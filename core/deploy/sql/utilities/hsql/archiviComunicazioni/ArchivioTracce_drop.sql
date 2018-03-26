@@ -11,6 +11,7 @@
 -- DROP INDEX TRACCE_SEARCH_ID_SOGGETTO;
 -- DROP INDEX TRACCE_SEARCH_RIF;
 -- DROP INDEX TRACCE_SEARCH_ID;
+-- DROP INDEX TRACCE_TRANS;
 DROP TABLE tracce_ext_protocol_info_init_seq;
 DROP TABLE tracce_ext_protocol_info;
 DROP TABLE tracce_allegati_init_seq;

@@ -40,6 +40,7 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 	
 		super();
 	
+		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.DOMINIO = new org.openspcoop2.core.diagnostica.model.DominioDiagnosticoModel(new Field("dominio",org.openspcoop2.core.diagnostica.DominioDiagnostico.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 		this.IDENTIFICATIVO_RICHIESTA = new Field("identificativo-richiesta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.IDENTIFICATIVO_RISPOSTA = new Field("identificativo-risposta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
@@ -48,7 +49,6 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 		this.MESSAGGIO = new Field("messaggio",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.SEVERITA = new Field("severita",java.lang.Integer.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.PROTOCOLLO = new org.openspcoop2.core.diagnostica.model.ProtocolloModel(new Field("protocollo",org.openspcoop2.core.diagnostica.Protocollo.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
-		this.FILTRO_INFORMAZIONE_PROTOCOLLO = new org.openspcoop2.core.diagnostica.model.FiltroInformazioneProtocolloModel(new Field("filtro-informazione-protocollo",org.openspcoop2.core.diagnostica.FiltroInformazioneProtocollo.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 	
 	}
 	
@@ -56,6 +56,7 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 	
 		super(father);
 	
+		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.DOMINIO = new org.openspcoop2.core.diagnostica.model.DominioDiagnosticoModel(new ComplexField(father,"dominio",org.openspcoop2.core.diagnostica.DominioDiagnostico.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 		this.IDENTIFICATIVO_RICHIESTA = new ComplexField(father,"identificativo-richiesta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.IDENTIFICATIVO_RISPOSTA = new ComplexField(father,"identificativo-risposta",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
@@ -64,12 +65,13 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 		this.MESSAGGIO = new ComplexField(father,"messaggio",java.lang.String.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.SEVERITA = new ComplexField(father,"severita",java.lang.Integer.class,"messaggio-diagnostico",MessaggioDiagnostico.class);
 		this.PROTOCOLLO = new org.openspcoop2.core.diagnostica.model.ProtocolloModel(new ComplexField(father,"protocollo",org.openspcoop2.core.diagnostica.Protocollo.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
-		this.FILTRO_INFORMAZIONE_PROTOCOLLO = new org.openspcoop2.core.diagnostica.model.FiltroInformazioneProtocolloModel(new ComplexField(father,"filtro-informazione-protocollo",org.openspcoop2.core.diagnostica.FiltroInformazioneProtocollo.class,"messaggio-diagnostico",MessaggioDiagnostico.class));
 	
 	}
 	
 	
 
+	public IField ID_TRANSAZIONE = null;
+	 
 	public org.openspcoop2.core.diagnostica.model.DominioDiagnosticoModel DOMINIO = null;
 	 
 	public IField IDENTIFICATIVO_RICHIESTA = null;
@@ -85,8 +87,6 @@ public class MessaggioDiagnosticoModel extends AbstractModel<MessaggioDiagnostic
 	public IField SEVERITA = null;
 	 
 	public org.openspcoop2.core.diagnostica.model.ProtocolloModel PROTOCOLLO = null;
-	 
-	public org.openspcoop2.core.diagnostica.model.FiltroInformazioneProtocolloModel FILTRO_INFORMAZIONE_PROTOCOLLO = null;
 	 
 
 	@Override

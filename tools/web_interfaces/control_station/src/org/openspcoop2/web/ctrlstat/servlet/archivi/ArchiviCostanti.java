@@ -22,12 +22,6 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.Vector;
 
-import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
-import org.openspcoop2.pdd.mdb.Imbustamento;
-import org.openspcoop2.pdd.mdb.InoltroBuste;
-import org.openspcoop2.pdd.mdb.Sbustamento;
-import org.openspcoop2.pdd.services.core.RicezioneBuste;
-import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -114,83 +108,9 @@ public class ArchiviCostanti {
 	public final static String LABEL_ARCHIVI_EXPORT = "Esporta";
 	public final static String LABEL_ARCHIVI_ELIMINA = "Elimina";
 	public final static String LABEL_DOWNLOAD = "Download";
-	public final static String LABEL_DIAGNOSTICA = "Diagnostica";
-	public final static String LABEL_TRACCIAMENTO = "Tracciamento";
-	public final static String LABEL_MESSAGGI = "Messaggi";
-	public final static String LABEL_TRACCE = "Tracce";
-	public final static String LABEL_SORGENTE_DATI = "Sorgente Dati";
-	public final static String LABEL_FILTRO_RICERCA = "Filtro Ricerca";
-	public final static String LABEL_SOGGETTO_MITTENTE = "Soggetto Mittente";
-	public final static String LABEL_SOGGETTO_DESTINATARIO = "Soggetto Destinatario";
-	public final static String LABEL_MITTENTE = "Mittente";
-	public final static String LABEL_DESTINATARIO = "Destinatario";
-	public final static String LABEL_SERVIZIO = "Servizio";
-	public final static String LABEL_DOMINIO = "Dominio";
-	public final static String LABEL_DETTAGLI_ELABORAZIONE = "Dettagli Elaborazione";
-	public final static String LABEL_DATA = "Data";
-	public final static String LABEL_DETTAGLIO = "Dettaglio";
-	public final static String LABEL_ESPORTA_XML = "Esporta XML";
-	public final static String LABEL_TESTO_DIAGNOSTICO = "Dettaglio";
-	public final static String LABEL_DETTAGLIO_DIAGNOSTICO = "Dettaglio";
-	public final static String LABEL_INFORMAZIONI_PROTOCOLLO = "Informazioni Protocollo";
-	public final static String LABEL_SERVIZIO_AZIONE = "Servizio[@Azione]";
-	public final static String LABEL_AZIONE = "Azione";
-	public final static String LABEL_TIPO_MESSAGGIO = "Tipo";
-	public final static String LABEL_TIPO_MESSAGGIO_2 = "Tipo Messaggio";
-	public final static String LABEL_TRACCIA = "Traccia";
-	public final static String LABEL_RICHIESTA = "Richiesta";
-	public final static String LABEL_RISPOSTA = "Risposta";
-	public final static String LABEL_TIPO_SOGGETTO = "Tipo";
+	
 	public final static String LABEL_NOME_SOGGETTO = "Nome";
-	public final static String LABEL_VERSIONE = "Versione";
-	public final static String LABEL_ID_PORTA_SOGGETTO = "Identificativo Porta";
-	public final static String LABEL_INDIRIZZO_SOGGETTO = "Indirizzo";
-	public final static String LABEL_SOGGETTO_PORTA = "Soggetto Porta";
-	public final static String LABEL_SERVIZIO_CORRELATO = "Servizio Correlato";
-	public final static String LABEL_TIPO_SERVIZIO_CORRELATO = "Tipo Servizio Correlato";
-	public final static String LABEL_NOME_SERVIZIO_CORRELATO = "Nome Servizio Correlato";
-	public final static String LABEL_DATI_PER_PROTOCOLLO = "Dati relativi al protocollo ";
-	public final static String LABEL_COLLABORAZIONE = "Collaborazione";
-	public final static String LABEL_SORGENTE_TEMPORALE = "Sorgente temporale";
-	public final static String LABEL_ORA_REGISTRAZIONE = "Ora Registrazione";
-	public final static String LABEL_SCADENZA = "Scadenza";
-	public final static String LABEL_PROFILO_TRASMISSIONE = "Profilo Trasmissione";
-	public final static String LABEL_PROFILO_TRASMISSIONE_INOLTRO = "Filtro Duplicati";
-	public final static String LABEL_PROFILO_TRASMISSIONE_CONFERMA_RICEZIONE = "Conferma Ricezione";
-	public final static String LABEL_SEQUENZA = "Sequenza";
-	public final static String LABEL_DIGEST = "Digest";
-	public final static String LABEL_LISTA_RISCONTRI = "Lista Riscontri";
-	public final static String LABEL_RISCONTRO = "Riscontro";
-	public final static String LABEL_LISTA_TRASMISSIONI = "Lista Trasmissioni";
-	public final static String LABEL_TRASMISSIONE = "Trasmissione";
-	public final static String LABEL_LISTA_ECCEZIONI = "Lista Eccezioni";
-	public final static String LABEL_ECCEZIONE = "Eccezione";
-	public final static String LABEL_REGISTRAZIONE = "Registrazione";
-	public final static String LABEL_ECCEZIONE_RILEVANZA = "Rilevanza";
-	public final static String LABEL_ECCEZIONE_CODICE = "Codice";
-	public final static String LABEL_ECCEZIONE_CONTESTO = "Contesto";
-	public final static String LABEL_ECCEZIONE_POSIZIONE = "Posizione";
-	public final static String LABEL_LISTA_INFO_PROTOCOLLO = "Informazioni aggiuntive sul protocollo";
-	public final static String LABEL_LISTA_INFO_AGGIUNTIVE = "Informazioni aggiuntive";
-	public final static String LABEL_RUOLO_PDD = "Ruolo della Porta";
-	public final static String LABEL_ESITO_ELABORAZIONE = "Esito";
-	public final static String LABEL_DETTAGLIO_ESITO_ELABORAZIONE = "Dettaglio";
-	public final static String LABEL_SERVIZI_APPLICATIVI = "Servizi Applicativi";
-	public final static String LABEL_SERVIZIO_APPLICATIVO_FRUITORE = "Applicativo Fruitore";
-	public final static String LABEL_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
-	public final static String LABEL_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
-	public final static String LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Richiesta";
-	public final static String LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Risposta";
-	public final static String LABEL_TRACCIA_LOCATION_LABEL = "Indirizzo";
-	public final static String LABEL_TRACCIA_LOCATION_IN = "Indirizzo di provenienza della busta";
-	public final static String LABEL_TRACCIA_LOCATION_OUT = "Indirizzo a cui è stata spedita la busta";
-	public final static String LABEL_TRACCIA_LOCATION = "Indirizzo provenienza/spedizione della busta";
-	public final static String LABEL_ALTRE_INFORMAZIONI = "Altre Informazioni";
-	public final static String LABEL_LISTA_INFO_ALLEGATI = "Informazioni aggiuntive Allegati";
-	public final static String LABEL_ALLEGATO = "Allegato";
-	public final static String LABEL_ALLEGATO_CONTENT_ID = "Content-ID";
-	public final static String LABEL_ALLEGATO_CONTENT_LOCATION = "Content-Location";
-	public final static String LABEL_ALLEGATO_CONTENT_TYPE = "Content-Type";
+	
 	public final static String LABEL_ARCHIVIO = "Archivio";
 	public final static String LABEL_IMPORT_ERRORE = "<BR><BR><B>Errore</B>: ";
 	public final static String LABEL_IMPORT_ERROR_HEADER = "Rilevato un errore durante l'import dell'archivio: <BR>";
@@ -212,39 +132,13 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_ID = "id";
 	public final static String PARAMETRO_ARCHIVI_TIPO_ACCORDO = "what";
 	
-	public final static String PARAMETRO_ARCHIVI_NOME_DATASOURCE = "nomeDs";
-	public final static String PARAMETRO_ARCHIVI_ID_FUNZIONE = "idfunzione";
-	public final static String PARAMETRO_ARCHIVI_DATA_INIZIO = "datainizio";
-	public final static String PARAMETRO_ARCHIVI_DATA_FINE = "datafine";
-	public final static String PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE = "profcoll";
-	public final static String PARAMETRO_ARCHIVI_TIPO_MITTENTE = "tipo_mittente";
-	public final static String PARAMETRO_ARCHIVI_NOME_MITTENTE = "nome_mittente";
-	public final static String PARAMETRO_ARCHIVI_TIPO_DESTINATARIO = "tipo_destinatario";
-	public final static String PARAMETRO_ARCHIVI_NOME_DESTINATARIO = "nome_destinatario";
-	public final static String PARAMETRO_ARCHIVI_TIPO_SERVIZIO = "tipo_servizio";
-	public final static String PARAMETRO_ARCHIVI_NOME_SERVIZIO = "servizio";
-	public final static String PARAMETRO_ARCHIVI_AZIONE = "nome_azione";
-	public final static String PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA = "correlazioneApplicativa";
 	public final static String PARAMETRO_ARCHIVI_PROTOCOLLO = "protocollo";
-	public final static String PARAMETRO_ARCHIVI_SEARCH = "search";
-	public final static String PARAMETRO_ARCHIVI_INDEX = "index";
-	public final static String PARAMETRO_ARCHIVI_PAGE_SIZE = "pageSize";
-	public final static String PARAMETRO_ARCHIVI_ID_MESSAGGIO = "idMessaggio";
-	public final static String PARAMETRO_ARCHIVI_ID_MESSAGGIO_SEARCH = "idMessaggioS";
-	public final static String PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA = "idMessaggioRisposta";
-	public final static String PARAMETRO_ARCHIVI_ID_PORTA = "idporta";
-	public final static String PARAMETRO_ARCHIVI_MESSAGGIO = "messaggio";
-	public final static String PARAMETRO_ARCHIVI_CODICE_PORTA = "codicePorta";
-	public final static String PARAMETRO_ARCHIVI_NOME_SOGGETTO_PORTA = "nomeSoggettoPorta";
-	public final static String PARAMETRO_ARCHIVI_TIPO_SOGGETTO_PORTA = "tipoSoggettoPorta";
-	
+
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_ID_ALLEGATO = "idAllegato";
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO = "idAccordo";
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO = "tipoDocumento";
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO = "tipoDocumentoDaScaricare";
-		
-	public final static String PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA = "severita";
-	
+			
 	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA = "modalita";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE = "theFile";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_PATH = "filePath";
@@ -290,32 +184,7 @@ public class ArchiviCostanti {
 	
 	/* LABEL PARAMETRI */
 	
-	public final static String LABEL_PARAMETRO_ARCHIVI_NOME_DATASOURCE = "Nome";
-	public final static String LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_LABEL = "Inizio intervallo";
-	public final static String LABEL_PARAMETRO_ARCHIVI_DATA_INIZIO_NOTE = "Indicare una data nel formato 'yyyy-MM-dd'";
-	public final static String LABEL_PARAMETRO_ARCHIVI_DATA_FINE_LABEL = "Fine intervallo";
-	public final static String LABEL_PARAMETRO_ARCHIVI_DATA_FINE_NOTE = "Indicare una data nel formato 'yyyy-MM-dd'";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ALTRE_INFORMAZIONI = "Informazioni di Protocollo";
-	public final static String LABEL_PARAMETRO_ARCHIVI_PROFILO_COLLABORAZIONE = "Profilo di Collaborazione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ID_FUNZIONE = "Identificativo funzione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_TIPO_MITTENTE = "Tipo Mittente";
-	public final static String LABEL_PARAMETRO_ARCHIVI_NOME_MITTENTE = "Nome Mittente";
-	public final static String LABEL_PARAMETRO_ARCHIVI_TIPO_DESTINATARIO = "Tipo Destinatario";
-	public final static String LABEL_PARAMETRO_ARCHIVI_NOME_DESTINATARIO = "Nome Destinatario";
-	public final static String LABEL_PARAMETRO_ARCHIVI_TIPO_SERVIZIO = "Tipo Servizio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_NOME_SERVIZIO = "Nome Servizio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_AZIONE = "Azione";
-	public final static String LABEL_PARAMETRO_ARCHIVI_CORRELAZIONE_APPLICATIVA = "ID Applicativo";
 	public final static String LABEL_PARAMETRO_ARCHIVI_PROTOCOLLO = "Protocollo";
-	public final static String LABEL_PARAMETRO_ARCHIVI_IDENTIFICATIVI = "Identificativi";
-	public final static String LABEL_PARAMETRO_ARCHIVI_INFORMAZIONI_TEMPORALI = "Informazioni Temporali";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO = "ID Messaggio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA = "Riferimento Messaggio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ID_MESSAGGIO_RISPOSTA_BREVE = "Rif. Messaggio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_ID_PORTA = "Identificativo Dominio";
-	public final static String LABEL_PARAMETRO_ARCHIVI_MESSAGGIO = "Messaggio";
-	
-	public final static String LABEL_PARAMETRO_ARCHIVI_DIAGNOSTICI_SEVERITA = "Livello severit&agrave;";
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE = "File";
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "File Caricato";
@@ -366,8 +235,6 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA_IMPORT = "import";
 	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA_ELIMINA = "elimina";
 	
-	public final static String FORMATO_DATA = "yyyy-MM-dd hh:mm:ss.SSS";
-	
 	public final static String PARAMETRO_DOWNLOAD_RESOCONTO_VALORE = "DownloadResocontoValore";
 	
 	public final static String PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED = "-";
@@ -375,9 +242,6 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_SOGGETTO_INPUT_UNDEFINDED = "-";
 	
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_INPUT_UNDEFINDED = "-";
-	
-	public final static String PARAMETRO_TRACCIA_LOCATION_IN = "IN:";
-	public final static String PARAMETRO_TRACCIA_LOCATION_OUT = "OUT:";
 	
 	public final static String PARAMETRO_VALORE_ARCHIVI_TIPO_ACCORDO_PARTE_COMUNE = "accordiAPC";
 	public final static String PARAMETRO_VALORE_ARCHIVI_TIPO_ACCORDO_PARTE_SPECIFICA = "accordiAPS";
@@ -405,20 +269,7 @@ public class ArchiviCostanti {
 	
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY = "protocolProperty";
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY = "propertyBinaria";
-	
-	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO = "asincrono-asimmetrico";
-	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO = "asincrono-simmetrico";
-	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_SINCRONO = "sincrono";
-	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ONEWAY = "oneway";
-	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ANY ="-";
-
-	public final static String[] PARAMETRO_VALORI_ARCHIVI_ID_FUNZIONE = { "-", ConsegnaContenutiApplicativi.ID_MODULO, 
-		Imbustamento.ID_MODULO, InoltroBuste.ID_MODULO, RicezioneBuste.ID_MODULO ,
-		RicezioneContenutiApplicativi.ID_MODULO, Sbustamento.ID_MODULO };
-	
-	public final static String[] PARAMETRO_VALORI_ARCHIVI_DIAGNOSTICA_SEVERITA = { "0", "1", "2", "3", "4", "5", "6", "7" };
-	public final static String PARAMETRO_VALORE_ARCHIVI_DIAGNOSTICA_SEVERITA_DEFAULT ="4";
-	
+		
 	public final static String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
 	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", "Dati applicativi", "Parametri di configurazione" };
 	

@@ -77,7 +77,7 @@
 			<classpath>
 				<pathelement path="${build}"/>
 				<path refid="classpath" />
-				<fileset dir="lib_jms">
+				<fileset dir="../../deploy/lib_jms/">
 					<include name="*.jar"/>
 				</fileset>
 <!--

@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -35,9 +34,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -67,62 +64,6 @@ public class DiagnosticDriverUtilities {
 		return sqlQueryObjectDelete;
 	}
 	
-	public static ISQLQueryObject createSQLQueryObj_searchMsgDiagCorrelazione(FiltroRicercaDiagnosticiConPaginazione filter,String tipoDatabase) throws SQLQueryObjectException{
-		return DiagnosticDriverUtilities.createSQLQueryObj(filter, tipoDatabase, DiagnosticSearchType.MSGDIAGNOSTICI_CORRELAZIONE);
-	}
-	public static ISQLQueryObject createSQLQueryObj_countMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,String tipoDatabase) throws SQLQueryObjectException{
-		return DiagnosticDriverUtilities.createSQLQueryObj(filter, tipoDatabase, DiagnosticSearchType.COUNT_MSGDIAGNOSTICI_CORRELAZIONE);
-	}
-	public static ISQLQueryObject createSQLQueryObj_deleteMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,String tipoDatabase) throws SQLQueryObjectException{
-		ISQLQueryObject from = DiagnosticDriverUtilities.createSQLQueryObj(filter, tipoDatabase, DiagnosticSearchType.DELETE_MSGDIAGNOSTICI_CORRELAZIONE);
-		ISQLQueryObject sqlQueryObjectDelete = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		sqlQueryObjectDelete.addDeleteTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE);
-		sqlQueryObjectDelete.addWhereINSelectSQLCondition(false, "id", from);
-		return sqlQueryObjectDelete;
-	}
-	
-	private static boolean isJoinWithCorrelazione(FiltroRicercaDiagnostici filter, DiagnosticSearchType tipoRicerca){
-		return isJoinWith(filter, tipoRicerca, false);
-	}
-	private static boolean isJoinWithCorrelazioneSA(FiltroRicercaDiagnostici filter, DiagnosticSearchType tipoRicerca){
-		return isJoinWith(filter, tipoRicerca, true);
-	}
-	private static boolean isJoinWith(FiltroRicercaDiagnostici filter, DiagnosticSearchType tipoRicerca, boolean correlazioneSA){
-		
-		boolean joinWithCorrelazioneSA = false;
-		boolean joinWithCorrelazione = false;
-		
-		switch (tipoRicerca) {
-		case MSGDIAGNOSTICI:
-		case COUNT_MSGDIAGNOSTICI:
-		case DELETE_MSGDIAGNOSTICI:
-			joinWithCorrelazioneSA = DiagnosticDriverUtilities.isDefined(filter.getServizioApplicativo());
-			joinWithCorrelazione = false;
-			joinWithCorrelazione = (DiagnosticDriverUtilities.isDefined(filter.isDelegata())) || 
-					(DiagnosticDriverUtilities.isDefined(filter.getNomePorta())) ||
-					(DiagnosticDriverUtilities.isDefined(filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) && filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) ||
-					(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo())) ||
-					joinWithCorrelazioneSA ||
-					(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativa())) ||
-					(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())) ||
-					(DiagnosticDriverUtilities.isDefined(filter.getFiltroSoggetti()));
-			break;
-		case MSGDIAGNOSTICI_CORRELAZIONE:
-		case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
-		case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
-			joinWithCorrelazioneSA = true;
-			joinWithCorrelazione = true;
-			break;
-		}
-		
-		if(correlazioneSA){
-			return joinWithCorrelazioneSA;
-		}
-		else{
-			return joinWithCorrelazione;
-		}
-	}
-	
 	private static ISQLQueryObject createSQLQueryObj(FiltroRicercaDiagnostici filter,String tipoDatabase,DiagnosticSearchType tipoRicerca) throws SQLQueryObjectException{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -132,85 +73,41 @@ public class DiagnosticDriverUtilities {
 		switch (tipoRicerca) {
 		case MSGDIAGNOSTICI:
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI+".id", "idMsgDiagnostico");
-			sqlQueryObject.addSelectField(CostantiDB.MSG_DIAGNOSTICI+".gdo");
-			break;
-		case MSGDIAGNOSTICI_CORRELAZIONE:
-			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id", "idMsgDiagCorrelazione");
-			sqlQueryObject.addSelectField(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".gdo");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID, "idMsgDiagnostico");
+			sqlQueryObject.addSelectField(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO);
 			break;
 		case COUNT_MSGDIAGNOSTICI:
-			sqlQueryObject.addSelectCountField(CostantiDB.MSG_DIAGNOSTICI+".id", "countMsgDiagnostici",distinct);
-			break;
-		case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
-			sqlQueryObject.addSelectCountField(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id", "countCorrelazioniMsgDiagnostici",distinct);
+			sqlQueryObject.addSelectCountField(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID, "countMsgDiagnostici",distinct);
 			break;
 		case DELETE_MSGDIAGNOSTICI:
 			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI+".id", "idMsgDiagnostico");
-			break;
-		case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
-			sqlQueryObject.setSelectDistinct(distinct);
-			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id", "idMsgDiagCorrelazione");
+			sqlQueryObject.addSelectAliasField(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID, "idMsgDiagnostico");
 			break;
 		}
-		
-		boolean joinWithCorrelazioneSA = isJoinWithCorrelazioneSA(filter, tipoRicerca);
-		boolean joinWithCorrelazione = isJoinWithCorrelazione(filter, tipoRicerca);
 		
 		
 		//from
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
-		if(joinWithCorrelazione){
-			sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE);
-		}
-		if(joinWithCorrelazioneSA){
-			sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA);
-		}
 		
 		sqlQueryObject.setANDLogicOperator(true);
 		
-		if(joinWithCorrelazione){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".idmessaggio="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".idmessaggio");
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_codice="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".pdd_codice");
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_tipo_soggetto="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".pdd_tipo_soggetto");
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_nome_soggetto="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".pdd_nome_soggetto");
-		}
-		if(joinWithCorrelazioneSA){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+".id_correlazione");
-		}
 		
 		//where
 		
 		
 		//data inizio
 		if(DiagnosticDriverUtilities.isDefined(filter.getDataInizio())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".gdo>=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+">=?");
 		}
 		//data fine
 		if(DiagnosticDriverUtilities.isDefined(filter.getDataFine())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".gdo<=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+"<=?");
 		}
 		
-		if(joinWithCorrelazione){
-			// FIX: per utilizzare gli indici. E' necessario filtrare anche sulla colonna gdo della tabella MSG_DIAGNOSTICI_CORRELAZIONE
-			//data inizio
-			if(DiagnosticDriverUtilities.isDefined(filter.getDataInizio())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".gdo>=?");
-			}
-			//data fine
-			if(DiagnosticDriverUtilities.isDefined(filter.getDataFine())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".gdo<=?");
-			}
+		if(DiagnosticDriverUtilities.isDefined(filter.getIdTransazione())){
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE+"=?");
 		}
 		
-		if(DiagnosticDriverUtilities.isDefined(filter.isDelegata())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".delegata=?");
-		}
-		if(DiagnosticDriverUtilities.isDefined(filter.getNomePorta())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".porta=?");
-		}
 		if(DiagnosticDriverUtilities.isDefined(filter.getIdFunzione())){
 			String idF  = filter.getIdFunzione();
 			if("RicezioneContenutiApplicativi".equals(idF)
@@ -218,100 +115,52 @@ public class DiagnosticDriverUtilities {
 					||"RicezioneBuste".equals(idF)
 					||"Sbustamento".equals(idF)
 			){
-				sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione",idF,true,true);
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE,idF,true,true);
 			}
 			else if("InoltroBuste".equals(idF)){
 				sqlQueryObject.addWhereCondition(false, 
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", idF),
-						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", "InoltroRisposte"));
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE, idF),
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE, "InoltroRisposte"));
 			}
 			else if("ConsegnaContenutiApplicativi".equals(idF)){
-				sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione", idF);
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE, idF);
 			}
 			else{
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".idfunzione=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE+"=?");
 			}
 		}
 		if(DiagnosticDriverUtilities.isDefined(filter.getDominio())){
 			if(DiagnosticDriverUtilities.isDefined(filter.getDominio().getCodicePorta())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_codice=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE+"=?");
 			}
 			if(DiagnosticDriverUtilities.isDefined(filter.getDominio().getTipo())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_tipo_soggetto=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_TIPO_SOGGETTO+"=?");
 			}
 			if(DiagnosticDriverUtilities.isDefined(filter.getDominio().getNome())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".pdd_nome_soggetto=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_NOME_SOGGETTO+"=?");
 			}
 		}
 		
 		if(DiagnosticDriverUtilities.isDefined(filter.getIdBustaRichiesta())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".idmessaggio=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+"=?");
 		}
 		if(DiagnosticDriverUtilities.isDefined(filter.getIdBustaRisposta())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".idmessaggio_risposta=?");
-		}
-		
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo())){
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore())){
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getTipo())){
-					sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".tipo_fruitore=?");
-				}
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getNome())){
-					sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".fruitore=?");
-				}
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore())){
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getTipo())){
-					sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".tipo_erogatore=?");
-				}
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getNome())){
-					sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".erogatore=?");
-				}
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getTipoServizio())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".tipo_servizio=?");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getServizio())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".servizio=?");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getVersioneServizio())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".versione_servizio=?");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getAzione())){
-				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".azione=?");
-			}
-		}
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getServizioApplicativo())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+".servizio_applicativo=?");
-		}
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativa()) && DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			sqlQueryObject.addWhereCondition((!filter.isCorrelazioneApplicativaOrMatch()),
-						CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id_correlazione_applicativa=?",
-						CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id_correlazione_risposta=?");
-		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativa())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id_correlazione_applicativa=?");
-		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id_correlazione_risposta=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA+"=?");
 		}
 		
 		if(DiagnosticDriverUtilities.isDefined(filter.getSeverita())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".severita<=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_SEVERITA+"<=?");
 		}
 		
 		if(DiagnosticDriverUtilities.isDefined(filter.getCodice())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".codice=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+"=?");
 		}
 		
 		if( DiagnosticDriverUtilities.isDefined(filter.getMessaggioCercatoInternamenteTestoDiagnostico()) )
-			sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+".messaggio", filter.getMessaggioCercatoInternamenteTestoDiagnostico(),true,true);
+			sqlQueryObject.addWhereLikeCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO, filter.getMessaggioCercatoInternamenteTestoDiagnostico(),true,true);
 		
 		if(DiagnosticDriverUtilities.isDefined(filter.getProtocollo())){
-			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".protocollo=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO+"=?");
 		}
 		
 		if(filter.getProperties()!=null){
@@ -329,39 +178,13 @@ public class DiagnosticDriverUtilities {
 						sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+key+"=?");
 					}
 					break;
-				case MSGDIAGNOSTICI_CORRELAZIONE:
-				case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
-				case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
-					if(DiagnosticDriver.IDDIAGNOSTICI.equals(key)){
-						// Caso particolare dell'id long della traccia
-						sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id=?");
-					}else{
-						sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+"."+key+"=?");
-					}
-					break;
 				}
 			}
-		}
-		
-		if(filter.getFiltroSoggetti()!=null && filter.sizeFiltroSoggetti()>0){
-			List<IDSoggetto> filtroSoggetti = filter.getFiltroSoggetti();
-			StringBuffer query = new StringBuffer();
-			for(int k=0; k<filtroSoggetti.size(); k++){
-				if(k>0)
-					query.append(" OR ");
-				query.append("( ");
-				query.append("("+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".tipo_fruitore = ? AND "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".fruitore = ?)");
-				query.append(" OR ");
-				query.append("("+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".tipo_erogatore = ? AND "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".erogatore = ?)");
-				query.append(" )");
-			}
-			sqlQueryObject.addWhereCondition(query.toString());
 		}
 		
 		
 		switch (tipoRicerca) {
 		case MSGDIAGNOSTICI:
-		case MSGDIAGNOSTICI_CORRELAZIONE:
 			
 			FiltroRicercaDiagnosticiConPaginazione f = (FiltroRicercaDiagnosticiConPaginazione) filter;
 			//limit
@@ -377,9 +200,7 @@ public class DiagnosticDriverUtilities {
 			sqlQueryObject.setSortType(f.isAsc());	
 			break;
 		case COUNT_MSGDIAGNOSTICI:
-		case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
 		case DELETE_MSGDIAGNOSTICI:
-		case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
 			// Niente da effettuare
 			break;
 		}
@@ -398,16 +219,6 @@ public class DiagnosticDriverUtilities {
 	}
 	public static int setValues_deleteMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
 		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.DELETE_MSGDIAGNOSTICI);
-	}
-	
-	public static int setValues_searchMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.MSGDIAGNOSTICI_CORRELAZIONE);
-	}
-	public static int setValues_countMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.COUNT_MSGDIAGNOSTICI_CORRELAZIONE);
-	}
-	public static int setValues_deleteMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.DELETE_MSGDIAGNOSTICI_CORRELAZIONE);
 	}
 		
 	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, DiagnosticSearchType tipoRicerca) throws SQLQueryObjectException, SQLException{
@@ -446,42 +257,15 @@ public class DiagnosticDriverUtilities {
 			if(query!=null)
 				query.replaceFirst("\\?","'"+dateformat.format(filter.getDataFine())+"'");
 		}
-		if(isJoinWithCorrelazione(filter, tipoRicerca)){
-			//data inizio
-			if(DiagnosticDriverUtilities.isDefined(filter.getDataInizio())){
-				if(pstmt!=null)
-					pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime()));
-				if(query!=null)
-					query.replaceFirst("\\?","'"+dateformat.format(filter.getDataInizio())+"'");
-			}
-			//data fine
-			if(DiagnosticDriverUtilities.isDefined(filter.getDataFine())){
-				if(pstmt!=null)
-					pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
-				if(query!=null)
-					query.replaceFirst("\\?","'"+dateformat.format(filter.getDataFine())+"'");
-			}
+		
+		// id transazione
+		if(DiagnosticDriverUtilities.isDefined(filter.getIdTransazione())){
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getIdTransazione());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getIdTransazione()+"'");
 		}
 		
-		if(DiagnosticDriverUtilities.isDefined(filter.isDelegata())){
-			if(filter.isDelegata()){
-				if(pstmt!=null)
-					pstmt.setInt(startIndex++,1);
-				if(query!=null)
-					query.replaceFirst("\\?","1");
-			}else{
-				if(pstmt!=null)
-					pstmt.setInt(startIndex++,0);
-				if(query!=null)
-					query.replaceFirst("\\?","0");
-			}
-		}
-		if(DiagnosticDriverUtilities.isDefined(filter.getNomePorta())){
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getNomePorta());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getNomePorta()+"'");
-		}
 		if(DiagnosticDriverUtilities.isDefined(filter.getIdFunzione())){
 			String idF  = filter.getIdFunzione();
 			if("RicezioneContenutiApplicativi".equals(idF)
@@ -537,93 +321,7 @@ public class DiagnosticDriverUtilities {
 			if(query!=null)
 				query.replaceFirst("\\?","'"+filter.getIdBustaRisposta()+"'");
 		}
-		
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo())){
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore())){
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getTipo())){
-					if(pstmt!=null)
-						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getTipo());
-					if(query!=null)
-						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getFruitore().getTipo()+"'");
-				}
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getFruitore().getNome())){
-					if(pstmt!=null)
-						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getFruitore().getNome());
-					if(query!=null)
-						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getFruitore().getNome()+"'");
-				}
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore())){
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getTipo())){
-					if(pstmt!=null)
-						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getTipo());
-					if(query!=null)
-						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getErogatore().getTipo()+"'");
-				}
-				if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getErogatore().getNome())){
-					if(pstmt!=null)
-						pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getErogatore().getNome());
-					if(query!=null)
-						query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getErogatore().getNome()+"'");
-				}
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getTipoServizio())){
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getTipoServizio());
-				if(query!=null)
-					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getTipoServizio()+"'");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getServizio())){
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getServizio());
-				if(query!=null)
-					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getServizio()+"'");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getVersioneServizio())){
-				if(pstmt!=null)
-					pstmt.setInt(startIndex++, filter.getInformazioniProtocollo().getVersioneServizio());
-				if(query!=null)
-					query.replaceFirst("\\?",filter.getInformazioniProtocollo().getVersioneServizio()+"");
-			}
-			if(DiagnosticDriverUtilities.isDefined(filter.getInformazioniProtocollo().getAzione())){
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, filter.getInformazioniProtocollo().getAzione());
-				if(query!=null)
-					query.replaceFirst("\\?","'"+filter.getInformazioniProtocollo().getAzione()+"'");
-			}
-		}
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getServizioApplicativo())){
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getServizioApplicativo());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getServizioApplicativo()+"'");
-		}
-		
-		if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativa()) && DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativa()+"'");
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativaRisposta()+"'");
-		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativa())){
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativa());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativa()+"'");
-		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())){
-			if(pstmt!=null)
-				pstmt.setString(startIndex++, filter.getCorrelazioneApplicativaRisposta());
-			if(query!=null)
-				query.replaceFirst("\\?","'"+filter.getCorrelazioneApplicativaRisposta()+"'");
-		}
-		
+				
 		if(DiagnosticDriverUtilities.isDefined(filter.getSeverita())){
 			if(pstmt!=null)
 				pstmt.setInt(startIndex++, filter.getSeverita());
@@ -665,31 +363,6 @@ public class DiagnosticDriverUtilities {
 			}
 		}
 		
-		if(filter.getFiltroSoggetti()!=null && filter.sizeFiltroSoggetti()>0){
-			List<IDSoggetto> filtroSoggetti = filter.getFiltroSoggetti();
-			for(int k=0; k<filtroSoggetti.size(); k++){
-				IDSoggetto id = filtroSoggetti.get(k);
-				
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, id.getTipo());
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, id.getNome());
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, id.getTipo());
-				if(pstmt!=null)
-					pstmt.setString(startIndex++, id.getNome());
-				
-				if(query!=null)
-					query.replaceFirst("\\?","'"+id.getTipo()+"'");
-				if(query!=null)
-					query.replaceFirst("\\?","'"+id.getNome()+"'");
-				if(query!=null)
-					query.replaceFirst("\\?","'"+id.getTipo()+"'");
-				if(query!=null)
-					query.replaceFirst("\\?","'"+id.getNome()+"'");
-			}
-		}
-
 		
 		return startIndex;
 	}
@@ -700,7 +373,7 @@ public class DiagnosticDriverUtilities {
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
-		sqlQueryObject.addWhereCondition("id=?");
+		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID+"=?");
 		
 		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
 		PreparedStatement stmt=null;
@@ -713,31 +386,33 @@ public class DiagnosticDriverUtilities {
 				
 				MsgDiagnostico msg = new MsgDiagnostico();
 				
-				msg.setId(rs.getLong("id"));
+				msg.setId(rs.getLong(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID));
 				msg.addProperty(DiagnosticDriver.IDDIAGNOSTICI, msg.getId()+"");
 				
-				Timestamp gdo=rs.getTimestamp("gdo");
+				Timestamp gdo=rs.getTimestamp(CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO);
 				msg.setGdo(gdo);
 				
+				msg.setIdTransazione(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE));
+				
 				IDSoggetto idSoggetto = new IDSoggetto();
-				idSoggetto.setCodicePorta(rs.getString("pdd_codice"));
-				idSoggetto.setNome(rs.getString("pdd_nome_soggetto"));
-				idSoggetto.setTipo(rs.getString("pdd_tipo_soggetto"));
+				idSoggetto.setCodicePorta(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE));
+				idSoggetto.setNome(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_NOME_SOGGETTO));
+				idSoggetto.setTipo(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_TIPO_SOGGETTO));
 				msg.setIdSoggetto(idSoggetto);
 				
-				msg.setIdFunzione(rs.getString("idfunzione"));
+				msg.setIdFunzione(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE));
 
-				msg.setSeverita(rs.getInt("severita"));
+				msg.setSeverita(rs.getInt(CostantiDB.MSG_DIAGNOSTICI_COLUMN_SEVERITA));
 				
-				msg.setMessaggio(rs.getString("messaggio"));
+				msg.setMessaggio(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
 				
-				msg.setIdBusta(rs.getString("idmessaggio"));
+				msg.setIdBusta(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO));
 				
-				msg.setIdBustaRisposta(rs.getString("idmessaggio_risposta"));
+				msg.setIdBustaRisposta(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA));
 				
-				msg.setCodice(rs.getString("codice"));
+				msg.setCodice(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE));
 				
-				msg.setProtocollo(rs.getString("protocollo"));
+				msg.setProtocollo(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO));
 				
 				if(properties!=null){
 					for (int i = 0; i < properties.size(); i++) {
@@ -768,120 +443,6 @@ public class DiagnosticDriverUtilities {
 	
 	
 	
-	public static MsgDiagnosticoCorrelazione getMsgDiagnosticoCorrelazione(Connection c,String tipoDatabase, 
-			Logger log,long id,List<String> properties) throws Exception{
-		
-		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE);
-		sqlQueryObject.addWhereCondition("id=?");
-		
-		MsgDiagnosticoCorrelazione msg = null;
-		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
-		PreparedStatement stmt=null;
-		ResultSet rs= null;
-		try{
-			stmt=c.prepareStatement(sqlQueryObject.createSQLQuery());
-			stmt.setLong(1, id);
-			rs=stmt.executeQuery();
-			if(rs.next()){
-				
-				msg = new MsgDiagnosticoCorrelazione();
-				
-				msg.setId(rs.getLong("id"));
-				msg.addProperty(DiagnosticDriver.IDDIAGNOSTICI, msg.getId()+"");
-				
-				msg.setIdBusta(rs.getString("idmessaggio"));
-				
-				IDSoggetto idSoggetto = new IDSoggetto();
-				idSoggetto.setCodicePorta(rs.getString("pdd_codice"));
-				idSoggetto.setNome(rs.getString("pdd_nome_soggetto"));
-				idSoggetto.setTipo(rs.getString("pdd_tipo_soggetto"));
-				msg.setIdSoggetto(idSoggetto);
-				
-				Timestamp gdo=rs.getTimestamp("gdo");
-				msg.setGdo(gdo);
-				
-				msg.setNomePorta(rs.getString("porta"));
-				
-				int isDelegata = rs.getInt("delegata");
-				msg.setDelegata(isDelegata==1);
-				
-				InformazioniProtocollo info = new InformazioniProtocollo();
-				info.setFruitore(new IDSoggetto(rs.getString("tipo_fruitore"), rs.getString("fruitore")));
-				info.setErogatore(new IDSoggetto(rs.getString("tipo_erogatore"), rs.getString("erogatore")));
-				info.setTipoServizio(rs.getString("tipo_servizio"));
-				info.setServizio(rs.getString("servizio"));
-				info.setVersioneServizio(rs.getInt("versione_servizio"));
-				info.setAzione(rs.getString("azione"));
-				msg.setInformazioniProtocollo(info);
-				
-				msg.setCorrelazioneApplicativa(rs.getString("id_correlazione_applicativa"));
-				msg.setCorrelazioneApplicativaRisposta(rs.getString("id_correlazione_risposta"));
-				
-				msg.setProtocollo(rs.getString("protocollo"));
-								
-				if(properties!=null){
-					for (int i = 0; i < properties.size(); i++) {
-						String key = properties.get(i);
-						msg.addProperty(key, rs.getString(key));
-					}
-				}
-				
-			}
-			else{
-				
-				throw new Exception("MsgDiagnostico con id["+id+"] non trovato");
-				
-			}
-		}finally{
-			try{
-				if(rs!=null){
-					rs.close();
-				}
-				if(stmt!=null){
-					stmt.close();
-				}
-			}catch(Exception eClose){}
-		}
-		
-		
-		sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-		sqlQueryObject.addSelectField("servizio_applicativo");
-		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE);
-		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA);
-		sqlQueryObject.setANDLogicOperator(true);
-		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id=?");
-		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".id="+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+".id_correlazione");
-		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
-		stmt=null;
-		rs= null;
-		try{
-			stmt=c.prepareStatement(sqlQueryObject.createSQLQuery());
-			stmt.setLong(1, id);
-			rs=stmt.executeQuery();
-			List<String> list = new ArrayList<String>();
-			while(rs.next()){
-				list.add(rs.getString("servizio_applicativo"));
-			}
-			msg.setServiziApplicativiList(list);
-		}finally{
-			try{
-				if(rs!=null){
-					rs.close();
-				}
-				if(stmt!=null){
-					stmt.close();
-				}
-			}catch(Exception eClose){}
-		}
-	
-		return msg;
-	}
-	
-	
-	
 	protected static boolean isDefined(String v){
 		return v!=null && !"".equals(v);
 	}
@@ -889,9 +450,6 @@ public class DiagnosticDriverUtilities {
 		return v!=null;
 	}
 	protected static boolean isDefined(Integer v){
-		return v!=null;
-	}
-	protected static boolean isDefined(InformazioniProtocollo v){
 		return v!=null;
 	}
 	protected static boolean isDefined(List<?> v){

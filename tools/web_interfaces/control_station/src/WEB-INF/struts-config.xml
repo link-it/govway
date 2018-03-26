@@ -882,52 +882,6 @@
         
 
 		<!--  Archivi -->
-
-		<!-- ** diagnostici ** -->
-  		<action path="/diagnostica" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Diagnostica"
-            scope="request" validate="true">
-            <forward name="diagnosticaForm" path="/jsplib/addElement.jsp"/>
-            <forward name="diagnosticaOk" path="/jsplib/listElement.jsp"/>
-            <forward name="diagnosticaCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
-        </action>
-        <!--  Alias per la lista -->
-        <action path="/diagnosticaList" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Diagnostica"
-            scope="request" validate="true">
-            <forward name="diagnosticaForm" path="/jsplib/addElement.jsp"/>
-            <forward name="diagnosticaOk" path="/jsplib/listElement.jsp"/>
-            <forward name="diagnosticaCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/diagnosticaTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.DiagnosticaTesto" 
-        	scope="request" validate="true">
-            <forward name="diagnosticaTesto" path="/jsplib/addElement.jsp"/>
-            <forward name="diagnosticaTestoError" path="/jsplib/info.jsp"/>
-            <forward name="diagnosticaError" path="/jsplib/info.jsp"/>
-        </action>
-
-		<!-- ** tracce ** -->
-        <action path="/tracciamento" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Tracciamento"
-            scope="request" validate="true">
-            <forward name="tracciamentoForm" path="/jsplib/addElement.jsp"/>
-            <forward name="tracciamentoOk" path="/jsplib/listElement.jsp"/>
-            <forward name="tracciamentoCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
-        </action>
-        <!--  Alias per la lista -->
-        <action path="/tracciamentoList" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Tracciamento"
-            scope="request" validate="true">
-            <forward name="tracciamentoForm" path="/jsplib/addElement.jsp"/>
-            <forward name="tracciamentoOk" path="/jsplib/listElement.jsp"/>
-            <forward name="tracciamentoCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/tracciamentoTesto" type="org.openspcoop2.web.ctrlstat.servlet.archivi.TracciamentoTesto" 
-        	scope="request" validate="true">
-            <forward name="tracciamentoTesto" path="/jsplib/addElement.jsp"/>
-            <forward name="tracciamentoTestoError" path="/jsplib/info.jsp"/>
-            <forward name="tracciamentoError" path="/jsplib/info.jsp"/>
-        </action>
         
         <!-- ** package ** -->
         <action path="/import" type="org.openspcoop2.web.ctrlstat.servlet.archivi.Importer"

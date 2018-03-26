@@ -2,6 +2,7 @@
 <binding force-classes="true">
   <mapping name="messaggio-diagnostico" class="org.openspcoop2.core.diagnostica.MessaggioDiagnostico">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
+    <value name="id-transazione" field="idTransazione" usage="optional"/>
     <structure field="dominio" usage="required" map-as="org.openspcoop2.core.diagnostica.DominioDiagnostico"/>
     <value name="identificativo-richiesta" field="identificativoRichiesta" usage="optional"/>
     <value name="identificativo-risposta" field="identificativoRisposta" usage="optional"/>
@@ -9,61 +10,20 @@
     <value name="codice" field="codice" usage="required"/>
     <value name="messaggio" field="messaggio" usage="required"/>
     <value name="severita" field="severita" usage="required"/>
-    <structure name="protocollo" field="protocollo" usage="optional" map-as="_Protocollo_Type"/>
-    <structure field="filtroInformazioneProtocollo" usage="optional" map-as="org.openspcoop2.core.diagnostica.FiltroInformazioneProtocollo"/>
-  </mapping>
-  <mapping name="informazioni-protocollo-transazione" class="org.openspcoop2.core.diagnostica.InformazioniProtocolloTransazione">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value name="tipoPdD" field="tipoPdD" usage="required" enum-value-method="toString"/>
-    <value name="identificativo-richiesta" field="identificativoRichiesta" usage="required"/>
-    <structure field="dominio" usage="required" map-as="org.openspcoop2.core.diagnostica.DominioTransazione"/>
-    <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
-    <value name="nome-porta" field="nomePorta" usage="optional"/>
-    <structure name="fruitore" field="fruitore" usage="required" map-as="_Soggetto_Type"/>
-    <structure name="erogatore" field="erogatore" usage="required" map-as="_Soggetto_Type"/>
-    <structure name="servizio" field="servizio" usage="required" map-as="_Servizio_Type"/>
-    <value name="azione" field="azione" usage="optional"/>
-    <value name="identificativo-correlazione-richiesta" field="identificativoCorrelazioneRichiesta" usage="optional"/>
-    <value name="identificativo-correlazione-risposta" field="identificativoCorrelazioneRisposta" usage="optional"/>
-    <value name="correlazione-applicativa-and-match" field="correlazioneApplicativaAndMatch" default="false" usage="optional"/>
-    <structure name="protocollo" field="protocollo" usage="required" map-as="_Protocollo_Type"/>
-    <collection field="servizioApplicativo" create-type="java.util.ArrayList">
-      <value name="servizio-applicativo" type="java.lang.String"/>
-    </collection>
-    <value name="filtro-servizio-applicativo" field="filtroServizioApplicativo" usage="optional"/>
-    <structure field="filtroInformazioniDiagnostici" usage="optional" map-as="org.openspcoop2.core.diagnostica.FiltroInformazioniDiagnostici"/>
+    <structure field="protocollo" usage="optional" map-as="org.openspcoop2.core.diagnostica.Protocollo"/>
   </mapping>
   <mapping name="dominio" class="org.openspcoop2.core.diagnostica.DominioDiagnostico">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
-    <structure name="soggetto" field="soggetto" usage="required" map-as="_DominioSoggetto_Type"/>
+    <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.diagnostica.DominioSoggetto"/>
     <value name="modulo" field="modulo" usage="optional" style="attribute"/>
   </mapping>
-  <mapping name="dominio" class="org.openspcoop2.core.diagnostica.DominioTransazione">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
-    <structure name="soggetto" field="soggetto" usage="required" map-as="_DominioSoggetto_Type"/>
-  </mapping>
-  <mapping name="soggetto" class="org.openspcoop2.core.diagnostica.DominioSoggetto" abstract="false">
+  <mapping name="soggetto" class="org.openspcoop2.core.diagnostica.DominioSoggetto">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <value field="base" usage="required" style="text"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
   </mapping>
-
-  <mapping type-name="_DominioSoggetto_Type" class="org.openspcoop2.core.diagnostica.DominioSoggetto" abstract="true">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value field="base" usage="required" style="text"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
-  </mapping>
-  <mapping name="protocollo" class="org.openspcoop2.core.diagnostica.Protocollo" abstract="false">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <collection field="proprieta" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.diagnostica.Proprieta"/>
-    </collection>
-    <value name="identificativo" field="identificativo" usage="required" style="attribute"/>
-  </mapping>
-
-  <mapping type-name="_Protocollo_Type" class="org.openspcoop2.core.diagnostica.Protocollo" abstract="true">
+  <mapping name="protocollo" class="org.openspcoop2.core.diagnostica.Protocollo">
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <collection field="proprieta" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.diagnostica.Proprieta"/>
@@ -74,61 +34,5 @@
     <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="valore" field="valore" usage="required" style="attribute"/>
-  </mapping>
-  <mapping name="fruitore" class="org.openspcoop2.core.diagnostica.Soggetto" abstract="false">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.diagnostica.SoggettoIdentificativo"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
-  </mapping>
-
-  <mapping type-name="_Soggetto_Type" class="org.openspcoop2.core.diagnostica.Soggetto" abstract="true">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <structure field="identificativo" usage="required" map-as="org.openspcoop2.core.diagnostica.SoggettoIdentificativo"/>
-    <value name="identificativo-porta" field="identificativoPorta" usage="optional"/>
-  </mapping>
-  <mapping name="identificativo" class="org.openspcoop2.core.diagnostica.SoggettoIdentificativo">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value field="base" usage="required" style="text"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
-  </mapping>
-  <mapping name="servizio" class="org.openspcoop2.core.diagnostica.Servizio" abstract="false">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value field="base" usage="required" style="text"/>
-    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
-    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
-  </mapping>
-
-  <mapping type-name="_Servizio_Type" class="org.openspcoop2.core.diagnostica.Servizio" abstract="true">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value field="base" usage="required" style="text"/>
-    <value name="tipo" field="tipo" usage="optional" style="attribute"/>
-    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
-  </mapping>
-  <mapping name="filtro-informazione-protocollo" class="org.openspcoop2.core.diagnostica.FiltroInformazioneProtocollo">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value name="tipo-porta" field="tipoPorta" usage="optional" enum-value-method="toString"/>
-    <value name="nome-porta" field="nomePorta" usage="optional"/>
-    <value name="ricerca-solo-messaggi-correlati-informazioni-protocollo" field="ricercaSoloMessaggiCorrelatiInformazioniProtocollo" default="false" usage="optional"/>
-    <structure name="fruitore" field="fruitore" usage="optional" map-as="_Soggetto_Type"/>
-    <structure name="erogatore" field="erogatore" usage="optional" map-as="_Soggetto_Type"/>
-    <structure name="servizio" field="servizio" usage="optional" map-as="_Servizio_Type"/>
-    <value name="azione" field="azione" usage="optional"/>
-    <value name="identificativo-correlazione-richiesta" field="identificativoCorrelazioneRichiesta" usage="optional"/>
-    <value name="identificativo-correlazione-risposta" field="identificativoCorrelazioneRisposta" usage="optional"/>
-    <value name="correlazione-applicativa-and-match" field="correlazioneApplicativaAndMatch" default="false" usage="optional"/>
-    <value name="servizio-applicativo" field="servizioApplicativo" usage="optional"/>
-  </mapping>
-  <mapping name="filtro-informazioni-diagnostici" class="org.openspcoop2.core.diagnostica.FiltroInformazioniDiagnostici">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value name="codice" field="codice" usage="optional"/>
-    <value name="messaggio" field="messaggio" usage="optional"/>
-    <value name="severita" field="severita" usage="optional"/>
-    <value name="modulo" field="modulo" usage="optional"/>
-    <value name="identificativo-risposta" field="identificativoRisposta" usage="optional"/>
-  </mapping>
-  <mapping name="id-informazioni-protocollo-transazione" class="org.openspcoop2.core.diagnostica.IdInformazioniProtocolloTransazione">
-    <namespace uri="http://www.openspcoop2.org/core/diagnostica" default="elements"/>
-    <value name="tipoPdD" field="tipoPdD" usage="required" enum-value-method="toString" style="attribute"/>
-    <value name="identificativo-richiesta" field="identificativoRichiesta" usage="required" style="attribute"/>
   </mapping>
 </binding>

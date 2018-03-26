@@ -136,6 +136,18 @@ public class Traccia implements java.io.Serializable {
 	}
 	
 	
+	
+	// idTransazione [Wrapper]
+	
+	public String getIdTransazione() {
+		return this.traccia.getIdTransazione();
+	}
+	public void setIdTransazione(String idTransazione) {
+		this.traccia.setIdTransazione(idTransazione);
+	}
+	
+	
+	
     // data [Wrapper]
     
 	public Date getGdo() {

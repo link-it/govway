@@ -40,6 +40,7 @@ public class TracciaModel extends AbstractModel<Traccia> {
 	
 		super();
 	
+		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"traccia",Traccia.class);
 		this.DOMINIO = new org.openspcoop2.core.tracciamento.model.DominioModel(new Field("dominio",org.openspcoop2.core.tracciamento.Dominio.class,"traccia",Traccia.class));
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"traccia",Traccia.class);
 		this.ESITO_ELABORAZIONE = new org.openspcoop2.core.tracciamento.model.TracciaEsitoElaborazioneModel(new Field("esito-elaborazione",org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione.class,"traccia",Traccia.class));
@@ -59,6 +60,7 @@ public class TracciaModel extends AbstractModel<Traccia> {
 	
 		super(father);
 	
+		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"traccia",Traccia.class);
 		this.DOMINIO = new org.openspcoop2.core.tracciamento.model.DominioModel(new ComplexField(father,"dominio",org.openspcoop2.core.tracciamento.Dominio.class,"traccia",Traccia.class));
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"traccia",Traccia.class);
 		this.ESITO_ELABORAZIONE = new org.openspcoop2.core.tracciamento.model.TracciaEsitoElaborazioneModel(new ComplexField(father,"esito-elaborazione",org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione.class,"traccia",Traccia.class));
@@ -76,6 +78,8 @@ public class TracciaModel extends AbstractModel<Traccia> {
 	
 	
 
+	public IField ID_TRANSAZIONE = null;
+	 
 	public org.openspcoop2.core.tracciamento.model.DominioModel DOMINIO = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;

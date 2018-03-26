@@ -3529,13 +3529,6 @@ public class RicezioneBuste {
 			this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(correlazioneApplicativa);
 		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
 		parametriInvioBustaErrore.setMsgDiag(msgDiag);
-		if(!isMessaggioErroreProtocollo && idServizio!=null &&
-				idServizio.getNome()!=null && idServizio.getTipo()!=null && idServizio.getVersione()!=null ){
-			
-			// Viene impostato a null se sopra e' un errore di protocollo, oppure se nella busta ci sono errori relativi al servizio.
-			
-			msgDiag.logCorrelazione();
-		}
 		
 		
 		

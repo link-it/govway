@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.tracciamento.ws.client.traccia.search;
 
@@ -43,70 +24,38 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "protocollo");
-    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "count");
-    private final static QName _TracciamentoMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-multiple-result-exception");
-    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIdsResponse");
-    private final static QName _Dominio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio");
-    private final static QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "servizio");
-    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "existsResponse");
     private final static QName _SearchFilterTraccia_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "search-filter-traccia");
+    private final static QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio-soggetto");
+    private final static QName _Dominio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio");
+    private final static QName _SoggettoIdentificativo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto-identificativo");
+    private final static QName _Soggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto");
+    private final static QName _ProfiloCollaborazione_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "profilo-collaborazione");
+    private final static QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "servizio");
+    private final static QName _Protocollo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "protocollo");
+    private final static QName _Busta_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "busta");
+    private final static QName _TracciamentoServiceException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-service-exception");
+    private final static QName _TracciamentoNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-found-exception");
+    private final static QName _TracciamentoMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-multiple-result-exception");
+    private final static QName _TracciamentoNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-implemented-exception");
+    private final static QName _TracciamentoNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-authorized-exception");
+    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAll");
     private final static QName _FindAllResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllResponse");
     private final static QName _Find_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "find");
-    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIds");
     private final static QName _FindResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findResponse");
-    private final static QName _DominioSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "dominio-soggetto");
-    private final static QName _FindAll_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAll");
-    private final static QName _TracciamentoNotAuthorizedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-authorized-exception");
-    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "get");
-    private final static QName _TracciamentoNotImplementedException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-implemented-exception");
+    private final static QName _Count_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "count");
     private final static QName _CountResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "countResponse");
-    private final static QName _SoggettoIdentificativo_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto-identificativo");
-    private final static QName _TracciamentoNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-not-found-exception");
+    private final static QName _Get_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "get");
     private final static QName _GetResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "getResponse");
-    private final static QName _ProfiloCollaborazione_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "profilo-collaborazione");
-    private final static QName _TracciamentoServiceException_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "tracciamento-service-exception");
-    private final static QName _Busta_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "busta");
     private final static QName _Exists_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "exists");
-    private final static QName _Soggetto_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "soggetto");
+    private final static QName _ExistsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "existsResponse");
+    private final static QName _FindAllIds_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIds");
+    private final static QName _FindAllIdsResponse_QNAME = new QName("http://www.openspcoop2.org/core/tracciamento/management", "findAllIdsResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.tracciamento.ws.client.traccia.search
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link FindAllIdsResponse }
-     * 
-     */
-    public FindAllIdsResponse createFindAllIdsResponse() {
-        return new FindAllIdsResponse();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoMultipleResultException }
-     * 
-     */
-    public TracciamentoMultipleResultException createTracciamentoMultipleResultException() {
-        return new TracciamentoMultipleResultException();
-    }
-
-    /**
-     * Create an instance of {@link Count }
-     * 
-     */
-    public Count createCount() {
-        return new Count();
-    }
-
-    /**
-     * Create an instance of {@link Protocollo }
-     * 
-     */
-    public Protocollo createProtocollo() {
-        return new Protocollo();
     }
 
     /**
@@ -118,19 +67,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExistsResponse }
+     * Create an instance of {@link DominioSoggetto }
      * 
      */
-    public ExistsResponse createExistsResponse() {
-        return new ExistsResponse();
-    }
-
-    /**
-     * Create an instance of {@link Servizio }
-     * 
-     */
-    public Servizio createServizio() {
-        return new Servizio();
+    public DominioSoggetto createDominioSoggetto() {
+        return new DominioSoggetto();
     }
 
     /**
@@ -142,107 +83,43 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DominioSoggetto }
-     * 
-     */
-    public DominioSoggetto createDominioSoggetto() {
-        return new DominioSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link FindResponse }
-     * 
-     */
-    public FindResponse createFindResponse() {
-        return new FindResponse();
-    }
-
-    /**
-     * Create an instance of {@link FindAllIds }
-     * 
-     */
-    public FindAllIds createFindAllIds() {
-        return new FindAllIds();
-    }
-
-    /**
-     * Create an instance of {@link Find }
-     * 
-     */
-    public Find createFind() {
-        return new Find();
-    }
-
-    /**
-     * Create an instance of {@link FindAllResponse }
-     * 
-     */
-    public FindAllResponse createFindAllResponse() {
-        return new FindAllResponse();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoNotImplementedException }
-     * 
-     */
-    public TracciamentoNotImplementedException createTracciamentoNotImplementedException() {
-        return new TracciamentoNotImplementedException();
-    }
-
-    /**
-     * Create an instance of {@link CountResponse }
-     * 
-     */
-    public CountResponse createCountResponse() {
-        return new CountResponse();
-    }
-
-    /**
-     * Create an instance of {@link Get }
-     * 
-     */
-    public Get createGet() {
-        return new Get();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoNotAuthorizedException }
-     * 
-     */
-    public TracciamentoNotAuthorizedException createTracciamentoNotAuthorizedException() {
-        return new TracciamentoNotAuthorizedException();
-    }
-
-    /**
-     * Create an instance of {@link FindAll }
-     * 
-     */
-    public FindAll createFindAll() {
-        return new FindAll();
-    }
-
-    /**
-     * Create an instance of {@link GetResponse }
-     * 
-     */
-    public GetResponse createGetResponse() {
-        return new GetResponse();
-    }
-
-    /**
-     * Create an instance of {@link TracciamentoNotFoundException }
-     * 
-     */
-    public TracciamentoNotFoundException createTracciamentoNotFoundException() {
-        return new TracciamentoNotFoundException();
-    }
-
-    /**
      * Create an instance of {@link SoggettoIdentificativo }
      * 
      */
     public SoggettoIdentificativo createSoggettoIdentificativo() {
         return new SoggettoIdentificativo();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     * 
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link ProfiloCollaborazione }
+     * 
+     */
+    public ProfiloCollaborazione createProfiloCollaborazione() {
+        return new ProfiloCollaborazione();
+    }
+
+    /**
+     * Create an instance of {@link Servizio }
+     * 
+     */
+    public Servizio createServizio() {
+        return new Servizio();
+    }
+
+    /**
+     * Create an instance of {@link Protocollo }
+     * 
+     */
+    public Protocollo createProtocollo() {
+        return new Protocollo();
     }
 
     /**
@@ -262,19 +139,99 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ProfiloCollaborazione }
+     * Create an instance of {@link TracciamentoNotFoundException }
      * 
      */
-    public ProfiloCollaborazione createProfiloCollaborazione() {
-        return new ProfiloCollaborazione();
+    public TracciamentoNotFoundException createTracciamentoNotFoundException() {
+        return new TracciamentoNotFoundException();
     }
 
     /**
-     * Create an instance of {@link Soggetto }
+     * Create an instance of {@link TracciamentoMultipleResultException }
      * 
      */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
+    public TracciamentoMultipleResultException createTracciamentoMultipleResultException() {
+        return new TracciamentoMultipleResultException();
+    }
+
+    /**
+     * Create an instance of {@link TracciamentoNotImplementedException }
+     * 
+     */
+    public TracciamentoNotImplementedException createTracciamentoNotImplementedException() {
+        return new TracciamentoNotImplementedException();
+    }
+
+    /**
+     * Create an instance of {@link TracciamentoNotAuthorizedException }
+     * 
+     */
+    public TracciamentoNotAuthorizedException createTracciamentoNotAuthorizedException() {
+        return new TracciamentoNotAuthorizedException();
+    }
+
+    /**
+     * Create an instance of {@link FindAll }
+     * 
+     */
+    public FindAll createFindAll() {
+        return new FindAll();
+    }
+
+    /**
+     * Create an instance of {@link FindAllResponse }
+     * 
+     */
+    public FindAllResponse createFindAllResponse() {
+        return new FindAllResponse();
+    }
+
+    /**
+     * Create an instance of {@link Find }
+     * 
+     */
+    public Find createFind() {
+        return new Find();
+    }
+
+    /**
+     * Create an instance of {@link FindResponse }
+     * 
+     */
+    public FindResponse createFindResponse() {
+        return new FindResponse();
+    }
+
+    /**
+     * Create an instance of {@link Count }
+     * 
+     */
+    public Count createCount() {
+        return new Count();
+    }
+
+    /**
+     * Create an instance of {@link CountResponse }
+     * 
+     */
+    public CountResponse createCountResponse() {
+        return new CountResponse();
+    }
+
+    /**
+     * Create an instance of {@link Get }
+     * 
+     */
+    public Get createGet() {
+        return new Get();
+    }
+
+    /**
+     * Create an instance of {@link GetResponse }
+     * 
+     */
+    public GetResponse createGetResponse() {
+        return new GetResponse();
     }
 
     /**
@@ -286,39 +243,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Protocollo }{@code >}}
+     * Create an instance of {@link ExistsResponse }
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "protocollo")
-    public JAXBElement<Protocollo> createProtocollo(Protocollo value) {
-        return new JAXBElement<Protocollo>(ObjectFactory._Protocollo_QNAME, Protocollo.class, null, value);
+    public ExistsResponse createExistsResponse() {
+        return new ExistsResponse();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Count }{@code >}}
+     * Create an instance of {@link FindAllIds }
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "count")
-    public JAXBElement<Count> createCount(Count value) {
-        return new JAXBElement<Count>(ObjectFactory._Count_QNAME, Count.class, null, value);
+    public FindAllIds createFindAllIds() {
+        return new FindAllIds();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoMultipleResultException }{@code >}}
+     * Create an instance of {@link FindAllIdsResponse }
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-multiple-result-exception")
-    public JAXBElement<TracciamentoMultipleResultException> createTracciamentoMultipleResultException(TracciamentoMultipleResultException value) {
-        return new JAXBElement<TracciamentoMultipleResultException>(ObjectFactory._TracciamentoMultipleResultException_QNAME, TracciamentoMultipleResultException.class, null, value);
+    public FindAllIdsResponse createFindAllIdsResponse() {
+        return new FindAllIdsResponse();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIdsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFilterTraccia }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAllIdsResponse")
-    public JAXBElement<FindAllIdsResponse> createFindAllIdsResponse(FindAllIdsResponse value) {
-        return new JAXBElement<FindAllIdsResponse>(ObjectFactory._FindAllIdsResponse_QNAME, FindAllIdsResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "search-filter-traccia")
+    public JAXBElement<SearchFilterTraccia> createSearchFilterTraccia(SearchFilterTraccia value) {
+        return new JAXBElement<SearchFilterTraccia>(ObjectFactory._SearchFilterTraccia_QNAME, SearchFilterTraccia.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DominioSoggetto }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "dominio-soggetto")
+    public JAXBElement<DominioSoggetto> createDominioSoggetto(DominioSoggetto value) {
+        return new JAXBElement<DominioSoggetto>(ObjectFactory._DominioSoggetto_QNAME, DominioSoggetto.class, null, value);
     }
 
     /**
@@ -331,6 +294,33 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SoggettoIdentificativo }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "soggetto-identificativo")
+    public JAXBElement<SoggettoIdentificativo> createSoggettoIdentificativo(SoggettoIdentificativo value) {
+        return new JAXBElement<SoggettoIdentificativo>(ObjectFactory._SoggettoIdentificativo_QNAME, SoggettoIdentificativo.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Soggetto }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "soggetto")
+    public JAXBElement<Soggetto> createSoggetto(Soggetto value) {
+        return new JAXBElement<Soggetto>(ObjectFactory._Soggetto_QNAME, Soggetto.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ProfiloCollaborazione }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "profilo-collaborazione")
+    public JAXBElement<ProfiloCollaborazione> createProfiloCollaborazione(ProfiloCollaborazione value) {
+        return new JAXBElement<ProfiloCollaborazione>(ObjectFactory._ProfiloCollaborazione_QNAME, ProfiloCollaborazione.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Servizio }{@code >}}
      * 
      */
@@ -340,21 +330,75 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ExistsResponse }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Protocollo }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "existsResponse")
-    public JAXBElement<ExistsResponse> createExistsResponse(ExistsResponse value) {
-        return new JAXBElement<ExistsResponse>(ObjectFactory._ExistsResponse_QNAME, ExistsResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "protocollo")
+    public JAXBElement<Protocollo> createProtocollo(Protocollo value) {
+        return new JAXBElement<Protocollo>(ObjectFactory._Protocollo_QNAME, Protocollo.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SearchFilterTraccia }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Busta }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "search-filter-traccia")
-    public JAXBElement<SearchFilterTraccia> createSearchFilterTraccia(SearchFilterTraccia value) {
-        return new JAXBElement<SearchFilterTraccia>(ObjectFactory._SearchFilterTraccia_QNAME, SearchFilterTraccia.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "busta")
+    public JAXBElement<Busta> createBusta(Busta value) {
+        return new JAXBElement<Busta>(ObjectFactory._Busta_QNAME, Busta.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoServiceException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-service-exception")
+    public JAXBElement<TracciamentoServiceException> createTracciamentoServiceException(TracciamentoServiceException value) {
+        return new JAXBElement<TracciamentoServiceException>(ObjectFactory._TracciamentoServiceException_QNAME, TracciamentoServiceException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotFoundException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-found-exception")
+    public JAXBElement<TracciamentoNotFoundException> createTracciamentoNotFoundException(TracciamentoNotFoundException value) {
+        return new JAXBElement<TracciamentoNotFoundException>(ObjectFactory._TracciamentoNotFoundException_QNAME, TracciamentoNotFoundException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoMultipleResultException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-multiple-result-exception")
+    public JAXBElement<TracciamentoMultipleResultException> createTracciamentoMultipleResultException(TracciamentoMultipleResultException value) {
+        return new JAXBElement<TracciamentoMultipleResultException>(ObjectFactory._TracciamentoMultipleResultException_QNAME, TracciamentoMultipleResultException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotImplementedException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-implemented-exception")
+    public JAXBElement<TracciamentoNotImplementedException> createTracciamentoNotImplementedException(TracciamentoNotImplementedException value) {
+        return new JAXBElement<TracciamentoNotImplementedException>(ObjectFactory._TracciamentoNotImplementedException_QNAME, TracciamentoNotImplementedException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotAuthorizedException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-authorized-exception")
+    public JAXBElement<TracciamentoNotAuthorizedException> createTracciamentoNotAuthorizedException(TracciamentoNotAuthorizedException value) {
+        return new JAXBElement<TracciamentoNotAuthorizedException>(ObjectFactory._TracciamentoNotAuthorizedException_QNAME, TracciamentoNotAuthorizedException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAll }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAll")
+    public JAXBElement<FindAll> createFindAll(FindAll value) {
+        return new JAXBElement<FindAll>(ObjectFactory._FindAll_QNAME, FindAll.class, null, value);
     }
 
     /**
@@ -376,15 +420,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIds }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAllIds")
-    public JAXBElement<FindAllIds> createFindAllIds(FindAllIds value) {
-        return new JAXBElement<FindAllIds>(ObjectFactory._FindAllIds_QNAME, FindAllIds.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FindResponse }{@code >}}
      * 
      */
@@ -394,48 +429,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DominioSoggetto }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Count }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "dominio-soggetto")
-    public JAXBElement<DominioSoggetto> createDominioSoggetto(DominioSoggetto value) {
-        return new JAXBElement<DominioSoggetto>(ObjectFactory._DominioSoggetto_QNAME, DominioSoggetto.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link FindAll }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAll")
-    public JAXBElement<FindAll> createFindAll(FindAll value) {
-        return new JAXBElement<FindAll>(ObjectFactory._FindAll_QNAME, FindAll.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotAuthorizedException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-authorized-exception")
-    public JAXBElement<TracciamentoNotAuthorizedException> createTracciamentoNotAuthorizedException(TracciamentoNotAuthorizedException value) {
-        return new JAXBElement<TracciamentoNotAuthorizedException>(ObjectFactory._TracciamentoNotAuthorizedException_QNAME, TracciamentoNotAuthorizedException.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Get }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "get")
-    public JAXBElement<Get> createGet(Get value) {
-        return new JAXBElement<Get>(ObjectFactory._Get_QNAME, Get.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotImplementedException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-implemented-exception")
-    public JAXBElement<TracciamentoNotImplementedException> createTracciamentoNotImplementedException(TracciamentoNotImplementedException value) {
-        return new JAXBElement<TracciamentoNotImplementedException>(ObjectFactory._TracciamentoNotImplementedException_QNAME, TracciamentoNotImplementedException.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "count")
+    public JAXBElement<Count> createCount(Count value) {
+        return new JAXBElement<Count>(ObjectFactory._Count_QNAME, Count.class, null, value);
     }
 
     /**
@@ -448,21 +447,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SoggettoIdentificativo }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Get }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "soggetto-identificativo")
-    public JAXBElement<SoggettoIdentificativo> createSoggettoIdentificativo(SoggettoIdentificativo value) {
-        return new JAXBElement<SoggettoIdentificativo>(ObjectFactory._SoggettoIdentificativo_QNAME, SoggettoIdentificativo.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoNotFoundException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-not-found-exception")
-    public JAXBElement<TracciamentoNotFoundException> createTracciamentoNotFoundException(TracciamentoNotFoundException value) {
-        return new JAXBElement<TracciamentoNotFoundException>(ObjectFactory._TracciamentoNotFoundException_QNAME, TracciamentoNotFoundException.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "get")
+    public JAXBElement<Get> createGet(Get value) {
+        return new JAXBElement<Get>(ObjectFactory._Get_QNAME, Get.class, null, value);
     }
 
     /**
@@ -475,33 +465,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ProfiloCollaborazione }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "profilo-collaborazione")
-    public JAXBElement<ProfiloCollaborazione> createProfiloCollaborazione(ProfiloCollaborazione value) {
-        return new JAXBElement<ProfiloCollaborazione>(ObjectFactory._ProfiloCollaborazione_QNAME, ProfiloCollaborazione.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TracciamentoServiceException }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "tracciamento-service-exception")
-    public JAXBElement<TracciamentoServiceException> createTracciamentoServiceException(TracciamentoServiceException value) {
-        return new JAXBElement<TracciamentoServiceException>(ObjectFactory._TracciamentoServiceException_QNAME, TracciamentoServiceException.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Busta }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "busta")
-    public JAXBElement<Busta> createBusta(Busta value) {
-        return new JAXBElement<Busta>(ObjectFactory._Busta_QNAME, Busta.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Exists }{@code >}}
      * 
      */
@@ -511,12 +474,30 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Soggetto }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ExistsResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "soggetto")
-    public JAXBElement<Soggetto> createSoggetto(Soggetto value) {
-        return new JAXBElement<Soggetto>(ObjectFactory._Soggetto_QNAME, Soggetto.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "existsResponse")
+    public JAXBElement<ExistsResponse> createExistsResponse(ExistsResponse value) {
+        return new JAXBElement<ExistsResponse>(ObjectFactory._ExistsResponse_QNAME, ExistsResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIds }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAllIds")
+    public JAXBElement<FindAllIds> createFindAllIds(FindAllIds value) {
+        return new JAXBElement<FindAllIds>(ObjectFactory._FindAllIds_QNAME, FindAllIds.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link FindAllIdsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/tracciamento/management", name = "findAllIdsResponse")
+    public JAXBElement<FindAllIdsResponse> createFindAllIdsResponse(FindAllIdsResponse value) {
+        return new JAXBElement<FindAllIdsResponse>(ObjectFactory._FindAllIdsResponse_QNAME, FindAllIdsResponse.class, null, value);
     }
 
 }

@@ -42,6 +42,8 @@
             </xsd:appinfo>
         </xsd:annotation>
         <xsd:sequence>
+            <!-- Identificativo della Transazione -->
+            <xsd:element name="id-transazione" type="xsd:string"/>
             <!-- Dati Porta di Dominio che ha emesso la traccia -->
             <xsd:element name="dominio" type="dominio"/>
             <!-- Traccia -->

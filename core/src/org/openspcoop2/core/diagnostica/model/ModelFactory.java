@@ -30,7 +30,5 @@ public class ModelFactory {
 
 	public static MessaggioDiagnosticoModel MESSAGGIO_DIAGNOSTICO = new MessaggioDiagnosticoModel();
 	
-	public static InformazioniProtocolloTransazioneModel INFORMAZIONI_PROTOCOLLO_TRANSAZIONE = new InformazioniProtocolloTransazioneModel();
-	
 
 }

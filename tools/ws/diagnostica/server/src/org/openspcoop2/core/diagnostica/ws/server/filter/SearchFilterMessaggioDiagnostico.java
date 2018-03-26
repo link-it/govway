@@ -27,6 +27,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  * <pre>
  * &lt;complexType name="search-filter-messaggio-diagnostico">
  *     &lt;sequence>
+ *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica/management}dominio-diagnostico" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -36,7 +37,6 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  *         &lt;element name="messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="severita" type="{http://www.openspcoop2.org/core/diagnostica}LivelloDiSeveritaType" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}protocollo" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="filtro-informazione-protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}filtro-informazione-protocollo" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
@@ -50,10 +50,9 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.diagnostica.ws.server.filter.beans.Protocollo;
-import org.openspcoop2.core.diagnostica.ws.server.filter.beans.FiltroInformazioneProtocollo;
 import org.openspcoop2.core.diagnostica.ws.server.filter.beans.DominioDiagnostico;
 import java.util.Date;
+import org.openspcoop2.core.diagnostica.ws.server.filter.beans.Protocollo;
 
 /**     
  * SearchFilterMessaggioDiagnostico
@@ -65,6 +64,7 @@ import java.util.Date;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "search-filter-messaggio-diagnostico", namespace="http://www.openspcoop2.org/core/diagnostica/management", propOrder = {
+    "idTransazione",
     "dominio",
     "identificativoRichiesta",
     "identificativoRisposta",
@@ -74,7 +74,6 @@ import java.util.Date;
     "messaggio",
     "severita",
     "protocollo",
-    "filtroInformazioneProtocollo",
     "limit",
     "offset",
     "descOrder"
@@ -83,6 +82,19 @@ import java.util.Date;
 public class SearchFilterMessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="id-transazione",required=false,nillable=false)
+	private String idTransazione;
+	
+	public void setIdTransazione(String idTransazione){
+		this.idTransazione = idTransazione;
+	}
+	
+	public String getIdTransazione(){
+		return this.idTransazione;
+	}
+	
 	
 	@XmlElement(name="dominio",required=false,nillable=false)
 	private DominioDiagnostico dominio;
@@ -198,18 +210,6 @@ public class SearchFilterMessaggioDiagnostico extends org.openspcoop2.utils.bean
 	
 	public Protocollo getProtocollo(){
 		return this.protocollo;
-	}
-	
-	
-	@XmlElement(name="filtro-informazione-protocollo",required=false,nillable=false)
-	private FiltroInformazioneProtocollo filtroInformazioneProtocollo;
-	
-	public void setFiltroInformazioneProtocollo(FiltroInformazioneProtocollo filtroInformazioneProtocollo){
-		this.filtroInformazioneProtocollo = filtroInformazioneProtocollo;
-	}
-	
-	public FiltroInformazioneProtocollo getFiltroInformazioneProtocollo(){
-		return this.filtroInformazioneProtocollo;
 	}
 	
 	

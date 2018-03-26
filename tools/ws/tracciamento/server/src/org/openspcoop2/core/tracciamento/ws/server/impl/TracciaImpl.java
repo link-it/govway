@@ -96,6 +96,10 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 			filterSearch.setMaxDate(filter.getOraRegistrazioneMax());
 		}
 		
+		if(filter.getIdTransazione()!=null){
+			filterSearch.setIdTransazione(filter.getIdTransazione());
+		}
+		
 		if(filter.getTipo()!=null){
 			switch (filter.getTipo()) {
 			case RICHIESTA:

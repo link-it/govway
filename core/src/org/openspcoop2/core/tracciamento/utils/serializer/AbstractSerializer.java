@@ -23,8 +23,8 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
-import org.openspcoop2.core.tracciamento.Dominio;
 import org.openspcoop2.core.tracciamento.Traccia;
+import org.openspcoop2.core.tracciamento.Dominio;
 import org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione;
 import org.openspcoop2.core.tracciamento.Busta;
 import org.openspcoop2.core.tracciamento.Allegati;
@@ -144,124 +144,6 @@ public abstract class AbstractSerializer {
 
 	/*
 	 =================================================================================
-	 Object: dominio
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Dominio dominio) throws SerializerException {
-		this.objToXml(fileName, Dominio.class, dominio, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Dominio dominio,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, Dominio.class, dominio, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param file Xml file to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Dominio dominio) throws SerializerException {
-		this.objToXml(file, Dominio.class, dominio, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param file Xml file to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Dominio dominio,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, Dominio.class, dominio, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param out OutputStream to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Dominio dominio) throws SerializerException {
-		this.objToXml(out, Dominio.class, dominio, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param out OutputStream to serialize the object <var>dominio</var>
-	 * @param dominio Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Dominio dominio,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, Dominio.class, dominio, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param dominio Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Dominio dominio) throws SerializerException {
-		return this.objToXml(Dominio.class, dominio, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param dominio Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Dominio dominio,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Dominio.class, dominio, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param dominio Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Dominio dominio) throws SerializerException {
-		return this.objToXml(Dominio.class, dominio, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param dominio Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Dominio dominio,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Dominio.class, dominio, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: traccia
 	 =================================================================================
 	*/
@@ -374,6 +256,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Traccia traccia,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Traccia.class, traccia, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: dominio
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Dominio dominio) throws SerializerException {
+		this.objToXml(fileName, Dominio.class, dominio, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Dominio dominio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Dominio.class, dominio, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param file Xml file to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Dominio dominio) throws SerializerException {
+		this.objToXml(file, Dominio.class, dominio, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param file Xml file to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Dominio dominio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Dominio.class, dominio, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param out OutputStream to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Dominio dominio) throws SerializerException {
+		this.objToXml(out, Dominio.class, dominio, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param out OutputStream to serialize the object <var>dominio</var>
+	 * @param dominio Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Dominio dominio,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Dominio.class, dominio, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param dominio Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Dominio dominio) throws SerializerException {
+		return this.objToXml(Dominio.class, dominio, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param dominio Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Dominio dominio,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Dominio.class, dominio, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param dominio Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Dominio dominio) throws SerializerException {
+		return this.objToXml(Dominio.class, dominio, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>dominio</var> of type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param dominio Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Dominio dominio,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Dominio.class, dominio, prettyPrint).toString();
 	}
 	
 	

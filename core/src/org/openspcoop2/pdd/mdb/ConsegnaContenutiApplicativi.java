@@ -2651,7 +2651,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									richiestaDelegata.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
 														
 								msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
-								msgDiag.logCorrelazioneApplicativaRisposta();
 								
 							}catch(Exception e){
 								msgDiag.logErroreGenerico(e,"CorrelazioneApplicativaRisposta");

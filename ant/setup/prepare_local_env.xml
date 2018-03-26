@@ -81,6 +81,7 @@
 	<property name="as4" value="${rootDir}/protocolli/as4"/>
 	<property name="src_as4" value="${as4}/src" />
 	<property name="stub_as4" value="${as4}/deploy/stub" />
+	<property name="jms_lib_as4" value="${as4}/deploy/lib_jms" />
 	<import file="${as4}/build.xml" />
 
 	<!-- SPCoop -->

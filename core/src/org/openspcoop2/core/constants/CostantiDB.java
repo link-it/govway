@@ -212,6 +212,7 @@ public final class CostantiDB {
     public static final String TRACCE_COLUMN_SERVIZIO_VERSIONE = "versione_servizio";
     public static final String TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO = "tipo_servizio_correlato";
     public static final String TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME = "servizio_correlato";
+    public static final String TRACCE_COLUMN_SERVIZIO_CORRELATO_VERSIONE = "versione_servizio_correlato";
     // collaborazione
     public static final String TRACCE_COLUMN_COLLABORAZIONE = "collaborazione";
     // azione
@@ -237,6 +238,8 @@ public final class CostantiDB {
     public static final String TRACCE_COLUMN_SA_EROGATORE = "sa_erogatore";
     // protocollo
     public static final String TRACCE_COLUMN_PROTOCOLLO = "protocollo";
+    // id_transazione
+    public static final String TRACCE_COLUMN_ID_TRANSAZIONE = "id_transazione";
     // isArrivedi
     public static final String TRACCE_COLUMN_IS_ARRIVED = "is_arrived";
     // SOAP
@@ -249,6 +252,7 @@ public final class CostantiDB {
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE = "ora_registrazione";
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO = "tipo_ora_reg";
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT = "tipo_ora_reg_meta";
+    public static final String TRACCE_RISCONTRI_COLUMN_GDO = "gdo";
     
     /*COLONNE TABELLA TRACCE TRASMISSIONI */
     public static final String TRACCE_TRASMISSIONI_COLUMN_ID_TRACCIA = "idtraccia";
@@ -266,6 +270,8 @@ public final class CostantiDB {
     public static final String TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE = "ora_registrazione";
     public static final String TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO = "tipo_ora_reg";
     public static final String TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT = "tipo_ora_reg_meta";
+    // gdo
+    public static final String TRACCE_TRASMISSIONI_COLUMN_GDO = "gdo";
 
     /*COLONNE TABELLA TRACCE ECCEZIONI */
     public static final String TRACCE_ECCEZIONI_COLUMN_ID_TRACCIA = "idtraccia";
@@ -277,7 +283,7 @@ public final class CostantiDB {
     public static final String TRACCE_ECCEZIONI_COLUMN_RILEVANZA = "rilevanza";
     public static final String TRACCE_ECCEZIONI_COLUMN_RILEVANZA_SDK_CONSTANT = "rilevanza_meta";
     public static final String TRACCE_ECCEZIONI_COLUMN_POSIZIONE = "posizione";
-    public static final String TRACCE_ECCEZIONI_COLUMN_DESCRIZIONE = "descrizione";
+    public static final String TRACCE_ECCEZIONI_COLUMN_GDO = "gdo";
     
     /*COLONNE TABELLA TRACCE ALLEGATI */
     public static final String TRACCE_ALLEGATI_COLUMN_ID_TRACCIA = "idtraccia";
@@ -285,11 +291,13 @@ public final class CostantiDB {
     public static final String TRACCE_ALLEGATI_COLUMN_CONTENT_LOCATION = "content_location";
     public static final String TRACCE_ALLEGATI_COLUMN_CONTENT_TYPE = "content_type";
     public static final String TRACCE_ALLEGATI_COLUMN_DIGEST = "digest";
+    public static final String TRACCE_ALLEGATI_COLUMN_GDO = "gdo";
     
     /*COLONNE TABELLA TRACCE EXT PROTOCOL INFO */
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA = "idtraccia";
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME = "name";
     public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE = "value";
+    public static final String TRACCE_EXT_PROTOCOL_INFO_COLUMN_GDO = "gdo";
 
 
     /*COLONNE TABELLA MSGDIAGNOSTICI */
@@ -304,32 +312,10 @@ public final class CostantiDB {
     public static final String MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA = "idmessaggio_risposta";
     public static final String MSG_DIAGNOSTICI_COLUMN_CODICE = "codice";
     public static final String MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO = "protocollo";
+    public static final String MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE = "id_transazione";
     public static final String MSG_DIAGNOSTICI_COLUMN_ID = "id";
     
-    /*COLONNE TABELLA MSG_DIAGNOSTICI_CORRELAZIONE */
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_IDMESSAGGIO = "idmessaggio";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_PDD_CODICE = "pdd_codice";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_PDD_TIPO_SOGGETTO = "pdd_tipo_soggetto";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_PDD_NOME_SOGGETTO = "pdd_nome_soggetto";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_GDO = "gdo";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_PORTA = "porta";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_DELEGATA = "delegata";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_TIPO_FRUITORE = "tipo_fruitore";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_FRUITORE = "fruitore";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_TIPO_EROGATORE = "tipo_erogatore";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_EROGATORE = "erogatore";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_TIPO_SERVIZIO = "tipo_servizio";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_SERVIZIO = "servizio";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_VERSIONE_SERVIZIO = "versione_servizio";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_AZIONE = "azione";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID_CORRELAZIONE_APPLICATIVA_RICHIESTA = "id_correlazione_applicativa";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID_CORRELAZIONE_APPLICATIVA_RISPOSTA = "id_correlazione_risposta";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_PROTOCOLLO = "protocollo";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID = "id";
-
-    /*COLONNE TABELLA MSG_DIAGNOSTICI_CORRELAZIONE_SA */
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_SA_COLUMN_ID_CORRELAZIONE = "id_correlazione";
-    public static final String MSG_DIAGNOSTICI_CORRELAZIONE_SA_COLUMN_SERVIZIO_APPLICATIVO = "servizio_applicativo";
+   
 
     
     /**

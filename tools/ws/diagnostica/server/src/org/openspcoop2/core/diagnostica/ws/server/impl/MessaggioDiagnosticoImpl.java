@@ -42,7 +42,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 
 /**     
@@ -88,24 +87,9 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			filterSearch.setDataFine(filter.getOraRegistrazioneMax());
 		}
 		
-		if(filter.getFiltroInformazioneProtocollo()!=null){
-			
-			if(filter.getFiltroInformazioneProtocollo().getTipoPorta()!=null){
-				switch (filter.getFiltroInformazioneProtocollo().getTipoPorta()) {
-				case PORTA_DELEGATA:
-					filterSearch.setDelegata(true);
-					break;
-				case PORTA_APPLICATIVA:
-					filterSearch.setDelegata(false);
-					break;
-				}
-			}
-			
-			if(filter.getFiltroInformazioneProtocollo().getNomePorta()!=null){
-				filterSearch.setNomePorta(filter.getFiltroInformazioneProtocollo().getNomePorta());
-			}
+		if(filter.getIdTransazione()!=null){
+			filterSearch.setIdTransazione(filter.getIdTransazione());
 		}
-		
 					
 		if(filter.getDominio()!=null){
 			
@@ -135,12 +119,6 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			}
 		}
 		
-		if(filter.getFiltroInformazioneProtocollo()!=null){
-			if(filter.getFiltroInformazioneProtocollo().getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()!=null){
-				filterSearch.setRicercaSoloMessaggiCorrelatiInformazioniProtocollo(filter.getFiltroInformazioneProtocollo().getRicercaSoloMessaggiCorrelatiInformazioniProtocollo());
-			}	
-		}
-			
 		if(filter.getIdentificativoRichiesta()!=null){
 			filterSearch.setIdBustaRichiesta(filter.getIdentificativoRichiesta());
 		}
@@ -149,99 +127,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			filterSearch.setIdBustaRisposta(filter.getIdentificativoRisposta());
 		}	
 		
-		if(filter.getFiltroInformazioneProtocollo()!=null){
-			if(filter.getFiltroInformazioneProtocollo().getFruitore()!=null){
-				// Filtro non supportato dal driver
-//				if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta()!=null){
-//					if(filterSearch.getInformazioniProtocollo()==null){
-//						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-//					}
-//					if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
-//						filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
-//					}
-//					filterSearch.getInformazioniProtocollo().getFruitore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativoPorta());
-//				}
-				if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo()!=null){
-					if(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getBase()!=null || filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getTipo()!=null){
-						if(filterSearch.getInformazioniProtocollo()==null){
-							filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-						}
-						if(filterSearch.getInformazioniProtocollo().getFruitore()==null){
-							filterSearch.getInformazioniProtocollo().setFruitore(new IDSoggetto());
-						}
-						filterSearch.getInformazioniProtocollo().getFruitore().setTipo(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getTipo());
-						filterSearch.getInformazioniProtocollo().getFruitore().setNome(filter.getFiltroInformazioneProtocollo().getFruitore().getIdentificativo().getBase());
-					}
-				}
-			}
-			
-			if(filter.getFiltroInformazioneProtocollo().getErogatore()!=null){
-				// Filtro non supportato dal driver
-//				if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta()!=null){
-//					if(filterSearch.getInformazioniProtocollo()==null){
-//						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-//					}
-//					if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
-//						filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
-//					}
-//					filterSearch.getInformazioniProtocollo().getErogatore().setCodicePorta(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativoPorta());
-//				}
-				if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo()!=null){
-					if(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getBase()!=null || filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getTipo()!=null){
-						if(filterSearch.getInformazioniProtocollo()==null){
-							filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-						}
-						if(filterSearch.getInformazioniProtocollo().getErogatore()==null){
-							filterSearch.getInformazioniProtocollo().setErogatore(new IDSoggetto());
-						}
-						filterSearch.getInformazioniProtocollo().getErogatore().setTipo(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getTipo());
-						filterSearch.getInformazioniProtocollo().getErogatore().setNome(filter.getFiltroInformazioneProtocollo().getErogatore().getIdentificativo().getBase());
-					}
-				}
-			}
-			
-			if(filter.getFiltroInformazioneProtocollo().getServizio()!=null){
-				if(filter.getFiltroInformazioneProtocollo().getServizio().getTipo()!=null || 
-						filter.getFiltroInformazioneProtocollo().getServizio().getBase()!=null ||
-						filter.getFiltroInformazioneProtocollo().getServizio().getVersione()!=null){
-					if(filterSearch.getInformazioniProtocollo()==null){
-						filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-					}
-					if(filter.getFiltroInformazioneProtocollo().getServizio().getTipo()!=null){
-						filterSearch.getInformazioniProtocollo().setTipoServizio(filter.getFiltroInformazioneProtocollo().getServizio().getTipo());
-					}
-					if(filter.getFiltroInformazioneProtocollo().getServizio().getBase()!=null){
-						filterSearch.getInformazioniProtocollo().setServizio(filter.getFiltroInformazioneProtocollo().getServizio().getBase());
-					}
-					if(filter.getFiltroInformazioneProtocollo().getServizio().getVersione()!=null){
-						filterSearch.getInformazioniProtocollo().setVersioneServizio(filter.getFiltroInformazioneProtocollo().getServizio().getVersione());
-					}
-				}	
-			}
-			
-			if(filter.getFiltroInformazioneProtocollo().getAzione()!=null){
-				if(filterSearch.getInformazioniProtocollo()==null){
-					filterSearch.setInformazioniProtocollo(new InformazioniProtocollo());
-				}
-				filterSearch.getInformazioniProtocollo().setAzione(filter.getFiltroInformazioneProtocollo().getAzione());
-			}
-			
-			if(filter.getFiltroInformazioneProtocollo().getServizioApplicativo()!=null){
-				filterSearch.setServizioApplicativo(filter.getFiltroInformazioneProtocollo().getServizioApplicativo());
-			}
-
-			if(filter.getFiltroInformazioneProtocollo().getIdentificativoCorrelazioneRichiesta()!=null){
-				filterSearch.setCorrelazioneApplicativa(filter.getFiltroInformazioneProtocollo().getIdentificativoCorrelazioneRichiesta());
-			}
-			if(filter.getFiltroInformazioneProtocollo().getIdentificativoCorrelazioneRisposta()!=null){
-				filterSearch.setCorrelazioneApplicativaRisposta(filter.getFiltroInformazioneProtocollo().getIdentificativoCorrelazioneRisposta());
-			}
-			if(filter.getFiltroInformazioneProtocollo().getCorrelazioneApplicativaAndMatch()!=null){
-				filterSearch.setCorrelazioneApplicativaOrMatch(!filter.getFiltroInformazioneProtocollo().getCorrelazioneApplicativaAndMatch());
-			}
-		}
-
-			
+		
 		if(filter.getSeverita()!=null){
 			filterSearch.setSeverita(filter.getSeverita());
 		}	

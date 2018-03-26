@@ -103,6 +103,7 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopTimers = null;
 	/**  Logger log4j utilizzato per registrare le operazioni di monitoraggio delle risorse utilizzate dalla PdD (Timer che verficano le risorse della PdD) */
 	protected static Logger loggerOpenSPCoopResources = null;
+	protected static org.apache.logging.log4j.Logger loggerOpenSPCoopResourcesAsLoggerImpl = null;
 	/**  Logger log4j utilizzato per la configurazione di sistema */
 	protected static Logger loggerOpenSPCoopConfigurazioneSistema = null;
 	/**  Logger log4j utilizzato per i connettori */
@@ -328,6 +329,9 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopResources = LoggerWrapperFactory.getLogger("openspcoop2.resources");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopResources==null)
 				throw new Exception("Logger openspcoop2.resources non trovato");
+			OpenSPCoop2Logger.loggerOpenSPCoopResourcesAsLoggerImpl = LoggerWrapperFactory.getLoggerImpl("openspcoop2.resources");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopResourcesAsLoggerImpl==null)
+				throw new Exception("Logger(Impl) openspcoop2.resources non trovato");
 			
 			// CONFIGURAZIONE SISTEMA LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConfigurazioneSistema = LoggerWrapperFactory.getLogger("openspcoop2.configurazioneSistema");

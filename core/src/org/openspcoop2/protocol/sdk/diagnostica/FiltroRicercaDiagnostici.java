@@ -24,10 +24,8 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -45,26 +43,18 @@ public class FiltroRicercaDiagnostici implements Serializable{
 
 
 	private static final long serialVersionUID = 2103096411857601491L;
-
+  
+    
     protected Date dataFine;
     protected Date dataInizio;
 	
-    protected Boolean delegata;
-    protected String nomePorta; // nomePortaDelegata o Applicativa
+    protected String idTransazione;
+   
+	protected IDSoggetto dominio;
     protected String idFunzione;
-    protected IDSoggetto dominio;
     
-    protected Boolean ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
-	
     protected String idBustaRichiesta;
     protected String idBustaRisposta;
-    protected InformazioniProtocollo busta;
-	
-    protected String servizioApplicativo;
-    
-    protected String correlazioneApplicativa;
-    protected String correlazioneApplicativaRisposta;
-    protected boolean correlazioneApplicativaOrMatch = false;
 		
     protected Integer severita;
     
@@ -75,65 +65,12 @@ public class FiltroRicercaDiagnostici implements Serializable{
     protected String protocollo;
     
     protected Hashtable<String, String> properties;
-	
-    protected List<IDSoggetto> filtroSoggetti;
-   
-    
-    
 
 
     
  
     public FiltroRicercaDiagnostici() {
     	this.properties = new Hashtable<String, String>();
-    	this.filtroSoggetti = new ArrayList<IDSoggetto>();
-	}
-    
-    public void addFiltroSoggetto(IDSoggetto soggetto){
-    	this.filtroSoggetti.add(soggetto);
-    }
-    
-    public int sizeFiltroSoggetti(){
-    	return this.filtroSoggetti.size();
-    }
-    
-    public IDSoggetto getFiltroSoggetto(int i){
-    	return this.filtroSoggetti.get(i);
-    }
-    
-    public IDSoggetto removeFiltroSoggetto(int i){
-    	return this.filtroSoggetti.remove(i);
-    }
-    
-    public List<IDSoggetto> getFiltroSoggetti() {
-    	return this.filtroSoggetti;
-    }
-    
-    public void setFiltroSoggetti(List<IDSoggetto> list) {
-		this.filtroSoggetti = list;
-    }
-        
-    public String getServizioApplicativo() {
-		return this.servizioApplicativo;
-	}
-    
-	public void setServizioApplicativo(String servizioApplicativo) {
-		this.servizioApplicativo = servizioApplicativo;
-	}
-	
-	public String getCorrelazioneApplicativa() {
-		return this.correlazioneApplicativa;
-	}
-	
-	public void setCorrelazioneApplicativa(String correlazioneApplicativa) {
-		this.correlazioneApplicativa = correlazioneApplicativa;
-	}
-	
-	public String getCorrelazioneApplicativaRisposta() {
-		return this.correlazioneApplicativaRisposta;
-	}
-	public void setCorrelazioneApplicativaRisposta(String correlazioneApplicativaRisposta) {
-		this.correlazioneApplicativaRisposta = correlazioneApplicativaRisposta;
 	}
 	
 	public Integer getSeverita() {
@@ -160,6 +97,14 @@ public class FiltroRicercaDiagnostici implements Serializable{
 	}
   
 	
+    public String getIdTransazione() {
+		return this.idTransazione;
+	}
+
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
+	
 	public Date getDataInizio() {
 		return this.dataInizio;
 	}
@@ -174,30 +119,6 @@ public class FiltroRicercaDiagnostici implements Serializable{
 	
 	public void setDataFine(Date dataFine) {
 		this.dataFine = dataFine;
-	}
-	
-	public InformazioniProtocollo getInformazioniProtocollo() {
-		return this.busta;
-	}
-	
-	public void setInformazioniProtocollo(InformazioniProtocollo busta) {
-		this.busta = busta;
-	}
-	
-	public String getNomePorta() {
-		return this.nomePorta;
-	}
-	
-	public void setNomePorta(String nomePorta) {
-		this.nomePorta = nomePorta;
-	}
-	
-	public Boolean isDelegata() {
-		return this.delegata;
-	}
-	
-	public void setDelegata(Boolean delegata) {
-		this.delegata = delegata;
 	}
 
 	public void addProperty(String key,String value){
@@ -240,23 +161,6 @@ public class FiltroRicercaDiagnostici implements Serializable{
 		this.protocollo = protocollo;
 	}
 
-	public boolean isCorrelazioneApplicativaOrMatch() {
-		return this.correlazioneApplicativaOrMatch;
-	}
-
-	public void setCorrelazioneApplicativaOrMatch(
-			boolean correlazioneApplicativaOrMatch) {
-		this.correlazioneApplicativaOrMatch = correlazioneApplicativaOrMatch;
-	}
-
-	public Boolean getRicercaSoloMessaggiCorrelatiInformazioniProtocollo() {
-		return this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
-	}
-
-	public void setRicercaSoloMessaggiCorrelatiInformazioniProtocollo(Boolean value) {
-		this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo = value;
-	}
-
 	public String getIdBustaRichiesta() {
 		return this.idBustaRichiesta;
 	}
@@ -295,46 +199,30 @@ public class FiltroRicercaDiagnostici implements Serializable{
 		
 		String pattern="idBustaRichiesta [{0}]" +
 				"idBustaRisposta [{1}]" +
-				" nomePorta [{2}]" +
-				" isDelegata [{3}]" +
-				(this.dataInizio!=null ? " dataInizio [{4,date} {4,time}]" : " dataInizio [{4}]") +
-				(this.dataFine!=null   ? " dataFine   [{5,date} {5,time}]" : " dataFine [{5}]") + 
-				" Informazioni Busta [{6}]" +
-				" dominio  [{7}]" +
-				" onlyMsgDiagWithProtocolInfo [{8}]"+
-				" parametriEstensioneSize [{9}]"+
-				" protocollo [{10}]"+
-				" correlazioneApplicativaRichiesta [{11}]"+
-				" correlazioneApplicativaRisposta [{12}]"+
-				" correlazioneApplicativaOrMatch [{13}]"+
-				" messaggioCercatoInternamenteTestoDiagnostico [{14}]"+
-				" idFunzione [{15}]"+
-				" servizioApplicativo [{16}]"+
-				" severita [{17}]"+
-				" codice [{18}]"+
-				" filtroSoggettiSize [{19}]";
+				(this.dataInizio!=null ? " dataInizio [{2,date} {2,time}]" : " dataInizio [{2}]") +
+				(this.dataFine!=null   ? " dataFine   [{3,date} {3,time}]" : " dataFine [{3}]") + 
+				" dominio  [{4}]" +
+				" parametriEstensioneSize [{5}]"+
+				" protocollo [{6}]"+
+				" messaggioCercatoInternamenteTestoDiagnostico [{7}]"+
+				" idFunzione [{8}]"+
+				" severita [{9}]"+
+				" codice [{10}]"+
+				" idTransazione [{11}]";
 		
 		return MessageFormat.format(pattern, 
 				this.idBustaRichiesta!=null ? this.idBustaRichiesta : "not set",
 				this.idBustaRisposta!=null ? this.idBustaRisposta : "not set",
-				this.nomePorta!=null ? this.nomePorta : "not set",
-				this.delegata!=null ? this.delegata : "not set",
 				this.dataInizio!=null ? this.dataInizio.getTime() : "not set",
 				this.dataFine!=null ? this.dataFine.getTime() : "not set",
-				this.busta!=null ? this.busta.toString() : "not set",
 				this.dominio!=null ? this.dominio.toString() : "not set",
-				this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo!=null ? this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo : "not set",
 				this.properties!=null ? this.properties.size() : "not set",
 				this.protocollo!=null ? this.protocollo : "not set",
-				this.correlazioneApplicativa!=null ? this.correlazioneApplicativa : "not set",
-				this.correlazioneApplicativaRisposta!=null ? this.correlazioneApplicativaRisposta : "not set",
-				this.correlazioneApplicativaOrMatch,
 				this.messaggioCercatoInternamenteTestoDiagnostico!=null ? this.messaggioCercatoInternamenteTestoDiagnostico : "not set",
 				this.idFunzione!=null ? this.idFunzione : "not set",
-				this.servizioApplicativo!=null ? this.servizioApplicativo : "not set",
 				this.severita!=null ? this.severita : "not set",
 				this.codice!=null ? this.codice : "not set",
-				this.filtroSoggetti!=null ? this.filtroSoggetti.size() : "not set"
+				this.idTransazione!=null ? this.idTransazione : "not set"
 				);
 	}
 

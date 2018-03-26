@@ -42,27 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetTracciaResponse }
-     */
-    public GetTracciaResponse createGetTracciaResponse() {
-        return new GetTracciaResponse();
-    }
-    
-    /**
-     * Create an instance of {@link GetTraccia }
-     */
-    public GetTraccia createGetTraccia() {
-        return new GetTraccia();
-    }
-    
-    /**
-     * Create an instance of {@link ExistsTracciaResponse }
-     */
-    public ExistsTracciaResponse createExistsTracciaResponse() {
-        return new ExistsTracciaResponse();
-    }
-    
-    /**
      * Create an instance of {@link FindTraccia }
      */
     public FindTraccia createFindTraccia() {
@@ -70,45 +49,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindTracciaResponse }
+     * Create an instance of {@link ExistsTracciaResponse }
      */
-    public FindTracciaResponse createFindTracciaResponse() {
-        return new FindTracciaResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllIdsTracciaResponse }
-     */
-    public FindAllIdsTracciaResponse createFindAllIdsTracciaResponse() {
-        return new FindAllIdsTracciaResponse();
-    }
-    
-    /**
-     * Create an instance of {@link CountTraccia }
-     */
-    public CountTraccia createCountTraccia() {
-        return new CountTraccia();
-    }
-    
-    /**
-     * Create an instance of {@link ExistsTraccia }
-     */
-    public ExistsTraccia createExistsTraccia() {
-        return new ExistsTraccia();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllTraccia }
-     */
-    public FindAllTraccia createFindAllTraccia() {
-        return new FindAllTraccia();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllTracciaResponse }
-     */
-    public FindAllTracciaResponse createFindAllTracciaResponse() {
-        return new FindAllTracciaResponse();
+    public ExistsTracciaResponse createExistsTracciaResponse() {
+        return new ExistsTracciaResponse();
     }
     
     /**
@@ -123,6 +67,62 @@ public class ObjectFactory {
      */
     public FindAllIdsTraccia createFindAllIdsTraccia() {
         return new FindAllIdsTraccia();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsTracciaResponse }
+     */
+    public FindAllIdsTracciaResponse createFindAllIdsTracciaResponse() {
+        return new FindAllIdsTracciaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllTracciaResponse }
+     */
+    public FindAllTracciaResponse createFindAllTracciaResponse() {
+        return new FindAllTracciaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link ExistsTraccia }
+     */
+    public ExistsTraccia createExistsTraccia() {
+        return new ExistsTraccia();
+    }
+    
+    /**
+     * Create an instance of {@link CountTraccia }
+     */
+    public CountTraccia createCountTraccia() {
+        return new CountTraccia();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllTraccia }
+     */
+    public FindAllTraccia createFindAllTraccia() {
+        return new FindAllTraccia();
+    }
+    
+    /**
+     * Create an instance of {@link GetTracciaResponse }
+     */
+    public GetTracciaResponse createGetTracciaResponse() {
+        return new GetTracciaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link GetTraccia }
+     */
+    public GetTraccia createGetTraccia() {
+        return new GetTraccia();
+    }
+    
+    /**
+     * Create an instance of {@link FindTracciaResponse }
+     */
+    public FindTracciaResponse createFindTracciaResponse() {
+        return new FindTracciaResponse();
     }
     
 

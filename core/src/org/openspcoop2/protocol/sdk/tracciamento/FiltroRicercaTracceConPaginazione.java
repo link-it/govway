@@ -73,8 +73,6 @@ public class FiltroRicercaTracceConPaginazione extends FiltroRicercaTracce imple
     	this.protocollo = filtroTracce.protocollo;
 
     	this.properties = filtroTracce.properties;
-
-    	this.filtroSoggetti = filtroTracce.filtroSoggetti;
 	}
     
     

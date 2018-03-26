@@ -736,6 +736,8 @@ public class Tracciamento {
 		
 		Traccia traccia = new Traccia();
 		
+		traccia.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		
 		// Esito
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);
 		try{

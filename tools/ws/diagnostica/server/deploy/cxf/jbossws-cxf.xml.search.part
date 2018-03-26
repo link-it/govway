@@ -21,26 +21,3 @@
 			<bean:entry key="schema-validation-enabled" value="true"/>
 		</jaxws:properties>
 	</jaxws:endpoint>
-	
-	<jaxws:endpoint 
-		id="InformazioniProtocolloTransazione_PortSoap11"
-		serviceName="InformazioniProtocolloTransazioneSoap11Service"
-		implementor="org.openspcoop2.core.diagnostica.ws.server.impl.InformazioniProtocolloTransazione@IMPLEMENTOR@Impl_PortSoap11"
-		address="/InformazioniProtocolloTransazione/Soap11" 
-		xmlns="http://www.openspcoop2.org/core/diagnostica/management"
-		wsdlLocation="/WEB-INF/classes/InformazioniProtocolloTransazione@IMPLEMENTOR@_PortSoap11.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	<jaxws:endpoint 
-		id="InformazioniProtocolloTransazione_PortSoap12"
-		serviceName="InformazioniProtocolloTransazioneSoap12Service"
-		implementor="org.openspcoop2.core.diagnostica.ws.server.impl.InformazioniProtocolloTransazione@IMPLEMENTOR@Impl_PortSoap12"
-		address="/InformazioniProtocolloTransazione/Soap12" 
-		xmlns="http://www.openspcoop2.org/core/diagnostica/management"
-		wsdlLocation="/WEB-INF/classes/InformazioniProtocolloTransazione@IMPLEMENTOR@_PortSoap12.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>

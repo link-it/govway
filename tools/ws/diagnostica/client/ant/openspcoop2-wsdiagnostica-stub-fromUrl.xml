@@ -37,31 +37,7 @@
 			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/messaggiodiagnostico"/>
 			<param name="stubJavaClassNameClient" value="MessaggioDiagnostico_MessaggioDiagnosticoPortSoap12_Client.java"/>
 		</antcall>
-		
-		
-		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value=""/>
-			<param name="stubClassEntity" value="InformazioniProtocolloTransazione"/>
-			<param name="stubVariableEntity" value="informazioniProtocolloTransazione"/>
-			<param name="stubSoapVersion" value="11"/>
-			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione"/>
-			<param name="stubWsdl" value="${wsdlURL_diagnostica_ws_client}/InformazioniProtocolloTransazione/Soap11?wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione"/>
-			<param name="stubJavaClassNameClient" value="InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client.java"/>
-		</antcall>
-			
-		<antcall target="-generateStub">
-			<param name="stubInterfaceType" value=""/>
-			<param name="stubClassEntity" value="InformazioniProtocolloTransazione"/>
-			<param name="stubVariableEntity" value="informazioniProtocolloTransazione"/>
-			<param name="stubSoapVersion" value="12"/>
-			<param name="stubOutputDir" value="${src_dir_diagnostica_ws_client}"/>
-			<param name="stubPackage" value="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione"/>
-			<param name="stubWsdl" value="${wsdlURL_diagnostica_ws_client}/InformazioniProtocolloTransazione/Soap12?wsdl"/>
-			<param name="stubDirClient" value="${src_dir_diagnostica_ws_client}/org/openspcoop2/core/diagnostica/ws/client/informazioniprotocollotransazione"/>
-			<param name="stubJavaClassNameClient" value="InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client.java"/>
-		</antcall>
+
 			
 	</target>
 	

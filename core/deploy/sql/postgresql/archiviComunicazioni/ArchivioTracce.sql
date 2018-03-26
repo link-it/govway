@@ -51,6 +51,7 @@ CREATE TABLE tracce
 	is_arrived INT DEFAULT 0,
 	soap_element TEXT,
 	digest TEXT,
+	id_transazione VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce') NOT NULL,
 	-- check constraints
@@ -62,6 +63,7 @@ CREATE TABLE tracce
 );
 
 -- index
+CREATE INDEX TRACCE_TRANS ON tracce (id_transazione,tipo_messaggio);
 CREATE INDEX TRACCE_SEARCH_ID ON tracce (id_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_RIF ON tracce (rif_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_ID_SOGGETTO ON tracce (id_messaggio,pdd_tipo_soggetto,pdd_nome_soggetto);
@@ -81,6 +83,8 @@ CREATE TABLE tracce_riscontri
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR(255),
 	tipo_ora_reg_meta VARCHAR(255),
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce_riscontri') NOT NULL,
 	-- fk/pk keys constraints
@@ -109,6 +113,8 @@ CREATE TABLE tracce_trasmissioni
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR(255),
 	tipo_ora_reg_meta VARCHAR(255),
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce_trasmissioni') NOT NULL,
 	-- fk/pk keys constraints
@@ -134,6 +140,8 @@ CREATE TABLE tracce_eccezioni
 	rilevanza VARCHAR(255),
 	rilevanza_meta VARCHAR(255),
 	posizione TEXT,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce_eccezioni') NOT NULL,
 	-- fk/pk keys constraints
@@ -155,6 +163,8 @@ CREATE TABLE tracce_allegati
 	content_location VARCHAR(255),
 	content_type VARCHAR(255),
 	digest TEXT,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce_allegati') NOT NULL,
 	-- fk/pk keys constraints
@@ -174,6 +184,8 @@ CREATE TABLE tracce_ext_protocol_info
 	idtraccia BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	value TEXT,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_tracce_ext_protocol_info') NOT NULL,
 	-- fk/pk keys constraints

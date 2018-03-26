@@ -57,18 +57,6 @@
     <servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.DocumentoExporter</servlet-class>
   </servlet>
 
-  <!-- Servlet per l'esportazione delle tracce -->
-  <servlet>
-  	<servlet-name>tracceExporter</servlet-name>
-    <servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.TracceExporter</servlet-class>
-  </servlet>
-  
-  <!-- Servlet per l'esportazione dei messaggi diagnostici -->
-  <servlet>
-  	<servlet-name>diagnosticaExporter</servlet-name>
-    <servlet-class>org.openspcoop2.web.ctrlstat.servlet.archivi.DiagnosticaExporter</servlet-class>
-  </servlet>
-
   <!-- Servlet di gestione esportazione allegati -->
   <servlet>
     <servlet-name>archiviExporter</servlet-name>
@@ -92,16 +80,6 @@
   <servlet-mapping>
     <servlet-name>downloadDocumento</servlet-name>
     <url-pattern>/downloadDocumento</url-pattern>
-  </servlet-mapping>
-
-  <!-- Servlet per l'esportazione delle tracce -->
-  <servlet-mapping>
-    <servlet-name>tracceExporter</servlet-name>
-    <url-pattern>/exporterTracce</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>diagnosticaExporter</servlet-name>
-    <url-pattern>/exporterDiagnostica</url-pattern>
   </servlet-mapping>
 
   <!-- Servlet di gestione esportazione allegati -->

@@ -42,6 +42,8 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
+			<!-- Identificativo della Transazione -->
+			<xsd:element name="id-transazione" type="xsd:string" minOccurs="0"/> <!-- I Diagnostici di servizio non hanno l'id di transazione -->
 			<!-- Dati Porta di Dominio che ha emesso i diagnostici -->
 			<xsd:element name="dominio" type="dominio-diagnostico"/>
 			<!-- Identificativi -->
@@ -62,96 +64,10 @@
 			<xsd:element name="messaggio" type="xsd:string"/>
 			<xsd:element name="severita" type="LivelloDiSeveritaType"/>
 			<xsd:element name="protocollo" type="protocollo" minOccurs="0"/>
-			<!-- Filtro -->
-			<xsd:element name="filtro-informazione-protocollo" type="filtro-informazione-protocollo" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping transient="true" filter="true"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	
 	
-	<xsd:element name="informazioni-protocollo-transazione" type="informazioni-protocollo-transazione"/>
-	<xsd:complexType name="informazioni-protocollo-transazione">
-		<xsd:annotation>
-			<xsd:appinfo>
-				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-					<linkit:interface crud="false" id="id-informazioni-protocollo-transazione">
-						<linkit:ws-interface search="true" crud="false" all="false" >
-							<linkit:ws-search-method-interface inUse="false" />
-							<linkit:ws-filter orCondition="false"/>
-						</linkit:ws-interface>
-					</linkit:interface>
-				</linkit:generator>
-			</xsd:appinfo>
-		</xsd:annotation>
-		<xsd:sequence>
-			<!-- Identificativi -->
-			<xsd:element name="tipoPdD" type="TipoPdD" />
-			<xsd:element name="identificativo-richiesta" type="xsd:string" />
-			<!-- Dati Porta di Dominio che ha emesso i diagnostici -->
-			<xsd:element name="dominio" type="dominio-transazione"/>
-			<!-- Altro -->
-			<xsd:element name="ora-registrazione" type="xsd:dateTime">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping filter="false" filter-interval="true"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="fruitore" type="soggetto" />
-			<xsd:element name="erogatore" type="soggetto" />
-			<xsd:element name="servizio" type="servizio" />
-			<xsd:element name="azione" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" default="false" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping transient="true" filter="true" filter-use-default="false"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<!-- Protocol Info -->
-			<xsd:element name="protocollo" type="protocollo" />
-			<!-- Servizi Applicativi -->
-			<xsd:element name="servizio-applicativo" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
-			<!-- Filtro -->
-			<xsd:element name="filtro-servizio-applicativo" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping transient="true" filter="true"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="filtro-informazioni-diagnostici" type="filtro-informazioni-diagnostici" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping transient="true" filter="true"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
 	
 	
 	<!-- Tipi -->
@@ -162,12 +78,6 @@
 			<xsd:element name="soggetto" type="dominio-soggetto"/>
 		</xsd:sequence>
 		<xsd:attribute name="modulo" type="xsd:string"/>
-	</xsd:complexType>
-	<xsd:complexType name="dominio-transazione">
-		<xsd:sequence>
-			<xsd:element name="identificativo-porta" type="xsd:string"/>
-			<xsd:element name="soggetto" type="dominio-soggetto"/>
-		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="dominio-soggetto">
 		<xsd:simpleContent>
@@ -187,101 +97,7 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
-	
-	<xsd:complexType name="soggetto">
-		<xsd:sequence>
-			<xsd:element name="identificativo" type="soggetto-identificativo" />
-			<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping filter="false" />
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="soggetto-identificativo">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-				<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-			</xsd:extension>
-		</xsd:simpleContent>
-	</xsd:complexType>
-	
-	<xsd:complexType name="servizio">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-				<xsd:attribute name="tipo" type="xsd:string" />
-				<xsd:attribute name="versione" type="xsd:integer" default="1">
-					<xsd:annotation>
-						<xsd:appinfo>
-							<linkit:generator
-								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:ws-field-mapping filter-use-default="false"/>
-							</linkit:generator>
-						</xsd:appinfo>
-					</xsd:annotation>
-				</xsd:attribute>
-			</xsd:extension>
-		</xsd:simpleContent>
-	</xsd:complexType>
-	
-	
-	<xsd:complexType name="filtro-informazione-protocollo">
-		<xsd:sequence>
-			<xsd:element name="tipo-porta" type="TipoPdD" minOccurs="0" />
-			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean" default="false" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping filter-use-default="false"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="fruitore" type="soggetto" minOccurs="0" />
-			<xsd:element name="erogatore" type="soggetto" minOccurs="0" />
-			<xsd:element name="servizio" type="servizio" minOccurs="0" />
-			<xsd:element name="azione" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" default="false" minOccurs="0" >
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping filter-use-default="false"/>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="servizio-applicativo" type="xsd:string" minOccurs="0"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:complexType name="filtro-informazioni-diagnostici">
-		<xsd:sequence>
-			<xsd:element name="codice" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="messaggio" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="severita" type="LivelloDiSeveritaType" minOccurs="0"/>
-			<xsd:element name="modulo" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="identificativo-risposta" type="xsd:string"  minOccurs="0"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	
-	
-	<!-- Identificativi -->
-	
-	<xsd:complexType name="id-informazioni-protocollo-transazione">
-		<xsd:attribute name="tipoPdD" type="TipoPdD" use="required"/>
-		<xsd:attribute name="identificativo-richiesta" type="xsd:string" use="required"/>
-	</xsd:complexType>
+		
 	
 	
 	<!-- Enumeration -->
@@ -293,11 +109,5 @@
 	</xsd:simpleType>
 	
 	
-	<xsd:simpleType name="TipoPdD">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="PortaDelegata"/>
-			<xsd:enumeration value="PortaApplicativa"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	
 </xsd:schema>

@@ -1784,9 +1784,6 @@ public class RicezioneContenutiApplicativi {
 			}
 		}
 
-		// emetto correlazione
-		msgDiag.logCorrelazione();
-		msgDiag.logCorrelazioneServizioApplicativo();
 		
 		
 		
@@ -3379,7 +3376,6 @@ public class RicezioneContenutiApplicativi {
 			
 				localForwardParameter.setRepositoryBuste(repositoryBuste);
 				localForwardParameter.getMsgDiag().setDelegata(false);
-				localForwardParameter.getMsgDiag().logCorrelazione(); // emetto correlazione per la PA
 				localForwardEngine.updateLocalForwardParameter(localForwardParameter);
 				
 				localForwardEngine.sendRequest(msgRequest);

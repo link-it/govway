@@ -2,6 +2,7 @@
 <binding force-classes="true">
   <mapping name="traccia" class="org.openspcoop2.core.tracciamento.Traccia">
     <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
+    <value name="id-transazione" field="idTransazione" usage="required"/>
     <structure field="dominio" usage="required" map-as="org.openspcoop2.core.tracciamento.Dominio"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="required"/>
     <structure field="esitoElaborazione" usage="required" map-as="org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione"/>

@@ -104,10 +104,6 @@ public final class Liste
 	public final static int	ROUTING;
 	public final static int SYSTEM_PROPERTIES;
 	
-	public final static int	TRACCE;
-	
-	public final static int MESSAGGI_DIAGNOSTICI;
-	
 	public final static int STATISTICHE_STATO;
 	
 	public final static int SU;
@@ -192,8 +188,6 @@ public final class Liste
     	REGISTRI = numeroListe ++;
     	ROUTING = numeroListe ++;
     	SYSTEM_PROPERTIES = numeroListe ++;
-    	TRACCE = numeroListe ++;
-    	MESSAGGI_DIAGNOSTICI = numeroListe ++;
     	STATISTICHE_STATO = numeroListe ++;
     	SU = numeroListe ++;
     	MONITOR_MSG = numeroListe ++;

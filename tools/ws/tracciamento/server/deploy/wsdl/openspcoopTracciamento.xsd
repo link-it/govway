@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/tracciamento" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/tracciamento">
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/tracciamento" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/tracciamento">
     
     
     
@@ -7,6 +7,8 @@
     <xsd:complexType name="traccia">
         
         <xsd:sequence>
+            <!-- Identificativo della Transazione -->
+            <xsd:element name="id-transazione" type="xsd:string"/>
             <!-- Dati Porta di Dominio che ha emesso la traccia -->
             <xsd:element name="dominio" type="dominio"/>
             <!-- Traccia -->

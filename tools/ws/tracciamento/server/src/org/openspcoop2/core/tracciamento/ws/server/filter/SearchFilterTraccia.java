@@ -27,6 +27,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter;
  * <pre>
  * &lt;complexType name="search-filter-traccia">
  *     &lt;sequence>
+ *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="dominio" type="{http://www.openspcoop2.org/core/tracciamento/management}dominio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -64,6 +65,7 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.Dominio;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "search-filter-traccia", namespace="http://www.openspcoop2.org/core/tracciamento/management", propOrder = {
+    "idTransazione",
     "dominio",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -81,6 +83,19 @@ import org.openspcoop2.core.tracciamento.ws.server.filter.beans.Dominio;
 public class SearchFilterTraccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="id-transazione",required=false,nillable=false)
+	private String idTransazione;
+	
+	public void setIdTransazione(String idTransazione){
+		this.idTransazione = idTransazione;
+	}
+	
+	public String getIdTransazione(){
+		return this.idTransazione;
+	}
+	
 	
 	@XmlElement(name="dominio",required=false,nillable=false)
 	private Dominio dominio;

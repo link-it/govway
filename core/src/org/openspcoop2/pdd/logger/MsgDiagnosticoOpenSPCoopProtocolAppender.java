@@ -33,9 +33,6 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServizioApplicativo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.utils.resources.MapReader;
 
@@ -116,59 +113,6 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IDiagnosticProd
 	}
 	
 	
-	/**
-	 * Creazione di un entry che permette di effettuare una correlazione con i msg diagnostici
-	 * 
-	 * @param msgDiagCorrelazione Informazioni di correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazione(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazione msgDiagCorrelazione) throws MsgDiagnosticoException{
-		try{
-			if(msgDiagCorrelazione.getProtocollo()!=null){
-				MsgDiagnosticoOpenSPCoopProtocolAppender.getProtocolAppender(msgDiagCorrelazione.getProtocollo()).logCorrelazione(conOpenSPCoopPdD,msgDiagCorrelazione);
-			}
-		}catch(Exception e){
-			throw new MsgDiagnosticoException(e.getMessage(),e);
-		}
-	}
-	
-	
-	/**
-	 * Creazione di una correlazione applicativa tra messaggi diagnostici e servizi applicativi.
-	 * 
-	 * @param msgDiagCorrelazioneSA Informazioni necessarie alla registrazione del servizio applicativo
-	 */
-	@Override
-	public void logCorrelazioneServizioApplicativo(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneServizioApplicativo msgDiagCorrelazioneSA)throws MsgDiagnosticoException{
-		try{
-			if(msgDiagCorrelazioneSA.getProtocollo()!=null){
-				MsgDiagnosticoOpenSPCoopProtocolAppender.getProtocolAppender(msgDiagCorrelazioneSA.getProtocollo()).logCorrelazioneServizioApplicativo(conOpenSPCoopPdD,msgDiagCorrelazioneSA);
-			}
-		}catch(Exception e){
-			throw new MsgDiagnosticoException(e.getMessage(),e);
-		}
-	}
-	
-	
-	/**
-	 * Registrazione dell'identificativo di correlazione applicativa della risposta
-	 * 
-	 * @param msgDiagCorrelazioneApplicativa Informazioni necessarie alla registrazione della correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazioneApplicativaRisposta(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneApplicativa msgDiagCorrelazioneApplicativa) throws MsgDiagnosticoException{
-		try{
-			if(msgDiagCorrelazioneApplicativa.getProtocollo()!=null){
-				MsgDiagnosticoOpenSPCoopProtocolAppender.getProtocolAppender(msgDiagCorrelazioneApplicativa.getProtocollo()).logCorrelazioneApplicativaRisposta(conOpenSPCoopPdD,msgDiagCorrelazioneApplicativa);
-			}
-		}catch(Exception e){
-			throw new MsgDiagnosticoException(e.getMessage(),e);
-		}
-	}
-	
-
 	/**
 	 * Metodo che verica la connessione ad una risorsa.
 	 * Se la connessione non e' presente, viene lanciata una eccezione che contiene il motivo della mancata connessione

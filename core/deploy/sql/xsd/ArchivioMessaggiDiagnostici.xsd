@@ -19,8 +19,6 @@
                         <linkit:sql-script generate="true">
                             <linkit:sql-table-list>
                                 <linkit:sql-table object-name="msgdiagnostici" object-type="msgdiagnostici"/>
-                                <linkit:sql-table object-name="msgdiag-correlazione" object-type="msgdiag-correlazione"/>
-                                <linkit:sql-table object-name="msgdiag-correlazione-sa" object-type="msgdiag-correlazione-sa"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -39,6 +37,9 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="msgdiagnostici" sequence-cycle="true"
                                               comment="Messaggi diagnostici emessi dalla PdD durante la gestione di una transazione applicativa">
+                        <linkit:sql-table-index name="MSG_DIAG_TRANS">
+                            <linkit:sql-table-index-field name="id_transazione"/>
+                        </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_DIAG_ID">
                             <linkit:sql-table-index-field name="idmessaggio"/>
                         </linkit:sql-table-index>
@@ -184,242 +185,13 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-    
-   
-   
-    
-    
-    <xsd:element name="msgdiag-correlazione">
-        <xsd:annotation>
-            <xsd:appinfo>
-                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-                    <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_correlazione" sequence-cycle="true"
-                                              comment="Contiene i dati di una transazione applicativa gestita dalla PdD (Informazioni sui soggetti coinvolti, sui dati del servizio e sugli identificativi unici dei messaggi)">
-                        <linkit:sql-table-index name="MSG_CORR_INDEX">
-                            <linkit:sql-table-index-field name="idmessaggio"/>
-                            <linkit:sql-table-index-field name="delegata"/>
-                        </linkit:sql-table-index>
-                        <linkit:sql-table-index name="MSG_CORR_GDO">
-                            <linkit:sql-table-index-field name="gdo" order="DESC" ignoreTypeCompatibility="true"/>
-                        </linkit:sql-table-index>
-                        <linkit:sql-table-index name="MSG_CORR_APP">
-                            <linkit:sql-table-index-field name="id_correlazione_applicativa"/>
-                            <linkit:sql-table-index-field name="delegata"/>
-                        </linkit:sql-table-index>
-			<linkit:sql-table-index name="MSG_CORR_APP_RISP">
-                            <linkit:sql-table-index-field name="id_correlazione_risposta"/>
-			    <linkit:sql-table-index-field name="delegata"/>
-                        </linkit:sql-table-index>
-                    </linkit:sql-table-mapping>
-                </linkit:generator>
-            </xsd:appinfo>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="idmessaggio" type="xsd:string">
+                <xsd:element name="id_transazione" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="idmessaggio"/>
-                                <linkit:sql-ddl-column-comment>Identificativo del messaggio di richiesta [FK logica verso tabella msgdiagnostici(idmessaggio)]</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[Dati di Correlazione con i messaggi diagnostici]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="pdd_codice" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="pdd_codice"/>
-                                <linkit:sql-ddl-column-comment>'Identificativo Porta' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="pdd_tipo_soggetto" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="pdd_tipo_soggetto"/>
-                                <linkit:sql-ddl-column-comment>'Tipo' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="pdd_nome_soggetto" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="pdd_nome_soggetto"/>
-                                <linkit:sql-ddl-column-comment>'Nome' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="gdo" type="xsd:dateTime">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="gdo"/>
-                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni riguardanti la transazione applicativa</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="porta" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="porta"/>
-                                <linkit:sql-ddl-column-comment><![CDATA[Nome della porta delegata (in caso di fruizione) o della porta applicativa (in caso di erogazione)]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[nome porta delegata/applicativa]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="delegata" type="xsd:int">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="delegata"/>
-                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se la transazione applicativa riguarda una fruzione (porta delegata) od una erogazione (porta applicativa) (1=PortaDelegata, 0=PortaApplicativa)]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[(1/0 true/false) True se siamo in un contesto di porta delegata, False se in un contesto di porta applicativa]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="tipo_fruitore" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tipo_fruitore"/>
-                                <linkit:sql-ddl-column-comment>Tipo del soggetto fruitore</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="fruitore" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="fruitore"/>
-                                <linkit:sql-ddl-column-comment>Nome del soggetto fruitore</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="tipo_erogatore" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tipo_erogatore"/>
-                                <linkit:sql-ddl-column-comment>Tipo del soggetto erogatore</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="erogatore" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="erogatore"/>
-                                <linkit:sql-ddl-column-comment>Nome del soggetto erogatore</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="tipo_servizio" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tipo_servizio"/>
-                                <linkit:sql-ddl-column-comment>Tipo del servizio (informazione che rappresenta insieme al nome ed alla versione l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="servizio" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="servizio"/>
-                                <linkit:sql-ddl-column-comment>Nome del servizio (informazione che rappresenta insieme al tipo ed alla versione l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="versione_servizio" type="xsd:int">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="versione_servizio"/>
-                                <linkit:sql-ddl-column-comment>Versione del servizio (informazione che rappresenta insieme al tipo ed al nome l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="azione" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="azione"/>
-                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'azione</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="id_correlazione_applicativa" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="id_correlazione_applicativa"/>
-                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di richiesta</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[Identificatore correlazione applicativa]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="id_correlazione_risposta" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="id_correlazione_risposta"/>
-                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di risposta</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="protocollo" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="protocollo"/>
-                                <linkit:sql-ddl-column-comment>Identificativo del protocollo utilizzato nella transazione applicativa</linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[Protocollo]]></linkit:sql-column-comment>
+                                <linkit:sql-column-mapping name="id_transazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della transazione in cui è stato emesso il messaggio diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -428,63 +200,6 @@
         </xsd:complexType>
     </xsd:element>
     
-    
-
-    
-    <xsd:element name="msgdiag-correlazione-sa">
-        <xsd:annotation>
-            <xsd:appinfo>
-                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-                    <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_correlazione_sa" sequence-cycle="true"
-                                              comment="Contiene gli identificativi degli applicativi (fruitori e erogatori) con cui la PdD ha interagito durante la gestione di una transazione applicativa">
-                        <linkit:sql-table-primary-key generate-id="false">
-                            <linkit:sql-table-pk-field name="id_correlazione"/>
-                            <linkit:sql-table-pk-field name="servizio_applicativo"/>
-                        </linkit:sql-table-primary-key>
-                       <linkit:sql-table-foreign-key
-                           reference-object-name="msgdiag-correlazione"
-                           reference-object-type="msgdiag-correlazione"
-                           reference-primary-key="true">
-                                   <linkit:sql-table-fk-field name="id_correlazione"/>
-                        </linkit:sql-table-foreign-key>
-                    </linkit:sql-table-mapping>
-                </linkit:generator>
-            </xsd:appinfo>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="id_correlazione" type="xsd:long">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="id_correlazione"/>
-                                <linkit:sql-ddl-column-comment>Identificativo delle informazioni sulla transazione [FK verso tabella msgdiag_correlazione(id)]</linkit:sql-ddl-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="servizio_applicativo" type="xsd:string">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="servizio_applicativo"/>
-                                <linkit:sql-ddl-column-comment><![CDATA[Identificativo del servizio applicativo coinvolto dalla PdD durante la transazione applicativa.
-                                Identifica un servizio applicativo fruitore od erogatore a seconda se la transazione riguarda rispettivamente una fruizione od una erogazione di servizio]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[Identita ServizioApplicativo]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>      
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-
-
-
 
 
     <xsd:simpleType name="TipoSeverita">

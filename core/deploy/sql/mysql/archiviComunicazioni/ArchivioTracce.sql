@@ -52,6 +52,7 @@ CREATE TABLE tracce
 	is_arrived INT DEFAULT 0,
 	soap_element TEXT,
 	digest TEXT,
+	id_transazione VARCHAR(255) NOT NULL,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -63,6 +64,7 @@ CREATE TABLE tracce
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
+CREATE INDEX TRACCE_TRANS ON tracce (id_transazione,tipo_messaggio);
 CREATE INDEX TRACCE_SEARCH_ID ON tracce (id_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_RIF ON tracce (rif_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_ID_SOGGETTO ON tracce (id_messaggio,pdd_tipo_soggetto,pdd_nome_soggetto);
@@ -81,6 +83,9 @@ CREATE TABLE tracce_riscontri
 	ora_registrazione TIMESTAMP(3) DEFAULT 0,
 	tipo_ora_reg VARCHAR(255),
 	tipo_ora_reg_meta VARCHAR(255),
+	-- Data di registrazione
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	gdo TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -108,6 +113,9 @@ CREATE TABLE tracce_trasmissioni
 	ora_registrazione TIMESTAMP(3) DEFAULT 0,
 	tipo_ora_reg VARCHAR(255),
 	tipo_ora_reg_meta VARCHAR(255),
+	-- Data di registrazione
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	gdo TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -131,6 +139,9 @@ CREATE TABLE tracce_eccezioni
 	rilevanza VARCHAR(255),
 	rilevanza_meta VARCHAR(255),
 	posizione TEXT,
+	-- Data di registrazione
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	gdo TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -150,6 +161,9 @@ CREATE TABLE tracce_allegati
 	content_location VARCHAR(255),
 	content_type VARCHAR(255),
 	digest TEXT,
+	-- Data di registrazione
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	gdo TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints
@@ -167,6 +181,9 @@ CREATE TABLE tracce_ext_protocol_info
 	idtraccia BIGINT NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	value TEXT,
+	-- Data di registrazione
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	gdo TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

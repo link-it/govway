@@ -42,13 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchFilterInformazioniProtocolloTransazione }
-     */
-    public SearchFilterInformazioniProtocolloTransazione createSearchFilterInformazioniProtocolloTransazione() {
-        return new SearchFilterInformazioniProtocolloTransazione();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterMessaggioDiagnostico }
      */
     public SearchFilterMessaggioDiagnostico createSearchFilterMessaggioDiagnostico() {

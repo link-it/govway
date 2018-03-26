@@ -13,6 +13,7 @@
 	<xsd:element name="search-filter-messaggio-diagnostico" type="tns:search-filter-messaggio-diagnostico" />
 	<xsd:complexType name="search-filter-messaggio-diagnostico">
 		<xsd:sequence>
+ 			<xsd:element name="id-transazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="dominio" type="tns:dominio-diagnostico" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="identificativo-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="identificativo-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -22,7 +23,6 @@
  			<xsd:element name="messaggio" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="severita" type="api:LivelloDiSeveritaType" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="protocollo" type="tns:protocollo" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="filtro-informazione-protocollo" type="tns:filtro-informazione-protocollo" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descOrder" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
@@ -50,47 +50,6 @@
 	<xsd:complexType name="protocollo">
 		<xsd:sequence>
  			<xsd:element name="identificativo" type="xsd:string" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:element name="soggetto-identificativo" type="tns:soggetto-identificativo" />
-	<xsd:complexType name="soggetto-identificativo">
-		<xsd:sequence>
- 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:element name="soggetto" type="tns:soggetto" />
-	<xsd:complexType name="soggetto">
-		<xsd:sequence>
- 			<xsd:element name="identificativo" type="tns:soggetto-identificativo" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:element name="servizio" type="tns:servizio" />
-	<xsd:complexType name="servizio">
-		<xsd:sequence>
- 			<xsd:element name="base" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="versione" type="xsd:integer" minOccurs="0" maxOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:element name="filtro-informazione-protocollo" type="tns:filtro-informazione-protocollo" />
-	<xsd:complexType name="filtro-informazione-protocollo">
-		<xsd:sequence>
- 			<xsd:element name="tipo-porta" type="api:TipoPdD" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="fruitore" type="tns:soggetto" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="erogatore" type="tns:soggetto" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="servizio" type="tns:servizio" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="azione" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="servizio-applicativo" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 

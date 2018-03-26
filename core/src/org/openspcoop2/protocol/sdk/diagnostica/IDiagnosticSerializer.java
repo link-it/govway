@@ -75,4 +75,6 @@ public interface IDiagnosticSerializer extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public XMLRootElement getXMLRootElement() throws ProtocolException;
+	
+	
 }

@@ -1325,7 +1325,6 @@ public class EJBUtils {
 			
 			//	Aggiorno dati di consegna
 			this.msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
-			this.msgDiag.logCorrelazioneServizioApplicativo();
 
 			gestoreMessaggi.aggiornaRiferimentoMessaggio(busta.getRiferimentoMessaggio());
 			boolean servizioApplicativoRicezioneAsincronaConConnettore = this.configurazionePdDReader.consegnaRispostaAsincronaConConnettore(sa);
@@ -1844,7 +1843,6 @@ public class EJBUtils {
 			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
 
 			this.msgDiag.setServizioApplicativo(servizioApplicativo);
-			this.msgDiag.logCorrelazioneServizioApplicativo();
 
 			// Raccolgo dati per la registrazione
 			boolean servizioApplicativoConConnettore = true; // la ricezione contenuti asincroni lo deve obbligatoriamente contenere

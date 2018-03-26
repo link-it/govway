@@ -54,24 +54,15 @@ public class FiltroRicercaDiagnosticiConPaginazione extends FiltroRicercaDiagnos
     	
         this.dataFine = filtro.dataFine;
         this.dataInizio = filtro.dataInizio;
-    	
-        this.delegata = filtro.delegata;
-        this.nomePorta = filtro.nomePorta;
+
+        this.idTransazione = filtro.idTransazione;
+
         this.idFunzione = filtro.idFunzione;
         this.dominio = filtro.dominio;
         
-        this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo = filtro.ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
-    	
         this.idBustaRichiesta = filtro.idBustaRichiesta;
         this.idBustaRisposta = filtro.idBustaRisposta;
-        this.busta = filtro.busta;
-    	
-        this.servizioApplicativo = filtro.servizioApplicativo;
         
-        this.correlazioneApplicativa = filtro.correlazioneApplicativa;
-        this.correlazioneApplicativaRisposta = filtro.correlazioneApplicativaRisposta;
-        this.correlazioneApplicativaOrMatch = filtro.correlazioneApplicativaOrMatch;
-    		
         this.severita = filtro.severita;
         
         this.codice = filtro.codice;
@@ -82,7 +73,6 @@ public class FiltroRicercaDiagnosticiConPaginazione extends FiltroRicercaDiagnos
         
         this.properties = filtro.properties;
     	
-        this.filtroSoggetti = filtro.filtroSoggetti;
 	}
     
   

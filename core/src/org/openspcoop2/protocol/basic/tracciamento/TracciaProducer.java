@@ -95,12 +95,6 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 	/** OpenSPCoop Connection */
 	protected boolean openspcoopConnection = false;
 	
-	/** AddIdTransazione */
-	protected boolean addIdTransazione = false;
-
-	/** AddGdoInfoAllTables */
-	protected boolean addGdoForAllTables = false;
-	
 	/** Emit debug info */
 	protected boolean debug = false;
 
@@ -322,27 +316,6 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				}
 			}
 			
-						
-			// scrittura id
-			String addIdTransazioneString = this.appenderProperties.getProperty("addIdTransazione");
-			if(addIdTransazioneString!=null){
-				addIdTransazioneString = addIdTransazioneString.trim();
-				if("true".equals(addIdTransazioneString)){
-					this.addIdTransazione = true;
-				}
-			}
-			
-			
-			// add gdo for all tables
-			String addGdoForAllTablesString = this.appenderProperties.getProperty("addGdoForAllTables");
-			if(addGdoForAllTablesString!=null){
-				addGdoForAllTablesString = addGdoForAllTablesString.trim();
-				if("true".equals(addGdoForAllTablesString)){
-					this.addGdoForAllTables = true;
-				}
-			}
-			
-			
 			// debug info
 			String debug = this.appenderProperties.getProperty("debug");
 			if(debug!=null){
@@ -448,53 +421,51 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				this.log.debug("@@ log["+busta.getID()+"] (prima inserimento traccia) ....");
 			}
 			List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo", gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo_int", gdoT.getTime(), InsertAndGeneratedKeyJDBCType.LONG) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_codice", idSoggetto.getCodicePorta(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_tipo_soggetto", idSoggetto.getTipo(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_nome_soggetto", idSoggetto.getNome(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_ruolo", traccia.getTipoPdD().getTipo(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_messaggio", tipoMessaggio, InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("esito_elaborazione", traccia.getEsitoElaborazioneMessaggioTracciato().getEsito().toString(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("dettaglio_esito_elaborazione", traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idporta_mittente", busta.getIdentificativoPortaMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("mittente", busta.getMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_mittente", busta.getTipoMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("indirizzo_mittente", busta.getIndirizzoMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idporta_destinatario", busta.getIdentificativoPortaDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("destinatario", busta.getDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_destinatario", busta.getTipoDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("indirizzo_destinatario", busta.getIndirizzoDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("profilo_collaborazione", busta.getProfiloDiCollaborazioneValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("profilo_collaborazione_meta", busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("servizio_correlato", busta.getServizioCorrelato(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_servizio_correlato", busta.getTipoServizioCorrelato(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("collaborazione", busta.getCollaborazione(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("versione_servizio", busta.getVersioneServizio(), InsertAndGeneratedKeyJDBCType.INT) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("servizio", busta.getServizio(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_servizio", busta.getTipoServizio(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("azione", busta.getAzione(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_messaggio", busta.getID(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("ora_registrazione",oraRegistrazioneT,InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_ora_reg", busta.getTipoOraRegistrazioneValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_ora_reg_meta",  busta.getTipoOraRegistrazione() == null ? null : busta.getTipoOraRegistrazione().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("rif_messaggio", busta.getRiferimentoMessaggio(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("scadenza",scadenzaT,InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("inoltro", busta.getInoltroValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("inoltro_meta", busta.getInoltro() == null ? null : busta.getInoltro().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("conferma_ricezione", confermaRicezione, InsertAndGeneratedKeyJDBCType.INT) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("sequenza", busta.getSequenza(), InsertAndGeneratedKeyJDBCType.LONG) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("location", location, InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("correlazione_applicativa", idCorrelazioneApplicativa, InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("correlazione_risposta", idCorrelazioneApplicativaRisposta, InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("sa_fruitore", busta.getServizioApplicativoFruitore(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("sa_erogatore", busta.getServizioApplicativoErogatore(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("protocollo", traccia.getProtocollo(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("digest", busta.getDigest(), InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("soap_element", headerProtocollo, InsertAndGeneratedKeyJDBCType.STRING) );
-			if(this.addIdTransazione){
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_transazione", idTransazione, InsertAndGeneratedKeyJDBCType.STRING) );
-			}
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_GDO, gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_GDO_INT, gdoT.getTime(), InsertAndGeneratedKeyJDBCType.LONG) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_CODICE, idSoggetto.getCodicePorta(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_TIPO_SOGGETTO, idSoggetto.getTipo(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_NOME_SOGGETTO, idSoggetto.getNome(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PDD_RUOLO, traccia.getTipoPdD().getTipo(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO, tipoMessaggio, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ESITO_ELABORAZIONE, traccia.getEsitoElaborazioneMessaggioTracciato().getEsito().toString(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DETTAGLIO_ESITO_ELABORAZIONE, traccia.getEsitoElaborazioneMessaggioTracciato().getDettaglio(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA, busta.getIdentificativoPortaMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME, busta.getMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO, busta.getTipoMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO, busta.getIndirizzoMittente(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA, busta.getIdentificativoPortaDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME, busta.getDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO, busta.getTipoDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO, busta.getIndirizzoDestinatario(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE, busta.getProfiloDiCollaborazioneValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT, busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME, busta.getServizioCorrelato(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO, busta.getTipoServizioCorrelato(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE, busta.getCollaborazione(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SERVIZIO_VERSIONE, busta.getVersioneServizio(), InsertAndGeneratedKeyJDBCType.INT) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME, busta.getServizio(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO, busta.getTipoServizio(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_AZIONE, busta.getAzione(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO, busta.getID(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE,oraRegistrazioneT,InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO, busta.getTipoOraRegistrazioneValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT,  busta.getTipoOraRegistrazione() == null ? null : busta.getTipoOraRegistrazione().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO, busta.getRiferimentoMessaggio(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SCADENZA,scadenzaT,InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_INOLTRO, busta.getInoltroValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT, busta.getInoltro() == null ? null : busta.getInoltro().getEngineValue(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_CONFERMA_RICEZIONE, confermaRicezione, InsertAndGeneratedKeyJDBCType.INT) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SEQUENZA, busta.getSequenza(), InsertAndGeneratedKeyJDBCType.LONG) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_LOCATION, location, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_CORRELAZIONE_APPLICATIVA_RICHIESTA, idCorrelazioneApplicativa, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_CORRELAZIONE_APPLICATIVA_RISPOSTA, idCorrelazioneApplicativaRisposta, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SA_FRUITORE, busta.getServizioApplicativoFruitore(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SA_EROGATORE, busta.getServizioApplicativoErogatore(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PROTOCOLLO, traccia.getProtocollo(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DIGEST, busta.getDigest(), InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SOAP, headerProtocollo, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ID_TRANSAZIONE, idTransazione, InsertAndGeneratedKeyJDBCType.STRING) );
 			
 			
 			// ** Insert and return generated key
@@ -512,14 +483,6 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 			
 			
 			
-			String gdoColumnName = "";
-			String gdoColumnValue = "";
-			if(this.addGdoForAllTables){
-				gdoColumnName = " , gdo";
-				gdoColumnValue = " , ?";
-			}
-			
-
 			String sqlString = null;
 			
 			if(this.debug){
@@ -529,8 +492,14 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				Riscontro riscontro = busta.getRiscontro(i);
 
 				//Inserimento nel DB
-				sqlString = "INSERT INTO "+CostantiDB.TRACCE_RISCONTRI+" (idtraccia, riscontro, ora_registrazione, tipo_ora_reg, tipo_ora_reg_meta"+gdoColumnName
-						+") VALUES (?, ?, ?, ?, ?"+gdoColumnValue+")";
+				sqlString = "INSERT INTO "+CostantiDB.TRACCE_RISCONTRI+" ("+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_TRACCIA+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_GDO+
+						") VALUES (?, ?, ?, ?, ?, ?)";
 				stmt = con.prepareStatement(sqlString);
 				int index = 1;
 				stmt.setLong(index++, idtraccia);
@@ -541,9 +510,7 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 					stmt.setTimestamp(index++, null);
 				JDBCUtilities.setSQLStringValue(stmt,index++, riscontro.getTipoOraRegistrazioneValue(this.protocolFactory));
 				JDBCUtilities.setSQLStringValue(stmt,index++, riscontro.getTipoOraRegistrazione().getEngineValue());
-				if(this.addGdoForAllTables){
-					stmt.setTimestamp(index++, gdoT);
-				}
+				stmt.setTimestamp(index++, gdoT);
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -558,9 +525,21 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				Trasmissione trasmissione = busta.getTrasmissione(i);
 
 				//Inserimento nel DB
-				sqlString = "INSERT INTO "+CostantiDB.TRACCE_TRASMISSIONI+" (idtraccia, origine, tipo_origine, indirizzo_origine, idporta_origine , destinazione, "+
-						"tipo_destinazione, indirizzo_destinazione, idporta_destinazione, ora_registrazione, tipo_ora_reg, tipo_ora_reg_meta"+gdoColumnName+
-						") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"+gdoColumnValue+")";
+				sqlString = "INSERT INTO "+CostantiDB.TRACCE_TRASMISSIONI+" ("+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ID_TRACCIA+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT+", "+
+						CostantiDB.TRACCE_TRASMISSIONI_COLUMN_GDO+
+						") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				stmt = con.prepareStatement(sqlString);
 				int index = 1;
 				stmt.setLong(index++, idtraccia);
@@ -578,9 +557,7 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 					stmt.setTimestamp(index++, null);
 				JDBCUtilities.setSQLStringValue(stmt,index++, trasmissione.getTempoValue(this.protocolFactory));
 				JDBCUtilities.setSQLStringValue(stmt,index++, trasmissione.getTempo().getEngineValue());
-				if(this.addGdoForAllTables){
-					stmt.setTimestamp(index++, gdoT);
-				}
+				stmt.setTimestamp(index++, gdoT);
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -598,11 +575,21 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				String subCodiceMeta = "";
 				String subCodiceMetaInsert = "";
 				if(eccezione.getSubCodiceEccezione()!=null && eccezione.getSubCodiceEccezione().getSubCodice()!=null){
-					subCodiceMeta = "subcodice_eccezione_meta,";
+					subCodiceMeta = CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE_SUBCOD_SDK_CONSTANT+", ";
 					subCodiceMetaInsert = "?,";
 				}
-				sqlString = "INSERT INTO "+CostantiDB.TRACCE_ECCEZIONI+" (idtraccia, contesto_codifica, contesto_codifica_meta, codice_eccezione, codice_eccezione_meta, "+
-						subCodiceMeta+" rilevanza, rilevanza_meta, posizione"+gdoColumnName+") VALUES (?, ?, ?, ?, ?, "+subCodiceMetaInsert+" ?, ? , ? "+gdoColumnValue+")";
+				sqlString = "INSERT INTO "+CostantiDB.TRACCE_ECCEZIONI+" ("+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_ID_TRACCIA+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_CONTESTO_CODIFICA+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_CONTESTO_CODIFICA_SDK_CONSTANT+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE_SDK_CONSTANT+", "+
+						subCodiceMeta+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_RILEVANZA+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_RILEVANZA_SDK_CONSTANT+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE+", "+
+						CostantiDB.TRACCE_ECCEZIONI_COLUMN_GDO+
+						") VALUES (?, ?, ?, ?, ?, "+subCodiceMetaInsert+" ?, ? , ? , ?)";
 				stmt = con.prepareStatement(sqlString);
 				int index = 1;
 				stmt.setLong(index++, idtraccia);
@@ -615,9 +602,7 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getRilevanzaValue(this.protocolFactory));
 				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getRilevanza().getEngineValue());
 				JDBCUtilities.setSQLStringValue(stmt,index++, eccezione.getDescrizione(this.protocolFactory));
-				if(this.addGdoForAllTables){
-					stmt.setTimestamp(index++, gdoT);
-				}
+				stmt.setTimestamp(index++, gdoT);
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -632,8 +617,14 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				Allegato allegato = traccia.getAllegato(i);
 
 				//Inserimento nel DB
-				sqlString = "INSERT INTO "+CostantiDB.TRACCE_ALLEGATI+" (idtraccia, content_id, content_location, content_type, digest"+gdoColumnName
-						+") VALUES (?, ?, ?, ?, ?"+gdoColumnValue+")";
+				sqlString = "INSERT INTO "+CostantiDB.TRACCE_ALLEGATI+" ("+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_ID_TRACCIA+", "+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_CONTENT_ID+", "+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_CONTENT_LOCATION+", "+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_CONTENT_TYPE+", "+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_DIGEST+", "+
+						CostantiDB.TRACCE_ALLEGATI_COLUMN_GDO+
+						") VALUES (?, ?, ?, ?, ?, ?)";
 				stmt = con.prepareStatement(sqlString);
 				int index = 1;
 				stmt.setLong(index++, idtraccia);
@@ -641,9 +632,7 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				JDBCUtilities.setSQLStringValue(stmt,index++, allegato.getContentLocation());
 				JDBCUtilities.setSQLStringValue(stmt,index++, allegato.getContentType());
 				JDBCUtilities.setSQLStringValue(stmt,index++, allegato.getDigest());
-				if(this.addGdoForAllTables){
-					stmt.setTimestamp(index++, gdoT);
-				}
+				stmt.setTimestamp(index++, gdoT);
 				stmt.executeUpdate();
 				stmt.close();
 			}
@@ -659,15 +648,18 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
 					//Inserimento nel DB
-					sqlString = "INSERT INTO "+CostantiDB.TRACCE_EXT_INFO+" (idtraccia, name, value"+gdoColumnName+") VALUES (?, ?, ?"+gdoColumnValue+")";
+					sqlString = "INSERT INTO "+CostantiDB.TRACCE_EXT_INFO+" ("+
+						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA+", "+
+						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME+", "+
+						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+", "+
+						CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_GDO+
+					") VALUES (?, ?, ?, ?)";
 					stmt = con.prepareStatement(sqlString);
 					int index = 1;
 					stmt.setLong(index++, idtraccia);
 					JDBCUtilities.setSQLStringValue(stmt,index++, propertiesNames[i]);
 					JDBCUtilities.setSQLStringValue(stmt,index++, busta.getProperty(propertiesNames[i]));
-					if(this.addGdoForAllTables){
-						stmt.setTimestamp(index++, gdoT);
-					}
+					stmt.setTimestamp(index++, gdoT);
 					stmt.executeUpdate();
 					stmt.close();
 				

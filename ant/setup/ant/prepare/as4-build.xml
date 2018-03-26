@@ -34,6 +34,14 @@
 
 		<copy file="${stub_as4}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar" todir="${deploy_sw}"/>
 
+		<!-- inizializza directory jarsDir (se non esiste) -->
+		<mkdir dir="${jarsDir}" />
+		<copy todir="${jarsDir}">
+			<fileset dir="${jms_lib_as4}">
+				<exclude name="*.jar"/>
+			</fileset>
+		</copy>
+
 		<mkdir dir="${deploy_resources}/protocolli"/>
 		<mkdir dir="${deploy_resources}/protocolli/as4"/>
 		<copy file="${as4}/deploy/resources/properties/as4_local.properties_minimal" tofile="${deploy_resources}/protocolli/as4/as4_local.properties"/>

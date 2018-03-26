@@ -35,6 +35,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="messaggio-diagnostico">
  * 		&lt;sequence>
+ * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica}dominio-diagnostico" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -56,6 +57,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "messaggio-diagnostico", 
   propOrder = {
+  	"idTransazione",
   	"dominio",
   	"identificativoRichiesta",
   	"identificativoRisposta",
@@ -85,6 +87,14 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public java.lang.String getIdTransazione() {
+    return this.idTransazione;
+  }
+
+  public void setIdTransazione(java.lang.String idTransazione) {
+    this.idTransazione = idTransazione;
   }
 
   public DominioDiagnostico getDominio() {
@@ -151,14 +161,6 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
     this.protocollo = protocollo;
   }
 
-  public FiltroInformazioneProtocollo getFiltroInformazioneProtocollo() {
-    return this.filtroInformazioneProtocollo;
-  }
-
-  public void setFiltroInformazioneProtocollo(FiltroInformazioneProtocollo filtroInformazioneProtocollo) {
-    this.filtroInformazioneProtocollo = filtroInformazioneProtocollo;
-  }
-
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -177,6 +179,10 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
 	  return org.openspcoop2.core.diagnostica.MessaggioDiagnostico.modelStaticInstance;
   }
 
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="id-transazione",required=false,nillable=false)
+  protected java.lang.String idTransazione;
 
   @XmlElement(name="dominio",required=true,nillable=false)
   protected DominioDiagnostico dominio;
@@ -208,8 +214,5 @@ public class MessaggioDiagnostico extends org.openspcoop2.utils.beans.BaseBean i
 
   @XmlElement(name="protocollo",required=false,nillable=false)
   protected Protocollo protocollo;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected FiltroInformazioneProtocollo filtroInformazioneProtocollo;
 
 }

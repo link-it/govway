@@ -83,6 +83,19 @@ public class MsgDiagnostico implements Serializable{
 	
 	
 	
+	
+	
+	// idTransazione [Wrapper]
+	
+	public String getIdTransazione() {
+		return this.messaggioDiagnostico.getIdTransazione();
+	}
+	public void setIdTransazione(String idTransazione) {
+		this.messaggioDiagnostico.setIdTransazione(idTransazione);
+	}
+	
+	
+	
     
 	// gdo  [Wrapper]
 	
@@ -253,6 +266,8 @@ public class MsgDiagnostico implements Serializable{
 	}
 	
 	
+	
+
 	
 	
 	// properties [wrapped]

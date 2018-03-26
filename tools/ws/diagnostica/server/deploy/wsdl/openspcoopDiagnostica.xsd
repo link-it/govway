@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/diagnostica" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/diagnostica">
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.openspcoop2.org/core/diagnostica" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.openspcoop2.org/core/diagnostica">
 	
 	
 	
@@ -7,6 +7,8 @@
 	<xsd:complexType name="messaggio-diagnostico">
 		
 		<xsd:sequence>
+			<!-- Identificativo della Transazione -->
+			<xsd:element minOccurs="0" name="id-transazione" type="xsd:string"/> <!-- I Diagnostici di servizio non hanno l'id di transazione -->
 			<!-- Dati Porta di Dominio che ha emesso i diagnostici -->
 			<xsd:element name="dominio" type="dominio-diagnostico"/>
 			<!-- Identificativi -->
@@ -20,50 +22,10 @@
 			<xsd:element name="messaggio" type="xsd:string"/>
 			<xsd:element name="severita" type="LivelloDiSeveritaType"/>
 			<xsd:element minOccurs="0" name="protocollo" type="protocollo"/>
-			<!-- Filtro -->
-			<xsd:element minOccurs="0" name="filtro-informazione-protocollo" type="filtro-informazione-protocollo">
-				
-			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	
 	
-	<xsd:element name="informazioni-protocollo-transazione" type="informazioni-protocollo-transazione"/>
-	<xsd:complexType name="informazioni-protocollo-transazione">
-		
-		<xsd:sequence>
-			<!-- Identificativi -->
-			<xsd:element name="tipoPdD" type="TipoPdD"/>
-			<xsd:element name="identificativo-richiesta" type="xsd:string"/>
-			<!-- Dati Porta di Dominio che ha emesso i diagnostici -->
-			<xsd:element name="dominio" type="dominio-transazione"/>
-			<!-- Altro -->
-			<xsd:element name="ora-registrazione" type="xsd:dateTime">
-				
-			</xsd:element>
-			<xsd:element minOccurs="0" name="nome-porta" type="xsd:string"/>
-			<xsd:element name="fruitore" type="soggetto"/>
-			<xsd:element name="erogatore" type="soggetto"/>
-			<xsd:element name="servizio" type="servizio"/>
-			<xsd:element minOccurs="0" name="azione" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="identificativo-correlazione-richiesta" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="identificativo-correlazione-risposta" type="xsd:string"/>
-			<xsd:element default="false" minOccurs="0" name="correlazione-applicativa-and-match" type="xsd:boolean">
-				
-			</xsd:element>
-			<!-- Protocol Info -->
-			<xsd:element name="protocollo" type="protocollo"/>
-			<!-- Servizi Applicativi -->
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="xsd:string"/>
-			<!-- Filtro -->
-			<xsd:element minOccurs="0" name="filtro-servizio-applicativo" type="xsd:string">
-				
-			</xsd:element>
-			<xsd:element minOccurs="0" name="filtro-informazioni-diagnostici" type="filtro-informazioni-diagnostici">
-				
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
 	
 	
 	<!-- Tipi -->
@@ -74,12 +36,6 @@
 			<xsd:element name="soggetto" type="dominio-soggetto"/>
 		</xsd:sequence>
 		<xsd:attribute name="modulo" type="xsd:string"/>
-	</xsd:complexType>
-	<xsd:complexType name="dominio-transazione">
-		<xsd:sequence>
-			<xsd:element name="identificativo-porta" type="xsd:string"/>
-			<xsd:element name="soggetto" type="dominio-soggetto"/>
-		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="dominio-soggetto">
 		<xsd:simpleContent>
@@ -99,73 +55,7 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
-	
-	<xsd:complexType name="soggetto">
-		<xsd:sequence>
-			<xsd:element name="identificativo" type="soggetto-identificativo"/>
-			<xsd:element minOccurs="0" name="identificativo-porta" type="xsd:string">
-				
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="soggetto-identificativo">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-				<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-			</xsd:extension>
-		</xsd:simpleContent>
-	</xsd:complexType>
-	
-	<xsd:complexType name="servizio">
-		<xsd:simpleContent>
-			<xsd:extension base="xsd:string">
-				<xsd:attribute name="tipo" type="xsd:string"/>
-				<xsd:attribute default="1" name="versione" type="xsd:integer">
-					
-				</xsd:attribute>
-			</xsd:extension>
-		</xsd:simpleContent>
-	</xsd:complexType>
-	
-	
-	<xsd:complexType name="filtro-informazione-protocollo">
-		<xsd:sequence>
-			<xsd:element minOccurs="0" name="tipo-porta" type="TipoPdD"/>
-			<xsd:element minOccurs="0" name="nome-porta" type="xsd:string"/>
-			<xsd:element default="false" minOccurs="0" name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean">
-				
-			</xsd:element>
-			<xsd:element minOccurs="0" name="fruitore" type="soggetto"/>
-			<xsd:element minOccurs="0" name="erogatore" type="soggetto"/>
-			<xsd:element minOccurs="0" name="servizio" type="servizio"/>
-			<xsd:element minOccurs="0" name="azione" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="identificativo-correlazione-richiesta" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="identificativo-correlazione-risposta" type="xsd:string"/>
-			<xsd:element default="false" minOccurs="0" name="correlazione-applicativa-and-match" type="xsd:boolean">
-				
-			</xsd:element>
-			<xsd:element minOccurs="0" name="servizio-applicativo" type="xsd:string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:complexType name="filtro-informazioni-diagnostici">
-		<xsd:sequence>
-			<xsd:element minOccurs="0" name="codice" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="messaggio" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="severita" type="LivelloDiSeveritaType"/>
-			<xsd:element minOccurs="0" name="modulo" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="identificativo-risposta" type="xsd:string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	
-	
-	<!-- Identificativi -->
-	
-	<xsd:complexType name="id-informazioni-protocollo-transazione">
-		<xsd:attribute name="tipoPdD" type="TipoPdD" use="required"/>
-		<xsd:attribute name="identificativo-richiesta" type="xsd:string" use="required"/>
-	</xsd:complexType>
+		
 	
 	
 	<!-- Enumeration -->
@@ -177,11 +67,5 @@
 	</xsd:simpleType>
 	
 	
-	<xsd:simpleType name="TipoPdD">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="PortaDelegata"/>
-			<xsd:enumeration value="PortaApplicativa"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	
 </xsd:schema>

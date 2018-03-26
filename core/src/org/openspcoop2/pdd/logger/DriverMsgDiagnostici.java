@@ -36,9 +36,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
-import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
@@ -61,9 +59,6 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	public void setPropertiesMsgDiagnostici(List<String> properties) {
 		this.driverBase.setPropertiesMsgDiagnostici(properties);
 	}
-	public void setPropertiesMsgDiagCorrelazione(List<String> properties) {
-		this.driverBase.setPropertiesMsgDiagCorrelazione(properties);
-	}	
 	
 	
 	/** Driver di base: valido per tutti i protocolli */
@@ -163,53 +158,6 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	}
 	
 	
-	
-	
-	
-	/* *********** ACCESSI TRAMITE RICERCHE (CORRELAZIONI DIAGNOSTICI con il PROTOCOLLO) ******* */
-	
-	/**
-	 * Si occupa di ritornare il numero di informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 *
-	 * @param filtro Filtro di ricerca
-	 * @return numero di informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 */
-	@Override
-	public int countInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filtro) throws DriverMsgDiagnosticiException{
-		return this.driverBase.countInfoCorrelazioniMessaggiDiagnostici(filtro);
-	}
-	
-	/**
-	 * Si occupa di ritornare informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 *
-	 * @param filtro Filtro di ricerca
-	 * @return informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 */
-	@Override
-	public List<MsgDiagnosticoCorrelazione> getInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnosticiConPaginazione filtro)  
-		throws DriverMsgDiagnosticiException, DriverMsgDiagnosticiNotFoundException{
-		return this.driverBase.getInfoCorrelazioniMessaggiDiagnostici(filtro);
-	}
-	
-	
-	/**
-	 * Si occupa di eliminare informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 * @param filter Filtro di ricerca
-	 * @return numero di diagnostici eliminati
-	 * @throws DriverTracciamentoException
-	 */
-	@Override
-	public int deleteInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filter) throws DriverMsgDiagnosticiException{
-		return this.driverBase.deleteInfoCorrelazioniMessaggiDiagnostici(filter);
-	}
-	
-	
-	
-	
-	
 	/* ******* RISORSE INTERNE ********** */
 	
 	@Override
@@ -217,27 +165,6 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 		this.driverBase.close();
 	}	
 	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	/* ********** UTILITY DEL DRIVER (non inserita nell'Interfaccia) ************ */
-	
-	
-	public List<MsgDiagnosticoCorrelazione> getInfoEntryCorrelazione(FiltroRicercaDiagnosticiConPaginazione filter,boolean all) throws DriverMsgDiagnosticiException, SQLQueryObjectException{
-		return this.driverBase.getInfoEntryCorrelazione(filter, all);
-	}
-	
-	public long getTotUnionEntry(FiltroRicercaDiagnosticiConPaginazione filter) throws DriverMsgDiagnosticiException, SQLQueryObjectException{
-		return this.driverBase.getTotUnionEntry(filter);
-	}
-
 }
 
 

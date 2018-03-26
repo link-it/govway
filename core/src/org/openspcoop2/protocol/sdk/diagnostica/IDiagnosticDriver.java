@@ -72,41 +72,6 @@ public interface IDiagnosticDriver extends IComponentFactory {
 	
 	
 	
-	
-	/* *********** ACCESSI TRAMITE RICERCHE (CORRELAZIONI DIAGNOSTICI con il PROTOCOLLO) ******* */
-	
-	/**
-	 * Si occupa di ritornare il numero di informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 *
-	 * @param filtro Filtro di ricerca
-	 * @return numero di informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 */
-	public int countInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filtro) throws DriverMsgDiagnosticiException;
-	
-	/**
-	 * Si occupa di ritornare informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 *
-	 * @param filtro Filtro di ricerca
-	 * @return informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 */
-	public List<MsgDiagnosticoCorrelazione> getInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnosticiConPaginazione filtro)  
-		throws DriverMsgDiagnosticiException, DriverMsgDiagnosticiNotFoundException;
-	
-	
-	/**
-	 * Si occupa di eliminare informazioni di correlazione dei diagnostici che rispettano il filtro di ricerca
-	 * 
-	 * @param filter Filtro di ricerca
-	 * @return numero di diagnostici eliminati
-	 * @throws DriverTracciamentoException
-	 */
-	public int deleteInfoCorrelazioniMessaggiDiagnostici(FiltroRicercaDiagnostici filter) throws DriverMsgDiagnosticiException;
-	
-	
-	
-	
 	/* ******* RISORSE INTERNE ********** */
 	
 	public void close() throws DriverMsgDiagnosticiException;

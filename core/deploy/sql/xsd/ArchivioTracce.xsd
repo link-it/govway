@@ -43,6 +43,10 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="tracce" sequence-cycle="true"
                                               comment="Tracce che registrano lo scambio dei messaggi (richiesta o risposta) avvenuti all'interno di una transazione applicativa">
+                        <linkit:sql-table-index name="TRACCE_TRANS">
+                            <linkit:sql-table-index-field name="id_transazione"/>
+                            <linkit:sql-table-index-field name="tipo_messaggio"/>
+                        </linkit:sql-table-index>
                         <linkit:sql-table-index name="TRACCE_SEARCH_ID">
                             <linkit:sql-table-index-field name="id_messaggio"/>
                             <linkit:sql-table-index-field name="pdd_codice"/>
@@ -596,6 +600,17 @@ Il valore presente in questo campo contiene la rappresentazione della modalità 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="id_transazione" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_transazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della transazione in cui sono state emesse le informazioni</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -685,6 +700,18 @@ Il valore presente in questo campo contiene la rappresentazione della sorgente n
                                 <linkit:sql-column-mapping name="tipo_ora_reg_meta"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Tipologia di sorgente della data relativa alla ricevuta (es. sincronizzata tramite ntp server, locale alla macchina ...)
 Il valore presente in questo campo contiene la rappresentazione della sorgente nel formato proprietario di OpenSPCoop.]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gdo" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -849,6 +876,18 @@ Il valore presente in questo campo contiene la rappresentazione della sorgente n
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="gdo" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -982,6 +1021,18 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="gdo" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -1065,6 +1116,18 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="gdo" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -1124,6 +1187,18 @@ Il valore presente in questo campo contiene la rappresentazione nel formato prop
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="value" text="true" />
                                 <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="gdo" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

@@ -1137,20 +1137,28 @@ public class ConsoleHelper {
 
 			if (singlePdD) {
 
-				// SinglePdD=true
-				if (pu.isDiagnostica()) {
+				List<ExtendedMenuItem> listStrumenti = null;
+				if(extendedMenu!=null){
+					for (IExtendedMenu extMenu : extendedMenu) {
+						listStrumenti = 
+								extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
+										this.core.isRegistroServiziLocale(), singlePdD, pu);
+					}
+				}
+				
+				if ( pu.isCodeMessaggi() || pu.isAuditing() || (listStrumenti!=null && listStrumenti.size()>0) ) {
+					// Se l'utente non ha i permessi "diagnostica", devo
+					// gestire la reportistica
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
-					int totEntries = 2;
-					// Se l'utente ha anche i permessi "auditing", la
-					// sezione reportistica ha una voce in più
-					if (pu.isAuditing())
+					int totEntries = 0;
+					if(this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						totEntries++;
-					// Se l'utente ha anche i permessi "monitoraggio", la
-					// sezione reportistica ha una voce in più
-					if (this.isModalitaAvanzata() && pu.isCodeMessaggi())
+					}
+					if(pu.isAuditing()) {
 						totEntries++;
+					}
 
 					// Extended Menu
 					if(extendedMenu!=null){
@@ -1165,19 +1173,14 @@ public class ConsoleHelper {
 					}
 
 					String[][] entries = new String[totEntries][2];
+
 					int i = 0;
-					entries[i][0] = ArchiviCostanti.LABEL_DIAGNOSTICA;
-					entries[i][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_DIAGNOSTICA;
-					i++;
-					entries[i][0] = ArchiviCostanti.LABEL_TRACCIAMENTO;
-					entries[i][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_TRACCIAMENTO;
-					i++;
+
 					if (pu.isAuditing()) {
 						entries[i][0] = AuditCostanti.LABEL_AUDIT;
 						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
 						i++;
 					}
-
 					if (this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
@@ -1190,7 +1193,7 @@ public class ConsoleHelper {
 							List<ExtendedMenuItem> list = 
 									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
 											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){								
+							if(list!=null){
 								for (ExtendedMenuItem extendedMenuItem : list) {
 									entries[i][0] = extendedMenuItem.getLabel();
 									entries[i][1] = extendedMenuItem.getUrl();
@@ -1202,9 +1205,9 @@ public class ConsoleHelper {
 
 					me.setEntries(entries);
 					menu.addElement(me);
-
 				}
-
+				
+				
 
 				// Label Configurazione
 				if(pu.isSistema()){
@@ -1410,68 +1413,7 @@ public class ConsoleHelper {
 					}
 				}
 
-				if ((pu.isCodeMessaggi() || pu.isAuditing()) && !pu.isDiagnostica()) {
-					// Se l'utente non ha i permessi "diagnostica", devo
-					// gestire la reportistica
-					MenuEntry me = new MenuEntry();
-					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
-
-					int totEntries = 0;
-					if ((this.isModalitaAvanzata() && pu.isCodeMessaggi()) && pu.isAuditing())
-						totEntries = 2;
-					else
-						totEntries = 1;
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null && list.size()>0){
-								totEntries +=list.size();
-							}
-						}
-					}
-
-					String[][] entries = null;
-					if ((this.isModalitaAvanzata() && pu.isCodeMessaggi()) && pu.isAuditing())
-						entries = new String[totEntries][2];
-					else
-						entries = new String[totEntries][2];
-
-					int i = 0;
-
-					if (pu.isAuditing()) {
-						entries[i][0] = AuditCostanti.LABEL_AUDIT;
-						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
-						i++;
-					}
-					if (this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
-						entries[i][0] = MonitorCostanti.LABEL_MONITOR;
-						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
-						i++;
-					}
-
-					// Extended Menu
-					if(extendedMenu!=null){
-						for (IExtendedMenu extMenu : extendedMenu) {
-							List<ExtendedMenuItem> list = 
-									extMenu.getExtendedItemsMenuStrumenti(isModalitaAvanzata, 
-											this.core.isRegistroServiziLocale(), singlePdD, pu);
-							if(list!=null){
-								for (ExtendedMenuItem extendedMenuItem : list) {
-									entries[i][0] = extendedMenuItem.getLabel();
-									entries[i][1] = extendedMenuItem.getUrl();
-									i++;
-								}
-							}
-						}
-					}
-
-					me.setEntries(entries);
-					menu.addElement(me);
-				}
+				
 			} else {
 
 				// SinglePdD=false

@@ -42,94 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CountInformazioniProtocolloTransazioneResponse }
-     */
-    public CountInformazioniProtocolloTransazioneResponse createCountInformazioniProtocolloTransazioneResponse() {
-        return new CountInformazioniProtocolloTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllIdsInformazioniProtocolloTransazione }
-     */
-    public FindAllIdsInformazioniProtocolloTransazione createFindAllIdsInformazioniProtocolloTransazione() {
-        return new FindAllIdsInformazioniProtocolloTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link ExistsInformazioniProtocolloTransazioneResponse }
-     */
-    public ExistsInformazioniProtocolloTransazioneResponse createExistsInformazioniProtocolloTransazioneResponse() {
-        return new ExistsInformazioniProtocolloTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link CountInformazioniProtocolloTransazione }
-     */
-    public CountInformazioniProtocolloTransazione createCountInformazioniProtocolloTransazione() {
-        return new CountInformazioniProtocolloTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link GetInformazioniProtocolloTransazioneResponse }
-     */
-    public GetInformazioniProtocolloTransazioneResponse createGetInformazioniProtocolloTransazioneResponse() {
-        return new GetInformazioniProtocolloTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link CountMessaggioDiagnostico }
-     */
-    public CountMessaggioDiagnostico createCountMessaggioDiagnostico() {
-        return new CountMessaggioDiagnostico();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllIdsInformazioniProtocolloTransazioneResponse }
-     */
-    public FindAllIdsInformazioniProtocolloTransazioneResponse createFindAllIdsInformazioniProtocolloTransazioneResponse() {
-        return new FindAllIdsInformazioniProtocolloTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link GetInformazioniProtocolloTransazione }
-     */
-    public GetInformazioniProtocolloTransazione createGetInformazioniProtocolloTransazione() {
-        return new GetInformazioniProtocolloTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link FindInformazioniProtocolloTransazione }
-     */
-    public FindInformazioniProtocolloTransazione createFindInformazioniProtocolloTransazione() {
-        return new FindInformazioniProtocolloTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllInformazioniProtocolloTransazioneResponse }
-     */
-    public FindAllInformazioniProtocolloTransazioneResponse createFindAllInformazioniProtocolloTransazioneResponse() {
-        return new FindAllInformazioniProtocolloTransazioneResponse();
-    }
-    
-    /**
      * Create an instance of {@link CountMessaggioDiagnosticoResponse }
      */
     public CountMessaggioDiagnosticoResponse createCountMessaggioDiagnosticoResponse() {
         return new CountMessaggioDiagnosticoResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllMessaggioDiagnosticoResponse }
-     */
-    public FindAllMessaggioDiagnosticoResponse createFindAllMessaggioDiagnosticoResponse() {
-        return new FindAllMessaggioDiagnosticoResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllInformazioniProtocolloTransazione }
-     */
-    public FindAllInformazioniProtocolloTransazione createFindAllInformazioniProtocolloTransazione() {
-        return new FindAllInformazioniProtocolloTransazione();
     }
     
     /**
@@ -140,17 +56,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link ExistsInformazioniProtocolloTransazione }
+     * Create an instance of {@link FindAllMessaggioDiagnosticoResponse }
      */
-    public ExistsInformazioniProtocolloTransazione createExistsInformazioniProtocolloTransazione() {
-        return new ExistsInformazioniProtocolloTransazione();
+    public FindAllMessaggioDiagnosticoResponse createFindAllMessaggioDiagnosticoResponse() {
+        return new FindAllMessaggioDiagnosticoResponse();
     }
     
     /**
-     * Create an instance of {@link FindInformazioniProtocolloTransazioneResponse }
+     * Create an instance of {@link CountMessaggioDiagnostico }
      */
-    public FindInformazioniProtocolloTransazioneResponse createFindInformazioniProtocolloTransazioneResponse() {
-        return new FindInformazioniProtocolloTransazioneResponse();
+    public CountMessaggioDiagnostico createCountMessaggioDiagnostico() {
+        return new CountMessaggioDiagnostico();
     }
     
 

@@ -59,29 +59,5 @@ public interface IDiagnosticProducer extends IMonitoraggioRisorsa,IComponentFact
 	public void log(Connection conOpenSPCoopPdD,MsgDiagnostico msgDiagnostico) throws MsgDiagnosticoException;
 	
 	
-	/**
-	 * Creazione di un entry che permette di effettuare una correlazione con i msg diagnostici
-	 * 
-	 * @param msgDiagCorrelazione Informazioni di correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	public void logCorrelazione(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazione msgDiagCorrelazione) throws MsgDiagnosticoException; 
 	
-		
-	
-	/**
-	 * Creazione di una correlazione applicativa tra messaggi diagnostici e servizi applicativi.
-	 * 
-	 * @param msgDiagCorrelazioneSA Informazioni necessarie alla registrazione del servizio applicativo
-	 * @throws MsgDiagnosticoException
-	 */
-	public void logCorrelazioneServizioApplicativo(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneServizioApplicativo msgDiagCorrelazioneSA) throws MsgDiagnosticoException;
-
-	/**
-	 * Registrazione dell'identificativo di correlazione applicativa della risposta
-	 * 
-	 * @param msgDiagCorrelazioneApplicativa Informazioni necessarie alla registrazione della correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	public void logCorrelazioneApplicativaRisposta(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneApplicativa msgDiagCorrelazioneApplicativa) throws MsgDiagnosticoException;
 }

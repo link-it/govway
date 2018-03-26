@@ -3203,7 +3203,7 @@ public class InoltroBuste extends GenericLib{
 					idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
 					
 					msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
-					msgDiag.logCorrelazioneApplicativaRisposta();
+
 					if(richiestaDelegata!=null){
 						richiestaDelegata.setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
 					}

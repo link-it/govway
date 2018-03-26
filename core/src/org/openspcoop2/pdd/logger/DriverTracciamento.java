@@ -208,6 +208,17 @@ public class DriverTracciamento implements ITracciaDriver {
 	} 
 	
 	/**
+	 * Recupera la traccia in base all'id di transazione
+	 * 
+	 * @return Traccia
+	 * @throws DriverMsgDiagnosticiException
+	 */
+	@Override
+	public Traccia getTraccia(String idTransazione, RuoloMessaggio tipoTraccia) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+		return this.driverBase.getTraccia(idTransazione, tipoTraccia);
+	}
+	
+	/**
 	 * Recupera la traccia in base ad una serie di properties
 	 * 
 	 * @return Traccia

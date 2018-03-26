@@ -516,21 +516,21 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
-			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField(CostantiDB.TRACCE_COLUMN_ID);
 			if(rifMsg){
-				sqlQueryObject.addWhereCondition("rif_messaggio=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO+"=?");
 			}else{
-				sqlQueryObject.addWhereCondition("id_messaggio=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO+"=?");
 			}
 			if(TracciaDriverUtilities.isDefined(codicePorta)){
 				if(TracciaDriverUtilities.isDefined(codicePorta.getCodicePorta())){
-					sqlQueryObject.addWhereCondition("pdd_codice=?");
+					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_PDD_CODICE+"=?");
 				}
 				if(TracciaDriverUtilities.isDefined(codicePorta.getTipo())){
-					sqlQueryObject.addWhereCondition("pdd_tipo_soggetto=?");
+					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_PDD_TIPO_SOGGETTO+"=?");
 				}
 				if(TracciaDriverUtilities.isDefined(codicePorta.getNome())){
-					sqlQueryObject.addWhereCondition("pdd_nome_soggetto=?");
+					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_PDD_NOME_SOGGETTO+"=?");
 				}
 			}
 			sqlQueryObject.setANDLogicOperator(true);
@@ -553,7 +553,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				
-				Long idTraccia = rs.getLong("id");
+				Long idTraccia = rs.getLong(CostantiDB.TRACCE_COLUMN_ID);
 				tr =  TracciaDriverUtilities.getTraccia(connectionDB, this.tipoDatabase, 
 						this.log, idTraccia, this.properties, this.protocolliRegistrati);
 				
@@ -584,7 +584,75 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}
 	} 
 	
-	
+	/**
+	 * Recupera la traccia in base all'id di transazione
+	 * 
+	 * @return Traccia
+	 * @throws DriverMsgDiagnosticiException
+	 */
+	@Override
+	public Traccia getTraccia(String idTransazione, RuoloMessaggio tipoTraccia) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+		
+		Connection connectionDB = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Traccia tr = null;
+		
+		try{
+			
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
+			sqlQueryObject.addSelectField(CostantiDB.TRACCE_COLUMN_ID);
+			sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_ID_TRANSAZIONE+"=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO+"=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			pstmt = connectionDB.prepareStatement(sqlQueryObject.toString());
+			int index = 1;
+			pstmt.setString(index++, idTransazione);
+			pstmt.setString(index++, tipoTraccia.toString());
+			rs = pstmt.executeQuery();
+			if(rs.next()){
+				
+				Long idTraccia = rs.getLong(CostantiDB.TRACCE_COLUMN_ID);
+				tr =  TracciaDriverUtilities.getTraccia(connectionDB, this.tipoDatabase, 
+						this.log, idTraccia, this.properties, this.protocolliRegistrati);
+
+			}
+			rs.close();
+			pstmt.close();
+			
+			if(tr==null){
+				throw new DriverTracciamentoNotFoundException("Traccia non trovata (idTransazione:"+idTransazione+") (tipo:"+tipoTraccia+")");
+			}
+			return tr;
+			
+		}catch(DriverTracciamentoNotFoundException d){
+			throw d;
+		}catch(Exception e){
+			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+		}finally{
+			try{
+				rs.close();
+			}catch(Exception eClose){}
+			try{
+				pstmt.close();
+			}catch(Exception eClose){}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}	
+	}
 	
 	/**
 	 * Recupera la traccia in base ad una serie di properties
@@ -613,14 +681,14 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			ISQLQueryObject sqlQueryObject = TracciaDriverUtilities.getSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.TRACCE);
-			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField(CostantiDB.TRACCE_COLUMN_ID);
 			if(propertiesRicerca!=null && propertiesRicerca.size()>0){
 				Enumeration<String> keys = propertiesRicerca.keys();
 				while(keys.hasMoreElements()){
 					String key = keys.nextElement();
 					if(TracciaDriver.IDTRACCIA.equals(key)){
 						// Caso particolare dell'id long della traccia
-						sqlQueryObject.addWhereCondition("id=?");
+						sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_ID+"=?");
 					}else{
 						sqlQueryObject.addWhereCondition(key+"=?");
 					}
@@ -628,7 +696,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			}else{
 				throw new Exception("Properties di ricerca non fornite");
 			}
-			sqlQueryObject.addWhereCondition("tipo_messaggio=?");
+			sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO+"=?");
 			sqlQueryObject.setANDLogicOperator(true);
 			
 			pstmt = connectionDB.prepareStatement(sqlQueryObject.toString());
@@ -649,7 +717,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				
-				Long idTraccia = rs.getLong("id");
+				Long idTraccia = rs.getLong(CostantiDB.TRACCE_COLUMN_ID);
 				tr =  TracciaDriverUtilities.getTraccia(connectionDB, this.tipoDatabase, 
 						this.log, idTraccia, this.properties, this.protocolliRegistrati);
 

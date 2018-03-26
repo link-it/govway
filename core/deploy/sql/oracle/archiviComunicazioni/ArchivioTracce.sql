@@ -51,6 +51,7 @@ CREATE TABLE tracce
 	is_arrived NUMBER,
 	soap_element CLOB,
 	digest CLOB,
+	id_transazione VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -62,6 +63,7 @@ CREATE TABLE tracce
 );
 
 -- index
+CREATE INDEX TRACCE_TRANS ON tracce (id_transazione,tipo_messaggio);
 CREATE INDEX TRACCE_SEARCH_ID ON tracce (id_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_RIF ON tracce (rif_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_ID_SOGGETTO ON tracce (id_messaggio,pdd_tipo_soggetto,pdd_nome_soggetto);
@@ -95,6 +97,8 @@ CREATE TABLE tracce_riscontri
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR2(255),
 	tipo_ora_reg_meta VARCHAR2(255),
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -134,6 +138,8 @@ CREATE TABLE tracce_trasmissioni
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR2(255),
 	tipo_ora_reg_meta VARCHAR2(255),
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -170,6 +176,8 @@ CREATE TABLE tracce_eccezioni
 	rilevanza VARCHAR2(255),
 	rilevanza_meta VARCHAR2(255),
 	posizione CLOB,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -202,6 +210,8 @@ CREATE TABLE tracce_allegati
 	content_location VARCHAR2(255),
 	content_type VARCHAR2(255),
 	digest CLOB,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -232,6 +242,8 @@ CREATE TABLE tracce_ext_protocol_info
 	idtraccia NUMBER NOT NULL,
 	name VARCHAR2(255) NOT NULL,
 	value CLOB,
+	-- Data di registrazione
+	gdo TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

@@ -31,9 +31,6 @@ import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServizioApplicativo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 
 
@@ -85,42 +82,6 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IDiagnosticProducer{
 		this.diagnosticaBase.log(conOpenSPCoopPdD,msgDiagnostico);
 	}
 	
-	
-	/**
-	 * Creazione di un entry che permette di effettuare una correlazione con i msg diagnostici
-	 * 
-	 * @param msgDiagCorrelazione Informazioni di correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazione(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazione msgDiagCorrelazione) throws MsgDiagnosticoException{
-		this.diagnosticaBase.logCorrelazione(conOpenSPCoopPdD,msgDiagCorrelazione);
-	}
-	
-	
-	/**
-	 * Creazione di una correlazione applicativa tra messaggi diagnostici e servizi applicativi.
-	 * 
-	 * @param msgDiagCorrelazioneSA Informazioni necessarie alla registrazione del servizio applicativo
-	 */
-	@Override
-	public void logCorrelazioneServizioApplicativo(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneServizioApplicativo msgDiagCorrelazioneSA)throws MsgDiagnosticoException{
-		this.diagnosticaBase.logCorrelazioneServizioApplicativo(conOpenSPCoopPdD,msgDiagCorrelazioneSA);
-	}
-	
-	
-	/**
-	 * Registrazione dell'identificativo di correlazione applicativa della risposta
-	 * 
-	 * @param msgDiagCorrelazioneApplicativa Informazioni necessarie alla registrazione della correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazioneApplicativaRisposta(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneApplicativa msgDiagCorrelazioneApplicativa) throws MsgDiagnosticoException{
-		this.diagnosticaBase.logCorrelazioneApplicativaRisposta(conOpenSPCoopPdD,msgDiagCorrelazioneApplicativa);
-	}
-	
-
 	/**
 	 * Metodo che verica la connessione ad una risorsa.
 	 * Se la connessione non e' presente, viene lanciata una eccezione che contiene il motivo della mancata connessione

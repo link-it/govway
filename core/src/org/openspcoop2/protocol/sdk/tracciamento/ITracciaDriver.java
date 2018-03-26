@@ -100,6 +100,14 @@ public interface ITracciaDriver extends IComponentFactory {
 	public Traccia getTraccia(String idBusta,IDSoggetto codicePorta,boolean ricercaIdBustaComeRiferimentoMessaggio) throws DriverTracciamentoException, DriverTracciamentoNotFoundException; 
 	
 	/**
+	 * Recupera la traccia in base all'id di transazione
+	 * 
+	 * @return Traccia
+	 * @throws DriverMsgDiagnosticiException
+	 */
+	public Traccia getTraccia(String idTransazione, RuoloMessaggio tipoTraccia) throws DriverTracciamentoException, DriverTracciamentoNotFoundException; 
+	
+	/**
 	 * Recupera la traccia in base ad una serie di properties
 	 * 
 	 * @return Traccia

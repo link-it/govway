@@ -52,10 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SoggettoIdentificativo }
+     * Create an instance of {@link Proprieta }
      */
-    public SoggettoIdentificativo createSoggettoIdentificativo() {
-        return new SoggettoIdentificativo();
+    public Proprieta createProprieta() {
+        return new Proprieta();
     }
 
     /**
@@ -66,10 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FiltroInformazioniDiagnostici }
+     * Create an instance of {@link DominioDiagnostico }
      */
-    public FiltroInformazioniDiagnostici createFiltroInformazioniDiagnostici() {
-        return new FiltroInformazioniDiagnostici();
+    public DominioDiagnostico createDominioDiagnostico() {
+        return new DominioDiagnostico();
     }
 
     /**
@@ -84,62 +84,6 @@ public class ObjectFactory {
      */
     public Protocollo createProtocollo() {
         return new Protocollo();
-    }
-
-    /**
-     * Create an instance of {@link FiltroInformazioneProtocollo }
-     */
-    public FiltroInformazioneProtocollo createFiltroInformazioneProtocollo() {
-        return new FiltroInformazioneProtocollo();
-    }
-
-    /**
-     * Create an instance of {@link Servizio }
-     */
-    public Servizio createServizio() {
-        return new Servizio();
-    }
-
-    /**
-     * Create an instance of {@link DominioTransazione }
-     */
-    public DominioTransazione createDominioTransazione() {
-        return new DominioTransazione();
-    }
-
-    /**
-     * Create an instance of {@link DominioDiagnostico }
-     */
-    public DominioDiagnostico createDominioDiagnostico() {
-        return new DominioDiagnostico();
-    }
-
-    /**
-     * Create an instance of {@link IdInformazioniProtocolloTransazione }
-     */
-    public IdInformazioniProtocolloTransazione createIdInformazioniProtocolloTransazione() {
-        return new IdInformazioniProtocolloTransazione();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link InformazioniProtocolloTransazione }
-     */
-    public InformazioniProtocolloTransazione createInformazioniProtocolloTransazione() {
-        return new InformazioniProtocolloTransazione();
     }
 
 

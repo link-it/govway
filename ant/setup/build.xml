@@ -305,6 +305,12 @@ org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
 						      <include name="openspcoop2_as4-protocol_*.jar"/>
 						    </fileset>
 						</copy>
+						<copy todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
+						    <fileset dir="${deploy_sw}/jars">
+						    	<include name="activemq-client-*.jar"/>
+							<include name="hawtbuf-*.jar"/>
+						    </fileset>
+						</copy>
 					</then>
 				</if>
 				<!-- sdi -->
@@ -420,6 +426,12 @@ org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
 				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}/jars">
+				    	<include name="activemq-client-*.jar"/>
+					<include name="hawtbuf-*.jar"/>
 				    </fileset>
 				</copy>
 			</then>
@@ -728,7 +740,8 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<then>
 				<copy todir="${tmp_archivi}/pddConsole.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				        <include name="openspcoop2_as4-protocol_*.jar"/>
+					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 				    </fileset>
 				</copy>
 			</then>
@@ -799,7 +812,8 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<then>
 				<copy todir="${tmp_archivi}/pddLoader.war/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_as4-protocol_*.jar"/>
+				        <include name="openspcoop2_as4-protocol_*.jar"/>
+					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 				    </fileset>
 				</copy>
 			</then>

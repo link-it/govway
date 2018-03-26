@@ -25,10 +25,8 @@ package org.openspcoop2.protocol.basic.diagnostica;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,18 +37,13 @@ import javax.sql.DataSource;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServizioApplicativo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
@@ -98,12 +91,6 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
     
 	/** OpenSPCoop Connection */
 	protected boolean openspcoopConnection = false;
-	
-	/** AddIdTransazione */
-	protected boolean addIdTransazione = false;
-	
-	/** AddGdoInfoAllTables */
-	protected boolean addGdoForAllTables = false;
     
 	/** Emit debug info */
 	protected boolean debug = false;
@@ -345,28 +332,7 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			if(correlazioneString!=null && "false".equalsIgnoreCase(correlazioneString)){
 				DiagnosticProducer.writeCorrelazione = false;
 			}
-			
-			
-			// scrittura id
-			String addIdTransazioneString = this.appenderProperties.getProperty("addIdTransazione");
-			if(addIdTransazioneString!=null){
-				addIdTransazioneString = addIdTransazioneString.trim();
-				if("true".equals(addIdTransazioneString)){
-					this.addIdTransazione = true;
-				}
-			}
-			
-			
-			// add gdo for all tables
-			String addGdoForAllTablesString = this.appenderProperties.getProperty("addGdoForAllTables");
-			if(addGdoForAllTablesString!=null){
-				addGdoForAllTablesString = addGdoForAllTablesString.trim();
-				if("true".equals(addGdoForAllTablesString)){
-					this.addGdoForAllTables = true;
-				}
-			}
-			
-			
+
 			
 			// debug info
 			String debug = this.appenderProperties.getProperty("debug");
@@ -440,30 +406,6 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (getConnection finished) ....");
 			}
 			
-			String codiceDiagnosticoColumnName = "";
-			String codiceDiagnosticoColumnValue = "";
-			if(codiceDiagnostico!=null){
-				if(tipo==null){
-					codiceDiagnosticoColumnName = " , codice";
-				}
-				else{
-					codiceDiagnosticoColumnName = "codice";
-				}
-				codiceDiagnosticoColumnValue = " , ?";
-			}
-			
-			String idTransazioneColumnName = "";
-			String idTransazioneColumnValue = "";
-			if(this.addIdTransazione){
-				if(tipo==null){
-					idTransazioneColumnName = " , id_transazione";
-				}
-				else{
-					idTransazioneColumnName = "id_transazione";
-				}
-				idTransazioneColumnValue = " , ?";
-			}
-			
 			if(tipo==null){
 			
 				// Inserimento della traccia nel DB in modalità retro compatibile
@@ -473,7 +415,20 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico BackwardCompatible) ....");
 				}
 				
-				String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI+" (gdo, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, idfunzione, severita, messaggio, idmessaggio, idmessaggio_risposta, protocollo"+codiceDiagnosticoColumnName+idTransazioneColumnName+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?"+codiceDiagnosticoColumnValue+idTransazioneColumnValue+")";
+				String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI+" ("+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_TIPO_SOGGETTO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_NOME_SOGGETTO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_SEVERITA+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE+""+
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)";
 				int index = 1;
 				stmt = con.prepareStatement(updateString);
 				if(gdo!=null)
@@ -489,12 +444,8 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				JDBCUtilities.setSQLStringValue(stmt,index++, idBusta);
 				JDBCUtilities.setSQLStringValue(stmt,index++, idBustaRisposta);
 				JDBCUtilities.setSQLStringValue(stmt,index++,msgDiagnostico.getProtocollo());
-				if(codiceDiagnostico!=null){
-					JDBCUtilities.setSQLStringValue(stmt,index++, codiceDiagnostico);
-				}
-				if(this.addIdTransazione){
-					JDBCUtilities.setSQLStringValue(stmt,index++, idTransazione);
-				}
+				JDBCUtilities.setSQLStringValue(stmt,index++, codiceDiagnostico);
+				JDBCUtilities.setSQLStringValue(stmt,index++, idTransazione);
 				stmt.executeUpdate();
 				stmt.close();
 				
@@ -515,23 +466,19 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				java.sql.Timestamp gdoT = null;
 				if(gdo!=null)
 					gdoT =  new java.sql.Timestamp(gdo.getTime());
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo", gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_codice", getSQLStringValue(idPorta.getCodicePorta()), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_tipo_soggetto", getSQLStringValue(idPorta.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_nome_soggetto", getSQLStringValue(idPorta.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idfunzione", getSQLStringValue(idFunzione), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("severita", severita, InsertAndGeneratedKeyJDBCType.INT) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("messaggio", getSQLStringValue(messaggio), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idmessaggio", getSQLStringValue(idBusta), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idmessaggio_risposta", getSQLStringValue(idBustaRisposta), InsertAndGeneratedKeyJDBCType.STRING) );
-				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("protocollo", getSQLStringValue(msgDiagnostico.getProtocollo()), InsertAndGeneratedKeyJDBCType.STRING) );
-				if(codiceDiagnostico!=null){
-					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(codiceDiagnosticoColumnName, getSQLStringValue(codiceDiagnostico), InsertAndGeneratedKeyJDBCType.STRING) );
-				}
-				if(this.addIdTransazione){
-					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(idTransazioneColumnName, getSQLStringValue(idTransazione), InsertAndGeneratedKeyJDBCType.STRING) );
-				}
-				
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_GDO, gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE, getSQLStringValue(idPorta.getCodicePorta()), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_TIPO_SOGGETTO, getSQLStringValue(idPorta.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_NOME_SOGGETTO, getSQLStringValue(idPorta.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDFUNZIONE, getSQLStringValue(idFunzione), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_SEVERITA, severita, InsertAndGeneratedKeyJDBCType.INT) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO, getSQLStringValue(messaggio), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO, getSQLStringValue(idBusta), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA, getSQLStringValue(idBustaRisposta), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO, getSQLStringValue(msgDiagnostico.getProtocollo()), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE, getSQLStringValue(codiceDiagnostico), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE, getSQLStringValue(idTransazione), InsertAndGeneratedKeyJDBCType.STRING) );
+								
 				// ** Insert and return generated key
 				long iddiagnostico = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, tipo, 
 						new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGNOSTICI, CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID, CostantiDB.MSG_DIAGNOSTICI_SEQUENCE, CostantiDB.MSG_DIAGNOSTICI_TABLE_FOR_ID),
@@ -563,530 +510,7 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 		}
 	}
 		
-	
-	/**
-	 * Creazione di un entry che permette di effettuare una correlazione con i msg diagnostici
-	 * 
-	 * @param msgDiagCorrelazione Informazioni di correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazione(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazione msgDiagCorrelazione) throws MsgDiagnosticoException{
-		
-		if(DiagnosticProducer.writeCorrelazione){
-			PreparedStatement stmt = null;
-			Connection con = null;
-			DiagnosticConnectionResult cr = null;
-			try{
-				
-				String idBusta = msgDiagCorrelazione.getIdBusta();
-				Date gdo = msgDiagCorrelazione.getGdo();
-				String porta = msgDiagCorrelazione.getNomePorta();
-				boolean delegata = msgDiagCorrelazione.isDelegata();
-				IDSoggetto idPorta = msgDiagCorrelazione.getIdSoggetto();
-				IDSoggetto fruitore = null;
-				IDServizio servizio = null;
-				if(msgDiagCorrelazione.getInformazioniProtocollo()!=null){
-					fruitore = msgDiagCorrelazione.getInformazioniProtocollo().getFruitore();
-					servizio = IDServizioFactory.getInstance().getIDServizioFromValues(msgDiagCorrelazione.getInformazioniProtocollo().getTipoServizio(), 
-							msgDiagCorrelazione.getInformazioniProtocollo().getServizio(), 
-							msgDiagCorrelazione.getInformazioniProtocollo().getErogatore(), 
-							msgDiagCorrelazione.getInformazioniProtocollo().getVersioneServizio());
-					servizio.setAzione(msgDiagCorrelazione.getInformazioniProtocollo().getAzione());
-				}
-				String idCorrelazioneApplicativa = msgDiagCorrelazione.getCorrelazioneApplicativa();
-				
-				String idTransazione = msgDiagCorrelazione.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] ....");
-				}
-				
-				TipiDatabase tipo = null;
-				if(this.tipoDatabase!=null){
-					if(!TipiDatabase.isAMember(this.tipoDatabase)){
-						throw new MsgDiagnosticoException("Tipo database ["+this.tipoDatabase+"] non supportato");
-					}
-					tipo = TipiDatabase.toEnumConstant(this.tipoDatabase);
-				}
-				
-				//	Connessione al DB
-				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazione");
-				con = cr.getConnection();
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (getConnection finished) ....");
-				}
-				
-				String fruitoreColumnName = "";
-				String fruitoreColumnValue = "";
-				if(fruitore!=null){
-					fruitoreColumnName = ", tipo_fruitore, fruitore";
-					fruitoreColumnValue = ", ?, ?";
-				}
-				
-				String idTransazioneColumnName = "";
-				String idTransazioneColumnValue = "";
-				if(this.addIdTransazione){
-					if(tipo==null){
-						idTransazioneColumnName = " , id_transazione";
-					}
-					else{
-						idTransazioneColumnName = "id_transazione";
-					}
-					idTransazioneColumnValue = " , ?";
-				}
-				
-				if(tipo==null){
-					
-					// Inserimento della traccia nel DB in modalità retro compatibile
-					// in questa versione non viene recuperato l'id long
-				
-					if(this.debug){
-						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione backwardCompatible) ....");
-					}
-					
-					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE
-					+" (idmessaggio, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, gdo, porta, delegata"+fruitoreColumnName+", tipo_erogatore, erogatore, tipo_servizio, servizio, versione_servizio, azione, id_correlazione_applicativa, protocollo"+idTransazioneColumnName+")"+
-					" VALUES (?, ?, ?, ?, ?, ?, ?"+fruitoreColumnValue+", ?, ?, ? , ? , ? , ? , ?, ?"+idTransazioneColumnValue+")";
-					stmt = con.prepareStatement(updateString);
-					int index = 1;
-					if(idBusta!=null)
-						JDBCUtilities.setSQLStringValue(stmt,index++, idBusta);
-					else
-						throw new Exception("Identificativo messaggio non definito");
-					if(idPorta!=null){
-						if(idPorta.getCodicePorta()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, idPorta.getCodicePorta());
-						else
-							throw new Exception("IdentificativoPorta.codice non definito");
-						if(idPorta.getTipo()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, idPorta.getTipo());
-						else
-							throw new Exception("IdentificativoPorta.tipo non definito");
-						if(idPorta.getNome()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, idPorta.getNome());
-						else
-							throw new Exception("IdentificativoPorta.nome non definito");
-					}else
-						throw new Exception("IdentificativoPorta non definito");
-					if(gdo!=null)
-						stmt.setTimestamp(index++, new java.sql.Timestamp(gdo.getTime()));
-					else
-						throw new Exception("Data di registrazione non definita");
-					JDBCUtilities.setSQLStringValue(stmt,index++, porta);
-					if(delegata)
-						stmt.setInt(index++, 1);
-					else
-						stmt.setInt(index++, 0);
-					if(fruitore!=null){
-						if(fruitore.getTipo()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, fruitore.getTipo());
-						else
-							throw new Exception("Tipo fruitore non definito");
-						if(fruitore.getNome()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, fruitore.getNome());
-						else
-							throw new Exception("Nome fruitore non definito");
-					}else{
-						if(this.protocolConfiguration.isSupportoAutenticazioneSoggetti()==false){
-							throw new Exception("Fruitore non definito");
-						}
-					}
-					if(servizio!=null){
-						if(servizio.getSoggettoErogatore()!=null){
-							if(servizio.getSoggettoErogatore().getTipo()!=null)
-								JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getSoggettoErogatore().getTipo());
-							else
-								throw new Exception("Tipo soggetto erogatore non definito");
-							if(servizio.getSoggettoErogatore().getNome()!=null)
-								JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getSoggettoErogatore().getNome());
-							else
-								throw new Exception("Nome soggetto erogatore non definito");
-						}else
-							throw new Exception("Soggetto erogatore non definito");
-						if(servizio.getTipo()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getTipo());
-						else
-							throw new Exception("Tipo servizio non definito");
-						if(servizio.getNome()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getNome());
-						else
-							throw new Exception("Nome servizio non definito");
-						if(servizio.getVersione()!=null)
-							stmt.setInt(index++, servizio.getVersione());
-						else
-							throw new Exception("Versione servizio non definita");
-						JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getAzione());
-					}else
-						throw new Exception("IDServizio non definito");
-					JDBCUtilities.setSQLStringValue(stmt,index++, idCorrelazioneApplicativa);
-					JDBCUtilities.setSQLStringValue(stmt,index++, msgDiagCorrelazione.getProtocollo());
-					if(this.addIdTransazione){
-						JDBCUtilities.setSQLStringValue(stmt,index++, idTransazione);
-					}
-					stmt.executeUpdate();
-					stmt.close();
-				
-					if(this.debug){
-						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione backwardCompatible terminato) ....");
-					}
-					
-				}
-				else{
-					
-					if(this.debug){
-						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione) ....");
-					}
-					
-					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
-					
-					if(idBusta!=null)
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("idmessaggio", getSQLStringValue(idBusta), InsertAndGeneratedKeyJDBCType.STRING) );
-					else
-						throw new Exception("Identificativo messaggio non definito");
-					if(idPorta!=null){
-						if(idPorta.getCodicePorta()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_codice", getSQLStringValue(idPorta.getCodicePorta()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("IdentificativoPorta.codice non definito");
-						if(idPorta.getTipo()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_tipo_soggetto", getSQLStringValue(idPorta.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("IdentificativoPorta.tipo non definito");
-						if(idPorta.getNome()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_nome_soggetto", getSQLStringValue(idPorta.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("IdentificativoPorta.nome non definito");
-					}else
-						throw new Exception("IdentificativoPorta non definito");
-					if(gdo!=null)
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo", new java.sql.Timestamp(gdo.getTime()) , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
-					else
-						throw new Exception("Data di registrazione non definita");
-					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("porta", getSQLStringValue(porta), InsertAndGeneratedKeyJDBCType.STRING) );
-					if(delegata)
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("delegata", 1, InsertAndGeneratedKeyJDBCType.INT) );
-					else
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("delegata", 0, InsertAndGeneratedKeyJDBCType.INT) );
-					if(fruitore!=null){
-						if(fruitore.getTipo()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_fruitore", getSQLStringValue(fruitore.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("Tipo fruitore non definito");
-						if(fruitore.getNome()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("fruitore", getSQLStringValue(fruitore.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("Nome fruitore non definito");
-					}else{
-						if(this.protocolConfiguration.isSupportoAutenticazioneSoggetti()==false){
-							throw new Exception("Fruitore non definito");
-						}
-					}
-					if(servizio!=null){
-						if(servizio.getSoggettoErogatore()!=null){
-							if(servizio.getSoggettoErogatore().getTipo()!=null)
-								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_erogatore", getSQLStringValue(servizio.getSoggettoErogatore().getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
-							else
-								throw new Exception("Tipo soggetto erogatore non definito");
-							if(servizio.getSoggettoErogatore().getNome()!=null)
-								listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("erogatore", getSQLStringValue(servizio.getSoggettoErogatore().getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
-							else
-								throw new Exception("Nome soggetto erogatore non definito");
-						}else
-							throw new Exception("Soggetto erogatore non definito");
-						if(servizio.getTipo()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_servizio", getSQLStringValue(servizio.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("Tipo servizio non definito");
-						if(servizio.getNome()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("servizio", getSQLStringValue(servizio.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
-						else
-							throw new Exception("Nome servizio non definito");
-						if(servizio.getVersione()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("versione_servizio", servizio.getVersione(), InsertAndGeneratedKeyJDBCType.INT) );
-						else
-							throw new Exception("Versione servizio non definita");
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("azione", getSQLStringValue(servizio.getAzione()), InsertAndGeneratedKeyJDBCType.STRING) );
-					}else
-						throw new Exception("IDServizio non definito");
-					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("id_correlazione_applicativa", getSQLStringValue(idCorrelazioneApplicativa), InsertAndGeneratedKeyJDBCType.STRING) );
-					listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("protocollo", getSQLStringValue(msgDiagCorrelazione.getProtocollo()), InsertAndGeneratedKeyJDBCType.STRING) );
-					if(this.addIdTransazione){
-						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(idTransazioneColumnName, getSQLStringValue(idTransazione), InsertAndGeneratedKeyJDBCType.STRING) );
-					}
-					
-					// ** Insert and return generated key
-					long iddiagnostico = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, tipo, 
-							new CustomKeyGeneratorObject(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE, CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_COLUMN_ID, 
-									CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SEQUENCE, CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_TABLE_FOR_ID),
-							listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
-					if(iddiagnostico<=0){
-						throw new Exception("ID autoincrementale non ottenuto");
-					}
-					msgDiagCorrelazione.setId(iddiagnostico);
-					
-					if(this.debug){
-						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione terminato) ....");
-					}
-					
-				}
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] completato");
-				}
-				
-			}catch(Exception e){
-				throw new MsgDiagnosticoException("Errore durante la registrazione del msg diagnostico di correlazione: "+e.getMessage(),e);
-			}finally{
-				try{
-					if(stmt!=null)
-						stmt.close();
-				}catch(Exception e){}
-				try{
-					this.releaseConnection(cr, "logCorrelazione");
-				}catch(Exception e){}
-			}
-		}
-	}
-	
-	
-	/**
-	 * Creazione di una correlazione applicativa tra messaggi diagnostici e servizi applicativi.
-	 * 
-	 * @param msgDiagCorrelazioneSA Informazioni necessarie alla registrazione del servizio applicativo
-	 */
-	@Override
-	public void logCorrelazioneServizioApplicativo(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneServizioApplicativo msgDiagCorrelazioneSA)throws MsgDiagnosticoException{
-		
-		if(DiagnosticProducer.writeCorrelazione){
-			PreparedStatement stmt = null;
-			Connection con = null;
-			ResultSet rs = null;
-			DiagnosticConnectionResult cr = null;
-			try{
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] ....");
-				}
-				
-				// Connessione al DB
-				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazioneServizioApplicativo");
-				con = cr.getConnection();
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (getConnection finished) ....");
-				}
-	
-				// Prendo id di correlazione
-				StringBuffer selectString = new StringBuffer("SELECT ");
-				if(this.forceIndex){
-					selectString.append(" /*+ index("+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+" "+CostantiDB.MSG_CORR_INDEX+") */ ");
-				}
-				selectString.append(" id,gdo FROM "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+" WHERE idmessaggio=? AND delegata=?");
-				stmt = con.prepareStatement(selectString.toString());
-				String id = msgDiagCorrelazioneSA.getIdBusta();
-				if(id!=null)
-					JDBCUtilities.setSQLStringValue(stmt,1, id);
-				else
-					throw new Exception("Identificativo Messaggio non definito");
-				if(msgDiagCorrelazioneSA.isDelegata())
-					stmt.setInt(2, 1);
-				else
-					stmt.setInt(2, 0);
-				long idCorrelazione = -1;
-				Timestamp gdoT = null;
-				int tentativi = 0;
-				while(tentativi<10){
-					
-					// Succedeva un errore a causa della lentezza del db, per cui non era subito immediatamente disponibile la correlazione
-					
-					rs = stmt.executeQuery();
-					if(rs.next()){
-						idCorrelazione = rs.getLong("id");
-						if(idCorrelazione==-1)
-							throw new Exception("ID Correlazione non esistente");
-						gdoT = rs.getTimestamp("gdo");
-					}
-					rs.close();
-					
-					if(idCorrelazione>0){
-						break;
-					}
-					
-					Utilities.sleep(50);
-					
-					tentativi++;
-					
-				}
-				stmt.close();
-				if(idCorrelazione<=0){
-					throw new Exception("Non esiste una correlazione con l'id["+id+"] e delegata["+msgDiagCorrelazioneSA.isDelegata()+"]");
-				}
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (idCorrelazione prelevato) ....");
-				}
-				
-				String gdoColumnName = "";
-				String gdoColumnValue = "";
-				if(this.addGdoForAllTables){
-					gdoColumnName = " , gdo";
-					gdoColumnValue = " , ?";
-				}
-				
-				// Controllo che non esista già.
-				// Può succedere (succede in ORACLE)
-				selectString = new StringBuffer("SELECT ");
-				selectString.append(" * FROM "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA+" WHERE id_correlazione=? AND servizio_applicativo=?");
-				stmt = con.prepareStatement(selectString.toString());
-				int index = 1;
-				stmt.setLong(index++, idCorrelazione);
-				JDBCUtilities.setSQLStringValue(stmt,index++, msgDiagCorrelazioneSA.getServizioApplicativo());
-				rs = stmt.executeQuery();
-				boolean existsAlready = rs.next();
-				rs.close();
-				stmt.close();
-								
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (controllo esistenza) ....");
-				}
-				
-				if(existsAlready==false){
-							
-					if(this.debug){
-						this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (inserimento) ....");
-					}
-					
-					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA
-					+" (id_correlazione, servizio_applicativo"+gdoColumnName+")"+
-					" VALUES (?, ?"+gdoColumnValue+")";
-					stmt = con.prepareStatement(updateString);
-					index = 1;
-					stmt.setLong(index++, idCorrelazione);
-					JDBCUtilities.setSQLStringValue(stmt,index++, msgDiagCorrelazioneSA.getServizioApplicativo());
-					if(this.addGdoForAllTables){
-						stmt.setTimestamp(index++, gdoT);
-					}
-					stmt.executeUpdate();
-					stmt.close();
-				
-					if(this.debug){
-						this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (inserimento completato) ....");
-					}
-					
-				}
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] completato");
-				}
-				
-			}catch(Exception e){
-				throw new MsgDiagnosticoException("Errore durante la registrazione del msg diagnostico di correlazione: "+e.getMessage(),e);
-			}finally{
-				try{
-					if(rs!=null)
-						rs.close();
-				}catch(Exception e){}
-				try{
-					if(stmt!=null)
-						stmt.close();
-				}catch(Exception e){}
-				try{
-					this.releaseConnection(cr, "logCorrelazioneServizioApplicativo");
-				}catch(Exception e){}
-			}
-		}
-	}
-	
-	
-	/**
-	 * Registrazione dell'identificativo di correlazione applicativa della risposta
-	 * 
-	 * @param msgDiagCorrelazioneApplicativa Informazioni necessarie alla registrazione della correlazione
-	 * @throws MsgDiagnosticoException
-	 */
-	@Override
-	public void logCorrelazioneApplicativaRisposta(Connection conOpenSPCoopPdD,MsgDiagnosticoCorrelazioneApplicativa msgDiagCorrelazioneApplicativa) throws MsgDiagnosticoException{
-		if(DiagnosticProducer.writeCorrelazione){
-			PreparedStatement stmt = null;
-			Connection con = null;
-			ResultSet rs = null;
-			DiagnosticConnectionResult cr = null;
-			try{
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] ....");
-				}
-				
-				// Connessione al DB
-				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazioneApplicativaRisposta");
-				con = cr.getConnection();
-	
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] (getConnection finished) ....");
-				}
-				
-				// Prendo id di correlazione
-				StringBuffer selectString = new StringBuffer("SELECT ");
-				if(this.forceIndex){
-					selectString.append(" /*+ index("+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+" "+CostantiDB.MSG_CORR_INDEX+") */ ");
-				}
-				selectString.append(" id FROM "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+" WHERE idmessaggio=? AND delegata=?");
-				stmt = con.prepareStatement(selectString.toString());
-				String idBusta = msgDiagCorrelazioneApplicativa.getIdBusta();
-				if(idBusta!=null)
-					JDBCUtilities.setSQLStringValue(stmt,1, idBusta);
-				else
-					throw new Exception("Identificativo Messaggio non definito");
-				if(msgDiagCorrelazioneApplicativa.isDelegata())
-					stmt.setInt(2, 1);
-				else
-					stmt.setInt(2, 0);
-				long idCorrelazione = -1;
-				rs = stmt.executeQuery();
-				if(rs.next()){
-					idCorrelazione = rs.getLong("id");
-					if(idCorrelazione==-1)
-						throw new Exception("ID Correlazione non esistente");
-				}else{
-					throw new Exception("Non esiste una correlazione con l'id["+idBusta+"] e delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"]");
-				}
-				rs.close();
-				stmt.close();
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] (letto idCorrelazione) ....");
-				}
-				
-				String updateString = "UPDATE "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE
-				+" set id_correlazione_risposta=? WHERE id=?";
-				stmt = con.prepareStatement(updateString);
-				JDBCUtilities.setSQLStringValue(stmt,1, msgDiagCorrelazioneApplicativa.getCorrelazione());
-				stmt.setLong(2, idCorrelazione);
-				stmt.executeUpdate();
-				stmt.close();
-				
-				if(this.debug){
-					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] completato");
-				}
-								
-			}catch(Exception e){
-				throw new MsgDiagnosticoException("Errore durante la registrazione del msg diagnostico di correlazione (id applicativo della risposta): "+e.getMessage(),e);
-			}finally{
-				try{
-					if(rs!=null)
-						rs.close();
-				}catch(Exception e){}
-				try{
-					if(stmt!=null)
-						stmt.close();
-				}catch(Exception e){}
-				try{
-					this.releaseConnection(cr, "logCorrelazioneApplicativaRisposta");
-				}catch(Exception e){}
-			}
-		}
-	}
-	
+
 	
 	public String getTipoDatabase() {
 		return this.tipoDatabase;

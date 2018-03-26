@@ -21,8 +21,8 @@ package org.openspcoop2.core.tracciamento.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
-import org.openspcoop2.core.tracciamento.Dominio;
 import org.openspcoop2.core.tracciamento.Traccia;
+import org.openspcoop2.core.tracciamento.Dominio;
 import org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione;
 import org.openspcoop2.core.tracciamento.Busta;
 import org.openspcoop2.core.tracciamento.Allegati;
@@ -118,69 +118,6 @@ public abstract class AbstractDeserializer {
 
 	/*
 	 =================================================================================
-	 Object: dominio
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Dominio readDominio(String fileName) throws DeserializerException {
-		return (Dominio) this.xmlToObj(fileName, Dominio.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Dominio readDominio(File file) throws DeserializerException {
-		return (Dominio) this.xmlToObj(file, Dominio.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Dominio readDominio(InputStream in) throws DeserializerException {
-		return (Dominio) this.xmlToObj(in, Dominio.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Dominio readDominio(byte[] in) throws DeserializerException {
-		return (Dominio) this.xmlToObj(in, Dominio.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Dominio readDominioFromString(String in) throws DeserializerException {
-		return (Dominio) this.xmlToObj(in.getBytes(), Dominio.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: traccia
 	 =================================================================================
 	*/
@@ -238,6 +175,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Traccia readTracciaFromString(String in) throws DeserializerException {
 		return (Traccia) this.xmlToObj(in.getBytes(), Traccia.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: dominio
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dominio readDominio(String fileName) throws DeserializerException {
+		return (Dominio) this.xmlToObj(fileName, Dominio.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dominio readDominio(File file) throws DeserializerException {
+		return (Dominio) this.xmlToObj(file, Dominio.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dominio readDominio(InputStream in) throws DeserializerException {
+		return (Dominio) this.xmlToObj(in, Dominio.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dominio readDominio(byte[] in) throws DeserializerException {
+		return (Dominio) this.xmlToObj(in, Dominio.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @return Object type {@link org.openspcoop2.core.tracciamento.Dominio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dominio readDominioFromString(String in) throws DeserializerException {
+		return (Dominio) this.xmlToObj(in.getBytes(), Dominio.class);
 	}	
 	
 	

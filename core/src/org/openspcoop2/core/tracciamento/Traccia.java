@@ -37,6 +37,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="traccia">
  * 		&lt;sequence>
+ * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/tracciamento}dominio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito-elaborazione" type="{http://www.openspcoop2.org/core/tracciamento}traccia-esito-elaborazione" minOccurs="1" maxOccurs="1"/>
@@ -60,6 +61,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "traccia", 
   propOrder = {
+  	"idTransazione",
   	"dominio",
   	"oraRegistrazione",
   	"esitoElaborazione",
@@ -90,6 +92,14 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public java.lang.String getIdTransazione() {
+    return this.idTransazione;
+  }
+
+  public void setIdTransazione(java.lang.String idTransazione) {
+    this.idTransazione = idTransazione;
   }
 
   public Dominio getDominio() {
@@ -226,6 +236,10 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
 	  return org.openspcoop2.core.tracciamento.Traccia.modelStaticInstance;
   }
 
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="id-transazione",required=true,nillable=false)
+  protected java.lang.String idTransazione;
 
   @XmlElement(name="dominio",required=true,nillable=false)
   protected Dominio dominio;

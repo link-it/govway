@@ -52,10 +52,6 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServizioApplicativo;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.Utilities;
@@ -88,6 +84,8 @@ public class MsgDiagnostico {
 	private org.apache.logging.log4j.Logger loggerOpenSPCoop2 = null;
 	/**  Logger log4j utilizzato per scrivere i msgDiagnostici HumanReadable del servìzio di IntegrationManager */
 	private org.apache.logging.log4j.Logger loggerIntegrationManager = null;
+	/**  Logger log4j utilizzato per scrivere i msgDiagnostici da passare agli appender che non possiedono un id di transazione */
+	private org.apache.logging.log4j.Logger loggerResource = null;
 	/**  Logger log4j utilizzato per segnalare a video errori gravi (FATAL) */
 	private Logger loggerOpenSPCoop2Fatal = null;
 	/**  Logger log4j utilizzato per scrivere lo stack trace degli errore nel core logger di openspcoop */
@@ -152,6 +150,7 @@ public class MsgDiagnostico {
 		this.loggerMsgDiagnostico = OpenSPCoop2Logger.loggerMsgDiagnostico;
 		this.loggerOpenSPCoop2 = OpenSPCoop2Logger.loggerOpenSPCoop2;
 		this.loggerIntegrationManager = OpenSPCoop2Logger.loggerIntegrationManager;
+		this.loggerResource = OpenSPCoop2Logger.loggerOpenSPCoopResourcesAsLoggerImpl;
 		this.loggerOpenSPCoop2Fatal = OpenSPCoop2Logger.loggerOpenSPCoopConsole;
 		this.loggerMsgDiagnosticoOpenSPCoopAppender = OpenSPCoop2Logger.loggerMsgDiagnosticoOpenSPCoopAppender;
 		this.tipoMsgDiagnosticoOpenSPCoopAppender = OpenSPCoop2Logger.tipoMsgDiagnosticoOpenSPCoopAppender;
@@ -683,136 +682,6 @@ public class MsgDiagnostico {
 
 	
 	
-	/** ----------------- METODI DI LOGGING (Messaggi Diagnostici per correlazione applicativa) ---------------- */
-	
-	/**
-	 * Creazione di un entry che permette di effettuare una correlazione con i msg diagnostici
-	 * 
-	 */
-	public void logCorrelazione() {
-		if( LogLevels.SEVERITA_OFF != this.configurazionePdDReader.getSeverita_msgDiagnostici() ){
-			try{
-				// Data
-				Date gdo = DateManager.getDate();
-				if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-					gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
-				}
-				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
-					try{
-						
-						// Preparo oggetto MsgDiagnosticoCorrelazione
-						MsgDiagnosticoCorrelazione msgDiagCorrelazione = new MsgDiagnosticoCorrelazione();
-						msgDiagCorrelazione.setProtocollo(this.protocolFactory.getProtocol());
-						msgDiagCorrelazione.setIdBusta(this.idMessaggioRichiesta);
-						msgDiagCorrelazione.setIdSoggetto(this.idSoggettoDominio);
-						msgDiagCorrelazione.setGdo(gdo);
-						msgDiagCorrelazione.setNomePorta(this.porta);
-						msgDiagCorrelazione.setDelegata(this.delegata);
-						msgDiagCorrelazione.setProtocollo(this.protocolFactory.getProtocol());
-						if(this.fruitore!=null || this.servizio!=null){
-							org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo informazioniBusta = new org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo();
-							informazioniBusta.setFruitore(this.fruitore);
-							if(this.servizio!=null){
-								informazioniBusta.setErogatore(this.servizio.getSoggettoErogatore());
-								informazioniBusta.setTipoServizio(this.servizio.getTipo());
-								informazioniBusta.setServizio(this.servizio.getNome());
-								informazioniBusta.setVersioneServizio(this.servizio.getVersione());
-								informazioniBusta.setAzione(this.servizio.getAzione());
-							}
-							msgDiagCorrelazione.setInformazioniProtocollo(informazioniBusta);
-						}
-						msgDiagCorrelazione.setCorrelazioneApplicativa(this.idCorrelazioneApplicativa);
-						if(this.pddContext!=null){
-							String [] key = org.openspcoop2.core.constants.Costanti.CONTEXT_OBJECT;
-							if(key!=null){
-								for (int j = 0; j < key.length; j++) {
-									Object o = this.pddContext.getObject(key[j]);
-									if(o instanceof String){
-										msgDiagCorrelazione.addProperty(key[j], (String)o);
-									}
-								}
-							}
-						}
-						
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).logCorrelazione(this.getConnectionFromState(),msgDiagCorrelazione);
-					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico di correlazione ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
-						gestioneErroreDiagnostica(e);
-					}
-				}
-				
-			}catch(Exception e){
-				logError("MsgDiagnostico.logCorrelazione error "+e.getMessage(),e);
-				gestioneErroreDiagnostica(e);
-			}
-		}
-	}
-	
-	
-	/**
-	 * Creazione di una correlazione applicativa tra messaggi diagnostici e servizi applicativi.
-	 * 
-	 */
-	public void logCorrelazioneServizioApplicativo(){
-		if( LogLevels.SEVERITA_OFF != this.configurazionePdDReader.getSeverita_msgDiagnostici() ){
-			try{
-				MsgDiagnosticoCorrelazioneServizioApplicativo msg = new MsgDiagnosticoCorrelazioneServizioApplicativo();
-				msg.setDelegata(this.delegata);
-				msg.setIdBusta(this.idMessaggioRichiesta);
-				msg.setServizioApplicativo(this.servizioApplicativo);
-				msg.setProtocollo(this.protocolFactory.getProtocol());
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).logCorrelazioneServizioApplicativo(this.getConnectionFromState(),msg);
-					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico di correlazione (servizi applicativi) ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
-						gestioneErroreDiagnostica(e);
-					}
-				}
-				
-			}catch(Exception e){
-				logError("MsgDiagnostico.logCorrelazione error "+e.getMessage(),e);
-				gestioneErroreDiagnostica(e);
-			}
-		}
-	}
-	
-	/**
-	 * Registrazione dell'identificativo di correlazione applicativa della risposta
-	 * 
-	 * @throws MsgDiagnosticoException
-	 */
-	public void logCorrelazioneApplicativaRisposta() throws MsgDiagnosticoException{
-		if( LogLevels.SEVERITA_OFF != this.configurazionePdDReader.getSeverita_msgDiagnostici() ){
-			try{
-				MsgDiagnosticoCorrelazioneApplicativa msg = new MsgDiagnosticoCorrelazioneApplicativa();
-				msg.setIdBusta(this.idMessaggioRichiesta);
-				msg.setProtocollo(this.protocolFactory.getProtocol());
-				msg.setDelegata(this.delegata);
-				msg.setCorrelazione(this.idCorrelazioneRisposta);
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
-					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).logCorrelazioneApplicativaRisposta(this.getConnectionFromState(),msg);
-					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico di correlazione (id correlazione risposta) ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
-						gestioneErroreDiagnostica(e);
-					}
-				}
-				
-			}catch(Exception e){
-				logError("MsgDiagnostico.logCorrelazioneApplicativaRisposta error "+e.getMessage(),e);
-				gestioneErroreDiagnostica(e);
-			}
-		}
-	}
-	
-	
-	
-	
 	
 	
 	
@@ -917,13 +786,28 @@ public class MsgDiagnostico {
 					msgReplaceKey = this.replaceKeywords(messaggio);
 					msgDiag = this.getMsgDiagnostico(gdo, severitaLivelloOpenSPCoop2, msgReplaceKey, codiceDiagnostico);
 				}
-									
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(logLevelseveritaLivelloLog4J,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1120,12 +1004,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_FATAL, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_FATAL,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1234,12 +1133,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_PROTOCOL, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_ERROR_PROTOCOL,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1343,12 +1257,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_ERROR_INTEGRATION, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_ERROR_INTEGRATION,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1452,12 +1381,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_PROTOCOL, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato	
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato	
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_INFO_PROTOCOL,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1562,12 +1506,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_INFO_INTEGRATION, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_INFO_INTEGRATION,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1671,12 +1630,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_LOW, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_DEBUG_LOW,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1778,12 +1752,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_MEDIUM, msg, codiceDiagnostico);
 				}
 				
-				//	Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					//	Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_DEBUG_MEDIUM,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1886,12 +1875,27 @@ public class MsgDiagnostico {
 					msgDiag = this.getMsgDiagnostico(gdo, LogLevels.SEVERITA_DEBUG_HIGH, msg, codiceDiagnostico);
 				}
 				
-				// Msg Diagnostico personalizzato
-				for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+				if(msgDiag.getIdTransazione()!=null) {
+					// Msg Diagnostico personalizzato
+					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
+						try{
+							this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						}catch(Exception e){
+							logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+							gestioneErroreDiagnostica(e);
+						}
+					}
+				}
+				else {
+					// i diagnostici di sistema comunque non li registro sugli appender personalizzati.
+					String message = OpenSPCoop2Logger.humanReadable(msgDiag,this.idCorrelazioneApplicativa,this.idCorrelazioneRisposta,
+							this.porta,this.delegata,
+							this.fruitore,this.servizio,this.servizioApplicativo,this.protocolFactory);
 					try{
-						this.loggerMsgDiagnosticoOpenSPCoopAppender.get(i).log(this.getConnectionFromState(),msgDiag);
+						this.loggerResource.log(LogLevels.LOG_LEVEL_DEBUG_HIGH,message);
+
 					}catch(Exception e){
-						logError("Errore durante l'emissione del msg diagnostico personalizzato ["+this.tipoMsgDiagnosticoOpenSPCoopAppender.get(i)+"]: "+e.getMessage(),e);
+						logError("Errore durante l'emissione del msg diagnostico 'human readable' nel log delle risorse (id transazione non fornito): "+e.getMessage(),e);
 						gestioneErroreDiagnostica(e);
 					}
 				}
@@ -1941,6 +1945,10 @@ public class MsgDiagnostico {
 	private org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico getMsgDiagnostico(Date gdo,int severitaLivelloOpenSPCoop2,String msg,String codiceDiagnostico){
 		
 		org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiagnostico = new org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico();
+		
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)) {
+			msgDiagnostico.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		}
 		
 		msgDiagnostico.setGdo(gdo);
 		

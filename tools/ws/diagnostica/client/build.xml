@@ -123,16 +123,6 @@
 		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.MessaggioDiagnostico_MessaggioDiagnosticoPortSoap12_Client"
 				param1="${baseWsdlURL_diagnostica_ws_client}/diagnostica/MessaggioDiagnostico/soap12?wsdl" />
 	</target>
-	<target name="runInformazioniProtocolloTransazioneClient_soap11_stubFromUrl" description="Run org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client" depends="jar">
-		<property name="param" value=""/>
-		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client"
-				param1="${baseWsdlURL_diagnostica_ws_client}/diagnostica/InformazioniProtocolloTransazione/soap11?wsdl" />
-	</target>
-	<target name="runInformazioniProtocolloTransazioneClient_soap12_stubFromUrl" description="Run org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client" depends="jar">
-		<property name="param" value=""/>
-		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client"
-				param1="${baseWsdlURL_diagnostica_ws_client}/diagnostica/InformazioniProtocolloTransazione/soap12?wsdl" />
-	</target>
 	
 	
 		
@@ -146,17 +136,6 @@
 		<property name="param" value=""/>
 		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search.MessaggioDiagnostico_MessaggioDiagnosticoPortSoap12_Client"
 				param1="deploy/wsdl/MessaggioDiagnosticoSearch_PortSoap12.wsdl" />
-	</target>
-		
-	<target name="runInformazioniProtocolloTransazioneSearchClient_soap11_stubFromWsdl" description="Run org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client" depends="jar">
-		<property name="param" value=""/>
-		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap11_Client"
-				param1="deploy/wsdl/InformazioniProtocolloTransazioneSearch_PortSoap11.wsdl" />
-	</target>
-	<target name="runInformazioniProtocolloTransazioneSearchClient_soap12_stubFromWsdl" description="Run org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client" depends="jar">
-		<property name="param" value=""/>
-		<cxfrun classname="org.openspcoop2.core.diagnostica.ws.client.informazioniprotocollotransazione.search.InformazioniProtocolloTransazione_InformazioniProtocolloTransazionePortSoap12_Client"
-				param1="deploy/wsdl/InformazioniProtocolloTransazioneSearch_PortSoap12.wsdl" />
 	</target>
 
 		

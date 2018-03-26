@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.diagnostica.ws.client.messaggiodiagnostico.search;
 
@@ -35,33 +16,34 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="search-filter-messaggio-diagnostico">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica/management}dominio-diagnostico" minOccurs="0"/>
- *         &lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="codice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="severita" type="{http://www.openspcoop2.org/core/diagnostica}LivelloDiSeveritaType" minOccurs="0"/>
- *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}protocollo" minOccurs="0"/>
- *         &lt;element name="filtro-informazione-protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}filtro-informazione-protocollo" minOccurs="0"/>
- *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="search-filter-messaggio-diagnostico"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="dominio" type="{http://www.openspcoop2.org/core/diagnostica/management}dominio-diagnostico" minOccurs="0"/&gt;
+ *         &lt;element name="identificativo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="identificativo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="codice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="severita" type="{http://www.openspcoop2.org/core/diagnostica}LivelloDiSeveritaType" minOccurs="0"/&gt;
+ *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}protocollo" minOccurs="0"/&gt;
+ *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "search-filter-messaggio-diagnostico", propOrder = {
+    "idTransazione",
     "dominio",
     "identificativoRichiesta",
     "identificativoRisposta",
@@ -71,13 +53,14 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "messaggio",
     "severita",
     "protocollo",
-    "filtroInformazioneProtocollo",
     "limit",
     "offset",
     "descOrder"
 })
 public class SearchFilterMessaggioDiagnostico {
 
+    @XmlElement(name = "id-transazione")
+    protected String idTransazione;
     protected DominioDiagnostico dominio;
     @XmlElement(name = "identificativo-richiesta")
     protected String identificativoRichiesta;
@@ -91,13 +74,36 @@ public class SearchFilterMessaggioDiagnostico {
     protected XMLGregorianCalendar oraRegistrazioneMax;
     protected String codice;
     protected String messaggio;
+    @XmlSchemaType(name = "positiveInteger")
     protected BigInteger severita;
     protected Protocollo protocollo;
-    @XmlElement(name = "filtro-informazione-protocollo")
-    protected FiltroInformazioneProtocollo filtroInformazioneProtocollo;
     protected BigInteger limit;
     protected BigInteger offset;
     protected Boolean descOrder;
+
+    /**
+     * Gets the value of the idTransazione property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIdTransazione() {
+        return this.idTransazione;
+    }
+
+    /**
+     * Sets the value of the idTransazione property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIdTransazione(String value) {
+        this.idTransazione = value;
+    }
 
     /**
      * Gets the value of the dominio property.
@@ -313,30 +319,6 @@ public class SearchFilterMessaggioDiagnostico {
      */
     public void setProtocollo(Protocollo value) {
         this.protocollo = value;
-    }
-
-    /**
-     * Gets the value of the filtroInformazioneProtocollo property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FiltroInformazioneProtocollo }
-     *     
-     */
-    public FiltroInformazioneProtocollo getFiltroInformazioneProtocollo() {
-        return this.filtroInformazioneProtocollo;
-    }
-
-    /**
-     * Sets the value of the filtroInformazioneProtocollo property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FiltroInformazioneProtocollo }
-     *     
-     */
-    public void setFiltroInformazioneProtocollo(FiltroInformazioneProtocollo value) {
-        this.filtroInformazioneProtocollo = value;
     }
 
     /**

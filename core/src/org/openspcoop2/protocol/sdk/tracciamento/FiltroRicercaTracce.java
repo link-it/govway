@@ -22,10 +22,8 @@
 
 package org.openspcoop2.protocol.sdk.tracciamento;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -51,6 +49,8 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	protected Date maxDate;
 	protected Date minDate;
 
+	protected String idTransazione;
+	
 	protected RuoloMessaggio tipoTraccia;
 	protected TipoPdD tipoPdD;
 	protected IDSoggetto dominio;
@@ -73,36 +73,9 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 
 	protected Hashtable<String, String> properties;
 
-	protected List<IDSoggetto> filtroSoggetti;
-
 
 	public FiltroRicercaTracce() {
 		this.properties = new Hashtable<String, String>();
-		this.filtroSoggetti = new ArrayList<IDSoggetto>();
-	}
-
-	public void addFiltroSoggetto(IDSoggetto soggetto){
-		this.filtroSoggetti.add(soggetto);
-	}
-
-	public int sizeFiltroSoggetti(){
-		return this.filtroSoggetti.size();
-	}
-
-	public IDSoggetto getFiltroSoggetto(int i){
-		return this.filtroSoggetti.get(i);
-	}
-
-	public IDSoggetto removeFiltroSoggetto(int i){
-		return this.filtroSoggetti.remove(i);
-	}
-
-	public List<IDSoggetto> getFiltroSoggetti() {
-		return this.filtroSoggetti;
-	}
-
-	public void setFiltroSoggetti(List<IDSoggetto> list) {
-		this.filtroSoggetti = list;
 	}
 
 
@@ -415,11 +388,21 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 			InformazioniProtocollo informazioniProtocollo) {
 		this.informazioniProtocollo = informazioniProtocollo;
 	}
+	
+    public String getIdTransazione() {
+		return this.idTransazione;
+	}
+
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
 
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
 		bf.append("Filtro Ricerca traccia:");
+		if(this.idTransazione!=null)
+			bf.append(" [id-transazione:"+this.idTransazione+"]");
 		if(this.minDate!=null)
 			bf.append(" [intervallo-inferiore-data:"+this.minDate+"]");
 		if(this.maxDate!=null)
