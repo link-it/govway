@@ -67,7 +67,7 @@ public class NodeReceiverJMS extends AbstractCore implements INodeReceiver{
 		Object objReturn = null;
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		try{
-			JMSReceiver receiverJMS = new JMSReceiver(codicePorta,idModulo,NodeReceiverJMS.openspcoopProperties.singleConnection_NodeReceiver(),log, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.getPddContext()));
+			JMSReceiver receiverJMS = new JMSReceiver(codicePorta,idModulo,NodeReceiverJMS.openspcoopProperties.singleConnection_NodeReceiver(),log, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
 			while(true){ // un msg deve essere ricevuto per forza.
 				
 				String strMessageSelector = "ID = '"+idMessaggio+"'";

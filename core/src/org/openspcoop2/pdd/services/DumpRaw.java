@@ -79,7 +79,7 @@ public class DumpRaw {
 			IDService serviceType = context.getIdModuloAsIDService();
 			TipoPdD tipoPdD = context.getTipoPorta();
 			if(context.getPddContext()!=null){
-				Object tmp = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+				Object tmp = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 				if(tmp!=null){
 					idTransazione = (String) tmp;
 				}

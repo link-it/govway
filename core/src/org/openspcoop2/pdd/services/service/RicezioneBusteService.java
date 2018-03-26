@@ -719,7 +719,7 @@ public class RicezioneBusteService  {
 		if(vm!=null){
 			if(context!=null && context.getPddContext()!=null){
 				DirectVMProtocolInfo pInfo = new DirectVMProtocolInfo();
-				Object oIdTransazione = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+				Object oIdTransazione = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 				if(oIdTransazione!=null){
 					pInfo.setIdTransazione((String)oIdTransazione);
 				}

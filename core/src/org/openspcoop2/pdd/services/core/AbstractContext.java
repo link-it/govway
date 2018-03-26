@@ -122,7 +122,7 @@ public abstract class AbstractContext implements java.io.Serializable{
 	/** Costruttore */
 	public AbstractContext(IDService idModuloAsIDService, Date dataAccettazioneRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
 		this.pddContext = new PdDContext();
-		this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,UniqueIdentifierManager.newUniqueIdentifier().getAsString());
+		this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,UniqueIdentifierManager.newUniqueIdentifier().getAsString());
 		this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
 		this.identitaPdD = requestInfo.getIdentitaPdD();
 		this.idModuloAsIDService = idModuloAsIDService;

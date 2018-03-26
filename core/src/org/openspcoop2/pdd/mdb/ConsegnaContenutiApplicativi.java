@@ -292,7 +292,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
@@ -967,7 +967,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory,openspcoopstate.getStatoRichiesta());
 				idMessageResponse = 
 					imbustatore.buildID(identitaPdD, 
-							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID),
+							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE),
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);

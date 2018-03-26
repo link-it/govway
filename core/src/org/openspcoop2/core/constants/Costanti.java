@@ -36,7 +36,7 @@ import org.openspcoop2.utils.jmx.CostantiJMX;
 public class Costanti {
 	
 	 /** Contesto della Porta di Dominio */ 
-	public final static String CLUSTER_ID = "ID";
+	public final static String ID_TRANSAZIONE = "ID";
 	public final static String CONNECTION_PDD = "CONNECTION_PDD";
 	public final static String PROTOCOL_NAME = "PROTOCOL_NAME";
 	public final static String PROTOCOL_WEB_CONTEXT = "PROTOCOL_WEB_CONTEXT";
@@ -63,7 +63,7 @@ public class Costanti {
 	public final static String REQUEST_INFO = "REQUEST_INFO";
 	public final static String EXTENDED_INFO_TRANSAZIONE = "EXTENDED_INFO_TRANSAZIONE";
 	public final static String [] CONTEXT_OBJECT = 
-		new String [] {Costanti.CLUSTER_ID,Costanti.PROTOCOL_NAME,
+		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,
 			Costanti.ID_MESSAGGIO,Costanti.ID_FRUITORE,Costanti.ID_SERVIZIO,
 			Costanti.HEADER_TRASPORTO,Costanti.TIPO_OPERAZIONE_IM,

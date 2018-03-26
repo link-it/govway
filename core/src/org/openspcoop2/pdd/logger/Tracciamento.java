@@ -245,8 +245,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				busta.setOraRegistrazione(gdo);
 			}
 			
@@ -328,8 +328,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				bustaObject.setOraRegistrazione(gdo);
 			}
 			
@@ -410,8 +410,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				bustaObject.setOraRegistrazione(gdo);
 			}
 			
@@ -497,8 +497,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				busta.setOraRegistrazione(gdo);
 			}
 			
@@ -580,8 +580,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				bustaObject.setOraRegistrazione(gdo);
 			}
 			
@@ -662,8 +662,8 @@ public class Tracciamento {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 				bustaObject.setOraRegistrazione(gdo);
 			}
 			
@@ -736,7 +736,7 @@ public class Tracciamento {
 		
 		Traccia traccia = new Traccia();
 		
-		traccia.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		traccia.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 		
 		// Esito
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);

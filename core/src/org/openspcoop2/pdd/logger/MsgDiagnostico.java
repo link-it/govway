@@ -749,8 +749,8 @@ public class MsgDiagnostico {
 		try{
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			String msgReplaceKey = null;
@@ -970,8 +970,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1099,8 +1099,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1223,8 +1223,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1347,8 +1347,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1472,8 +1472,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1596,8 +1596,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1718,8 +1718,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1841,8 +1841,8 @@ public class MsgDiagnostico {
 			
 			// Data
 			Date gdo = DateManager.getDate();
-			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+			if(this.openspcoopProperties.generazioneDateCasualiLogAbilitato() && this.pddContext!=null && this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+				gdo = this.generatoreDateCasuali.getProssimaData((String)this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 			}
 			
 			org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag = null;
@@ -1946,8 +1946,8 @@ public class MsgDiagnostico {
 		
 		org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiagnostico = new org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico();
 		
-		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)) {
-			msgDiagnostico.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+			msgDiagnostico.setIdTransazione((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 		}
 		
 		msgDiagnostico.setGdo(gdo);

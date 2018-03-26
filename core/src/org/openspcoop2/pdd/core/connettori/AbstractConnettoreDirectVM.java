@@ -166,7 +166,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 				directVMProtocolInfo.setIdMessaggioRichiesta(this.idMessaggio);
 			}
 			if(this.getPddContext()!=null){
-				Object o = this.getPddContext().getObject(Costanti.CLUSTER_ID);
+				Object o = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
 				directVMProtocolInfo.setIdTransazione(o!=null ? (String)o : null);
 			}
 			
@@ -175,8 +175,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			if(pddContextPreserve!=null){
 				if("true".equalsIgnoreCase(pddContextPreserve.trim())){
 					newPddContext = this.getPddContext();
-					if(newPddContext.containsKey(Costanti.CLUSTER_ID)){
-						oldIdTransazione = (String) newPddContext.removeObject(Costanti.CLUSTER_ID);
+					if(newPddContext.containsKey(Costanti.ID_TRANSAZIONE)){
+						oldIdTransazione = (String) newPddContext.removeObject(Costanti.ID_TRANSAZIONE);
 					}
 				}
 			}
@@ -215,7 +215,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			
 			try{
 				if(oldIdTransazione!=null){
-					this.getPddContext().addObject(Costanti.CLUSTER_ID, oldIdTransazione);
+					this.getPddContext().addObject(Costanti.ID_TRANSAZIONE, oldIdTransazione);
 					oldIdTransazione = null;
 				}
 			}catch(Exception e){
@@ -265,7 +265,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		finally{
 			try{
 				if(oldIdTransazione!=null){
-					this.getPddContext().addObject(Costanti.CLUSTER_ID, oldIdTransazione);
+					this.getPddContext().addObject(Costanti.ID_TRANSAZIONE, oldIdTransazione);
 				}
 			}catch(Exception e){
 				this.logger.error("Errore avvenuto durante il ripristino del cluster id: "+e.getMessage(),e);

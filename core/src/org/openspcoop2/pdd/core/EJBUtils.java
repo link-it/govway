@@ -686,7 +686,7 @@ public class EJBUtils {
 			RichiestaDelegata richiestaDelegata,boolean rollbackRichiesta,
 			PortaDelegata pd,ServizioApplicativo sa) throws EJBUtilsException{ 
 
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		if (this.openSPCoopState instanceof OpenSPCoopStateless)
 			((OpenSPCoopStateless)this.openSPCoopState).setRispostaMsg(responseMessageError);
@@ -968,7 +968,7 @@ public class EJBUtils {
 	private GestoreMessaggi sendRispostaApplicativa(OpenSPCoop2Message msg, RichiestaDelegata richiestaDelegata, String idBustaRisposta,
 			PortaDelegata pd,ServizioApplicativo sa) throws EJBUtilsException{ 
 
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		StateMessage statoRisposta = (StateMessage) this.openSPCoopState.getStatoRisposta();
 		
@@ -1202,7 +1202,7 @@ public class EJBUtils {
 
 				else { //send modalita Stateful
 					// NOTA: usare realmente JMSSender e non l'interfaccia INodeSender, perche' questo punto riguarda INodeReceiver!!
-					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.pddContext);
+					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext);
 					JMSSender senderJMS = new JMSSender(this.identitaPdD,this.idModulo,this.log,idT);
 					if(senderJMS.send(idModuloInAttesa,
 							accettazioneMSG,this.idSessione) == false){
@@ -1698,7 +1698,7 @@ public class EJBUtils {
 						throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 					}
 					
-					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					OpenSPCoopStateless stateBehaviour = null;
 					try{
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
@@ -2157,7 +2157,7 @@ public class EJBUtils {
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 
 		//Costruisco busta Errore 
 		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
@@ -2250,7 +2250,7 @@ public class EJBUtils {
 		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 		String id_bustaErrore = 
 			imbustatore.buildID(this.identitaPdD, 
-					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
+					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
@@ -2286,7 +2286,7 @@ public class EJBUtils {
 	 */
 	public void sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(Busta busta,List<Eccezione> eccezioni)throws EJBUtilsException,ProtocolException{ 
 		
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 
 		//Costruisco busta Errore 
 		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
@@ -2503,7 +2503,7 @@ public class EJBUtils {
 	 */
 	public GestoreMessaggi sendSbloccoRicezioneBuste(String idModuloInAttesa)throws EJBUtilsException,ProtocolException{
 		
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 
 		// ID Busta Sblocco
@@ -2519,7 +2519,7 @@ public class EJBUtils {
 	
 	public GestoreMessaggi sendSOAPFault(String idModuloInAttesa,OpenSPCoop2Message msg)throws EJBUtilsException,ProtocolException{
 		
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		// ID Busta Sblocco
 		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
@@ -2553,7 +2553,7 @@ public class EJBUtils {
 			OpenSPCoop2Message msg,String profiloGestione,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{
 
-		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		// ID Busta Costruita
 		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
@@ -2887,7 +2887,7 @@ public class EJBUtils {
 
 				else { //Stateful mode:
 					// NOTA: usare realmente JMSSender e non l'interfaccia INodeSender, perche' questo punto riguarda INodeReceiver!!
-					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.pddContext);
+					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext);
 					JMSSender senderJMS = new JMSSender(this.identitaPdD,this.idModulo,this.log,idT);
 					java.util.Properties prop = new java.util.Properties();
 					prop.put("ID",this.idSessione);

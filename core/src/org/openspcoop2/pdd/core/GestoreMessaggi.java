@@ -140,6 +140,7 @@ public class GestoreMessaggi  {
 	public static final String MESSAGGI_COLUMN_ORA_REGISTRAZIONE  = "ORA_REGISTRAZIONE";
 	public static final String MESSAGGI_COLUMN_PROPRIETARIO  = "PROPRIETARIO";
 	public static final String MESSAGGI_COLUMN_PROTOCOLLO  = "PROTOCOLLO";
+	public static final String MESSAGGI_COLUMN_ID_TRANSAZIONE  = "id_transazione";
 	public static final String MESSAGGI_COLUMN_CORRELAZIONE_APPLICATIVA_RICHIESTA  = "CORRELAZIONE_APPLICATIVA";
 	public static final String MESSAGGI_COLUMN_CORRELAZIONE_APPLICATIVA_RISPOSTA  = "CORRELAZIONE_RISPOSTA";
 
@@ -194,6 +195,9 @@ public class GestoreMessaggi  {
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
+	
+	/** ID Transazione */
+	private String idTransazione;
 
 	/* --------------- Cache --------------------*/
 	public static void resetCache() throws GestoreMessaggiException{
@@ -870,8 +874,10 @@ public class GestoreMessaggi  {
 
 		this.pddContext = pddContext;
 		try{
-			if(this.pddContext!=null)
+			if(this.pddContext!=null) {
+				this.idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 				this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			}
 		}catch(Exception e){
 			this.log.error("Inizializzione GestoreMessaggi non riuscita [ProtocoFactoryManager.getInstance]:"+e.getMessage(),e);
 		}
@@ -1066,22 +1072,23 @@ public class GestoreMessaggi  {
 				query.append("INSERT INTO ");
 
 				query.append(GestoreMessaggi.MESSAGGI);
-				query.append("(ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RISPEDIZIONE, REDELIVERY_DELAY, CLUSTER_ID, CORRELAZIONE_APPLICATIVA, CORRELAZIONE_RISPOSTA, PROTOCOLLO"+fieldNamesPdDContext.toString()
-						+") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ?"+fieldValuesPdDContext.toString()+")");
+				query.append("(ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RISPEDIZIONE, REDELIVERY_DELAY, CLUSTER_ID, CORRELAZIONE_APPLICATIVA, CORRELAZIONE_RISPOSTA, PROTOCOLLO, id_transazione"+fieldNamesPdDContext.toString()
+						+") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?"+fieldValuesPdDContext.toString()+")");
 				//this.log.debug("[registraMessaggio] Aggiorno MSG["+this.tipo+"/"+this.idBusta+"] ORA_REGISTRAZIONE["+oraRegistrazioneT.toString()+"] e RISPEDIZIONE["+oraRegistrazioneT.toString()+"]");
 
 
 				pstmt = connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1, this.idBusta);
-				pstmt.setString(2, this.tipo);
-				pstmt.setTimestamp(3, oraRegistrazioneT);
-				pstmt.setTimestamp(4, oraRegistrazioneT);
-				pstmt.setTimestamp(5, oraRegistrazioneT);
-				pstmt.setString(6, GestoreMessaggi.cluster_id);
-				pstmt.setString(7, correlazioneApplicativaRichiesta);
-				pstmt.setString(8, correlazioneApplicativaRisposta);
-				pstmt.setString(9, this.protocolFactory.getProtocol());
-				int index = 10;
+				int index = 1;
+				pstmt.setString(index++, this.idBusta);
+				pstmt.setString(index++, this.tipo);
+				pstmt.setTimestamp(index++, oraRegistrazioneT);
+				pstmt.setTimestamp(index++, oraRegistrazioneT);
+				pstmt.setTimestamp(index++, oraRegistrazioneT);
+				pstmt.setString(index++, GestoreMessaggi.cluster_id);
+				pstmt.setString(index++, correlazioneApplicativaRichiesta);
+				pstmt.setString(index++, correlazioneApplicativaRisposta);
+				pstmt.setString(index++, this.protocolFactory.getProtocol());
+				pstmt.setString(index++, this.idTransazione);
 				for (int i = 0; i < objectSerializer.size(); i++) {
 					Object o = objectSerializer.get(i);
 					if(o instanceof String){
@@ -1190,11 +1197,11 @@ public class GestoreMessaggi  {
 			query.append("INSERT INTO ");
 
 			query.append(GestoreMessaggi.MESSAGGI);
-			query.append("(ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RISPEDIZIONE, REDELIVERY_DELAY, CLUSTER_ID, PROPRIETARIO, CORRELAZIONE_APPLICATIVA, CORRELAZIONE_RISPOSTA, PROTOCOLLO ");
+			query.append("(ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RISPEDIZIONE, REDELIVERY_DELAY, CLUSTER_ID, PROPRIETARIO, CORRELAZIONE_APPLICATIVA, CORRELAZIONE_RISPOSTA, PROTOCOLLO, id_transazione ");
 			if(riferimentoMessaggio!=null)
 				query.append(", RIFERIMENTO_MSG");
 			query.append(fieldNamesPdDContext.toString());
-			query.append(") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? ");
+			query.append(") VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? ");
 			if(riferimentoMessaggio!=null)
 				query.append(", ?");
 			query.append(fieldValuesPdDContext);
@@ -1204,17 +1211,18 @@ public class GestoreMessaggi  {
 
 
 			pstmt = connectionDB.prepareStatement(query.toString());
-			pstmt.setString(1, this.idBusta);
-			pstmt.setString(2, this.tipo);
-			pstmt.setTimestamp(3, oraRegistrazioneT);
-			pstmt.setTimestamp(4, oraRegistrazioneT);
-			pstmt.setTimestamp(5, oraRegistrazioneT);
-			pstmt.setString(6, GestoreMessaggi.cluster_id);
-			pstmt.setString(7, proprietarioMessaggio);
-			pstmt.setString(8, correlazioneApplicativaRichiesta);
-			pstmt.setString(9, correlazioneApplicativaRisposta);
-			pstmt.setString(10, this.protocolFactory.getProtocol());
-			int index = 11;
+			int index = 1;
+			pstmt.setString(index++, this.idBusta);
+			pstmt.setString(index++, this.tipo);
+			pstmt.setTimestamp(index++, oraRegistrazioneT);
+			pstmt.setTimestamp(index++, oraRegistrazioneT);
+			pstmt.setTimestamp(index++, oraRegistrazioneT);
+			pstmt.setString(index++, GestoreMessaggi.cluster_id);
+			pstmt.setString(index++, proprietarioMessaggio);
+			pstmt.setString(index++, correlazioneApplicativaRichiesta);
+			pstmt.setString(index++, correlazioneApplicativaRisposta);
+			pstmt.setString(index++, this.protocolFactory.getProtocol());
+			pstmt.setString(index++, this.idTransazione);
 			if(riferimentoMessaggio!=null){
 				pstmt.setString(index++,riferimentoMessaggio);
 			}
@@ -5699,7 +5707,7 @@ public class GestoreMessaggi  {
 				String rifMsg = this.getRiferimentoMessaggio();
 				JMSReceiver receiverJMS = null;
 				if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.propertiesReader.getNodeReceiver())){
-					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.pddContext);
+					String idT = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext);
 					String protocol = null;
 					if(this.protocolFactory!=null)
 						protocol = this.protocolFactory.getProtocol();

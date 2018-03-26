@@ -691,7 +691,7 @@ public class RicezioneBuste {
 		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 		
 		// ID Transazione
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, inRequestContext.getPddContext());
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
 		
 		// Loader
 		Loader loader = Loader.getInstance();
@@ -1475,7 +1475,7 @@ public class RicezioneBuste {
 				Imbustamento imbustamento = new Imbustamento(logCore, protocolFactory, openspcoopstate.getStatoRichiesta());
 				id = 
 					imbustamento.buildID(idServizio.getSoggettoErogatore(), 
-							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
+							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RICHIESTA);
@@ -6188,7 +6188,7 @@ public class RicezioneBuste {
 	}
 
 	private OpenSPCoop2Message generaBustaErrore(RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore){
-		String idTransazione = (String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = (String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		try{
 			IntegrationError integrationError = parametriGenerazioneBustaErrore.getIntegrationError();

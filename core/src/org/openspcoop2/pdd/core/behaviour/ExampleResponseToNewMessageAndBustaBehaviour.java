@@ -67,7 +67,7 @@ public class ExampleResponseToNewMessageAndBustaBehaviour implements IBehaviour 
 			mittente.setCodicePorta(gestoreMessaggioRichiesta.getProtocolFactory().createTraduttore().getIdentificativoPortaDefault(mittente));
 			bustaRisposta.setID(gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder(gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta()).newID( 
 					mittente, 
-					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.CLUSTER_ID), 
+					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.ID_TRANSAZIONE), 
 					RuoloMessaggio.RISPOSTA));
 			responseTo.setBusta(bustaRisposta);
 			

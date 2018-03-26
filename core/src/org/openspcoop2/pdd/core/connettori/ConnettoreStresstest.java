@@ -295,7 +295,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 		
 		StatefulMessage state = new StatefulMessage(null, this.logger.getLogger());
     	
-		Object id = this.getPddContext().getObject(Costanti.CLUSTER_ID);
+		Object id = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
 		String idTransazione = null;
 		if(id!=null){
 			idTransazione = (String) id;

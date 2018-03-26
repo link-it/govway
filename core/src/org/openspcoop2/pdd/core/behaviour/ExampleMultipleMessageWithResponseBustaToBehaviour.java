@@ -70,7 +70,7 @@ public class ExampleMultipleMessageWithResponseBustaToBehaviour implements IBeha
 			mittente.setCodicePorta(gestoreMessaggioRichiesta.getProtocolFactory().createTraduttore().getIdentificativoPortaDefault(mittente));
 			bustaRisposta.setID(gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder(gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta()).newID( 
 					mittente, 
-					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.CLUSTER_ID), 
+					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.ID_TRANSAZIONE), 
 					RuoloMessaggio.RISPOSTA));
 			responseTo.setBusta(bustaRisposta);
 			

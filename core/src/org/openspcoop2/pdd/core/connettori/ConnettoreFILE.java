@@ -713,7 +713,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			return null;
 		}
 		if(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
-			String idTransazione = (String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+			String idTransazione = (String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			while(tmp.contains(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID)){
 				tmp = tmp.replace(CostantiConnettori._CONNETTORE_FILE_MAP_TRANSACTION_ID, idTransazione);
 			}

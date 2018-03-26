@@ -46,7 +46,7 @@ public class ConnettoreLogger {
 		this.idMessaggio = idMessaggio;
 		this.pddContext = pddContext;
 		
-		Object oIdTransazione = this.pddContext.getObject(Costanti.CLUSTER_ID);
+		Object oIdTransazione = this.pddContext.getObject(Costanti.ID_TRANSAZIONE);
 		if(oIdTransazione!=null && (oIdTransazione instanceof String)){
 			this.idTransazione = (String) oIdTransazione;
 		}

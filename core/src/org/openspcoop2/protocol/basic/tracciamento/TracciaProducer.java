@@ -357,7 +357,7 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 		String idCorrelazioneApplicativa = traccia.getCorrelazioneApplicativa();
 		String idCorrelazioneApplicativaRisposta = traccia.getCorrelazioneApplicativaRisposta();
 		
-		String idTransazione = traccia.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+		String idTransazione = traccia.getProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 		
 		if(this.debug){
 			this.log.debug("@@ log["+busta.getID()+"] ....");

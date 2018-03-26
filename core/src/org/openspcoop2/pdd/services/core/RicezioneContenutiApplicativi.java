@@ -585,7 +585,7 @@ public class RicezioneContenutiApplicativi {
 		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 		
 		// ID Transazione
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, inRequestContext.getPddContext());
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
 		
 		// RequestInfo
 		RequestInfo requestInfo = this.msgContext.getRequestInfo();
@@ -1670,7 +1670,7 @@ public class RicezioneContenutiApplicativi {
 				Imbustamento imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
 				idMessageRequest = 
 					imbustatore.buildID(identitaPdD, 
-							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
+							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RICHIESTA);
@@ -3656,7 +3656,7 @@ public class RicezioneContenutiApplicativi {
 		boolean localForward = parametriGestioneRisposta.isLocalForward();
 		
 		// ID Transazione
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, imbustamentoMSG.getPddContext());
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, imbustamentoMSG.getPddContext());
 		
 		
 		if(localForward){
@@ -3934,7 +3934,7 @@ public class RicezioneContenutiApplicativi {
 		boolean richiestaAsincronaSimmetricaStateless = parametriGestioneRisposta.isRichiestaAsincronaSimmetricaStateless();
 		
 		PdDContext pddContext = parametriGestioneRisposta.getPddContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		IProtocolFactory<?> protocolFactory = parametriGestioneRisposta.getProtocolFactory();

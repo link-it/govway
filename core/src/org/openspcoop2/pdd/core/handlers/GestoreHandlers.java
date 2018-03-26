@@ -623,8 +623,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.inRequestHandlers!=null){
@@ -660,8 +660,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.inRequestProtocolHandlers!=null){
@@ -697,8 +697,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.outRequestHandlers!=null){
@@ -734,8 +734,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.postOutRequestHandlers!=null){
@@ -771,8 +771,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.preInResponseHandlers!=null){
@@ -808,8 +808,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.inResponseHandlers!=null){
@@ -845,8 +845,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.outResponseHandlers!=null){
@@ -882,8 +882,8 @@ public class GestoreHandlers  {
 		}
 		
 		// genero date casuali 
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
-			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
+			context.setDataElaborazioneMessaggio(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 		}
 		
 		if(GestoreHandlers.postOutResponseHandlers!=null){
@@ -901,7 +901,7 @@ public class GestoreHandlers  {
 		}
 
 		// Rilascio risorse per la generazione di date casuali
-		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 	}
 	
 	
@@ -912,10 +912,10 @@ public class GestoreHandlers  {
 			GestoreHandlers.initialize(msgDiag,log);
 		}
 		
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
 			// genero date casuali
 			if(context.getDataRichiestaOperazione()!=null){
-				context.setDataRichiestaOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+				context.setDataRichiestaOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 			}
 		}
 		
@@ -947,13 +947,13 @@ public class GestoreHandlers  {
 			GestoreHandlers.initialize(msgDiag,log);
 		}
 		
-		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)!=null){
+		if(GestoreHandlers.properties.generazioneDateCasualiLogAbilitato() && context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)!=null){
 			// genero date casuali
 			if(context.getDataRichiestaOperazione()!=null){
-				context.setDataRichiestaOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+				context.setDataRichiestaOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 			}
 			if(context.getDataCompletamentoOperazione()!=null){
-				context.setDataCompletamentoOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID)));
+				context.setDataCompletamentoOperazione(GestoreHandlers.generatoreCasualeDati.getProssimaData((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)));
 			}
 		}
 		
@@ -978,7 +978,7 @@ public class GestoreHandlers  {
 		}
 		
 		// Rilascio risorse per la generazione di date casuali
-		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID));
+		GestoreHandlers.rilasciaRisorseDemoMode((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
 	}
 
 	

@@ -56,7 +56,7 @@ public class NodeSenderJMS extends AbstractCore implements INodeSender{
 			IDSoggetto codicePorta, String idModulo, String idMessaggio, GestoreMessaggi gm)
 			throws NodeException {
 		try{
-			JMSSender senderJMS = new JMSSender(codicePorta,idModulo,OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.getPddContext()));
+			JMSSender senderJMS = new JMSSender(codicePorta,idModulo,OpenSPCoop2Logger.getLoggerOpenSPCoopCore(), PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
 			if(senderJMS.send(destinazione,
 					msg,idMessaggio) == false){
 				if(senderJMS.getException()!=null)

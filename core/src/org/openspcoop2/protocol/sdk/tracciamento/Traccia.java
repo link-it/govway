@@ -395,12 +395,12 @@ public class Traccia implements java.io.Serializable {
     public String getProperty(String key){
     	String value = this.properties.get(key);
     	if(value==null || "".equals(value)){
-    		if(Costanti.CLUSTER_ID.equals(key)){
+    		if(Costanti.ID_TRANSAZIONE.equals(key)){
     			if(this.traccia.getBusta()!=null && this.traccia.getBusta().getProtocollo()!=null && 
     					this.traccia.getBusta().getProtocollo().getProprietaList()!=null){
     				for (int i = 0; i < this.traccia.getBusta().getProtocollo().sizeProprietaList(); i++) {
 						Proprieta p = this.traccia.getBusta().getProtocollo().getProprieta(i);
-						if(Costanti.CLUSTER_ID.equals(p.getNome())){
+						if(Costanti.ID_TRANSAZIONE.equals(p.getNome())){
 							return p.getValore();
 						}
 					}

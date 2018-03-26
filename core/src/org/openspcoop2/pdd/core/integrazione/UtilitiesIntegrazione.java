@@ -795,7 +795,7 @@ public class UtilitiesIntegrazione {
 	
 	public static String getIdTransazione(PdDContext context){
 		if(context!=null){
-			return (String) context.getObject(Costanti.CLUSTER_ID);
+			return (String) context.getObject(Costanti.ID_TRANSAZIONE);
 		}
 		else{
 			return null;

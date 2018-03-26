@@ -135,7 +135,7 @@ public class InoltroRisposte extends GenericLib{
 		
 		/* PddContext */
 		PdDContext pddContext = inoltroRisposteMsg.getPddContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
 		@SuppressWarnings("unused")
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		

@@ -262,8 +262,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		// PddContext
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,context.getPddContext()); 
-		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,context.getPddContext()); 
+		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.TIPO_OPERAZIONE_IM, tipoOperazione.toString());
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.ID_MESSAGGIO, idInvocazionePerRiferimento);
 		context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA, portaDelegata);

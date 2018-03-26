@@ -150,7 +150,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 				if( (checkOnlyCache==false) && needConnection ){
 					msgDiag.highDebug("Prendo Connessione per NodeReceiver");
 					try{
-						resource = dbManager.getResource(codicePorta,idModulo, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.getPddContext()));
+						resource = dbManager.getResource(codicePorta,idModulo, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
 					}catch(Exception e){
 						throw new NodeException("Impossibile ottenere una Risorsa dal DBManager",e);
 					}
@@ -233,7 +233,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 					if( needConnection && checkOnlyCache){
 						msgDiag.highDebug("Prendo Connessione per NodeReceiver");
 						try{
-							resource = dbManager.getResource(codicePorta,idModulo, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, this.getPddContext()));
+							resource = dbManager.getResource(codicePorta,idModulo, PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.getPddContext()));
 						}catch(Exception e){
 							throw new NodeException("Impossibile ottenere una Risorsa dal DBManager",e);
 						}

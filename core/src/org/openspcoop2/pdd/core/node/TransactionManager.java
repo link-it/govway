@@ -143,7 +143,7 @@ public class TransactionManager {
 				if( (checkOnlyCache==false) && needConnection ){
 					msgDiag.highDebug("Prendo Connessione per TransactionManager");
 					try{
-						resource = dbManager.getResource(dominio,idModuloTransaction,PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext));
+						resource = dbManager.getResource(dominio,idModuloTransaction,PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 					}catch(Exception e){
 						throw new NodeException("Impossibile ottenere una Risorsa dal DBManager",e);
 					}
@@ -207,7 +207,7 @@ public class TransactionManager {
 					if(needConnection && checkOnlyCache){
 						msgDiag.highDebug("Prendo Connessione per TransactionManager NeedForJMS");
 						try{
-							resource = dbManager.getResource(dominio,idModuloTransaction,PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext));
+							resource = dbManager.getResource(dominio,idModuloTransaction,PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 						}catch(Exception e){
 							throw new NodeException("Impossibile ottenere una Risorsa dal DBManager",e);
 						}

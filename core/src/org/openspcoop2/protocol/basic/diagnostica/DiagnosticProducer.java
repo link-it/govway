@@ -384,7 +384,7 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			String idBustaRisposta = msgDiagnostico.getIdBustaRisposta();
 			String codiceDiagnostico = msgDiagnostico.getCodice();
 			
-			String idTransazione = msgDiagnostico.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
+			String idTransazione = msgDiagnostico.getProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 			
 			if(this.debug){
 				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] ....");
