@@ -142,7 +142,7 @@ public final class CostantiDB {
     public final static String TRACCIAMENTO_DS_TABLE_FOR_ID = "tracce_ds_init_seq";
     public static final String TRACCIAMENTO_DS_PROP = "tracce_ds_prop";
     
-    public static final String DUMP_APPENDER = "dump_appender_appender";
+    public static final String DUMP_APPENDER = "dump_appender";
     public final static String DUMP_APPENDER_COLUMN_ID = "id";
     public final static String DUMP_APPENDER_SEQUENCE = "seq_dump_appender";
     public final static String DUMP_APPENDER_TABLE_FOR_ID = "dump_appender_init_seq";
