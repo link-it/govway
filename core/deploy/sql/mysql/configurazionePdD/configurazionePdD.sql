@@ -250,7 +250,7 @@ CREATE TABLE dump_appender_prop
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
-	CONSTRAINT uniq_tracce_app_prop_1 UNIQUE (id_appender,nome,valore),
+	CONSTRAINT uniq_dump_app_prop_1 UNIQUE (id_appender,nome,valore),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_dump_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES dump_appender(id),
 	CONSTRAINT pk_dump_appender_prop PRIMARY KEY (id)

@@ -1053,7 +1053,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="dump_appender_prop"
                         comment="Definisce le proprietà (nome/valore) che permettono all'appender associato di attivare e poter salvare i messaggi sul backend di propria competenza">
-                        <linkit:sql-table-constraint unique="uniq_tracce_app_prop"/>
+                        <linkit:sql-table-constraint unique="uniq_dump_app_prop"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="dump-appender"
                             reference-object-type="dump-appender"
@@ -1077,7 +1077,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_appender"/>
-                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella tracce_appender(id))</linkit:sql-ddl-column-comment>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella dump_appender(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
