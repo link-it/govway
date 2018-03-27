@@ -7202,12 +7202,12 @@ public class DriverConfigurazioneDB_LIB {
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			
 			stm1 = con.prepareStatement(sqlQuery);
-			rs1 = stm1.executeQuery();
 			int index = 1;
 			if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
 				stm1.setLong(index++, idProprietario);
 			}
 			stm1.setString(index++, tipoProprietario);
+			rs1 = stm1.executeQuery();
 			
 			//recuper tutti gli appender e le prop di ogni appender
 			DumpConfigurazione dumpConfig = null;
@@ -7269,8 +7269,8 @@ public class DriverConfigurazioneDB_LIB {
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			
 			stm1 = con.prepareStatement(sqlQuery);
-			rs1 = stm1.executeQuery();
 			stm1.setLong(1, idRegola);
+			rs1 = stm1.executeQuery();
 			
 			//recuper tutti gli appender e le prop di ogni appender
 			DumpConfigurazioneRegola dumpConfig = new DumpConfigurazioneRegola(); // ci sono i default
