@@ -52,6 +52,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaModel(new Field("correlazione-applicativa",org.openspcoop2.core.config.CorrelazioneApplicativa.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new Field("correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-delegata",PortaDelegata.class));
+		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new Field("dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -93,6 +94,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaModel(new ComplexField(father,"correlazione-applicativa",org.openspcoop2.core.config.CorrelazioneApplicativa.class,"porta-delegata",PortaDelegata.class));
 		this.CORRELAZIONE_APPLICATIVA_RISPOSTA = new org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel(new ComplexField(father,"correlazione-applicativa-risposta",org.openspcoop2.core.config.CorrelazioneApplicativaRisposta.class,"porta-delegata",PortaDelegata.class));
+		this.DUMP = new org.openspcoop2.core.config.model.DumpConfigurazioneModel(new ComplexField(father,"dump",org.openspcoop2.core.config.DumpConfigurazione.class,"porta-delegata",PortaDelegata.class));
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"porta-delegata",PortaDelegata.class);
@@ -143,6 +145,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.CorrelazioneApplicativaModel CORRELAZIONE_APPLICATIVA = null;
 	 
 	public org.openspcoop2.core.config.model.CorrelazioneApplicativaRispostaModel CORRELAZIONE_APPLICATIVA_RISPOSTA = null;
+	 
+	public org.openspcoop2.core.config.model.DumpConfigurazioneModel DUMP = null;
 	 
 	public IField ID_SOGGETTO = null;
 	 

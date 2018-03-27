@@ -277,6 +277,17 @@ public class TestValidazioneSemantica {
 				tipiTracceAppenderArray[i]=tipiTracceAppenderArray[i].trim();
 			}
 			
+			String tipiDumpAppender = commonProperties.getProperty("openspcoop2.dump.appender");
+			if(tipiDumpAppender==null){
+				throw new Exception("Non sono stati definiti i tipi di appender supportati (dump)");
+			}else{
+				tipiDumpAppender = tipiDumpAppender.trim();
+			}
+			String [] tipiDumpAppenderArray = tipiDumpAppender.split(",");
+			for (int i = 0; i < tipiDumpAppenderArray.length; i++) {
+				tipiDumpAppenderArray[i]=tipiDumpAppenderArray[i].trim();
+			}
+			
 			String tipiAutenticazionePortaDelegata = commonProperties.getProperty("openspcoop2.autenticazione.pd");
 			if(tipiAutenticazionePortaDelegata==null){
 				throw new Exception("Non sono stati definiti i tipi di autenticazione per la porta delegata supportati");
@@ -367,7 +378,7 @@ public class TestValidazioneSemantica {
 						
 			ValidazioneSemantica validatore = new ValidazioneSemantica(configurazione,tipoConnettoriArray,
 					tipoSoggettiArray,tipoServiziSoapArray,tipoServiziRestArray,
-					tipiDiagnosticiAppenderArray,tipiTracceAppenderArray,
+					tipiDiagnosticiAppenderArray,tipiTracceAppenderArray,tipiDumpAppenderArray,
 					tipiAutenticazionePortaDelegataArray,tipiAutenticazionePortaApplicativaArray,
 					tipiAutorizzazionePortaDelegataArray,tipiAutorizzazionePortaApplicativaArray,
 					tipiAutorizzazioneContenutiPortaDelegataArray,tipiAutorizzazioneContenutiPortaApplicativaArray,

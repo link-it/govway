@@ -49,6 +49,7 @@
     <structure name="validazione-contenuti-applicativi" field="validazioneContenutiApplicativi" usage="optional" map-as="_ValidazioneContenutiApplicativi_Type"/>
     <structure name="correlazione-applicativa" field="correlazioneApplicativa" usage="optional" map-as="_CorrelazioneApplicativa_Type"/>
     <structure name="correlazione-applicativa-risposta" field="correlazioneApplicativaRisposta" usage="optional" map-as="_CorrelazioneApplicativaRisposta_Type"/>
+    <structure name="dump" field="dump" usage="optional" map-as="_DumpConfigurazione_Type"/>
     <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="id-port-type" field="idPortType" usage="optional" style="attribute"/>
@@ -121,6 +122,7 @@
     <structure name="validazione-contenuti-applicativi" field="validazioneContenutiApplicativi" usage="optional" map-as="_ValidazioneContenutiApplicativi_Type"/>
     <structure name="correlazione-applicativa" field="correlazioneApplicativa" usage="optional" map-as="_CorrelazioneApplicativa_Type"/>
     <structure name="correlazione-applicativa-risposta" field="correlazioneApplicativaRisposta" usage="optional" map-as="_CorrelazioneApplicativaRisposta_Type"/>
+    <structure name="dump" field="dump" usage="optional" map-as="_DumpConfigurazione_Type"/>
     <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="id-port-type" field="idPortType" usage="optional" style="attribute"/>
@@ -497,6 +499,7 @@
     <structure field="inoltroBusteNonRiscontrate" usage="required" map-as="org.openspcoop2.core.config.InoltroBusteNonRiscontrate"/>
     <structure field="messaggiDiagnostici" usage="required" map-as="org.openspcoop2.core.config.MessaggiDiagnostici"/>
     <structure field="tracciamento" usage="optional" map-as="org.openspcoop2.core.config.Tracciamento"/>
+    <structure field="dump" usage="optional" map-as="org.openspcoop2.core.config.Dump"/>
     <structure field="gestioneErrore" usage="optional" map-as="org.openspcoop2.core.config.ConfigurazioneGestioneErrore"/>
     <structure field="integrationManager" usage="optional" map-as="org.openspcoop2.core.config.IntegrationManager"/>
     <structure field="statoServiziPdd" usage="optional" map-as="org.openspcoop2.core.config.StatoServiziPdd"/>
@@ -633,6 +636,57 @@
     <value name="severita" field="severita" default="infoIntegration" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="severita-log4j" field="severitaLog4j" default="infoIntegration" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
+  <mapping name="tracciamento" class="org.openspcoop2.core.config.Tracciamento">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="openspcoopAppender" create-type="java.util.ArrayList">
+      <structure name="openspcoop-appender" map-as="_OpenspcoopAppender_Type"/>
+    </collection>
+    <collection field="openspcoopSorgenteDati" create-type="java.util.ArrayList">
+      <structure name="openspcoop-sorgente-dati" map-as="_OpenspcoopSorgenteDati_Type"/>
+    </collection>
+    <value name="stato" field="stato" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="esiti" field="esiti" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="dump" class="org.openspcoop2.core.config.Dump">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <structure name="configurazione" field="configurazione" usage="optional" map-as="_DumpConfigurazione_Type"/>
+    <collection field="openspcoopAppender" create-type="java.util.ArrayList">
+      <structure name="openspcoop-appender" map-as="_OpenspcoopAppender_Type"/>
+    </collection>
+    <value name="stato" field="stato" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="dump-binario-porta-delegata" field="dumpBinarioPortaDelegata" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="dump-binario-porta-applicativa" field="dumpBinarioPortaApplicativa" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="dump" class="org.openspcoop2.core.config.DumpConfigurazione" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <structure name="richiesta-ingresso" field="richiestaIngresso" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="richiesta-uscita" field="richiestaUscita" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="risposta-ingresso" field="rispostaIngresso" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="risposta-uscita" field="rispostaUscita" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <value name="realtime" field="realtime" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_DumpConfigurazione_Type" class="org.openspcoop2.core.config.DumpConfigurazione" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <structure name="richiesta-ingresso" field="richiestaIngresso" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="richiesta-uscita" field="richiestaUscita" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="risposta-ingresso" field="rispostaIngresso" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <structure name="risposta-uscita" field="rispostaUscita" usage="required" map-as="_DumpConfigurazioneRegola_Type"/>
+    <value name="realtime" field="realtime" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="richiesta-ingresso" class="org.openspcoop2.core.config.DumpConfigurazioneRegola" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="body" field="body" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="attachments" field="attachments" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="headers" field="headers" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_DumpConfigurazioneRegola_Type" class="org.openspcoop2.core.config.DumpConfigurazioneRegola" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="body" field="body" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="attachments" field="attachments" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="headers" field="headers" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
   <mapping name="openspcoop-appender" class="org.openspcoop2.core.config.OpenspcoopAppender" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <collection field="property" create-type="java.util.ArrayList">
@@ -666,19 +720,6 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="nome-jndi" field="nomeJndi" usage="required" style="attribute"/>
     <value name="tipo-database" field="tipoDatabase" usage="optional" style="attribute"/>
-  </mapping>
-  <mapping name="tracciamento" class="org.openspcoop2.core.config.Tracciamento">
-    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <collection field="openspcoopAppender" create-type="java.util.ArrayList">
-      <structure name="openspcoop-appender" map-as="_OpenspcoopAppender_Type"/>
-    </collection>
-    <collection field="openspcoopSorgenteDati" create-type="java.util.ArrayList">
-      <structure name="openspcoop-sorgente-dati" map-as="_OpenspcoopSorgenteDati_Type"/>
-    </collection>
-    <value name="buste" field="buste" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="dump" field="dump" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="dump-binario-porta-delegata" field="dumpBinarioPortaDelegata" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="dump-binario-porta-applicativa" field="dumpBinarioPortaApplicativa" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="integration-manager" class="org.openspcoop2.core.config.IntegrationManager">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -224,6 +225,19 @@ public class ValidazioneSemantica {
 		}
 		return bf.toString();
 	}
+	
+	/** Lista di tipi di dump appender validi */
+	private List<String> tipoDumpAppender = new ArrayList<String>();
+	/** Lista dei tipi di dump appender ammessi */
+	private String getTipoDumpAppender(){
+		StringBuffer bf = new StringBuffer();
+		for(int i=0; i<this.tipoDumpAppender.size(); i++){
+			if(i>0)
+				bf.append(",");
+			bf.append(this.tipoDumpAppender.get(i));
+		}
+		return bf.toString();
+	}
 
 	/** Lista di tipi di autenticazione porta delegata validi */
 	private List<String> tipoAutenticazionePortaDelegata = new ArrayList<String>();
@@ -333,7 +347,7 @@ public class ValidazioneSemantica {
 
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
 			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
-			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
+			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,String[]tipoDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
@@ -388,6 +402,13 @@ public class ValidazioneSemantica {
 			}
 		}else{
 			throw new DriverConfigurazioneException("Tipo di appender ammissibili per le traccie non definiti");
+		}
+		if(tipoDumpAppender!=null && tipoDumpAppender.length>0 ){
+			for(int i=0; i<tipoDumpAppender.length; i++){
+				this.tipoDumpAppender.add(tipoDumpAppender[i]);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Tipo di appender ammissibili per il dump non definiti");
 		}
 		if(tipoAutenticazionePortaDelegata!=null && tipoAutenticazionePortaDelegata.length>0 ){
 			for(int i=0; i<tipoAutenticazionePortaDelegata.length; i++){
@@ -448,13 +469,13 @@ public class ValidazioneSemantica {
 	}
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
 			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
-			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
+			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,String[]tipoDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA,
 			boolean validazioneConfigurazione) throws DriverConfigurazioneException{
-		this(configurazione,tipoConnettori,tipoSoggetti,tipoServiziSoap,tipoServiziRest,tipoMsgDiagnosticiAppender,tipoTracciamentoAppender,
+		this(configurazione,tipoConnettori,tipoSoggetti,tipoServiziSoap,tipoServiziRest,tipoMsgDiagnosticiAppender,tipoTracciamentoAppender,tipoDumpAppender,
 				tipoAutenticazionePortaDelegata,tipoAutenticazionePortaApplicativa,
 				tipoAutorizzazionePortaDelegata,tipoAutorizzazionePortaApplicativa,
 				tipoAutorizzazioneContenutoPortaDelegata,tipoAutorizzazioneContenutoPortaApplicativa,
@@ -2522,18 +2543,66 @@ public class ValidazioneSemantica {
 			}
 
 			// XSD: buste: abilitato, disabilitato
-			StatoFunzionalita tracciamentoBuste = t.getBuste();
+			StatoFunzionalita tracciamentoBuste = t.getStato();
 			if ((tracciamentoBuste != null) && !tracciamentoBuste.equals(CostantiConfigurazione.ABILITATO) && !tracciamentoBuste.equals(CostantiConfigurazione.DISABILITATO))
 				this.errori.add("Il valore 'buste' della configurazione per il tracciamento delle buste deve assumere i valori "+CostantiConfigurazione.ABILITATO+
 						" o "+CostantiConfigurazione.DISABILITATO);
 
-			// XSD: dump: abilitato, disabilitato
-			StatoFunzionalita dump = t.getDump();
-			if ((dump != null) && !dump.equals(CostantiConfigurazione.ABILITATO) && !dump.equals(CostantiConfigurazione.DISABILITATO))
-				this.errori.add("Il valore 'dump' della configurazione per il tracciamento delle buste deve assumere i valori "+CostantiConfigurazione.ABILITATO+
-						" o "+CostantiConfigurazione.DISABILITATO);
 		}
 
+		
+		// 5.  Valida dump
+		// Ogni elemento definito nelle proprieta' di un OpenSPCoopProperties deve avere un nome univoco.
+		Dump d = configurazione.getDump();
+		if (d != null) {
+			for (int j=0; j<d.sizeOpenspcoopAppenderList(); j++) {
+				OpenspcoopAppender oa = d.getOpenspcoopAppender(j);
+				
+				// Controllo tipo
+				if(oa.getTipo()==null){
+					this.errori.add("E' stato definito un appender del dump per cui non e' stato definito il tipo");
+				}
+				else {
+					
+					// Controllo tipo
+					if(this.tipoDumpAppender.contains(oa.getTipo())==false){
+						this.errori.add("E' stato definito un appender del dump per cui e' stato definito un tipo["+oa.getTipo()+"] non valido, valori ammessi sono: "+this.getTipoDumpAppender());
+					}
+				
+					for(int k=0; k<oa.sizePropertyList();k++){
+						Property oap = oa.getProperty(k);
+						
+						if(oap.getNome()==null){
+							this.errori.add("E' stato definito un appender["+oa.getTipo()+"] del dump per cui esiste una proprieta' senza un nome?");
+						}
+						else if(oap.getValore()==null){
+							this.errori.add("E' stato definito un appender["+oa.getTipo()+"] del dump per cui esiste una proprieta' senza un valore?");
+						}
+						else{
+							// Controllo univocita' nome
+							String nomeOap = oap.getNome();
+							int numOap = 0;
+							for(int h=0; h<oa.sizePropertyList();h++){
+								Property tmpOap = oa.getProperty(h);
+								if (nomeOap.equals(tmpOap.getNome()))
+									numOap++;
+							}
+							if (numOap > 1)
+								this.errori.add("Non può esistere più di una proprietà con nome "+nomeOap+" per lo stesso appender["+oa.getTipo()+"] delle tracce");
+						}
+					}
+					
+				}
+			}
+
+			// XSD: buste: abilitato, disabilitato
+			StatoFunzionalita statoDump = d.getStato();
+			if ((statoDump != null) && !statoDump.equals(CostantiConfigurazione.ABILITATO) && !statoDump.equals(CostantiConfigurazione.DISABILITATO))
+				this.errori.add("Il valore 'buste' della configurazione per il tracciamento delle buste deve assumere i valori "+CostantiConfigurazione.ABILITATO+
+						" o "+CostantiConfigurazione.DISABILITATO);
+
+
+		}
 		
 
 		// Gestione Errore

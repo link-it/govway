@@ -52,6 +52,7 @@ import java.util.List;
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="correlazione-applicativa" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="correlazione-applicativa-risposta" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -98,7 +99,8 @@ import java.util.List;
   	"messageSecurity",
   	"validazioneContenutiApplicativi",
   	"correlazioneApplicativa",
-  	"correlazioneApplicativaRisposta"
+  	"correlazioneApplicativaRisposta",
+  	"dump"
   }
 )
 
@@ -280,6 +282,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setCorrelazioneApplicativaRisposta(CorrelazioneApplicativaRisposta correlazioneApplicativaRisposta) {
     this.correlazioneApplicativaRisposta = correlazioneApplicativaRisposta;
+  }
+
+  public DumpConfigurazione getDump() {
+    return this.dump;
+  }
+
+  public void setDump(DumpConfigurazione dump) {
+    this.dump = dump;
   }
 
   public java.lang.Long getIdSoggetto() {
@@ -707,6 +717,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="correlazione-applicativa-risposta",required=false,nillable=false)
   protected CorrelazioneApplicativaRisposta correlazioneApplicativaRisposta;
+
+  @XmlElement(name="dump",required=false,nillable=false)
+  protected DumpConfigurazione dump;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idSoggetto;

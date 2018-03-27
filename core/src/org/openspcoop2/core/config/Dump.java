@@ -32,18 +32,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class for tracciamento complex type.
+/** <p>Java class for dump complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tracciamento">
+ * &lt;complexType name="dump">
  * 		&lt;sequence>
+ * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="dump-binario-porta-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="dump-binario-porta-applicativa" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -54,17 +55,17 @@ import java.util.List;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tracciamento", 
+@XmlType(name = "dump", 
   propOrder = {
-  	"openspcoopAppender",
-  	"openspcoopSorgenteDati"
+  	"configurazione",
+  	"openspcoopAppender"
   }
 )
 
-@XmlRootElement(name = "tracciamento")
+@XmlRootElement(name = "dump")
 
-public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public Tracciamento() {
+public class Dump extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public Dump() {
   }
 
   public Long getId() {
@@ -79,6 +80,14 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 		this.id=id;
 	else
 		this.id=new Long(-1);
+  }
+
+  public DumpConfigurazione getConfigurazione() {
+    return this.configurazione;
+  }
+
+  public void setConfigurazione(DumpConfigurazione configurazione) {
+    this.configurazione = configurazione;
   }
 
   public void addOpenspcoopAppender(OpenspcoopAppender openspcoopAppender) {
@@ -105,30 +114,6 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
     return this.openspcoopAppender.size();
   }
 
-  public void addOpenspcoopSorgenteDati(OpenspcoopSorgenteDati openspcoopSorgenteDati) {
-    this.openspcoopSorgenteDati.add(openspcoopSorgenteDati);
-  }
-
-  public OpenspcoopSorgenteDati getOpenspcoopSorgenteDati(int index) {
-    return this.openspcoopSorgenteDati.get( index );
-  }
-
-  public OpenspcoopSorgenteDati removeOpenspcoopSorgenteDati(int index) {
-    return this.openspcoopSorgenteDati.remove( index );
-  }
-
-  public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDatiList() {
-    return this.openspcoopSorgenteDati;
-  }
-
-  public void setOpenspcoopSorgenteDatiList(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {
-    this.openspcoopSorgenteDati=openspcoopSorgenteDati;
-  }
-
-  public int sizeOpenspcoopSorgenteDatiList() {
-    return this.openspcoopSorgenteDati.size();
-  }
-
   public void set_value_stato(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -149,12 +134,44 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
     this.stato = stato;
   }
 
-  public java.lang.String getEsiti() {
-    return this.esiti;
+  public void set_value_dumpBinarioPortaDelegata(String value) {
+    this.dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public void setEsiti(java.lang.String esiti) {
-    this.esiti = esiti;
+  public String get_value_dumpBinarioPortaDelegata() {
+    if(this.dumpBinarioPortaDelegata == null){
+    	return null;
+    }else{
+    	return this.dumpBinarioPortaDelegata.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getDumpBinarioPortaDelegata() {
+    return this.dumpBinarioPortaDelegata;
+  }
+
+  public void setDumpBinarioPortaDelegata(org.openspcoop2.core.config.constants.StatoFunzionalita dumpBinarioPortaDelegata) {
+    this.dumpBinarioPortaDelegata = dumpBinarioPortaDelegata;
+  }
+
+  public void set_value_dumpBinarioPortaApplicativa(String value) {
+    this.dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_dumpBinarioPortaApplicativa() {
+    if(this.dumpBinarioPortaApplicativa == null){
+    	return null;
+    }else{
+    	return this.dumpBinarioPortaApplicativa.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getDumpBinarioPortaApplicativa() {
+    return this.dumpBinarioPortaApplicativa;
+  }
+
+  public void setDumpBinarioPortaApplicativa(org.openspcoop2.core.config.constants.StatoFunzionalita dumpBinarioPortaApplicativa) {
+    this.dumpBinarioPortaApplicativa = dumpBinarioPortaApplicativa;
   }
 
   private static final long serialVersionUID = 1L;
@@ -163,6 +180,9 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
   private Long id;
 
 
+
+  @XmlElement(name="configurazione",required=false,nillable=false)
+  protected DumpConfigurazione configurazione;
 
   @XmlElement(name="openspcoop-appender",required=true,nillable=false)
   protected List<OpenspcoopAppender> openspcoopAppender = new ArrayList<OpenspcoopAppender>();
@@ -194,44 +214,22 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
   	return this.openspcoopAppender.size();
   }
 
-  @XmlElement(name="openspcoop-sorgente-dati",required=true,nillable=false)
-  protected List<OpenspcoopSorgenteDati> openspcoopSorgenteDati = new ArrayList<OpenspcoopSorgenteDati>();
-
-  /**
-   * @deprecated Use method getOpenspcoopSorgenteDatiList
-   * @return List<OpenspcoopSorgenteDati>
-  */
-  @Deprecated
-  public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method setOpenspcoopSorgenteDatiList
-   * @param openspcoopSorgenteDati List<OpenspcoopSorgenteDati>
-  */
-  @Deprecated
-  public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {
-  	this.openspcoopSorgenteDati=openspcoopSorgenteDati;
-  }
-
-  /**
-   * @deprecated Use method sizeOpenspcoopSorgenteDatiList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeOpenspcoopSorgenteDati() {
-  	return this.openspcoopSorgenteDati.size();
-  }
-
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)
-  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="esiti",required=false)
-  protected java.lang.String esiti;
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_dumpBinarioPortaDelegata;
+
+  @XmlAttribute(name="dump-binario-porta-delegata",required=false)
+  protected StatoFunzionalita dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_dumpBinarioPortaApplicativa;
+
+  @XmlAttribute(name="dump-binario-porta-applicativa",required=false)
+  protected StatoFunzionalita dumpBinarioPortaApplicativa = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
 }

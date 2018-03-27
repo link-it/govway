@@ -30,6 +30,11 @@
                                 <linkit:sql-comment><![CDATA[**** Tracciamento Appender ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="tracciamento-appender" object-type="tracciamento-appender"/>
                                 <linkit:sql-table object-name="tracciamento-appender-prop" object-type="tracciamento-appender-prop"/>
+                                <linkit:sql-comment><![CDATA[**** Dump Appender ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="dump-configurazione" object-type="dump-configurazione"/>
+                                <linkit:sql-table object-name="dump-configurazione-regola" object-type="dump-configurazione-regola"/>
+                                <linkit:sql-table object-name="dump-appender" object-type="dump-appender"/>
+                                <linkit:sql-table object-name="dump-appender-prop" object-type="dump-appender-prop"/>
                                 <linkit:sql-comment><![CDATA[**** Datasources dove reperire i messaggi diagnostici salvati ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="msgdiag-ds" object-type="msgdiag-ds"/>
                                 <linkit:sql-table object-name="msgdiag-ds-prop" object-type="msgdiag-ds-prop"/>
@@ -404,34 +409,46 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tracciamento_dump" type="xsd:string" minOccurs="0">
+                <xsd:element name="tracciamento_esiti" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tracciamento_dump"/>
-                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare il contenuto e gli header di trasporto dei messaggi gestiti. Il dump avviene dopo che la PdD ha 'trattato' i messaggi con il proprio engine di messaggistica (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-mapping name="tracciamento_esiti"/>
+                                <linkit:sql-ddl-column-comment>Indicazione su quali transazioni la porta deve registrare</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tracciamento_dump_bin_pd" type="xsd:string" minOccurs="0">
+                <xsd:element name="dump" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tracciamento_dump_bin_pd"/>
+                                <linkit:sql-column-mapping name="dump"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve efettuare il dump dei messaggi gestiti. Il dump avviene dopo che la PdD ha 'trattato' i messaggi con il proprio engine di messaggistica (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Dump]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_bin_pd" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_bin_pd"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare i dati raw e gli header di trasporto ricevuti (richiesta) o inviati (risposta) tramite la porta delegata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                               
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tracciamento_dump_bin_pa" type="xsd:string" minOccurs="0">
+                <xsd:element name="dump_bin_pa" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="tracciamento_dump_bin_pa"/>
+                                <linkit:sql-column-mapping name="dump_bin_pa"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare i dati raw e gli header di trasporto ricevuti (richiesta) o inviati (risposta) tramite la porta applicativa (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                               
                             </linkit:generator>
                         </xsd:appinfo>
@@ -996,6 +1013,247 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    
+    
+    
+    <xsd:element name="dump-appender">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="dump_appender"
+                        comment="Registro degli appender dei dump effettuati dalla Porta di Dominio. Ogni appender si occupa di rendere persistente i messaggi in transito nel formato e nelle risorse che gli competono (db, fileSystem, ...)"/>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tipo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    <xsd:element name="dump-appender-prop">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="dump_appender_prop"
+                        comment="Definisce le proprietà (nome/valore) che permettono all'appender associato di attivare e poter salvare i messaggi sul backend di propria competenza">
+                        <linkit:sql-table-constraint unique="uniq_tracce_app_prop"/>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="dump-appender"
+                            reference-object-type="dump-appender"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_appender"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique>
+                            <linkit:sql-table-unique-field name="id_appender"/>
+                            <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="valore"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_appender" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_appender"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella tracce_appender(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+  
+
+    <xsd:element name="dump-configurazione">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="dump_config"
+                        comment="Definisce la configurazione del dump per i messaggi in transito sulla Porta di Dominio">
+                        <linkit:sql-table-constraint unique="uniq_dump_conf"/>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="proprietario" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo logico del proprietario (config/pd/pa)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_proprietario" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_proprietario"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del proprietario (FK verso tabella configurazione(id) o porte_delegate(id) o porte_applicative(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="dump_realtime" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="dump_realtime"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve effettuare il dump interpretando le informazioni ricevute immediatamente o posticipandole in una elaborazione postProcess (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_richiesta_ingresso" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_richiesta_ingresso"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione per il messaggio di richiesta in ingresso sulla porta (FK verso tabella dump_config_regola(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_richiesta_uscita" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_richiesta_uscita"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione per il messaggio di richiesta in uscita sulla porta (FK verso tabella dump_config_regola(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_risposta_ingresso" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_risposta_ingresso"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione per il messaggio di risposta in ingresso sulla porta (FK verso tabella dump_config_regola(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_risposta_uscita" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_risposta_uscita"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione per il messaggio di risposta in uscita sulla porta (FK verso tabella dump_config_regola(id))</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    <xsd:element name="dump-configurazione-regola">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="dump_config_regola"
+                        comment="Definisce la configurazione del dump per un tipo di messaggio (richiesta/risposta) in transito (ingresso/uscita) sulla Porta di Dominio"/>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="body" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="body"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare il body del messaggio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="attachments" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="attachments"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare gli attachments del messaggio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="headers" type="xsd:string" >
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="headers"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare gli headers del messaggio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
   
 
 

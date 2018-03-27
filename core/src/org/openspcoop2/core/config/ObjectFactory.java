@@ -206,6 +206,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DumpConfigurazione }
+     */
+    public DumpConfigurazione createDumpConfigurazione() {
+        return new DumpConfigurazione();
+    }
+
+    /**
      * Create an instance of {@link Configurazione }
      */
     public Configurazione createConfigurazione() {
@@ -409,6 +416,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Dump }
+     */
+    public Dump createDump() {
+        return new Dump();
+    }
+
+    /**
      * Create an instance of {@link PortaApplicativaAzione }
      */
     public PortaApplicativaAzione createPortaApplicativaAzione() {
@@ -497,6 +511,13 @@ public class ObjectFactory {
      */
     public TipoFiltroAbilitazioneServizi createTipoFiltroAbilitazioneServizi() {
         return new TipoFiltroAbilitazioneServizi();
+    }
+
+    /**
+     * Create an instance of {@link DumpConfigurazioneRegola }
+     */
+    public DumpConfigurazioneRegola createDumpConfigurazioneRegola() {
+        return new DumpConfigurazioneRegola();
     }
 
     /**

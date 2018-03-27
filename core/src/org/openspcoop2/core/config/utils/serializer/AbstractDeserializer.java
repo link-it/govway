@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
@@ -90,6 +91,7 @@ import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Risposte;
+import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.IntegrationManager;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
@@ -98,6 +100,7 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 
 import java.io.ByteArrayInputStream;
@@ -2687,6 +2690,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: dump-configurazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazione readDumpConfigurazione(String fileName) throws DeserializerException {
+		return (DumpConfigurazione) this.xmlToObj(fileName, DumpConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazione readDumpConfigurazione(File file) throws DeserializerException {
+		return (DumpConfigurazione) this.xmlToObj(file, DumpConfigurazione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazione readDumpConfigurazione(InputStream in) throws DeserializerException {
+		return (DumpConfigurazione) this.xmlToObj(in, DumpConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazione readDumpConfigurazione(byte[] in) throws DeserializerException {
+		return (DumpConfigurazione) this.xmlToObj(in, DumpConfigurazione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazione readDumpConfigurazioneFromString(String in) throws DeserializerException {
+		return (DumpConfigurazione) this.xmlToObj(in.getBytes(), DumpConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: id-servizio-applicativo
 	 =================================================================================
 	*/
@@ -4514,6 +4580,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: dump
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.Dump}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Dump}
+	 * @return Object type {@link org.openspcoop2.core.config.Dump}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dump readDump(String fileName) throws DeserializerException {
+		return (Dump) this.xmlToObj(fileName, Dump.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.Dump}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Dump}
+	 * @return Object type {@link org.openspcoop2.core.config.Dump}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dump readDump(File file) throws DeserializerException {
+		return (Dump) this.xmlToObj(file, Dump.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.Dump}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Dump}
+	 * @return Object type {@link org.openspcoop2.core.config.Dump}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dump readDump(InputStream in) throws DeserializerException {
+		return (Dump) this.xmlToObj(in, Dump.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.Dump}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Dump}
+	 * @return Object type {@link org.openspcoop2.core.config.Dump}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dump readDump(byte[] in) throws DeserializerException {
+		return (Dump) this.xmlToObj(in, Dump.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.Dump}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.Dump}
+	 * @return Object type {@link org.openspcoop2.core.config.Dump}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Dump readDumpFromString(String in) throws DeserializerException {
+		return (Dump) this.xmlToObj(in.getBytes(), Dump.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: integration-manager
 	 =================================================================================
 	*/
@@ -5012,6 +5141,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public StatoServiziPddIntegrationManager readStatoServiziPddIntegrationManagerFromString(String in) throws DeserializerException {
 		return (StatoServiziPddIntegrationManager) this.xmlToObj(in.getBytes(), StatoServiziPddIntegrationManager.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: dump-configurazione-regola
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazioneRegola readDumpConfigurazioneRegola(String fileName) throws DeserializerException {
+		return (DumpConfigurazioneRegola) this.xmlToObj(fileName, DumpConfigurazioneRegola.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazioneRegola readDumpConfigurazioneRegola(File file) throws DeserializerException {
+		return (DumpConfigurazioneRegola) this.xmlToObj(file, DumpConfigurazioneRegola.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazioneRegola readDumpConfigurazioneRegola(InputStream in) throws DeserializerException {
+		return (DumpConfigurazioneRegola) this.xmlToObj(in, DumpConfigurazioneRegola.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazioneRegola readDumpConfigurazioneRegola(byte[] in) throws DeserializerException {
+		return (DumpConfigurazioneRegola) this.xmlToObj(in, DumpConfigurazioneRegola.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @return Object type {@link org.openspcoop2.core.config.DumpConfigurazioneRegola}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpConfigurazioneRegola readDumpConfigurazioneRegolaFromString(String in) throws DeserializerException {
+		return (DumpConfigurazioneRegola) this.xmlToObj(in.getBytes(), DumpConfigurazioneRegola.class);
 	}	
 	
 	

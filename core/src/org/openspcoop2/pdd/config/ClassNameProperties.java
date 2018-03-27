@@ -318,6 +318,18 @@ public class ClassNameProperties {
 	}
 	
 	/**
+	 * Ritorna una classe 'IDumpOpenSPCoopAppender' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getDumpOpenSPCoopAppender(String nome){
+		return this.getValue("org.openspcoop2.dumpAppender.", nome);
+	}
+	public String[] getDumpOpenSPCoopAppender() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.dumpAppender.");
+	}
+		
+	/**
 	 * Ritorna una classe 'INodeReceiver' se questa e' stata precedentemente registrata
 	 *
 	 * 

@@ -84,6 +84,9 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta">
 				
 			</xsd:element>
+			<xsd:element minOccurs="0" name="dump" type="dump-configurazione">
+				
+			</xsd:element>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -195,6 +198,9 @@
 				
 			</xsd:element>
 			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="dump" type="dump-configurazione">
 				
 			</xsd:element>
 		</xsd:sequence>
@@ -597,6 +603,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="inoltro-buste-non-riscontrate" type="inoltro-buste-non-riscontrate"/>
 			<xsd:element maxOccurs="1" minOccurs="1" name="messaggi-diagnostici" type="messaggi-diagnostici"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="tracciamento" type="tracciamento"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="dump" type="dump"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="configurazione-gestione-errore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="integration-manager" type="integration-manager"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="stato-servizi-pdd" type="stato-servizi-pdd"/>
@@ -742,6 +749,41 @@
 		<xsd:attribute default="infoIntegration" name="severita" type="Severita"/>
 		<xsd:attribute default="infoIntegration" name="severita-log4j" type="Severita"/>
 	</xsd:complexType>
+	
+	<!-- Tracciamento -->
+	<xsd:complexType name="tracciamento">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-appender" type="openspcoop-appender"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-sorgente-dati" type="openspcoop-sorgente-dati"/>
+		</xsd:sequence>
+		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute name="esiti" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Dump -->
+	<xsd:complexType name="dump">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="configurazione" type="dump-configurazione"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-appender" type="openspcoop-appender"/>
+		</xsd:sequence>
+		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="dump-binario-porta-delegata" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="dump-binario-porta-applicativa" type="StatoFunzionalita"/>
+	</xsd:complexType>
+	<xsd:complexType name="dump-configurazione">
+		<xsd:sequence>
+			<xsd:element name="richiesta-ingresso" type="dump-configurazione-regola"/>
+			<xsd:element name="richiesta-uscita" type="dump-configurazione-regola"/>
+			<xsd:element name="risposta-ingresso" type="dump-configurazione-regola"/>
+			<xsd:element name="risposta-uscita" type="dump-configurazione-regola"/>
+		</xsd:sequence>
+		<xsd:attribute default="abilitato" name="realtime" type="StatoFunzionalita"/>
+	</xsd:complexType>
+	<xsd:complexType name="dump-configurazione-regola">
+		<xsd:attribute default="abilitato" name="body" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="attachments" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="headers" type="StatoFunzionalita"/>
+	</xsd:complexType>
 
 	<!-- OpenSPCoop Appender utilizzato per appender personalizzati dei msg diagnostici e dei tracciamenti -->
 	<xsd:complexType name="openspcoop-appender">
@@ -765,17 +807,6 @@
 		<xsd:attribute name="tipo-database" type="xsd:string"/>
 	</xsd:complexType>
 	
-	<!-- Tracciamento -->
-	<xsd:complexType name="tracciamento">
-		<xsd:sequence>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-appender" type="openspcoop-appender"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="openspcoop-sorgente-dati" type="openspcoop-sorgente-dati"/>
-		</xsd:sequence>
-		<xsd:attribute default="abilitato" name="buste" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="dump" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="dump-binario-porta-delegata" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="dump-binario-porta-applicativa" type="StatoFunzionalita"/>
-	</xsd:complexType>
 	
 	<!-- Gestione accesso al servizio di Integration Manager -->
 	<xsd:complexType name="integration-manager">

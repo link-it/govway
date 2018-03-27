@@ -87,9 +87,11 @@ CREATE TABLE configurazione
 	msg_diag_severita_log4j VARCHAR2(255) NOT NULL,
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR2(255),
-	tracciamento_dump VARCHAR2(255),
-	tracciamento_dump_bin_pd VARCHAR2(255),
-	tracciamento_dump_bin_pa VARCHAR2(255),
+	tracciamento_esiti VARCHAR2(255),
+	-- Dump
+	dump VARCHAR2(255),
+	dump_bin_pd VARCHAR2(255),
+	dump_bin_pa VARCHAR2(255),
 	-- Autenticazione IntegrationManager
 	auth_integration_manager VARCHAR2(255),
 	-- Cache per l'accesso ai registri
@@ -289,6 +291,121 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_tracce_appender_prop.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+-- **** Dump Appender ****
+
+CREATE SEQUENCE seq_dump_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE dump_config
+(
+	proprietario VARCHAR2(255) NOT NULL,
+	id_proprietario NUMBER NOT NULL,
+	dump_realtime VARCHAR2(255),
+	id_richiesta_ingresso NUMBER NOT NULL,
+	id_richiesta_uscita NUMBER NOT NULL,
+	id_risposta_ingresso NUMBER NOT NULL,
+	id_risposta_uscita NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_config PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_dump_config
+BEFORE
+insert on dump_config
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_config.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_dump_config_regola MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE dump_config_regola
+(
+	body VARCHAR2(255) NOT NULL,
+	attachments VARCHAR2(255) NOT NULL,
+	headers VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_config_regola PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_dump_config_regola
+BEFORE
+insert on dump_config_regola
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_config_regola.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_dump_appender MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE dump_appender
+(
+	tipo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_appender PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_dump_appender
+BEFORE
+insert on dump_appender
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_appender.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_dump_appender_prop MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE dump_appender_prop
+(
+	id_appender NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tracce_app_prop_1 UNIQUE (id_appender,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES dump_appender(id),
+	CONSTRAINT pk_dump_appender_prop PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_dump_appender_prop
+BEFORE
+insert on dump_appender_prop
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_appender_prop.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

@@ -65,9 +65,11 @@ CREATE TABLE configurazione
 	msg_diag_severita_log4j VARCHAR(255) NOT NULL,
 	-- Tracciamento Buste
 	tracciamento_buste VARCHAR(255),
-	tracciamento_dump VARCHAR(255),
-	tracciamento_dump_bin_pd VARCHAR(255),
-	tracciamento_dump_bin_pa VARCHAR(255),
+	tracciamento_esiti VARCHAR(255),
+	-- Dump
+	dump VARCHAR(255),
+	dump_bin_pd VARCHAR(255),
+	dump_bin_pa VARCHAR(255),
 	-- Autenticazione IntegrationManager
 	auth_integration_manager VARCHAR(255),
 	-- Cache per l'accesso ai registri
@@ -203,6 +205,77 @@ CREATE TABLE tracce_appender_prop
 	-- fk/pk keys constraints
 	CONSTRAINT fk_tracce_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES tracce_appender(id),
 	CONSTRAINT pk_tracce_appender_prop PRIMARY KEY (id)
+);
+
+
+
+
+-- **** Dump Appender ****
+
+CREATE SEQUENCE seq_dump_config start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE dump_config
+(
+	proprietario VARCHAR(255) NOT NULL,
+	id_proprietario BIGINT NOT NULL,
+	dump_realtime VARCHAR(255),
+	id_richiesta_ingresso BIGINT NOT NULL,
+	id_richiesta_uscita BIGINT NOT NULL,
+	id_risposta_ingresso BIGINT NOT NULL,
+	id_risposta_uscita BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_config') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_config PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_dump_config_regola start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE dump_config_regola
+(
+	body VARCHAR(255) NOT NULL,
+	attachments VARCHAR(255) NOT NULL,
+	headers VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_config_regola') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_config_regola PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_dump_appender start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE dump_appender
+(
+	tipo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_appender') NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT pk_dump_appender PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_dump_appender_prop start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE dump_appender_prop
+(
+	id_appender BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_appender_prop') NOT NULL,
+	-- unique constraints
+	CONSTRAINT uniq_tracce_app_prop_1 UNIQUE (id_appender,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_appender_prop_1 FOREIGN KEY (id_appender) REFERENCES dump_appender(id),
+	CONSTRAINT pk_dump_appender_prop PRIMARY KEY (id)
 );
 
 

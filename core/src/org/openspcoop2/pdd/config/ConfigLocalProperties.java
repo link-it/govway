@@ -33,6 +33,9 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -1114,7 +1117,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 			
 			// Tracciamento
 			
-			String tracciamentoBuste = this.getValue("tracciamento.buste");
+			String tracciamentoBuste = this.getValue("tracciamento.stato");
 			if(tracciamentoBuste!=null){
 				tracciamentoBuste = tracciamentoBuste.trim();
 				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoBuste) && 
@@ -1122,31 +1125,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 					throw new Exception("Impostazione sul tracciamento buste non corretta");
 				}
 			}
-			String tracciamentoDump = this.getValue("tracciamento.dump");
-			if(tracciamentoDump!=null){
-				tracciamentoDump = tracciamentoDump.trim();
-				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoDump) && 
-						!CostantiConfigurazione.DISABILITATO.equals(tracciamentoDump)){
-					throw new Exception("Impostazione sul dump applicativo non corretta");
-				}
-			}
-			String tracciamentoDumpBinarioPortaDelegata = this.getValue("tracciamento.dumpBinarioPortaDelegata");
-			if(tracciamentoDumpBinarioPortaDelegata!=null){
-				tracciamentoDumpBinarioPortaDelegata = tracciamentoDumpBinarioPortaDelegata.trim();
-				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoDumpBinarioPortaDelegata) && 
-						!CostantiConfigurazione.DISABILITATO.equals(tracciamentoDumpBinarioPortaDelegata)){
-					throw new Exception("Impostazione sul dump binario della porta delegata non corretta");
-				}
-			}
-			String tracciamentoDumpBinarioPortaApplicativa = this.getValue("tracciamento.dumpBinarioPortaApplicativa");
-			if(tracciamentoDumpBinarioPortaApplicativa!=null){
-				tracciamentoDumpBinarioPortaApplicativa = tracciamentoDumpBinarioPortaApplicativa.trim();
-				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoDumpBinarioPortaApplicativa) && 
-						!CostantiConfigurazione.DISABILITATO.equals(tracciamentoDumpBinarioPortaApplicativa)){
-					throw new Exception("Impostazione sul dump binario della porta applicativa non corretta");
-				}
-			}
-			
+						
 			String tracciamentoAppendersDisabledTmp = this.getValue("tracciamento.appenders.disabled");
 			boolean disabilitatiTracciamentoAppenderOriginali = false;
 			if(tracciamentoAppendersDisabledTmp!=null && "true".equals(tracciamentoAppendersDisabledTmp)){
@@ -1173,30 +1152,17 @@ public class ConfigLocalProperties extends InstanceProperties {
 					}
 				}
 			}
-			if(tracciamentoBuste!=null || tracciamentoDump!=null || 
-					tracciamentoDumpBinarioPortaDelegata!=null || tracciamentoDumpBinarioPortaApplicativa!=null || 
+			if(tracciamentoBuste!=null ||
 					tracciamentoAppenders!=null){
 				if(configurazione.getTracciamento()==null){
 					configurazione.setTracciamento(new Tracciamento());
 					if(tracciamentoBuste==null){
-						configurazione.getTracciamento().setBuste(CostantiConfigurazione.ABILITATO); // default
-					}
-					if(tracciamentoDump==null){
-						configurazione.getTracciamento().setDump(CostantiConfigurazione.DISABILITATO); // default
+						configurazione.getTracciamento().setStato(CostantiConfigurazione.ABILITATO); // default
 					}
 				}
 			}
 			if(tracciamentoBuste!=null){
-				configurazione.getTracciamento().setBuste(StatoFunzionalita.toEnumConstant(tracciamentoBuste));
-			}
-			if(tracciamentoDump!=null){
-				configurazione.getTracciamento().setDump(StatoFunzionalita.toEnumConstant(tracciamentoDump));
-			}
-			if(tracciamentoDumpBinarioPortaDelegata!=null){
-				configurazione.getTracciamento().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(tracciamentoDumpBinarioPortaDelegata));
-			}
-			if(tracciamentoDumpBinarioPortaApplicativa!=null){
-				configurazione.getTracciamento().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(tracciamentoDumpBinarioPortaApplicativa));
+				configurazione.getTracciamento().setStato(StatoFunzionalita.toEnumConstant(tracciamentoBuste));
 			}
 			if(tracciamentoAppenders!=null){
 				
@@ -1267,6 +1233,190 @@ public class ConfigLocalProperties extends InstanceProperties {
 			
 			
 			
+			// Dump
+			
+			String dumpStato = this.getValue("dump.stato");
+			if(dumpStato!=null){
+				dumpStato = dumpStato.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(dumpStato) && 
+						!CostantiConfigurazione.DISABILITATO.equals(dumpStato)){
+					throw new Exception("Impostazione sul dump applicativo non corretta");
+				}
+			}
+			String dumpBinarioPortaDelegata = this.getValue("dump.dumpBinarioPortaDelegata");
+			if(dumpBinarioPortaDelegata!=null){
+				dumpBinarioPortaDelegata = dumpBinarioPortaDelegata.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(dumpBinarioPortaDelegata) && 
+						!CostantiConfigurazione.DISABILITATO.equals(dumpBinarioPortaDelegata)){
+					throw new Exception("Impostazione sul dump binario della porta delegata non corretta");
+				}
+			}
+			String dumpBinarioPortaApplicativa = this.getValue("dump.dumpBinarioPortaApplicativa");
+			if(dumpBinarioPortaApplicativa!=null){
+				dumpBinarioPortaApplicativa = dumpBinarioPortaApplicativa.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(dumpBinarioPortaApplicativa) && 
+						!CostantiConfigurazione.DISABILITATO.equals(dumpBinarioPortaApplicativa)){
+					throw new Exception("Impostazione sul dump binario della porta applicativa non corretta");
+				}
+			}
+			
+			String dumpAppendersDisabledTmp = this.getValue("dump.appenders.disabled");
+			boolean disabilitatiDumpAppenderOriginali = false;
+			if(dumpAppendersDisabledTmp!=null && "true".equals(dumpAppendersDisabledTmp)){
+				disabilitatiDumpAppenderOriginali = true;
+				if(configurazione.getDump()!=null){
+					while(configurazione.getDump().sizeOpenspcoopAppenderList()>0){
+						configurazione.getDump().removeOpenspcoopAppender(0);
+					}
+				}
+			}
+			
+			String dumpAppendersTmp = this.getValue("dump.appenders");
+			String [] dumpAppenders = null;
+			if(dumpAppendersTmp!=null){
+				dumpAppendersTmp = dumpAppendersTmp.trim();
+				dumpAppenders = dumpAppendersTmp.split(",");
+				if(dumpAppenders!=null){
+					if(dumpAppenders.length>0){
+						for (int i = 0; i < dumpAppenders.length; i++) {
+							dumpAppenders[i] = dumpAppenders[i].trim();
+						}
+					}else{
+						dumpAppenders = null;
+					}
+				}
+			}
+			if(dumpStato!=null || 
+					dumpBinarioPortaDelegata!=null || dumpBinarioPortaApplicativa!=null || 
+					dumpAppenders!=null){
+				if(configurazione.getDump()==null){
+					configurazione.setDump(new Dump());
+					if(dumpStato==null){
+						configurazione.getDump().setStato(CostantiConfigurazione.DISABILITATO); // default
+					}
+				}
+			}
+			if(dumpStato!=null){
+				configurazione.getDump().setStato(StatoFunzionalita.toEnumConstant(dumpStato));
+			}
+			if(dumpBinarioPortaDelegata!=null){
+				configurazione.getDump().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpBinarioPortaDelegata));
+			}
+			if(dumpBinarioPortaApplicativa!=null){
+				configurazione.getDump().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpBinarioPortaApplicativa));
+			}
+			if(dumpAppenders!=null){
+				
+				// Dump appenders
+				
+				for (int i = 0; i < dumpAppenders.length; i++) {
+					
+					String tipo = this.getValue("dump.appender."+dumpAppenders[i]+".tipo");
+					if(tipo==null){
+						throw new Exception("Tipo dell'appender del dump "+dumpAppenders[i]+" non definito");
+					}else{
+						tipo = tipo.trim();
+					}
+					
+					String valueEnable = this.getValue("dump.appender."+dumpAppenders[i]+".enabled");
+					if(valueEnable!=null && "false".equalsIgnoreCase(valueEnable.trim())){
+						// Voglio eliminare tale appender
+						if(disabilitatiDumpAppenderOriginali==false){
+							for(int j=0; j<configurazione.getDump().sizeOpenspcoopAppenderList(); j++){
+								if(tipo.equals(configurazione.getDump().getOpenspcoopAppender(j).getTipo()) ){
+									configurazione.getDump().removeOpenspcoopAppender(j);
+									break;
+								}
+							}
+						}// else ho gia eliminato gli appenders originali
+					}
+					else{
+						// Voglio creare/modificare un appender
+						OpenspcoopAppender appender = null;
+						for(int j=0; j<configurazione.getDump().sizeOpenspcoopAppenderList(); j++){
+							if(tipo.equals(configurazione.getDump().getOpenspcoopAppender(j).getTipo()) ){
+								appender = configurazione.getDump().removeOpenspcoopAppender(j);
+								break;
+							}
+						}
+						if(appender==null){
+							// creo
+							appender = new OpenspcoopAppender();
+							appender.setTipo(tipo);
+						}	
+						
+						// Elimino vecchie properties
+						while(appender.sizePropertyList()>0){
+							appender.removeProperty(0);
+						}
+						
+						// Aggiunto nuove
+						Properties properties = this.readProperties("dump.appender."+dumpAppenders[i]+".property.");
+						Enumeration<?> keys = properties.keys();
+						while (keys.hasMoreElements()) {
+							String key = (String) keys.nextElement();
+							Property ap = new Property();
+							ap.setNome(key);
+							ap.setValore(properties.getProperty(key));
+							appender.addProperty(ap);
+						}
+						
+						configurazione.getDump().addOpenspcoopAppender(appender);
+					}
+					
+				}
+				
+			}
+			
+			// regole di dump
+			
+			String dumpRealtime = this.getValue("dump.realtime");
+			if(dumpRealtime!=null){
+				dumpRealtime = dumpRealtime.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(dumpStato) && 
+						!CostantiConfigurazione.DISABILITATO.equals(dumpStato)){
+					throw new Exception("Impostazione sul dump realtime non corretta");
+				}
+			}
+			
+			DumpConfigurazioneRegola regolaRequestIn = this.readRegola("request", "in");
+			DumpConfigurazioneRegola regolaRequestOut = this.readRegola("request", "out");
+			DumpConfigurazioneRegola regolaResponseIn = this.readRegola("response", "in");
+			DumpConfigurazioneRegola regolaResponseOut = this.readRegola("response", "out");
+			
+			if(dumpRealtime!=null || 
+					regolaRequestIn!=null || regolaRequestOut!=null ||
+					regolaResponseIn!=null || regolaResponseOut!=null ) {
+				if(configurazione.getDump()==null){
+					configurazione.setDump(new Dump());
+					if(dumpStato==null){
+						configurazione.getDump().setStato(CostantiConfigurazione.DISABILITATO); // default
+					}
+				}
+				if(configurazione.getDump().getConfigurazione()==null){
+					configurazione.getDump().setConfigurazione(new DumpConfigurazione());
+				}
+			}
+			
+			if(dumpRealtime!=null) {
+				configurazione.getDump().getConfigurazione().setRealtime(StatoFunzionalita.toEnumConstant(dumpRealtime));
+			}
+			if(regolaRequestIn!=null) {
+				configurazione.getDump().getConfigurazione().setRichiestaIngresso(regolaRequestIn);
+			}
+			if(regolaRequestOut!=null) {
+				configurazione.getDump().getConfigurazione().setRichiestaUscita(regolaRequestOut);
+			}
+			if(regolaResponseIn!=null) {
+				configurazione.getDump().getConfigurazione().setRispostaIngresso(regolaResponseIn);
+			}
+			if(regolaResponseOut!=null) {
+				configurazione.getDump().getConfigurazione().setRispostaUscita(regolaResponseOut);
+			}
+			
+			
+			
+			
 			// IntegrationManager
 			String integrationManager_autenticazione = this.getValue("integrationManager.autenticazione");
 			if(integrationManager_autenticazione!=null){
@@ -1288,5 +1438,53 @@ public class ConfigLocalProperties extends InstanceProperties {
 			throw new Exception("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (Configurazione): "+e.getMessage(),e);
 		}
 		
+	}
+	
+	private DumpConfigurazioneRegola readRegola(String flow, String inOut) throws Exception {
+		
+		DumpConfigurazioneRegola regola = null;
+		
+		String body = this.getValue("dump."+flow+"."+inOut+".body");
+		if(body!=null){
+			body = body.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(body) && 
+					!CostantiConfigurazione.DISABILITATO.equals(body)){
+				throw new Exception("Impostazione sul dump body ("+flow+"."+inOut+") non corretta");
+			}
+		}
+		
+		String attachments = this.getValue("dump."+flow+"."+inOut+".attachments");
+		if(attachments!=null){
+			attachments = attachments.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(attachments) && 
+					!CostantiConfigurazione.DISABILITATO.equals(attachments)){
+				throw new Exception("Impostazione sul dump attachments ("+flow+"."+inOut+") non corretta");
+			}
+		}
+		
+		String headers = this.getValue("dump."+flow+"."+inOut+".headers");
+		if(headers!=null){
+			headers = headers.trim();
+			if(!CostantiConfigurazione.ABILITATO.equals(headers) && 
+					!CostantiConfigurazione.DISABILITATO.equals(headers)){
+				throw new Exception("Impostazione sul dump headers ("+flow+"."+inOut+") non corretta");
+			}
+		}
+		
+		if(body!=null || attachments!=null || headers!=null){
+			regola = new DumpConfigurazioneRegola();
+		}
+		
+		if(body!=null) {
+			regola.setBody(StatoFunzionalita.toEnumConstant(body));
+		}
+		if(attachments!=null) {
+			regola.setAttachments(StatoFunzionalita.toEnumConstant(attachments));
+		}
+		if(headers!=null) {
+			regola.setHeaders(StatoFunzionalita.toEnumConstant(headers));
+		}
+		
+		return regola;
 	}
 }

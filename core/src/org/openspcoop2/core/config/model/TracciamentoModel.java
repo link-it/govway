@@ -42,10 +42,8 @@ public class TracciamentoModel extends AbstractModel<Tracciamento> {
 	
 		this.OPENSPCOOP_APPENDER = new org.openspcoop2.core.config.model.OpenspcoopAppenderModel(new Field("openspcoop-appender",org.openspcoop2.core.config.OpenspcoopAppender.class,"tracciamento",Tracciamento.class));
 		this.OPENSPCOOP_SORGENTE_DATI = new org.openspcoop2.core.config.model.OpenspcoopSorgenteDatiModel(new Field("openspcoop-sorgente-dati",org.openspcoop2.core.config.OpenspcoopSorgenteDati.class,"tracciamento",Tracciamento.class));
-		this.BUSTE = new Field("buste",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP = new Field("dump",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP_BINARIO_PORTA_DELEGATA = new Field("dump-binario-porta-delegata",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP_BINARIO_PORTA_APPLICATIVA = new Field("dump-binario-porta-applicativa",java.lang.String.class,"tracciamento",Tracciamento.class);
+		this.STATO = new Field("stato",java.lang.String.class,"tracciamento",Tracciamento.class);
+		this.ESITI = new Field("esiti",java.lang.String.class,"tracciamento",Tracciamento.class);
 	
 	}
 	
@@ -55,10 +53,8 @@ public class TracciamentoModel extends AbstractModel<Tracciamento> {
 	
 		this.OPENSPCOOP_APPENDER = new org.openspcoop2.core.config.model.OpenspcoopAppenderModel(new ComplexField(father,"openspcoop-appender",org.openspcoop2.core.config.OpenspcoopAppender.class,"tracciamento",Tracciamento.class));
 		this.OPENSPCOOP_SORGENTE_DATI = new org.openspcoop2.core.config.model.OpenspcoopSorgenteDatiModel(new ComplexField(father,"openspcoop-sorgente-dati",org.openspcoop2.core.config.OpenspcoopSorgenteDati.class,"tracciamento",Tracciamento.class));
-		this.BUSTE = new ComplexField(father,"buste",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP = new ComplexField(father,"dump",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP_BINARIO_PORTA_DELEGATA = new ComplexField(father,"dump-binario-porta-delegata",java.lang.String.class,"tracciamento",Tracciamento.class);
-		this.DUMP_BINARIO_PORTA_APPLICATIVA = new ComplexField(father,"dump-binario-porta-applicativa",java.lang.String.class,"tracciamento",Tracciamento.class);
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"tracciamento",Tracciamento.class);
+		this.ESITI = new ComplexField(father,"esiti",java.lang.String.class,"tracciamento",Tracciamento.class);
 	
 	}
 	
@@ -68,13 +64,9 @@ public class TracciamentoModel extends AbstractModel<Tracciamento> {
 	 
 	public org.openspcoop2.core.config.model.OpenspcoopSorgenteDatiModel OPENSPCOOP_SORGENTE_DATI = null;
 	 
-	public IField BUSTE = null;
+	public IField STATO = null;
 	 
-	public IField DUMP = null;
-	 
-	public IField DUMP_BINARIO_PORTA_DELEGATA = null;
-	 
-	public IField DUMP_BINARIO_PORTA_APPLICATIVA = null;
+	public IField ESITI = null;
 	 
 
 	@Override

@@ -135,11 +135,30 @@ public final class CostantiDB {
     public final static String TRACCIAMENTO_APPENDER_TABLE_FOR_ID = "tracce_appender_init_seq";
     public static final String TRACCIAMENTO_APPENDER_PROP = "tracce_appender_prop";
     
+    // Utilizzabile anche per le transazioni
     public static final String TRACCIAMENTO_DS = "tracce_ds";
     public final static String TRACCIAMENTO_DS_COLUMN_ID = "id";
     public final static String TRACCIAMENTO_DS_SEQUENCE = "seq_tracce_ds";
     public final static String TRACCIAMENTO_DS_TABLE_FOR_ID = "tracce_ds_init_seq";
     public static final String TRACCIAMENTO_DS_PROP = "tracce_ds_prop";
+    
+    public static final String DUMP_APPENDER = "dump_appender_appender";
+    public final static String DUMP_APPENDER_COLUMN_ID = "id";
+    public final static String DUMP_APPENDER_SEQUENCE = "seq_dump_appender";
+    public final static String DUMP_APPENDER_TABLE_FOR_ID = "dump_appender_init_seq";
+    
+    public static final String DUMP_APPENDER_PROP = "dump_appender_prop";
+    
+    public static final String DUMP_CONFIGURAZIONE = "dump_config";
+    
+    public static final String DUMP_CONFIGURAZIONE_REGOLA = "dump_config_regola";
+    public final static String DUMP_CONFIGURAZIONE_REGOLA_COLUMN_ID = "id";
+    public final static String DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE = "seq_dump_config_regola";
+    public final static String DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID = "dump_config_regola_init_seq";
+
+    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG = "config";
+    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PD = "pd";
+    public static final String DUMP_CONFIGURAZIONE_PROPRIETARIO_PA = "pa";
     
     /*DIAGNOSTICA*/
     public final static String MSG_DIAGNOSTICI = "msgdiagnostici";

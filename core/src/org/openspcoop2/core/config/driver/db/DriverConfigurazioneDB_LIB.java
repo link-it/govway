@@ -56,6 +56,9 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -1776,6 +1779,10 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaDelegata[" + idPortaDelegata + "]");
 				
 				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPD.getDump(), aPD.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
+				
 				// extendedInfo
 				i=0;
 				if(aPD.sizeExtendedInfoList()>0){
@@ -2395,6 +2402,12 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
+				
+				
 				// extendedInfo
 				if(extInfoConfigurazioneDriver!=null){
 					extInfoConfigurazioneDriver.deleteAllExtendedInfo(con, DriverConfigurazioneDB_LIB.log, aPD, CRUDType.UPDATE);
@@ -2419,6 +2432,9 @@ public class DriverConfigurazioneDB_LIB {
 				if (idPortaDelegata <= 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(DELETE)] Non e' stato possibile recuperare l'id della Porta Delegata, necessario per effettuare la DELETE.");
 
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPD.getDump(), idPortaDelegata, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				
 				// azioni delegate
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_AZIONI);
@@ -3860,6 +3876,12 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azioni delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPA.getDump(), aPA.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				
+				
+				
 				// extendedInfo
 				i=0;
 				if(aPA.sizeExtendedInfoList()>0){
@@ -4490,7 +4512,10 @@ public class DriverConfigurazioneDB_LIB {
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunte " + n + " azione delegate alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
+			
 				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
 				
 				
 				// extendedInfo
@@ -4521,6 +4546,9 @@ public class DriverConfigurazioneDB_LIB {
 				if (idPortaApplicativa <= 0)
 					throw new DriverConfigurazioneException("Non e' stato possibile recuperare l'id della Porta Applicativa.");
 
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, aPA.getDump(), idPortaApplicativa, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				
 				// azioni delegate
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
@@ -6072,14 +6100,22 @@ public class DriverConfigurazioneDB_LIB {
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
+		String tracciamentoEsiti = null;
+		if (t != null) {
+			tracciamentoBuste = DriverConfigurazioneDB_LIB.getValue(t.getStato());
+			tracciamentoEsiti = t.getEsiti();
+		}
+		
+		Dump d = config.getDump();
 		String dumpApplicativo = null;
 		String dumpPD = null;
 		String dumpPA = null;
-		if (t != null) {
-			tracciamentoBuste = DriverConfigurazioneDB_LIB.getValue(t.getBuste());
-			dumpApplicativo = DriverConfigurazioneDB_LIB.getValue(t.getDump());
-			dumpPD = DriverConfigurazioneDB_LIB.getValue(t.getDumpBinarioPortaDelegata());
-			dumpPA = DriverConfigurazioneDB_LIB.getValue(t.getDumpBinarioPortaApplicativa());
+		DumpConfigurazione dumpConfig = null;
+		if (d != null) {
+			dumpApplicativo = DriverConfigurazioneDB_LIB.getValue(d.getStato());
+			dumpPD = DriverConfigurazioneDB_LIB.getValue(d.getDumpBinarioPortaDelegata());
+			dumpPA = DriverConfigurazioneDB_LIB.getValue(d.getDumpBinarioPortaApplicativa());
+			dumpConfig = d.getConfigurazione();
 		}
 
 		String modRisposta = CostantiConfigurazione.CONNECTION_REPLY.toString();
@@ -6125,9 +6161,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("gestione_manifest", "?");
 				sqlQueryObject.addInsertField("validazione_manifest", "?");
 				sqlQueryObject.addInsertField("tracciamento_buste", "?");
-				sqlQueryObject.addInsertField("tracciamento_dump", "?");
-				sqlQueryObject.addInsertField("tracciamento_dump_bin_pd", "?");
-				sqlQueryObject.addInsertField("tracciamento_dump_bin_pa", "?");
+				sqlQueryObject.addInsertField("tracciamento_esiti", "?");
+				sqlQueryObject.addInsertField("dump", "?");
+				sqlQueryObject.addInsertField("dump_bin_pd", "?");
+				sqlQueryObject.addInsertField("dump_bin_pa", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_mtom", "?");
@@ -6174,6 +6211,7 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, val_manifest);
 				updateStmt.setString(index++, tracciamentoBuste);
+				updateStmt.setString(index++, tracciamentoEsiti);
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
@@ -6353,6 +6391,61 @@ public class DriverConfigurazioneDB_LIB {
 
 					}
 				}
+				
+				
+				// delete from dump appender_prop
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER_PROP);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				// delete from dump appender
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				// insert into dump appender
+				if(config.getDump()!=null){
+					for(int k=0; k<config.getDump().sizeOpenspcoopAppenderList();k++){
+						OpenspcoopAppender appender = config.getDump().getOpenspcoopAppender(k);
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idDumpAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.DUMP_APPENDER, CostantiDB.DUMP_APPENDER_COLUMN_ID, 
+										CostantiDB.DUMP_APPENDER_SEQUENCE, CostantiDB.DUMP_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idDumpAppender<=0){
+							throw new Exception("ID (dump appender) autoincrementale non ottenuto");
+						}
+
+						for(int l=0; l<appender.sizePropertyList();l++){
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+							sqlQueryObject.addInsertTable(CostantiDB.DUMP_APPENDER_PROP);
+							sqlQueryObject.addInsertField("id_appender", "?");
+							sqlQueryObject.addInsertField("nome", "?");
+							sqlQueryObject.addInsertField("valore", "?");
+							updateQuery = sqlQueryObject.createSQLInsert();
+							updateStmt = con.prepareStatement(updateQuery);
+							updateStmt.setLong(1, idDumpAppender);
+							updateStmt.setString(2, appender.getProperty(l).getNome());
+							updateStmt.setString(3, appender.getProperty(l).getValore());
+							updateStmt.executeUpdate();
+							updateStmt.close();
+						}
+
+					}
+				}
+				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				
 
 				// delete from msgdiag ds prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -6489,9 +6582,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("gestione_manifest", "?");
 				sqlQueryObject.addUpdateField("validazione_manifest", "?");
 				sqlQueryObject.addUpdateField("tracciamento_buste", "?");
-				sqlQueryObject.addUpdateField("tracciamento_dump", "?");
-				sqlQueryObject.addUpdateField("tracciamento_dump_bin_pd", "?");
-				sqlQueryObject.addUpdateField("tracciamento_dump_bin_pa", "?");
+				sqlQueryObject.addUpdateField("tracciamento_esiti", "?");
+				sqlQueryObject.addUpdateField("dump", "?");
+				sqlQueryObject.addUpdateField("dump_bin_pd", "?");
+				sqlQueryObject.addUpdateField("dump_bin_pa", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_mtom", "?");
@@ -6719,6 +6813,61 @@ public class DriverConfigurazioneDB_LIB {
 
 					}
 				}
+				
+				
+				// delete from dump appender_prop
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER_PROP);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				// delete from dump appender
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_APPENDER);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				// insert into dump appender
+				if(config.getDump()!=null){
+					for(int k=0; k<config.getDump().sizeOpenspcoopAppenderList();k++){
+						OpenspcoopAppender appender = config.getDump().getOpenspcoopAppender(k);
+						
+						List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", appender.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+						
+						long idDumpAppender = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+								new CustomKeyGeneratorObject(CostantiDB.DUMP_APPENDER, CostantiDB.DUMP_APPENDER_COLUMN_ID, 
+										CostantiDB.DUMP_APPENDER_SEQUENCE, CostantiDB.DUMP_APPENDER_TABLE_FOR_ID),
+								listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+						if(idDumpAppender<=0){
+							throw new Exception("ID (dump appender) autoincrementale non ottenuto");
+						}
+
+						for(int l=0; l<appender.sizePropertyList();l++){
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+							sqlQueryObject.addInsertTable(CostantiDB.DUMP_APPENDER_PROP);
+							sqlQueryObject.addInsertField("id_appender", "?");
+							sqlQueryObject.addInsertField("nome", "?");
+							sqlQueryObject.addInsertField("valore", "?");
+							updateQuery = sqlQueryObject.createSQLInsert();
+							updateStmt = con.prepareStatement(updateQuery);
+							updateStmt.setLong(1, idDumpAppender);
+							updateStmt.setString(2, appender.getProperty(l).getNome());
+							updateStmt.setString(3, appender.getProperty(l).getValore());
+							updateStmt.executeUpdate();
+							updateStmt.close();
+						}
+
+					}
+				}
+				
+				// dumpConfigurazione
+				CRUDDumpConfigurazione(type, con, dumpConfig, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				
 
 				// delete from msgdiag ds prop
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -6881,6 +7030,277 @@ public class DriverConfigurazioneDB_LIB {
 		}
 	}
 
+	private static void CRUDDumpConfigurazione(int type, Connection con, DumpConfigurazione dumpConfig, 
+			Long idProprietario, String tipoProprietario) throws DriverConfigurazioneException {
+		
+		PreparedStatement updateStmt = null;
+		try {
+			switch (type) {
+			case CREATE:
+		
+				if(dumpConfig==null) {
+					break;
+				}
+				
+				long idRequestIn = -1;
+				if(dumpConfig.getRichiestaIngresso()!=null) {
+					idRequestIn = createDumpConfigurazioneRegola(dumpConfig.getRichiestaIngresso(), con);
+				}
+				
+				long idRequestOut = -1;
+				if(dumpConfig.getRichiestaUscita()!=null) {
+					idRequestOut = createDumpConfigurazioneRegola(dumpConfig.getRichiestaUscita(), con);
+				}
+				
+				long idResponseIn = -1;
+				if(dumpConfig.getRispostaIngresso()!=null) {
+					idResponseIn = createDumpConfigurazioneRegola(dumpConfig.getRispostaIngresso(), con);
+				}
+				
+				long idResponseOut = -1;
+				if(dumpConfig.getRispostaUscita()!=null) {
+					idResponseOut = createDumpConfigurazioneRegola(dumpConfig.getRispostaUscita(), con);
+				}
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.DUMP_CONFIGURAZIONE);
+				sqlQueryObject.addInsertField("proprietario", "?");
+				sqlQueryObject.addInsertField("id_proprietario", "?");
+				sqlQueryObject.addInsertField("dump_realtime", "?");
+				sqlQueryObject.addInsertField("id_richiesta_ingresso", "?");
+				sqlQueryObject.addInsertField("id_richiesta_uscita", "?");
+				sqlQueryObject.addInsertField("id_risposta_ingresso", "?");
+				sqlQueryObject.addInsertField("id_risposta_uscita", "?");
+				String updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+				int index = 1;
+				updateStmt.setString(index++, tipoProprietario);
+				updateStmt.setLong(index++, idProprietario!=null ? idProprietario : -1);
+				updateStmt.setString(index++, getValue(dumpConfig.getRealtime()));
+				updateStmt.setLong(index++, idRequestIn);
+				updateStmt.setLong(index++, idRequestOut);
+				updateStmt.setLong(index++, idResponseIn);
+				updateStmt.setLong(index++, idResponseOut);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+				
+				break;
+				
+			case UPDATE:
+				
+				// Per la delete recupero l'immagine attuale del confi
+				DumpConfigurazione dumpConfigOld = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, idProprietario, tipoProprietario);
+				if(dumpConfigOld!=null) {
+					CRUDDumpConfigurazione(DELETE, con, dumpConfigOld, idProprietario, tipoProprietario);
+				}
+				
+				// Creo la nuova immagine
+				if(dumpConfig!=null) {
+					CRUDDumpConfigurazione(CREATE, con, dumpConfig, idProprietario, tipoProprietario);
+				}
+				break;
+				
+			case DELETE:
+				
+				if(dumpConfig==null) {
+					break;
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA);
+				sqlQueryObject.addWhereCondition("id=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				
+				if(dumpConfig.getRichiestaIngresso()!=null) {
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, dumpConfig.getRichiestaIngresso().getId());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+				if(dumpConfig.getRichiestaUscita()!=null) {
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, dumpConfig.getRichiestaUscita().getId());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+				if(dumpConfig.getRispostaIngresso()!=null) {
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, dumpConfig.getRispostaIngresso().getId());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+				if(dumpConfig.getRispostaUscita()!=null) {
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, dumpConfig.getRispostaUscita().getId());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.DUMP_CONFIGURAZIONE);
+				if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+					sqlQueryObject.addWhereCondition("id_proprietario=?");
+				}
+				sqlQueryObject.addWhereCondition("proprietario=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				index = 1;
+				if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+					updateStmt.setLong(index++, idProprietario);
+				}
+				updateStmt.setString(index++, tipoProprietario);
+				updateStmt.executeUpdate();
+				
+				break;
+			}
+		
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDConfigurazioneGenerale] Exception [" + se.getMessage() + "].",se);
+		} finally {
+	
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			
+		}
+	}
+	
+	private static long createDumpConfigurazioneRegola(DumpConfigurazioneRegola dumpRegola, Connection con) throws Exception {
+		List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("body", getValue(dumpRegola.getBody()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("attachments", getValue(dumpRegola.getAttachments()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("headers", getValue(dumpRegola.getHeaders()) , InsertAndGeneratedKeyJDBCType.STRING) );
+		
+		long idDumpconfigurazioneRegola = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+				new CustomKeyGeneratorObject(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA, CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_COLUMN_ID, 
+						CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_SEQUENCE, CostantiDB.DUMP_CONFIGURAZIONE_REGOLA_TABLE_FOR_ID),
+				listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+		if(idDumpconfigurazioneRegola<=0){
+			throw new Exception("ID (dump configurazione regola) autoincrementale non ottenuto");
+		}
+		return idDumpconfigurazioneRegola;
+	}
+	
+	protected static DumpConfigurazione readDumpConfigurazione(Connection con, Long idProprietario, String tipoProprietario) throws Exception {
+		PreparedStatement stm1=null;
+		ResultSet rs1= null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+				sqlQueryObject.addWhereCondition("id_proprietario=?");
+			}
+			sqlQueryObject.addWhereCondition("proprietario=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			
+			stm1 = con.prepareStatement(sqlQuery);
+			rs1 = stm1.executeQuery();
+			int index = 1;
+			if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
+				stm1.setLong(index++, idProprietario);
+			}
+			stm1.setString(index++, tipoProprietario);
+			
+			//recuper tutti gli appender e le prop di ogni appender
+			DumpConfigurazione dumpConfig = null;
+			if(rs1.next()){
+				
+				dumpConfig = new DumpConfigurazione();
+				
+				dumpConfig.setId(rs1.getLong("id"));
+				
+				dumpConfig.setRealtime(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("dump_realtime"));
+				
+				long idRequestIn = rs1.getLong("id_richiesta_ingresso");
+				if(idRequestIn>0) {
+					dumpConfig.setRichiestaIngresso(readDumpConfigurazioneRegola(con, idRequestIn));
+				}
+				
+				long idRequestOut = rs1.getLong("id_richiesta_uscita");
+				if(idRequestIn>0) {
+					dumpConfig.setRichiestaUscita(readDumpConfigurazioneRegola(con, idRequestOut));
+				}
+				
+				long idResponseIn = rs1.getLong("id_risposta_ingresso");
+				if(idRequestIn>0) {
+					dumpConfig.setRispostaIngresso(readDumpConfigurazioneRegola(con, idResponseIn));
+				}
+				
+				long idResponseOut = rs1.getLong("id_risposta_uscita");
+				if(idRequestIn>0) {
+					dumpConfig.setRispostaUscita(readDumpConfigurazioneRegola(con, idResponseOut));
+				}
+				
+			}
+			return dumpConfig;
+
+		}finally {
+			try {
+				if(rs1!=null) {
+					rs1.close();
+				}
+			}catch(Exception e) {}
+			try {
+				if(stm1!=null) {
+					stm1.close();
+				}
+			}catch(Exception e) {}
+		}
+	}
+	
+	private static DumpConfigurazioneRegola readDumpConfigurazioneRegola(Connection con, long idRegola) throws Exception {
+		PreparedStatement stm1=null;
+		ResultSet rs1= null;
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.DUMP_CONFIGURAZIONE_REGOLA);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			
+			stm1 = con.prepareStatement(sqlQuery);
+			rs1 = stm1.executeQuery();
+			stm1.setLong(1, idRegola);
+			
+			//recuper tutti gli appender e le prop di ogni appender
+			DumpConfigurazioneRegola dumpConfig = new DumpConfigurazioneRegola(); // ci sono i default
+			if(rs1.next()){
+				
+				dumpConfig.setId(rs1.getLong("id"));
+				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("body"));
+				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("attachments"));
+				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("headers"));
+				
+			}
+
+			return dumpConfig;
+
+		}finally {
+			try {
+				if(rs1!=null) {
+					rs1.close();
+				}
+			}catch(Exception e) {}
+			try {
+				if(stm1!=null) {
+					stm1.close();
+				}
+			}catch(Exception e) {}
+		}
+	}
+	
+	
+	
 	/** Metodi di Utilita' */
 
 	/**

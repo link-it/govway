@@ -217,6 +217,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					this.configPdDReader.validazioneSemantica(classNameReader.getConnettore(), 
 							classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
 							classNameReader.getTracciamentoOpenSPCoopAppender(),
+							classNameReader.getDumpOpenSPCoopAppender(),
 							classNameReader.getAutenticazionePortaDelegata(), classNameReader.getAutenticazionePortaApplicativa(), 
 							classNameReader.getAutorizzazionePortaDelegata(),classNameReader.getAutorizzazionePortaApplicativa(),
 							classNameReader.getAutorizzazioneContenutoPortaDelegata(),classNameReader.getAutorizzazioneContenutoPortaApplicativa(),

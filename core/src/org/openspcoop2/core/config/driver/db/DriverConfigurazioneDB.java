@@ -64,6 +64,8 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
@@ -6049,20 +6051,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				//Tracciamento
 				String tracc_buste = rs.getString("tracciamento_buste");
-				String tracc_dump_applicativo = rs.getString("tracciamento_dump");
-				String tracc_dump_pd = rs.getString("tracciamento_dump_bin_pd");
-				String tracc_dump_pa = rs.getString("tracciamento_dump_bin_pa");
+				String tracc_esiti = rs.getString("tracciamento_esiti");
 				Tracciamento tracciamento = new Tracciamento();
-				tracciamento.setBuste(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_buste));
-				tracciamento.setDump(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_applicativo));
-				tracciamento.setDumpBinarioPortaDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_pd));
-				if(tracciamento.getDumpBinarioPortaDelegata()==null){
-					tracciamento.setDumpBinarioPortaDelegata(StatoFunzionalita.DISABILITATO); // default
-				}
-				tracciamento.setDumpBinarioPortaApplicativa(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_dump_pa));
-				if(tracciamento.getDumpBinarioPortaApplicativa()==null){
-					tracciamento.setDumpBinarioPortaApplicativa(StatoFunzionalita.DISABILITATO); // default
-				}
+				tracciamento.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(tracc_buste));
+				tracciamento.setEsiti(tracc_esiti);
+				
 				//appender tracciamento
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.TRACCIAMENTO_APPENDER);
@@ -6152,6 +6145,71 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				config.setTracciamento(tracciamento);
 
+				
+				// Dump
+				String dump_stato = rs.getString("dump");
+				String dump_pd = rs.getString("dump_bin_pd");
+				String dump_pa = rs.getString("dump_bin_pa");
+				Dump dump = new Dump();
+				dump.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_stato));
+				dump.setDumpBinarioPortaDelegata(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_pd));
+				if(dump.getDumpBinarioPortaDelegata()==null){
+					dump.setDumpBinarioPortaDelegata(StatoFunzionalita.DISABILITATO); // default
+				}
+				dump.setDumpBinarioPortaApplicativa(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(dump_pa));
+				if(dump.getDumpBinarioPortaApplicativa()==null){
+					dump.setDumpBinarioPortaApplicativa(StatoFunzionalita.DISABILITATO); // default
+				}
+				//appender dump
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.DUMP_APPENDER);
+				sqlQueryObject.addSelectField("*");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+
+				stm1 = con.prepareStatement(sqlQuery);
+				rs1 = stm1.executeQuery();
+				//recuper tutti gli appender e le prop di ogni appender
+				while(rs1.next()){
+					OpenspcoopAppender dump_appender = new OpenspcoopAppender();
+					//tipo appender
+					dump_appender.setTipo(rs1.getString("tipo"));
+					long idAppenderDump = rs1.getLong("id");
+					dump_appender.setId(idAppenderDump);
+					//prendo le proprieta
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.DUMP_APPENDER_PROP);
+					sqlQueryObject.addSelectField("*");
+					sqlQueryObject.addWhereCondition("id_appender = ?");
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm2 = con.prepareStatement(sqlQuery);
+					stm2.setLong(1, idAppenderDump);
+					rs2 = stm2.executeQuery();
+					Property dump_appender_prop = null;
+					while(rs2.next())
+					{
+						//setto le prop di questo appender
+						dump_appender_prop = new Property();
+						//proprieta
+						dump_appender_prop.setId(rs2.getLong("id"));
+						dump_appender_prop.setNome(rs2.getString("nome"));
+						dump_appender_prop.setValore(rs2.getString("valore"));
+						//aggiungo la prop all'appender
+						dump_appender.addProperty(dump_appender_prop);
+					}
+					rs2.close();
+					stm2.close();
+					dump.addOpenspcoopAppender(dump_appender);
+				}
+				rs1.close();
+				stm1.close();
+
+				// dump_config
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, null, CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG);
+				dump.setConfigurazione(dumpConfig);
+				
+				config.setDump(dump);
+				
+				
 				Risposte risposte = new Risposte();
 				risposte.setConnessione(DriverConfigurazioneDB_LIB.getEnumTipoConnessioneRisposte(rs.getString("mod_risposta")));
 				config.setRisposte(risposte);
@@ -6269,7 +6327,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return config;
 	}
 
-	
+
 	public Object getConfigurazioneExtended(Configurazione config, String idExtendedConfiguration) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		
@@ -12412,6 +12470,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
+				// dump_config
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pa.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PA);
+				pa.setDump(dumpConfig);
+				
+				
 				
 				// *** Aggiungo extInfo ***
 				
@@ -13077,6 +13140,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stm.close();
 				
 				
+				
+				// dump_config
+				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pd.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
+				pd.setDump(dumpConfig);
 				
 				
 				// *** Aggiungo extInfo ***

@@ -4,7 +4,7 @@ CREATE SEQUENCE seq_servizi_applicativi AS BIGINT START WITH 1 INCREMENT BY 1 ; 
 
 CREATE TABLE servizi_applicativi
 (
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR(4000) NOT NULL,
 	descrizione VARCHAR(255),
 	-- * Risposta Asincrona *
 	-- valori 0/1 indicano rispettivamente FALSE/TRUE

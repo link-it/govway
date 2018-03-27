@@ -407,7 +407,7 @@ public class ConfigurazionePdDReader {
 	 * 
 	 * @throws CoreException eccezione che contiene il motivo della validazione semantica errata
 	 */
-	protected void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,
+	protected void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,String [] tipiDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
@@ -430,7 +430,7 @@ public class ConfigurazionePdDReader {
 						tipiConnettori,ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
-						tipiMsgDiagnosticoAppender,tipiTracciamentoAppender,
+						tipiMsgDiagnosticoAppender,tipiTracciamentoAppender,tipiDumpAppender,
 						tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
 						tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
 						tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
@@ -446,7 +446,7 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected void setValidazioneSemanticaModificaConfigurazionePdDXML(String[] tipiConnettori,
-			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
+			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,String [] tipiDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
@@ -459,7 +459,7 @@ public class ConfigurazionePdDReader {
 						ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
-						tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, 
+						tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, tipiDumpAppender, 
 						tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
 						tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
 						tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
@@ -3752,8 +3752,8 @@ public class ConfigurazionePdDReader {
 					this.log.error("dumpMessaggi",e);
 				}
 
-				if(configurazione!=null && configurazione.getTracciamento()!=null){
-					StatoFunzionalita read = configurazione.getTracciamento().getDump();	   
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getStato();	   
 					if(CostantiConfigurazione.ABILITATO.equals(read))
 						ConfigurazionePdDReader.dumpMessaggi = true;
 					else
@@ -3788,8 +3788,8 @@ public class ConfigurazionePdDReader {
 					this.log.error("dumpBinarioPD",e);
 				}
 
-				if(configurazione!=null && configurazione.getTracciamento()!=null){
-					StatoFunzionalita read = configurazione.getTracciamento().getDumpBinarioPortaDelegata();	   
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaDelegata();	   
 					if(CostantiConfigurazione.ABILITATO.equals(read))
 						ConfigurazionePdDReader.dumpBinarioPD = true;
 					else
@@ -3825,8 +3825,8 @@ public class ConfigurazionePdDReader {
 					this.log.error("dumpBinarioPA",e);
 				}
 
-				if(configurazione!=null && configurazione.getTracciamento()!=null){
-					StatoFunzionalita read = configurazione.getTracciamento().getDumpBinarioPortaApplicativa();	   
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaApplicativa();	   
 					if(CostantiConfigurazione.ABILITATO.equals(read))
 						ConfigurazionePdDReader.dumpBinarioPA = true;
 					else
@@ -3885,7 +3885,7 @@ public class ConfigurazionePdDReader {
 				}
 
 				if(configurazione!=null && configurazione.getTracciamento()!=null){
-					StatoFunzionalita read = configurazione.getTracciamento().getBuste();	   
+					StatoFunzionalita read = configurazione.getTracciamento().getStato();	   
 					if(CostantiConfigurazione.DISABILITATO.equals(read))
 						ConfigurazionePdDReader.tracciamentoBuste = false;
 					else

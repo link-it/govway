@@ -51,6 +51,7 @@ import java.util.List;
  * 			&lt;element name="inoltro-buste-non-riscontrate" type="{http://www.openspcoop2.org/core/config}inoltro-buste-non-riscontrate" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="messaggi-diagnostici" type="{http://www.openspcoop2.org/core/config}messaggi-diagnostici" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}tracciamento" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}configurazione-gestione-errore" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}integration-manager" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/>
@@ -82,6 +83,7 @@ import java.util.List;
   	"inoltroBusteNonRiscontrate",
   	"messaggiDiagnostici",
   	"tracciamento",
+  	"dump",
   	"gestioneErrore",
   	"integrationManager",
   	"statoServiziPdd",
@@ -245,6 +247,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     this.tracciamento = tracciamento;
   }
 
+  public Dump getDump() {
+    return this.dump;
+  }
+
+  public void setDump(Dump dump) {
+    this.dump = dump;
+  }
+
   public ConfigurazioneGestioneErrore getGestioneErrore() {
     return this.gestioneErrore;
   }
@@ -367,6 +377,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="tracciamento",required=false,nillable=false)
   protected Tracciamento tracciamento;
+
+  @XmlElement(name="dump",required=false,nillable=false)
+  protected Dump dump;
 
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected ConfigurazioneGestioneErrore gestioneErrore;

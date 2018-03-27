@@ -2,7 +2,7 @@
 
 CREATE TABLE porte_applicative
 (
-	nome_porta VARCHAR(255) NOT NULL,
+	nome_porta VARCHAR(4000) NOT NULL,
 	descrizione VARCHAR(255),
 	-- Soggetto Virtuale
 	id_soggetto_virtuale BIGINT,

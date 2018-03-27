@@ -148,14 +148,14 @@ public class ConfigurazionePdDManager {
 		this.configurazionePdDReader.isAlive();
 	}
 
-	public void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,
+	public void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,String[] tipiDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String [] tipiIntegrazionePD, String [] tipiIntegrazionePA,
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltreConfigurazioni,boolean validaConfigurazione,
 			Logger logConsole) throws CoreException{
-		this.configurazionePdDReader.validazioneSemantica(tipiConnettori, tipiMsgDiagnosticoAppender, tipiTracciamentoAppender, 
+		this.configurazionePdDReader.validazioneSemantica(tipiConnettori, tipiMsgDiagnosticoAppender, tipiTracciamentoAppender, tipiDumpAppender,
 				tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
 				tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
 				tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
@@ -164,12 +164,12 @@ public class ConfigurazionePdDManager {
 	}
 	
 	public void setValidazioneSemanticaModificaConfigurazionePdDXML(String[] tipiConnettori,
-			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
+			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,String[] tipiDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA) throws CoreException{
-		this.configurazionePdDReader.setValidazioneSemanticaModificaConfigurazionePdDXML(tipiConnettori, tipoMsgDiagnosticiAppender, tipoTracciamentoAppender,
+		this.configurazionePdDReader.setValidazioneSemanticaModificaConfigurazionePdDXML(tipiConnettori, tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, tipiDumpAppender,
 				tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
 				tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
 				tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 

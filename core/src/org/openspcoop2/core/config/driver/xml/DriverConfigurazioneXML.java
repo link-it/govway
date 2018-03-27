@@ -348,7 +348,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			if(this.validazioneSemanticaDuranteModificaXML){
 				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.openspcoop,this.tipiConnettori,
 						this.tipiSoggetti,this.tipiServiziSoap,this.tipiServiziRest,
-						this.tipoMsgDiagnosticiAppender,this.tipoTracciamentoAppender,
+						this.tipoMsgDiagnosticiAppender,this.tipoTracciamentoAppender,this.tipoDumpAppender,
 						this.tipoAutenticazionePortaDelegata,this.tipoAutenticazionePortaApplicativa,
 						this.tipoAutorizzazionePortaDelegata,this.tipoAutorizzazionePortaApplicativa,
 						this.tipoAutorizzazioneContenutoPortaDelegata,this.tipoAutorizzazioneContenutoPortaApplicativa,
@@ -379,6 +379,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private String[] tipiServiziRest = null;
 	private String[] tipoMsgDiagnosticiAppender = null;
 	private String[] tipoTracciamentoAppender = null;
+	private String[] tipoDumpAppender = null;
 	private String[] tipoAutenticazionePortaDelegata = null;
 	private String[] tipoAutenticazionePortaApplicativa = null;
 	private String[] tipoAutorizzazionePortaDelegata = null;
@@ -389,7 +390,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private String[] tipoIntegrazionePA = null;
 	public void abilitazioneValidazioneSemanticaDuranteModificaXML(String[] tipiConnettori,
 			String[] tipiSoggetti,String[] tipiServiziSoap,String[] tipiServiziRest,
-			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
+			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,String[]tipoDumpAppender,
 			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
 			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
 			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
@@ -402,6 +403,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		this.tipiServiziRest = tipiServiziRest;
 		this.tipoMsgDiagnosticiAppender= tipoMsgDiagnosticiAppender;
 		this.tipoTracciamentoAppender=tipoTracciamentoAppender;
+		this.tipoDumpAppender=tipoDumpAppender;
 		this.tipoAutenticazionePortaDelegata=tipoAutenticazionePortaDelegata;
 		this.tipoAutenticazionePortaApplicativa=tipoAutenticazionePortaApplicativa;
 		this.tipoAutorizzazionePortaDelegata=tipoAutorizzazionePortaDelegata;

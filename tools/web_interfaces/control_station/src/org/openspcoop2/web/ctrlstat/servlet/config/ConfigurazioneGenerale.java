@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
@@ -337,17 +338,23 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 
 				if (newConfigurazione.getTracciamento() != null) {
-					newConfigurazione.getTracciamento().setBuste(StatoFunzionalita.toEnumConstant(registrazioneTracce));
-					newConfigurazione.getTracciamento().setDump(StatoFunzionalita.toEnumConstant(dumpApplicativo));
-					newConfigurazione.getTracciamento().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
-					newConfigurazione.getTracciamento().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
+					newConfigurazione.getTracciamento().setStato(StatoFunzionalita.toEnumConstant(registrazioneTracce));
 				} else {
 					Tracciamento t = new Tracciamento();
-					t.setBuste(StatoFunzionalita.toEnumConstant(registrazioneTracce));
-					t.setDump(StatoFunzionalita.toEnumConstant(dumpApplicativo));
-					t.setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
-					t.setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
+					t.setStato(StatoFunzionalita.toEnumConstant(registrazioneTracce));
 					newConfigurazione.setTracciamento(t);
+				}
+				
+				if (newConfigurazione.getDump() != null) {
+					newConfigurazione.getDump().setStato(StatoFunzionalita.toEnumConstant(dumpApplicativo));
+					newConfigurazione.getDump().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
+					newConfigurazione.getDump().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
+				} else {
+					Dump d = new Dump();
+					d.setStato(StatoFunzionalita.toEnumConstant(dumpApplicativo));
+					d.setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
+					d.setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
+					newConfigurazione.setDump(d);
 				}
 
 				if (newConfigurazione.getValidazioneContenutiApplicativi() != null) {
@@ -539,14 +546,14 @@ public final class ConfigurazioneGenerale extends Action {
 					validman = configurazione.getValidazioneBuste().getManifestAttachments().toString();
 				if(configurazione.getAttachments().getGestioneManifest()!=null)
 					gestman = configurazione.getAttachments().getGestioneManifest().toString();
-				if(configurazione.getTracciamento().getBuste()!=null)
-					registrazioneTracce = configurazione.getTracciamento().getBuste().toString();
-				if(configurazione.getTracciamento().getDump()!=null)
-					dumpApplicativo = configurazione.getTracciamento().getDump().toString();
-				if(configurazione.getTracciamento().getDumpBinarioPortaDelegata()!=null)
-					dumpPD = configurazione.getTracciamento().getDumpBinarioPortaDelegata().toString();
-				if(configurazione.getTracciamento().getDumpBinarioPortaApplicativa()!=null)
-					dumpPA = configurazione.getTracciamento().getDumpBinarioPortaApplicativa().toString();
+				if(configurazione.getTracciamento().getStato()!=null)
+					registrazioneTracce = configurazione.getTracciamento().getStato().toString();
+				if(configurazione.getDump().getStato()!=null)
+					dumpApplicativo = configurazione.getDump().getStato().toString();
+				if(configurazione.getDump().getDumpBinarioPortaDelegata()!=null)
+					dumpPD = configurazione.getDump().getDumpBinarioPortaDelegata().toString();
+				if(configurazione.getDump().getDumpBinarioPortaApplicativa()!=null)
+					dumpPA = configurazione.getDump().getDumpBinarioPortaApplicativa().toString();
 				if (configurazione.getValidazioneContenutiApplicativi() != null) {
 					if(configurazione.getValidazioneContenutiApplicativi().getStato()!=null)
 						xsd = configurazione.getValidazioneContenutiApplicativi().getStato().toString();
