@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocol name="gateway" label="API Gateway"
+    <protocol name="trasparente" label="API Gateway"
     	descrizione="Gestisce le comunicazioni in entrata ed in uscita dal dominio, adattandosi alla modalità di trasmissione prevista dallo specifico servizio (SOAP o REST)"
     	webSite="http://www.openspcoop.org">
     	<factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
