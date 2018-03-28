@@ -6632,6 +6632,7 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, gestioneManifest);
 				updateStmt.setString(index++, val_manifest);
 				updateStmt.setString(index++, tracciamentoBuste);
+				updateStmt.setString(index++, tracciamentoEsiti);
 				updateStmt.setString(index++, dumpApplicativo);
 				updateStmt.setString(index++, dumpPD);
 				updateStmt.setString(index++, dumpPA);
