@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -106,6 +107,10 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	public ITracciaDriver createTracciaDriver() throws ProtocolException;
 	public ITracciaProducer createTracciaProducer() throws ProtocolException;
 	public ITracciaSerializer createTracciaSerializer() throws ProtocolException;
+	
+	/* ** DUMP ** */
+	
+	public IDumpProducer createDumpProducer() throws ProtocolException;
 	
 	/* ** ARCHIVE ** */
 	

@@ -34,6 +34,8 @@ import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -392,6 +394,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isPortaAbilitata(pd);
 	}
 	
+	public DumpConfigurazione getDumpConfigurazione(PortaDelegata pd) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection(), pd);
+	}
+	
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pd);
 	}
@@ -581,9 +587,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isPortaAbilitata(pa);
 	}
 	
+	public DumpConfigurazione getDumpConfigurazione(PortaApplicativa pa) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection(), pa);
+	}
+	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pa);
 	}
+
 	
 	
 	
@@ -782,9 +793,21 @@ public class ConfigurazionePdDManager {
 	public MessaggiDiagnostici getOpenSPCoopAppender_MsgDiagnostici(){
 		return this.configurazionePdDReader.getOpenSPCoopAppender_MsgDiagnostici(this.getConnection());
 	}
+		
+	public boolean tracciamentoBuste(){
+		return this.configurazionePdDReader.tracciamentoBuste(this.getConnection());
+	}
+	
+	public Tracciamento getOpenSPCoopAppender_Tracciamento(){
+		return this.configurazionePdDReader.getOpenSPCoopAppender_Tracciamento(this.getConnection());
+	}
 	
 	public boolean dumpMessaggi(){
 		return this.configurazionePdDReader.dumpMessaggi(this.getConnection());
+	}
+	
+	public DumpConfigurazione getDumpConfigurazione() {
+		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection());
 	}
 	
 	public boolean dumpBinarioPD(){
@@ -795,12 +818,8 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.dumpBinarioPA(this.getConnection());
 	}
 	
-	public boolean tracciamentoBuste(){
-		return this.configurazionePdDReader.tracciamentoBuste(this.getConnection());
-	}
-	
-	public Tracciamento getOpenSPCoopAppender_Tracciamento(){
-		return this.configurazionePdDReader.getOpenSPCoopAppender_Tracciamento(this.getConnection());
+	public Dump getOpenSPCoopAppender_Dump(){
+		return this.configurazionePdDReader.getOpenSPCoopAppender_Dump(this.getConnection());
 	}
 	
 	public GestioneErrore getGestioneErroreConnettoreComponenteCooperazione(){

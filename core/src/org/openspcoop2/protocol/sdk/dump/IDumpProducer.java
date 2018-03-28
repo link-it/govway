@@ -21,8 +21,11 @@
 
 package org.openspcoop2.protocol.sdk.dump;
 
+import java.sql.Connection;
+
+import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.OpenspcoopAppender;
-import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 
 /**
  * Contiene la definizione una interfaccia per la registrazione personalizzata dei dump applicativi
@@ -32,25 +35,26 @@ import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
  * @version $Rev$, $Date$
  */
 
-public interface IDumpProducer {
+public interface IDumpProducer extends IMonitoraggioRisorsa,IComponentFactory {
 
 	/**
 	 * Inizializza l'engine di un appender per la registrazione
 	 * di un dump applicativo emesso da una porta di dominio.
 	 * 
 	 * @param appenderProperties Proprieta' dell'appender
-	 * @throws TracciamentoException
+	 * @throws DumpException
 	 */
-	public void initializeAppender(OpenspcoopAppender appenderProperties) throws TracciamentoException;
+	public void initializeAppender(OpenspcoopAppender appenderProperties) throws DumpException;
 
 		
 	/**
 	 * Dump di un messaggio
 	 * 
+	 * @param conOpenSPCoopPdD Connessione verso il database della Porta di Dominio
 	 * @param messaggio
-	 * @throws TracciamentoException
+	 * @throws DumpException
 	 */
-	public void dump(Messaggio messaggio) throws TracciamentoException;
+	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException;
 	
 	
 	

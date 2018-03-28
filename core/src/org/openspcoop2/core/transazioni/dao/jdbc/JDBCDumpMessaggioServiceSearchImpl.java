@@ -57,9 +57,11 @@ import org.openspcoop2.core.transazioni.dao.jdbc.fetch.DumpMessaggioFetch;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 
 /**     
  * JDBCDumpMessaggioServiceSearchImpl
@@ -467,33 +469,13 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			return;
 		}
 		obj.setId(imgSaved.getId());
-		if(obj.getAllegatoList()!=null){
-			List<org.openspcoop2.core.transazioni.DumpAllegato> listObj_ = obj.getAllegatoList();
-			for(org.openspcoop2.core.transazioni.DumpAllegato itemObj_ : listObj_){
-				org.openspcoop2.core.transazioni.DumpAllegato itemAlreadySaved_ = null;
-				if(imgSaved.getAllegatoList()!=null){
-					List<org.openspcoop2.core.transazioni.DumpAllegato> listImgSaved_ = imgSaved.getAllegatoList();
-					for(org.openspcoop2.core.transazioni.DumpAllegato itemImgSaved_ : listImgSaved_){
-						boolean objEqualsToImgSaved_ = false;
-						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdAllegato(),itemImgSaved_.getIdAllegato());
-						if(objEqualsToImgSaved_){
-							itemAlreadySaved_=itemImgSaved_;
-							break;
-						}
-					}
-				}
-				if(itemAlreadySaved_!=null){
-					itemObj_.setId(itemAlreadySaved_.getId());
-				}
-			}
-		}
-		if(obj.getContenutoList()!=null){
-			List<org.openspcoop2.core.transazioni.DumpContenuto> listObj_ = obj.getContenutoList();
-			for(org.openspcoop2.core.transazioni.DumpContenuto itemObj_ : listObj_){
-				org.openspcoop2.core.transazioni.DumpContenuto itemAlreadySaved_ = null;
-				if(imgSaved.getContenutoList()!=null){
-					List<org.openspcoop2.core.transazioni.DumpContenuto> listImgSaved_ = imgSaved.getContenutoList();
-					for(org.openspcoop2.core.transazioni.DumpContenuto itemImgSaved_ : listImgSaved_){
+		if(obj.getMultipartHeaderList()!=null){
+			List<org.openspcoop2.core.transazioni.DumpMultipartHeader> listObj_ = obj.getMultipartHeaderList();
+			for(org.openspcoop2.core.transazioni.DumpMultipartHeader itemObj_ : listObj_){
+				org.openspcoop2.core.transazioni.DumpMultipartHeader itemAlreadySaved_ = null;
+				if(imgSaved.getMultipartHeaderList()!=null){
+					List<org.openspcoop2.core.transazioni.DumpMultipartHeader> listImgSaved_ = imgSaved.getMultipartHeaderList();
+					for(org.openspcoop2.core.transazioni.DumpMultipartHeader itemImgSaved_ : listImgSaved_){
 						boolean objEqualsToImgSaved_ = false;
 						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
 						if(objEqualsToImgSaved_){
@@ -527,7 +509,67 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 				}
 			}
 		}
-        
+		if(obj.getAllegatoList()!=null){
+			List<org.openspcoop2.core.transazioni.DumpAllegato> listObj_ = obj.getAllegatoList();
+			for(org.openspcoop2.core.transazioni.DumpAllegato itemObj_ : listObj_){
+				org.openspcoop2.core.transazioni.DumpAllegato itemAlreadySaved_ = null;
+				if(imgSaved.getAllegatoList()!=null){
+					List<org.openspcoop2.core.transazioni.DumpAllegato> listImgSaved_ = imgSaved.getAllegatoList();
+					for(org.openspcoop2.core.transazioni.DumpAllegato itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getContentId(),itemImgSaved_.getContentId());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+					if(itemObj_.getHeaderList()!=null){
+						List<org.openspcoop2.core.transazioni.DumpHeaderAllegato> listObj_allegato = itemObj_.getHeaderList();
+						for(org.openspcoop2.core.transazioni.DumpHeaderAllegato itemObj_allegato : listObj_allegato){
+							org.openspcoop2.core.transazioni.DumpHeaderAllegato itemAlreadySaved_allegato = null;
+							if(itemAlreadySaved_.getHeaderList()!=null){
+								List<org.openspcoop2.core.transazioni.DumpHeaderAllegato> listImgSaved_allegato = itemAlreadySaved_.getHeaderList();
+								for(org.openspcoop2.core.transazioni.DumpHeaderAllegato itemImgSaved_allegato : listImgSaved_allegato){
+									boolean objEqualsToImgSaved_allegato = false;
+									objEqualsToImgSaved_allegato = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_allegato.getNome(),itemImgSaved_allegato.getNome());
+									if(objEqualsToImgSaved_allegato){
+										itemAlreadySaved_allegato=itemImgSaved_allegato;
+										break;
+									}
+								}
+							}
+							if(itemAlreadySaved_allegato!=null){
+								itemObj_allegato.setId(itemAlreadySaved_allegato.getId());
+							}
+						}
+					}
+				}
+			}
+		}
+		if(obj.getContenutoList()!=null){
+			List<org.openspcoop2.core.transazioni.DumpContenuto> listObj_ = obj.getContenutoList();
+			for(org.openspcoop2.core.transazioni.DumpContenuto itemObj_ : listObj_){
+				org.openspcoop2.core.transazioni.DumpContenuto itemAlreadySaved_ = null;
+				if(imgSaved.getContenutoList()!=null){
+					List<org.openspcoop2.core.transazioni.DumpContenuto> listImgSaved_ = imgSaved.getContenutoList();
+					for(org.openspcoop2.core.transazioni.DumpContenuto itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+				}
+			}
+		}
+
 	}
 	
 	@Override
@@ -552,9 +594,12 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addSelectField("id");
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_TYPE,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_ID,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().BODY,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().DUMP_TIMESTAMP,true));
-		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_HEADER,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_FILENAME,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_CONTENT,true));
@@ -569,52 +614,33 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 
 
 
-		// Object dumpMessaggio_dumpAllegato
-		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpAllegato = sqlQueryObjectGet.newSQLQueryObject();
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.setANDLogicOperator(true);
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField("id");
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.LOCATION,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.MIMETYPE,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ALLEGATO,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addWhereCondition("id_messaggio=?");
+		// Object dumpMessaggio_dumpMultipartHeader
+		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.setANDLogicOperator(true);
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addSelectField("id");
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER.NOME,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER.VALORE,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.addWhereCondition("id_messaggio=?");
 
-		// Get dumpMessaggio_dumpAllegato
-		java.util.List<Object> dumpMessaggio_dumpAllegato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
+		// Get dumpMessaggio_dumpMultipartHeader
+		java.util.List<Object> dumpMessaggio_dumpMultipartHeader_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpMultipartHeader.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
 			new JDBCObject(dumpMessaggio.getId(),Long.class));
 
-		if(dumpMessaggio_dumpAllegato_list != null) {
-			for (Object dumpMessaggio_dumpAllegato_object: dumpMessaggio_dumpAllegato_list) {
-				DumpAllegato dumpMessaggio_dumpAllegato = (DumpAllegato) dumpMessaggio_dumpAllegato_object;
+		if(dumpMessaggio_dumpMultipartHeader_list != null) {
+			for (Object dumpMessaggio_dumpMultipartHeader_object: dumpMessaggio_dumpMultipartHeader_list) {
+				DumpMultipartHeader dumpMessaggio_dumpMultipartHeader = (DumpMultipartHeader) dumpMessaggio_dumpMultipartHeader_object;
 
+				// Bug fix OPPT-466 per gestione empty string as null on oracle
+				// Rilasciare il vincolo di not null 'fisico' sul database.
+				// Imporlo logicamente, in modo che non siano permessi insert o update con valori null.
+				// Dopodichè, se nella get viene recuperato un valore null, deve essere trasformato in stringa vuota.
+				if(dumpMessaggio_dumpMultipartHeader.getValore()==null){
+					dumpMessaggio_dumpMultipartHeader.setValore("");
+				}
 
-				dumpMessaggio.addAllegato(dumpMessaggio_dumpAllegato);
-			}
-		}
-
-		// Object dumpMessaggio_dumpContenuto
-		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpContenuto = sqlQueryObjectGet.newSQLQueryObject();
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.setANDLogicOperator(true);
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField("id");
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.NOME,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.VALORE,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP,true));
-		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addWhereCondition("id_messaggio=?");
-
-		// Get dumpMessaggio_dumpContenuto
-		java.util.List<Object> dumpMessaggio_dumpContenuto_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpContenuto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
-			new JDBCObject(dumpMessaggio.getId(),Long.class));
-
-		if(dumpMessaggio_dumpContenuto_list != null) {
-			for (Object dumpMessaggio_dumpContenuto_object: dumpMessaggio_dumpContenuto_list) {
-				DumpContenuto dumpMessaggio_dumpContenuto = (DumpContenuto) dumpMessaggio_dumpContenuto_object;
-
-
-				dumpMessaggio.addContenuto(dumpMessaggio_dumpContenuto);
+				dumpMessaggio.addMultipartHeader(dumpMessaggio_dumpMultipartHeader);
 			}
 		}
 
@@ -645,6 +671,85 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 				}
 
 				dumpMessaggio.addHeaderTrasporto(dumpMessaggio_dumpHeaderTrasporto);
+			}
+		}
+
+		// Object dumpMessaggio_dumpAllegato
+		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpAllegato = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.setANDLogicOperator(true);
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField("id");
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_TYPE,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_ID,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ALLEGATO,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addWhereCondition("id_messaggio=?");
+
+		// Get dumpMessaggio_dumpAllegato
+		java.util.List<Object> dumpMessaggio_dumpAllegato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
+			new JDBCObject(dumpMessaggio.getId(),Long.class));
+
+		if(dumpMessaggio_dumpAllegato_list != null) {
+			for (Object dumpMessaggio_dumpAllegato_object: dumpMessaggio_dumpAllegato_list) {
+				DumpAllegato dumpMessaggio_dumpAllegato = (DumpAllegato) dumpMessaggio_dumpAllegato_object;
+
+
+
+				// Object dumpMessaggio_dumpAllegato_dumpHeaderAllegato
+				ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato = sqlQueryObjectGet.newSQLQueryObject();
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.setANDLogicOperator(true);
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addSelectField("id");
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER.NOME,true));
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER.VALORE,true));
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP,true));
+				sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.addWhereCondition("id_allegato=?");
+
+				// Get dumpMessaggio_dumpAllegato_dumpHeaderAllegato
+				java.util.List<Object> dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpAllegato_dumpHeaderAllegato.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
+					new JDBCObject(dumpMessaggio_dumpAllegato.getId(),Long.class));
+
+				if(dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list != null) {
+					for (Object dumpMessaggio_dumpAllegato_dumpHeaderAllegato_object: dumpMessaggio_dumpAllegato_dumpHeaderAllegato_list) {
+						DumpHeaderAllegato dumpMessaggio_dumpAllegato_dumpHeaderAllegato = (DumpHeaderAllegato) dumpMessaggio_dumpAllegato_dumpHeaderAllegato_object;
+
+						// Bug fix OPPT-466 per gestione empty string as null on oracle
+						// Rilasciare il vincolo di not null 'fisico' sul database.
+						// Imporlo logicamente, in modo che non siano permessi insert o update con valori null.
+						// Dopodichè, se nella get viene recuperato un valore null, deve essere trasformato in stringa vuota.
+						if(dumpMessaggio_dumpAllegato_dumpHeaderAllegato.getValore()==null){
+							dumpMessaggio_dumpAllegato_dumpHeaderAllegato.setValore("");
+						}
+
+						dumpMessaggio_dumpAllegato.addHeader(dumpMessaggio_dumpAllegato_dumpHeaderAllegato);
+					}
+				}
+				dumpMessaggio.addAllegato(dumpMessaggio_dumpAllegato);
+			}
+		}
+
+		// Object dumpMessaggio_dumpContenuto
+		ISQLQueryObject sqlQueryObjectGet_dumpMessaggio_dumpContenuto = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.setANDLogicOperator(true);
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField("id");
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.NOME,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.VALORE,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpContenuto.addWhereCondition("id_messaggio=?");
+
+		// Get dumpMessaggio_dumpContenuto
+		java.util.List<Object> dumpMessaggio_dumpContenuto_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_dumpMessaggio_dumpContenuto.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
+			new JDBCObject(dumpMessaggio.getId(),Long.class));
+
+		if(dumpMessaggio_dumpContenuto_list != null) {
+			for (Object dumpMessaggio_dumpContenuto_object: dumpMessaggio_dumpContenuto_list) {
+				DumpContenuto dumpMessaggio_dumpContenuto = (DumpContenuto) dumpMessaggio_dumpContenuto_object;
+
+
+				dumpMessaggio.addContenuto(dumpMessaggio_dumpContenuto);
 			}
 		}
 
@@ -689,6 +794,11 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			String tableName2 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model());
 			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
 		}
+		if(expression.inUseModel(DumpMessaggio.model().ALLEGATO.HEADER,false)){
+			String tableName1 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER);
+			String tableName2 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_allegato="+tableName2+".id");
+		}
 		if(expression.inUseModel(DumpMessaggio.model().CONTENUTO,false)){
 			String tableName1 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO);
 			String tableName2 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model());
@@ -698,6 +808,17 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			String tableName1 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO);
 			String tableName2 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model());
 			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
+		}
+		if(expression.inUseModel(DumpMessaggio.model().MULTIPART_HEADER,false)){
+			String tableName1 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER);
+			String tableName2 = this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
+		}
+		
+		if(expression.inUseModel(DumpMessaggio.model().ALLEGATO.HEADER,false)){
+			if(expression.inUseModel(DumpMessaggio.model().ALLEGATO,false)==false){
+				sqlQueryObject.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
+			}
 		}
         
 	}

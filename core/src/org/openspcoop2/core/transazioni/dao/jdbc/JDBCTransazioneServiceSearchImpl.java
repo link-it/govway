@@ -801,8 +801,20 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
 			joinTransazioniRequired = true;
 		}
+		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER,false)){
+			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER);
+			String tableName2 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_allegato="+tableName2+".id");
+			joinTransazioniRequired = true;
+		}
 		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO,false)){
 			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO);
+			String tableName2 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
+			joinTransazioniRequired = true;
+		}
+		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER,false)){
+			String tableName1 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER);
 			String tableName2 = this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO);
 			sqlQueryObject.addWhereCondition(tableName1+".id_messaggio="+tableName2+".id");
 			joinTransazioniRequired = true;
@@ -833,7 +845,17 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 				sqlQueryObject.addFromTable(this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO));
 			}
 		}
+		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER,false)){
+			if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.ALLEGATO,false)==false){
+				sqlQueryObject.addFromTable(this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO));
+			}
+		}
 		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO,false)){
+			if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO,false)==false){
+				sqlQueryObject.addFromTable(this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO));
+			}
+		}
+		if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER,false)){
 			if(expression.inUseModel(Transazione.model().DUMP_MESSAGGIO,false)==false){
 				sqlQueryObject.addFromTable(this.getTransazioneFieldConverter().toTable(Transazione.model().DUMP_MESSAGGIO));
 			}

@@ -26,6 +26,7 @@ import java.util.Properties;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -1050,9 +1051,11 @@ public class InoltroRisposte extends GenericLib{
 				
 				//	dump applicativo
 				if(responseHttpReply!=null && configurazionePdDManager.dumpMessaggi() ){
+					DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pa);
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroRisposte.ID_MODULO,idMessageRequest,
 							soggettoMittente,idServizio,tipoPorta,pddContext,
-							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseHttpReply, infoConnettoreUscita, headerTrasportoReply);
 				}
 			}

@@ -21,11 +21,13 @@ package org.openspcoop2.core.transazioni.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
-import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpAllegato;
-import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
 import org.openspcoop2.core.transazioni.IdDumpMessaggio;
 
@@ -96,69 +98,6 @@ public abstract class AbstractDeserializer {
 
 	/*
 	 =================================================================================
-	 Object: dump-messaggio
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public DumpMessaggio readDumpMessaggio(String fileName) throws DeserializerException {
-		return (DumpMessaggio) this.xmlToObj(fileName, DumpMessaggio.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public DumpMessaggio readDumpMessaggio(File file) throws DeserializerException {
-		return (DumpMessaggio) this.xmlToObj(file, DumpMessaggio.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public DumpMessaggio readDumpMessaggio(InputStream in) throws DeserializerException {
-		return (DumpMessaggio) this.xmlToObj(in, DumpMessaggio.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public DumpMessaggio readDumpMessaggio(byte[] in) throws DeserializerException {
-		return (DumpMessaggio) this.xmlToObj(in, DumpMessaggio.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public DumpMessaggio readDumpMessaggioFromString(String in) throws DeserializerException {
-		return (DumpMessaggio) this.xmlToObj(in.getBytes(), DumpMessaggio.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
 	 Object: dump-allegato
 	 =================================================================================
 	*/
@@ -222,63 +161,126 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: dump-contenuto
+	 Object: dump-header-allegato
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public DumpContenuto readDumpContenuto(String fileName) throws DeserializerException {
-		return (DumpContenuto) this.xmlToObj(fileName, DumpContenuto.class);
+	public DumpHeaderAllegato readDumpHeaderAllegato(String fileName) throws DeserializerException {
+		return (DumpHeaderAllegato) this.xmlToObj(fileName, DumpHeaderAllegato.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public DumpContenuto readDumpContenuto(File file) throws DeserializerException {
-		return (DumpContenuto) this.xmlToObj(file, DumpContenuto.class);
+	public DumpHeaderAllegato readDumpHeaderAllegato(File file) throws DeserializerException {
+		return (DumpHeaderAllegato) this.xmlToObj(file, DumpHeaderAllegato.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public DumpContenuto readDumpContenuto(InputStream in) throws DeserializerException {
-		return (DumpContenuto) this.xmlToObj(in, DumpContenuto.class);
+	public DumpHeaderAllegato readDumpHeaderAllegato(InputStream in) throws DeserializerException {
+		return (DumpHeaderAllegato) this.xmlToObj(in, DumpHeaderAllegato.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public DumpContenuto readDumpContenuto(byte[] in) throws DeserializerException {
-		return (DumpContenuto) this.xmlToObj(in, DumpContenuto.class);
+	public DumpHeaderAllegato readDumpHeaderAllegato(byte[] in) throws DeserializerException {
+		return (DumpHeaderAllegato) this.xmlToObj(in, DumpHeaderAllegato.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
-	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpHeaderAllegato}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public DumpContenuto readDumpContenutoFromString(String in) throws DeserializerException {
-		return (DumpContenuto) this.xmlToObj(in.getBytes(), DumpContenuto.class);
+	public DumpHeaderAllegato readDumpHeaderAllegatoFromString(String in) throws DeserializerException {
+		return (DumpHeaderAllegato) this.xmlToObj(in.getBytes(), DumpHeaderAllegato.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: dump-multipart-header
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMultipartHeader readDumpMultipartHeader(String fileName) throws DeserializerException {
+		return (DumpMultipartHeader) this.xmlToObj(fileName, DumpMultipartHeader.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMultipartHeader readDumpMultipartHeader(File file) throws DeserializerException {
+		return (DumpMultipartHeader) this.xmlToObj(file, DumpMultipartHeader.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMultipartHeader readDumpMultipartHeader(InputStream in) throws DeserializerException {
+		return (DumpMultipartHeader) this.xmlToObj(in, DumpMultipartHeader.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMultipartHeader readDumpMultipartHeader(byte[] in) throws DeserializerException {
+		return (DumpMultipartHeader) this.xmlToObj(in, DumpMultipartHeader.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMultipartHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMultipartHeader readDumpMultipartHeaderFromString(String in) throws DeserializerException {
+		return (DumpMultipartHeader) this.xmlToObj(in.getBytes(), DumpMultipartHeader.class);
 	}	
 	
 	
@@ -348,6 +350,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: dump-contenuto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpContenuto readDumpContenuto(String fileName) throws DeserializerException {
+		return (DumpContenuto) this.xmlToObj(fileName, DumpContenuto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpContenuto readDumpContenuto(File file) throws DeserializerException {
+		return (DumpContenuto) this.xmlToObj(file, DumpContenuto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpContenuto readDumpContenuto(InputStream in) throws DeserializerException {
+		return (DumpContenuto) this.xmlToObj(in, DumpContenuto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpContenuto readDumpContenuto(byte[] in) throws DeserializerException {
+		return (DumpContenuto) this.xmlToObj(in, DumpContenuto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpContenuto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpContenuto readDumpContenutoFromString(String in) throws DeserializerException {
+		return (DumpContenuto) this.xmlToObj(in.getBytes(), DumpContenuto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: transazione
 	 =================================================================================
 	*/
@@ -405,6 +470,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Transazione readTransazioneFromString(String in) throws DeserializerException {
 		return (Transazione) this.xmlToObj(in.getBytes(), Transazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: dump-messaggio
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMessaggio readDumpMessaggio(String fileName) throws DeserializerException {
+		return (DumpMessaggio) this.xmlToObj(fileName, DumpMessaggio.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMessaggio readDumpMessaggio(File file) throws DeserializerException {
+		return (DumpMessaggio) this.xmlToObj(file, DumpMessaggio.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMessaggio readDumpMessaggio(InputStream in) throws DeserializerException {
+		return (DumpMessaggio) this.xmlToObj(in, DumpMessaggio.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMessaggio readDumpMessaggio(byte[] in) throws DeserializerException {
+		return (DumpMessaggio) this.xmlToObj(in, DumpMessaggio.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.DumpMessaggio}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DumpMessaggio readDumpMessaggioFromString(String in) throws DeserializerException {
+		return (DumpMessaggio) this.xmlToObj(in.getBytes(), DumpMessaggio.class);
 	}	
 	
 	

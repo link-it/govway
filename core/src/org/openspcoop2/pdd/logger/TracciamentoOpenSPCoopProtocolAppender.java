@@ -54,7 +54,7 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciaProducer{
 			IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			ITracciaProducer tracciamento = p.createTracciaProducer();
 			if(tracciamento==null){
-				throw new ProtocolException("ITracciamentoOpenSPCoopAppender not defined for protocol ["+protocol+"]");
+				throw new ProtocolException("ITracciaProducer not defined for protocol ["+protocol+"]");
 			}
 			try{
 				tracciamento.initializeAppender(appenderProperties);

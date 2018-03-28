@@ -43,7 +43,17 @@ public enum TipoMessaggio implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("RispostaIngresso")
 	RISPOSTA_INGRESSO ("RispostaIngresso"),
 	@javax.xml.bind.annotation.XmlEnumValue("RispostaUscita")
-	RISPOSTA_USCITA ("RispostaUscita");
+	RISPOSTA_USCITA ("RispostaUscita"),
+	@javax.xml.bind.annotation.XmlEnumValue("RichiestaIngressoDumpBinario")
+	RICHIESTA_INGRESSO_DUMP_BINARIO ("RichiestaIngressoDumpBinario"),
+	@javax.xml.bind.annotation.XmlEnumValue("RichiestaUscitaDumpBinario")
+	RICHIESTA_USCITA_DUMP_BINARIO ("RichiestaUscitaDumpBinario"),
+	@javax.xml.bind.annotation.XmlEnumValue("RispostaIngressoDumpBinario")
+	RISPOSTA_INGRESSO_DUMP_BINARIO ("RispostaIngressoDumpBinario"),
+	@javax.xml.bind.annotation.XmlEnumValue("RispostaUscitaDumpBinario")
+	RISPOSTA_USCITA_DUMP_BINARIO ("RispostaUscitaDumpBinario"),
+	@javax.xml.bind.annotation.XmlEnumValue("IntegrationManager")
+	INTEGRATION_MANAGER ("IntegrationManager");
 	
 	
 	/** Value */

@@ -40,10 +40,11 @@ public class DumpAllegatoModel extends AbstractModel<DumpAllegato> {
 	
 		super();
 	
-		this.ID_ALLEGATO = new Field("id-allegato",java.lang.String.class,"dump-allegato",DumpAllegato.class);
-		this.LOCATION = new Field("location",java.lang.String.class,"dump-allegato",DumpAllegato.class);
-		this.MIMETYPE = new Field("mimetype",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_ID = new Field("content-id",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_LOCATION = new Field("content-location",java.lang.String.class,"dump-allegato",DumpAllegato.class);
 		this.ALLEGATO = new Field("allegato",byte[].class,"dump-allegato",DumpAllegato.class);
+		this.HEADER = new org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel(new Field("header",org.openspcoop2.core.transazioni.DumpHeaderAllegato.class,"dump-allegato",DumpAllegato.class));
 		this.DUMP_TIMESTAMP = new Field("dump-timestamp",java.util.Date.class,"dump-allegato",DumpAllegato.class);
 	
 	}
@@ -52,23 +53,26 @@ public class DumpAllegatoModel extends AbstractModel<DumpAllegato> {
 	
 		super(father);
 	
-		this.ID_ALLEGATO = new ComplexField(father,"id-allegato",java.lang.String.class,"dump-allegato",DumpAllegato.class);
-		this.LOCATION = new ComplexField(father,"location",java.lang.String.class,"dump-allegato",DumpAllegato.class);
-		this.MIMETYPE = new ComplexField(father,"mimetype",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_ID = new ComplexField(father,"content-id",java.lang.String.class,"dump-allegato",DumpAllegato.class);
+		this.CONTENT_LOCATION = new ComplexField(father,"content-location",java.lang.String.class,"dump-allegato",DumpAllegato.class);
 		this.ALLEGATO = new ComplexField(father,"allegato",byte[].class,"dump-allegato",DumpAllegato.class);
+		this.HEADER = new org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel(new ComplexField(father,"header",org.openspcoop2.core.transazioni.DumpHeaderAllegato.class,"dump-allegato",DumpAllegato.class));
 		this.DUMP_TIMESTAMP = new ComplexField(father,"dump-timestamp",java.util.Date.class,"dump-allegato",DumpAllegato.class);
 	
 	}
 	
 	
 
-	public IField ID_ALLEGATO = null;
+	public IField CONTENT_TYPE = null;
 	 
-	public IField LOCATION = null;
+	public IField CONTENT_ID = null;
 	 
-	public IField MIMETYPE = null;
+	public IField CONTENT_LOCATION = null;
 	 
 	public IField ALLEGATO = null;
+	 
+	public org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel HEADER = null;
 	 
 	public IField DUMP_TIMESTAMP = null;
 	 

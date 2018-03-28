@@ -80,46 +80,60 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "tipo_messaggio";
 			}
 		}
+		if(field.equals(DumpMessaggio.model().CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_type";
+			}else{
+				return "content_type";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_type";
+			}else{
+				return "multipart_content_type";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_id";
+			}else{
+				return "multipart_content_id";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_location";
+			}else{
+				return "multipart_content_location";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
+			}
+		}
 		if(field.equals(DumpMessaggio.model().BODY)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".body";
 			}else{
 				return "body";
-			}
-		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".id_allegato";
-			}else{
-				return "id_allegato";
-			}
-		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.LOCATION)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".location";
-			}else{
-				return "location";
-			}
-		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.MIMETYPE)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".mimetype";
-			}else{
-				return "mimetype";
-			}
-		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.ALLEGATO)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".allegato";
-			}else{
-				return "allegato";
-			}
-		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".dump_timestamp";
-			}else{
-				return "dump_timestamp";
 			}
 		}
 		if(field.equals(DumpMessaggio.model().HEADER_TRASPORTO.NOME)){
@@ -143,18 +157,95 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "dump_timestamp";
 			}
 		}
-		if(field.equals(DumpMessaggio.model().DUMP_TIMESTAMP)){
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_type";
+			}else{
+				return "content_type";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_id";
+			}else{
+				return "content_id";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_location";
+			}else{
+				return "content_location";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.ALLEGATO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".allegato";
+			}else{
+				return "allegato";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".dump_timestamp";
 			}else{
 				return "dump_timestamp";
 			}
 		}
-		if(field.equals(DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE)){
+		if(field.equals(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".post_process_content_type";
+				return this.toAliasTable(field)+".dump_timestamp";
 			}else{
-				return "post_process_content_type";
+				return "dump_timestamp";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore_as_bytes";
+			}else{
+				return "valore_as_bytes";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
 			}
 		}
 		if(field.equals(DumpMessaggio.model().POST_PROCESS_HEADER)){
@@ -218,23 +309,29 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(DumpMessaggio.model().TIPO_MESSAGGIO)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().BODY)){
+		if(field.equals(DumpMessaggio.model().CONTENT_TYPE)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO)){
-			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_TYPE)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.LOCATION)){
-			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_ID)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.MIMETYPE)){
-			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		if(field.equals(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.ALLEGATO)){
-			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.NOME)){
+			return this.toTable(DumpMessaggio.model().MULTIPART_HEADER, returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP)){
-			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.VALORE)){
+			return this.toTable(DumpMessaggio.model().MULTIPART_HEADER, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP)){
+			return this.toTable(DumpMessaggio.model().MULTIPART_HEADER, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().BODY)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().HEADER_TRASPORTO.NOME)){
 			return this.toTable(DumpMessaggio.model().HEADER_TRASPORTO, returnAlias);
@@ -245,10 +342,43 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP)){
 			return this.toTable(DumpMessaggio.model().HEADER_TRASPORTO, returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().DUMP_TIMESTAMP)){
-			return this.toTable(DumpMessaggio.model(), returnAlias);
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_TYPE)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
 		}
-		if(field.equals(DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE)){
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_ID)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.ALLEGATO)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.NOME)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.VALORE)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.NOME)){
+			return this.toTable(DumpMessaggio.model().CONTENUTO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.VALORE)){
+			return this.toTable(DumpMessaggio.model().CONTENUTO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES)){
+			return this.toTable(DumpMessaggio.model().CONTENUTO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP)){
+			return this.toTable(DumpMessaggio.model().CONTENUTO, returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().DUMP_TIMESTAMP)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().POST_PROCESS_HEADER)){
@@ -285,11 +415,20 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		if(model.equals(DumpMessaggio.model())){
 			return "dump_messaggi";
 		}
-		if(model.equals(DumpMessaggio.model().ALLEGATO)){
-			return "dump_allegati";
+		if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
+			return "dump_multipart_header";
 		}
 		if(model.equals(DumpMessaggio.model().HEADER_TRASPORTO)){
 			return "dump_header_trasporto";
+		}
+		if(model.equals(DumpMessaggio.model().ALLEGATO)){
+			return "dump_allegati";
+		}
+		if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
+			return "dump_header_allegato";
+		}
+		if(model.equals(DumpMessaggio.model().CONTENUTO)){
+			return "dump_contenuti";
 		}
 
 

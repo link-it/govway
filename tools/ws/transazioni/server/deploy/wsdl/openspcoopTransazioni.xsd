@@ -317,7 +317,25 @@
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="content-type" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="multipart-content-type" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="multipart-content-id" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="multipart-content-location" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="multipart-header" type="dump-multipart-header">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="body" type="xsd:hexBinary">
+					
+				</xsd:element>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" name="header-trasporto" type="dump-header-trasporto">
 					
 				</xsd:element>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" name="allegato" type="dump-allegato">
@@ -326,16 +344,10 @@
 				<xsd:element maxOccurs="unbounded" minOccurs="0" name="contenuto" type="dump-contenuto">
 					
 				</xsd:element>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" name="header-trasporto" type="dump-header-trasporto">
-					
-				</xsd:element>
 			    <xsd:element name="dump-timestamp" type="xsd:dateTime">
 			    	
 			    </xsd:element>
 			    <!-- Dump non real-time -->
-			    <xsd:element minOccurs="0" name="post-process-content-type" type="xsd:string">
-			    	
-			    </xsd:element>
 			    <xsd:element minOccurs="0" name="post-process-header" type="xsd:string">
 			        
 			    </xsd:element>
@@ -358,24 +370,72 @@
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:complexType name="dump-multipart-header">
+		
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="valore" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element name="dump-timestamp" type="xsd:dateTime">
+				
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="dump-header-trasporto">
+		
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="valore" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element name="dump-timestamp" type="xsd:dateTime">
+				
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
 	<xsd:complexType name="dump-allegato">
 		
 		<xsd:sequence>
-			<xsd:element minOccurs="0" name="id-allegato" type="xsd:string">
+			<xsd:element minOccurs="0" name="content-type" type="xsd:string">
 				
 			</xsd:element>
-			<xsd:element minOccurs="0" name="location" type="xsd:string">
+			<xsd:element minOccurs="0" name="content-id" type="xsd:string">
 				
 			</xsd:element>
-			<xsd:element minOccurs="0" name="mimetype" type="xsd:string">
+			<xsd:element minOccurs="0" name="content-location" type="xsd:string">
 				
 			</xsd:element>
 			<xsd:element minOccurs="0" name="allegato" type="xsd:hexBinary">
 			    
 			</xsd:element>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="header" type="dump-header-allegato">
+				
+			</xsd:element>
 		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
 		    	
 		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-header-allegato">
+		
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element minOccurs="0" name="valore" type="xsd:string">
+				
+			</xsd:element>
+			<xsd:element name="dump-timestamp" type="xsd:dateTime">
+				
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -408,20 +468,7 @@
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="dump-header-trasporto">
-		
-		<xsd:sequence>
-			<xsd:element name="nome" type="xsd:string">
-				
-			</xsd:element>
-			<xsd:element minOccurs="0" name="valore" type="xsd:string">
-				
-			</xsd:element>
-		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
-		    	
-		    </xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
+
 
 
 
@@ -447,10 +494,19 @@
 
 	<xsd:simpleType name="tipo-messaggio">
 		<xsd:restriction base="xsd:string">
+			
 			<xsd:enumeration value="RichiestaIngresso"/>
 			<xsd:enumeration value="RichiestaUscita"/>
 			<xsd:enumeration value="RispostaIngresso"/>
 			<xsd:enumeration value="RispostaUscita"/>
+			
+			<xsd:enumeration value="RichiestaIngressoDumpBinario"/>
+			<xsd:enumeration value="RichiestaUscitaDumpBinario"/>
+			<xsd:enumeration value="RispostaIngressoDumpBinario"/>
+			<xsd:enumeration value="RispostaUscitaDumpBinario"/>
+			
+			<xsd:enumeration value="IntegrationManager"/>
+			
 		</xsd:restriction>
 	</xsd:simpleType>
 

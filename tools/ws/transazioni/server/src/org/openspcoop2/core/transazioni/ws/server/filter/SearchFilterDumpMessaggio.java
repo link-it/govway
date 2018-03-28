@@ -10,6 +10,10 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *     &lt;sequence>
  *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
@@ -37,6 +41,10 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 @javax.xml.bind.annotation.XmlType(name = "search-filter-dump-messaggio", namespace="http://www.openspcoop2.org/core/transazioni/management", propOrder = {
     "idTransazione",
     "tipoMessaggio",
+    "contentType",
+    "multipartContentType",
+    "multipartContentId",
+    "multipartContentLocation",
     "limit",
     "offset",
     "descOrder"
@@ -68,6 +76,58 @@ public class SearchFilterDumpMessaggio extends org.openspcoop2.utils.beans.BaseB
 	
 	public TipoMessaggio getTipoMessaggio(){
 		return this.tipoMessaggio;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="content-type",required=false,nillable=false)
+	private String contentType;
+	
+	public void setContentType(String contentType){
+		this.contentType = contentType;
+	}
+	
+	public String getContentType(){
+		return this.contentType;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-type",required=false,nillable=false)
+	private String multipartContentType;
+	
+	public void setMultipartContentType(String multipartContentType){
+		this.multipartContentType = multipartContentType;
+	}
+	
+	public String getMultipartContentType(){
+		return this.multipartContentType;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-id",required=false,nillable=false)
+	private String multipartContentId;
+	
+	public void setMultipartContentId(String multipartContentId){
+		this.multipartContentId = multipartContentId;
+	}
+	
+	public String getMultipartContentId(){
+		return this.multipartContentId;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-location",required=false,nillable=false)
+	private String multipartContentLocation;
+	
+	public void setMultipartContentLocation(String multipartContentLocation){
+		this.multipartContentLocation = multipartContentLocation;
+	}
+	
+	public String getMultipartContentLocation(){
+		return this.multipartContentLocation;
 	}
 	
 	

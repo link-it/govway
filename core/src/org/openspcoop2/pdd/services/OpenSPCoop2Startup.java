@@ -1001,7 +1001,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(isInitializeAppender == false){
 				return;
 			}
-			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDReader.getOpenSPCoopAppender_Tracciamento());
+			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDReader.getOpenSPCoopAppender_Dump());
 			if(isInitializeAppender == false){
 				return;
 			}

@@ -30,9 +30,12 @@ import java.util.Map;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
 
 
 /**     
@@ -59,12 +62,18 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id_transazione", DumpMessaggio.model().ID_TRANSAZIONE.getFieldType()));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_messaggio", DumpMessaggio.model().TIPO_MESSAGGIO.getFieldType())+"");
+				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "content_type", DumpMessaggio.model().CONTENT_TYPE.getFieldType()));
+				setParameter(object, "setMultipartContentType", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "multipart_content_type", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType()));
+				setParameter(object, "setMultipartContentId", DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "multipart_content_id", DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType()));
+				setParameter(object, "setMultipartContentLocation", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "multipart_content_location", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType()));
 				setParameter(object, "setBody", DumpMessaggio.model().BODY.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "body", DumpMessaggio.model().BODY.getFieldType()));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType()));
-				setParameter(object, "setPostProcessContentType", DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "post_process_content_type", DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE.getFieldType()));
 				setParameter(object, "setPostProcessHeader", DumpMessaggio.model().POST_PROCESS_HEADER.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "post_process_header", DumpMessaggio.model().POST_PROCESS_HEADER.getFieldType()));
 				setParameter(object, "setPostProcessFilename", DumpMessaggio.model().POST_PROCESS_FILENAME.getFieldType(),
@@ -79,20 +88,16 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "post_processed", DumpMessaggio.model().POST_PROCESSED.getFieldType()));
 				return object;
 			}
-			if(model.equals(DumpMessaggio.model().ALLEGATO)){
-				DumpAllegato object = new DumpAllegato();
+			if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
+				DumpMultipartHeader object = new DumpMultipartHeader();
 				setParameter(object, "setId", Long.class,
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
-				setParameter(object, "setIdAllegato", DumpMessaggio.model().ALLEGATO.ID_ALLEGATO.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "id_allegato", DumpMessaggio.model().ALLEGATO.ID_ALLEGATO.getFieldType()));
-				setParameter(object, "setLocation", DumpMessaggio.model().ALLEGATO.LOCATION.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "location", DumpMessaggio.model().ALLEGATO.LOCATION.getFieldType()));
-				setParameter(object, "setMimetype", DumpMessaggio.model().ALLEGATO.MIMETYPE.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "mimetype", DumpMessaggio.model().ALLEGATO.MIMETYPE.getFieldType()));
-				setParameter(object, "setAllegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "allegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()));
-				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()));
+				setParameter(object, "setNome", DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome", DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType()));
+				setParameter(object, "setValore", DumpMessaggio.model().MULTIPART_HEADER.VALORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "valore", DumpMessaggio.model().MULTIPART_HEADER.VALORE.getFieldType()));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType()));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().HEADER_TRASPORTO)){
@@ -105,6 +110,48 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "valore", DumpMessaggio.model().HEADER_TRASPORTO.VALORE.getFieldType()));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType()));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO)){
+				DumpAllegato object = new DumpAllegato();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setContentType", DumpMessaggio.model().ALLEGATO.CONTENT_TYPE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "content_type", DumpMessaggio.model().ALLEGATO.CONTENT_TYPE.getFieldType()));
+				setParameter(object, "setContentId", DumpMessaggio.model().ALLEGATO.CONTENT_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "content_id", DumpMessaggio.model().ALLEGATO.CONTENT_ID.getFieldType()));
+				setParameter(object, "setContentLocation", DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "content_location", DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType()));
+				setParameter(object, "setAllegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "allegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
+				DumpHeaderAllegato object = new DumpHeaderAllegato();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome", DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType()));
+				setParameter(object, "setValore", DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "valore", DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType()));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType()));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().CONTENUTO)){
+				DumpContenuto object = new DumpContenuto();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", DumpMessaggio.model().CONTENUTO.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome", DumpMessaggio.model().CONTENUTO.NOME.getFieldType()));
+				setParameter(object, "setValore", DumpMessaggio.model().CONTENUTO.VALORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "valore", DumpMessaggio.model().CONTENUTO.VALORE.getFieldType()));
+				setParameter(object, "setValoreAsBytes", DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "valore_as_bytes", DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES.getFieldType()));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType()));
 				return object;
 			}
 			
@@ -131,12 +178,18 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id-transazione"));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					this.getObjectFromMap(map,"tipo-messaggio"));
+				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
+					this.getObjectFromMap(map,"content-type"));
+				setParameter(object, "setMultipartContentType", DumpMessaggio.model().MULTIPART_CONTENT_TYPE.getFieldType(),
+					this.getObjectFromMap(map,"multipart-content-type"));
+				setParameter(object, "setMultipartContentId", DumpMessaggio.model().MULTIPART_CONTENT_ID.getFieldType(),
+					this.getObjectFromMap(map,"multipart-content-id"));
+				setParameter(object, "setMultipartContentLocation", DumpMessaggio.model().MULTIPART_CONTENT_LOCATION.getFieldType(),
+					this.getObjectFromMap(map,"multipart-content-location"));
 				setParameter(object, "setBody", DumpMessaggio.model().BODY.getFieldType(),
 					this.getObjectFromMap(map,"body"));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().DUMP_TIMESTAMP.getFieldType(),
 					this.getObjectFromMap(map,"dump-timestamp"));
-				setParameter(object, "setPostProcessContentType", DumpMessaggio.model().POST_PROCESS_CONTENT_TYPE.getFieldType(),
-					this.getObjectFromMap(map,"post-process-content-type"));
 				setParameter(object, "setPostProcessHeader", DumpMessaggio.model().POST_PROCESS_HEADER.getFieldType(),
 					this.getObjectFromMap(map,"post-process-header"));
 				setParameter(object, "setPostProcessFilename", DumpMessaggio.model().POST_PROCESS_FILENAME.getFieldType(),
@@ -151,20 +204,16 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"post-processed"));
 				return object;
 			}
-			if(model.equals(DumpMessaggio.model().ALLEGATO)){
-				DumpAllegato object = new DumpAllegato();
+			if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
+				DumpMultipartHeader object = new DumpMultipartHeader();
 				setParameter(object, "setId", Long.class,
-					this.getObjectFromMap(map,"allegato.id"));
-				setParameter(object, "setIdAllegato", DumpMessaggio.model().ALLEGATO.ID_ALLEGATO.getFieldType(),
-					this.getObjectFromMap(map,"allegato.id-allegato"));
-				setParameter(object, "setLocation", DumpMessaggio.model().ALLEGATO.LOCATION.getFieldType(),
-					this.getObjectFromMap(map,"allegato.location"));
-				setParameter(object, "setMimetype", DumpMessaggio.model().ALLEGATO.MIMETYPE.getFieldType(),
-					this.getObjectFromMap(map,"allegato.mimetype"));
-				setParameter(object, "setAllegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType(),
-					this.getObjectFromMap(map,"allegato.allegato"));
-				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
-					this.getObjectFromMap(map,"allegato.dump-timestamp"));
+					this.getObjectFromMap(map,"multipart-header.id"));
+				setParameter(object, "setNome", DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType(),
+					this.getObjectFromMap(map,"multipart-header.nome"));
+				setParameter(object, "setValore", DumpMessaggio.model().MULTIPART_HEADER.VALORE.getFieldType(),
+					this.getObjectFromMap(map,"multipart-header.valore"));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType(),
+					this.getObjectFromMap(map,"multipart-header.dump-timestamp"));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().HEADER_TRASPORTO)){
@@ -177,6 +226,48 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"header-trasporto.valore"));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType(),
 					this.getObjectFromMap(map,"header-trasporto.dump-timestamp"));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO)){
+				DumpAllegato object = new DumpAllegato();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"allegato.id"));
+				setParameter(object, "setContentType", DumpMessaggio.model().ALLEGATO.CONTENT_TYPE.getFieldType(),
+					this.getObjectFromMap(map,"allegato.content-type"));
+				setParameter(object, "setContentId", DumpMessaggio.model().ALLEGATO.CONTENT_ID.getFieldType(),
+					this.getObjectFromMap(map,"allegato.content-id"));
+				setParameter(object, "setContentLocation", DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType(),
+					this.getObjectFromMap(map,"allegato.content-location"));
+				setParameter(object, "setAllegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType(),
+					this.getObjectFromMap(map,"allegato.allegato"));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
+					this.getObjectFromMap(map,"allegato.dump-timestamp"));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
+				DumpHeaderAllegato object = new DumpHeaderAllegato();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"allegato.header.id"));
+				setParameter(object, "setNome", DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType(),
+					this.getObjectFromMap(map,"allegato.header.nome"));
+				setParameter(object, "setValore", DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType(),
+					this.getObjectFromMap(map,"allegato.header.valore"));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType(),
+					this.getObjectFromMap(map,"allegato.header.dump-timestamp"));
+				return object;
+			}
+			if(model.equals(DumpMessaggio.model().CONTENUTO)){
+				DumpContenuto object = new DumpContenuto();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"contenuto.id"));
+				setParameter(object, "setNome", DumpMessaggio.model().CONTENUTO.NOME.getFieldType(),
+					this.getObjectFromMap(map,"contenuto.nome"));
+				setParameter(object, "setValore", DumpMessaggio.model().CONTENUTO.VALORE.getFieldType(),
+					this.getObjectFromMap(map,"contenuto.valore"));
+				setParameter(object, "setValoreAsBytes", DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES.getFieldType(),
+					this.getObjectFromMap(map,"contenuto.valore-as-bytes"));
+				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType(),
+					this.getObjectFromMap(map,"contenuto.dump-timestamp"));
 				return object;
 			}
 			
@@ -199,11 +290,20 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 			if(model.equals(DumpMessaggio.model())){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_messaggi","id","seq_dump_messaggi","dump_messaggi_init_seq");
 			}
-			if(model.equals(DumpMessaggio.model().ALLEGATO)){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_allegati","id","seq_dump_allegati","dump_allegati_init_seq");
+			if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_multipart_header","id","seq_dump_multipart_header","dump_multipart_header_init_seq");
 			}
 			if(model.equals(DumpMessaggio.model().HEADER_TRASPORTO)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_header_trasporto","id","seq_dump_header_trasporto","dump_header_trasporto_init_seq");
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_allegati","id","seq_dump_allegati","dump_allegati_init_seq");
+			}
+			if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_header_allegato","id","seq_dump_header_allegato","dump_header_allegato_init_seq");
+			}
+			if(model.equals(DumpMessaggio.model().CONTENUTO)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("dump_contenuti","id","seq_dump_contenuti","dump_contenuti_init_seq");
 			}
 			
 			else{

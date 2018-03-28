@@ -605,46 +605,60 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "tipo_messaggio";
 			}
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_type";
+			}else{
+				return "content_type";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_type";
+			}else{
+				return "multipart_content_type";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_id";
+			}else{
+				return "multipart_content_id";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_LOCATION)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_content_location";
+			}else{
+				return "multipart_content_location";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
+			}
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.BODY)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".body";
 			}else{
 				return "body";
-			}
-		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ID_ALLEGATO)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".id_allegato";
-			}else{
-				return "id_allegato";
-			}
-		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.LOCATION)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".location";
-			}else{
-				return "location";
-			}
-		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.MIMETYPE)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".mimetype";
-			}else{
-				return "mimetype";
-			}
-		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ALLEGATO)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".allegato";
-			}else{
-				return "allegato";
-			}
-		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.DUMP_TIMESTAMP)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".dump_timestamp";
-			}else{
-				return "dump_timestamp";
 			}
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO.NOME)){
@@ -668,18 +682,95 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "dump_timestamp";
 			}
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DUMP_TIMESTAMP)){
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_TYPE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_type";
+			}else{
+				return "content_type";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_id";
+			}else{
+				return "content_id";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_LOCATION)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".content_location";
+			}else{
+				return "content_location";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ALLEGATO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".allegato";
+			}else{
+				return "allegato";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.DUMP_TIMESTAMP)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".dump_timestamp";
 			}else{
 				return "dump_timestamp";
 			}
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.POST_PROCESS_CONTENT_TYPE)){
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.DUMP_TIMESTAMP)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".post_process_content_type";
+				return this.toAliasTable(field)+".dump_timestamp";
 			}else{
-				return "post_process_content_type";
+				return "dump_timestamp";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore";
+			}else{
+				return "valore";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE_AS_BYTES)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".valore_as_bytes";
+			}else{
+				return "valore_as_bytes";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DUMP_TIMESTAMP)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dump_timestamp";
+			}else{
+				return "dump_timestamp";
 			}
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.POST_PROCESS_HEADER)){
@@ -982,23 +1073,29 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.TIPO_MESSAGGIO)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.BODY)){
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_TYPE)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ID_ALLEGATO)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_TYPE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.LOCATION)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_ID)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.MIMETYPE)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_CONTENT_LOCATION)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ALLEGATO)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.NOME)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.DUMP_TIMESTAMP)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.VALORE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER.DUMP_TIMESTAMP)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.BODY)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO.NOME)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO, returnAlias);
@@ -1009,10 +1106,43 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO.DUMP_TIMESTAMP)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DUMP_TIMESTAMP)){
-			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_TYPE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
 		}
-		if(field.equals(Transazione.model().DUMP_MESSAGGIO.POST_PROCESS_CONTENT_TYPE)){
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_ID)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.CONTENT_LOCATION)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.ALLEGATO)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.NOME)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.VALORE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER.DUMP_TIMESTAMP)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.DUMP_TIMESTAMP)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.CONTENUTO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.CONTENUTO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE_AS_BYTES)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.CONTENUTO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.DUMP_TIMESTAMP)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.CONTENUTO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DUMP_TIMESTAMP)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.POST_PROCESS_HEADER)){
@@ -1058,11 +1188,20 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO)){
 			return "dump_messaggi";
 		}
-		if(model.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO)){
-			return "dump_allegati";
+		if(model.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER)){
+			return "dump_multipart_header";
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO)){
 			return "dump_header_trasporto";
+		}
+		if(model.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO)){
+			return "dump_allegati";
+		}
+		if(model.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER)){
+			return "dump_header_allegato";
+		}
+		if(model.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO)){
+			return "dump_contenuti";
 		}
 		if(model.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO)){
 			return "transazione_extended_info";

@@ -33,6 +33,7 @@ import java.util.Properties;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -1902,9 +1903,11 @@ public class InoltroBuste extends GenericLib{
 			
 			/* ------------------- Dump -----------------------*/
 			if(configurazionePdDManager.dumpMessaggi() ){
+				DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
 				Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
 						soggettoFruitore,idServizio,tipoPdD,pddContext,
-						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+						dumpConfig);
 				dumpApplicativo.dumpRichiestaUscita(requestMessage, outRequestContext.getConnettore());
 			}
 			
@@ -2327,9 +2330,11 @@ public class InoltroBuste extends GenericLib{
 			
 				// dump applicativo
 				if(responseMessage!=null && configurazionePdDManager.dumpMessaggi() ){
+					DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
 							soggettoFruitore,idServizio,tipoPdD,pddContext,
-							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}
 				

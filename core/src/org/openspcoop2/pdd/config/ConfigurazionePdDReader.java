@@ -44,6 +44,8 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
@@ -1564,6 +1566,21 @@ public class ConfigurazionePdDReader {
 		}
 	}
 	
+	protected DumpConfigurazione getDumpConfigurazione(Connection connectionPdD,PortaDelegata pd) throws DriverConfigurazioneException{
+		if(pd==null){
+			//configurazione di default
+			return getDumpConfigurazione(connectionPdD);
+		}
+		
+		if(pd.getDump()!=null) {
+			return pd.getDump();
+		}
+		else {
+			//configurazione di default
+			return getDumpConfigurazione(connectionPdD);
+		}
+	}
+		
 	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 
 		if(pd == null || pd.sizeExtendedInfoList()<=0)
@@ -2269,6 +2286,21 @@ public class ConfigurazionePdDReader {
 		else {
 			//configurazione di default
 			return true; 
+		}
+	}
+	
+	protected DumpConfigurazione getDumpConfigurazione(Connection connectionPdD,PortaApplicativa pa) throws DriverConfigurazioneException{
+		if(pa==null){
+			//configurazione di default
+			return getDumpConfigurazione(connectionPdD);
+		}
+		
+		if(pa.getDump()!=null) {
+			return pa.getDump();
+		}
+		else {
+			//configurazione di default
+			return getDumpConfigurazione(connectionPdD);
 		}
 	}
 	
@@ -3728,122 +3760,6 @@ public class ConfigurazionePdDReader {
 	}
 
 
-	/**
-	 * Restituisce l'indicazione se effettuare o meno il dump dei messaggi. 
-	 *
-	 * @return Restituisce l'indicazione se effettuare o meno il dump dei messaggi.  (di default ritorna 'disabilitato'). 
-	 * 
-	 */
-	private static Boolean dumpMessaggi = null;
-	public static Boolean dumpMessaggiJMX = null;
-	protected boolean dumpMessaggi(Connection connectionPdD){
-
-		if(ConfigurazionePdDReader.dumpMessaggiJMX!=null)
-			return ConfigurazionePdDReader.dumpMessaggiJMX;
-
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpMessaggi==null){
-			try{
-				Configurazione configurazione = null;
-				try{
-					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpMessaggi (not found): "+e.getMessage());
-				}catch(Exception e){
-					this.log.error("dumpMessaggi",e);
-				}
-
-				if(configurazione!=null && configurazione.getDump()!=null){
-					StatoFunzionalita read = configurazione.getDump().getStato();	   
-					if(CostantiConfigurazione.ABILITATO.equals(read))
-						ConfigurazionePdDReader.dumpMessaggi = true;
-					else
-						ConfigurazionePdDReader.dumpMessaggi = false;
-				}else{
-					ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
-				}
-
-			}catch(Exception e){
-				ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
-			}
-		}
-
-		return ConfigurazionePdDReader.dumpMessaggi;
-	}
-
-	private static Boolean dumpBinarioPD = null;
-	public static Boolean dumpBinarioPDJMX = null;
-	protected boolean dumpBinarioPD(Connection connectionPdD){
-
-		if(ConfigurazionePdDReader.dumpBinarioPDJMX!=null)
-			return ConfigurazionePdDReader.dumpBinarioPDJMX;
-
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPD==null){
-			try{
-				Configurazione configurazione = null;
-				try{
-					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpBinarioPD (not found): "+e.getMessage());
-				}catch(Exception e){
-					this.log.error("dumpBinarioPD",e);
-				}
-
-				if(configurazione!=null && configurazione.getDump()!=null){
-					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaDelegata();	   
-					if(CostantiConfigurazione.ABILITATO.equals(read))
-						ConfigurazionePdDReader.dumpBinarioPD = true;
-					else
-						ConfigurazionePdDReader.dumpBinarioPD = false;
-				}else{
-					ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
-				}
-
-			}catch(Exception e){
-				ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
-			}
-		}
-
-		return ConfigurazionePdDReader.dumpBinarioPD;
-	}
-
-
-	private static Boolean dumpBinarioPA = null;
-	public static Boolean dumpBinarioPAJMX = null;
-	protected boolean dumpBinarioPA(Connection connectionPdD){
-
-		if(ConfigurazionePdDReader.dumpBinarioPAJMX!=null)
-			return ConfigurazionePdDReader.dumpBinarioPAJMX;
-
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPA==null){
-			try{
-				Configurazione configurazione = null;
-				try{
-					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpBinarioPA (not found): "+e.getMessage());
-				}catch(Exception e){
-					this.log.error("dumpBinarioPA",e);
-				}
-
-				if(configurazione!=null && configurazione.getDump()!=null){
-					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaApplicativa();	   
-					if(CostantiConfigurazione.ABILITATO.equals(read))
-						ConfigurazionePdDReader.dumpBinarioPA = true;
-					else
-						ConfigurazionePdDReader.dumpBinarioPA = false;
-				}else{
-					ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
-				}
-
-			}catch(Exception e){
-				ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
-			}
-		}
-
-		return ConfigurazionePdDReader.dumpBinarioPA;
-	}
-
-
 	public static Boolean tracciamentoBusteJMX = null;
 	private static Boolean tracciamentoBuste = null;
 	/**
@@ -3934,6 +3850,184 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.openSPCoopAppender_Tracciamento;
 	}
 
+
+	/**
+	 * Restituisce l'indicazione se effettuare o meno il dump dei messaggi. 
+	 *
+	 * @return Restituisce l'indicazione se effettuare o meno il dump dei messaggi.  (di default ritorna 'disabilitato'). 
+	 * 
+	 */
+	private static Boolean dumpMessaggi = null;
+	public static Boolean dumpMessaggiJMX = null;
+	protected boolean dumpMessaggi(Connection connectionPdD){
+
+		if(ConfigurazionePdDReader.dumpMessaggiJMX!=null)
+			return ConfigurazionePdDReader.dumpMessaggiJMX;
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpMessaggi==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("dumpMessaggi (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("dumpMessaggi",e);
+				}
+
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getStato();	   
+					if(CostantiConfigurazione.ABILITATO.equals(read))
+						ConfigurazionePdDReader.dumpMessaggi = true;
+					else
+						ConfigurazionePdDReader.dumpMessaggi = false;
+				}else{
+					ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpMessaggi;
+	}
+	
+	private static DumpConfigurazione dumpConfigurazione = null;
+	public DumpConfigurazione getDumpConfigurazione(Connection connectionPdD) {
+		
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpConfigurazione==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("getDumpConfigurazione (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("getDumpConfigurazione",e);
+				}
+
+				if(configurazione!=null && configurazione.getDump()!=null){
+					ConfigurazionePdDReader.dumpConfigurazione = configurazione.getDump().getConfigurazione();
+				}else{
+					ConfigurazionePdDReader.dumpConfigurazione = new DumpConfigurazione(); // default tutto abilitato
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpConfigurazione = new DumpConfigurazione(); // default tutto abilitato
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpConfigurazione;
+		
+	}
+
+	private static Boolean dumpBinarioPD = null;
+	public static Boolean dumpBinarioPDJMX = null;
+	protected boolean dumpBinarioPD(Connection connectionPdD){
+
+		if(ConfigurazionePdDReader.dumpBinarioPDJMX!=null)
+			return ConfigurazionePdDReader.dumpBinarioPDJMX;
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPD==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("dumpBinarioPD (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("dumpBinarioPD",e);
+				}
+
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaDelegata();	   
+					if(CostantiConfigurazione.ABILITATO.equals(read))
+						ConfigurazionePdDReader.dumpBinarioPD = true;
+					else
+						ConfigurazionePdDReader.dumpBinarioPD = false;
+				}else{
+					ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpBinarioPD = false; // default CostantiConfigurazione.DISABILITATO
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpBinarioPD;
+	}
+
+
+	private static Boolean dumpBinarioPA = null;
+	public static Boolean dumpBinarioPAJMX = null;
+	protected boolean dumpBinarioPA(Connection connectionPdD){
+
+		if(ConfigurazionePdDReader.dumpBinarioPAJMX!=null)
+			return ConfigurazionePdDReader.dumpBinarioPAJMX;
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpBinarioPA==null){
+			try{
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("dumpBinarioPA (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("dumpBinarioPA",e);
+				}
+
+				if(configurazione!=null && configurazione.getDump()!=null){
+					StatoFunzionalita read = configurazione.getDump().getDumpBinarioPortaApplicativa();	   
+					if(CostantiConfigurazione.ABILITATO.equals(read))
+						ConfigurazionePdDReader.dumpBinarioPA = true;
+					else
+						ConfigurazionePdDReader.dumpBinarioPA = false;
+				}else{
+					ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
+				}
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.dumpBinarioPA = false; // default CostantiConfigurazione.DISABILITATO
+			}
+		}
+
+		return ConfigurazionePdDReader.dumpBinarioPA;
+	}
+	
+	/**
+	 * Restituisce gli appender personalizzati per la registrazione dei contenuti
+	 *
+	 * @return Restituisce gli appender personalizzati per la registrazione dei contenuti
+	 */
+	private static Dump openSPCoopAppender_Dump = null;
+	private static Boolean openSPCoopAppender_DumpLetto = false;
+	protected Dump getOpenSPCoopAppender_Dump(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.openSPCoopAppender_DumpLetto==false){
+			try{
+
+				Configurazione configurazione = null;
+				try{
+					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
+				}catch(DriverConfigurazioneNotFound e){
+					this.log.debug("getOpenSPCoopAppender_Dump (not found): "+e.getMessage());
+				}catch(Exception e){
+					this.log.error("getOpenSPCoopAppender_Dump",e);
+				}
+
+				if(configurazione!=null)
+					ConfigurazionePdDReader.openSPCoopAppender_Dump = configurazione.getDump();	   
+
+			}catch(Exception e){
+				ConfigurazionePdDReader.openSPCoopAppender_Dump = null;
+			}
+			ConfigurazionePdDReader.openSPCoopAppender_DumpLetto = true;
+		}
+
+		return ConfigurazionePdDReader.openSPCoopAppender_Dump;
+	}
+	
 	/**
 	 * Restituisce la politica di gestione della consegna tramite connettore per il componente di cooperazione
 	 *

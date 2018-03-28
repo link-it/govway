@@ -261,7 +261,17 @@ public abstract class TransazioneImpl extends BaseImpl  implements TransazioneSe
 		if(filter.getOffset()!=null) {
 			pagExp.offset(filter.getOffset());
 		}
-        pagExp.sortOrder(SortOrder.DESC);
+		if(filter.getDescOrder()!=null) {
+			if(filter.getDescOrder()) {
+				pagExp.sortOrder(SortOrder.DESC);
+			}
+			else {
+				pagExp.sortOrder(SortOrder.ASC);
+			}
+		}
+		else {
+			pagExp.sortOrder(SortOrder.DESC);
+		}
 		pagExp.addOrder(Transazione.model().DATA_INGRESSO_RICHIESTA);
 		
 		return pagExp;

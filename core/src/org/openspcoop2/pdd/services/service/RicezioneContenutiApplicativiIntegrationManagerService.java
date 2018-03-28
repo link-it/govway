@@ -518,8 +518,11 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 					if(ConfigurazionePdDManager.getInstance().dumpMessaggi()){
 						Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
-								IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),null,null);
-						dumpApplicativo.dumpRichiestaIngresso(msg.getMessage(),IntegrationManager.buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
+								IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),
+								null,null,
+								ConfigurazionePdDManager.getInstance().getDumpConfigurazione());
+						dumpApplicativo.dumpRichiestaIngressoByIntegrationManagerError(msg.getMessage(),urlProtocolContext);
+								//IntegrationManager.buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
 					}
 					if(msg.getImbustamento()==false){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);

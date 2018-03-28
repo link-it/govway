@@ -40,12 +40,16 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="multipart-header" type="{http://www.openspcoop2.org/core/transazioni}dump-multipart-header" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="body" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="header-trasporto" type="{http://www.openspcoop2.org/core/transazioni}dump-header-trasporto" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/transazioni}dump-allegato" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="contenuto" type="{http://www.openspcoop2.org/core/transazioni}dump-contenuto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="header-trasporto" type="{http://www.openspcoop2.org/core/transazioni}dump-header-trasporto" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="post-process-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="post-process-header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="post-process-filename" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="post-process-content" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
@@ -67,12 +71,16 @@ import java.util.List;
   propOrder = {
   	"idTransazione",
   	"tipoMessaggio",
+  	"contentType",
+  	"multipartContentType",
+  	"multipartContentId",
+  	"multipartContentLocation",
+  	"multipartHeader",
   	"body",
+  	"headerTrasporto",
   	"allegato",
   	"contenuto",
-  	"headerTrasporto",
   	"dumpTimestamp",
-  	"postProcessContentType",
   	"postProcessHeader",
   	"postProcessFilename",
   	"postProcessContent",
@@ -130,12 +138,92 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
     this.tipoMessaggio = tipoMessaggio;
   }
 
+  public java.lang.String getContentType() {
+    return this.contentType;
+  }
+
+  public void setContentType(java.lang.String contentType) {
+    this.contentType = contentType;
+  }
+
+  public java.lang.String getMultipartContentType() {
+    return this.multipartContentType;
+  }
+
+  public void setMultipartContentType(java.lang.String multipartContentType) {
+    this.multipartContentType = multipartContentType;
+  }
+
+  public java.lang.String getMultipartContentId() {
+    return this.multipartContentId;
+  }
+
+  public void setMultipartContentId(java.lang.String multipartContentId) {
+    this.multipartContentId = multipartContentId;
+  }
+
+  public java.lang.String getMultipartContentLocation() {
+    return this.multipartContentLocation;
+  }
+
+  public void setMultipartContentLocation(java.lang.String multipartContentLocation) {
+    this.multipartContentLocation = multipartContentLocation;
+  }
+
+  public void addMultipartHeader(DumpMultipartHeader multipartHeader) {
+    this.multipartHeader.add(multipartHeader);
+  }
+
+  public DumpMultipartHeader getMultipartHeader(int index) {
+    return this.multipartHeader.get( index );
+  }
+
+  public DumpMultipartHeader removeMultipartHeader(int index) {
+    return this.multipartHeader.remove( index );
+  }
+
+  public List<DumpMultipartHeader> getMultipartHeaderList() {
+    return this.multipartHeader;
+  }
+
+  public void setMultipartHeaderList(List<DumpMultipartHeader> multipartHeader) {
+    this.multipartHeader=multipartHeader;
+  }
+
+  public int sizeMultipartHeaderList() {
+    return this.multipartHeader.size();
+  }
+
   public byte[] getBody() {
     return this.body;
   }
 
   public void setBody(byte[] body) {
     this.body = body;
+  }
+
+  public void addHeaderTrasporto(DumpHeaderTrasporto headerTrasporto) {
+    this.headerTrasporto.add(headerTrasporto);
+  }
+
+  public DumpHeaderTrasporto getHeaderTrasporto(int index) {
+    return this.headerTrasporto.get( index );
+  }
+
+  public DumpHeaderTrasporto removeHeaderTrasporto(int index) {
+    return this.headerTrasporto.remove( index );
+  }
+
+  public List<DumpHeaderTrasporto> getHeaderTrasportoList() {
+    return this.headerTrasporto;
+  }
+
+  public void setHeaderTrasportoList(List<DumpHeaderTrasporto> headerTrasporto) {
+    this.headerTrasporto=headerTrasporto;
+  }
+
+  public int sizeHeaderTrasportoList() {
+    return this.headerTrasporto.size();
   }
 
   public void addAllegato(DumpAllegato allegato) {
@@ -186,44 +274,12 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
     return this.contenuto.size();
   }
 
-  public void addHeaderTrasporto(DumpHeaderTrasporto headerTrasporto) {
-    this.headerTrasporto.add(headerTrasporto);
-  }
-
-  public DumpHeaderTrasporto getHeaderTrasporto(int index) {
-    return this.headerTrasporto.get( index );
-  }
-
-  public DumpHeaderTrasporto removeHeaderTrasporto(int index) {
-    return this.headerTrasporto.remove( index );
-  }
-
-  public List<DumpHeaderTrasporto> getHeaderTrasportoList() {
-    return this.headerTrasporto;
-  }
-
-  public void setHeaderTrasportoList(List<DumpHeaderTrasporto> headerTrasporto) {
-    this.headerTrasporto=headerTrasporto;
-  }
-
-  public int sizeHeaderTrasportoList() {
-    return this.headerTrasporto.size();
-  }
-
   public java.util.Date getDumpTimestamp() {
     return this.dumpTimestamp;
   }
 
   public void setDumpTimestamp(java.util.Date dumpTimestamp) {
     this.dumpTimestamp = dumpTimestamp;
-  }
-
-  public java.lang.String getPostProcessContentType() {
-    return this.postProcessContentType;
-  }
-
-  public void setPostProcessContentType(java.lang.String postProcessContentType) {
-    this.postProcessContentType = postProcessContentType;
   }
 
   public java.lang.String getPostProcessHeader() {
@@ -303,10 +359,86 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="content-type",required=false,nillable=false)
+  protected java.lang.String contentType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-type",required=false,nillable=false)
+  protected java.lang.String multipartContentType;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-id",required=false,nillable=false)
+  protected java.lang.String multipartContentId;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-content-location",required=false,nillable=false)
+  protected java.lang.String multipartContentLocation;
+
+  @XmlElement(name="multipart-header",required=true,nillable=false)
+  protected List<DumpMultipartHeader> multipartHeader = new ArrayList<DumpMultipartHeader>();
+
+  /**
+   * @deprecated Use method getMultipartHeaderList
+   * @return List<DumpMultipartHeader>
+  */
+  @Deprecated
+  public List<DumpMultipartHeader> getMultipartHeader() {
+  	return this.multipartHeader;
+  }
+
+  /**
+   * @deprecated Use method setMultipartHeaderList
+   * @param multipartHeader List<DumpMultipartHeader>
+  */
+  @Deprecated
+  public void setMultipartHeader(List<DumpMultipartHeader> multipartHeader) {
+  	this.multipartHeader=multipartHeader;
+  }
+
+  /**
+   * @deprecated Use method sizeMultipartHeaderList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeMultipartHeader() {
+  	return this.multipartHeader.size();
+  }
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
   @XmlElement(type=String.class, name="body",required=false,nillable=false)
   protected byte[] body;
+
+  @XmlElement(name="header-trasporto",required=true,nillable=false)
+  protected List<DumpHeaderTrasporto> headerTrasporto = new ArrayList<DumpHeaderTrasporto>();
+
+  /**
+   * @deprecated Use method getHeaderTrasportoList
+   * @return List<DumpHeaderTrasporto>
+  */
+  @Deprecated
+  public List<DumpHeaderTrasporto> getHeaderTrasporto() {
+  	return this.headerTrasporto;
+  }
+
+  /**
+   * @deprecated Use method setHeaderTrasportoList
+   * @param headerTrasporto List<DumpHeaderTrasporto>
+  */
+  @Deprecated
+  public void setHeaderTrasporto(List<DumpHeaderTrasporto> headerTrasporto) {
+  	this.headerTrasporto=headerTrasporto;
+  }
+
+  /**
+   * @deprecated Use method sizeHeaderTrasportoList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeHeaderTrasporto() {
+  	return this.headerTrasporto.size();
+  }
 
   @XmlElement(name="allegato",required=true,nillable=false)
   protected List<DumpAllegato> allegato = new ArrayList<DumpAllegato>();
@@ -368,44 +500,10 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   	return this.contenuto.size();
   }
 
-  @XmlElement(name="header-trasporto",required=true,nillable=false)
-  protected List<DumpHeaderTrasporto> headerTrasporto = new ArrayList<DumpHeaderTrasporto>();
-
-  /**
-   * @deprecated Use method getHeaderTrasportoList
-   * @return List<DumpHeaderTrasporto>
-  */
-  @Deprecated
-  public List<DumpHeaderTrasporto> getHeaderTrasporto() {
-  	return this.headerTrasporto;
-  }
-
-  /**
-   * @deprecated Use method setHeaderTrasportoList
-   * @param headerTrasporto List<DumpHeaderTrasporto>
-  */
-  @Deprecated
-  public void setHeaderTrasporto(List<DumpHeaderTrasporto> headerTrasporto) {
-  	this.headerTrasporto=headerTrasporto;
-  }
-
-  /**
-   * @deprecated Use method sizeHeaderTrasportoList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeHeaderTrasporto() {
-  	return this.headerTrasporto.size();
-  }
-
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="dump-timestamp",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date dumpTimestamp;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="post-process-content-type",required=false,nillable=false)
-  protected java.lang.String postProcessContentType;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="post-process-header",required=false,nillable=false)

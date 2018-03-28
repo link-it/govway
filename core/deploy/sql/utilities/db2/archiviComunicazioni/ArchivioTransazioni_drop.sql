@@ -1,7 +1,9 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX index_dump_header_trasporto_1;
 -- DROP INDEX index_dump_contenuti_1;
+-- DROP INDEX index_dump_header_allegato_1;
 -- DROP INDEX index_dump_allegati_1;
+-- DROP INDEX index_dump_header_trasporto_1;
+-- DROP INDEX index_dump_multipart_header_1;
 -- DROP INDEX index_dump_messaggi_3;
 -- DROP INDEX index_dump_messaggi_2;
 -- DROP INDEX index_dump_messaggi_1;
@@ -14,8 +16,10 @@
 -- DROP INDEX INDEX_TR_FULL;
 -- DROP INDEX INDEX_TR_MEDIUM;
 -- DROP INDEX INDEX_TR_ENTRY;
-DROP TABLE dump_header_trasporto;
 DROP TABLE dump_contenuti;
+DROP TABLE dump_header_allegato;
 DROP TABLE dump_allegati;
+DROP TABLE dump_header_trasporto;
+DROP TABLE dump_multipart_header;
 DROP TABLE dump_messaggi;
 DROP TABLE transazioni;

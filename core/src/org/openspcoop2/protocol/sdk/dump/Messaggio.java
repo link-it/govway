@@ -22,17 +22,15 @@
 package org.openspcoop2.protocol.sdk.dump;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
-import org.openspcoop2.core.constants.TipoMessaggio;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 
 /**
  * Messaggio
@@ -48,134 +46,159 @@ public class Messaggio implements Serializable{
 	 */
 	private static final long serialVersionUID = 4718160136521047108L;
 	
-	private OpenSPCoop2Message msg;
 	private TipoMessaggio tipoMessaggio;
+	
+	private String contentType;
+	
+	private byte[] body;
+	private BodyMultipartInfo bodyMultipartInfo;
+
+	private List<Attachment> attachments;
+	
+	private Map<String, String> headers = new Hashtable<String, String>();
+	
+	private Map<String, String> contenuti = new Hashtable<String, String>();
+	
 	private Date gdo;
+	
 	private IDSoggetto dominio;
+	private TipoPdD tipoPdD;
 	private String idFunzione;
+	
+	private String idTransazione;
 	private String idBusta;
 	private IDSoggetto fruitore;
 	private IDServizio servizio;
-	private java.util.Properties transportHeader;
-	private String location;
-	private TipoPdD tipoPdD;
-	private long id;
-	private Hashtable<String, String> properties = new Hashtable<String, String>();
+
 	private String protocollo;
 	
-	public OpenSPCoop2Message getMsg() {
-		return this.msg;
-	}
-	public void setMsg(OpenSPCoop2Message msg) {
-		this.msg = msg;
-	}
+	
 	public TipoMessaggio getTipoMessaggio() {
 		return this.tipoMessaggio;
 	}
+
 	public void setTipoMessaggio(TipoMessaggio tipoMessaggio) {
 		this.tipoMessaggio = tipoMessaggio;
 	}
+
+	public byte[] getBody() {
+		return this.body;
+	}
+
+	public void setBody(byte[] body) {
+		this.body = body;
+	}
+
+	public BodyMultipartInfo getBodyMultipartInfo() {
+		return this.bodyMultipartInfo;
+	}
+
+	public void setBodyMultipartInfo(BodyMultipartInfo bodyMultipartInfo) {
+		this.bodyMultipartInfo = bodyMultipartInfo;
+	}
+	
+	public List<Attachment> getAttachments() {
+		return this.attachments;
+	}
+
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+	public Map<String, String> getContenuti() {
+		return this.contenuti;
+	}
+
+	public void setContenuti(Map<String, String> contenuti) {
+		this.contenuti = contenuti;
+	}
+	
+	public Map<String, String> getHeaders() {
+		return this.headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
+	}
+
 	public Date getGdo() {
 		return this.gdo;
 	}
+
 	public void setGdo(Date gdo) {
 		this.gdo = gdo;
 	}
-	public IDSoggetto getIdPorta() {
+
+	public IDSoggetto getDominio() {
 		return this.dominio;
 	}
-	public void setIdPorta(IDSoggetto idPorta) {
-		this.dominio = idPorta;
+
+	public void setDominio(IDSoggetto dominio) {
+		this.dominio = dominio;
 	}
-	public String getIdFunzione() {
-		return this.idFunzione;
-	}
-	public void setIdFunzione(String idFunzione) {
-		this.idFunzione = idFunzione;
-	}
-	public String getIdBusta() {
-		return this.idBusta;
-	}
-	public void setIdBusta(String idBusta) {
-		this.idBusta = idBusta;
-	}
-	public IDSoggetto getFruitore() {
-		return this.fruitore;
-	}
-	public void setFruitore(IDSoggetto fruitore) {
-		this.fruitore = fruitore;
-	}
-	public IDServizio getServizio() {
-		return this.servizio;
-	}
-	public void setServizio(IDServizio servizio) {
-		this.servizio = servizio;
-	}
-	public java.util.Properties getTransportHeader() {
-		return this.transportHeader;
-	}
-	public void setTransportHeader(java.util.Properties transportHeader) {
-		this.transportHeader = transportHeader;
-	}
-	public long getId() {
-		return this.id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	
-	public void addProperty(String key,String value){
-    	this.properties.put(key,value);
-    }
-    public int sizeProperties(){
-    	return this.properties.size();
-    }
-    public String getProperty(String key){
-    	return this.properties.get(key);
-    }
-    public String removeProperty(String key){
-    	return this.properties.remove(key);
-    }
-    public String[] getPropertiesValues() {
-    	String[] array = new String[1];
-    	if(this.properties.size()>0){
-    		return this.properties.values().toArray(array);
-    	}else{
-    		return null;
-    	}
-    }
-    public String[] getPropertiesNames() {
-    	List<String> nomi = new ArrayList<String>();
-    	Enumeration<String> en = this.properties.keys();
-    	while(en.hasMoreElements()){
-    		nomi.add(en.nextElement());
-    	}	    	
-    	String[] array = new String[1];
-    	if(nomi.size()>0){
-    		return nomi.toArray(array);
-    	}else{
-    		return null;
-    	}
-    }
-    public void setProperties(Hashtable<String, String> params) {
-    	this.properties = params;
-    }
-	public String getLocation() {
-		return this.location;
-	}
-	public void setLocation(String location) {
-		this.location = location;
-	}
+
 	public TipoPdD getTipoPdD() {
 		return this.tipoPdD;
 	}
+
 	public void setTipoPdD(TipoPdD tipoPdD) {
 		this.tipoPdD = tipoPdD;
 	}
+
+	public String getIdFunzione() {
+		return this.idFunzione;
+	}
+
+	public void setIdFunzione(String idFunzione) {
+		this.idFunzione = idFunzione;
+	}
+
+	public String getIdTransazione() {
+		return this.idTransazione;
+	}
+
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
+	}
+
+	public String getIdBusta() {
+		return this.idBusta;
+	}
+
+	public void setIdBusta(String idBusta) {
+		this.idBusta = idBusta;
+	}
+
+	public IDSoggetto getFruitore() {
+		return this.fruitore;
+	}
+
+	public void setFruitore(IDSoggetto fruitore) {
+		this.fruitore = fruitore;
+	}
+
+	public IDServizio getServizio() {
+		return this.servizio;
+	}
+
+	public void setServizio(IDServizio servizio) {
+		this.servizio = servizio;
+	}
+
 	public String getProtocollo() {
 		return this.protocollo;
 	}
+
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
 	}
+	
+	public String getContentType() {
+		return this.contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 }

@@ -180,19 +180,6 @@ public class Tracciamento {
 	}
 
 
-	/**
-	 * Filter. 
-	 *
-	 * @deprecated  utility che elimina i caratteri XML codificati
-	 */
-	@Deprecated  public String filter(String msg){
-		String xml = msg.replaceAll("&lt;","<");
-		xml = xml.replaceAll("&quot;","\"");
-		xml = xml.replaceAll("&gt;",">");
-		return xml;
-	}
-
-
 	private Connection getConnectionFromState(boolean richiesta){
 		if(richiesta){
 			if(this.statoRichiesta!=null && this.statoRichiesta instanceof StateMessage){

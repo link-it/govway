@@ -142,6 +142,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.config" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.diagnostica" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.tracciamento" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.dump" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.validator" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.properties" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.basic.registry" />

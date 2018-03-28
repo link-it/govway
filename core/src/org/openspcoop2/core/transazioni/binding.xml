@@ -93,18 +93,24 @@
     <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
     <value name="id-transazione" field="idTransazione" usage="required"/>
     <value name="tipo-messaggio" field="tipoMessaggio" usage="required" enum-value-method="toString"/>
+    <value name="content-type" field="contentType" usage="optional"/>
+    <value name="multipart-content-type" field="multipartContentType" usage="optional"/>
+    <value name="multipart-content-id" field="multipartContentId" usage="optional"/>
+    <value name="multipart-content-location" field="multipartContentLocation" usage="optional"/>
+    <collection field="multipartHeader" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpMultipartHeader"/>
+    </collection>
     <value name="body" field="body" usage="optional"/>
+    <collection field="headerTrasporto" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpHeaderTrasporto"/>
+    </collection>
     <collection field="allegato" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.transazioni.DumpAllegato"/>
     </collection>
     <collection field="contenuto" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.transazioni.DumpContenuto"/>
     </collection>
-    <collection field="headerTrasporto" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.transazioni.DumpHeaderTrasporto"/>
-    </collection>
     <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
-    <value name="post-process-content-type" field="postProcessContentType" usage="optional"/>
     <value name="post-process-header" field="postProcessHeader" usage="optional"/>
     <value name="post-process-filename" field="postProcessFilename" usage="optional"/>
     <value name="post-process-content" field="postProcessContent" usage="optional"/>
@@ -112,12 +118,33 @@
     <value name="post-process-timestamp" field="postProcessTimestamp" usage="optional"/>
     <value name="post-processed" field="postProcessed" default="1" usage="optional"/>
   </mapping>
+  <mapping name="multipart-header" class="org.openspcoop2.core.transazioni.DumpMultipartHeader">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
+  <mapping name="header-trasporto" class="org.openspcoop2.core.transazioni.DumpHeaderTrasporto">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
   <mapping name="allegato" class="org.openspcoop2.core.transazioni.DumpAllegato">
     <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
-    <value name="id-allegato" field="idAllegato" usage="optional"/>
-    <value name="location" field="location" usage="optional"/>
-    <value name="mimetype" field="mimetype" usage="optional"/>
+    <value name="content-type" field="contentType" usage="optional"/>
+    <value name="content-id" field="contentId" usage="optional"/>
+    <value name="content-location" field="contentLocation" usage="optional"/>
     <value name="allegato" field="allegato" usage="optional"/>
+    <collection field="header" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.transazioni.DumpHeaderAllegato"/>
+    </collection>
+    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
+  </mapping>
+  <mapping name="header" class="org.openspcoop2.core.transazioni.DumpHeaderAllegato">
+    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
     <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
   </mapping>
   <mapping name="contenuto" class="org.openspcoop2.core.transazioni.DumpContenuto">
@@ -125,12 +152,6 @@
     <value name="nome" field="nome" usage="required"/>
     <value name="valore" field="valore" usage="required"/>
     <value name="valore-as-bytes" field="valoreAsBytes" usage="optional"/>
-    <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
-  </mapping>
-  <mapping name="header-trasporto" class="org.openspcoop2.core.transazioni.DumpHeaderTrasporto">
-    <namespace uri="http://www.openspcoop2.org/core/transazioni" default="elements"/>
-    <value name="nome" field="nome" usage="required"/>
-    <value name="valore" field="valore" usage="optional"/>
     <value name="dump-timestamp" field="dumpTimestamp" usage="required"/>
   </mapping>
   <mapping name="id-dump-messaggio" class="org.openspcoop2.core.transazioni.IdDumpMessaggio">

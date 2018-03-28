@@ -137,9 +137,12 @@ CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	tipo_messaggio VARCHAR(255) NOT NULL,
+	content_type VARCHAR(255),
+	multipart_content_type VARCHAR(255),
+	multipart_content_id VARCHAR(255),
+	multipart_content_location VARCHAR(255),
 	body BYTEA,
 	dump_timestamp TIMESTAMP NOT NULL,
-	post_process_content_type VARCHAR(255),
 	post_process_header TEXT,
 	post_process_filename VARCHAR(255),
 	post_process_content BYTEA,
@@ -149,7 +152,7 @@ CREATE TABLE dump_messaggi
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_dump_messaggi') NOT NULL,
 	-- check constraints
-	CONSTRAINT chk_dump_messaggi_1 CHECK (tipo_messaggio IN ('RichiestaIngresso','RichiestaUscita','RispostaIngresso','RispostaUscita')),
+	CONSTRAINT chk_dump_messaggi_1 CHECK (tipo_messaggio IN ('RichiestaIngresso','RichiestaUscita','RispostaIngresso','RispostaUscita','RichiestaIngressoDumpBinario','RichiestaUscitaDumpBinario','RispostaIngressoDumpBinario','RispostaUscitaDumpBinario','IntegrationManager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_messaggi PRIMARY KEY (id)
 );
@@ -161,13 +164,57 @@ CREATE INDEX index_dump_messaggi_3 ON dump_messaggi (post_process_config_id);
 
 
 
+CREATE SEQUENCE seq_dump_multipart_header start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE dump_multipart_header
+(
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_multipart_header') NOT NULL,
+	id_messaggio BIGINT NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_multipart_header_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_multipart_header_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
+	CONSTRAINT pk_dump_multipart_header PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_multipart_header_1 ON dump_multipart_header (id_messaggio);
+
+
+
+CREATE SEQUENCE seq_dump_header_trasporto start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE dump_header_trasporto
+(
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_header_trasporto') NOT NULL,
+	id_messaggio BIGINT NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_header_trasporto_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
+	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_header_trasporto_1 ON dump_header_trasporto (id_messaggio);
+
+
+
 CREATE SEQUENCE seq_dump_allegati start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
 
 CREATE TABLE dump_allegati
 (
-	id_allegato VARCHAR(255),
-	location VARCHAR(255),
-	mimetype VARCHAR(255),
+	content_type VARCHAR(255),
+	content_id VARCHAR(255),
+	content_location VARCHAR(255),
 	allegato BYTEA,
 	dump_timestamp TIMESTAMP NOT NULL,
 	-- fk/pk columns
@@ -180,6 +227,28 @@ CREATE TABLE dump_allegati
 
 -- index
 CREATE INDEX index_dump_allegati_1 ON dump_allegati (id_messaggio);
+
+
+
+CREATE SEQUENCE seq_dump_header_allegato start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE dump_header_allegato
+(
+	nome VARCHAR(255) NOT NULL,
+	valore TEXT,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_dump_header_allegato') NOT NULL,
+	id_allegato BIGINT NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_header_allegato_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_header_allegato_1 FOREIGN KEY (id_allegato) REFERENCES dump_allegati(id),
+	CONSTRAINT pk_dump_header_allegato PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_header_allegato_1 ON dump_header_allegato (id_allegato);
 
 
 
@@ -203,27 +272,5 @@ CREATE TABLE dump_contenuti
 
 -- index
 CREATE INDEX index_dump_contenuti_1 ON dump_contenuti (id_messaggio);
-
-
-
-CREATE SEQUENCE seq_dump_header_trasporto start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
-
-CREATE TABLE dump_header_trasporto
-(
-	nome VARCHAR(255) NOT NULL,
-	valore TEXT,
-	dump_timestamp TIMESTAMP NOT NULL,
-	-- fk/pk columns
-	id BIGINT DEFAULT nextval('seq_dump_header_trasporto') NOT NULL,
-	id_messaggio BIGINT NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_dump_header_trasporto_1 UNIQUE (id,nome),
-	-- fk/pk keys constraints
-	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
-	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
-);
-
--- index
-CREATE INDEX index_dump_header_trasporto_1 ON dump_header_trasporto (id_messaggio);
 
 

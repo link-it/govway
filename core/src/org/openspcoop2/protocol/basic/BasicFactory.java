@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -229,6 +230,13 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		return new TracciaSerializer(this);
 	}
 	
+	
+	/* ** DUMP ** */
+	
+	@Override
+	public IDumpProducer createDumpProducer() throws ProtocolException{
+		return new org.openspcoop2.protocol.basic.dump.DumpProducer(this);
+	}
 	
 	
 	/* ** ARCHIVE ** */

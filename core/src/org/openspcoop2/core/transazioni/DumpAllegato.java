@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for dump-allegato complex type.
@@ -35,10 +37,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="dump-allegato">
  * 		&lt;sequence>
- * 			&lt;element name="id-allegato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="mimetype" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="allegato" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/transazioni}dump-header-allegato" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -53,10 +56,11 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "dump-allegato", 
   propOrder = {
-  	"idAllegato",
-  	"location",
-  	"mimetype",
+  	"contentType",
+  	"contentId",
+  	"contentLocation",
   	"allegato",
+  	"header",
   	"dumpTimestamp"
   }
 )
@@ -81,28 +85,28 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
 		this.id=new Long(-1);
   }
 
-  public java.lang.String getIdAllegato() {
-    return this.idAllegato;
+  public java.lang.String getContentType() {
+    return this.contentType;
   }
 
-  public void setIdAllegato(java.lang.String idAllegato) {
-    this.idAllegato = idAllegato;
+  public void setContentType(java.lang.String contentType) {
+    this.contentType = contentType;
   }
 
-  public java.lang.String getLocation() {
-    return this.location;
+  public java.lang.String getContentId() {
+    return this.contentId;
   }
 
-  public void setLocation(java.lang.String location) {
-    this.location = location;
+  public void setContentId(java.lang.String contentId) {
+    this.contentId = contentId;
   }
 
-  public java.lang.String getMimetype() {
-    return this.mimetype;
+  public java.lang.String getContentLocation() {
+    return this.contentLocation;
   }
 
-  public void setMimetype(java.lang.String mimetype) {
-    this.mimetype = mimetype;
+  public void setContentLocation(java.lang.String contentLocation) {
+    this.contentLocation = contentLocation;
   }
 
   public byte[] getAllegato() {
@@ -111,6 +115,30 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
 
   public void setAllegato(byte[] allegato) {
     this.allegato = allegato;
+  }
+
+  public void addHeader(DumpHeaderAllegato header) {
+    this.header.add(header);
+  }
+
+  public DumpHeaderAllegato getHeader(int index) {
+    return this.header.get( index );
+  }
+
+  public DumpHeaderAllegato removeHeader(int index) {
+    return this.header.remove( index );
+  }
+
+  public List<DumpHeaderAllegato> getHeaderList() {
+    return this.header;
+  }
+
+  public void setHeaderList(List<DumpHeaderAllegato> header) {
+    this.header=header;
+  }
+
+  public int sizeHeaderList() {
+    return this.header.size();
   }
 
   public java.util.Date getDumpTimestamp() {
@@ -129,21 +157,51 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="id-allegato",required=false,nillable=false)
-  protected java.lang.String idAllegato;
+  @XmlElement(name="content-type",required=false,nillable=false)
+  protected java.lang.String contentType;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="location",required=false,nillable=false)
-  protected java.lang.String location;
+  @XmlElement(name="content-id",required=false,nillable=false)
+  protected java.lang.String contentId;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="mimetype",required=false,nillable=false)
-  protected java.lang.String mimetype;
+  @XmlElement(name="content-location",required=false,nillable=false)
+  protected java.lang.String contentLocation;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.HexBinaryAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="hexBinary")
   @XmlElement(type=String.class, name="allegato",required=false,nillable=false)
   protected byte[] allegato;
+
+  @XmlElement(name="header",required=true,nillable=false)
+  protected List<DumpHeaderAllegato> header = new ArrayList<DumpHeaderAllegato>();
+
+  /**
+   * @deprecated Use method getHeaderList
+   * @return List<DumpHeaderAllegato>
+  */
+  @Deprecated
+  public List<DumpHeaderAllegato> getHeader() {
+  	return this.header;
+  }
+
+  /**
+   * @deprecated Use method setHeaderList
+   * @param header List<DumpHeaderAllegato>
+  */
+  @Deprecated
+  public void setHeader(List<DumpHeaderAllegato> header) {
+  	this.header=header;
+  }
+
+  /**
+   * @deprecated Use method sizeHeaderList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeHeader() {
+  	return this.header.size();
+  }
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

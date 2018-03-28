@@ -17,43 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.protocol.basic;
 
-
-package org.openspcoop2.core.constants;
-
-import java.io.Serializable;
+import java.sql.Connection;
 
 /**
- * Contiene i tipi di messaggio
+ * BasicConnectionResult
  *
- * @author apoli@link.it
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 13575 $, $Date: 2018-01-26 12:33:08 +0100 (Fri, 26 Jan 2018) $
  */
+public class BasicConnectionResult {
 
-public enum TipoMessaggio implements Serializable {
-
-	RICHIESTA_INGRESSO ("RichiestaIngresso"),
-	RICHIESTA_USCITA ("RichiestaUscita"),
-	RISPOSTA_INGRESSO ("RispostaIngresso"),
-	RISPOSTA_USCITA ("RispostaUscita"),
-	INTEGRATION_MANAGER ("IntegrationManager");
+	private Connection connection;
+	private boolean releaseConnection;
 	
-	
-	private final String tipo;
-
-	TipoMessaggio(String tipo)
-	{
-		this.tipo = tipo;
+	public Connection getConnection() {
+		return this.connection;
 	}
-
-	public String getTipo()
-	{
-		return this.tipo;
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+	public boolean isReleaseConnection() {
+		return this.releaseConnection;
+	}
+	public void setReleaseConnection(boolean releaseConnection) {
+		this.releaseConnection = releaseConnection;
 	}
 	
-	public boolean equals(TipoMessaggio tipoPdD){
-		return this.tipo.equals(tipoPdD.getTipo());
-	}
 }
-

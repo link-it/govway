@@ -489,6 +489,7 @@ public class OpenSPCoop2Logger {
 					}catch(Exception e){
 						throw new Exception("Riscontrato errore durante l'inizializzazione del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
+					
 					// Aggiungo agli appender registrati
 					OpenSPCoop2Logger.loggerMsgDiagnosticoOpenSPCoopAppender.add(appender);
 					OpenSPCoop2Logger.tipoMsgDiagnosticoOpenSPCoopAppender.add(msgDiagConfig.getOpenspcoopAppender(i).getTipo());
@@ -529,30 +530,19 @@ public class OpenSPCoop2Logger {
 					// Carico appender richiesto
 					ITracciaProducer appender = null;
 					try{
-						Object o = Loader.getInstance().newInstance(tracciamentoAppenderClass);
-						if(o instanceof ITracciaProducer){
-							appender = (ITracciaProducer) o; 
-							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
-						}
-						else{
-							if( !(o instanceof IDumpProducer) ){
-								throw new Exception("OpenSPCoop Appender non è compatibile ne per registrare le tracce, ne per registrare i contenuti applicativi");
-							}
-						}
-						
-						if(appender!=null){
-							// Aggiungo agli appender registrati
-							OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender.add(appender);
-							OpenSPCoop2Logger.tipoTracciamentoOpenSPCoopAppender.add(tracciamentoConfig.getOpenspcoopAppender(i).getTipo());
-							
-							OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging: TracciamentoOpenSPCoopAppender di tipo ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"] correttamente inizializzato.");
-						}
-						
+						appender = (ITracciaProducer) Loader.getInstance().newInstance(tracciamentoAppenderClass);
+						appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
 						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}catch(Exception e){
 						throw new Exception("Riscontrato errore durante l'inizializzazione del tracciamento appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
+					
+					// Aggiungo agli appender registrati
+					OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender.add(appender);
+					OpenSPCoop2Logger.tipoTracciamentoOpenSPCoopAppender.add(tracciamentoConfig.getOpenspcoopAppender(i).getTipo());
+					
+					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging: TracciamentoOpenSPCoopAppender di tipo ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"] correttamente inizializzato.");
 					
 				}
 			}
@@ -568,49 +558,38 @@ public class OpenSPCoop2Logger {
 	
 	/**
 	 * Il Metodo si occupa di inizializzare gli appender personalizzati di OpenSPCoop che permettono di effettuare log dei dump applicativi senza passare da log4j
-	 * @param tracciamentoConfig Configurazione
+	 * @param dumpConfig Configurazione
 	 * @return true in caso di inizializzazione con successo, false altrimenti.
 	 */
-	public static boolean initializeDumpOpenSPCoopAppender(org.openspcoop2.core.config.Tracciamento tracciamentoConfig){
+	public static boolean initializeDumpOpenSPCoopAppender(org.openspcoop2.core.config.Dump dumpConfig){
 		try{
 			// Inizializzazione dump appender personalizzati
-			if(tracciamentoConfig!=null){
+			if(dumpConfig!=null){
 				ClassNameProperties prop = ClassNameProperties.getInstance();
-				for(int i=0; i< tracciamentoConfig.sizeOpenspcoopAppenderList(); i++){
+				for(int i=0; i< dumpConfig.sizeOpenspcoopAppenderList(); i++){
 					
 					// Dump Appender class
-					String dumpAppenderClass = prop.getTracciamentoOpenSPCoopAppender(tracciamentoConfig.getOpenspcoopAppender(i).getTipo());
+					String dumpAppenderClass = prop.getTracciamentoOpenSPCoopAppender(dumpConfig.getOpenspcoopAppender(i).getTipo());
 					if(dumpAppenderClass == null){
-						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
+						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
 					}
 
 					// Carico appender richiesto
 					IDumpProducer appender = null;
 					try{
-						Object o = Loader.getInstance().newInstance(dumpAppenderClass);
-						if(o instanceof IDumpProducer){
-							appender = (IDumpProducer) o; 
-							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
-						}
-						else{
-							if( !(o instanceof ITracciaProducer) ){
-								throw new Exception("OpenSPCoop Appender non è compatibile ne per registrare le tracce, ne per registrare i contenuti applicativi");
-							}
-						}
-						
-						// Aggiungo agli appender registrati
-						if(appender!=null){
-							OpenSPCoop2Logger.loggerDumpOpenSPCoopAppender.add(appender);
-							OpenSPCoop2Logger.tipoDumpOpenSPCoopAppender.add(tracciamentoConfig.getOpenspcoopAppender(i).getTipo());
-							
-							OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging: DumpOpenSPCoopAppender di tipo ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"] correttamente inizializzato.");
-						}
-						
+						appender = (IDumpProducer) Loader.getInstance().newInstance(dumpAppenderClass);
+						appender.initializeAppender(dumpConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
-						throw new Exception("Riscontrato errore durante il caricamento del dump appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new Exception("Riscontrato errore durante il caricamento del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante l'inizializzazione del dump appender specificato ["+tracciamentoConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
+						throw new Exception("Riscontrato errore durante l'inizializzazione del dump appender specificato ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
 					}
+					
+					// Aggiungo agli appender registrati
+					OpenSPCoop2Logger.loggerDumpOpenSPCoopAppender.add(appender);
+					OpenSPCoop2Logger.tipoDumpOpenSPCoopAppender.add(dumpConfig.getOpenspcoopAppender(i).getTipo());
+					
+					OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging: DumpOpenSPCoopAppender di tipo ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"] correttamente inizializzato.");
 				}
 			}
 			return true;

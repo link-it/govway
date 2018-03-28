@@ -63,6 +63,22 @@ public abstract class DumpMessaggioImpl extends BaseImpl  implements DumpMessagg
 		if(filter.getIdTransazione()!= null) {
 			exp.equals(DumpMessaggio.model().ID_TRANSAZIONE, filter.getIdTransazione());
 		}
+		if(filter.getTipoMessaggio()!= null) {
+			exp.equals(DumpMessaggio.model().TIPO_MESSAGGIO, filter.getTipoMessaggio());
+		}
+		if(filter.getContentType()!= null) {
+			exp.equals(DumpMessaggio.model().CONTENT_TYPE, filter.getContentType());
+		}
+		
+		if(filter.getMultipartContentId()!= null) {
+			exp.equals(DumpMessaggio.model().MULTIPART_CONTENT_ID, filter.getMultipartContentId());
+		}
+		if(filter.getMultipartContentLocation()!= null) {
+			exp.equals(DumpMessaggio.model().MULTIPART_CONTENT_LOCATION, filter.getMultipartContentLocation());
+		}
+		if(filter.getMultipartContentType()!= null) {
+			exp.equals(DumpMessaggio.model().MULTIPART_CONTENT_TYPE, filter.getMultipartContentType());
+		}
 
 		return exp;
 	}
@@ -75,7 +91,12 @@ public abstract class DumpMessaggioImpl extends BaseImpl  implements DumpMessagg
 		if(filter.getOffset()!=null) {
 			pagExp.offset(filter.getOffset());
 		}
-        pagExp.sortOrder(SortOrder.ASC);
+		if(filter.getDescOrder()!=null && filter.getDescOrder()) {
+			pagExp.sortOrder(SortOrder.DESC);
+		}
+		else {
+			pagExp.sortOrder(SortOrder.ASC);
+		}
 		pagExp.addOrder(DumpMessaggio.model().ID_TRANSAZIONE);
 		pagExp.addOrder(DumpMessaggio.model().TIPO_MESSAGGIO);
 		

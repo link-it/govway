@@ -27,10 +27,12 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -49,6 +51,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
@@ -176,6 +179,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
@@ -449,10 +453,14 @@ public class RicezioneBuste {
 		
 		
 		// ------------- process -----------------------------
+		HashMap<String, Object> internalObjects = new HashMap<>();
 		try{
-			process_engine(inRequestContext,params);
+			process_engine(inRequestContext,internalObjects,params);
 		} catch(TracciamentoException tracciamentoException){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
+			return;
+		} catch(DumpException e){
+			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "DumpNonRiuscito");
 			return;
 		} catch(ProtocolException protocolException){
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, protocolException, "ProtocolFactoryNonInstanziata");
@@ -482,6 +490,35 @@ public class RicezioneBuste {
 			setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "FinalizeIntegrationContextRicezioneBuste");
 			return;
 		}
+		
+		
+		
+		
+		
+		
+		
+		// ------------- Dump richiesta in ingresso -----------------------------
+		if(internalObjects.containsKey(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO)==false) {
+			if(Dump.sistemaDumpDisponibile){
+				try{
+					ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+					OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
+					if (configurazionePdDReader.dumpMessaggi() && msgRichiesta!=null) {
+						
+						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+						dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
+								inRequestContext.getConnettore().getUrlProtocolContext());
+					}
+				}catch(DumpException dumpException){
+					setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, dumpException, "DumpNonRiuscito");
+					return;
+				}catch(Exception e){
+					// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
+				}
+			}
+		}
+		
+		
 		
 		
 		
@@ -555,26 +592,14 @@ public class RicezioneBuste {
 			try{
 				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
 				if (configurazionePdDReader.dumpMessaggi() && msgRisposta!=null) {
-					ProtocolContext protocolContext = this.msgContext.getProtocol();
-					Dump dumpApplicativo = null;
-					if(protocolContext!=null){
-						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
-								protocolContext.getErogatore(), protocolContext.getVersioneServizio());
-						idServizio.setAzione(protocolContext.getAzione());
-						dumpApplicativo = new Dump(protocolContext.getDominio(),
-								this.msgContext.getIdModulo(), protocolContext.getIdRichiesta(),
-								protocolContext.getFruitore(),
-								idServizio,
-								this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
-								null,null);
-					}else{
-						dumpApplicativo = new Dump(null,this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
-								null,null);
-					}
-					dumpApplicativo.dumpRispostaUscita(msgRisposta, inRequestContext.getConnettore(), outResponseContext.getPropertiesRispostaTrasporto());
+					
+					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
+					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
+							inRequestContext.getConnettore().getUrlProtocolContext(), 
+							outResponseContext.getPropertiesRispostaTrasporto());
 				}
-			}catch(TracciamentoException tracciamentoException){
-				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
+			}catch(DumpException dumpException){
+				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, dumpException, "DumpNonRiuscito");
 				return;
 			}catch(Exception e){
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
@@ -582,6 +607,40 @@ public class RicezioneBuste {
 		}
 
 	}
+	
+	private Dump getDump(ConfigurazionePdDManager configurazionePdDReader,
+			IProtocolFactory<?> protocolFactory,
+			HashMap<String, Object> internalObjects) throws DumpException, DriverRegistroServiziException {
+		DumpConfigurazione dumpConfig = null;
+		if(internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
+			dumpConfig = (DumpConfigurazione) internalObjects.get(CostantiPdD.DUMP_CONFIG); // dovrebbe essere stata impostata per la pd/pa specifica
+		}
+		else {
+			dumpConfig = configurazionePdDReader.getDumpConfigurazione();
+		}
+		
+		ProtocolContext protocolContext = this.msgContext.getProtocol();
+		Dump dumpApplicativo = null;
+		if(protocolContext!=null){
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
+					protocolContext.getErogatore(), protocolContext.getVersioneServizio());
+			idServizio.setAzione(protocolContext.getAzione());
+			
+			dumpApplicativo = new Dump(protocolContext.getDominio(),
+					this.msgContext.getIdModulo(), protocolContext.getIdRichiesta(),
+					protocolContext.getFruitore(), idServizio,
+					this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					null,null,
+					dumpConfig);
+		}else{
+			dumpApplicativo = new Dump(OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()),
+					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
+					null,null,
+					dumpConfig);
+		}
+		return dumpApplicativo;
+	}
+	
 	// processamento quando non sono disponibili le risorse (es. MsgDiagnostico)
 	private void setSOAPFault_processamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione){
 		setSOAPFault_engine(integrationError, null, null, null, null, erroreIntegrazione, null, false);
@@ -677,7 +736,9 @@ public class RicezioneBuste {
 	
 	
 	
-	private void process_engine(InRequestContext inRequestContext,Object ... params) throws TracciamentoException, ProtocolException {
+	private void process_engine(InRequestContext inRequestContext,HashMap<String, Object> internalObjects,Object ... params) 
+			throws TracciamentoException, DumpException, ProtocolException {
+		
 
 		/* ------------ Lettura parametri della richiesta ------------- */
 	
@@ -989,16 +1050,7 @@ public class RicezioneBuste {
 
 		
 		
-		// ------------- Dump richiesta-----------------------------
-		if (configurazionePdDReader.dumpMessaggi()) {
-			
-			msgDiag.mediumDebug("Dump richiesta ...");
-			
-			Dump dumpApplicativo = new Dump(identitaPdD,this.msgContext.getIdModulo(), this.msgContext.getTipoPorta(),inRequestContext.getPddContext(),
-					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-			dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore());
-		}
-		
+
 		
 		
 		
@@ -1408,6 +1460,59 @@ public class RicezioneBuste {
 		
 		
 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// ------------- Dump richiesta-----------------------------
+		if (configurazionePdDReader.dumpMessaggi()) {
+			
+			msgDiag.mediumDebug("Dump richiesta ...");
+			
+			DumpConfigurazione dumpConfig = null;
+			try {
+				if(pa!=null) {
+					dumpConfig = configurazionePdDReader.getDumpConfigurazione(pa);
+				}
+				internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
+			} 
+			catch (Exception e) {
+				setSOAPFault_processamento(IntegrationError.INTERNAL_ERROR,logCore,msgDiag,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+						"readDumpConfigurazione");
+				openspcoopstate.releaseResource();
+				return;
+			}
+			
+			Dump dumpApplicativo = new Dump(identitaPdD,
+					this.msgContext.getIdModulo(),  null,
+					null, idServizio,
+					this.msgContext.getTipoPorta(),inRequestContext.getPddContext(),
+					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+					dumpConfig);
+			dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
+			internalObjects.put(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO, true);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 
 		/* ------------  

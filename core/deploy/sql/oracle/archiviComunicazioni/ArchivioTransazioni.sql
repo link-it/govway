@@ -141,9 +141,12 @@ CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR2(255) NOT NULL,
 	tipo_messaggio VARCHAR2(255) NOT NULL,
+	content_type VARCHAR2(255),
+	multipart_content_type VARCHAR2(255),
+	multipart_content_id VARCHAR2(255),
+	multipart_content_location VARCHAR2(255),
 	body BLOB,
 	dump_timestamp TIMESTAMP NOT NULL,
-	post_process_content_type VARCHAR2(255),
 	post_process_header CLOB,
 	post_process_filename VARCHAR2(255),
 	post_process_content BLOB,
@@ -153,7 +156,7 @@ CREATE TABLE dump_messaggi
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
-	CONSTRAINT chk_dump_messaggi_1 CHECK (tipo_messaggio IN ('RichiestaIngresso','RichiestaUscita','RispostaIngresso','RispostaUscita')),
+	CONSTRAINT chk_dump_messaggi_1 CHECK (tipo_messaggio IN ('RichiestaIngresso','RichiestaUscita','RispostaIngresso','RispostaUscita','RichiestaIngressoDumpBinario','RichiestaUscitaDumpBinario','RispostaIngressoDumpBinario','RispostaUscitaDumpBinario','IntegrationManager')),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_dump_messaggi PRIMARY KEY (id)
 );
@@ -179,13 +182,79 @@ end;
 
 
 
+CREATE SEQUENCE seq_dump_multipart_header MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
+CREATE TABLE dump_multipart_header
+(
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_messaggio NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_multipart_header_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_multipart_header_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
+	CONSTRAINT pk_dump_multipart_header PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_multipart_header_1 ON dump_multipart_header (id_messaggio);
+CREATE TRIGGER trg_dump_multipart_header
+BEFORE
+insert on dump_multipart_header
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_multipart_header.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_dump_header_trasporto MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
+CREATE TABLE dump_header_trasporto
+(
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_messaggio NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_header_trasporto_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
+	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_header_trasporto_1 ON dump_header_trasporto (id_messaggio);
+CREATE TRIGGER trg_dump_header_trasporto
+BEFORE
+insert on dump_header_trasporto
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_header_trasporto.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 CREATE SEQUENCE seq_dump_allegati MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
 
 CREATE TABLE dump_allegati
 (
-	id_allegato VARCHAR2(255),
-	location VARCHAR2(255),
-	mimetype VARCHAR2(255),
+	content_type VARCHAR2(255),
+	content_id VARCHAR2(255),
+	content_location VARCHAR2(255),
 	allegato BLOB,
 	dump_timestamp TIMESTAMP NOT NULL,
 	-- fk/pk columns
@@ -205,6 +274,39 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_dump_allegati.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_dump_header_allegato MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
+CREATE TABLE dump_header_allegato
+(
+	nome VARCHAR2(255) NOT NULL,
+	valore CLOB,
+	dump_timestamp TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_allegato NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_dump_header_allegato_1 UNIQUE (id,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_dump_header_allegato_1 FOREIGN KEY (id_allegato) REFERENCES dump_allegati(id),
+	CONSTRAINT pk_dump_header_allegato PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX index_dump_header_allegato_1 ON dump_header_allegato (id_allegato);
+CREATE TRIGGER trg_dump_header_allegato
+BEFORE
+insert on dump_header_allegato
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_dump_header_allegato.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -239,39 +341,6 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_dump_contenuti.nextval INTO :new.id
-                FROM DUAL;
-   END IF;
-end;
-/
-
-
-
-CREATE SEQUENCE seq_dump_header_trasporto MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
-
-CREATE TABLE dump_header_trasporto
-(
-	nome VARCHAR2(255) NOT NULL,
-	valore CLOB,
-	dump_timestamp TIMESTAMP NOT NULL,
-	-- fk/pk columns
-	id NUMBER NOT NULL,
-	id_messaggio NUMBER NOT NULL,
-	-- unique constraints
-	CONSTRAINT unique_dump_header_trasporto_1 UNIQUE (id,nome),
-	-- fk/pk keys constraints
-	CONSTRAINT fk_dump_header_trasporto_1 FOREIGN KEY (id_messaggio) REFERENCES dump_messaggi(id),
-	CONSTRAINT pk_dump_header_trasporto PRIMARY KEY (id)
-);
-
--- index
-CREATE INDEX index_dump_header_trasporto_1 ON dump_header_trasporto (id_messaggio);
-CREATE TRIGGER trg_dump_header_trasporto
-BEFORE
-insert on dump_header_trasporto
-for each row
-begin
-   IF (:new.id IS NULL) THEN
-      SELECT seq_dump_header_trasporto.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

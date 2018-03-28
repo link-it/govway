@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DumpMultipartHeader }
+     */
+    public DumpMultipartHeader createDumpMultipartHeader() {
+        return new DumpMultipartHeader();
+    }
+
+    /**
      * Create an instance of {@link DumpContenuto }
      */
     public DumpContenuto createDumpContenuto() {
@@ -91,6 +98,13 @@ public class ObjectFactory {
      */
     public DumpHeaderTrasporto createDumpHeaderTrasporto() {
         return new DumpHeaderTrasporto();
+    }
+
+    /**
+     * Create an instance of {@link DumpHeaderAllegato }
+     */
+    public DumpHeaderAllegato createDumpHeaderAllegato() {
+        return new DumpHeaderAllegato();
     }
 
     /**

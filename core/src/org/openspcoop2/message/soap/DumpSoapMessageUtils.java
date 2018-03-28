@@ -22,11 +22,20 @@ package org.openspcoop2.message.soap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
 
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPPart;
 
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.utils.DumpAttachment;
+import org.openspcoop2.message.utils.DumpMessaggio;
+import org.openspcoop2.message.utils.DumpMessaggioConfig;
+import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -41,40 +50,375 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class DumpSoapMessageUtils {
 
+	public static DumpMessaggio dumpMessage(OpenSPCoop2SoapMessage msg,boolean dumpAllAttachments) throws MessageException{
+		return dumpMessage(msg, new DumpMessaggioConfig(), dumpAllAttachments);
+	}
+	public static DumpMessaggio dumpMessage(OpenSPCoop2SoapMessage msg,
+			DumpMessaggioConfig config,
+			boolean dumpAllAttachments) throws MessageException{
+		try{
+			DumpMessaggio dumpMessaggio = new DumpMessaggio();
+			dumpMessaggio.setMessageType(msg.getMessageType());
+			dumpMessaggio.setContentType(msg.getContentType());
+						
+			Properties pTrasporto = null;
+			if(msg.getTransportRequestContext()!=null) {
+				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
+						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+					if(config.isDumpHeaders()) {
+						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+					}
+				}
+			}
+			else if(msg.getTransportResponseContext()!=null) {
+				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
+						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+					if(config.isDumpHeaders()) {
+						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+					}
+				}
+			}
+			if(config.isDumpHeaders() && pTrasporto!=null) {
+				Enumeration<?> en = pTrasporto.keys();
+				while (en.hasMoreElements()) {
+					String key = (String) en.nextElement();
+					if(key!=null){
+						String value = pTrasporto.getProperty(key);
+						dumpMessaggio.getHeaders().put(key, value);
+					}
+				}
+			}
+			
+			boolean msgWithAttachments = msg.countAttachments()>0;
+			
+			if(config.isDumpBody()) {
+				
+				SOAPPart soapPart = msg.getSOAPPart();
+				
+				DumpMessaggioMultipartInfo multipartInfoBody = null;
+				if(msgWithAttachments) {
+					
+					Iterator<?> itM = soapPart.getAllMimeHeaders();
+			    	if(itM!=null) {
+				    	while(itM.hasNext()) {
+				    		Object keyO = itM.next();
+				    		if(keyO instanceof String) {
+				    			String key = (String) keyO;
+				    			
+				    			if(!HttpConstants.CONTENT_ID.equalsIgnoreCase(key) &&
+				    					!HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) &&
+				    					!HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key) &&
+				    					!config.isDumpMultipartHeaders()) {
+				    				continue;
+				    			}
+				    			
+				    			String [] values = soapPart.getMimeHeader(key);
+				    			String value = "";
+				    			if(values!=null && values.length>0) {
+				    				for (int j = 0; j < values.length; j++) {
+										if(j>0) {
+											value = value + ",";
+										}
+										value = value + values[j];
+									}
+				    			}
+				    			
+				    			if(multipartInfoBody==null) {
+				    				multipartInfoBody = new DumpMessaggioMultipartInfo();
+				    			}
+				    			
+				    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
+				    				multipartInfoBody.setContentId(value);
+				    			}
+				    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
+				    				multipartInfoBody.setContentLocation(value);
+				    			}
+				    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+				    				multipartInfoBody.setContentType(value);
+				    			}
+				    			
+				    			if(config.isDumpMultipartHeaders()) {
+				    				multipartInfoBody.getHeaders().put(key, value);
+				    			}
+				    			
+				    			
+				    		}
+				    	}
+			    	}
+					
+				}
+				if(multipartInfoBody!=null) {
+					dumpMessaggio.setMultipartInfoBody(multipartInfoBody);
+				}
+				
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				bout.write(msg.getAsByte(soapPart.getEnvelope(),false));
+				bout.flush();
+				bout.close();
+				dumpMessaggio.setBody(bout);
+			}
+			
+			if(config.isDumpAttachments()) {
+				
+				java.util.Iterator<?> it = msg.getAttachments();
+			    while(it.hasNext()){
+			    	AttachmentPart ap = 
+			    		(AttachmentPart) it.next();
+			    	DumpAttachment dumpAttach = new DumpAttachment();
+			    	
+			    	dumpAttach.setContentId(ap.getContentId());
+			    	dumpAttach.setContentLocation(ap.getContentLocation());
+			    	dumpAttach.setContentType(ap.getContentType());
+			    	
+			    	if(config.isDumpMultipartHeaders()) {
+				    	Iterator<?> itM = ap.getAllMimeHeaders();
+				    	if(itM!=null) {
+					    	while(itM.hasNext()) {
+					    		Object keyO = itM.next();
+					    		if(keyO instanceof String) {
+					    			String key = (String) keyO;
+					    			String [] values = ap.getMimeHeader(key);
+					    			String value = "";
+					    			if(values!=null && values.length>0) {
+					    				for (int j = 0; j < values.length; j++) {
+											if(j>0) {
+												value = value + ",";
+											}
+											value = value + values[j];
+										}
+					    			}
+					    			dumpAttach.getHeaders().put(key, value);
+					    		}
+					    	}
+				    	}
+			    	}
+			    	
+			    	ByteArrayOutputStream boutAttach = null;
+			    	if(dumpAllAttachments){
+			    		boutAttach = (ByteArrayOutputStream) _dumpAttachment(msg, ap, true); 
+			    	}else{
+			    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
+			    		Object o = ap.getDataHandler().getContent();
+			    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");
+			    		if(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
+			    			 // reimposto handler
+			    			 DumpSoapMessageUtils.rebuildAttachmentAsByteArray(msg, ap);
+			    		}
+			    		
+			    		if(o instanceof String){
+			    			boutAttach = new ByteArrayOutputStream();
+			    			boutAttach.write(((String)o).getBytes());
+			    			boutAttach.flush();
+			    			boutAttach.close();
+			    		}else{
+			    			dumpAttach.setErrorContentNotSerializable("Contenuto attachment non è visualizzabile, tipo: "+o.getClass().getName());
+			    		}
+			    	}
+			    	dumpAttach.setContent(boutAttach);
+			    }
+			    
+			}
+			
+		    return dumpMessaggio;
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 	
-	public static String dumpMessage(OpenSPCoop2SoapMessage msg,boolean dumpAllAttachments) throws MessageException{
+	public static String dumpMessageAsString(DumpMessaggio msg) throws MessageException{
+		return dumpMessageAsString(msg, new DumpMessaggioConfig());
+	}
+	public static String dumpMessageAsString(DumpMessaggio msg,
+			DumpMessaggioConfig config) throws MessageException{
+		try{
+			StringBuffer out = new StringBuffer(msg.toString(config));
+		    return out.toString();
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	public static String dumpMessageAsString(OpenSPCoop2SoapMessage msg,
+			boolean dumpAllAttachments) throws MessageException{
+		return dumpMessageAsString(msg, new DumpMessaggioConfig(), dumpAllAttachments);
+	}
+	public static String dumpMessageAsString(OpenSPCoop2SoapMessage msg,
+			DumpMessaggioConfig config,
+			boolean dumpAllAttachments) throws MessageException{
 		try{
 			StringBuffer out = new StringBuffer();
-			out.append("------ SOAPEnvelope ------\n");
-			out.append(msg.getAsString(msg.getSOAPPart().getEnvelope(),false));
-			java.util.Iterator<?> it = msg.getAttachments();
-		    while(it.hasNext()){
-		    	AttachmentPart ap = 
-		    		(AttachmentPart) it.next();
-		    	if(ap.getContentId()!=null)
-		    		out.append("\n------ Attachment id["+ap.getContentId()+"]------");
-		    	else if(ap.getContentLocation()!=null)
-		    		out.append("\n------ Attachment location["+ap.getContentLocation()+"]------");
-		    	out.append("\nId["+ap.getContentId()+"] location["+ap.getContentLocation()+"] type["+ap.getContentType()+"]: ");
+			
+			Properties pTrasporto = null;
+			if(msg.getTransportRequestContext()!=null) {
+				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
+						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
+					if(config.isDumpHeaders()) {
+						pTrasporto = msg.getTransportRequestContext().getParametersTrasporto();
+					}
+				}
+			}
+			else if(msg.getTransportResponseContext()!=null) {
+				if(msg.getTransportResponseContext().getParametersTrasporto()!=null && 
+						msg.getTransportResponseContext().getParametersTrasporto().size()>0){
+					if(config.isDumpHeaders()) {
+						pTrasporto = msg.getTransportResponseContext().getParametersTrasporto();
+					}
+				}
+			}
+			if(config.isDumpHeaders()) {
+				out.append("------ Header di trasporto ------\n");
+				if(pTrasporto!=null && pTrasporto.size()>0) {
+					Enumeration<?> en = pTrasporto.keys();
+					while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						if(key!=null){
+							String value = pTrasporto.getProperty(key);
+							out.append("- "+key+": "+value+"\n");
+						}
+					}
+				}
+				else {
+					out.append("Non presenti\n");
+				}
+			}
+			
+			boolean msgWithAttachments = msg.countAttachments()>0;
+			
+			if(config.isDumpBody()) {
+				out.append("------ SOAPEnvelope (ContentType: "+msg.getContentType()+") (MessageType: "+msg.getMessageType()+") ------\n");
 				
-		    	if(dumpAllAttachments){
-		    		out.append(DumpSoapMessageUtils.dumpAttachment(msg, ap));
-		    	}else{
-		    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
-		    		Object o = ap.getDataHandler().getContent();
-		    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");
-		    		if(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
-		    			 // reimposto handler
-		    			 DumpSoapMessageUtils.rebuildAttachmentAsByteArray(msg, ap);
-		    		}
-		    		
-		    		if(o instanceof String){
-		    			out.append((String)o);
-		    		}else{
-		    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
-		    		}
-		    	}
-		    }
+				SOAPPart soapPart = msg.getSOAPPart();
+				
+				if(msgWithAttachments) {
+					
+					HashMap<String, String> mime = new HashMap<>();
+					Iterator<?> itM = soapPart.getAllMimeHeaders();
+			    	if(itM!=null) {
+				    	while(itM.hasNext()) {
+				    		Object keyO = itM.next();
+				    		if(keyO instanceof String) {
+				    			String key = (String) keyO;
+				    			
+				    			if(!HttpConstants.CONTENT_ID.equalsIgnoreCase(key) &&
+				    					!HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) &&
+				    					!HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key) &&
+				    					!config.isDumpMultipartHeaders()) {
+				    				continue;
+				    			}
+				    			
+				    			String [] values = soapPart.getMimeHeader(key);
+				    			String value = "";
+				    			if(values!=null && values.length>0) {
+				    				for (int j = 0; j < values.length; j++) {
+										if(j>0) {
+											value = value + ",";
+										}
+										value = value + values[j];
+									}
+				    			}
+				    			
+				    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key)) {
+				    				mime.put(key, value);
+				    			}
+				    			else if(HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key)) {
+				    				mime.put(key, value);
+				    			}
+				    			else if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+				    				mime.put(key, value);
+				    			}
+				    			else if(config.isDumpMultipartHeaders()) {
+				    				mime.put(key, value);
+				    			}
+				    			
+				    			
+				    		}
+				    	}
+			    	}
+			    	
+			    	if(mime.size()>0) {
+			    		out.append("\n*** MimePart Header ***\n");
+			    		Iterator<String> it = mime.keySet().iterator();
+			    		while (it.hasNext()) {
+							String key = (String) it.next();
+							out.append("- "+key+": "+mime.get(key)+"\n");	
+						}
+			    	}
+					
+				}
+				
+				out.append("\n");
+				
+				out.append(msg.getAsString(soapPart.getEnvelope(),false));
+			}
+			
+			if(config.isDumpAttachments()) {
+				java.util.Iterator<?> it = msg.getAttachments();
+				int index = 1;
+			    while(it.hasNext()){
+			    	AttachmentPart ap = 
+			    		(AttachmentPart) it.next();
+			    	out.append("\n------ Attachment-"+index+" ------\n");
+			    	
+			    	out.append("\n*** MimePart Header ***\n");
+			    	if(ap.getContentId()!=null) {
+						out.append("- "+HttpConstants.CONTENT_ID+": "+ap.getContentId()+"\n");
+					}
+					if(ap.getContentLocation()!=null) {
+						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentLocation()+"\n");
+					}
+					if(ap.getContentType()!=null) {
+						out.append("- "+HttpConstants.CONTENT_LOCATION+": "+ap.getContentType()+"\n");
+					}
+
+					if(config.isDumpMultipartHeaders()) { 
+						Iterator<?> itM = ap.getAllMimeHeaders();
+						if(itM!=null) {
+					    	while(itM.hasNext()) {
+					    		Object keyO = itM.next();
+					    		if(keyO instanceof String) {
+					    			String key = (String) keyO;
+					    			if(HttpConstants.CONTENT_ID.equalsIgnoreCase(key) ||
+					    					HttpConstants.CONTENT_LOCATION.equalsIgnoreCase(key) ||
+					    					HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)) {
+					    				continue;
+					    			}
+					    			String [] values = ap.getMimeHeader(key);
+					    			String value = "";
+					    			if(values!=null && values.length>0) {
+					    				for (int j = 0; j < values.length; j++) {
+											if(j>0) {
+												value = value + ",";
+											}
+											value = value + values[j];
+										}
+					    			}
+					    			out.append("- "+key+": "+value+"\n");
+					    		}
+					    	}
+						}
+					}
+					out.append("\n");
+			    					
+			    	if(dumpAllAttachments){
+			    		out.append(DumpSoapMessageUtils.dumpAttachment(msg, ap));
+			    	}else{
+			    		//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
+			    		Object o = ap.getDataHandler().getContent();
+			    		//System.out.println("["+o.getClass().getName()+"])"+ap.getContentType()+"(");
+			    		if(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
+			    			 // reimposto handler
+			    			 DumpSoapMessageUtils.rebuildAttachmentAsByteArray(msg, ap);
+			    		}
+			    		
+			    		if(o instanceof String){
+			    			out.append((String)o);
+			    		}else{
+			    			 out.append("Contenuto attachments non è visualizzabile, tipo: "+o.getClass().getName());
+			    		}
+			    	}
+			    	index++;
+			    }
+			}
 		    return out.toString();
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
@@ -82,7 +426,7 @@ public class DumpSoapMessageUtils {
 	}
 	
 	public static String dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
-		Object o = _dumpAttachment(msg, ap);
+		Object o = _dumpAttachment(msg, ap, false);
 		if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}
@@ -107,7 +451,7 @@ public class DumpSoapMessageUtils {
 		}
 	}
 	public static byte[] dumpAttachmentAsByteArray(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
-		Object o = _dumpAttachment(msg, ap);
+		Object o = _dumpAttachment(msg, ap, false);
 		if(o == null){
 			throw new MessageException("Dump error (return null reference)");
 		}
@@ -132,7 +476,7 @@ public class DumpSoapMessageUtils {
 		}
 	}
 	
-	private static Object _dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap) throws MessageException{
+	private static Object _dumpAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap, boolean forceReturnAsByteArrayOutputStream) throws MessageException{
 		try{		
 			java.io.ByteArrayOutputStream bout = null;
 			//Object o = ap.getContent(); NON FUNZIONA CON TOMCAT
@@ -212,7 +556,12 @@ public class DumpSoapMessageUtils {
 				}
 			}
 			if(s!=null){
-				return s;
+				if(forceReturnAsByteArrayOutputStream) {
+					return bout;
+				}
+				else {
+					return s;
+				}
 			}else{
 				return bout;
 			}

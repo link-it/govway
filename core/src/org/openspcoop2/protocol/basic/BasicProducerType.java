@@ -17,33 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.basic.tracciamento;
 
-import java.sql.Connection;
+package org.openspcoop2.protocol.basic;
 
 /**
- * TracciamentoConnectionResult
+ * BasicProducerType
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13575 $, $Date: 2018-01-26 12:33:08 +0100 (Fri, 26 Jan 2018) $
  */
-public class TracciaConnectionResult {
-
-	private Connection connection;
-	private boolean releaseConnection;
+public enum BasicProducerType{
 	
-	public Connection getConnection() {
-		return this.connection;
-	}
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-	public boolean isReleaseConnection() {
-		return this.releaseConnection;
-	}
-	public void setReleaseConnection(boolean releaseConnection) {
-		this.releaseConnection = releaseConnection;
-	}
+	TRACCE, DIAGNOSTIC, DUMP
 	
 }

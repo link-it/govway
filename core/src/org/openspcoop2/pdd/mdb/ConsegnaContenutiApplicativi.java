@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPFault;
 
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -370,6 +371,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		IDSoggetto soggettoFruitoreHeaderIntegrazione = null;
 		String profiloGestione = null;
 		
+		DumpConfigurazione dumpConfig = null;
+		
 		boolean localForward = false;
 		
 		if(richiestaApplicativa!=null){
@@ -600,6 +603,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
 			}
+			try{
+				msgDiag.mediumDebug("readDumpConfig(pa)...");
+				dumpConfig = configurazionePdDManager.getDumpConfigurazione(pa);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readDumpConfig(pa)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
 		}else{
 			try{
 				msgDiag.mediumDebug("isAllegaBody(pd)...");
@@ -642,6 +654,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory); 
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "isGestioneManifestAttachments(pd)");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+			try{
+				msgDiag.mediumDebug("readDumpConfig(pd)...");
+				dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "readDumpConfig(pd)");
 				esito.setEsitoInvocazione(false); 
 				esito.setStatoInvocazioneErroreNonGestito(e);
 				return esito;
@@ -1590,7 +1611,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				
 				Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
 						soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
-						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+						dumpConfig);
 				dumpApplicativo.dumpRichiestaUscita(consegnaMessage, outRequestContext.getConnettore());
 			}
 			
@@ -1970,7 +1992,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(responseMessage!=null && configurazionePdDManager.dumpMessaggi() ){
 					Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
-							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
+							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+							dumpConfig);
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}
 				

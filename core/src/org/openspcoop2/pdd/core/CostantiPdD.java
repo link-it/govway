@@ -119,6 +119,10 @@ public class CostantiPdD {
     public final static String DATA_ACCETTAZIONE_RICHIESTA = "CONTEXT_DATA_ACCETTAZIONE_RICHIESTA";
     public final static String DATA_INGRESSO_RICHIESTA = "CONTEXT_DATA_INGRESSO_RICHIESTA";
     
+    /** Variabile che indica la configurazione di dump */
+    public final static String DUMP_CONFIG = "DumpConfig";
+    public final static String DUMP_RICHIESTA_EFFETTUATO = "DumpRichiestaEffettuato";
+    
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
         	    

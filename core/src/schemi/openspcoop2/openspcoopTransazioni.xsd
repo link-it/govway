@@ -25,12 +25,16 @@
 								<linkit:sql-comment><![CDATA[DUMP - DATI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="dump-messaggio"
 									object-type="dump-messaggio"/>
+								<linkit:sql-table object-name="dump-multipart-header"
+									object-type="dump-multipart-header"/>
+								<linkit:sql-table object-name="dump-header-trasporto"
+									object-type="dump-header-trasporto"/>
 								<linkit:sql-table object-name="dump-allegato"
 									object-type="dump-allegato"/>
+								<linkit:sql-table object-name="dump-header-allegato"
+									object-type="dump-header-allegato"/>
 								<linkit:sql-table object-name="dump-contenuto"
-									object-type="dump-contenuto"/>
-								<linkit:sql-table object-name="dump-header-trasporto"
-									object-type="dump-header-trasporto"/>										
+									object-type="dump-contenuto"/>										
 							</linkit:sql-table-list>
 						</linkit:sql-script>
 						<linkit:sql-mapping single-table-mapping="false"
@@ -1248,6 +1252,58 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="content-type" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>ContentType del Messaggio</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="multipart-content-type" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>ContentType all'interno dell'header della parte del Multipart contenente il messaggio principale</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="multipart-content-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>ContentId all'interno dell'header della parte del Multipart contenente il messaggio principale</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="multipart-content-location" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>ContentLocation all'interno dell'header della parte del Multipart contenente il messaggio principale</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="multipart-header" type="dump-multipart-header" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo del messaggio (FK verso dump_messaggi(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="body" type="xsd:hexBinary" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -1256,6 +1312,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 								<linkit:sql-column-mapping long-binary="true"/>
 								<linkit:sql-ddl-column-comment>Body del messaggio (es. Envelope in SOAP)</linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="header-trasporto" type="dump-header-trasporto" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_messaggio" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo del messaggio (FK verso dump_messaggi(id))</linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -1283,18 +1351,6 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element name="header-trasporto" type="dump-header-trasporto" minOccurs="0"
-					maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:appinfo>
-							<linkit:generator
-								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="id_messaggio" required="true"/>
-								<linkit:sql-ddl-column-comment>Identificativo del messaggio (FK verso dump_messaggi(id))</linkit:sql-ddl-column-comment>
-							</linkit:generator>
-						</xsd:appinfo>
-					</xsd:annotation>
-				</xsd:element>
 			    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
 			    	<xsd:annotation>
 			    		<xsd:appinfo>
@@ -1307,17 +1363,6 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			    	</xsd:annotation>
 			    </xsd:element>
 			    <!-- Dump non real-time -->
-			    <xsd:element name="post-process-content-type" type="xsd:string" minOccurs="0">
-			    	<xsd:annotation>
-			    		<xsd:appinfo>
-			    			<linkit:generator
-			    				xmlns:linkit="http://www.link.it/project_generator">
-			    				<linkit:sql-ddl-column-comment>ContentType del Messaggio (Elaborazione PostProcess)</linkit:sql-ddl-column-comment>
-			    				<linkit:ws-field-mapping filter="false" />
-			    			</linkit:generator>
-			    		</xsd:appinfo>
-			    	</xsd:annotation>
-			    </xsd:element>
 			    <xsd:element name="post-process-header" type="xsd:string" minOccurs="0">
 			        <xsd:annotation>
 			            <xsd:appinfo>
@@ -1390,6 +1435,112 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:complexType name="dump-multipart-header">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping sequence-cycle="true"
+						comment="Dump degli header di trasporto all'interno della parte del Multipart contenente il messaggio principale">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-column name="id"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_messaggio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping medium-text="true"/>
+							<linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Data di registrazione dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="dump-header-trasporto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping sequence-cycle="true"
+						comment="Dump degli header di trasporto associati ai messaggi transitati nella Porta di Dominio">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-column name="id"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_messaggio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping medium-text="true"/>
+							<linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Data di registrazione dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
 	<xsd:complexType name="dump-allegato">
 		<xsd:annotation>
 			<xsd:appinfo>
@@ -1405,32 +1556,32 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="id-allegato" type="xsd:string" minOccurs="0">
+			<xsd:element name="content-type" type="xsd:string" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment>Identificativo univoco dell'allegato</linkit:sql-ddl-column-comment>
+							<linkit:sql-ddl-column-comment>ContentType dell'allegato</linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="location" type="xsd:string" minOccurs="0">
+			<xsd:element name="content-id" type="xsd:string" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment>Location dell'allegato</linkit:sql-ddl-column-comment>
+							<linkit:sql-ddl-column-comment>ContentId dell'allegato</linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="mimetype" type="xsd:string" minOccurs="0">
+			<xsd:element name="content-location" type="xsd:string" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment>Media Type dell'allegato</linkit:sql-ddl-column-comment>
+							<linkit:sql-ddl-column-comment>ContentLocation dell'allegato</linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
@@ -1446,6 +1597,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			        </xsd:appinfo>
 			    </xsd:annotation>
 			</xsd:element>
+			<xsd:element name="header" type="dump-header-allegato" minOccurs="0"
+				maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="id_allegato" required="true"/>
+							<linkit:sql-ddl-column-comment>Identificativo dell'allegato (FK verso dump_allegati(id))</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
 		    	<xsd:annotation>
 		    		<xsd:appinfo>
@@ -1456,6 +1619,59 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 		    		</xsd:appinfo>
 		    	</xsd:annotation>
 		    </xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="dump-header-allegato">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping sequence-cycle="true"
+						comment="Dump degli header di trasporto associati ad un allegato transitato nella Porta di Dominio">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-column name="id"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+						<!-- Indici per ottimizzare le ricerche basate sull'id delll'allegato -->
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_allegato"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="valore" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping medium-text="true"/>
+							<linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dump-timestamp"  type="xsd:dateTime" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Data di registrazione dell'header</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -1533,58 +1749,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="dump-header-trasporto">
-		<xsd:annotation>
-			<xsd:appinfo>
-				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-				    <linkit:sql-table-mapping sequence-cycle="true"
-				    	comment="Dump degli header di trasporto associati ai messaggi transitati nella Porta di Dominio">
-						<linkit:sql-table-unique>
-							<linkit:sql-table-unique-column name="id"/>
-							<linkit:sql-table-unique-field name="nome"/>
-						</linkit:sql-table-unique>
-						<!-- Indici per ottimizzare le ricerche basate sull'id del messaggio -->
-						<linkit:sql-table-index>
-							<linkit:sql-table-index-column name="id_messaggio"/>
-						</linkit:sql-table-index>
-					</linkit:sql-table-mapping>
-				</linkit:generator>
-			</xsd:appinfo>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="nome" type="xsd:string">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-ddl-column-comment>Nome dell'header</linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="valore" type="xsd:string" minOccurs="0">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<linkit:generator
-							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:sql-column-mapping medium-text="true"/>
-							<linkit:sql-ddl-column-comment>Valore dell'header</linkit:sql-ddl-column-comment>
-						</linkit:generator>
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:element>
-		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" >
-		    	<xsd:annotation>
-		    		<xsd:appinfo>
-		    			<linkit:generator
-		    				xmlns:linkit="http://www.link.it/project_generator">
-		    				<linkit:sql-ddl-column-comment>Data di registrazione dell'header</linkit:sql-ddl-column-comment>
-		    			</linkit:generator>
-		    		</xsd:appinfo>
-		    	</xsd:annotation>
-		    </xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
+
 
 
 
@@ -1610,10 +1775,19 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 
 	<xsd:simpleType name="tipo-messaggio">
 		<xsd:restriction base="xsd:string">
+			
 			<xsd:enumeration value="RichiestaIngresso"/>
 			<xsd:enumeration value="RichiestaUscita"/>
 			<xsd:enumeration value="RispostaIngresso"/>
 			<xsd:enumeration value="RispostaUscita"/>
+			
+			<xsd:enumeration value="RichiestaIngressoDumpBinario"/>
+			<xsd:enumeration value="RichiestaUscitaDumpBinario"/>
+			<xsd:enumeration value="RispostaIngressoDumpBinario"/>
+			<xsd:enumeration value="RispostaUscitaDumpBinario"/>
+			
+			<xsd:enumeration value="IntegrationManager"/>
+			
 		</xsd:restriction>
 	</xsd:simpleType>
 

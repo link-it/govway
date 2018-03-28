@@ -54,7 +54,7 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IDiagnosticProd
 			IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IDiagnosticProducer msgDiag = p.createDiagnosticProducer();
 			if(msgDiag==null){
-				throw new ProtocolException("IMsgDiagnosticoOpenSPCoopAppender not defined for protocol ["+protocol+"]");
+				throw new ProtocolException("IDiagnosticProducer not defined for protocol ["+protocol+"]");
 			}
 			try{
 				msgDiag.initializeAppender(appenderProperties);
