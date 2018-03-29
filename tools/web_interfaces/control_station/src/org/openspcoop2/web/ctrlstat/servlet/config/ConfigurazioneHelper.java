@@ -37,6 +37,9 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
@@ -47,6 +50,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -55,7 +59,9 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.InformazioniProtocollo;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -907,8 +913,263 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 
 
+	// Prepara la lista di appender del dump
+	public void prepareDumpAppenderList(List<OpenspcoopAppender> lista)
+			throws Exception {
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER);
+			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
+			//this.pd.setIndex(offset);
+			//this.pd.setPageSize(limit);
+			if (lista == null)
+				this.pd.setNumEntries(0);
+			else
+				this.pd.setNumEntries(lista.size());
 
+			this.pd.setSearchDescription("");
+			this.pd.setSearch("off");
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP, null));
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+
+			// setto le label delle colonne
+			String[] labels = { 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO,
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA
+			};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				for (int i = 0; i < lista.size(); i++) {
+					OpenspcoopAppender oa = lista.get(i);
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					Parameter pId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, oa.getId()  + "");
+					DataElement de = new DataElement();
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_CHANGE, pId);
+					de.setValue(oa.getTipo());
+					de.setIdToRemove(""+oa.getId());
+					e.addElement(de);
+
+					de = new DataElement();
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST ,pId);
+
+					if (contaListe)
+						ServletUtils.setDataElementVisualizzaLabel(de, (long)oa.sizePropertyList());
+					else
+						ServletUtils.setDataElementVisualizzaLabel(de);
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	// Controlla i dati dell'appender del dump
+	public boolean dumpAppenderCheckData(TipoOperazione tipoOp)
+			throws Exception {
+		try {
+			String tipo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
+
+			if (tipo == null || "".equals(tipo)) {
+				this.pd.setMessage("Il campo Tipo deve essere specificato.");
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che l'appender non sia gia' stato registrato
+			/*if (tipoOp.equals("add")) {
+					boolean trovatoAppender = false;
+					Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
+					Tracciamento t = newConfigurazione.getTracciamento();
+					if (t != null) {
+						OpenspcoopAppender[] lista = t.getOpenspcoopAppenderList();
+						OpenspcoopAppender oa = null;
+						for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
+							oa = lista[j];
+							if (tipo.equals(oa.getTipo())) {
+								trovatoAppender = true;
+								break;
+							}
+						}
+					}
+					if (trovatoAppender) {
+						this.pd.setMessage("Esiste gi&agrave; un Appender con tipo " + tipo);
+						return false;
+					}
+				}*/
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public Vector<DataElement> addTipoDumpAppenderToDati(TipoOperazione tipoOp, String tipo, Vector<DataElement> dati,String idAppenderDati, int dimensioneAppenderDati) {
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setValue(tipo);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_TIPO);
+		de.setSize(getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+
+		if(tipoOp.equals(TipoOperazione.CHANGE)){
+			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST, new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, idAppenderDati));
+			if (contaListe)
+				ServletUtils.setDataElementVisualizzaLabel(de, (long) dimensioneAppenderDati);
+			else
+				ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);
+		}
+
+		return dati;
+	}
+	
+	// Prepara la lista di property di appender del dump
+	public void prepareDumpAppenderPropList(OpenspcoopAppender oa,	List<Property> lista)
+					throws Exception {
+		try {
+			Parameter pOaId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID, ""+oa.getId());
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES, 
+					pOaId);			
+
+			//this.pd.setIndex(offset);
+			//this.pd.setPageSize(limit);
+			if (lista == null)
+				this.pd.setNumEntries(0);
+			else
+				this.pd.setNumEntries(lista.size());
+
+			this.pd.setSearchDescription("");
+			this.pd.setSearch("off");
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP , 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA+ " di " + oa.getTipo(), null));
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+
+			// setto le label delle colonne
+			String[] labels = { 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME,
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_VALORE
+			};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				for (int i = 0; i < lista.size(); i++) {
+					Property oap = lista.get(i);
+
+					Vector<DataElement> e = new Vector<DataElement>();
+					Parameter pOapId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID_PROPRIETA, oap.getId()  + "");
+					DataElement de = new DataElement();
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_CHANGE, pOaId, pOapId	);
+					de.setValue(oap.getNome());
+					de.setIdToRemove(""+oap.getId());
+					e.addElement(de);
+
+					de = new DataElement();
+					de.setValue(oap.getValore());
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	// Controlla i dati delle property dell'appender del dump
+	public boolean dumpAppenderPropCheckData(TipoOperazione tipoOp)
+			throws Exception {
+		try {
+			String id = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ID);
+			int idInt = Integer.parseInt(id);
+			String nome = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME);
+			String valore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALORE);
+
+			if (nome == null || "".equals(nome)) {
+				this.pd.setMessage("Il campo Nome deve essere specificato.");
+				return false;
+			}
+			if (valore == null || "".equals(valore)) {
+				this.pd.setMessage("Il campo Valore deve essere specificato.");
+				return false;
+			}
+
+			// Se tipoOp = add, controllo che la property non sia gia' stata registrata
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean trovataProp = false;
+				Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
+				Dump dump = newConfigurazione.getDump();
+				OpenspcoopAppender oa = null;
+				for (int j = 0; j < dump.sizeOpenspcoopAppenderList(); j++) {
+					oa = dump.getOpenspcoopAppender(j);
+					if (idInt == oa.getId().intValue()) {
+						break;
+					}
+				}
+				Property oap = null;
+				for (int i = 0; i < oa.sizePropertyList(); i++) {
+					oap = oa.getProperty(i);
+					if (nome.equals(oap.getNome())) {
+						trovataProp = true;
+						break;
+					}
+				}
+				if (trovataProp) {
+					this.pd.setMessage("Esiste gi&agrave; una Propriet&agrave; con nome " + nome);
+					return false;
+				}
+			}
+
+			return true;
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 	// Controlla i dati del system properties
 	public boolean systemPropertiesCheckData(TipoOperazione tipoOp) throws Exception {
@@ -2774,29 +3035,77 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
 		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoBuste);
 			de.setSelected(registrazioneTracce);
+			de.setPostBack(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(registrazioneTracce);
 		}
 		dati.addElement(de);
+		
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI);
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRANSAZIONI_SALVATE);
+			dati.addElement(de);
+		}
 
+		if (this.isModalitaAvanzata()) {
+			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
+				if (contaListe) {
+					int totAppender = 0;
+					if (configurazione.getTracciamento() != null)
+						totAppender =
+						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+				dati.addElement(de);
+			}
+			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
+				if (contaListe) {
+					int totDs = 0;
+					if (configurazione.getTracciamento() != null)
+						totDs =
+						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+				dati.addElement(de);
+			}
+		}
+		
+		// DUMP
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
 		String[] tipoDump = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
 		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDump);
 			de.setSelected(dumpApplicativo);
+			de.setPostBack(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);
@@ -2839,37 +3148,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValue(dumpPA);
 		}
 		dati.addElement(de);
-
+		
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+			dati.addElement(de);
+		}
+		
 		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
+			if (this.confCore.isDump_showConfigurazioneCustomAppender()) {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
 				if (contaListe) {
 					int totAppender = 0;
-					if (configurazione.getTracciamento() != null)
+					if (configurazione.getDump() != null)
 						totAppender =
-						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
+						configurazione.getDump().sizeOpenspcoopAppenderList();
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
 				} else
 					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
 				dati.addElement(de);
 			}
-			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
-				if (contaListe) {
-					int totDs = 0;
-					if (configurazione.getTracciamento() != null)
-						totDs =
-						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
-			}
 		}
+		
+		
+		// I.M.
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
@@ -4457,5 +4763,165 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return true;
 		}
 		return false;
+	}
+	
+	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, String tracciamentoEsiti) throws Exception {
+		
+	
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+		de.setType(DataElementType.NOTE);
+		de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+		dati.addElement(de);
+		
+		List<String> attivi = new ArrayList<String>();
+		if(tracciamentoEsiti!=null){
+			String [] tmp = tracciamentoEsiti.split(",");
+			if(tmp!=null){
+				for (int i = 0; i < tmp.length; i++) {
+					attivi.add(tmp[i].trim());
+				}
+			}
+		}
+		
+		EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+		List<Integer> esitiCodes = esiti.getEsitiCode();
+		if(esitiCodes!=null){
+			for (Integer esito : esitiCodes) {
+				de = new DataElement();
+				de.setLabel(esiti.getEsitoLabel(esito));
+				de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+//				de.setNote(esiti.getEsitoLabel(esito));
+				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(attivi.contains((esito+"")));
+				dati.addElement(de);
+			}
+		}
+	}
+	
+	public String readConfigurazioneRegistrazioneEsitiFromHttpParameters(String configurazioneEsiti, boolean first) throws Exception {
+	
+	
+		StringBuffer bf = new StringBuffer();
+		EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+		List<Integer> esitiCodes = esiti.getEsitiCode();
+		if(esitiCodes!=null){
+			for (Integer esito : esitiCodes) {
+				String esitoParam = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+				boolean checked = ServletUtils.isCheckBoxEnabled(esitoParam);
+				if(checked){
+					if(bf.length()>0){
+						bf.append(",");
+					}
+					bf.append(esito);
+				}
+			}
+		}
+		if(bf.length()>0){
+			return bf.toString();
+		}
+		else{
+			if(first==false){
+				return null;
+			}
+			else{
+				if(configurazioneEsiti == null || "".equals(configurazioneEsiti.trim())){
+					// creo un default composto da tutti ad eccezione dell'esito 84 (MaxThreads)
+					this.getRegistrazioneEsiti(configurazioneEsiti, bf);
+					if(bf.length()>0){
+						return bf.toString();
+					}
+					else{
+						return null;
+					}
+				}
+			}
+		}
+		return configurazioneEsiti;
+	}
+	
+	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuffer bf) throws Exception{
+		if(configurazioneEsiti==null ||"".equals(configurazioneEsiti.trim())){
+			
+			// creo un default composto da tutti ad eccezione dell'esito 84 (MaxThreads)
+			EsitiProperties esiti = EsitiProperties.getInstance(ControlStationCore.getLog());
+			List<Integer> esitiCodes = esiti.getEsitiCode();
+			
+			if(esitiCodes!=null && esitiCodes.size()>0){
+				List<String> esitiDaRegistrare = new ArrayList<String>();
+				for (Integer esito : esitiCodes) {
+					if(esito!=84){
+						if(bf.length()>0){
+							bf.append(",");
+						}
+						bf.append(esito);
+						esitiDaRegistrare.add(esito+"");
+					}
+				}
+				if(esitiDaRegistrare.size()>0){
+					return esitiDaRegistrare;
+				}
+			}
+			
+			return null; // non dovrebbe succedere, degli esiti nell'EsitiProperties dovrebbero esistere
+		}
+		else{
+			
+			String [] tmp = configurazioneEsiti.split(",");
+			if(tmp!=null && tmp.length>0){
+				List<String> esitiDaRegistrare = new ArrayList<String>();
+				for (int i = 0; i < tmp.length; i++) {
+					String t = tmp[i];
+					if(t!=null){
+						t = t.trim();
+						if(!"".equals(t)){
+							if(bf.length()>0){
+								bf.append(",");
+							}
+							bf.append(t);
+							esitiDaRegistrare.add(t);
+						}
+					}
+				}
+				if(esitiDaRegistrare.size()>0){
+					return esitiDaRegistrare;
+				}
+			}
+			
+			return null; // non dovrebbe succedere, si rientra nel ramo then dell'if principale
+		}
+	}
+	
+	public boolean checkConfigurazioneTracciamentoEsiti(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
+		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
+			this.pd.setMessage("Deve essere selezionato almeno un esito");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isFirstTimeFromHttpParameters() throws Exception{
+		
+		String tmp = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
+		if(tmp!=null && !"".equals(tmp.trim())){
+			return "true".equals(tmp.trim());
+		}
+		return true;
+		
+	}
+	
+	public void addToDatiFirstTimeDisabled(Vector<DataElement> dati){
+		DataElement de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("false");
+		dati.addElement(de);
 	}
 }

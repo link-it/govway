@@ -394,6 +394,18 @@ public class ControlStationCore {
 	public boolean isMsgDiagnostici_showSorgentiDatiDatabase() {
 		return this.msgDiagnostici_showSorgentiDatiDatabase;
 	}
+	
+	/** Dump */
+	
+	private boolean dump_showConfigurazioneCustomAppender = false;
+	public boolean isDump_showConfigurazioneCustomAppender() {
+		return this.dump_showConfigurazioneCustomAppender;
+	}
+	
+	private boolean dump_showConfigurazioneDumpRealtime = true;
+	public boolean isDump_showConfigurazioneDumpRealtime() {
+		return this.dump_showConfigurazioneDumpRealtime;
+	}
 
 	/** Porte di Dominio */
 	private boolean gestionePddAbilitata = true;
@@ -1266,6 +1278,10 @@ public class ControlStationCore {
 		this.msgDiagnostici_tipoDatabase = core.msgDiagnostici_tipoDatabase;
 		this.msgDiagnostici_ctxDatasource = core.msgDiagnostici_ctxDatasource;
 		this.driverMSGDiagnostici = core.driverMSGDiagnostici;
+		
+		/** Dump */
+		this.dump_showConfigurazioneCustomAppender = core.dump_showConfigurazioneCustomAppender;
+		this.dump_showConfigurazioneDumpRealtime = core.dump_showConfigurazioneDumpRealtime;
 
 		/** Gestione Pdd Abilitata */
 		this.gestionePddAbilitata = core.gestionePddAbilitata;
@@ -1586,6 +1602,9 @@ public class ControlStationCore {
 				
 				this.msgDiagnostici_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_MessaggiDiagnosticiConfigurazioneCustomAppender();
 				this.msgDiagnostici_showSorgentiDatiDatabase = consoleProperties.isSinglePdD_MessaggiDiagnosticiGestioneSorgentiDatiPrelevataDaDatabase();
+				
+				this.dump_showConfigurazioneCustomAppender = consoleProperties.isSinglePdD_DumpConfigurazioneCustomAppender();
+				this.dump_showConfigurazioneDumpRealtime = consoleProperties.isSinglePdD_DumpConfigurazioneRealtime();
 			}
 			
 			// Opzioni di importazione/esportazione Archivi

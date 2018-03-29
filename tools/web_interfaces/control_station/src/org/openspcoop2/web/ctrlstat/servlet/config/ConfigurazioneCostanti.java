@@ -54,6 +54,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER = "configurazioneTracciamentoAppender";
 	public final static String OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES = "configurazioneTracciamentoAppenderProperties";
+	public final static String OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI = "configurazioneTracciamentoTransazioni";
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE = "configurazioneTracciamentoDatasource";
 	public final static String OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES = "configurazioneTracciamentoDatasourceProperties";
@@ -71,6 +72,11 @@ public class ConfigurazioneCostanti {
 	public final static String OBJECT_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES = "configurazioneSystemProperties";
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_SISTEMA = "configurazioneSistema";
+	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = "configurazioneDumpConfigurazione";
+	
+	public final static String OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER = "configurazioneDumpAppender";
+	public final static String OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES = "configurazioneDumpAppenderProperties";
 	
 	/* SERVLET NAME */
 	
@@ -248,9 +254,32 @@ public class ConfigurazioneCostanti {
 		SERVLET_CONFIGURAZIONE_SISTEMA.add(SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);
 	}
 	
-
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_ADD = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER+"Add.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_CHANGE = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER+"Change.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_DELETE = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER+"Del.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER+"List.do";
+	public final static Vector<String> SERVLET_CONFIGURAZIONE_DUMP_APPENDER = new Vector<String>();
+	static{
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_ADD);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_CHANGE);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_DELETE);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
+	}
 	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_ADD = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES+"Add.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_CHANGE = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES+"Change.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_DELETE = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES+"Del.do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST = OBJECT_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES+"List.do";
+	public final static Vector<String> SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES = new Vector<String>();
+	static{
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_ADD);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_CHANGE);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_DELETE);
+		SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES.add(SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES_LIST);
+	}
 	
+	public final static String SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = OBJECT_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE+".do";
+	public final static String SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI = OBJECT_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI+".do";
 	
 	/* LABEL GENERALI */
 	
@@ -264,6 +293,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI = "Elenco Appender Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO = "Elenco Sorgenti Dati Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI = "Elenco Sorgenti Dati Messaggi Diagnostici";
+	public final static String LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP = "Elenco Appender Dump";
 	
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
@@ -283,6 +313,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRI = "Registri";
 	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
+	public final static String LABEL_CONFIGURAZIONE_TRANSAZIONI_SALVATE = "Transazioni Salvate";
+	public final static String LABEL_CONFIGURAZIONE_DUMP = "Dump";
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = "Configurazione";
 	public final static String LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER = "Integration Manager";
 	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI = "Validazione Contenuti Applicativi";
 	
@@ -325,7 +358,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
 	
-	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni";
+	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti delle transazioni che verranno registrate nello storico";
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -429,6 +463,9 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
+	public final static String PARAMETRO_CONFIGURAZIONE_FIRST_TIME = "ConfigurazioneFirstTime";
 		
 	/* LABEL PARAMETRI */
 	
@@ -523,6 +560,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_TABELLA_ROUTING_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO = "Configurazione modificata con successo"+RIAVVIO;
+	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO = "Configurazione Esiti modificata con successo"+RIAVVIO;
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO+RIAVVIO;
 	
 	
 	/* DEFAULT VALUE PARAMETRI */
@@ -537,6 +576,7 @@ public class ConfigurazioneCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_ROTTA_REGISTRO = "registro";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_RIGIDO = "rigido";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONTROLLO_NORMALE = "normale";
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_DUMP = "protocol";
 	
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";

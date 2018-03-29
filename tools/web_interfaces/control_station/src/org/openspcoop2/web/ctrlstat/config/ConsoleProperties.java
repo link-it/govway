@@ -944,7 +944,13 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "msgDiagnostici.sorgentiDati.database");
 	}
 	
+	public Boolean isSinglePdD_DumpConfigurazioneCustomAppender() throws UtilsException{
+		return this.readBooleanProperty(true, "dump.configurazioneCustomAppender");
+	}
 	
+	public Boolean isSinglePdD_DumpConfigurazioneRealtime() throws UtilsException{
+		return this.readBooleanProperty(true, "dump.configurazioneRealtime");
+	}
 	
 	
 	/* ---- Plugins ------ */

@@ -85,6 +85,9 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "porteApplicativeConnettoreRidefinito";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
 	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = "porteApplicativeDumpConfigurazione";
+	public final static ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE+"Add.do";
@@ -252,6 +255,8 @@ public class PorteApplicativeCostanti {
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT +".do";
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO +".do";
 
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE+".do"; 
+	
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_PORTE_APPLICATIVE = "Porte Applicative";
@@ -457,6 +462,12 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = "soap-action-based";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = "interface-based";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = "protocol-based";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = "Archivio Messaggi";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE_CONFIG_DI = "Archivio Messaggi di ";
+	
+	public final static String LABEL_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO;
+	public final static String LABEL_PORTE_APPLICATIVE_ARCHIVIO_MESSAGGI_CON_SUCCESSO = CostantiControlStation.LABEL_ARCHIVIO_MESSAGGI_MODIFICATA_CON_SUCCESSO;
 	
 
 	

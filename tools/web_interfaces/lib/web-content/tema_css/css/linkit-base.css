@@ -958,6 +958,11 @@ div.prop label em {
 	color: ${p.legend.color};
 }
 
+div.prop label.labelLong{
+	width: 220px;
+}
+	
+
 p.note {
 	margin-left: 170px;
     /* font-size: 90%; */

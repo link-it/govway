@@ -53,12 +53,15 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.DumpConfigurazioneRegola;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -4264,5 +4267,489 @@ public class ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	
+	public void addConfigurazioneDumpToDati(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
+			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
+			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE);
+		dati.addElement(de);
+		
+		String valuesProp [] = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
+		String labelsProp [] = {CostantiControlStation.DEFAULT_VALUE_ABILITATO, CostantiControlStation.DEFAULT_VALUE_DISABILITATO};
+		
+		// stato generale dump
+		de = new DataElement();
+		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
+		if(showStato) {
+			de.setType(DataElementType.SELECT);
+			String valuesStato [] = {CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO};
+			String labelsStato [] = {CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO};
+			de.setSelected(statoDump);
+			de.setLabels(labelsStato);
+			de.setValues(valuesStato); 
+			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statoDump);
+		}
+		dati.addElement(de);
+		
+		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+		
+			// Realtime
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_REALTIME); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME);
+			if(showRealtime) {
+				de.setType(DataElementType.SELECT);
+				de.setSelected(realtime);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(realtime);
+			}
+			dati.addElement(de);
+			
+			// Sezione Richiesta
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA);
+			dati.addElement(de);
+
+			// Stato Dump Richiesta
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO);
+			de.setType(DataElementType.SELECT);
+			de.setSelected(statoDumpRichiesta);
+			de.setLabels(labelsProp);
+			de.setValues(valuesProp);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// sotto sezione ingresso
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO);
+				dati.addElement(de);
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaIngressoHeader);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaIngressoBody);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaIngressoAttachments);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// sotto sezione uscita
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA);
+				dati.addElement(de);
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaUscitaHeader);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaUscitaBody); 
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRichiestaUscitaAttachments);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+
+			}
+			
+			
+			// Sezione Risposta
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA);
+			dati.addElement(de);
+
+			// Stato Dump Richiesta
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO);
+			de.setType(DataElementType.SELECT);
+			de.setSelected(statoDumpRisposta);
+			de.setLabels(labelsProp);
+			de.setValues(valuesProp);
+			de.setPostBack(true);	
+			dati.addElement(de);
+			
+			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// sotto sezione ingresso
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO);
+				dati.addElement(de);
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaIngressoHeader);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaIngressoBody);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaIngressoAttachments);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// sotto sezione uscita
+				de = new DataElement();
+				de.setType(DataElementType.SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA);
+				dati.addElement(de);
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaUscitaHeader);
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaUscitaBody); 
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setType(DataElementType.SELECT);
+				de.setSelected(dumpRispostaUscitaAttachments); 
+				de.setLabels(labelsProp);
+				de.setValues(valuesProp);
+				dati.addElement(de);
+
+			}
+		}
+	}
+	
+	public boolean checkDataConfigurazioneDump(TipoOperazione tipoOperazione,boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
+			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
+			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+		
+		if(showStato) {
+			if(StringUtils.isEmpty(statoDump) || !(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT) || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO));
+				return false;
+			}
+		}
+		
+		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+			// realtime
+			if(StringUtils.isEmpty(realtime) || !(realtime.equals(StatoFunzionalita.ABILITATO.getValue()) || realtime.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO, CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME));
+				return false;
+			}
+			
+			// statoDumpRichiesta
+			if(StringUtils.isEmpty(statoDumpRichiesta) || !(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue()) || statoDumpRichiesta.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO, 
+						CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+				return false;
+			}
+			
+			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())){
+				// dumpRichiestaIngressoHeader
+				if(StringUtils.isEmpty(dumpRichiestaIngressoHeader) || !(dumpRichiestaIngressoHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+				
+				// dumpRichiestaIngressoBody
+				if(StringUtils.isEmpty(dumpRichiestaIngressoBody) || !(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+				
+				// dumpRichiestaIngressoAttachments
+				if(StringUtils.isEmpty(dumpRichiestaIngressoAttachments) || !(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+				
+				// dumpRichiestaUscitaHeader
+				if(StringUtils.isEmpty(dumpRichiestaUscitaHeader) || !(dumpRichiestaUscitaHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+				
+				// dumpRichiestaUscitaBody
+				if(StringUtils.isEmpty(dumpRichiestaUscitaBody) || !(dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+				
+				// dumpRichiestaUscitaAttachments
+				if(StringUtils.isEmpty(dumpRichiestaUscitaAttachments) || !(dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
+			}
+			
+			// statoDumpRisposta
+			if(StringUtils.isEmpty(statoDumpRisposta) || !(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue()) || statoDumpRisposta.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+				this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO, 
+						CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+				return false;
+			}
+			
+			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// dumpRispostaIngressoHeader
+				if(StringUtils.isEmpty(dumpRispostaIngressoHeader) || !(dumpRispostaIngressoHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// dumpRispostaIngressoBody
+				if(StringUtils.isEmpty(dumpRispostaIngressoBody) || !(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// dumpRispostaIngressoAttachments
+				if(StringUtils.isEmpty(dumpRispostaIngressoAttachments) || !(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// dumpRispostaUscitaHeader
+				if(StringUtils.isEmpty(dumpRispostaUscitaHeader) || !(dumpRispostaUscitaHeader.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// dumpRispostaUscitaBody
+				if(StringUtils.isEmpty(dumpRispostaUscitaBody) || !(dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// dumpRispostaUscitaAttachments
+				if(StringUtils.isEmpty(dumpRispostaUscitaAttachments) || !(dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
+							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+			}
+		}
+		
+		
+		return true;
+	}
+	
+	public DumpConfigurazione getConfigurazioneDump(TipoOperazione tipoOperazione,boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
+			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
+			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+		
+		DumpConfigurazione newConfigurazione = null;
+		
+		if(showStato) {
+			// impostazioni dump di default impostate nelle PD/PA
+			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_DEFAULT))
+				return newConfigurazione;
+		}
+		
+		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+			
+			newConfigurazione = new DumpConfigurazione();
+			newConfigurazione.setRichiestaIngresso(new DumpConfigurazioneRegola());
+			newConfigurazione.setRichiestaUscita(new DumpConfigurazioneRegola());
+			newConfigurazione.setRispostaIngresso(new DumpConfigurazioneRegola());
+			newConfigurazione.setRispostaUscita(new DumpConfigurazioneRegola());
+			
+			// realtime			
+			newConfigurazione.set_value_realtime(realtime);
+
+			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				newConfigurazione.getRichiestaIngresso().set_value_headers(dumpRichiestaIngressoHeader);
+				newConfigurazione.getRichiestaIngresso().set_value_body(dumpRichiestaIngressoBody);
+				newConfigurazione.getRichiestaIngresso().set_value_attachments(dumpRichiestaIngressoAttachments);
+				newConfigurazione.getRichiestaUscita().set_value_headers(dumpRichiestaUscitaHeader);
+				newConfigurazione.getRichiestaUscita().set_value_body(dumpRichiestaUscitaBody);
+				newConfigurazione.getRichiestaUscita().set_value_attachments(dumpRichiestaUscitaAttachments);
+			} else {
+				newConfigurazione.getRichiestaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRichiestaIngresso().setBody(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRichiestaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRichiestaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRichiestaUscita().setBody(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRichiestaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
+			}
+			
+			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				newConfigurazione.getRispostaIngresso().set_value_headers(dumpRispostaIngressoHeader);
+				newConfigurazione.getRispostaIngresso().set_value_body(dumpRispostaIngressoBody);
+				newConfigurazione.getRispostaIngresso().set_value_attachments(dumpRispostaIngressoAttachments);
+				newConfigurazione.getRispostaUscita().set_value_headers(dumpRispostaUscitaHeader);
+				newConfigurazione.getRispostaUscita().set_value_body(dumpRispostaUscitaBody);
+				newConfigurazione.getRispostaUscita().set_value_attachments(dumpRispostaUscitaAttachments);
+			} else {
+				newConfigurazione.getRispostaIngresso().setHeaders(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRispostaIngresso().setBody(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRispostaIngresso().setAttachments(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRispostaUscita().setHeaders(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRispostaUscita().setBody(StatoFunzionalita.DISABILITATO);
+				newConfigurazione.getRispostaUscita().setAttachments(StatoFunzionalita.DISABILITATO);
+			}
+		}
+		
+		return newConfigurazione;
+	}
+	
+	public boolean isAbilitato(DumpConfigurazione configurazione, boolean isRisposta) {
+		boolean abilitato = false;
+		
+		if(isRisposta) {
+			DumpConfigurazioneRegola rispostaIngresso = configurazione.getRispostaIngresso();
+			
+			if(rispostaIngresso != null) {
+				if(rispostaIngresso.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaIngresso.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaIngresso.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+			
+			DumpConfigurazioneRegola rispostaUscita = configurazione.getRispostaUscita();
+			
+			if(rispostaUscita != null) {
+				if(rispostaUscita.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaUscita.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(rispostaUscita.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+		} else {
+			DumpConfigurazioneRegola richiestaIngresso = configurazione.getRichiestaIngresso();
+			
+			if(richiestaIngresso != null) {
+				if(richiestaIngresso.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaIngresso.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaIngresso.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+			
+			DumpConfigurazioneRegola richiestaUscita = configurazione.getRichiestaUscita();
+			
+			if(richiestaUscita != null) {
+				if(richiestaUscita.getHeaders().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaUscita.getBody().equals(StatoFunzionalita.ABILITATO))
+					return true;
+				
+				if(richiestaUscita.getAttachments().equals(StatoFunzionalita.ABILITATO))
+					return true;
+			}
+		}
+		
+		return abilitato;
 	}
 }

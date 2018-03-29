@@ -89,6 +89,7 @@ public class DataElement {
 	
 	String note = null;
 	String styleClass = null;
+	String labelStyleClass = null;
 	
 	String [] selezionati = null; // serve per gestire i valori selezionati in una multiselect
 	
@@ -125,6 +126,7 @@ public class DataElement {
 		this.labelAffiancata = true;
 		this.note = "";
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
+		this.labelStyleClass = null;
 		
 	}
 
@@ -562,4 +564,13 @@ public class DataElement {
 	public void setWidthPercentuale(int width) {
 		this.setWidth(width + "%");
 	}
+
+	public String getLabelStyleClass() {
+		return DataElement.checkNull(this.labelStyleClass);
+	}
+
+	public void setLabelStyleClass(String labelStyleClass) {
+		this.labelStyleClass = labelStyleClass;
+	}
+	
 }

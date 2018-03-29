@@ -207,7 +207,33 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
+	
+	public final static String LABEL_PARAMETRO_DUMP_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_DUMP_STATO_DEFAULT = "default";
+	public final static String LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
+	public final static String LABEL_PARAMETRO_DUMP_REALTIME = "Realtime";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY = "Body";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS = "Attachments";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS = "Headers";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY = "Body";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS = "Attachments";
+	public final static String LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS = "Headers";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY = "Body";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS = "Attachments";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS = "Headers";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = "Body";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "Attachments";
+	public final static String LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "Headers";
 
+	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE = "Generale";
+	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_RICHIESTA = "Richiesta";
+	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA = "Risposta";
+	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO = "Ingresso";
+	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_USCITA = "Uscita";
+	public static final String LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO = "Configurazione Dump modificata con successo";
+	public static final String LABEL_ARCHIVIO_MESSAGGI_MODIFICATA_CON_SUCCESSO = "Configurazione Archivio Messaggi modificata con successo";
 	
 	/** PARAMETERS **/
 	
@@ -272,6 +298,23 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_AZIONE = "azione";
 	public final static String PARAMETRO_AZIONI = "azioni";
 	
+	public final static String PARAMETRO_DUMP_STATO = "dumpStato";
+	public final static String PARAMETRO_DUMP_REALTIME = "dumpRealTime";
+	public final static String PARAMETRO_DUMP_RICHIESTA_STATO = "dumpStatoReq";
+	public final static String PARAMETRO_DUMP_RISPOSTA_STATO = "dumpStatoRes";
+	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY = "dumpReqInBody";
+	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS = "dumpReqInAtt";
+	public final static String PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS = "dumpReqInHead";
+	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_BODY = "dumpReqOutBody";
+	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS = "dumpReqOutAtt";
+	public final static String PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS = "dumpReqOutHead";
+	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY = "dumpResInBody";
+	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS = "dumpResInAtt";
+	public final static String PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS = "dumpResInHead";
+	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = "dumpResOutBody";
+	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "dumpResOutAtt";
+	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "dumpResOutHead";
+	
 	/** VALUES **/
 	
 	public final static String DEFAULT_VALUE_ABILITATO = "abilitato";
@@ -333,6 +376,9 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
 	
+	public final static String VALUE_PARAMETRO_DUMP_STATO_DEFAULT = "default";
+	public final static String VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
+	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
 	
@@ -393,5 +439,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare gli applicativi associati";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare i soggetti associati";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
-
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_NON_VALIDO = "Valore del campo {0} non valido.";
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO = "Valore del campo {0} della {1} non valido.";
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO = "Valore del campo {0} {1} della {2} non valido.";
 }

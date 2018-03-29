@@ -1283,6 +1283,16 @@
             <forward name="porteDelegateConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
             <forward name="porteDelegateConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
         </action>
+        
+   		<!-- Porte Delegate (Configurazione Dump Richiesta/Risposta) -->
+    
+    	<action path="/porteDelegateDumpConfigurazione" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateDumpConfigurazione"
+            scope="request" validate="true">
+            <forward name="porteDelegateDumpConfigurazioneForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateDumpConfigurazioneOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateDumpConfigurazioneCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateDumpConfigurazioneError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Porte Applicative -->
@@ -1686,6 +1696,16 @@
             <forward name="porteApplicativeConnettoreRidefinitoError" path="/jsplib/info.jsp"/>
             <forward name="porteApplicativeConnettoreRidefinitoCheckError" path="/jsplib/addElement.jsp"/>
         </action>
+        
+   		<!-- Porte Applicative (Configurazione Dump Richiesta/Risposta) -->
+    
+    	<action path="/porteApplicativeDumpConfigurazione" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeDumpConfigurazione"
+            scope="request" validate="true">
+            <forward name="porteApplicativeDumpConfigurazioneForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeDumpConfigurazioneOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeDumpConfigurazioneCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeDumpConfigurazioneError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     
@@ -1950,6 +1970,16 @@
             <forward name="configurazioneTracciamentoDatasourcePropertiesError" path="/jsplib/info.jsp"/>
         </action>
     
+   		<!-- Configurazione Tracce (Transazioni da salvare) -->
+    
+    	<action path="/configurazioneTracciamentoTransazioni" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneTracciamentoTransazioni"
+            scope="request" validate="true">
+            <forward name="configurazioneTracciamentoTransazioniForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoTransazioniOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoTransazioniCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneTracciamentoTransazioniError" path="/jsplib/info.jsp"/>
+        </action>
+    
     
    		<!-- Configurazione Registro (cache e link alla lista dei registri) -->
     
@@ -2102,8 +2132,69 @@
             <forward name="configurazioneAuditingFiltriError" path="/jsplib/info.jsp"/>
         </action>
     
+     	<!--  Configurazione Dump (Appender) -->
     
+    	<action path="/configurazioneDumpAppenderAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderAdd" 
+    		scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderChange" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderError" path="/jsplib/info.jsp"/>
+        </action>
+
+		<!--  Configurazione Tracce (Appender, properties) -->
+
+        <action path="/configurazioneDumpAppenderPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderPropertiesAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderPropertiesList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderPropertiesChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderPropertiesChange"
+            scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderPropertiesChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneDumpAppenderPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpAppenderPropertiesDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneDumpAppenderPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneDumpAppenderPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        
+  		<!-- Configurazione Dump (Configurazione Richiesta/Risposta) -->
     
+    	<action path="/configurazioneDumpConfigurazione" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneDumpConfigurazione"
+            scope="request" validate="true">
+            <forward name="configurazioneDumpConfigurazioneForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpConfigurazioneOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpConfigurazioneCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneDumpConfigurazioneError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

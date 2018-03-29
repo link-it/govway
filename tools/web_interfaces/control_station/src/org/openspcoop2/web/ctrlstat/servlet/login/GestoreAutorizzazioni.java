@@ -228,6 +228,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO);
+		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
 		
 		/** Permessi associati alla gestione delle porte delegate */
 		this.permessiPorteDelegate = new PermessiUtente();
@@ -256,6 +257,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ABILITAZIONE);
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT);
 		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO);
+		this.servletPorteApplicative.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
 		/** Permessi associati alla gestione delle porte applicative */
 		this.permessiPorteApplicative = new PermessiUtente();
 		this.permessiPorteApplicative.setServizi(true);
@@ -304,6 +306,7 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_PROPERTIES);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_TRACCIAMENTO_APPENDER);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_PROPERTIES);
+			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_PROPERTIES);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_ROUTING);
@@ -311,6 +314,9 @@ public class GestoreAutorizzazioni {
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_REGISTRI);
 			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SYSTEM_PROPERTIES);
+			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DUMP_APPENDER);
+			this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_DUMP_APPENDER_PROPERTIES);
+			this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
 		}
 		this.servletConfigurazione.addAll(ConfigurazioneCostanti.SERVLET_CONFIGURAZIONE_SISTEMA);
 		this.servletConfigurazione.add(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER);

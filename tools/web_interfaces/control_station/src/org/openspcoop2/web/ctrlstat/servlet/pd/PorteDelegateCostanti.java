@@ -81,6 +81,9 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = "porteDelegateConnettoreRidefinito";
 	public final static ForwardParams TIPO_OPERAZIONE_CONNETTORE_RIDEFINITO = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE = "porteDelegateDumpConfigurazione";
+	public final static ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -239,6 +242,8 @@ public class PorteDelegateCostanti {
 	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT +".do";
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO +".do";
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE+".do"; 
 	
 	/* LABEL GENERALI */
 
@@ -453,6 +458,12 @@ public class PorteDelegateCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE = "Archivio Messaggi";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE_CONFIG_DI = "Archivio Messaggi di ";
+	
+	public final static String LABEL_PORTE_DELEGATE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO;
+	public final static String LABEL_PORTE_DELEGATE_ARCHIVIO_MESSAGGI_CON_SUCCESSO = CostantiControlStation.LABEL_ARCHIVIO_MESSAGGI_MODIFICATA_CON_SUCCESSO;
 
 	
 	/* DEFAULT VALUE PARAMETRI */

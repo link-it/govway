@@ -34,6 +34,7 @@ import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
+import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -2069,6 +2070,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(visualizzaCorrelazione) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
 			}
+			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
+			
 			if(this.isModalitaAvanzata()) {
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
@@ -2282,6 +2285,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 				}
+				
+				// dump
+				de = new DataElement();
+				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
+				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSogg, pIdPorta, pIdAsps);
+				DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
+				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				de.setValue(statoDump);
+				e.addElement(de);
 				
 				// Protocol Properties
 				if(this.isModalitaAvanzata()){
@@ -2865,6 +2877,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(visualizzaCorrelazione) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 			}
+			
+			listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
+			
 			if(this.isModalitaAvanzata()) {
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
@@ -3104,6 +3119,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 				}
+				
+				// dump
+				de = new DataElement();
+				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+				DumpConfigurazione dumpConfigurazione = pdAssociata.getDump();
+				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				de.setValue(statoDump);
+				e.addElement(de);
 				
 				// Protocol Properties
 				if(this.isModalitaAvanzata()){
