@@ -7146,6 +7146,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("proprietario=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
 				index = 1;
 				if(!CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_CONFIG.equals(tipoProprietario)) {
 					updateStmt.setLong(index++, idProprietario);
@@ -7218,7 +7219,7 @@ public class DriverConfigurazioneDB_LIB {
 				
 				dumpConfig.setId(rs1.getLong("id"));
 				
-				dumpConfig.setRealtime(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("dump_realtime"));
+				dumpConfig.setRealtime(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("dump_realtime")));
 				
 				long idRequestIn = rs1.getLong("id_richiesta_ingresso");
 				if(idRequestIn>0) {
@@ -7226,17 +7227,17 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				long idRequestOut = rs1.getLong("id_richiesta_uscita");
-				if(idRequestIn>0) {
+				if(idRequestOut>0) {
 					dumpConfig.setRichiestaUscita(readDumpConfigurazioneRegola(con, idRequestOut));
 				}
 				
 				long idResponseIn = rs1.getLong("id_risposta_ingresso");
-				if(idRequestIn>0) {
+				if(idResponseIn>0) {
 					dumpConfig.setRispostaIngresso(readDumpConfigurazioneRegola(con, idResponseIn));
 				}
 				
 				long idResponseOut = rs1.getLong("id_risposta_uscita");
-				if(idRequestIn>0) {
+				if(idResponseOut>0) {
 					dumpConfig.setRispostaUscita(readDumpConfigurazioneRegola(con, idResponseOut));
 				}
 				
@@ -7278,9 +7279,9 @@ public class DriverConfigurazioneDB_LIB {
 			if(rs1.next()){
 				
 				dumpConfig.setId(rs1.getLong("id"));
-				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("body"));
-				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("attachments"));
-				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita("headers"));
+				dumpConfig.setBody(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("body")));
+				dumpConfig.setAttachments(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("attachments")));
+				dumpConfig.setHeaders(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs1.getString("headers")));
 				
 			}
 
