@@ -270,7 +270,6 @@ public class Dump {
 				TipoMessaggio.RISPOSTA_INGRESSO.equals(tipoMessaggio) ||
 				TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio);
 		
-		@SuppressWarnings("unused")
 		boolean dumpBinario = TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(tipoMessaggio) ||
 				TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(tipoMessaggio) ||
 				TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(tipoMessaggio) ||
@@ -519,7 +518,8 @@ public class Dump {
 		
 		
 		// Log4J
-		if(OpenSPCoop2Logger.loggerDumpAbilitato){
+		if(OpenSPCoop2Logger.loggerDumpAbilitato && !dumpBinario){
+			// Su file di log, il log binario viene registrato in altra maniera sul file openspcoop2_connettori.log
 			try{
 				StringBuffer out = new StringBuffer();
 				out.append(this.signature);

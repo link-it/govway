@@ -1,3 +1,18 @@
+2018-03-30  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-702
+	L'autenticazione 'basic' salva il risultato dell'autorizzazione success/deny in cache 
+	senza utilizzare nella chiave della cache la 'password'.
+	Questo comporta alcuni comportamenti errati:
+	- [CORRETTO] Invocazione effettuata con username corretto e password errata: la PdD segnala l'errore
+	- Reset Cache
+	- [CORRETTO] Invocazione effettuata con username corretto e password corretta: la PdD autentica con successo
+	- [ERRATO] Invocazione effettuata con username corretto e password errata: la PdD autentica con sucesso
+	- Reset Cache
+	- [CORRETTO] Invocazione effettuata con username corretto e password errata: la PdD segnala l'errore
+	- [ERRATO] Invocazione effettuata con username corretto e password corretta: la PdD segnala l'errore
+
 2018-03-22  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloAS4]

@@ -73,7 +73,11 @@ public abstract class AbstractDatiInvocazione {
 			}
 			if(this.infoConnettoreIngresso.getCredenziali()!=null){
 				if(this.infoConnettoreIngresso.getCredenziali()!=null){
-					bf.append(" Credenziali(").append(this.infoConnettoreIngresso.getCredenziali().toString());
+					boolean showPassword = false;
+					if(keyCache) {
+						showPassword = true;
+					}
+					bf.append(" Credenziali(").append(this.infoConnettoreIngresso.getCredenziali().toString(showPassword));
 					bf.append(")");
 				}
 				if(keyCache==false){
