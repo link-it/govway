@@ -152,8 +152,8 @@ public class PorteDelegateDumpConfigurazione extends Action {
 					} else {
 						statoDump = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
 						realtime = oldConfigurazione.getRealtime().getValue();
-						statoDumpRichiesta = porteDelegateHelper.isAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-						statoDumpRisposta = porteDelegateHelper.isAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+						statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+						statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
 						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
 						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
@@ -178,8 +178,8 @@ public class PorteDelegateDumpConfigurazione extends Action {
 						oldConfigurazione.setRispostaUscita(new DumpConfigurazioneRegola());
 						
 						realtime = oldConfigurazione.getRealtime().getValue();
-						statoDumpRichiesta = porteDelegateHelper.isAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-						statoDumpRisposta = porteDelegateHelper.isAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+						statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+						statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
 						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
 						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
@@ -273,8 +273,8 @@ public class PorteDelegateDumpConfigurazione extends Action {
 			} else {
 				statoDump = CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO;
 				realtime = configurazioneAggiornata.getRealtime().getValue();
-				statoDumpRichiesta = porteDelegateHelper.isAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-				statoDumpRisposta = porteDelegateHelper.isAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
 				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
 				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();

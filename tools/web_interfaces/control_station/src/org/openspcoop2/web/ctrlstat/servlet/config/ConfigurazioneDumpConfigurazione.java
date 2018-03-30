@@ -130,8 +130,8 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 				if(statoDump == null) {
 					statoDump = "";
 					realtime = oldConfigurazione.getRealtime().getValue();
-					statoDumpRichiesta = confHelper.isAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-					statoDumpRisposta = confHelper.isAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+					statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+					statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 					dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
 					dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
 					dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
@@ -214,8 +214,8 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			DumpConfigurazione configurazioneAggiornata = newConfigurazione.getDump().getConfigurazione();
 			statoDump = "";
 			realtime = configurazioneAggiornata.getRealtime().getValue();
-			statoDumpRichiesta = confHelper.isAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-			statoDumpRisposta = confHelper.isAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+			statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+			statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 			dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
 			dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
 			dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();

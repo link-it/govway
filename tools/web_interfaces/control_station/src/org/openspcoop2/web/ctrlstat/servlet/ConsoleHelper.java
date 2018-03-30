@@ -4693,7 +4693,7 @@ public class ConsoleHelper {
 		return newConfigurazione;
 	}
 	
-	public boolean isAbilitato(DumpConfigurazione configurazione, boolean isRisposta) {
+	public boolean isDumpConfigurazioneAbilitato(DumpConfigurazione configurazione, boolean isRisposta) {
 		boolean abilitato = false;
 		
 		if(isRisposta) {
@@ -4752,4 +4752,9 @@ public class ConsoleHelper {
 		
 		return abilitato;
 	}
+	
+	public boolean isDumpConfigurazioneAbilitato(DumpConfigurazione configurazione) {
+		return isDumpConfigurazioneAbilitato(configurazione, true) || isDumpConfigurazioneAbilitato(configurazione, false);
+	}
+	
 }

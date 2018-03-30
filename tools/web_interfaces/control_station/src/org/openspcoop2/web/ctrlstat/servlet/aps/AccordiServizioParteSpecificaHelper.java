@@ -2291,7 +2291,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE, pIdSogg, pIdPorta, pIdAsps);
 				DumpConfigurazione dumpConfigurazione = paAssociata.getDump();
-				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : 
+					(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 				de.setValue(statoDump);
 				e.addElement(de);
 				
@@ -3124,7 +3125,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 				DumpConfigurazione dumpConfigurazione = pdAssociata.getDump();
-				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO;
+				String statoDump = dumpConfigurazione == null ? CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT : 
+					(this.isDumpConfigurazioneAbilitato(dumpConfigurazione) ? CostantiControlStation.DEFAULT_VALUE_ABILITATO : CostantiControlStation.DEFAULT_VALUE_DISABILITATO);
 				de.setValue(statoDump);
 				e.addElement(de);
 				
