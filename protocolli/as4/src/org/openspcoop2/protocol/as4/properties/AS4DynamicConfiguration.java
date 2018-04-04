@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 
@@ -89,7 +90,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	/*** SOGGETTO 
 	 * @throws ProtocolException ***/
 
-//	private boolean isOperativo(IRegistryReader registryReader, IDSoggetto id) throws ProtocolException {
+//	private boolean isOperativo(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
 //		try {
 //			
 //			org.openspcoop2.core.registry.Soggetto soggetto = registryReader.getSoggetto(id);
@@ -115,7 +116,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 //	
 	@Override
 	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDSoggetto id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id)
 					throws ProtocolException {
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -194,7 +195,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 
 	@Override
 	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDSoggetto id) throws ProtocolException {
 		
 		// La proprietà AS4ConsoleCostanti.AS4_SOGGETTO_USER_MESSAGE_PARTY_ID_ID deve essere un valore univoco
@@ -255,7 +256,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 					throws ProtocolException {
 
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -363,7 +364,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		
 		// Se il tipo non è presente allora è obbligatorio che il nome del servizio sia una URI.
 		StringProperty serviceTypeItem = (StringProperty) 
@@ -511,14 +512,14 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordoAzione id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id)
 					throws ProtocolException {	
-		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdAccordo());		
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, configIntegrationReader, id.getIdAccordo());		
 	}
 
 	@Override
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
 		
 		StringProperty actionTypeItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
@@ -584,14 +585,14 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id)
 					throws ProtocolException {
-		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdPortType().getIdAccordo());
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, configIntegrationReader, id.getIdPortType().getIdAccordo());
 	}
 
 	@Override
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
 		
 		StringProperty actionTypeItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
@@ -661,14 +662,14 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id)
 					throws ProtocolException {
-		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, id.getIdAccordo());
+		return _getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, configIntegrationReader, id.getIdAccordo());
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
 		
 		StringProperty actionTypeItem = (StringProperty) 
 				ProtocolPropertiesUtils.getAbstractPropertyById(properties, AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
@@ -734,7 +735,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 	}
 	
 	private ConsoleConfiguration _getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 		
@@ -888,10 +889,10 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDServizio id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
 			throws ProtocolException {
 		
-		PModeRegistryReader pmodeRR = new PModeRegistryReader(registryReader, this.protocolFactory);
+		PModeRegistryReader pmodeRR = new PModeRegistryReader(registryReader, configIntegrationReader, this.protocolFactory);
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 		
@@ -922,7 +923,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 
 	@Override
 	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDServizio id) throws ProtocolException {
 		
 		StringProperty securityProfileItem = (StringProperty) 

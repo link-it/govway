@@ -116,6 +116,8 @@ public class Translator {
 			List<APS> listAPS = soggetto.getAps();
 			for (APS aps : listAPS) {
 				aps.initCNFruitori(soggetti);
+				aps.initCNFruitori(soggetti, this.reader.findSoggettoAutorizzati(aps.getBase()));
+				aps.checkCNFruitori();
 			}
 		}
 		map.put("soggetti", soggetti);

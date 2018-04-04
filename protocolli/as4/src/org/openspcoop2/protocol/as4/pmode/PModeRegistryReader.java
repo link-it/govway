@@ -25,7 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -33,18 +37,21 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.API;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
-import org.openspcoop2.protocol.as4.pmode.beans.Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
+import org.openspcoop2.protocol.as4.pmode.beans.Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.Soggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
+import org.openspcoop2.protocol.sdk.registry.FiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -60,12 +67,14 @@ public class PModeRegistryReader {
 
 
 	private IRegistryReader registryReader;
+	private IConfigIntegrationReader configIntergrationReader;
 	private String tipo;
 	private Logger log;
 	private AS4Properties as4Properties;
 	
-	public PModeRegistryReader(IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public PModeRegistryReader(IRegistryReader registryReader, IConfigIntegrationReader configIntergrationReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.registryReader = registryReader;
+		this.configIntergrationReader = configIntergrationReader;
 		this.tipo = protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault();
 		this.log = LoggerWrapperFactory.getLogger(PModeRegistryReader.class);
 		this.as4Properties = AS4Properties.getInstance();
@@ -190,6 +199,56 @@ public class PModeRegistryReader {
 		
 		return soggetti;
 		
+	}
+	
+	public List<IDSoggetto> findSoggettoAutorizzati(AccordoServizioParteSpecifica asps) throws Exception{
+		
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		
+		FiltroRicercaSoggetti filtroRicercaSoggetti = new FiltroRicercaSoggetti();
+		filtroRicercaSoggetti.setTipo(this.tipo);
+		List<IDSoggetto> allIdSoggettiTmp = this.registryReader.findIdSoggetti(filtroRicercaSoggetti);
+		List<IDSoggetto> allIdSoggetti = new ArrayList<>(); // escludo soggetto erogatore
+		for (IDSoggetto idSoggetto : allIdSoggettiTmp) {
+			if(idSoggetto.equals(idServizio.getSoggettoErogatore())==false) {
+				allIdSoggetti.add(idSoggetto);
+			}
+		}
+		
+		List<IDSoggetto> list = new ArrayList<>();
+		FiltroRicercaPorteApplicative filtroRicerca = new FiltroRicercaPorteApplicative();
+		filtroRicerca.setTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
+		filtroRicerca.setNomeSoggetto(idServizio.getSoggettoErogatore().getNome());
+		filtroRicerca.setTipoServizio(idServizio.getTipo());
+		filtroRicerca.setNomeServizio(idServizio.getNome());
+		filtroRicerca.setVersioneServizio(idServizio.getVersione());
+		List<IDPortaApplicativa> idsPA = null;
+		try {
+			idsPA = this.configIntergrationReader.findIdPorteApplicative(filtroRicerca);
+		}catch(RegistryNotFound notFound) {}
+		if(idsPA!=null && idsPA.size()>0) {
+			for (IDPortaApplicativa idPortaApplicativa : idsPA) {
+				PortaApplicativa pa = this.configIntergrationReader.getPortaApplicativa(idPortaApplicativa);
+				if(TipoAutorizzazione.AUTHENTICATED.equals(pa.getAutorizzazione())) {
+					// aggiungo solo i soggetti indicati nella lista
+					if(pa.getSoggetti()!=null && pa.getSoggetti().sizeSoggettoList()>0) {
+						for (PortaApplicativaAutorizzazioneSoggetto paAuthSoggetto : pa.getSoggetti().getSoggettoList()) {
+							IDSoggetto idSogg = new IDSoggetto(paAuthSoggetto.getTipo(), paAuthSoggetto.getNome());
+							if(list.contains(idSogg)==false) {
+								list.add(idSogg);
+							}
+						}
+					}
+				}
+				else {
+					// autorizzo tutti
+					// poi se la PA è invocabile da tutti (authz disabilitata) o per ruoli si vedrà sulla PdD
+					return allIdSoggetti; // e' inutile continuare a collezionare la lista
+				}
+			}
+		}
+		
+		return list;
 	}
 
 	public String getNomeSoggettoOperativo() throws Exception {

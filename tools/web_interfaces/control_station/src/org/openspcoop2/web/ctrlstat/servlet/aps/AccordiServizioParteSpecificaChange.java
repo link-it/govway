@@ -76,6 +76,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -124,6 +125,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
@@ -585,8 +587,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDServizio idAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore,nomeSoggettoErogatore, versione);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAps );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idAps );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			oldProtocolPropertyList = asps.getProtocolPropertyList(); 
@@ -889,7 +893,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
-							this.registryReader, idAps);
+							this.registryReader, this.configRegistryReader, idAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1025,7 +1029,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAps);
+					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAps);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -1057,7 +1062,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
-						this.registryReader, idAps);
+						this.registryReader, this.configRegistryReader, idAps);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1161,7 +1166,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
-							this.registryReader, idAps);
+							this.registryReader, this.configRegistryReader, idAps);
 					
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 
@@ -1393,7 +1398,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,
-							this.registryReader, idAps);
+							this.registryReader, this.configRegistryReader, idAps);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, id, null, null, dati);
 

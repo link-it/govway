@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -89,6 +90,7 @@ public final class AccordiCooperazioneAdd extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 
@@ -229,10 +231,12 @@ public final class AccordiCooperazioneAdd extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			
 			// ID Accordo Null per default
 			IDAccordo idAc = null;
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAc );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idAc );
 			this.protocolProperties = acHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			String postBackElementName = acHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
@@ -283,7 +287,8 @@ public final class AccordiCooperazioneAdd extends Action {
 					this.referente = "";
 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAc);
 
 				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, this.referente,
 						this.versione, providersList, providersListLabel, false,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
@@ -319,7 +324,8 @@ public final class AccordiCooperazioneAdd extends Action {
 				try{
 					idAc = acHelper.getIDAccordoFromValues(this.nome, this.referente, this.versione);
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAc);
+					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAc);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -338,7 +344,8 @@ public final class AccordiCooperazioneAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAc);
 
 				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 						this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
@@ -405,7 +412,8 @@ public final class AccordiCooperazioneAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAc);
 
 					dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 							this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);

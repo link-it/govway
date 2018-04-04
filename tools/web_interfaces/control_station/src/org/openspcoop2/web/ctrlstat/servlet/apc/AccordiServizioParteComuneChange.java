@@ -69,6 +69,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -118,6 +119,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
@@ -271,9 +273,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
-					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD)
-					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD);
+					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD)
+					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, this.consoleInterfaceType, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
@@ -532,10 +537,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,
 						this.wsblconc,this.wsblserv,this.wsblservcorr,
@@ -591,9 +598,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 			try{
 				//validazione campi dinamici
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAccordoOLD);
+					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 				else 
-					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAccordoOLD);
+					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 			}catch(ProtocolException e){
 				ControlStationCore.getLog().error(e.getMessage(),e);
 				pd.setMessage(e.getMessage());
@@ -618,10 +627,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 			// update della configurazione 
 			if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAccordoOLD);
 			else 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
-						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 			dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 					this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
@@ -659,10 +670,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
@@ -803,10 +816,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// update della configurazione 
 				if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 				else 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
-							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
@@ -908,10 +923,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 							// update della configurazione 
 							if(this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
 								this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
-										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+										this.registryReader, this.configRegistryReader, idAccordoOLD);
 							else 
 								this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
-										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
+										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+										this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 							dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
 									this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 

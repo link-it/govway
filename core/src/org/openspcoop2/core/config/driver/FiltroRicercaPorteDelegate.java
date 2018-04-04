@@ -62,6 +62,9 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	
 	/** NomeServizio */
 	private String nomeServizio;
+	
+	/** VersioneServizio */
+	private Integer versioneServizio;
 
 	/** Azione */
 	private String azione;
@@ -96,6 +99,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [tipoServizio:"+this.tipoServizio+"]");
 		if(this.nomeServizio!=null)
 			bf.append(" [nomeServizio:"+this.nomeServizio+"]");
+		if(this.versioneServizio!=null)
+			bf.append(" [versioneServizio:"+this.versioneServizio+"]");
 		if(this.azione!=null)
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
@@ -165,9 +170,17 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 		return this.nomeServizio;
 	}
 
-
 	public void setNomeServizio(String nomeServizio) {
 		this.nomeServizio = nomeServizio;
+	}
+
+	
+	public Integer getVersioneServizio() {
+		return this.versioneServizio;
+	}
+
+	public void setVersioneServizio(Integer versioneServizio) {
+		this.versioneServizio = versioneServizio;
 	}
 
 

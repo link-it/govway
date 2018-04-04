@@ -27,9 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 
 /**
@@ -106,10 +108,29 @@ public class APS {
 		for (Fruitore fruitore : this.base.getFruitoreList()) {
 			for (Soggetto soggetto : soggetti) {
 				if(soggetto.getBase().getNome().equals(fruitore.getNome())) {
-					this.cnFruitori.add(soggetto.getEbmsUserMessagePartyCN());
+					if(this.cnFruitori.contains(soggetto.getEbmsUserMessagePartyCN())==false) {
+						this.cnFruitori.add(soggetto.getEbmsUserMessagePartyCN());
+					}
 					break;
 				}
 			}
+		}
+	}
+	public void initCNFruitori(List<Soggetto> soggetti,List<IDSoggetto> soggettiAutorizzati) {
+		for (IDSoggetto soggettoAutorizzato : soggettiAutorizzati) {
+			for (Soggetto soggetto : soggetti) {
+				if(soggetto.getBase().getNome().equals(soggettoAutorizzato.getNome())) {
+					if(this.cnFruitori.contains(soggetto.getEbmsUserMessagePartyCN())==false) {
+						this.cnFruitori.add(soggetto.getEbmsUserMessagePartyCN());
+					}
+					break;
+				}
+			}
+		}
+	}
+	public void checkCNFruitori() throws Exception {
+		if(this.cnFruitori.size()<=0) {
+			throw new Exception("Non sono stati definiti soggetto autorizzati a fruire del servizio "+IDServizioFactory.getInstance().getUriFromAccordo(this.base));
 		}
 	}
 }

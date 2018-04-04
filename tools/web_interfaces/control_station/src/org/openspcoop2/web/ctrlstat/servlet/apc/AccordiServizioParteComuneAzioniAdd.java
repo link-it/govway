@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -88,6 +89,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String editMode = null;
@@ -180,11 +182,13 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
-
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			
 			IDAccordoAzione idAzione = new IDAccordoAzione();
 			idAzione.setIdAccordo(idAs);
 			idAzione.setNome(nomeaz); 
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAzione(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAzione );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAzione(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idAzione );
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			// Prendo la lista di azioni dell'accordo
@@ -248,7 +252,8 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAzione);
+				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
@@ -282,7 +287,8 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAzione);
+					this.consoleDynamicConfiguration.validateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAzione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -311,7 +317,8 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAzione);
+				this.consoleDynamicConfiguration.updateDynamicConfigAzione(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
 						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, consordaz, consordaz, scadenzaaz, scadenzaaz, 

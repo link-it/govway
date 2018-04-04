@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -118,6 +119,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
@@ -454,11 +456,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDServizio idAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore,nomeSoggettoErogatore, versioneservizio+"");
 			IDFruizione idFruizione = new IDFruizione();
 			idFruizione.setIdServizio(idAps);
 			idFruizione.setIdFruitore(idSF);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idFruizione  );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idFruizione  );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			oldProtocolPropertyList = servFru.getProtocolPropertyList(); 
@@ -746,7 +750,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					// update della configurazione 
 					if(!viewOnlyConnettore)
-						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
@@ -833,7 +838,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			if(isOk && !viewOnlyConnettore){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idFruizione);
+					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idFruizione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -852,7 +858,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				// update della configurazione 
 				if(!viewOnlyConnettore)
-					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idFruizione);
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
@@ -912,7 +919,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					// update della configurazione 
 					if(!viewOnlyConnettore)
-						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 					
@@ -1107,7 +1115,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					// update della configurazione 
 					if(!viewOnlyConnettore)
-						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
+						this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+								this.registryReader, this.configRegistryReader, idFruizione);
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 

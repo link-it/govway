@@ -795,6 +795,14 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					if(filtroRicerca.getVersioneServizio()!=null){
+						if(pd.getServizio().getVersione()==null){
+							continue;
+						}
+						if(pd.getServizio().getVersione().intValue() != filtroRicerca.getVersioneServizio().intValue()){
+							continue;
+						}
+					}
 					// Filtro By azione
 					if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 						if(pd.getAzione().getNome()==null){
@@ -1231,6 +1239,14 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 						if(pa.getServizio().getNome().equals(filtroRicerca.getNomeServizio()) == false){
+							continue;
+						}
+					}
+					if(filtroRicerca.getVersioneServizio()!=null){
+						if(pa.getServizio().getVersione()==null){
+							continue;
+						}
+						if(pa.getServizio().getVersione().intValue() != filtroRicerca.getVersioneServizio().intValue()){
 							continue;
 						}
 					}

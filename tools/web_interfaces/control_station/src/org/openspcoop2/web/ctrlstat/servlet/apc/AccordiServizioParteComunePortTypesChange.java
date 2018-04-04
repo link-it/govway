@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -90,6 +91,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String editMode = null;
@@ -188,10 +190,12 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDPortType idPt = new IDPortType();
 			idPt.setIdAccordo(idAs);
 			idPt.setNome(nomept);
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idPt);
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idPt);
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			PortType ptOLD = null;
@@ -276,7 +280,8 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idPt);
+				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idPt);
 
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, deffiltroduppt, confricpt, defconfricpt, idcollpt, defidcollpt, consordpt, defconsordpt, scadenzapt, 
@@ -317,7 +322,8 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idPt);
+					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idPt);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -345,7 +351,8 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idPt);
+				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idPt);
 
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 

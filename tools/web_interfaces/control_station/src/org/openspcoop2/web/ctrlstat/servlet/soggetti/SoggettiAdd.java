@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -95,6 +96,7 @@ public final class SoggettiAdd extends Action {
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 
@@ -290,7 +292,9 @@ public final class SoggettiAdd extends Action {
 			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idSoggetto);
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idSoggetto);
 			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
@@ -316,7 +320,8 @@ public final class SoggettiAdd extends Action {
 				}
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSoggetto); 
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,
 						isSupportatoCodiceIPA, isSupportatoIdentificativoPorta,
@@ -373,7 +378,8 @@ public final class SoggettiAdd extends Action {
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idSoggetto); 
+					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idSoggetto); 
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -392,7 +398,8 @@ public final class SoggettiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// update della configurazione 
-				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,

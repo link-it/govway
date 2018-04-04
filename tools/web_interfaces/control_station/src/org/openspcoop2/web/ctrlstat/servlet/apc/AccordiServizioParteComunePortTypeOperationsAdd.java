@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -92,6 +93,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
 	private IRegistryReader registryReader = null; 
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 
@@ -216,7 +218,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory);
-
+			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
+			
 			IDPortType idPt = new IDPortType();
 			idPt.setIdAccordo(idAs);
 			idPt.setNome(pt.getNome());
@@ -224,7 +227,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			idAzione.setIdPortType(idPt);
 			idAzione.setNome(nomeop);
 
-			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigOperation(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAzione );
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigOperation(this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, idAzione );
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 
@@ -377,7 +381,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAzione);
+				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
 						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, consordop, consordop, scadenzaop, scadenzaop, 
@@ -416,7 +421,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			if(isOk){
 				try{
 					//validazione campi dinamici
-					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAzione);
+					this.consoleDynamicConfiguration.validateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader, idAzione);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());
@@ -496,7 +502,8 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAzione);
+				this.consoleDynamicConfiguration.updateDynamicConfigOperation(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
+						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
 						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, consordop, consordop, scadenzaop, scadenzaop, 

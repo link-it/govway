@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
@@ -57,7 +58,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDSoggetto id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id)
 					throws ProtocolException {
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, null);
 	}
@@ -65,13 +66,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDSoggetto id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 
 	@Override
 	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDSoggetto id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -81,7 +82,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 					throws ProtocolException {
 
 		List<ProtocolProperty> protocolPropertyList = null;
@@ -92,13 +93,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -107,7 +108,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioComposto(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 					throws ProtocolException {
 
 		List<ProtocolProperty> protocolPropertyList = null;
@@ -117,13 +118,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -132,7 +133,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordoAzione id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -141,14 +142,14 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDAccordoAzione id)
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id)
 					throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDAccordoAzione id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -158,7 +159,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -167,14 +168,14 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDPortTypeAzione id)
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id)
 					throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDPortTypeAzione id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -184,7 +185,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortType id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -193,13 +194,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDPortType id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDPortType id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -208,7 +209,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 
 	@Override
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDResource id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id)
 					throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -217,13 +218,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDResource id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDResource id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -232,7 +233,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoCooperazione(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 			throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -241,13 +242,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigAccordoCooperazione(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigCooperazione(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -257,7 +258,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType,
-			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDServizio id)
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
 			throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
@@ -266,13 +267,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDServizio id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDServizio id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
@@ -283,7 +284,7 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			IRegistryReader registryReader, IDFruizione id) throws ProtocolException {
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException {
 		List<ProtocolProperty> protocolPropertyList = null;
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
 	}
@@ -292,13 +293,13 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	@Override
 	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties, IRegistryReader registryReader, IDFruizione id) throws ProtocolException {
+			ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
 	
 	@Override
 	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IDFruizione id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}

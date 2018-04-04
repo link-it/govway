@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -77,7 +78,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 	private ConsoleConfiguration consoleConfiguration =null;
 	private ProtocolProperties protocolProperties = null;
 	private IProtocolFactory<?> protocolFactory= null;
-	private IRegistryReader registryReader = null; 
+	private IRegistryReader registryReader = null;
+	private IConfigIntegrationReader configRegistryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	
@@ -133,6 +135,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = ppCore.getRegistryReader(this.protocolFactory); 
+			this.configRegistryReader = ppCore.getConfigIntegrationReader(this.protocolFactory);
 
 			int idProtocolProperty = 0;
 			try {
@@ -147,7 +150,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			Object idOggettoProprietario = ppHelper.getIdOggettoProprietario(oggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
 
 			this.consoleConfiguration = ppHelper.getConsoleDynamicConfiguration(idOggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo,
-					this.consoleOperationType, this.consoleInterfaceType, this.registryReader,this.consoleDynamicConfiguration);
+					this.consoleOperationType, this.consoleInterfaceType, 
+					this.registryReader, this.configRegistryReader, this.consoleDynamicConfiguration);
 
 			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, this.contenutoDocumento);
 
@@ -246,7 +250,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
 				try{
-					ppHelper.validateDynamicConfig(this.consoleDynamicConfiguration, idOggettoProprietario, this.tipoAccordo, this.tipoProprietario, this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader);
+					ppHelper.validateDynamicConfig(this.consoleDynamicConfiguration, idOggettoProprietario, this.tipoAccordo, this.tipoProprietario, this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, 
+							this.registryReader, this.configRegistryReader);
 				}catch(ProtocolException e){
 					ControlStationCore.getLog().error(e.getMessage(),e);
 					pd.setMessage(e.getMessage());

@@ -162,6 +162,8 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, userLogin, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 			}
 
+			boolean multiTenant = ServletUtils.getUserFromSession(session).isPermitMultiTenant();
+			
 			PortaApplicativaAutorizzazioneSoggetti soggetti = pa.getSoggetti(); 
 			List<PortaApplicativaAutorizzazioneSoggetto> soggettoList = soggetti != null ? soggetti.getSoggettoList() : new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
 			if (list.size() > 0) {
@@ -178,7 +180,13 @@ public final class PorteApplicativeSoggettoAdd extends Action {
 						}
 					}
 					
-					if(!found){
+					boolean soggettoErogatoreServizio = false;
+					if(pa.getTipoSoggettoProprietario().equals(soggetto.getTipo()) &&
+							pa.getNomeSoggettoProprietario().equals(soggetto.getNome())) {
+						soggettoErogatoreServizio = true;
+					}
+										
+					if(!found && (!soggettoErogatoreServizio || multiTenant)){
 						soggettiListTmp.add(soggetto.getId().toString());
 						soggettiListLabelTmp.add(porteApplicativeHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo() , soggetto.getNome()));
 					}

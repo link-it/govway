@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
@@ -416,41 +417,51 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 	public ConsoleConfiguration getConsoleDynamicConfiguration(Object idOggettoProprietario, String idProprietario,
 			String nomeProprietario, String nomeParentProprietario, ProprietariProtocolProperty tipoProprietario,
 			String tipoAccordo, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			IRegistryReader registryReader,IConsoleDynamicConfiguration consoleDynamicConfiguration) throws ProtocolException{
+			IRegistryReader registryReader,IConfigIntegrationReader configRegistryReader,IConsoleDynamicConfiguration consoleDynamicConfiguration) throws ProtocolException{
 		try{
 			if(tipoProprietario != null && idProprietario != null && idOggettoProprietario != null){
 				switch (tipoProprietario) {
 				case ACCORDO_COOPERAZIONE:
 					IDAccordo idAccordoCooperazione = (IDAccordo) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(consoleOperationType, consoleInterfaceType, registryReader, idAccordoCooperazione);
+					return consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idAccordoCooperazione);
 				case ACCORDO_SERVIZIO_PARTE_COMUNE:
 					IDAccordo idApc = (IDAccordo) idOggettoProprietario;
 					if(tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE)){
-						return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleInterfaceType, registryReader, idApc);
+						return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleInterfaceType, 
+								registryReader, configRegistryReader, idApc);
 					} else {
-						return consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(consoleOperationType, consoleInterfaceType, registryReader, idApc);
+						return consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(consoleOperationType, consoleInterfaceType, 
+								registryReader, configRegistryReader, idApc);
 					}
 				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 					IDServizio idAps =(IDServizio) idOggettoProprietario;			
-					return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(consoleOperationType, consoleInterfaceType, registryReader, idAps);
+					return consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idAps);
 				case AZIONE_ACCORDO:
 					IDAccordoAzione idAccordoAzione = (IDAccordoAzione) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, registryReader, idAccordoAzione);
+					return consoleDynamicConfiguration.getDynamicConfigAzione(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idAccordoAzione);
 				case FRUITORE:
 					IDFruizione idFruizione = (IDFruizione) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleOperationType, consoleInterfaceType, registryReader, idFruizione);
+					return consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idFruizione);
 				case OPERATION:
 					IDPortTypeAzione idAzionePt = (IDPortTypeAzione) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigOperation(consoleOperationType, consoleInterfaceType, registryReader, idAzionePt);
+					return consoleDynamicConfiguration.getDynamicConfigOperation(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idAzionePt);
 				case PORT_TYPE:
 					IDPortType idPt = (IDPortType) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigPortType(consoleOperationType, consoleInterfaceType, registryReader, idPt);
+					return consoleDynamicConfiguration.getDynamicConfigPortType(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idPt);
 				case RESOURCE:
 					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigResource(consoleOperationType, consoleInterfaceType, registryReader, idAccordoRisorsa);
+					return consoleDynamicConfiguration.getDynamicConfigResource(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idAccordoRisorsa);
 				case SOGGETTO:
 					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;
-					return consoleDynamicConfiguration.getDynamicConfigSoggetto(consoleOperationType, consoleInterfaceType, registryReader, idSoggetto);
+					return consoleDynamicConfiguration.getDynamicConfigSoggetto(consoleOperationType, consoleInterfaceType, 
+							registryReader, configRegistryReader, idSoggetto);
 				}
 			}
 
@@ -635,50 +646,61 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 	}
 
 	public void validateDynamicConfig(IConsoleDynamicConfiguration consoleDynamicConfiguration, Object idOggettoProprietario, String tipoAccordo, ProprietariProtocolProperty tipoProprietario,
-			ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,ProtocolProperties protocolProperties, IRegistryReader registryReader) throws ProtocolException {
+			ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,ProtocolProperties protocolProperties, 
+			IRegistryReader registryReader, IConfigIntegrationReader configRegistryReader) throws ProtocolException {
 		try{
 			if(idOggettoProprietario != null){
 				switch (tipoProprietario) {
 				case ACCORDO_COOPERAZIONE:
 					IDAccordo idAccordoCooperazione = (IDAccordo) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigCooperazione(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoCooperazione);
+					consoleDynamicConfiguration.validateDynamicConfigCooperazione(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idAccordoCooperazione);
 					break;
 				case ACCORDO_SERVIZIO_PARTE_COMUNE:
 					IDAccordo idApc = (IDAccordo) idOggettoProprietario;
 					
 					if(tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE))
-						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idApc);
+						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, protocolProperties, 
+								registryReader, configRegistryReader, idApc);
 					else 
-						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idApc);
+						consoleDynamicConfiguration.validateDynamicConfigAccordoServizioComposto(consoleConfiguration, consoleOperationType, protocolProperties, 
+								registryReader, configRegistryReader, idApc);
 					break;
 				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 					IDServizio idAps =(IDServizio) idOggettoProprietario;
 					
-					consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAps);
+					consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idAps);
 					break;
 				case AZIONE_ACCORDO:
 					IDAccordoAzione idAccordoAzione = (IDAccordoAzione) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigAzione(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoAzione);
+					consoleDynamicConfiguration.validateDynamicConfigAzione(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idAccordoAzione);
 					break;
 				case FRUITORE:
 					IDFruizione idFruizione = (IDFruizione) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idFruizione);
+					consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idFruizione);
 					break;
 				case OPERATION:
 					IDPortTypeAzione idAzionePt = (IDPortTypeAzione) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigOperation(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAzionePt);
+					consoleDynamicConfiguration.validateDynamicConfigOperation(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idAzionePt);
 					break;
 				case PORT_TYPE:
 					IDPortType idPt = (IDPortType) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigPortType(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idPt);
+					consoleDynamicConfiguration.validateDynamicConfigPortType(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idPt);
 					break;
 				case RESOURCE:
 					IDResource idAccordoRisorsa = (IDResource) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigResource(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idAccordoRisorsa);
+					consoleDynamicConfiguration.validateDynamicConfigResource(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idAccordoRisorsa);
 					break;
 				case SOGGETTO:
 					IDSoggetto idSoggetto = (IDSoggetto) idOggettoProprietario;
-					consoleDynamicConfiguration.validateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, protocolProperties, registryReader, idSoggetto);
+					consoleDynamicConfiguration.validateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, protocolProperties, 
+							registryReader, configRegistryReader, idSoggetto);
 					break;
 				}
 			}

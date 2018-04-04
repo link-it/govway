@@ -53,7 +53,7 @@ public class XMLWriteUtils {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, protocolFactory); 
+		PModeRegistryReader pModeRegistryReader = new PModeRegistryReader(registryReader, configIntegrationReader, protocolFactory); 
 		this.translator = new Translator(pModeRegistryReader);
 	}
 

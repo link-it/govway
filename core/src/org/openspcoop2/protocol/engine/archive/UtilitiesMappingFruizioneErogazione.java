@@ -172,6 +172,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 											FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
 											filtroPA.setTipoServizio(idServizio.getTipo());
 											filtroPA.setNomeServizio(idServizio.getNome());
+											filtroPA.setVersioneServizio(idServizio.getVersione());
 											filtroPA.setTipoSoggetto(idSoggetto.getTipo());
 											filtroPA.setNomeSoggetto(idSoggetto.getNome());
 											List<IDPortaApplicativa> listPA = null;
@@ -384,6 +385,7 @@ public class UtilitiesMappingFruizioneErogazione  {
 											filtroPD.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
 											filtroPD.setTipoServizio(idServizio.getTipo());
 											filtroPD.setNomeServizio(idServizio.getNome());
+											filtroPD.setVersioneServizio(idServizio.getVersione());
 											List<IDPortaDelegata> listPD = null;
 											try{
 												listPD = this.driverConfigurazione.getAllIdPorteDelegate(filtroPD);

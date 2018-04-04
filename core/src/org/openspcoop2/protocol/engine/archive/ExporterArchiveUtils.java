@@ -953,6 +953,7 @@ public class ExporterArchiveUtils {
 			filtroRicercaPorteDelegate.setNomeSoggettoErogatore(idAccordoServizio.getSoggettoErogatore().getNome());
 			filtroRicercaPorteDelegate.setTipoServizio(as.getTipo());
 			filtroRicercaPorteDelegate.setNomeServizio(as.getNome());
+			filtroRicercaPorteDelegate.setVersioneServizio(as.getVersione());
 			try{
 				List<IDPortaDelegata> idsPD = this.archiveEngine.getAllIdPorteDelegate(filtroRicercaPorteDelegate);
 				if(idsPD!=null && idsPD.size()>0){
@@ -976,6 +977,7 @@ public class ExporterArchiveUtils {
 			filtroRicercaPorteApplicative.setNomeSoggetto(idAccordoServizio.getSoggettoErogatore().getNome());
 			filtroRicercaPorteApplicative.setTipoServizio(as.getTipo());
 			filtroRicercaPorteApplicative.setNomeServizio(as.getNome());
+			filtroRicercaPorteApplicative.setVersioneServizio(as.getVersione());
 			try{
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
@@ -996,6 +998,7 @@ public class ExporterArchiveUtils {
 			filtroRicercaPorteApplicative.setNomeSoggettoVirtuale(idAccordoServizio.getSoggettoErogatore().getNome());
 			filtroRicercaPorteApplicative.setTipoServizio(as.getTipo());
 			filtroRicercaPorteApplicative.setNomeServizio(as.getNome());
+			filtroRicercaPorteApplicative.setVersioneServizio(as.getVersione());
 			try{
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){

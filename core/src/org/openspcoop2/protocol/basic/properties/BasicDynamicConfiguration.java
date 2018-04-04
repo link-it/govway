@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 
@@ -55,154 +56,154 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDSoggetto id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDSoggetto id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDSoggetto id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoCooperazione(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAccordoCooperazione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigCooperazione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioComposto(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordo id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDPortType id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortType id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDPortTypeAzione id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordoAzione id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigResource(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	
 	@Override
 	public void updateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
 	}
 	
 	@Override
 	public void validateDynamicConfigResource(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDResource id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDResource id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDServizio id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDServizio id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDServizio id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties,  
-			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException{
 	}
 
 }

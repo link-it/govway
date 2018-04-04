@@ -17298,6 +17298,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_servizio = ?");
 				if(filtroRicerca.getNomeServizio()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_servizio = ?");
+				if(filtroRicerca.getVersioneServizio()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".versione_servizio = ?");
 				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_azione = ?");
 				if(filtroRicerca.getNome()!=null)
@@ -17359,6 +17361,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getNomeServizio()!=null){
 					this.log.debug("nomeServizio stmt.setString("+filtroRicerca.getNomeServizio()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomeServizio());
+					indexStmt++;
+				}	
+				if(filtroRicerca.getVersioneServizio()!=null){
+					this.log.debug("versioneServizio stmt.setInt("+filtroRicerca.getVersioneServizio()+")");
+					stm.setInt(indexStmt, filtroRicerca.getVersioneServizio());
 					indexStmt++;
 				}	
 				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
@@ -17521,6 +17528,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio = ?");
 				if(filtroRicerca.getNomeServizio()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio = ?");
+				if(filtroRicerca.getVersioneServizio()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio = ?");
 				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 				if(filtroRicerca.getNome()!=null)
@@ -17592,6 +17601,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					stm.setString(indexStmt, filtroRicerca.getNomeServizio());
 					indexStmt++;
 				}	
+				if(filtroRicerca.getVersioneServizio()!=null){
+					this.log.debug("versioneServizio stmt.setInt("+filtroRicerca.getVersioneServizio()+")");
+					stm.setInt(indexStmt, filtroRicerca.getVersioneServizio());
+					indexStmt++;
+				}
 				if(!porteDelegatePerAzioni && filtroRicerca.getAzione()!=null){
 					this.log.debug("azione stmt.setString("+filtroRicerca.getAzione()+")");
 					stm.setString(indexStmt, filtroRicerca.getAzione());
