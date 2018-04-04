@@ -101,6 +101,7 @@
 				<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
 			</then>
 		</if>
+		<replace file="${dist}/INSTALL.txt" token="/etc/openspcoop2/" value="${work_dir}"/>
 		
 		<!-- Datasource -->
 		<mkdir dir="${dist}/datasource"/>

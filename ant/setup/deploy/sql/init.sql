@@ -4,6 +4,12 @@ INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id fr
 INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
 INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'usePdDConnection','true'); 
 
+-- Dump
+INSERT INTO dump_appender (tipo) VALUES ('protocol');
+INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
+INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
+INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'usePdDConnection','true');
+
 -- MsgDiagnostici
 INSERT INTO msgdiag_appender (tipo) VALUES ('protocol');
 INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id from msgdiag_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');

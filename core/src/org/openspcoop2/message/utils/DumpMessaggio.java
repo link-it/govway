@@ -196,7 +196,9 @@ public class DumpMessaggio implements Serializable{
 				
 				out.append("\n");
 				
-				out.append(this.getBodyAsString());
+				if(this.getBodyLength()>0) {
+					out.append(this.getBodyAsString());
+				}
 			}
 			
 			if(config.isDumpAttachments() && this.getAttachments()!=null && this.getAttachments().size()>0){

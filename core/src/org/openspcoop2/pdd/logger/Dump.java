@@ -280,7 +280,7 @@ public class Dump {
 		
 		
 		if(dumpNormale) {
-			if(StatoFunzionalita.DISABILITATO.equals(this.dumpConfigurazione.getRealtime())) {
+			if(this.dumpConfigurazione!=null && StatoFunzionalita.DISABILITATO.equals(this.dumpConfigurazione.getRealtime())) {
 				return; // viene gestito tramite l'handler notify
 			}
 		}
@@ -308,28 +308,28 @@ public class Dump {
 		boolean dumpAttachments = true;
 		if(dumpNormale) {
 			if(TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio)) {
-				if(this.dumpConfigurazione.getRichiestaIngresso()!=null) {
+				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaIngresso()!=null) {
 					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getHeaders());
 					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getBody());
 					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaIngresso().getAttachments());
 				}
 			}
 			else if(TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)) {
-				if(this.dumpConfigurazione.getRichiestaUscita()!=null) {
+				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRichiestaUscita()!=null) {
 					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getHeaders());
 					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getBody());
 					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRichiestaUscita().getAttachments());
 				}
 			}
 			else if(TipoMessaggio.RISPOSTA_INGRESSO.equals(tipoMessaggio)) {
-				if(this.dumpConfigurazione.getRispostaIngresso()!=null) {
+				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaIngresso()!=null) {
 					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getHeaders());
 					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getBody());
 					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaIngresso().getAttachments());
 				}
 			}
 			else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio)) {
-				if(this.dumpConfigurazione.getRispostaUscita()!=null) {
+				if(this.dumpConfigurazione!=null && this.dumpConfigurazione.getRispostaUscita()!=null) {
 					dumpHeaders = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getHeaders());
 					dumpBody = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getBody());
 					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());

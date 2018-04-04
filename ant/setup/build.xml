@@ -225,6 +225,10 @@
 		</copy>
 		<copy file="${deploy_resources}/protocolli/as4/as4_local.properties" todir="${tmp_cfg}"/>
 		<replace file="${tmp_cfg}/as4_local.properties" token="WORK_DIR" value="${work_dir}"/>
+		<replace file="${tmp_cfg}/as4_local.properties" token="http://DOMIBUS-HOST:8080/domibus/services/backend" value="${antinstaller_as4_backend}"/>
+		<replace file="${tmp_cfg}/as4_local.properties" token="tcp://DOMIBUS-HOST:61616" value="${antinstaller_as4_jms_url}"/>
+		<replace file="${tmp_cfg}/as4_local.properties" token="admin" value="${antinstaller_as4_jms_username}"/>
+		<replace file="${tmp_cfg}/as4_local.properties" token="123456" value="${antinstaller_as4_jms_password}"/>
 
 		<!-- impostazione workDir in as4.properties -->
                 <fileset dir="${deploy_sw}" id="archiveAS4.txt">
@@ -553,6 +557,10 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				  </header>
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_as4.sql"/>
+				</concat>
+				<concat destfile="${tmp_sql}/OpenSPCoop2.sql" append="yes" >
+<![CDATA[INSERT INTO config_protocolli (nome,url_pd,url_pa) VALUES ('as4','http://localhost:8080/openspcoop2/as4/PD/','${antinstaller_as4_msh}');
+]]>
 				</concat>
 				<delete file="${tmp_sql}/init_soggetto_as4.sql" failonerror="false"/>
 			</then>

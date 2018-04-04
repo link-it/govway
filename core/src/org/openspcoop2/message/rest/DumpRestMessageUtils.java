@@ -285,7 +285,9 @@ public class DumpRestMessageUtils {
 					
 					out.append("\n");
 					
-					out.append(msg.getContentAsString());
+					if(hasContent) {
+						out.append(msg.getContentAsString());
+					}
 				}
 			}
 			

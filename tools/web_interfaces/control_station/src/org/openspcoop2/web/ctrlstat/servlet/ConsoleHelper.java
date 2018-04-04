@@ -4275,16 +4275,19 @@ public class ConsoleHelper {
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
 			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
-		DataElement de = new DataElement();
-		de.setType(DataElementType.TITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE);
-		dati.addElement(de);
 		
+		if(showStato || showRealtime) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_GENERALE);
+			dati.addElement(de);
+		}
+			
 		String valuesProp [] = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
 		String labelsProp [] = {CostantiControlStation.DEFAULT_VALUE_ABILITATO, CostantiControlStation.DEFAULT_VALUE_DISABILITATO};
 		
 		// stato generale dump
-		de = new DataElement();
+		DataElement de = new DataElement();
 		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
 		if(showStato) {

@@ -215,6 +215,26 @@
 
     </page>
 
+    <page name="preinstallazioneEDelivery" type="input" displayText="Configurazione eDelivery" ifProperty="${antinstaller_protocollo_as4}==true">
+
+	<comment displayText="HTTP Endpoint" bold="true"/>
+	<validated defaultValue="http://127.0.0.1:8080/domibus/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+	<validated defaultValue="http://127.0.0.1:8080/domibus/services/backend" property="antinstaller_as4_backend" displayText="Domibus Backend WS URL" regex="http(s?):\/\/(.+)\/(.*)"/>
+
+	<comment displayText=""/>
+	<comment displayText="Broker JMS" bold="true"/>
+	<validated defaultValue="tcp://127.0.0.1:61616" property="antinstaller_as4_jms_url" displayText="Provider URL" regex="(.+):\/\/(.+)"/>
+	<validated defaultValue="admin" property="antinstaller_as4_jms_username" displayText="Username" regex="^[^ ]+$" />
+	<validated defaultValue="123456" property="antinstaller_as4_jms_password" displayText="Password" regex="^[^ ]+$" />
+
+    </page>
+
+    <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
+        
+         <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
+
+    </page>
+
     <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_backward_compatibility}=true) AND (${antinstaller_as}=tomcat5) OR (${antinstaller_as}=tomcat6) OR (${antinstaller_as}=tomcat7) OR (${antinstaller_as}=tomcat8) OR (${antinstaller_as}=tomcat9) ">
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat"/> 
