@@ -42,6 +42,8 @@
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
+		<copy file="${required_lib}/javax/javax.jms.jar" todir="${jarsDir}"/>
+		<copy file="${required_lib}/javax/javax.management.jar" todir="${jarsDir}"/>
 
 		<mkdir dir="${deploy_resources}/protocolli"/>
 		<mkdir dir="${deploy_resources}/protocolli/as4"/>

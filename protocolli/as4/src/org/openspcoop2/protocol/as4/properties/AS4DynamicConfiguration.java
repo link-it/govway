@@ -214,7 +214,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		if(idSoggettiList!=null && idSoggettiList.size()>0) {
 			StringBuffer bfExc = new StringBuffer();
 			for (IDSoggetto idSoggetto : idSoggettiList) {
-				if(id.equals(idSoggetto)==false) {
+				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idSoggetto)==false) {
 					if(bfExc.length()>0) {
 						bfExc.append(",");
 					}
@@ -400,7 +400,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		if(idAccordiList!=null && idAccordiList.size()>0) {
 			StringBuffer bfExc = new StringBuffer();
 			for (IDAccordo idAccordo : idAccordiList) {
-				if(id.equals(idAccordo)==false) {
+				if(ConsoleOperationType.ADD.equals(consoleOperationType) || (id.equals(idAccordo)==false)) {
 					if(bfExc.length()>0) {
 						bfExc.append(",");
 					}
@@ -541,7 +541,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
 			StringBuffer bfExc = new StringBuffer();
 			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
+				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
 						bfExc.append(",");
 					}
@@ -615,7 +615,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
 			StringBuffer bfExc = new StringBuffer();
 			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
+				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
 						bfExc.append(",");
 					}
@@ -691,7 +691,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
 			StringBuffer bfExc = new StringBuffer();
 			for (IDResource idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
+				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
 						bfExc.append(",");
 					}

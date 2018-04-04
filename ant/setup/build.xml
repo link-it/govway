@@ -313,6 +313,8 @@ org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
 						    <fileset dir="${deploy_sw}/jars">
 						    	<include name="activemq-client-*.jar"/>
 							<include name="hawtbuf-*.jar"/>
+							<include name="javax.jms.jar"/>
+							<include name="javax.management.jar"/>
 						    </fileset>
 						</copy>
 					</then>
