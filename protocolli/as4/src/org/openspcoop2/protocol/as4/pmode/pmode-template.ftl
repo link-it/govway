@@ -115,7 +115,7 @@ ${payloadProfiles.payloadProfileDefault}
 		</as4>
 		<legConfigurations>
 		<#list soggetti as soggetto>
-			<#list soggetto.aps as aps>
+			<#list soggetto.getAps(soggettoOperativo) as aps>
 					<#list aps.azioni as azioneK, azione>
 			<legConfiguration name="${azioneK}" 
 					service="${aps.pt.id}" 
@@ -133,7 +133,7 @@ ${payloadProfiles.payloadProfileDefault}
 		</#list>
 		</legConfigurations>
 		<#list soggetti as soggetto>
-			<#list soggetto.aps as aps>
+			<#list soggetto.getAps(soggettoOperativo) as aps>
 <process name="${aps.id}"
          agreement=""
          mep="oneway"

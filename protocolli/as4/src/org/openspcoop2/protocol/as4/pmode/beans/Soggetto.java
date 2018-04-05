@@ -153,6 +153,22 @@ public class Soggetto  {
 	public List<APS> getAps() {
 		return this.aps;
 	}
+	
+	public List<APS> getAps(String nomeSoggettoOperativo) {
+		// filtro su utilizzo del soggetto o come erogatore o come fruitore
+		List<APS> listFiltrato = new ArrayList<>();
+		for (APS apsCheck : this.aps) {
+			if(apsCheck.getBase().getTipoSoggettoErogatore().equals(this.base.getTipo()) &&
+					apsCheck.getBase().getNomeSoggettoErogatore().equals(this.base.getNome()) &&
+					nomeSoggettoOperativo.equals(this.ebmsUserMessagePartyCN)) {
+				listFiltrato.add(apsCheck); // erogatore
+			}
+			else if(apsCheck.getCnFruitori().contains(nomeSoggettoOperativo)) {
+				listFiltrato.add(apsCheck); // fruitore
+			}
+		}
+		return listFiltrato;
+	}
 
 	public void setAps(List<APS> aps) {
 		this.aps = aps;
