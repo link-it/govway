@@ -286,6 +286,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE = "Configurazione";
 	
 	public final static String LABEL_CONFIGURAZIONE_GENERALE_MENU = "Generale";
+	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU = "Tracciamento";
 	
 	public final static String LABEL_CONFIGURAZIONE_GENERALE = "Configurazione Generale";
 	
@@ -313,9 +314,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRI = "Registri";
 	public final static String LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI = "Messaggi Diagnostici";
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO = "Tracciamento";
+	public final static String LABEL_CONFIGURAZIONE_TRACCE = "Tracce";
 	public final static String LABEL_CONFIGURAZIONE_TRANSAZIONI_SALVATE = "Transazioni Salvate";
-	public final static String LABEL_CONFIGURAZIONE_DUMP = "Dump";
-	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = "Configurazione";
+	public final static String LABEL_CONFIGURAZIONE_DUMP = CostantiControlStation.LABEL_DUMP;
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI;
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI_CONFIG_DI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI;
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE = CostantiControlStation.LABEL_DUMP_CONFIGURAZIONE;
 	public final static String LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER = "Integration Manager";
 	public final static String LABEL_CONFIGURAZIONE_VALIDAZIONE_CONTENUTI_APPLICATIVI = "Validazione Contenuti Applicativi";
 	
@@ -358,8 +362,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
 	
-	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni";
-	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti delle transazioni che verranno registrate nello storico";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
+	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -490,8 +494,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_INOLTRO_MIN = "Cadenza (minuti)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO = "Controllo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J = "Livello Severit&agrave; Log4J";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA = "Livello Severit&agrave;";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J = "Livello di Log su File";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA = "Livello di Log su DB";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN = "";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN = "Tipo autenticazione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROFILO_COLLABORAZIONE = "Profilo di collaborazione";
@@ -501,8 +505,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN = "Gestione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE = "Buste";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO = "Dump Applicativo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "Dump Binario PD";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "Dump Binario PA";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE = "Dump Binario";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD = "Porte Delegate";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA = "Porte Applicative";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_XSD = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE = "Tipo";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE = "Stato";
@@ -561,7 +566,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO = "Configurazione "+LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA+" modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_APPENDER_CON_SUCCESSO = "Configurazione modificata con successo"+RIAVVIO;
 	public final static String LABEL_CONFIGURAZIONE_TRACCIAMENTO_ESITI_CON_SUCCESSO = "Configurazione Esiti modificata con successo"+RIAVVIO;
-	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO+RIAVVIO;
+	public final static String LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO+RIAVVIO;
 	
 	
 	/* DEFAULT VALUE PARAMETRI */

@@ -93,9 +93,11 @@ public final class ConfigurazioneDumpAppenderPropertiesChange extends Action {
 			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			Dump t = newConfigurazione.getDump();
 			OpenspcoopAppender oa = null;
+			String oldTipo = null;
 			for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
 				oa = t.getOpenspcoopAppender(j);
 				if (idInt == oa.getId().intValue()) {
+					oldTipo = oa.getTipo();
 					break;
 				}
 			}
@@ -113,8 +115,8 @@ public final class ConfigurazioneDumpAppenderPropertiesChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA + " di " + oa.getTipo(),
@@ -218,7 +220,7 @@ public final class ConfigurazioneDumpAppenderPropertiesChange extends Action {
 			oa = null;
 			for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
 				oa = t.getOpenspcoopAppender(j);
-				if (idInt == oa.getId().intValue()) {
+				if (oldTipo.equals(oa.getTipo()))  {
 					break;
 				}
 			}

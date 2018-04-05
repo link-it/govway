@@ -208,6 +208,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
 	
+	public final static String LABEL_DUMP = "Dump";
+	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
+	public final static String LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI = "Registrazione Messaggi di ";
+	public final static String LABEL_DUMP_CONFIGURAZIONE = "Configurazione";
+	
 	public final static String LABEL_PARAMETRO_DUMP_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_DUMP_STATO_DEFAULT = "default";
 	public final static String LABEL_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
@@ -232,8 +237,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_RISPOSTA = "Risposta";
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_INGRESSO = "Ingresso";
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_USCITA = "Uscita";
-	public static final String LABEL_CONFIGURAZIONE_DUMP_MODIFICATA_CON_SUCCESSO = "Configurazione Dump modificata con successo";
-	public static final String LABEL_ARCHIVIO_MESSAGGI_MODIFICATA_CON_SUCCESSO = "Configurazione Archivio Messaggi modificata con successo";
+	public static final String LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO = "Configurazione Registrazione Messaggi modificata con successo";
 	
 	/** PARAMETERS **/
 	

@@ -120,8 +120,9 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE, null));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI, null));
 
 			// edit in progress
 			if (confHelper.isEditModeInProgress()) {

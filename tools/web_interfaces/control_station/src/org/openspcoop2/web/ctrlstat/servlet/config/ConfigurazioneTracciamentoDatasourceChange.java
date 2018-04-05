@@ -116,8 +116,8 @@ public final class ConfigurazioneTracciamentoDatasourceChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO, 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST));
 				lstParam.add(new Parameter(od.getNome(), null));

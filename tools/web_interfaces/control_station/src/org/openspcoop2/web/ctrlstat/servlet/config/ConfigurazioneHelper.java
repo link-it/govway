@@ -434,8 +434,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO , null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
@@ -570,8 +570,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO , 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA+ " di " + oa.getTipo(), null));
@@ -692,8 +692,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_TRACCIAMENTO , 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA+ " di " + od.getNome(), null));
@@ -816,8 +816,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO, null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
@@ -880,26 +880,25 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// Se tipoOp = add, controllo che l'appender non sia gia' stato registrato
-			/*if (tipoOp.equals("add")) {
-					boolean trovatoAppender = false;
-					Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
-					Tracciamento t = newConfigurazione.getTracciamento();
-					if (t != null) {
-						OpenspcoopAppender[] lista = t.getOpenspcoopAppenderList();
-						OpenspcoopAppender oa = null;
-						for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
-							oa = lista[j];
-							if (tipo.equals(oa.getTipo())) {
-								trovatoAppender = true;
-								break;
-							}
+			if (tipoOp.equals(TipoOperazione.ADD)) {
+				boolean trovatoAppender = false;
+				Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
+				Tracciamento t = newConfigurazione.getTracciamento();
+				if (t != null) {
+					OpenspcoopAppender oa = null;
+					for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
+						oa = t.getOpenspcoopAppender(j);
+						if (tipo.equals(oa.getTipo())) {
+							trovatoAppender = true;
+							break;
 						}
 					}
-					if (trovatoAppender) {
-						this.pd.setMessage("Esiste gi&agrave; un Appender con tipo " + tipo);
-						return false;
-					}
-				}*/
+				}
+				if (trovatoAppender) {
+					this.pd.setMessage("Esiste gi&agrave; un Appender con tipo " + tipo);
+					return false;
+				}
+			}
 
 			return true;
 		} catch (Exception e) {
@@ -929,7 +928,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP, null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
@@ -990,15 +990,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// Se tipoOp = add, controllo che l'appender non sia gia' stato registrato
-			/*if (tipoOp.equals("add")) {
+			if (tipoOp.equals(TipoOperazione.ADD)) {
 					boolean trovatoAppender = false;
 					Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
-					Tracciamento t = newConfigurazione.getTracciamento();
-					if (t != null) {
-						OpenspcoopAppender[] lista = t.getOpenspcoopAppenderList();
+					Dump dump = newConfigurazione.getDump();
+					if (dump != null) {
 						OpenspcoopAppender oa = null;
-						for (int j = 0; j < t.sizeOpenspcoopAppenderList(); j++) {
-							oa = lista[j];
+						for (int j = 0; j < dump.sizeOpenspcoopAppenderList(); j++) {
+							oa = dump.getOpenspcoopAppender(j);
 							if (tipo.equals(oa.getTipo())) {
 								trovatoAppender = true;
 								break;
@@ -1009,7 +1008,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						this.pd.setMessage("Esiste gi&agrave; un Appender con tipo " + tipo);
 						return false;
 					}
-				}*/
+				}
 
 			return true;
 		} catch (Exception e) {
@@ -1070,8 +1069,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_DUMP , 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA+ " di " + oa.getTipo(), null));
@@ -2023,8 +2022,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI ,   null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
@@ -2086,15 +2085,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// Se tipoOp = add, controllo che l'appender non sia gia' stato registrato
-			/*if (tipoOp.equals("add")) {
+			if (tipoOp.equals("add")) {
 					boolean trovatoAppender = false;
 					Configurazione newConfigurazione = this.core.getConfigurazioneGenerale();
 					MessaggiDiagnostici md = newConfigurazione.getMessaggiDiagnostici();
 					if (md != null) {
-						OpenspcoopAppender[] lista = md.getOpenspcoopAppenderList();
 						OpenspcoopAppender oa = null;
 						for (int j = 0; j < md.sizeOpenspcoopAppenderList(); j++) {
-							oa = lista[j];
+							oa =  md.getOpenspcoopAppender(j);
 							if (tipo.equals(oa.getTipo())) {
 								trovatoAppender = true;
 								break;
@@ -2105,7 +2103,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						this.pd.setMessage("Esiste gi&agrave; un Appender con tipo " + tipo);
 						return false;
 					}
-				}*/
+				}
 
 			return true;
 		} catch (Exception e) {
@@ -2136,8 +2134,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_MESSAGGI_DIAGNOSTICI, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA + " di " + oa.getTipo(),
@@ -2256,8 +2254,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI , null));
 
 			ServletUtils.setPageDataTitle(this.pd, lstParam);
@@ -2385,28 +2383,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.pd.setSearch("off");
 
 			// setto la barra del titolo
-			Vector<GeneralLink> titlelist = new Vector<GeneralLink>();
-			GeneralLink tl1 = new GeneralLink();
-			tl1.setLabel("Configurazione");
-			titlelist.addElement(tl1);
-			GeneralLink tl2 = new GeneralLink();
-			tl2.setLabel("Generale");
-			tl2.setUrl("configurazione.do");
-			titlelist.addElement(tl2);
-			GeneralLink tl3 = new GeneralLink();
-			tl3.setLabel("Elenco sorgenti dati messaggi diagnostici");
-			tl3.setUrl("diagnosticaDatasourceList.do");
-			titlelist.addElement(tl3);
-			GeneralLink tl4 = new GeneralLink();
-			tl4.setLabel("Proprietà di "+od.getNome());
-			titlelist.addElement(tl4);
-			this.pd.setTitleList(titlelist);
-			
-			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_SORGENTI_DATI_MESSAGGI_DIAGNOSTICI, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA + " di " + od.getNome(),  null));
@@ -2843,7 +2823,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
 			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli) throws Exception {
 		DataElement de = new DataElement();
-		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 		if (this.isModalitaStandard()) {
 			de = new DataElement();
@@ -2952,223 +2931,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		addMessaggiDiagnosticiToDatiAsHidden(severita, severita_log4j, dati);
 
-		//					String[] tipoMsg = { "off", "fatalOpenspcoop", "errorSpcoop", "errorOpenspcoop", "infoSpcoop", "infoOpenspcoop",
-		//							"debugLow", "debugMedium", "debugHigh", "all" };
-		String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
-				LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
-				LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
-				LogLevels.LIVELLO_ALL};
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
-		//		de.setLabel("Livello Severita");
-		de.setType(DataElementType.SELECT);
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
-		de.setValues(tipoMsg);
-		de.setSelected(severita);
-		dati.addElement(de);
-
-		de = new DataElement();
-		//		de.setLabel("Livello Severita Log4J");
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoMsg);
-			de.setSelected(severita_log4j);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(severita_log4j);
-		}
-		dati.addElement(de);
-
-		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isMsgDiagnostici_showConfigurazioneCustomAppender()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST);
-				if (contaListe) {
-					int totAppender = 0;
-					if (configurazione.getMessaggiDiagnostici() != null)
-						totAppender =
-						configurazione.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
-			}
-			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST);
-				if (contaListe) {
-					int totDs = 0;
-					if (configurazione.getMessaggiDiagnostici() != null)
-						totDs =
-						configurazione.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
-			}
-		}
-
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || this.isModalitaAvanzata()){
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-		}
-
-		String[] tipoBuste = { 
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoBuste);
-			de.setSelected(registrazioneTracce);
-			de.setPostBack(true);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(registrazioneTracce);
-		}
-		dati.addElement(de);
+		addTracciamentoToDatiAsHidden(registrazioneTracce, configurazione, dati);
 		
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI);
-			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRANSAZIONI_SALVATE);
-			dati.addElement(de);
-		}
-
-		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
-				if (contaListe) {
-					int totAppender = 0;
-					if (configurazione.getTracciamento() != null)
-						totAppender =
-						configurazione.getTracciamento().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
-			}
-			if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
-				if (contaListe) {
-					int totDs = 0;
-					if (configurazione.getTracciamento() != null)
-						totDs =
-						configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
-				dati.addElement(de);
-			}
-		}
-		
-		// DUMP
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-		
-		String[] tipoDump = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoDump);
-			de.setSelected(dumpApplicativo);
-			de.setPostBack(true);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(dumpApplicativo);
-		}
-		dati.addElement(de);
-		
-		String[] tipoDumpConnettorePD = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-		if(this.isModalitaAvanzata()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoDumpConnettorePD);
-			de.setSelected(dumpPD);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(dumpPD);
-		}
-		dati.addElement(de);
-		
-		String[] tipoDumpConnettorePA = {
-				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
-				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
-		};
-		de = new DataElement();
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
-		if(this.isModalitaAvanzata()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoDumpConnettorePA);
-			de.setSelected(dumpPA);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(dumpPA);
-		}
-		dati.addElement(de);
-		
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
-			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
-			dati.addElement(de);
-		}
-		
-		if (this.isModalitaAvanzata()) {
-			if (this.confCore.isDump_showConfigurazioneCustomAppender()) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
-				if (contaListe) {
-					int totAppender = 0;
-					if (configurazione.getDump() != null)
-						totAppender =
-						configurazione.getDump().sizeOpenspcoopAppenderList();
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
-				} else
-					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
-				dati.addElement(de);
-			}
-		}
+		addRegistrazioneMessaggiToDatiAsHidden(dumpApplicativo, dumpPD, dumpPA, configurazione, dati);
 		
 		
 		// I.M.
@@ -3501,6 +3268,302 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //		}
 
 		return dati;
+	}
+
+	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
+		DataElement de = new DataElement();
+
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(dumpApplicativo);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(dumpPD);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(dumpPA);
+		dati.addElement(de);
+		
+	}
+	
+	public void addRegistrazioneMessaggiToDati(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,
+			Vector<DataElement> dati, Boolean contaListe) {
+		DataElement de;
+		// DUMP
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String[] tipoDump = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDump);
+			de.setSelected(dumpApplicativo);
+			de.setPostBack(true);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpApplicativo);
+		}
+		dati.addElement(de);
+		
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+			dati.addElement(de);
+		}
+		
+		if (this.isModalitaAvanzata()) {
+			if (this.confCore.isDump_showConfigurazioneCustomAppender()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_APPENDER_LIST);
+				if (contaListe) {
+					int totAppender = 0;
+					if (configurazione.getDump() != null)
+						totAppender =
+						configurazione.getDump().sizeOpenspcoopAppenderList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+				dati.addElement(de);
+			}
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		String[] tipoDumpConnettorePD = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		if(this.isModalitaAvanzata()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDumpConnettorePD);
+			de.setSelected(dumpPD);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpPD);
+		}
+		dati.addElement(de);
+		
+		String[] tipoDumpConnettorePA = {
+				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+		};
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		if(this.isModalitaAvanzata()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoDumpConnettorePA);
+			de.setSelected(dumpPA);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(dumpPA);
+		}
+		dati.addElement(de);
+		
+		
+	}
+	
+	public void addTracciamentoToDatiAsHidden(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati) {
+		DataElement de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(registrazioneTracce);
+		dati.addElement(de);
+	}
+
+	public void addTracciamentoToDati(String registrazioneTracce, Configurazione configurazione, Vector<DataElement> dati,	Boolean contaListe) {
+		DataElement de;
+		
+		boolean showSezione = this.isModalitaAvanzata() && (
+					this.core.isShowConfigurazioneTracciamentoDiagnostica() ||
+					this.confCore.isTracce_showConfigurazioneCustomAppender() || 
+					this.confCore.isTracce_showSorgentiDatiDatabase()
+				);
+		
+		if(showSezione) {
+			if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || this.isModalitaAvanzata()){
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
+	
+			String[] tipoBuste = { 
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
+					ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
+			};
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+			if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()){
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoBuste);
+				de.setSelected(registrazioneTracce);
+				de.setPostBack(true);
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(registrazioneTracce);
+			}
+			dati.addElement(de);
+	
+			if (this.isModalitaAvanzata()) {
+				if (this.confCore.isTracce_showConfigurazioneCustomAppender()) {
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST);
+					if (contaListe) {
+						int totAppender = 0;
+						if (configurazione.getTracciamento() != null)
+							totAppender =
+							configurazione.getTracciamento().sizeOpenspcoopAppenderList();
+						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+					} else
+						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+					dati.addElement(de);
+				}
+				if (this.confCore.isTracce_showSorgentiDatiDatabase()) {
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_DATASOURCE_LIST);
+					if (contaListe) {
+						int totDs = 0;
+						if (configurazione.getTracciamento() != null)
+							totDs =
+							configurazione.getTracciamento().sizeOpenspcoopSorgenteDatiList();
+						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+					} else
+						ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+					dati.addElement(de);
+				}
+			}
+		
+		} else {
+			// campi hidden
+			de = new DataElement();
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(registrazioneTracce);
+			dati.addElement(de);
+		}
+	}
+
+	public void addMessaggiDiagnosticiToDatiAsHidden(String severita, String severita_log4j, Vector<DataElement> dati) {
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		de.setValue(severita);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(severita_log4j);
+		dati.addElement(de);
+	}
+	
+	public void addMessaggiDiagnosticiToDati(String severita, String severita_log4j, Configurazione configurazione,
+			Vector<DataElement> dati, Boolean contaListe) {
+		DataElement de;
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MESSAGGI_DIAGNOSTICI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		//					String[] tipoMsg = { "off", "fatalOpenspcoop", "errorSpcoop", "errorOpenspcoop", "infoSpcoop", "infoOpenspcoop",
+		//							"debugLow", "debugMedium", "debugHigh", "all" };
+		String[] tipoMsg = { LogLevels.LIVELLO_OFF, LogLevels.LIVELLO_FATAL, LogLevels.LIVELLO_ERROR_PROTOCOL, LogLevels.LIVELLO_ERROR_INTEGRATION, 
+				LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
+				LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
+				LogLevels.LIVELLO_ALL};
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		//		de.setLabel("Livello Severita");
+		de.setType(DataElementType.SELECT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
+		de.setValues(tipoMsg);
+		de.setSelected(severita);
+		dati.addElement(de);
+
+		de = new DataElement();
+		//		de.setLabel("Livello Severita Log4J");
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
+		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoMsg);
+			de.setSelected(severita_log4j);
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(severita_log4j);
+		}
+		dati.addElement(de);
+
+		if (this.isModalitaAvanzata()) {
+			if (this.confCore.isMsgDiagnostici_showConfigurazioneCustomAppender()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_APPENDER_LIST);
+				if (contaListe) {
+					int totAppender = 0;
+					if (configurazione.getMessaggiDiagnostici() != null)
+						totAppender =
+						configurazione.getMessaggiDiagnostici().sizeOpenspcoopAppenderList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER, (long)totAppender);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_APPENDER);
+				dati.addElement(de);
+			}
+			if (this.confCore.isMsgDiagnostici_showSorgentiDatiDatabase()) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DIAGNOSTICA_DATASOURCE_LIST);
+				if (contaListe) {
+					int totDs = 0;
+					if (configurazione.getMessaggiDiagnostici() != null)
+						totDs =
+						configurazione.getMessaggiDiagnostici().sizeOpenspcoopSorgenteDatiList();
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI, (long)totDs);
+				} else
+					ServletUtils.setDataElementCustomLabel(de, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SORGENTI_DATI);
+				dati.addElement(de);
+			}
+		}
 	}
 	
 	public Vector<DataElement> addConfigurazioneSistemaSelectListNodiCluster(Vector<DataElement> dati) throws Exception {
@@ -4769,11 +4832,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
-		de.setType(DataElementType.NOTE);
-		de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-		dati.addElement(de);
+//		de = new DataElement();
+//		de.setLabel(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
+//		de.setType(DataElementType.SUBTITLE);
+//		dati.addElement(de);
 		
 		List<String> attivi = new ArrayList<String>();
 		if(tracciamentoEsiti!=null){
@@ -4894,9 +4956,37 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public boolean checkConfigurazioneTracciamentoEsiti(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
+	public boolean checkConfigurazioneTracciamento(TipoOperazione tipoOperazione, String configurazioneEsiti)	throws Exception {
 		if(configurazioneEsiti ==null || "".equals(configurazioneEsiti.trim())){
 			this.pd.setMessage("Deve essere selezionato almeno un esito");
+			return false;
+		}
+		
+		//String severita = this.getParameter("severita");
+		//String severita_log4j = this.getParameter("severita_log4j");
+		String registrazioneTracce = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
+		String dumpApplicativo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+		String dumpPD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+		String dumpPA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+		
+		if (!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+				!registrazioneTracce.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+			this.pd.setMessage("Buste dev'essere abilitato o disabilitato");
+			return false;
+		}
+		if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+				!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+			this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
+			return false;
+		}
+		if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+				!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+			this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
+			return false;
+		}
+		if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+				!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+			this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
 			return false;
 		}
 		

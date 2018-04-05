@@ -1224,7 +1224,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 2; // configurazione e audit
+					dimensioneEntries = 3; // configurazione tracciamento e audit
 					List<String> aliases = this.confCore.getJmxPdD_aliases();
 					if(aliases!=null && aliases.size()>0){
 						dimensioneEntries++; // runtime
@@ -1262,6 +1262,9 @@ public class ConsoleHelper {
 					int index = 0;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE_MENU;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
+					index++;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO_MENU;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
 					index++;
 					if(aliases!=null && aliases.size()>0){
 						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA;

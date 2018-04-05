@@ -103,8 +103,8 @@ public final class ConfigurazioneTracciamentoAppenderChange extends Action {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, 
-						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
+						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_ELENCO_APPENDER_TRACCIAMENTO , 
 						ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_APPENDER_LIST));
 				lstParam.add(new Parameter(oa.getTipo(), null));
