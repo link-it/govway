@@ -44,7 +44,7 @@ public class ClientTest {
 
 	public static void main(String[] args) throws Exception {
 
-		TipiDatabase tipoDatabase = TipiDatabase.POSTGRESQL;
+		TipiDatabase tipoDatabase = null;
 		if(args.length>0){
 			if(!"${tipoDatabase}".equals(args[0].trim())){
 				tipoDatabase = TipiDatabase.toEnumConstant(args[0].trim());
@@ -55,14 +55,14 @@ public class ClientTest {
 		String driver = null;
 		String userName = null;
 		String password = null;
-		String sondaBatchName = "check-batch-ack";
+		String sondaBatchName = "batch";
 		String sondaCodaName = "coda";
-		String sondaInvocazioneName = "check-db";
+		String sondaInvocazioneName = "invocazione";
 		
 		
 		switch (tipoDatabase) {
 		case POSTGRESQL:
-			url = "jdbc:postgresql://localhost/proxysiope";
+			url = "jdbc:postgresql://localhost/prova";
 			driver = "org.postgresql.Driver";
 			userName = "openspcoop2";
 			password = "openspcoop2";
@@ -138,7 +138,7 @@ public class ClientTest {
 			con = DriverManager.getConnection(url, userName, password);
 //			testSondaError(tipoDatabase, con);
 			testSondaBatch(sondaBatchName, tipoDatabase, con);
-//			testSondaCoda(sondaCodaName, tipoDatabase, con);
+			testSondaCoda(sondaCodaName, tipoDatabase, con);
 			testSondaInvocazione(sondaInvocazioneName, tipoDatabase, con);
 		} catch(Exception e) {
 			System.err.println("Errore durante il TestSonda: " + e.getMessage());
