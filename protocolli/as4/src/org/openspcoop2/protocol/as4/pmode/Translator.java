@@ -91,6 +91,10 @@ public class Translator {
 					break;
 				}
 			}
+			Object nomeSoggettoOperativo = map.get("soggettoOperativo");
+			if(nomeSoggettoOperativo==null) {
+				throw new Exception("Soggetto Operativo 'PartyCN' non trovato per soggetto ["+nomeSoggetto+"]");
+			}
 			this.template.process(map, out);
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);

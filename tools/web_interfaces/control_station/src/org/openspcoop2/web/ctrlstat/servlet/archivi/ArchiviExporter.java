@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -48,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -95,6 +97,7 @@ public class ArchiviExporter extends HttpServlet {
 			PageData pd = new PageData();
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			ArchiviCore archiviCore = new ArchiviCore();
+			SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 		
@@ -149,15 +152,7 @@ public class ArchiviExporter extends HttpServlet {
 					break;
 				}
 			}
-			
-			// extension
-			MappingModeTypesExtensions mappingModeTypeExt = archiveFactory.getMappingTypesExtensions(exportModeObject);
-			String extSingleArchive = mappingModeTypeExt.mappingArchiveTypeToExt(archiveType);
-			if(extSingleArchive==null){
-				extSingleArchive = mappingModeTypeExt.getExtensions().get(0); // prendo la prima estensione supportata 
-			}
-			String ext = mappingModeTypeExt.getExtensions().get(0); // prendo la prima estensione supportata
-			
+						
 			// cascadeConfig
 			ArchiveCascadeConfiguration cascadeConfig = new ArchiveCascadeConfiguration(false); // se non e' abilitato il cascade deve essere tutto false
 			if(ServletUtils.isCheckBoxEnabled(cascade)){
@@ -208,20 +203,89 @@ public class ArchiviExporter extends HttpServlet {
 			// Recuperi eventuali identificativi logici degli oggetti
 			ExporterUtils exporterUtils = new ExporterUtils(archiviCore);
 			List<?> identificativi = null;
-			String fileName = null;
 			switch (archiveType) {
 			case SOGGETTO:
 				identificativi = exporterUtils.getIdsSoggetti(objToExport);
+				redirect = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
+				break;
+			case ACCORDO_SERVIZIO_PARTE_COMUNE:
+				identificativi = exporterUtils.getIdsAccordiServizioParteComune(objToExport);
+				redirect = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+						AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
+						AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
+				break;
+			case ACCORDO_SERVIZIO_COMPOSTO:
+				identificativi = exporterUtils.getIdsAccordiServizioComposti(objToExport);
+				redirect = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
+						AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
+						AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
+				break;
+			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
+				redirect = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
+				break;
+			case ACCORDO_COOPERAZIONE:
+				identificativi = exporterUtils.getIdsAccordiCooperazione(objToExport);
+				redirect = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
+				break;
+			default:
+				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
+				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
+			}
+			
+			
+			// Costruisco l'archivio da esportare
+			Archive archive = archiviCore.readArchiveForExport(userLogin, archiviHelper.smista(), 
+					tipoEsportazione, identificativi, cascadeConfig);
+					
+			
+			// Filtro per il protocollo attivo sulla console
+			List<String> protocolli = archiviCore.getProtocolli(session);
+			List<String> tipiSoggetti = new ArrayList<>();
+			for (String protocolloUtente : protocolli) {
+				tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloUtente));
+			}
+			exporterUtils.filterByProtocol(tipiSoggetti,archive);
+			
+			
+			// extension
+			MappingModeTypesExtensions mappingModeTypeExt = archiveFactory.getExportMappingTypesExtensions(archive, exportModeObject,
+					archiviCore.getRegistryReader(protocolFactory),archiviCore.getConfigIntegrationReader(protocolFactory));
+			String extSingleArchive = mappingModeTypeExt.getPreferExtSingleObject();
+			if(extSingleArchive==null){
+				extSingleArchive = mappingModeTypeExt.mappingArchiveTypeToExt(archiveType);
+			}
+			if(extSingleArchive==null){
+				extSingleArchive = mappingModeTypeExt.getExtensions().get(0); // prendo la prima estensione supportata 
+			}
+			String ext = null;
+			if(mappingModeTypeExt.getExtensions().size()==1 || (mappingModeTypeExt.getPreferExtSingleObject()==null)) {
+				ext = mappingModeTypeExt.getExtensions().get(0); // prendo la prima estensione supportata
+			}
+			else {
+				// prendo la prima estensione supportata escludento la preferita per la singola entita
+				for (int i = 0; i < mappingModeTypeExt.getExtensions().size(); i++) {
+					String extTmp = mappingModeTypeExt.getExtensions().get(i);
+					if(extTmp.equals(mappingModeTypeExt.getPreferExtSingleObject())==false) {
+						ext = extTmp;
+						break;
+					}
+				}
+			}
+			
+			
+			// Costruisco file name da esportare
+			String fileName = null;
+			switch (archiveType) {
+			case SOGGETTO:
 				if(identificativi.size()>1){
 					fileName = "Soggetti."+ext;
 				}else{
 					IDSoggetto idSoggetto = ((IDSoggetto)identificativi.get(0));
 					fileName = idSoggetto.getTipo()+idSoggetto.getNome()+"."+extSingleArchive;
 				}
-				redirect = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
 				break;
 			case ACCORDO_SERVIZIO_PARTE_COMUNE:
-				identificativi = exporterUtils.getIdsAccordiServizioParteComune(objToExport);
 				if(identificativi.size()>1){
 					fileName = "AccordiServizioParteComune."+ext;
 				}
@@ -236,12 +300,8 @@ public class ArchiviExporter extends HttpServlet {
 	                }
 					fileName +="."+extSingleArchive;
 				}
-				redirect = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-						AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-						AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE;
 				break;
 			case ACCORDO_SERVIZIO_COMPOSTO:
-				identificativi = exporterUtils.getIdsAccordiServizioComposti(objToExport);
 				if(identificativi.size()>1){
 					fileName = "AccordiServizioComposto."+ext;
 				}
@@ -256,12 +316,8 @@ public class ArchiviExporter extends HttpServlet {
 	                }
 					fileName +="."+extSingleArchive;
 				}
-				redirect = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-						AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
-						AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
 				if(identificativi.size()>1){
 					fileName = "AccordiServizioParteSpecifica."+ext;
 				}
@@ -276,10 +332,8 @@ public class ArchiviExporter extends HttpServlet {
 	                }
 					fileName +="."+extSingleArchive;
 				}
-				redirect = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST;
 				break;
 			case ACCORDO_COOPERAZIONE:
-				identificativi = exporterUtils.getIdsAccordiCooperazione(objToExport);
 				if(identificativi.size()>1){
 					fileName = "AccordiCooperazione."+ext;
 				}
@@ -294,19 +348,12 @@ public class ArchiviExporter extends HttpServlet {
 	                }
 					fileName +="."+extSingleArchive;
 				}
-				redirect = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
 				break;
 			default:
 				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
 				fileName = "ConfigurazioneOpenspcoop."+extSingleArchive;
-				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
 			}
 			
-			
-			// Costruisco l'archivio da esportare
-			Archive archive = archiviCore.readArchiveForExport(userLogin, archiviHelper.smista(), 
-					tipoEsportazione, identificativi, cascadeConfig);
-					
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
 								

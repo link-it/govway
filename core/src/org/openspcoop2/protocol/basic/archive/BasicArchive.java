@@ -808,6 +808,12 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		list.add((ExportMode)Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.clone()); // vengono supportati tutti i tipi
 		return list;
 	}
+	
+	@Override
+	public MappingModeTypesExtensions getExportMappingTypesExtensions(Archive archive, ArchiveMode mode,
+			IRegistryReader registroReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
+		return this.getMappingTypesExtensions(mode); // basic ignora archive
+	}
 
 	@Override
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,

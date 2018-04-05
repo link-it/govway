@@ -39,29 +39,48 @@ public class MappingModeTypesExtensions {
 	private Hashtable<String, List<ArchiveModeType>> mappingExtensionsTypes = new Hashtable<String, List<ArchiveModeType>>();
 	private Hashtable<String, ArchiveType> mappingExtensionsArchiveType = new Hashtable<String, ArchiveType>();
 	private List<String> exts = new ArrayList<String>(); // per garantire l'ordine di inserimento
+	private String preferExtSingleObject = null;
 	
 	public void add(String ext,ArchiveModeType type) throws ProtocolException{
-		this.add(ext, null, type);
+		this.add(ext, false, type);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,ArchiveModeType type) throws ProtocolException{
+		this.add(ext, preferUseForSingleObject, null, type);
 	}
 	public void add(String ext,ArchiveType archiveType,ArchiveModeType type) throws ProtocolException{
+		this.add(ext, false, archiveType, type);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,ArchiveType archiveType,ArchiveModeType type) throws ProtocolException{
 		List<ArchiveModeType> l = new ArrayList<ArchiveModeType>();
 		l.add(type);
-		this.add(ext, archiveType, l);
+		this.add(ext, preferUseForSingleObject, archiveType, l);
 	}
 	public void add(String ext,ArchiveModeType ... types) throws ProtocolException{
-		this.add(ext, null, types);
+		this.add(ext, false, types);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,ArchiveModeType ... types) throws ProtocolException{
+		this.add(ext, preferUseForSingleObject, null, types);
 	}
 	public void add(String ext,ArchiveType archiveType,ArchiveModeType ... types) throws ProtocolException{
+		this.add(ext,false, archiveType, types);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,ArchiveType archiveType,ArchiveModeType ... types) throws ProtocolException{
 		List<ArchiveModeType> l = new ArrayList<ArchiveModeType>();
 		for (int i = 0; i < types.length; i++) {
 			l.add(types[i]);
 		}
-		this.add(ext, archiveType, l);
+		this.add(ext, preferUseForSingleObject, archiveType, l);
 	}
 	public void add(String ext,List<ArchiveModeType> listTypes) throws ProtocolException{
-		this.add(ext, null, listTypes);
+		this.add(ext, false, null, listTypes);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,List<ArchiveModeType> listTypes) throws ProtocolException{
+		this.add(ext, preferUseForSingleObject, null, listTypes);
 	}
 	public void add(String ext,ArchiveType archiveType, List<ArchiveModeType> listTypes) throws ProtocolException{
+		this.add(ext, false, archiveType, listTypes);
+	}
+	public void add(String ext,boolean preferUseForSingleObject,ArchiveType archiveType, List<ArchiveModeType> listTypes) throws ProtocolException{
 		List<ArchiveModeType> l = null;
 		if(this.mappingExtensionsTypes.containsKey(ext)){
 			l = this.mappingExtensionsTypes.remove(ext);
@@ -83,6 +102,15 @@ public class MappingModeTypesExtensions {
 //			}
 			
 			l.add(type);
+			
+			if(preferUseForSingleObject) {
+				if(this.preferExtSingleObject==null) {
+					this.preferExtSingleObject = ext;
+				}
+				else {
+					throw new ProtocolException("Extension["+this.preferExtSingleObject+"] already selected choice for single object");
+				}
+			}
 		}
 		this.mappingExtensionsTypes.put(ext, l);
 		if(archiveType!=null){
@@ -143,6 +171,10 @@ public class MappingModeTypesExtensions {
 	
 	public List<String> getExtensions(){
 		return this.exts;
+	}
+	
+	public String getPreferExtSingleObject() {
+		return this.preferExtSingleObject;
 	}
 	
 	public List<ArchiveModeType> getTypes(String ext){

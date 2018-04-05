@@ -55,7 +55,7 @@ public interface IArchive extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public MappingModeTypesExtensions getMappingTypesExtensions(ArchiveMode mode) throws ProtocolException;
-	
+		
 	/**
 	 * Imposta per ogni portType e operation presente nell'accordo fornito come parametro 
 	 * le informazioni di protocollo analizzando i documenti interni agli archivi
@@ -143,6 +143,19 @@ public interface IArchive extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public List<ExportMode> getExportModes(ArchiveType archiveType) throws ProtocolException;
+	
+	/**
+	 * Tipi di package gestiti per il protocollo, il valore della tabella contiene l'estensione associata al tipo al momento della generazione del package
+	 * 
+	 * @param archive Archivio
+	 * @param mode ArchiveMode
+	 * @param registroReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
+	 * @return Tipi dei package gestiti per il protocollo
+	 * @throws ProtocolException
+	 */
+	public MappingModeTypesExtensions getExportMappingTypesExtensions(Archive archive, ArchiveMode mode,
+			IRegistryReader registroReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException;
 	
 	/**
 	 * Converte l'archivio org.openspcoop2.protocol.sdk.archive.Archive in un formato binario serializzato nell'output stream 

@@ -47,7 +47,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
- * SPCoopArchive 
+ * AS4Archive 
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -62,26 +62,14 @@ public class AS4Archive extends BasicArchive {
 
 	
 	
-	
-	
+
 	/* ----- Utilita' generali ----- */
-	
+		
 	@Override
 	public MappingModeTypesExtensions getMappingTypesExtensions(ArchiveMode mode)
 			throws ProtocolException {
-		if( AS4Costanti.PMODE_ARCHIVE_MODE_SINGLE_XML.equals(mode) ){
-			MappingModeTypesExtensions m = new MappingModeTypesExtensions();
-			m.add(AS4Costanti.PMODE_ARCHIVE_EXT_XML, ArchiveType.SOGGETTO, AS4Costanti.PMODE_ARCHIVE_MODE_TYPE_XML);			
-			return m;
-		}
-		else if( AS4Costanti.PMODE_ARCHIVE_MODE_MULTIPLE_ZIP.equals(mode) ){
-			MappingModeTypesExtensions m = new MappingModeTypesExtensions();			
-			m.add(AS4Costanti.PMODE_ARCHIVE_EXT_ZIP, ArchiveType.SOGGETTO, AS4Costanti.PMODE_ARCHIVE_MODE_TYPE_ZIP);			
-			return m;
-		}
-		else{
-			return super.getMappingTypesExtensions(mode);
-		}
+		
+		return this._getMappingTypesExtensions(mode, null, null);
 	}
 	
 	
@@ -174,13 +162,25 @@ public class AS4Archive extends BasicArchive {
 		List<ExportMode> list = super.getExportModes(archiveType);
 		switch (archiveType) {
 		case SOGGETTO:
-			list.add(AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_MULTIPLE_ZIP);
-			list.add(AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_SINGLE_XML);
+			ExportMode exportPMode = new ExportMode(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_SOGGETTI);
+			list.add(exportPMode);
+			break;
+		case CONFIGURAZIONE:
+		case ALL:
+		case ALL_WITHOUT_CONFIGURAZIONE:
+			ExportMode exportPModeConfig = new ExportMode(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG);
+			list.add(exportPModeConfig);
 			break;
 		default:
 			break;
 		}
 		return list;
+	}
+	
+	@Override
+	public MappingModeTypesExtensions getExportMappingTypesExtensions(Archive archive, ArchiveMode mode,
+			IRegistryReader registroReader, IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
+		return this._getMappingTypesExtensions(mode, archive, registroReader);
 	}
 	
 	@Override
@@ -191,8 +191,8 @@ public class AS4Archive extends BasicArchive {
 		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.equals(mode)){
 			return super.exportArchive(archive, mode, registroReader, configIntegrationReader);
 		}
-		else if(AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_SINGLE_XML.equals(mode) ||
-				AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_MULTIPLE_ZIP.equals(mode)){
+		else if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_SOGGETTI.equals(mode) || 
+				AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode) ){
 			try {
 				ByteArrayOutputStream bot = new ByteArrayOutputStream();
 				this.exportArchive(archive, bot, mode, registroReader, configIntegrationReader);
@@ -216,40 +216,120 @@ public class AS4Archive extends BasicArchive {
 		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.equals(mode)){
 			super.exportArchive(archive, out, mode, registroReader, configIntegrationReader);
 		}
-		else if(AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_SINGLE_XML.equals(mode)){
+		else if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_SOGGETTI.equals(mode)){
 			if(archive.getSoggetti().size()<=0) {
 				throw new ProtocolException("Non risulta selezionato alcun soggetto");
 			}
-			else if(archive.getSoggetti().size()>1) {
-				throw new ProtocolException("Con l'esportazione '"+AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_SINGLE_XML.getName()+"' deve essere selezionato solamente un soggetto");
-			}
-			else {
-				ArchiveSoggetto soggetto = archive.getSoggetti().get(0);
+			
+			List<ArchiveSoggetto> listArchive = new ArrayList<>();
+			for (int i = 0; i < archive.getSoggetti().size(); i++) {
+				ArchiveSoggetto soggetto = archive.getSoggetti().get(i);
 				this.checkSoggetto(soggetto, registroReader,mode);
-				XMLWriteUtils writeUtils = new XMLWriteUtils(this.log, this.protocolFactory, registroReader, configIntegrationReader);
-				writeUtils.generate(out, soggetto.getIdSoggetto().getNome());
+				listArchive.add(soggetto);
 			}
-		}
-		else if(AS4Costanti.PMODE_EXPORT_ARCHIVE_MODE_MULTIPLE_ZIP.equals(mode)){
-			if(archive.getSoggetti().size()<=0) {
-				throw new ProtocolException("Non risulta selezionato alcun soggetto");
-			}
-			else {
-				List<ArchiveSoggetto> listArchive = new ArrayList<>();
-				for (int i = 0; i < archive.getSoggetti().size(); i++) {
-					ArchiveSoggetto soggetto = archive.getSoggetti().get(i);
-					this.checkSoggetto(soggetto, registroReader,mode);
-					listArchive.add(soggetto);
-				}
+			
+			if(listArchive.size()>1) {
 				ZIPWriteUtils zipUtils = new ZIPWriteUtils(this.log, this.protocolFactory, registroReader, configIntegrationReader);
 				zipUtils.generate(out, listArchive);
 			}
+			else {
+				XMLWriteUtils writeUtils = new XMLWriteUtils(this.log, this.protocolFactory, registroReader, configIntegrationReader);
+				writeUtils.generate(out, listArchive.get(0).getIdSoggetto().getNome());
+			}
+
+		}
+		else if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode)){
+			if(archive.getSoggetti().size()<=0) {
+				throw new ProtocolException("Non risultano configurati soggetti");
+			}
+			
+			List<ArchiveSoggetto> listArchive = this._listSoggettiOperativi(archive, registroReader);
+			
+			if(listArchive.size()>1) {
+				ZIPWriteUtils zipUtils = new ZIPWriteUtils(this.log, this.protocolFactory, registroReader, configIntegrationReader);
+				zipUtils.generate(out, listArchive);
+			}
+			else {
+				XMLWriteUtils writeUtils = new XMLWriteUtils(this.log, this.protocolFactory, registroReader, configIntegrationReader);
+				writeUtils.generate(out, listArchive.get(0).getIdSoggetto().getNome());
+			}
+			
 		}
 		else{
 			throw new ProtocolException("Mode ["+mode+"] unknown");
 		}	
 	}
 
+	
+	
+	
+	
+	/* ----- Utilita' interne ----- */
+	
+	private List<ArchiveSoggetto> _listSoggettiOperativi(Archive archive, IRegistryReader registryReader) throws ProtocolException{
+		List<ArchiveSoggetto> listArchive = new ArrayList<>();
+		if(archive!=null && archive.getSoggetti()!=null && archive.getSoggetti().size()>0) {
+			
+			List<String> listPddOperative = null;
+			try {
+				listPddOperative = registryReader.findIdPorteDominio(true);
+			}catch(Exception notFound) {
+				throw new ProtocolException("Non risultano configurate porte di dominio di tipo 'operativo'"); // non dovrebbe succedere
+			}
+			
+			for (int i = 0; i < archive.getSoggetti().size(); i++) {
+				ArchiveSoggetto archiveSoggetto = archive.getSoggetti().get(i);
+				boolean soggettoOperativo = false;
+				if(archiveSoggetto.getSoggettoRegistro().getPortaDominio()!=null) {
+					soggettoOperativo = listPddOperative.contains(archiveSoggetto.getSoggettoRegistro().getPortaDominio());
+				}
+				if(soggettoOperativo) {
+					listArchive.add(archiveSoggetto);
+				}
+			}
+		}
+		return listArchive;
+	}
+	
+	private MappingModeTypesExtensions _getMappingTypesExtensions(ArchiveMode mode, Archive archive, IRegistryReader registryReader) throws ProtocolException{
+		if(AS4Costanti.DOMIBUS_MODE.equals(mode) || 
+				AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_SOGGETTI.equals(mode) || 
+				AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode) ){
+
+			MappingModeTypesExtensions m = new MappingModeTypesExtensions();
+							
+			List<ArchiveSoggetto> listSoggetti = null;
+			if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode)) {
+				listSoggetti = this._listSoggettiOperativi(archive, registryReader);
+			}
+			
+			// xml
+			boolean preferExtXmlSingleObject = false;
+			if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_SOGGETTI.equals(mode)) {
+				preferExtXmlSingleObject = true;
+			}
+			else if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode) && listSoggetti!=null && listSoggetti.size()==1) {
+				preferExtXmlSingleObject = true;
+			}
+			m.add(AS4Costanti.PMODE_ARCHIVE_EXT_XML, 
+					preferExtXmlSingleObject,
+					AS4Costanti.PMODE_ARCHIVE_MODE_TYPE_XML);
+			
+			// zip
+			boolean preferExtZipSingleObject = false;
+			 if(AS4Costanti.EXPORT_MODE_DOMIBUS_FROM_CONFIG.equals(mode) && listSoggetti!=null && listSoggetti.size()>1) {
+				preferExtZipSingleObject = true;
+			}
+			m.add(AS4Costanti.PMODE_ARCHIVE_EXT_ZIP, 
+					preferExtZipSingleObject,
+					AS4Costanti.PMODE_ARCHIVE_MODE_TYPE_ZIP);
+			
+			return m;
+		}
+		else{
+			return super.getMappingTypesExtensions(mode);
+		}
+	}
 	
 	private void checkSoggetto(ArchiveSoggetto soggetto, IRegistryReader registroReader, ArchiveMode mode) throws ProtocolException {
 		if(soggetto.getSoggettoRegistro().getPortaDominio()==null) {

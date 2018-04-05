@@ -37,6 +37,16 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.archive.Archive;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
+import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
+import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -175,5 +185,180 @@ public class ExporterUtils {
 			idsAccordi.add(this.acCore.getIdAccordoCooperazione(idLong));
 		}
 		return idsAccordi;
+	}
+	
+	public void filterByProtocol(List<String> tipiSoggetti,Archive archive) throws ProtocolException {
+		
+		// soggetti
+		if(archive.getSoggetti()!=null && archive.getSoggetti().size()>0) {
+			List<ArchiveSoggetto> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getSoggetti().size(); i++) {
+				if(archive.getSoggetti().get(i).getIdSoggetto()!=null &&
+						tipiSoggetti.contains(archive.getSoggetti().get(i).getIdSoggetto().getTipo())) {
+					listFiltrata.add(archive.getSoggetti().get(i));
+				}
+			}
+			while(archive.getSoggetti().size()>0) {
+				archive.getSoggetti().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveSoggetto archiveFiltrato : listFiltrata) {
+					archive.getSoggetti().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// servizio applicativo
+		if(archive.getServiziApplicativi()!=null && archive.getServiziApplicativi().size()>0) {
+			List<ArchiveServizioApplicativo> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
+				if(archive.getServiziApplicativi().get(i).getIdSoggettoProprietario()!=null &&
+						tipiSoggetti.contains(archive.getServiziApplicativi().get(i).getIdSoggettoProprietario().getTipo())) {
+					listFiltrata.add(archive.getServiziApplicativi().get(i));
+				}
+			}
+			while(archive.getServiziApplicativi().size()>0) {
+				archive.getServiziApplicativi().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveServizioApplicativo archiveFiltrato : listFiltrata) {
+					archive.getServiziApplicativi().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// porta delegata
+		if(archive.getPorteDelegate()!=null && archive.getPorteDelegate().size()>0) {
+			List<ArchivePortaDelegata> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
+				if(archive.getPorteDelegate().get(i).getIdSoggettoProprietario()!=null &&
+						tipiSoggetti.contains(archive.getPorteDelegate().get(i).getIdSoggettoProprietario().getTipo())) {
+					listFiltrata.add(archive.getPorteDelegate().get(i));
+				}
+			}
+			while(archive.getPorteDelegate().size()>0) {
+				archive.getPorteDelegate().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchivePortaDelegata archiveFiltrato : listFiltrata) {
+					archive.getPorteDelegate().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// porta applicativa
+		if(archive.getPorteApplicative()!=null && archive.getPorteApplicative().size()>0) {
+			List<ArchivePortaApplicativa> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
+				if(archive.getPorteApplicative().get(i).getIdSoggettoProprietario()!=null &&
+						tipiSoggetti.contains(archive.getPorteApplicative().get(i).getIdSoggettoProprietario().getTipo())) {
+					listFiltrata.add(archive.getPorteApplicative().get(i));
+				}
+			}
+			while(archive.getPorteApplicative().size()>0) {
+				archive.getPorteApplicative().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchivePortaApplicativa archiveFiltrato : listFiltrata) {
+					archive.getPorteApplicative().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// accordi cooperazione
+		if(archive.getAccordiCooperazione()!=null && archive.getAccordiCooperazione().size()>0) {
+			List<ArchiveAccordoCooperazione> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAccordiCooperazione().size(); i++) {
+				if(archive.getAccordiCooperazione().get(i).getIdSoggettoReferente()!=null &&
+						tipiSoggetti.contains(archive.getAccordiCooperazione().get(i).getIdSoggettoReferente().getTipo())) {
+					listFiltrata.add(archive.getAccordiCooperazione().get(i));
+				}
+			}
+			while(archive.getAccordiCooperazione().size()>0) {
+				archive.getAccordiCooperazione().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAccordoCooperazione archiveFiltrato : listFiltrata) {
+					archive.getAccordiCooperazione().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// accordi parte comune
+		if(archive.getAccordiServizioParteComune()!=null && archive.getAccordiServizioParteComune().size()>0) {
+			List<ArchiveAccordoServizioParteComune> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
+				if(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente()!=null &&
+						tipiSoggetti.contains(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente().getTipo())) {
+					listFiltrata.add(archive.getAccordiServizioParteComune().get(i));
+				}
+			}
+			while(archive.getAccordiServizioParteComune().size()>0) {
+				archive.getAccordiServizioParteComune().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAccordoServizioParteComune archiveFiltrato : listFiltrata) {
+					archive.getAccordiServizioParteComune().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// accordi composto
+		if(archive.getAccordiServizioComposto()!=null && archive.getAccordiServizioComposto().size()>0) {
+			List<ArchiveAccordoServizioComposto> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAccordiServizioComposto().size(); i++) {
+				if(archive.getAccordiServizioComposto().get(i).getIdSoggettoReferente()!=null &&
+						tipiSoggetti.contains(archive.getAccordiServizioComposto().get(i).getIdSoggettoReferente().getTipo())) {
+					listFiltrata.add(archive.getAccordiServizioComposto().get(i));
+				}
+			}
+			while(archive.getAccordiServizioComposto().size()>0) {
+				archive.getAccordiServizioComposto().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAccordoServizioComposto archiveFiltrato : listFiltrata) {
+					archive.getAccordiServizioComposto().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// accordi parte specifica
+		if(archive.getAccordiServizioParteSpecifica()!=null && archive.getAccordiServizioParteSpecifica().size()>0) {
+			List<ArchiveAccordoServizioParteSpecifica> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
+				if(archive.getAccordiServizioParteSpecifica().get(i).getIdSoggettoErogatore()!=null &&
+						tipiSoggetti.contains(archive.getAccordiServizioParteSpecifica().get(i).getIdSoggettoErogatore().getTipo())) {
+					listFiltrata.add(archive.getAccordiServizioParteSpecifica().get(i));
+				}
+			}
+			while(archive.getAccordiServizioParteSpecifica().size()>0) {
+				archive.getAccordiServizioParteSpecifica().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveAccordoServizioParteSpecifica archiveFiltrato : listFiltrata) {
+					archive.getAccordiServizioParteSpecifica().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// fruitori
+		if(archive.getAccordiFruitori()!=null && archive.getAccordiFruitori().size()>0) {
+			List<ArchiveFruitore> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+				if(archive.getAccordiFruitori().get(i).getIdSoggettoFruitore()!=null &&
+						tipiSoggetti.contains(archive.getAccordiFruitori().get(i).getIdSoggettoFruitore().getTipo())) {
+					listFiltrata.add(archive.getAccordiFruitori().get(i));
+				}
+			}
+			while(archive.getAccordiFruitori().size()>0) {
+				archive.getAccordiFruitori().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveFruitore archiveFiltrato : listFiltrata) {
+					archive.getAccordiFruitori().add(archiveFiltrato);		
+				}
+			}
+		}
+		
 	}
 }

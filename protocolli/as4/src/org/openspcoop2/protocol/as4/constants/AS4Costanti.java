@@ -24,7 +24,6 @@ package org.openspcoop2.protocol.as4.constants;
 
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchiveModeType;
-import org.openspcoop2.protocol.sdk.archive.ExportMode;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo AS4, 
@@ -72,10 +71,10 @@ public class AS4Costanti {
     public static final String AS4_NAMESPACE_CID_MESSAGGIO = "http://www.openspcoop2.org/protocol/as4";
         
 	/** Archive mode */
-	public static final ArchiveMode PMODE_ARCHIVE_MODE_SINGLE_XML = new ArchiveMode("domibus-pmode (single xml configuration)");
-	public static final ArchiveMode PMODE_ARCHIVE_MODE_MULTIPLE_ZIP = new ArchiveMode("domibus-pmode (archive zip)");
-	public static final ExportMode PMODE_EXPORT_ARCHIVE_MODE_SINGLE_XML = new ExportMode(PMODE_ARCHIVE_MODE_SINGLE_XML,false);
-	public static final ExportMode PMODE_EXPORT_ARCHIVE_MODE_MULTIPLE_ZIP = new ExportMode(PMODE_ARCHIVE_MODE_MULTIPLE_ZIP,false);
+    public static final ArchiveMode DOMIBUS_MODE = new ArchiveMode("domibus");	
+	public static final ArchiveMode EXPORT_MODE_DOMIBUS_FROM_SOGGETTI = new ArchiveMode("domibus");
+	public static final ArchiveMode EXPORT_MODE_DOMIBUS_FROM_CONFIG = new ArchiveMode("domibus-pmode"); // necessita di utilizzare un nome differente
+
 	/** Archive mode type */
 	public static final ArchiveModeType PMODE_ARCHIVE_MODE_TYPE_XML = new ArchiveModeType("xml");
 	public static final ArchiveModeType PMODE_ARCHIVE_MODE_TYPE_ZIP = new ArchiveModeType("zip");
