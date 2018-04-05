@@ -209,12 +209,6 @@
 
     </page>
 
-    <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
-        
-         <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
-
-    </page>
-
     <page name="preinstallazioneEDelivery" type="input" displayText="Configurazione eDelivery" ifProperty="${antinstaller_protocollo_as4}==true">
 
 	<comment displayText="HTTP Endpoint" bold="true"/>
