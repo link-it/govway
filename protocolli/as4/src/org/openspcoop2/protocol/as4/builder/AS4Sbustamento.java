@@ -209,7 +209,16 @@ public class AS4Sbustamento {
 				// Dobbiamo usare il namespace
 				
 				// ----- checkEnvelope----
-				Element envelope = XMLUtils.getInstance().newElement(contentRoot);
+				Element envelope = null;
+				try {
+					envelope = XMLUtils.getInstance().newElement(contentRoot);
+				}catch(Throwable e) {
+					String s = "";
+					try {
+						s = new String(contentRoot);
+					}catch(Throwable tInternal) {}
+					throw new Exception("ContentRoot (cid:"+contentIdRoot+") non è un xml valido (Envelope): "+s,e);
+				}
 				String namespace = envelope.getNamespaceURI();
 				if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(namespace)) {
 					// correggo message type
@@ -286,7 +295,15 @@ public class AS4Sbustamento {
 				result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, contentRoot);
 	//			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
 	//					mimeTypeRoot, contentRoot);
-				newMessage = result.getMessage_throwParseThrowable();
+				try {
+					newMessage = result.getMessage_throwParseThrowable();
+				}catch(Throwable t) {
+					String s = "";
+					try {
+						s = new String(contentRoot);
+					}catch(Throwable tInternal) {}
+					throw new Exception("ContentRoot (messageType:"+messageType+") non è un contenuto valido: "+s,t);
+				}
 			}
 			
 			if(ServiceBinding.SOAP.equals(integrationServiceBinding)) {

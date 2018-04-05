@@ -569,9 +569,9 @@ public class OpenSPCoop2Logger {
 				for(int i=0; i< dumpConfig.sizeOpenspcoopAppenderList(); i++){
 					
 					// Dump Appender class
-					String dumpAppenderClass = prop.getTracciamentoOpenSPCoopAppender(dumpConfig.getOpenspcoopAppender(i).getTipo());
+					String dumpAppenderClass = prop.getDumpOpenSPCoopAppender(dumpConfig.getOpenspcoopAppender(i).getTipo());
 					if(dumpAppenderClass == null){
-						throw new Exception("Riscontrato errore durante il caricamento del tracciamento appender ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
+						throw new Exception("Riscontrato errore durante il caricamento del dump appender ["+dumpConfig.getOpenspcoopAppender(i).getTipo()+"]: appender non registrato.");
 					}
 
 					// Carico appender richiesto
