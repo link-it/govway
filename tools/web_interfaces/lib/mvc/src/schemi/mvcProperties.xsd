@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/web/lib/mvc/properties"
+	targetNamespace="http://www.openspcoop2.org/web/lib/mvc/properties"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	
+	
+	<xsd:element name="config" type="config" />
+	<xsd:complexType name="config">
+		<xsd:sequence>
+			<xsd:element name="properties" type="properties" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="section" type="section" maxOccurs="unbounded" minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="section">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="conditions" maxOccurs="1"  minOccurs="0"/>
+			<xsd:element name="item" type="item" maxOccurs="unbounded"  minOccurs="0"/>
+			<xsd:element name="subsection" type="subsection" maxOccurs="unbounded"  minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="label" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="subsection">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="conditions" maxOccurs="1"  minOccurs="0"/>
+			<xsd:element name="item" type="item" maxOccurs="unbounded"  minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="label" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	<!-- Item -->
+	<xsd:complexType name="item">
+		<xsd:sequence>
+			<xsd:element name="conditions" type="conditions" maxOccurs="1"  minOccurs="0"/>
+			<xsd:element name="values" type="itemValues" maxOccurs="1"  minOccurs="0"/> <!-- per SELECT -->
+			<xsd:element name="property" type="property" maxOccurs="1"  minOccurs="0"/>
+		</xsd:sequence>		
+		<xsd:attribute name="type" type="itemType" use="required"/>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+		<xsd:attribute name="required" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="reloadOnChange" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="default" type="xsd:string" use="optional"/>
+		<xsd:attribute name="defaultSelected" type="xsd:boolean" use="optional"/> <!-- per CheckBox -->
+		<xsd:attribute name="value" type="xsd:string" use="optional"/> <!-- hidden -->
+		<xsd:attribute name="min" type="xsd:int" use="optional"/> <!-- number -->
+		<xsd:attribute name="max" type="xsd:int" use="optional"/> <!-- number -->
+		<xsd:attribute name="validation" type="xsd:string" use="optional"/> <!-- RegularExpression for validation -->
+	</xsd:complexType>
+	
+	<xsd:simpleType name="itemType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="hidden"/>
+			<xsd:enumeration value="text"/>
+			<xsd:enumeration value="select"/>
+			<xsd:enumeration value="checkbox"/>
+			<xsd:enumeration value="number"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="itemValues">		
+		<xsd:sequence>
+			<xsd:element name="value" type="itemValue" maxOccurs="unbounded"  minOccurs="2"/>
+		</xsd:sequence>	
+	</xsd:complexType>
+	<xsd:complexType name="itemValue">		
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+		<xsd:attribute name="label" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+	
+	
+	<!-- Property -->
+	<xsd:complexType name="property">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="selectedValue" type="xsd:string" use="optional"/>
+		<xsd:attribute name="unselectedValue" type="xsd:string" use="optional"/>
+		<xsd:attribute name="append" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="appendSeparator" type="xsd:string" use="optional" default=" "/>
+		<xsd:attribute name="properties" type="xsd:string" use="optional" /> <!-- tutte le property con stesso nome properties vengono aggregate -->
+	</xsd:complexType>
+	
+	<xsd:complexType name="properties">
+		<xsd:sequence>
+			<xsd:element name="collection" type="collection" maxOccurs="unbounded"  minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="collection">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	
+	<!-- Conditions -->
+	<xsd:complexType name="conditions">
+		<xsd:sequence>
+			<xsd:element name="condition" type="condition" maxOccurs="unbounded"  minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="condition">
+		<xsd:sequence>
+			<xsd:element name="selected" type="selected" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="equals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="undefined" type="undefined" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="selected">
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+	</xsd:complexType>
+	<xsd:complexType name="equals">
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="value" type="xsd:string" use="required" />
+	</xsd:complexType>
+	<xsd:complexType name="undefined">
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+	</xsd:complexType>
+	
+	
+</xsd:schema>

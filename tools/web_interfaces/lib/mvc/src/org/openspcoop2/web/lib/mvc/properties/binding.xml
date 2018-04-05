@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="config" class="org.openspcoop2.web.lib.mvc.properties.Config">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <structure field="properties" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.Properties"/>
+    <collection field="section" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Section"/>
+    </collection>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="section" class="org.openspcoop2.web.lib.mvc.properties.Section">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
+    <collection field="item" create-type="java.util.ArrayList">
+      <structure name="item" map-as="_Item_Type"/>
+    </collection>
+    <collection field="subsection" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Subsection"/>
+    </collection>
+    <value name="label" field="label" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="subsection" class="org.openspcoop2.web.lib.mvc.properties.Subsection">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
+    <collection field="item" create-type="java.util.ArrayList">
+      <structure name="item" map-as="_Item_Type"/>
+    </collection>
+    <value name="label" field="label" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="item" class="org.openspcoop2.web.lib.mvc.properties.Item" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
+    <structure field="values" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.ItemValues"/>
+    <structure field="property" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
+    <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="label" field="label" usage="optional" style="attribute"/>
+    <value name="required" field="required" default="false" usage="optional" style="attribute"/>
+    <value name="reloadOnChange" field="reloadOnChange" default="false" usage="optional" style="attribute"/>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+    <value name="defaultSelected" field="defaultSelected" usage="optional" style="attribute"/>
+    <value name="value" field="value" usage="optional" style="attribute"/>
+    <value name="min" field="min" usage="optional" style="attribute"/>
+    <value name="max" field="max" usage="optional" style="attribute"/>
+    <value name="validation" field="validation" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Item_Type" class="org.openspcoop2.web.lib.mvc.properties.Item" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
+    <structure field="values" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.ItemValues"/>
+    <structure field="property" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
+    <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="label" field="label" usage="optional" style="attribute"/>
+    <value name="required" field="required" default="false" usage="optional" style="attribute"/>
+    <value name="reloadOnChange" field="reloadOnChange" default="false" usage="optional" style="attribute"/>
+    <value name="default" field="_default" usage="optional" style="attribute"/>
+    <value name="defaultSelected" field="defaultSelected" usage="optional" style="attribute"/>
+    <value name="value" field="value" usage="optional" style="attribute"/>
+    <value name="min" field="min" usage="optional" style="attribute"/>
+    <value name="max" field="max" usage="optional" style="attribute"/>
+    <value name="validation" field="validation" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="values" class="org.openspcoop2.web.lib.mvc.properties.ItemValues">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <collection field="value" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.ItemValue"/>
+    </collection>
+  </mapping>
+  <mapping name="value" class="org.openspcoop2.web.lib.mvc.properties.ItemValue">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+    <value name="label" field="label" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="property" class="org.openspcoop2.web.lib.mvc.properties.Property">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="selectedValue" field="selectedValue" usage="optional" style="attribute"/>
+    <value name="unselectedValue" field="unselectedValue" usage="optional" style="attribute"/>
+    <value name="append" field="append" default="false" usage="optional" style="attribute"/>
+    <value name="appendSeparator" field="appendSeparator" default=" " usage="optional" style="attribute"/>
+    <value name="properties" field="properties" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="properties" class="org.openspcoop2.web.lib.mvc.properties.Properties">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <collection field="collection" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Collection"/>
+    </collection>
+  </mapping>
+  <mapping name="collection" class="org.openspcoop2.web.lib.mvc.properties.Collection">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="conditions" class="org.openspcoop2.web.lib.mvc.properties.Conditions" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <collection field="condition" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Condition"/>
+    </collection>
+    <value name="and" field="and" default="true" usage="optional" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Conditions_Type" class="org.openspcoop2.web.lib.mvc.properties.Conditions" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <collection field="condition" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Condition"/>
+    </collection>
+    <value name="and" field="and" default="true" usage="optional" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="condition" class="org.openspcoop2.web.lib.mvc.properties.Condition">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <collection field="selected" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Selected"/>
+    </collection>
+    <collection field="equals" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Equals"/>
+    </collection>
+    <collection field="undefined" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Undefined"/>
+    </collection>
+    <value name="and" field="and" default="true" usage="optional" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="selected" class="org.openspcoop2.web.lib.mvc.properties.Selected">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="equals" class="org.openspcoop2.web.lib.mvc.properties.Equals">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="undefined" class="org.openspcoop2.web.lib.mvc.properties.Undefined">
+    <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+  </mapping>
+</binding>
