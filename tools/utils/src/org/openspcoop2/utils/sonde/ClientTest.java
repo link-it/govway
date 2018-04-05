@@ -23,12 +23,14 @@ package org.openspcoop2.utils.sonde;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Date;
+import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sonde.Sonda.StatoSonda;
 import org.openspcoop2.utils.sonde.impl.SondaBatch;
 import org.openspcoop2.utils.sonde.impl.SondaCoda;
+import org.openspcoop2.utils.sonde.impl.SondaInvocazione;
 
 /**
  * TEST
@@ -42,7 +44,7 @@ public class ClientTest {
 
 	public static void main(String[] args) throws Exception {
 
-		TipiDatabase tipoDatabase = null;
+		TipiDatabase tipoDatabase = TipiDatabase.POSTGRESQL;
 		if(args.length>0){
 			if(!"${tipoDatabase}".equals(args[0].trim())){
 				tipoDatabase = TipiDatabase.toEnumConstant(args[0].trim());
@@ -53,13 +55,14 @@ public class ClientTest {
 		String driver = null;
 		String userName = null;
 		String password = null;
-		String sondaBatchName = "batch";
+		String sondaBatchName = "check-batch-ack";
 		String sondaCodaName = "coda";
+		String sondaInvocazioneName = "check-db";
 		
 		
 		switch (tipoDatabase) {
 		case POSTGRESQL:
-			url = "jdbc:postgresql://localhost/prova";
+			url = "jdbc:postgresql://localhost/proxysiope";
 			driver = "org.postgresql.Driver";
 			userName = "openspcoop2";
 			password = "openspcoop2";
@@ -135,7 +138,8 @@ public class ClientTest {
 			con = DriverManager.getConnection(url, userName, password);
 //			testSondaError(tipoDatabase, con);
 			testSondaBatch(sondaBatchName, tipoDatabase, con);
-			testSondaCoda(sondaCodaName, tipoDatabase, con);
+//			testSondaCoda(sondaCodaName, tipoDatabase, con);
+			testSondaInvocazione(sondaInvocazioneName, tipoDatabase, con);
 		} catch(Exception e) {
 			System.err.println("Errore durante il TestSonda: " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -177,7 +181,7 @@ public class ClientTest {
 		if(batch == null) throw new Exception("Sonda ["+sondaName+"] non trovata sul db");
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			
 			checkStato(sondaName, 0, stato);
 			System.out.println("Test 1 batch ok. Descrizione: " + stato.getDescrizione());
@@ -199,23 +203,66 @@ public class ClientTest {
 		}
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			checkStato(sondaName, 0, stato);
 			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
 		}		
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(false, new Date(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
+			StatoSonda stato = batch.aggiornaStatoSonda(false, null, new Date(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
 			checkStato(sondaName, 2, stato);
 			System.out.println("Test 5 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, null, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
 			checkStato(sondaName, 0, stato);
 			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 		
+	}
+	
+	public static void testSondaInvocazione(String sondaInvocazioneName, TipiDatabase tipoDatabase, Connection con) throws Exception {
+
+		SondaInvocazione invocazione = (SondaInvocazione) SondaFactory.get(sondaInvocazioneName, con, tipoDatabase);
+		if(invocazione == null) throw new Exception("Sonda ["+sondaInvocazioneName+"] non trovata sul db");
+		
+		{
+			StatoSonda stato = invocazione.aggiornaStatoSonda(true, null, con, tipoDatabase);
+			checkStato(sondaInvocazioneName, 0, stato);
+			System.out.println("Test 1 invocazione ok. Descrizione: " + stato.getDescrizione());
+		}
+
+		{
+			StatoSonda stato = invocazione.aggiornaStatoSonda(false, null, con, tipoDatabase);
+			checkStato(sondaInvocazioneName, 2, stato);
+			System.out.println("Test 2 invocazione ko. Descrizione: " + stato.getDescrizione());
+		}
+
+		{
+			Properties props = new Properties();
+			String key = "subCode";
+			String value = "ERR_000\na";
+			props.setProperty(key, value);
+			StatoSonda stato = invocazione.aggiornaStatoSonda(true, props, con, tipoDatabase);
+			checkStato(sondaInvocazioneName, 0, stato);
+			System.out.println("Test 3 invocazione ok. Descrizione: " + stato.getDescrizione());
+			
+			SondaInvocazione invocazione2 = (SondaInvocazione) SondaFactory.get(sondaInvocazioneName, con, tipoDatabase);
+			
+			if(!invocazione2.getParam().getDatiCheck().containsKey(key)) {
+				 throw new Exception("Property ["+key+"] non correttamente salvata");
+			}
+			String property = invocazione2.getParam().getDatiCheck().getProperty(key);
+			
+			if(!property.equals(value)) {
+				 throw new Exception("Property ["+key+"] non correttamente salvata. Expected ["+value+"] found ["+property+"]");
+			}
+			
+			System.out.println("Trovata property custom ["+key+"] ["+property+"]");
+		}
+
+
 	}
 	
 	public static void testSondaCoda(String sondaCodaName, TipiDatabase tipoDatabase, Connection con) throws Exception {
@@ -224,27 +271,27 @@ public class ClientTest {
 		if(coda == null) throw new Exception("Sonda ["+sondaCodaName+"] non trovata sul db");
 
 		{
-			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
+			StatoSonda stato = coda.aggiornaStatoSonda(3, null, con, tipoDatabase);
 			checkStato(sondaCodaName, 0, stato);
 			System.out.println("Test 1 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		{
-			StatoSonda stato = coda.aggiornaStatoSonda(7, con, tipoDatabase); 
+			StatoSonda stato = coda.aggiornaStatoSonda(7, null, con, tipoDatabase); 
 			checkStato(sondaCodaName, 1, stato);
 			System.out.println("Test 2 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 
 		{
-			StatoSonda stato = coda.aggiornaStatoSonda(20, con, tipoDatabase);
+			StatoSonda stato = coda.aggiornaStatoSonda(20, null, con, tipoDatabase);
 			checkStato(sondaCodaName, 2, stato);
 			System.out.println("Test 3 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 
 		{
-			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
+			StatoSonda stato = coda.aggiornaStatoSonda(3, null, con, tipoDatabase);
 			checkStato(sondaCodaName, 0, stato);
 			System.out.println("Test 4 coda ok. Descrizione: " + stato.getDescrizione());
 		}

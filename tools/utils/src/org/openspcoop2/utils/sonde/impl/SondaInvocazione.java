@@ -38,62 +38,51 @@ import org.openspcoop2.utils.sonde.SondaException;
  * 
  *
  * @author Bussu Giovanni (bussu@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100(ven, 26 gen 2018) $
  */
 
-public class SondaCoda extends Sonda {
+public class SondaInvocazione extends Sonda {
 
 	/**
 	 * Costruttore per la classe SondaCoda
 	 * @param param parametri costruttivi della sonda
 	 * @throws Exception
 	 */
-	public SondaCoda(ParametriSonda param) {
+	public SondaInvocazione(ParametriSonda param) {
 		super(param);
 		Set<String> reserved = new HashSet<String>();
-		reserved.add("dimensione_coda");
+		reserved.add(RICHIESTA_OK);
 		this.getParam().setReserved(reserved);
+
 	}
 
+	private static final String RICHIESTA_OK = "richiestaOk";
 	@Override
 	public StatoSonda getStatoSonda(){
 		
-		long dimensione_coda = 0;
-		String dimensioneCodaString = super.getParam().getDatiCheck().getProperty("dimensione_coda");
-		try {
-			if(dimensioneCodaString!=null)
-				dimensione_coda = Long.parseLong(dimensioneCodaString);
-		} catch(NumberFormatException e) {
-			e.printStackTrace(System.err);
-			System.err.println("Errore durante il parsing del parametro dimensione_coda: " + dimensioneCodaString + ". Elimino il valore");
-			super.getParam().getDatiCheck().remove("dimensione_coda");
+		boolean richiestaOK = false;
+		if(super.getParam().getDatiCheck().containsKey(RICHIESTA_OK)) {
+			try {
+				richiestaOK = Boolean.parseBoolean(super.getParam().getDatiCheck().getProperty(RICHIESTA_OK));
+			} catch(Exception e) {
+				super.getParam().getDatiCheck().remove(RICHIESTA_OK);
+			}
 		}
+		
 		StatoSonda statoSonda = new StatoSonda();
 		SimpleDateFormat format = new SimpleDateFormat(PATTERN);
 
-		//Valuto l'eventuale superamento delle soglie e calcolo lo stato
-		if(dimensione_coda > super.getParam().getSogliaError()) {
+		//non esiste stato warning
+		if(richiestaOK) {
+			statoSonda.setStato(0);
+			statoSonda.setDescrizione(null);
+		} else {
 			if(this.getParam().getDataError() == null) {
 				this.getParam().setDataError(new Date());
 			}
 			statoSonda.setStato(2);
-			statoSonda.setDescrizione("La coda "+super.getParam().getNome()+" ha superato la soglia di errore ("+
-										super.getParam().getSogliaError()+") dal "+
-										format.format(this.getParam().getDataError())+
-										". Dimensione attuale della coda: "+dimensione_coda+".");
-		} else if (dimensione_coda > super.getParam().getSogliaWarn()) {
-			if(this.getParam().getDataWarn() == null) {
-				this.getParam().setDataWarn(new Date());
-			}
-			statoSonda.setStato(1);
-			statoSonda.setDescrizione("La coda "+super.getParam().getNome()+" ha superato la soglia di warn ("+
-										super.getParam().getSogliaWarn()+") dal "+
-										format.format(this.getParam().getDataWarn())+
-										". Dimensione attuale della coda: "+dimensione_coda+".");
-		} else {
-			statoSonda.setStato(0);
-			statoSonda.setDescrizione("Coda "+super.getParam().getNome()+": numero elementi in coda: " + dimensione_coda);
+			statoSonda.setDescrizione("Invocazione richiesta dal check "+super.getParam().getNome()+" fallita dal "+format.format(this.getParam().getDataError()));
 		}
  
 		return statoSonda;
@@ -106,12 +95,11 @@ public class SondaCoda extends Sonda {
 	 * @return lo stato attuale della sonda
 	 * @throws SondaException
 	 */
-	public StatoSonda aggiornaStatoSonda(long dimensioneCoda, Properties params, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
+	public StatoSonda aggiornaStatoSonda(boolean richiestaOk, Properties params, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
 		// inserisce i dati nel properties
-		
 		super.getParam().putAllCheck(params);
 		
-		super.getParam().getDatiCheck().put("dimensione_coda", dimensioneCoda + "");
+		super.getParam().getDatiCheck().put(RICHIESTA_OK, richiestaOk + "");
 		return updateSonda(connection, tipoDatabase);
 	}
 

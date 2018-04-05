@@ -24,6 +24,9 @@ package org.openspcoop2.utils.sonde.impl;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.TipiDatabase;
@@ -48,6 +51,13 @@ public class SondaBatch extends Sonda {
 	 */
 	public SondaBatch(ParametriSonda param) {
 		super(param);
+		Set<String> reserved = new HashSet<String>();
+		reserved.add("data_ultimo_batch");
+		reserved.add("esito_batch");
+		reserved.add("interazioni_fallite");
+		reserved.add("descrizione_errore");
+		this.getParam().setReserved(reserved);
+
 	}
 
 	@Override
@@ -149,8 +159,10 @@ public class SondaBatch extends Sonda {
 	 * @return lo stato attuale della sonda
 	 * @throws SondaException
 	 */
-	public StatoSonda aggiornaStatoSonda(boolean esito_batch, Date data_ultimo_batch, String descrizioneErrore, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
+	public StatoSonda aggiornaStatoSonda(boolean esito_batch, Properties params, Date data_ultimo_batch, String descrizioneErrore, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
 		// inserisce i dati nel properties
+		
+		super.getParam().putAllCheck(params);
 		
 		super.getParam().getDatiCheck().put("data_ultimo_batch", data_ultimo_batch.getTime()+ "");
 		super.getParam().getDatiCheck().put("esito_batch", String.valueOf(esito_batch));
