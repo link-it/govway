@@ -66,6 +66,7 @@ public class PageData {
 	List<DataElement> filter_names = null;
 	List<DataElement> filter_values = null;
 	int pageSize, index, numEntries;
+	boolean mostraLinkHome = false;
 
 	public PageData() {
 		this.pageDescription = "";
@@ -93,6 +94,7 @@ public class PageData {
 		this.pageSize = 20;
 		this.index = 0;
 		this.numEntries = 0;
+		this.mostraLinkHome = false;
 	}
 
 	public void setPageDescription(String s) {
@@ -417,4 +419,14 @@ public class PageData {
 			return false; // bottoni invia/cancella
 		}
 	}
+
+	public boolean isMostraLinkHome() {
+		return this.mostraLinkHome;
+	}
+
+	public void setMostraLinkHome(boolean mostraLinkHome) {
+		this.mostraLinkHome = mostraLinkHome;
+	}
+	
+	
 }

@@ -46,6 +46,7 @@ String message = pd.getMessage();
 String messageType = pd.getMessageType();
 String pageDescription = pd.getPageDescription();
 String messageTitle = pd.getMessageTitle();
+boolean mostraLinkHome = pd.isMostraLinkHome();
 %>
 <table style="width:100%;">
 	<tbody>
@@ -136,6 +137,9 @@ String messageTitle = pd.getMessageTitle();
 						  %>
 				  			<div class="messages-<%=messageType %>-text">
 				  				<span ><%= message %></span>
+				  				<% if(mostraLinkHome){%>
+				  					<br/><span><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE %><a href="<%= request.getContextPath()%>"><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME %></a><%= Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST %></span>
+				  				<% }%>
 				  			</div>
 			  			  <%
 							}

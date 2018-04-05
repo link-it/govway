@@ -36,6 +36,12 @@
             <forward name="logoutOk" path="/jsplib/logout.jsp"/>
             <forward name="logoutError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <action path="/messagePage" type="org.openspcoop2.web.loader.servlet.login.MessagePage" 
+            scope="request" validate="true">
+            <forward name="messagePageOk" path="/jsplib/info.jsp"/>
+            <forward name="messagePageError" path="/jsplib/info.jsp"/>
+        </action>
   
   
   		<!--  Archivi -->

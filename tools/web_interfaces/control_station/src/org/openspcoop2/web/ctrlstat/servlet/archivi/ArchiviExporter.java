@@ -48,7 +48,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -229,8 +229,8 @@ public class ArchiviExporter extends HttpServlet {
 				redirect = AccordiCooperazioneCostanti.SERVLET_NAME_ACCORDI_COOPERAZIONE_LIST;
 				break;
 			default:
-				// altri tipi che non prevedono la lista degli identificativi: e' la configurazione
-				redirect = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE;
+				// altri tipi che non prevedono la lista degli identificativi schermata di errore
+				redirect = LoginCostanti.SERVLET_NAME_MESSAGE_PAGE;
 			}
 			
 			
@@ -372,10 +372,15 @@ public class ArchiviExporter extends HttpServlet {
 	            	redirect+="&"+Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT+"='"+msg+"'";
 	            else
 	            	redirect+="?"+Costanti.PARAMETER_NAME_MSG_ERROR_EXPORT+"='"+msg+"'";
+	            
+	            // parametro necessario per la servlet generica di messaggi errore
+	            redirect+="&"+Costanti.PARAMETER_MESSAGE_TEXT+"='"+msg+"'";
+	            
 	            response.sendRedirect(redirect);
 			}
 			else{
-				throw new ServletException(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
+				response.sendRedirect(LoginCostanti.SERVLET_NAME_MESSAGE_PAGE);
+//				throw new ServletException(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
 			}
 		}
 		

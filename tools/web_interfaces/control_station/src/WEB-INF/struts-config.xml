@@ -45,7 +45,11 @@
             <forward name="loginAsSuError" path="/jsplib/info.jsp"/>
         </action>
     
-    
+       <action path="/messagePage" type="org.openspcoop2.web.ctrlstat.servlet.login.MessagePage" 
+            scope="request" validate="true">
+            <forward name="messagePageOk" path="/jsplib/info.jsp"/>
+            <forward name="messagePageError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     	<!--  Utenti -->

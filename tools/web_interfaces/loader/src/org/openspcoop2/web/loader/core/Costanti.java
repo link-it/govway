@@ -66,6 +66,8 @@ public class Costanti {
 	
 	public final static String OBJECT_NAME_LOGOUT = "logout";
 	
+	public final static String OBJECT_NAME_MESSAGE_PAGE = "messagePage";
+	
 	public final static String OBJECT_NAME_ARCHIVI_IMPORTA_XML = "importaXml";
 	public final static ForwardParams TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML = ForwardParams.OTHER("");
 	
@@ -94,9 +96,11 @@ public class Costanti {
 		SERVLET_ARCHIVI.add(SERVLET_NAME_ARCHIVI_IMPORTA_XML);
 	}
 	
-	
-	
-	
+	public final static String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
+	public final static Vector<String> SERVLET_MESSAGE_PAGE = new Vector<String>();
+	static{
+		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
+	}
 	
 	/* LABEL GENERALI */
 	
@@ -128,8 +132,6 @@ public class Costanti {
 	public final static String LABEL_LOGIN_CON_PASSWORD_ERRATO = "Le credenziali fornite non sono corrette";
 	public final static String LABEL_LOGIN_PERMESSI_NON_SUFFICENTI = "L'utente non possiede i diritti per creare configurazioni";
 	
-	
-	
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
@@ -144,7 +146,14 @@ public class Costanti {
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_FILE = "File";
 	
+	/** PARAMETRI MESSAGE PAGE **/
 	
+	public static final String PARAMETER_MESSAGE_TEXT = org.openspcoop2.web.lib.mvc.Costanti.PARAMETER_MESSAGE_TEXT;
+	public static final String PARAMETER_MESSAGE_TITLE = org.openspcoop2.web.lib.mvc.Costanti.PARAMETER_MESSAGE_TITLE;
+	public static final String PARAMETER_MESSAGE_TYPE = org.openspcoop2.web.lib.mvc.Costanti.PARAMETER_MESSAGE_TYPE;
+	public static final String PARAMETER_MESSAGE_BREADCRUMB = org.openspcoop2.web.lib.mvc.Costanti.PARAMETER_MESSAGE_BREADCRUMB;
+	
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = org.openspcoop2.web.lib.mvc.Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
 	
 	/* VALORI */
 	

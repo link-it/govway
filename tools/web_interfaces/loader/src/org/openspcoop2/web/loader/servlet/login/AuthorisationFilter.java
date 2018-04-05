@@ -33,9 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.servlet.GeneralHelper;
@@ -90,7 +92,13 @@ public final class AuthorisationFilter implements Filter {
 					
 					// return so that we do not chain to other filters
 					return;
-				} 
+				} else {
+					if (urlRichiesta.indexOf(".js") == -1) {
+						String servletRichiesta = urlRichiesta.substring((contextPath+"/").length());
+						if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
+							response.sendRedirect(getRedirectToMessageServlet());
+					}
+				}
 			}
 
 			// allow others filter to be chained
@@ -165,5 +173,12 @@ public final class AuthorisationFilter implements Filter {
 		}
 		
 		return false;
+	}
+	
+	private String getRedirectToMessageServlet() {
+		return new Parameter("", Costanti.SERVLET_NAME_MESSAGE_PAGE,
+				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_CONSOLE_RIPRISTINATA),
+				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
+				).getValue();
 	}
 }

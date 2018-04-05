@@ -40,9 +40,11 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.slf4j.Logger;
 
@@ -145,7 +147,7 @@ public final class AuthorisationFilter implements Filter {
 							request.setCharacterEncoding("UTF-8");
 							
 							// Non faccio verificare login/logout
-							if (!LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
+							if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
 								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper)==false){
 									ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
 									setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO);
@@ -155,6 +157,9 @@ public final class AuthorisationFilter implements Filter {
 							}
 							
 							ControlStationCore.logDebug("Autorizzazione permessa all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
+							
+							if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
+								response.sendRedirect(getRedirectToMessageServlet());
 							
 						} catch (Exception e) {
 							ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
@@ -253,5 +258,12 @@ public final class AuthorisationFilter implements Filter {
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 		
+	}
+	
+	private String getRedirectToMessageServlet() {
+		return new Parameter("", LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
+				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_CONSOLE_RIPRISTINATA),
+				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
+				).getValue();
 	}
 }

@@ -46,14 +46,18 @@ public class ServletUtils {
 
 	/* ------ STRUTS -FORWARD -ERROR */
 
-	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping,
-			String objectName,ForwardParams forwardType){
+	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType){
+		return getStrutsForwardError(log, e, pd, session, gd, mapping, objectName, forwardType, Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
+	}
+	
+	public static ActionForward getStrutsForwardError(Logger log,Throwable e,PageData pd,HttpSession session, GeneralData gd, ActionMapping mapping, String objectName,ForwardParams forwardType,String message){
 		if(e!=null)
 			log.error("SistemaNonDisponibile: "+e.getMessage(), e);
 		else
 			log.error("SistemaNonDisponibile");
 		pd.disableEditMode();
-		pd.setMessage(Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE);
+		pd.setMessage(message);
+		pd.setMostraLinkHome(true); 
 		ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 		return ServletUtils.getStrutsForwardGeneralError(mapping, objectName, forwardType);
 	}

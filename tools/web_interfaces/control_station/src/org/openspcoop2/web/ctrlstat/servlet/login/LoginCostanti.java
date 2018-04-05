@@ -38,7 +38,7 @@ public class LoginCostanti {
 	
 	public final static String OBJECT_NAME_LOGOUT = "logout";
 	
-	
+	public final static String OBJECT_NAME_MESSAGE_PAGE = "messagePage";
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_LOGIN = OBJECT_NAME_LOGIN+".do";
@@ -59,6 +59,12 @@ public class LoginCostanti {
 		SERVLET_LOGOUT.add(SERVLET_NAME_LOGOUT);
 	}
 	
+	public final static String SERVLET_NAME_MESSAGE_PAGE = OBJECT_NAME_MESSAGE_PAGE+".do";
+	public final static Vector<String> SERVLET_MESSAGE_PAGE = new Vector<String>();
+	static{
+		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_MESSAGE_PAGE);
+	}
+	
 	
 	/* LABEL GENERALI */
 	
@@ -72,6 +78,7 @@ public class LoginCostanti {
 	public final static String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
 	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
 	public final static String LABEL_ERRORE = "Errore";
+	public final static String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
 	
 	/* LABEL MENU' AZIONI UTENTE */
 	

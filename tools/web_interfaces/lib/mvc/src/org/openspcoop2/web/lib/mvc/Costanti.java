@@ -33,8 +33,10 @@ public class Costanti {
 
 	/** SISTEMA NON DISPONIBILE */
 	
-	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.<BR>Si prega di riprovare pi&ugrave; tardi";
-	
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.<BR/>Si prega di riprovare pi&ugrave; tardi.";
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE = "Torna alla ";
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME = "home";
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST = ".";
 	
 	/** LABEL */
 	
@@ -180,6 +182,13 @@ public class Costanti {
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  
 	public static final String PARAMETER_FILEID_PREFIX = "__fd__";
+	
+	/** PARAMETRI MESSAGE PAGE **/
+	
+	public static final String PARAMETER_MESSAGE_TEXT ="mpText";
+	public static final String PARAMETER_MESSAGE_TITLE ="mpTitle";
+	public static final String PARAMETER_MESSAGE_TYPE ="mpType";
+	public static final String PARAMETER_MESSAGE_BREADCRUMB ="mpBC";
 	
 	/** PAGE DATA TITLE */
 	
