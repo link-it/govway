@@ -69,7 +69,12 @@ public abstract class AbstractRicezioneConnector implements IRunnableInstance{
 		this.asProperties = asProperties;
 		this.ricezioneNotifiche = ricezioneNotifiche;
 		
-		this.initJMS();
+		try {
+			this.initJMS();
+		} catch (Exception er) {
+			this.log.error(": Re-Inizializzazione Receiver non effettuata:" + er.toString());
+			this.riconnessioneConErrore = true;
+		}
 	}
 	
 	
