@@ -26,9 +26,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
-
+import org.apache.soap.encoding.soapenc.Base64;
 /**
  * Classe contenente i parametri per le Sonde
  * 
@@ -69,11 +67,7 @@ public class ParametriSonda {
 						
 						String key = nameValue[0].trim();
 						String value = nameValue[1].trim();
-						try {
-							this.datiCheck.put(new String(Base64.decode(key)), new String(Base64.decode(value)));
-						} catch(Base64DecodingException e) {
-							System.err.println("Errore durante il decoding del dato check ["+dato+"]:" + e.getMessage());
-						} 
+						this.datiCheck.put(new String(Base64.decode(key)), new String(Base64.decode(value)));
 					}
 					
 				} else {
