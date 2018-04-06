@@ -375,6 +375,7 @@ public class ArchiviExporter extends HttpServlet {
 	            
 	            // parametro necessario per la servlet generica di messaggi errore
 	            redirect+="&"+Costanti.PARAMETER_MESSAGE_TEXT+"='"+msg+"'";
+	            redirect+="&"+Costanti.PARAMETER_MESSAGE_BREADCRUMB+"="+ArchiviCostanti.LABEL_ARCHIVI_EXPORT+"";
 	            
 	            response.sendRedirect(redirect);
 			}
