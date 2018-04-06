@@ -42,6 +42,7 @@ public class EqualsModel extends AbstractModel<Equals> {
 	
 		this.NAME = new Field("name",java.lang.String.class,"equals",Equals.class);
 		this.VALUE = new Field("value",java.lang.String.class,"equals",Equals.class);
+		this.NOT = new Field("not",boolean.class,"equals",Equals.class);
 	
 	}
 	
@@ -51,6 +52,7 @@ public class EqualsModel extends AbstractModel<Equals> {
 	
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"equals",Equals.class);
 		this.VALUE = new ComplexField(father,"value",java.lang.String.class,"equals",Equals.class);
+		this.NOT = new ComplexField(father,"not",boolean.class,"equals",Equals.class);
 	
 	}
 	
@@ -59,6 +61,8 @@ public class EqualsModel extends AbstractModel<Equals> {
 	public IField NAME = null;
 	 
 	public IField VALUE = null;
+	 
+	public IField NOT = null;
 	 
 
 	@Override

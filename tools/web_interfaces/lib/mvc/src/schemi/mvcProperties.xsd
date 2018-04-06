@@ -109,20 +109,23 @@
 		<xsd:sequence>
 			<xsd:element name="selected" type="selected" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="equals" type="equals" maxOccurs="unbounded" minOccurs="0"/>
-			<xsd:element name="undefined" type="undefined" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="defined" type="defined" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
 		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	<xsd:complexType name="selected">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	<xsd:complexType name="equals">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
 		<xsd:attribute name="value" type="xsd:string" use="required" />
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
-	<xsd:complexType name="undefined">
+	<xsd:complexType name="defined">
 		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	
 	

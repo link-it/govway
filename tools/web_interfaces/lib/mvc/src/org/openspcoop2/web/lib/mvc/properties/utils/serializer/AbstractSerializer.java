@@ -23,6 +23,7 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
+import org.openspcoop2.web.lib.mvc.properties.Defined;
 import org.openspcoop2.web.lib.mvc.properties.Conditions;
 import org.openspcoop2.web.lib.mvc.properties.Subsection;
 import org.openspcoop2.web.lib.mvc.properties.Item;
@@ -35,7 +36,6 @@ import org.openspcoop2.web.lib.mvc.properties.Config;
 import org.openspcoop2.web.lib.mvc.properties.Section;
 import org.openspcoop2.web.lib.mvc.properties.Property;
 import org.openspcoop2.web.lib.mvc.properties.Collection;
-import org.openspcoop2.web.lib.mvc.properties.Undefined;
 import org.openspcoop2.web.lib.mvc.properties.Condition;
 
 import java.io.ByteArrayOutputStream;
@@ -127,6 +127,124 @@ public abstract class AbstractSerializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: defined
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Defined defined) throws SerializerException {
+		this.objToXml(fileName, Defined.class, defined, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Defined defined,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Defined.class, defined, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param file Xml file to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Defined defined) throws SerializerException {
+		this.objToXml(file, Defined.class, defined, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param file Xml file to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Defined defined,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Defined.class, defined, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param out OutputStream to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Defined defined) throws SerializerException {
+		this.objToXml(out, Defined.class, defined, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param out OutputStream to serialize the object <var>defined</var>
+	 * @param defined Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Defined defined,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Defined.class, defined, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param defined Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Defined defined) throws SerializerException {
+		return this.objToXml(Defined.class, defined, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param defined Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Defined defined,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Defined.class, defined, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param defined Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Defined defined) throws SerializerException {
+		return this.objToXml(Defined.class, defined, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>defined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param defined Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Defined defined,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Defined.class, defined, prettyPrint).toString();
+	}
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: conditions
@@ -1539,124 +1657,6 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Collection collection,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Collection.class, collection, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: undefined
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Undefined undefined) throws SerializerException {
-		this.objToXml(fileName, Undefined.class, undefined, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,Undefined undefined,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, Undefined.class, undefined, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param file Xml file to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Undefined undefined) throws SerializerException {
-		this.objToXml(file, Undefined.class, undefined, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param file Xml file to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,Undefined undefined,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, Undefined.class, undefined, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param out OutputStream to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Undefined undefined) throws SerializerException {
-		this.objToXml(out, Undefined.class, undefined, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param out OutputStream to serialize the object <var>undefined</var>
-	 * @param undefined Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,Undefined undefined,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, Undefined.class, undefined, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param undefined Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Undefined undefined) throws SerializerException {
-		return this.objToXml(Undefined.class, undefined, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param undefined Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(Undefined undefined,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Undefined.class, undefined, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param undefined Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Undefined undefined) throws SerializerException {
-		return this.objToXml(Undefined.class, undefined, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>undefined</var> of type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param undefined Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(Undefined undefined,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(Undefined.class, undefined, prettyPrint).toString();
 	}
 	
 	

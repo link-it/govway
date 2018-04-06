@@ -39,7 +39,7 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="selected" type="{http://www.openspcoop2.org/web/lib/mvc/properties}selected" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="equals" type="{http://www.openspcoop2.org/web/lib/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="undefined" type="{http://www.openspcoop2.org/web/lib/mvc/properties}undefined" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="defined" type="{http://www.openspcoop2.org/web/lib/mvc/properties}defined" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
@@ -57,7 +57,7 @@ import java.util.List;
   propOrder = {
   	"selected",
   	"equals",
-  	"undefined"
+  	"defined"
   }
 )
 
@@ -115,28 +115,28 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
     return this.equals.size();
   }
 
-  public void addUndefined(Undefined undefined) {
-    this.undefined.add(undefined);
+  public void addDefined(Defined defined) {
+    this.defined.add(defined);
   }
 
-  public Undefined getUndefined(int index) {
-    return this.undefined.get( index );
+  public Defined getDefined(int index) {
+    return this.defined.get( index );
   }
 
-  public Undefined removeUndefined(int index) {
-    return this.undefined.remove( index );
+  public Defined removeDefined(int index) {
+    return this.defined.remove( index );
   }
 
-  public List<Undefined> getUndefinedList() {
-    return this.undefined;
+  public List<Defined> getDefinedList() {
+    return this.defined;
   }
 
-  public void setUndefinedList(List<Undefined> undefined) {
-    this.undefined=undefined;
+  public void setDefinedList(List<Defined> defined) {
+    this.defined=defined;
   }
 
-  public int sizeUndefinedList() {
-    return this.undefined.size();
+  public int sizeDefinedList() {
+    return this.defined.size();
   }
 
   public boolean isAnd() {
@@ -227,34 +227,34 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
   	return this.equals.size();
   }
 
-  @XmlElement(name="undefined",required=true,nillable=false)
-  protected List<Undefined> undefined = new ArrayList<Undefined>();
+  @XmlElement(name="defined",required=true,nillable=false)
+  protected List<Defined> defined = new ArrayList<Defined>();
 
   /**
-   * @deprecated Use method getUndefinedList
-   * @return List<Undefined>
+   * @deprecated Use method getDefinedList
+   * @return List<Defined>
   */
   @Deprecated
-  public List<Undefined> getUndefined() {
-  	return this.undefined;
+  public List<Defined> getDefined() {
+  	return this.defined;
   }
 
   /**
-   * @deprecated Use method setUndefinedList
-   * @param undefined List<Undefined>
+   * @deprecated Use method setDefinedList
+   * @param defined List<Defined>
   */
   @Deprecated
-  public void setUndefined(List<Undefined> undefined) {
-  	this.undefined=undefined;
+  public void setDefined(List<Defined> defined) {
+  	this.defined=defined;
   }
 
   /**
-   * @deprecated Use method sizeUndefinedList
+   * @deprecated Use method sizeDefinedList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeUndefined() {
-  	return this.undefined.size();
+  public int sizeDefined() {
+  	return this.defined.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")

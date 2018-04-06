@@ -59,6 +59,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Defined }
+     */
+    public Defined createDefined() {
+        return new Defined();
+    }
+
+    /**
      * Create an instance of {@link Conditions }
      */
     public Conditions createConditions() {
@@ -133,13 +140,6 @@ public class ObjectFactory {
      */
     public ItemValues createItemValues() {
         return new ItemValues();
-    }
-
-    /**
-     * Create an instance of {@link Undefined }
-     */
-    public Undefined createUndefined() {
-        return new Undefined();
     }
 
     /**

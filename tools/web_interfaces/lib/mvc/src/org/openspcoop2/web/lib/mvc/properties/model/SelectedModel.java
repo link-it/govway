@@ -41,6 +41,7 @@ public class SelectedModel extends AbstractModel<Selected> {
 		super();
 	
 		this.NAME = new Field("name",java.lang.String.class,"selected",Selected.class);
+		this.NOT = new Field("not",boolean.class,"selected",Selected.class);
 	
 	}
 	
@@ -49,12 +50,15 @@ public class SelectedModel extends AbstractModel<Selected> {
 		super(father);
 	
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"selected",Selected.class);
+		this.NOT = new ComplexField(father,"not",boolean.class,"selected",Selected.class);
 	
 	}
 	
 	
 
 	public IField NAME = null;
+	 
+	public IField NOT = null;
 	 
 
 	@Override

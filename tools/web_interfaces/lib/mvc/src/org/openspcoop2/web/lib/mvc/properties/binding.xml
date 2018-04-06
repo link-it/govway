@@ -119,8 +119,8 @@
     <collection field="equals" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.web.lib.mvc.properties.Equals"/>
     </collection>
-    <collection field="undefined" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Undefined"/>
+    <collection field="defined" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.web.lib.mvc.properties.Defined"/>
     </collection>
     <value name="and" field="and" default="true" usage="optional" style="attribute"/>
     <value name="not" field="not" default="false" usage="optional" style="attribute"/>
@@ -128,14 +128,17 @@
   <mapping name="selected" class="org.openspcoop2.web.lib.mvc.properties.Selected">
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="equals" class="org.openspcoop2.web.lib.mvc.properties.Equals">
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="value" field="value" usage="required" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
   </mapping>
-  <mapping name="undefined" class="org.openspcoop2.web.lib.mvc.properties.Undefined">
+  <mapping name="defined" class="org.openspcoop2.web.lib.mvc.properties.Defined">
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
     <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="not" field="not" default="false" usage="optional" style="attribute"/>
   </mapping>
 </binding>

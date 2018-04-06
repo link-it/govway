@@ -34,6 +34,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="selected">
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -60,6 +61,18 @@ public class Selected extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.name = name;
   }
 
+  public boolean isNot() {
+    return this.not;
+  }
+
+  public boolean getNot() {
+    return this.not;
+  }
+
+  public void setNot(boolean not) {
+    this.not = not;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -67,5 +80,9 @@ public class Selected extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="not",required=false)
+  protected boolean not = false;
 
 }

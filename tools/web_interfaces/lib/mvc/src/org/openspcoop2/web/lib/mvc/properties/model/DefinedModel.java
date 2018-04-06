@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.lib.mvc.properties.model;
 
-import org.openspcoop2.web.lib.mvc.properties.Undefined;
+import org.openspcoop2.web.lib.mvc.properties.Defined;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -28,27 +28,29 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model Undefined 
+ * Model Defined 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class UndefinedModel extends AbstractModel<Undefined> {
+public class DefinedModel extends AbstractModel<Defined> {
 
-	public UndefinedModel(){
+	public DefinedModel(){
 	
 		super();
 	
-		this.NAME = new Field("name",java.lang.String.class,"undefined",Undefined.class);
+		this.NAME = new Field("name",java.lang.String.class,"defined",Defined.class);
+		this.NOT = new Field("not",boolean.class,"defined",Defined.class);
 	
 	}
 	
-	public UndefinedModel(IField father){
+	public DefinedModel(IField father){
 	
 		super(father);
 	
-		this.NAME = new ComplexField(father,"name",java.lang.String.class,"undefined",Undefined.class);
+		this.NAME = new ComplexField(father,"name",java.lang.String.class,"defined",Defined.class);
+		this.NOT = new ComplexField(father,"not",boolean.class,"defined",Defined.class);
 	
 	}
 	
@@ -56,10 +58,12 @@ public class UndefinedModel extends AbstractModel<Undefined> {
 
 	public IField NAME = null;
 	 
+	public IField NOT = null;
+	 
 
 	@Override
-	public Class<Undefined> getModeledClass(){
-		return Undefined.class;
+	public Class<Defined> getModeledClass(){
+		return Defined.class;
 	}
 	
 	@Override

@@ -21,6 +21,7 @@ package org.openspcoop2.web.lib.mvc.properties.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
+import org.openspcoop2.web.lib.mvc.properties.Defined;
 import org.openspcoop2.web.lib.mvc.properties.Conditions;
 import org.openspcoop2.web.lib.mvc.properties.Subsection;
 import org.openspcoop2.web.lib.mvc.properties.Item;
@@ -33,7 +34,6 @@ import org.openspcoop2.web.lib.mvc.properties.Config;
 import org.openspcoop2.web.lib.mvc.properties.Section;
 import org.openspcoop2.web.lib.mvc.properties.Property;
 import org.openspcoop2.web.lib.mvc.properties.Collection;
-import org.openspcoop2.web.lib.mvc.properties.Undefined;
 import org.openspcoop2.web.lib.mvc.properties.Condition;
 
 import java.io.ByteArrayInputStream;
@@ -101,6 +101,69 @@ public abstract class AbstractDeserializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: defined
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Defined readDefined(String fileName) throws DeserializerException {
+		return (Defined) this.xmlToObj(fileName, Defined.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Defined readDefined(File file) throws DeserializerException {
+		return (Defined) this.xmlToObj(file, Defined.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Defined readDefined(InputStream in) throws DeserializerException {
+		return (Defined) this.xmlToObj(in, Defined.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Defined readDefined(byte[] in) throws DeserializerException {
+		return (Defined) this.xmlToObj(in, Defined.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Defined}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Defined readDefinedFromString(String in) throws DeserializerException {
+		return (Defined) this.xmlToObj(in.getBytes(), Defined.class);
+	}	
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: conditions
@@ -853,69 +916,6 @@ public abstract class AbstractDeserializer {
 	 */
 	public Collection readCollectionFromString(String in) throws DeserializerException {
 		return (Collection) this.xmlToObj(in.getBytes(), Collection.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: undefined
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Undefined readUndefined(String fileName) throws DeserializerException {
-		return (Undefined) this.xmlToObj(fileName, Undefined.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Undefined readUndefined(File file) throws DeserializerException {
-		return (Undefined) this.xmlToObj(file, Undefined.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Undefined readUndefined(InputStream in) throws DeserializerException {
-		return (Undefined) this.xmlToObj(in, Undefined.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Undefined readUndefined(byte[] in) throws DeserializerException {
-		return (Undefined) this.xmlToObj(in, Undefined.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @return Object type {@link org.openspcoop2.web.lib.mvc.properties.Undefined}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Undefined readUndefinedFromString(String in) throws DeserializerException {
-		return (Undefined) this.xmlToObj(in.getBytes(), Undefined.class);
 	}	
 	
 	

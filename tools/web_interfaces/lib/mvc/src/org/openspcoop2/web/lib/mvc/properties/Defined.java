@@ -27,13 +27,14 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for undefined complex type.
+/** <p>Java class for defined complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="undefined">
+ * &lt;complexType name="defined">
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -44,12 +45,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "undefined")
+@XmlType(name = "defined")
 
-@XmlRootElement(name = "undefined")
+@XmlRootElement(name = "defined")
 
-public class Undefined extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public Undefined() {
+public class Defined extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public Defined() {
   }
 
   public java.lang.String getName() {
@@ -60,6 +61,18 @@ public class Undefined extends org.openspcoop2.utils.beans.BaseBean implements S
     this.name = name;
   }
 
+  public boolean isNot() {
+    return this.not;
+  }
+
+  public boolean getNot() {
+    return this.not;
+  }
+
+  public void setNot(boolean not) {
+    this.not = not;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -67,5 +80,9 @@ public class Undefined extends org.openspcoop2.utils.beans.BaseBean implements S
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="not",required=false)
+  protected boolean not = false;
 
 }

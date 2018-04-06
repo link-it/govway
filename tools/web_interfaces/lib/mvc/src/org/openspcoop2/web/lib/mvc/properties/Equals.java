@@ -35,6 +35,7 @@ import java.io.Serializable;
  * &lt;complexType name="equals">
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -69,6 +70,18 @@ public class Equals extends org.openspcoop2.utils.beans.BaseBean implements Seri
     this.value = value;
   }
 
+  public boolean isNot() {
+    return this.not;
+  }
+
+  public boolean getNot() {
+    return this.not;
+  }
+
+  public void setNot(boolean not) {
+    this.not = not;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -80,5 +93,9 @@ public class Equals extends org.openspcoop2.utils.beans.BaseBean implements Seri
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="value",required=true)
   protected java.lang.String value;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="not",required=false)
+  protected boolean not = false;
 
 }
