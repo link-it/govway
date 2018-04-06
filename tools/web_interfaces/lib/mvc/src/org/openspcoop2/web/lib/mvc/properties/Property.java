@@ -39,6 +39,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="append" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="appendSeparator" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default=" "/>
  * 		&lt;attribute name="properties" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="force" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -109,6 +110,18 @@ public class Property extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.properties = properties;
   }
 
+  public boolean isForce() {
+    return this.force;
+  }
+
+  public boolean getForce() {
+    return this.force;
+  }
+
+  public void setForce(boolean force) {
+    this.force = force;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -136,5 +149,9 @@ public class Property extends org.openspcoop2.utils.beans.BaseBean implements Se
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="properties",required=false)
   protected java.lang.String properties;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="force",required=false)
+  protected boolean force = false;
 
 }

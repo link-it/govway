@@ -82,6 +82,7 @@
     <value name="append" field="append" default="false" usage="optional" style="attribute"/>
     <value name="appendSeparator" field="appendSeparator" default=" " usage="optional" style="attribute"/>
     <value name="properties" field="properties" usage="optional" style="attribute"/>
+    <value name="force" field="force" default="false" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="properties" class="org.openspcoop2.web.lib.mvc.properties.Properties">
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>

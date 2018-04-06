@@ -84,6 +84,7 @@
 		<xsd:attribute name="append" type="xsd:boolean" default="false"/>
 		<xsd:attribute name="appendSeparator" type="xsd:string" use="optional" default=" "/>
 		<xsd:attribute name="properties" type="xsd:string" use="optional" /> <!-- tutte le property con stesso nome properties vengono aggregate -->
+		<xsd:attribute name="force" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	
 	<xsd:complexType name="properties">

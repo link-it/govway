@@ -46,6 +46,7 @@ public class PropertyModel extends AbstractModel<Property> {
 		this.APPEND = new Field("append",boolean.class,"property",Property.class);
 		this.APPEND_SEPARATOR = new Field("appendSeparator",java.lang.String.class,"property",Property.class);
 		this.PROPERTIES = new Field("properties",java.lang.String.class,"property",Property.class);
+		this.FORCE = new Field("force",boolean.class,"property",Property.class);
 	
 	}
 	
@@ -59,6 +60,7 @@ public class PropertyModel extends AbstractModel<Property> {
 		this.APPEND = new ComplexField(father,"append",boolean.class,"property",Property.class);
 		this.APPEND_SEPARATOR = new ComplexField(father,"appendSeparator",java.lang.String.class,"property",Property.class);
 		this.PROPERTIES = new ComplexField(father,"properties",java.lang.String.class,"property",Property.class);
+		this.FORCE = new ComplexField(father,"force",boolean.class,"property",Property.class);
 	
 	}
 	
@@ -75,6 +77,8 @@ public class PropertyModel extends AbstractModel<Property> {
 	public IField APPEND_SEPARATOR = null;
 	 
 	public IField PROPERTIES = null;
+	 
+	public IField FORCE = null;
 	 
 
 	@Override
