@@ -5616,13 +5616,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST,
 					protocolFactory, serviceBinding, messageTypeRichiesta, hiddenMessageType));
 			
-			if(tipoOperazione.equals(TipoOperazione.CHANGE)  && !this.isModalitaStandard()) {
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)) {
 				de = new DataElement();
 				de.setValue(idRisorsa.intValue()+"");
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID);
 				dati.addElement(de);
-				
+			}
+			
+			if(tipoOperazione.equals(TipoOperazione.CHANGE)  && !this.isModalitaStandard()) {
 				if(contaListe) {
 					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(Integer.parseInt(idAccordo));
 					for (int i = 0; i < as.sizeResourceList(); i++) {
