@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -177,7 +176,7 @@ public final class AuthorisationFilter implements Filter {
 	
 	private String getRedirectToMessageServlet() {
 		return new Parameter("", Costanti.SERVLET_NAME_MESSAGE_PAGE,
-				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_CONSOLE_RIPRISTINATA),
+				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,Costanti.LABEL_CONSOLE_RIPRISTINATA),
 				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
 				).getValue();
 	}

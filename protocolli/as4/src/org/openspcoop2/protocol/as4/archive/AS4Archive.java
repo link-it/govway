@@ -31,6 +31,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
@@ -86,6 +87,10 @@ public class AS4Archive extends BasicArchive {
 			if(ServiceBinding.SOAP.equals(accordoServizioParteComune.getServiceBinding())) {
 				
 				for (Azione azione : accordoServizioParteComune.getAzioneList()) {
+					
+					// forzo utilizzo oneway (unico supportato)
+					azione.setProfiloCollaborazione(ProfiloCollaborazione.ONEWAY);
+					
 					boolean found = false;
 					for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
 						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
@@ -104,7 +109,15 @@ public class AS4Archive extends BasicArchive {
 					}
 				}
 				for (PortType pt : accordoServizioParteComune.getPortTypeList()) {
+					
+					// forzo utilizzo oneway (unico supportato)
+					pt.setProfiloCollaborazione(ProfiloCollaborazione.ONEWAY);
+					
 					for (Operation azione : pt.getAzioneList()) {
+						
+						// forzo utilizzo oneway (unico supportato)
+						azione.setProfiloCollaborazione(ProfiloCollaborazione.ONEWAY);
+						
 						boolean found = false;
 						for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
 							if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
