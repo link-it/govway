@@ -33,7 +33,8 @@ public class Costanti {
 
 	/** SISTEMA NON DISPONIBILE */
 	
-	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.<BR/>Si prega di riprovare pi&ugrave; tardi.";
+	//public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.<BR/>Si prega di riprovare pi&ugrave; tardi.";
+	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE = "Il sistema &egrave; momentaneamente indisponibile.";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_PRE = "Torna alla ";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME = "home";
 	public static final String MESSAGGIO_SISTEMA_NON_DISPONIBILE_BACK_HOME_POST = ".";

@@ -320,40 +320,6 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				pd.setMessage(msg);
 			}
 
-			//				con.commit();
-			//				con.setAutoCommit(true);
-			//			} catch (SQLException ex) {
-			//				// java.util.Date now = new java.util.Date();
-			//				try {
-			//					con.rollback();
-			//				} catch (SQLException exrool) {
-			//				}
-			//				// Chiudo la connessione al DB
-			//				dbM.releaseConnection(con);
-			//				pd.setMessage("Il sistema &egrave; momentaneamente indisponibile.<BR>Si prega di riprovare pi&ugrave; tardi");
-			//				session.setAttribute("GeneralData", gd);
-			//				session.setAttribute("PageData", pd);
-			//				// Remove the Form Bean - don't need to carry values forward
-			//				// con jboss 4.2.1 produce errore:
-			//				// request.removeAttribute(mapping.getAttribute());
-			//				return (mapping.findForward("Error"));
-			//			}
-
-			// Preparo la lista
-			// boolean ersql = ch.serviziList();
-			// if (ersql) {
-			// //Chiudo la connessione al DB
-			// dbM.releaseConnection(con);
-			// pd.setMessage("Il sistema &egrave; momentaneamente
-			// indisponibile.<BR>Si prega di riprovare pi&ugrave; tardi");
-			// session.setAttribute("GeneralData", gd);
-			// session.setAttribute("PageData", pd);
-			// // Remove the Form Bean - don't need to carry values forward
-			// //con jboss 4.2.1 produce errore:
-			// request.removeAttribute(mapping.getAttribute());
-			// return (mapping.findForward("Error"));
-			// }
-
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();

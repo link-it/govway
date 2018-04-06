@@ -213,37 +213,6 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
-			// Dovrebbe essere gia invocato dalla performUpdate sopra
-//			if (callBC) {
-//				// Chiedo la setDati
-//				if (ch.smista()) {
-//					OperazioneDaSmistare opRegistroServizi = new OperazioneDaSmistare();
-//					opRegistroServizi.setOperazione(TipiOperazione.MODIFICA);
-//					opRegistroServizi.setIDTable(idAccordo);
-//					opRegistroServizi.setSuperuser(userLogin);
-//					opRegistroServizi.setOggetto("accordo");
-//					opRegistroServizi.addParameter(OperationsParameter.NOME_ACCORDO, nomeacc);
-//					BackendConnector bc = new BackendConnector();
-//					boolean bcOk = bc.setDati(opRegistroServizi);
-//					if (!bcOk) {
-//						// java.util.Date now = new java.util.Date();
-//						try {
-//							con.rollback();
-//						} catch (SQLException exrool) {
-//						}
-//						// Chiudo la connessione al DB
-//						dbM.releaseConnection(con);
-//						pd.setMessage("Si e' verificato un errore durante la setDati.<BR>Si prega di riprovare pi&ugrave; tardi");
-//						session.setAttribute("GeneralData", gd);
-//						session.setAttribute("PageData", pd);
-//						// Remove the Form Bean - don't need to carry values
-//						// forward
-//						// con jboss 4.2.1 produce errore:
-//						// request.removeAttribute(mapping.getAttribute());
-//						return (mapping.findForward("Error"));
-//					}
-//				}
-//			}
 
 			// imposto msg di errore se presente
 			if(errori.length()>0)
