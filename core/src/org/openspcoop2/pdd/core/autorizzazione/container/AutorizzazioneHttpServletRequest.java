@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.WrappedHttpServletRequest;
+import org.openspcoop2.utils.xacml.XacmlRequest;
 
 
 /**
@@ -57,6 +58,10 @@ public class AutorizzazioneHttpServletRequest extends WrappedHttpServletRequest 
 	@Override
 	public boolean isUserInRole(String role) {
 		return this.authEngine.isUserInRole(role);
+	}
+	
+	public void fillXacmlRequest(XacmlRequest request) {
+		this.authEngine.fillXacmlRequest(request);
 	}
 }
 

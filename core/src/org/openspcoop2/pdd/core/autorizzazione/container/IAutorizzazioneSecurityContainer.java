@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.xacml.XacmlRequest;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione tramite container
@@ -42,6 +43,8 @@ public interface IAutorizzazioneSecurityContainer  {
 	public String getUserPrincipal();
 	
 	public boolean isUserInRole(String role);
+	
+	public void fillXacmlRequest(XacmlRequest request);
 
 	
 }

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.apache.xml.security.utils.RFC2253Parser;
 
@@ -687,6 +688,24 @@ public class Utilities {
 		}
 		counterFileNameWithCharNotPermitted++;
 		return counterFileNameWithCharNotPermitted;
+	}
+	
+	
+	public static String camelCase(String value) throws UtilsException{
+		char [] delimiters = new char[] {'.' , '_' , '-' , ':' , ';' , ',' , ' ' };
+		return camelCase(delimiters, value);
+	}
+	public static String camelCase(char [] delimiters, String value) throws UtilsException{
+				
+		String s = WordUtils.capitalizeFully(value, delimiters);
+		for (int i = 0; i < delimiters.length; i++) {
+			String c = delimiters[i]+"";
+			while(s.contains(c)) {
+				s = s.replace(c, "");
+			}
+		}
+		
+		return s;
 	}
 	
 	

@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -312,25 +313,29 @@ public class XACMLPolicyUtilities {
 		List<String> roles = new ArrayList<>();
 		if(checkRuoloRegistro){
 			if(datiPD!=null){
-				if(datiPD.getServizioApplicativo()==null){
+				if(datiPD.getServizioApplicativo()==null && !checkRuoloEsterno){
 					throw new AutorizzazioneException("Identità servizio applicativo non disponibile; tale informazione è richiesta dall'autorizzazione");
 				}
-				if(datiPD.getServizioApplicativo().getInvocazionePorta()!=null && 
-						datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli()!=null &&
-						datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().sizeRuoloList()>0){
-					for (int i = 0; i < datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
-						roles.add(datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().getRuolo(i).getNome());
+				if(datiPD.getServizioApplicativo()!=null) {
+					if(datiPD.getServizioApplicativo().getInvocazionePorta()!=null && 
+							datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli()!=null &&
+							datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
+							roles.add(datiPD.getServizioApplicativo().getInvocazionePorta().getRuoli().getRuolo(i).getNome());
+						}
 					}
 				}
 			}
 			else if(datiPA!=null){
-				if(datiPA.getSoggettoFruitore()==null){
+				if(datiPA.getSoggettoFruitore()==null && !checkRuoloEsterno){
 					throw new AutorizzazioneException("Identità soggetto fruitore non disponibile; tale informazione è richiesta dall'autorizzazione");
 				}
-				if(datiPA.getSoggettoFruitore().getRuoli()!=null &&
-						datiPA.getSoggettoFruitore().getRuoli().sizeRuoloList()>0){
-					for (int i = 0; i < datiPA.getSoggettoFruitore().getRuoli().sizeRuoloList(); i++) {
-						roles.add(datiPA.getSoggettoFruitore().getRuoli().getRuolo(i).getNome());
+				if(datiPA.getSoggettoFruitore()!=null) {
+					if(datiPA.getSoggettoFruitore().getRuoli()!=null &&
+							datiPA.getSoggettoFruitore().getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < datiPA.getSoggettoFruitore().getRuoli().sizeRuoloList(); i++) {
+							roles.add(datiPA.getSoggettoFruitore().getRuoli().getRuolo(i).getNome());
+						}
 					}
 				}
 			}
@@ -366,7 +371,9 @@ public class XACMLPolicyUtilities {
 				}
 			}
 			catch(DriverRegistroServiziNotFound notFound){
-				throw new AutorizzazioneException("Non sono stati registrati sulla PdD ruoli utilizzabili con un'autorizzazione esterna");
+				if(!checkRuoloRegistro) {
+					throw new AutorizzazioneException("Non sono stati registrati sulla PdD ruoli utilizzabili con un'autorizzazione esterna");
+				}
 			}
 			catch(Exception e){
 				throw new AutorizzazioneException("E' avvenuto un errore durante la ricerca dei ruoli: "+e.getMessage(),e);
@@ -414,6 +421,12 @@ public class XACMLPolicyUtilities {
 		
 		xacmlRequest.addResourceAttribute(CachedMapBasedSimplePolicyRepository.RESOURCE_ATTRIBUTE_ID_TO_MATCH, policyKey);
 		
+		
+		// Fill XAML
+		if(httpServletRequest!=null && httpServletRequest instanceof AutorizzazioneHttpServletRequest) {
+			AutorizzazioneHttpServletRequest authHttpServletRequest = (AutorizzazioneHttpServletRequest) httpServletRequest;
+			authHttpServletRequest.fillXacmlRequest(xacmlRequest);
+		}
 		
 		return xacmlRequest;
 
