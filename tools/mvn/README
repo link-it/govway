@@ -1,4 +1,4 @@
-# Prerequisito: 
+# Prerequisito:  
 cd tools/web_generic_project; ant clean build
 cd tools/web_generic_project/impl/jsf1/; ant clean build
 
