@@ -38,7 +38,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/web/lib/mvc/properties}conditions" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="values" type="{http://www.openspcoop2.org/web/lib/mvc/properties}itemValues" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="property" type="{http://www.openspcoop2.org/web/lib/mvc/properties}property" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="property" type="{http://www.openspcoop2.org/web/lib/mvc/properties}property" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/web/lib/mvc/properties}itemType" use="required"/>
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
@@ -221,7 +221,7 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlElement(name="values",required=false,nillable=false)
   protected ItemValues values;
 
-  @XmlElement(name="property",required=false,nillable=false)
+  @XmlElement(name="property",required=true,nillable=false)
   protected Property property;
 
   @javax.xml.bind.annotation.XmlTransient

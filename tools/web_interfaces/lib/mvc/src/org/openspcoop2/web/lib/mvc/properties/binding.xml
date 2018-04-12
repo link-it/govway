@@ -32,7 +32,7 @@
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
     <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
     <structure field="values" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.ItemValues"/>
-    <structure field="property" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
+    <structure field="property" usage="required" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
     <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="label" field="label" usage="optional" style="attribute"/>
@@ -50,7 +50,7 @@
     <namespace uri="http://www.openspcoop2.org/web/lib/mvc/properties" default="elements"/>
     <structure name="conditions" field="conditions" usage="optional" map-as="_Conditions_Type"/>
     <structure field="values" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.ItemValues"/>
-    <structure field="property" usage="optional" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
+    <structure field="property" usage="required" map-as="org.openspcoop2.web.lib.mvc.properties.Property"/>
     <value name="type" field="type" usage="required" enum-value-method="toString" style="attribute"/>
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="label" field="label" usage="optional" style="attribute"/>
