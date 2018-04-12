@@ -150,6 +150,12 @@ public class SondaBatch extends Sonda {
 		}
 	}
 
+	
+	//retrocompatibilita
+	public StatoSonda aggiornaStatoSonda(boolean esito_batch, Date data_ultimo_batch, String descrizioneErrore, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
+		return this.aggiornaStatoSonda(esito_batch, null, data_ultimo_batch, descrizioneErrore, connection, tipoDatabase);
+	}
+	
 	/**
 	 * @param esito_batch true se l'esito e' positivo, false altrimenti
 	 * @param data_ultimo_batch ultima data di esecuzione del batch 

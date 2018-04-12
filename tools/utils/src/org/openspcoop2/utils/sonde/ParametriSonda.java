@@ -64,13 +64,19 @@ public class ParametriSonda {
 					if(nameValue.length != 2){
 						System.err.println("Dato Check ["+datoReale+"] non nel formato valido nome"+SEPARATOR+"valore");
 					} else {
-						
-						String key = nameValue[0].trim();
-						String value = nameValue[1].trim();
-						this.datiCheck.put(new String(Base64.decode(key)), new String(Base64.decode(value)));
+						try {
+							String key = nameValue[0].trim();
+							String value = nameValue[1].trim();
+							byte[] decodedKey = Base64.decode(key);
+							byte[] decodedValue = Base64.decode(value);
+							this.datiCheck.put(new String(decodedKey), new String(decodedValue));
+						} catch(Throwable t) {
+							System.err.println("Errore durante il decoding del parametro ["+datoReale+"]: " + t.getMessage());	
+						}
 					}
 					
 				} else {
+					System.out.println("Dato: " + dato);
 					String[] nameValue = dato.split(SEPARATOR); 
 					if(nameValue.length != 2){
 						System.err.println("Dato Check ["+dato+"] non nel formato valido nome"+SEPARATOR+"valore");

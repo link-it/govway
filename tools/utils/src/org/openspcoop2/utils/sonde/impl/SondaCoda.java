@@ -99,6 +99,11 @@ public class SondaCoda extends Sonda {
 		return statoSonda;
 	}
 
+	//retrocompatibilita
+	public StatoSonda aggiornaStatoSonda(long dimensioneCoda, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
+		return this.aggiornaStatoSonda(dimensioneCoda, null, connection, tipoDatabase);
+	}
+	
 	/**
 	 * @param dimensioneCoda dimensione attuale della coda
 	 * @param connection connessione per il DB
