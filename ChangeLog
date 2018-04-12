@@ -1,3 +1,10 @@
+2018-04-12  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-706
+	Aggiunta il supporto per i metodi PATCH, LINK e UNLINK (https://tools.ietf.org/html/rfc2068#section-19.6.1)
+	Il connettore HTTP supporta tale metodo solo utilizzando una versione di java 1.8 o superiore.
+
 2018-04-05  Giovanni Bussu <bussu@link.it>
 
 	* [Utils]

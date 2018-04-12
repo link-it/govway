@@ -5840,47 +5840,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		HttpMethod[] httpMethods = HttpMethod.values();
 		String [] values = new String[httpMethods.length+1];
 		String [] labels = new String[httpMethods.length+1];
-		
+
 		labels[0] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 		values[0] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 		
 		for (int i = 0; i < httpMethods.length; i++) {
 			HttpMethod method = httpMethods[i];
-			switch (method) {
-			case DELETE:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_DELETE;
-				break;
-			case GET:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_GET;
-				break;
-			case HEAD:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_HEAD;
-				break;
-			case OPTIONS:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_OPTIONS;
-				break;
-			case PATCH:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PATCH;
-				break;
-			case POST:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_POST;
-				break;
-			case PUT:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_PUT;
-				break;
-			case TRACE:
-			default:
-				labels[i+1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
-				values[i+1] = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_TRACE;
-				break;
-			}
+			labels[i+1] = method.name();
+			values[i+1] = method.name();
 		}
 		
 		de.setLabels(labels);

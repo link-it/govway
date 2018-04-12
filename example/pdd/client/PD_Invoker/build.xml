@@ -5,6 +5,7 @@
     </description>
 
 	<property name="required_lib" value="../../../../lib/" />
+	<property name="utils_dist" value="../../../../tools/utils/dist/" />
 
 
 	<!-- Argomento passato al Client, durante l'esecuzione -->
@@ -52,11 +53,13 @@
 
    <!-- Classpath -->
    <path id="classpath_compile">
-       <fileset dir="${required_lib}"/>
+	<fileset dir="${required_lib}"/>
+	<fileset dir="${utils_dist}"/>
    </path>
    <path id="classpath_run">
 		<fileset dir="${required_lib}" includes="axis14/axis-1.4.jar"/>
 		<fileset dir="${required_lib}" includes="shared/soap.jar"/>
+		<fileset dir="${utils_dist}"/>
    </path>
 
 

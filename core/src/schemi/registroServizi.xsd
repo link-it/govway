@@ -475,6 +475,8 @@
 			<xsd:enumeration value="HEAD"/>
 			<xsd:enumeration value="TRACE"/>
 			<xsd:enumeration value="PATCH"/>
+			<xsd:enumeration value="LINK"/>
+			<xsd:enumeration value="UNLINK"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="FormatoSpecifica">

@@ -30,6 +30,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+
 
 
 /**
@@ -116,5 +118,48 @@ public class ServerOpenSPCoop2APIEchoService extends ServerCore{
 	protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		this.dispatch(req, resp);
+	}
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpRequestMethod m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		switch (m) {
+		
+		// Standard
+		
+		case DELETE:
+			this.doDelete(req, resp);
+			break;
+		case GET:
+			this.doGet(req, resp);
+			break;
+		case HEAD:
+			this.doHead(req, resp);
+			break;
+		case OPTIONS:
+			this.doOptions(req, resp);
+			break;
+		case POST:
+			this.doPost(req, resp);
+			break;
+		case PUT:
+			this.doPut(req, resp);
+			break;
+		case TRACE:
+			this.doTrace(req, resp);
+			break;
+			
+		// Additionals
+		case PATCH:
+		case LINK:
+		case UNLINK:
+			dispatch(req, resp);
+			break;
+			
+		default:
+			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			break;
+		}
 	}
 }

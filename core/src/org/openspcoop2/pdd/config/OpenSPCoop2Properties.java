@@ -7540,6 +7540,73 @@ public class OpenSPCoop2Properties {
 	
 	/* ***************** Servizi HTTP  ************* */
 	
+	private static Boolean serviceRequestHttpMethodPatchEnabled = null;
+	public boolean isServiceRequestHttpMethodPatchEnabled() {	
+		if(OpenSPCoop2Properties.serviceRequestHttpMethodPatchEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.PATCH");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.serviceRequestHttpMethodPatchEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.serviceRequestHttpMethodPatchEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.serviceRequestHttpMethodPatchEnabled = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.serviceRequestHttpMethodPatchEnabled;
+	}
+	
+	private static Boolean serviceRequestHttpMethodLinkEnabled = null;
+	public boolean isServiceRequestHttpMethodLinkEnabled() {	
+		if(OpenSPCoop2Properties.serviceRequestHttpMethodLinkEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.LINK");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.serviceRequestHttpMethodLinkEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.serviceRequestHttpMethodLinkEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.serviceRequestHttpMethodLinkEnabled = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.serviceRequestHttpMethodLinkEnabled;
+	}
+	
+	private static Boolean serviceRequestHttpMethodUnlinkEnabled = null;
+	public boolean isServiceRequestHttpMethodUnlinkEnabled() {	
+		if(OpenSPCoop2Properties.serviceRequestHttpMethodUnlinkEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.services.request.method.UNLINK");
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.serviceRequestHttpMethodUnlinkEnabled = Boolean.parseBoolean(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.serviceRequestHttpMethodUnlinkEnabled = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage());
+				OpenSPCoop2Properties.serviceRequestHttpMethodUnlinkEnabled = true;
+			}  
+		}
+
+		return OpenSPCoop2Properties.serviceRequestHttpMethodUnlinkEnabled;
+	}
+	
+	
 	private static TransferLengthModes readTransferLengthModes_ricezioneContenutiApplicativi = null;
 	public TransferLengthModes getTransferLengthModes_ricezioneContenutiApplicativi() {	
 		if(OpenSPCoop2Properties.readTransferLengthModes_ricezioneContenutiApplicativi==null){

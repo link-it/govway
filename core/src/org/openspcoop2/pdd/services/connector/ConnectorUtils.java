@@ -182,6 +182,12 @@ public class ConnectorUtils {
 		case PATCH:
 			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_PATCH_UNSUPPORTED);
 			break;
+		case LINK:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_LINK_UNSUPPORTED);
+			break;
+		case UNLINK:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_UNLINK_UNSUPPORTED);
+			break;
 		}
 		return bf.toString();
 	}

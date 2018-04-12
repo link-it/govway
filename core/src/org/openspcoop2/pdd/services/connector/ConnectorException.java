@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.services.connector;
 
+import java.io.IOException;
+
 import org.openspcoop2.utils.Utilities;
 
 /**	
@@ -57,6 +59,24 @@ public class ConnectorException extends Exception {
 			 if(Utilities.existsInnerException(this, java.net.SocketException.class)){
 				 Throwable t = Utilities.getInnerException(this, java.net.SocketException.class);
 				 if(t!=null){
+					 String msg = t.getMessage();
+					 if(msg!=null && !"".equals(msg) && !"null".equals(msg)){
+						 return msg;
+					 }
+				 }
+			 }
+			 else if(Utilities.existsInnerException(this, java.nio.channels.ClosedChannelException.class)){
+				 Throwable t = Utilities.getInnerException(this, java.nio.channels.ClosedChannelException.class);
+				 if(t!=null){
+					 String msg = t.getMessage();
+					 if(msg!=null && !"".equals(msg) && !"null".equals(msg)){
+						 return msg;
+					 }
+				 }
+			 }
+			 else {
+				 Throwable t = Utilities.getLastInnerException(this);
+				 if(t!=null && t instanceof IOException) {
 					 String msg = t.getMessage();
 					 if(msg!=null && !"".equals(msg) && !"null".equals(msg)){
 						 return msg;

@@ -280,7 +280,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
 				}
 				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
-				if(httpEntity instanceof HttpEntityEnclosingRequestBase){
+				if(httpRequest instanceof HttpEntityEnclosingRequestBase){
 					((HttpEntityEnclosingRequestBase)httpRequest).setEntity(httpEntity);
 				}
 				else{

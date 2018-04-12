@@ -2,6 +2,12 @@
 openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PD/
 #openspcoop2.portaDiDominio=http://localhost:8080/openspcoop2/PDtoSOAP/
 
+# HTTP Method
+# PATCH/LINK/UNLINK funziona solo con java 8
+# Con java7 si ottiene l'errore:
+# Caused by: java.net.ProtocolException: HTTP method PATCH doesn't support output
+#    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java)
+openspcoop2.httpMethod = POST
 
 # ContentType SOAP 1.1
 openspcoop2.contentType = text/xml; charset=utf-8

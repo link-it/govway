@@ -300,7 +300,7 @@ public class CostantiTestSuite {
 	
 		
 	/** Tipo Soggetto */
-	public static final String PROXY_TIPO_SOGGETTO="API";
+	public static final String PROXY_TIPO_SOGGETTO="gw";
 	
 	/** IDSoggetto Anonimo*/
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = null; // volutamente null
@@ -442,7 +442,7 @@ public class CostantiTestSuite {
 	
 	
 	/** Tipo Servizio */
-	public static final String SOAP_TIPO_SERVIZIO="SOAP";
+	public static final String SOAP_TIPO_SERVIZIO="gw";
 	
 	/** Nome Servizio OneWay */
 	public static final String SOAP_NOME_SERVIZIO_ONEWAY="Oneway";
@@ -462,7 +462,7 @@ public class CostantiTestSuite {
     
     
 	/** Tipo Servizio */
-	public static final String REST_TIPO_SERVIZIO="REST";
+	public static final String REST_TIPO_SERVIZIO="gw";
     
     
 	/** ENTITA SPCOOP: Nome Servizio MTOM SOAP11  */

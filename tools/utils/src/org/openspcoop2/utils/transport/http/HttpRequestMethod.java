@@ -31,6 +31,58 @@ import java.io.Serializable;
  */
 public enum HttpRequestMethod implements Serializable {
 
-	GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE;
+	// STANDARD
+	GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, 
 	
+	// ADDITIONAL 
+	// Servlet: Method PATCH is not defined in RFC 2068 and is not supported by the Servlet API
+	// https://tools.ietf.org/html/rfc2068#section-19.6.1
+	PATCH, LINK, UNLINK;
+	
+	// https://tools.ietf.org/html/rfc2068#section-9
+	public boolean isStandardMethod() {
+		if(HttpRequestMethod.GET.name().equals(this.name())
+				||
+			HttpRequestMethod.HEAD.name().equals(this.name())
+			||
+			HttpRequestMethod.POST.name().equals(this.name())
+			||
+			HttpRequestMethod.PUT.name().equals(this.name())
+			||
+			HttpRequestMethod.DELETE.name().equals(this.name())
+			||
+			HttpRequestMethod.OPTIONS.name().equals(this.name())
+			||
+			HttpRequestMethod.TRACE.name().equals(this.name())
+				){
+			return true;
+		}
+		return false;
+	}
+	
+	// https://tools.ietf.org/html/rfc2068#section-19.6.1
+	public boolean isAdditionalMethod() {
+		if(HttpRequestMethod.PATCH.name().equals(this.name())
+				||
+			HttpRequestMethod.LINK.name().equals(this.name())
+			||
+			HttpRequestMethod.UNLINK.name().equals(this.name())
+				){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean equals(HttpRequestMethod object){
+		if(object==null)
+			return false;
+		if(object.name()==null)
+			return false;
+		return object.name().equals(this.name());	
+	}
+	public boolean equals(String object){
+		if(object==null)
+			return false;
+		return object.equals(this.name());	
+	}
 }

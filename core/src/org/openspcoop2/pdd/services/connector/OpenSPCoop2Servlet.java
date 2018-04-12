@@ -51,6 +51,70 @@ import org.slf4j.Logger;
 public class OpenSPCoop2Servlet extends HttpServlet {
 
 	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpRequestMethod m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		switch (m) {
+		
+		// Standard
+		
+		case DELETE:
+			this.doDelete(req, resp);
+			break;
+		case GET:
+			this.doGet(req, resp);
+			break;
+		case HEAD:
+			this.doHead(req, resp);
+			break;
+		case OPTIONS:
+			this.doOptions(req, resp);
+			break;
+		case POST:
+			this.doPost(req, resp);
+			break;
+		case PUT:
+			this.doPut(req, resp);
+			break;
+		case TRACE:
+			this.doTrace(req, resp);
+			break;
+			
+		// Additionals
+		case PATCH:
+		case LINK:
+		case UNLINK:
+			boolean enabled = true;
+			OpenSPCoop2Properties op2Properties = null;
+			try {
+				op2Properties = OpenSPCoop2Properties.getInstance();
+			}catch(Throwable t) { 
+				//come default si lasciano abilitati
+			}
+			if(HttpRequestMethod.PATCH.equals(m)) {
+				enabled = op2Properties.isServiceRequestHttpMethodPatchEnabled();
+			}
+			else if(HttpRequestMethod.LINK.equals(m)) {
+				enabled = op2Properties.isServiceRequestHttpMethodLinkEnabled();
+			}
+			else if(HttpRequestMethod.UNLINK.equals(m)) {
+				enabled = op2Properties.isServiceRequestHttpMethodUnlinkEnabled();
+			}
+			if(enabled) {
+				dispatch(req, resp, m);
+			}
+			else {
+				super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			}
+			break;
+			
+		default:
+			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			break;
+		}
+	}
+
+	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		dispatch(req, resp, HttpRequestMethod.DELETE);

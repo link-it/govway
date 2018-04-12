@@ -57,6 +57,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 
 
@@ -770,12 +771,90 @@ public class ServletTestService extends HttpServlet {
 		}
 	}
 
+	// La doGet viene implementata normalmente da chi la estende
+	
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		doGet(req,res);
 	}
 
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doGet(req,res);
+	}
+
+	@Override
+	protected void doHead(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doGet(req,res);
+	}
+
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doGet(req,res);
+	}
+
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doGet(req,res);
+	}
+
+
+	@Override
+	protected void doTrace(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doGet(req,res);
+	}
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		HttpRequestMethod m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
+		switch (m) {
+		
+		// Standard
+		
+		case DELETE:
+			this.doDelete(req, resp);
+			break;
+		case GET:
+			this.doGet(req, resp);
+			break;
+		case HEAD:
+			this.doHead(req, resp);
+			break;
+		case OPTIONS:
+			this.doOptions(req, resp);
+			break;
+		case POST:
+			this.doPost(req, resp);
+			break;
+		case PUT:
+			this.doPut(req, resp);
+			break;
+		case TRACE:
+			this.doTrace(req, resp);
+			break;
+			
+		// Additionals
+		case PATCH:
+		case LINK:
+		case UNLINK:
+			doGet(req, resp);
+			break;
+			
+		default:
+			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			break;
+		}
+	}
 	
 	private byte[] replace(byte[]contenuto,Map<String,String> map){
 		String s = new String(contenuto);

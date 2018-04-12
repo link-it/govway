@@ -8,7 +8,7 @@
 
         <accordo-servizio-parte-comune nome="EsempioREST" profilo-collaborazione="sincrono" 
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
-                    <soggetto-referente tipo="API" nome="MinisteroReferente"/>
+                    <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
 		<resource nome="invoke" />
 		<resource nome="invokeBasicPdD" />
 		<resource nome="invokeBasicPdD_credenzialiNonBruciate" />
@@ -22,7 +22,7 @@
 
 	<accordo-servizio-parte-comune nome="EsempioASParteComune" profilo-collaborazione="oneway" 
 		utilizzo-senza-azione="true" versione="1" service-binding="soap">
-                    <soggetto-referente tipo="API" nome="MinisteroReferente"/>
+                    <soggetto-referente tipo="gw" nome="MinisteroReferente"/>
                     <port-type nome="Oneway" profilo-collaborazione="oneway">
                         <azione nome="notifica"/>
                         <azione nome="notificaLocalForward"/>
@@ -48,7 +48,7 @@
 			     wsdl-concettuale="/etc/openspcoop2/mtom/concettuale.wsdl"
 			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl"
 			     service-binding="soap">
-		<soggetto-referente tipo="API" nome="MinisteroErogatore" />
+		<soggetto-referente tipo="gw" nome="MinisteroErogatore" />
 		<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
 		   <azione nome="echo" />
 		   <azione nome="packageUnpackage" />
@@ -97,7 +97,7 @@
 
 	<!-- Configurazione REST -->
 
-	<soggetto tipo="API" nome="TestPerCredenzialiBruciateBasic" porta-dominio="PdDTestPerCredenzialiBruciateBasic">
+	<soggetto tipo="gw" nome="TestPerCredenzialiBruciateBasic" porta-dominio="PdDTestPerCredenzialiBruciateBasic">
 
 		<connettore tipo="disabilitato" nome="CNT_API_TestPerCredenzialiBruciateBasic"/>
 
@@ -107,7 +107,7 @@
 
 	<!-- Configurazione SOAP -->
 
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic" porta-dominio="PdDEsempioSoggettoTrasparenteBasic">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic" porta-dominio="PdDEsempioSoggettoTrasparenteBasic">
 
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteBasic"/>
 
@@ -121,7 +121,7 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2" porta-dominio="PdDEsempioSoggettoTrasparenteBasic2">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic2" porta-dominio="PdDEsempioSoggettoTrasparenteBasic2">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteBasic2"/>
 
@@ -129,7 +129,7 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic3" porta-dominio="PdDEsempioSoggettoTrasparenteBasic3">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic3" porta-dominio="PdDEsempioSoggettoTrasparenteBasic3">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteBasic3"/>
 
@@ -141,7 +141,7 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteSsl" porta-dominio="PdDEsempioSoggettoTrasparenteSsl">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteSsl" porta-dominio="PdDEsempioSoggettoTrasparenteSsl">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteSsl"/>
 
@@ -149,7 +149,7 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteSsl2" porta-dominio="PdDEsempioSoggettoTrasparenteSsl2">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteSsl2" porta-dominio="PdDEsempioSoggettoTrasparenteSsl2">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteSsl2"/>
 
@@ -160,7 +160,7 @@
 
 	<!-- Utente configurato sul container con password 'Op3nSPC@@p2' e ruoli: 
 		'role1AllAllOpenSPCoopTest', 'role2ExtAllOpenSPCoopTest' e 'role4AllPA_OpenSPCoopTest' -->
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparentePrincipal"/>
 
@@ -176,7 +176,7 @@
 
 	<!-- Utente configurato sul container con password 'Op3nSPC@@p2' e ruoli: 
 		'role1AllAllOpenSPCoopTest' e 'role9ExtPA_OpenSPCoopTest' -->
-	<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal2">
+	<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal2" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal2">
     
 		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparentePrincipal2"/>
 
@@ -191,7 +191,7 @@
 
 
 
-	<soggetto tipo="API" nome="applicativoComunePisa">
+	<soggetto tipo="gw" nome="applicativoComunePisa">
     
 		<connettore tipo="disabilitato" nome="CNT_API_applicativoComunePisa"/>
 
@@ -199,13 +199,13 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroReferente">
+	<soggetto tipo="gw" nome="MinisteroReferente">
 
     		<connettore tipo="disabilitato" nome="CNT_API_MinisteroReferente"/>
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroFruitore">
+	<soggetto tipo="gw" nome="MinisteroFruitore">
     
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroFruitore"/>
 
@@ -213,46 +213,50 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatore">
+	<soggetto tipo="gw" nome="MinisteroErogatore">
 		
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroErogatore"/>
 
 
 		<!-- **** Configurazione REST **** -->
 
-                <accordo-servizio-parte-specifica tipo="REST" nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1">
+                <accordo-servizio-parte-specifica tipo="gw" nome="API" versione="1" accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioREST:1">
 		        <configurazione-servizio>
-		                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
+		                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_REST/API">
 		                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
 		                </connettore>
 
-				<configurazione-azione nome="invokeBasicPdD">
+				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeBasicPdD">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
+				    <azione>invokeBasicPdD</azione>
 			     	</configurazione-azione>
-				<configurazione-azione nome="invokeBasicPdD_credenzialiNonBruciate">
+				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeBasicPdD_credenzialiNonBruciate">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
+				    <azione>invokeBasicPdD_credenzialiNonBruciate</azione>
 			     	</configurazione-azione>
-				<configurazione-azione nome="invokeWithBasicAuth">
+				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeWithBasicAuth">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678"
 				        />
 				    </connettore>
+				    <azione>invokeWithBasicAuth</azione>
 			     	</configurazione-azione>
-				<configurazione-azione nome="invokeWithBasicAuthDomain">
+				<configurazione-azione>
 				    <connettore tipo="http" nome="invokeWithBasicAuthDomain">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente&amp;basicUsername=testsuiteOp2&amp;basicPassword=12345678&amp;basicDomain=TestSuiteOpenSPCoop2"
 				        />
 				    </connettore>
+				    <azione>invokeWithBasicAuthDomain</azione>
 			     	</configurazione-azione>
 		        </configurazione-servizio>
                 </accordo-servizio-parte-specifica>
@@ -260,27 +264,27 @@
 
 		<!-- **** Configurazione SOAP **** -->
 
-		<accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" 
-			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+		<accordo-servizio-parte-specifica tipo="gw" nome="Oneway" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
 			<configurazione-servizio>
-			        <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
+			        <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Oneway">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
 			        </connettore>
 			</configurazione-servizio>
 		</accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" 
-			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                <accordo-servizio-parte-specifica tipo="gw" nome="Sincrono" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
-                                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
+                                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
 			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/testfiles/OpenSPCoop2TestSuitePolicy.xml"/>
 		</accordo-servizio-parte-specifica>
 
-		<accordo-servizio-parte-specifica tipo="SOAP" nome="MTOMServiceExampleSOAP11" versione="1" 
-			 accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
+		<accordo-servizio-parte-specifica tipo="gw" nome="MTOMServiceExampleSOAP11" versione="1" 
+			 accordo-servizio-parte-comune="gw/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 			 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
 			 wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap11.wsdl">
 			<configurazione-servizio>
@@ -288,18 +292,19 @@
 		                 <property nome="location" valore="http://localhost:65000/MTOMExample/soap11" />
 		             </connettore>
 
-			     <configurazione-azione nome="unpackagePackage">
+			     <configurazione-azione>
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
+				    <azione>unpackagePackage</azione>
 			     </configurazione-azione>
 			</configurazione-servizio> 
 		</accordo-servizio-parte-specifica>
 
-		<accordo-servizio-parte-specifica tipo="SOAP" nome="MTOMServiceExampleSOAP12" versione="1" 
-		         accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
+		<accordo-servizio-parte-specifica tipo="gw" nome="MTOMServiceExampleSOAP12" versione="1" 
+		         accordo-servizio-parte-comune="gw/MinisteroErogatore:AS_MTOMExample:1" port-type="MTOMServiceExample"
 		         descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
 		         wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap12.wsdl">
 			<configurazione-servizio>
@@ -307,78 +312,79 @@
 		                 <property nome="location" valore="http://localhost:65001/MTOMExample/soap12" />
 		             </connettore>
 
-			     <configurazione-azione nome="unpackagePackage">
+			     <configurazione-azione>
 				    <connettore tipo="http" nome="unpackagePackage">
 				        <property nome="location"
 				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
 				        />
 				    </connettore>
+				    <azione>unpackagePackage</azione>
 			     </configurazione-azione>
 			</configurazione-servizio>
 		</accordo-servizio-parte-specifica>
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatoreEsterno">
+	<soggetto tipo="gw" nome="MinisteroErogatoreEsterno">
     
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroErogatoreEsterno"/>
 
 
 		<!-- **** Configurazione SOAP **** -->
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" 
-			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+                <accordo-servizio-parte-specifica tipo="gw" nome="Oneway" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
                         <configurazione-servizio>
-                                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
+                                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Oneway">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-			<fruitore tipo="API" nome="ClientSoapFault11">
-			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
+			<fruitore tipo="gw" nome="ClientSoapFault11">
+			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
 			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
-			<fruitore tipo="API" nome="ClientSoapFault11500">
-			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
+			<fruitore tipo="gw" nome="ClientSoapFault11500">
+			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
 			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
-			<fruitore tipo="API" nome="ClientSoapFault12">
-			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
+			<fruitore tipo="gw" nome="ClientSoapFault12">
+			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
 			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
-			<fruitore tipo="API" nome="ClientSoapFault12500">
-			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
+			<fruitore tipo="gw" nome="ClientSoapFault12500">
+			    <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
 			        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
 			    </connettore>
 			</fruitore>
                 </accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" 
-			accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                <accordo-servizio-parte-specifica tipo="gw" nome="Sincrono" versione="1" 
+			accordo-servizio-parte-comune="gw/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
                         <configurazione-servizio>
-                                <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
+                                <connettore tipo="http" nome="CNT_gw/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-                        <fruitore tipo="API" nome="ClientSoapFault11">
-                            <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
+                        <fruitore tipo="gw" nome="ClientSoapFault11">
+                            <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
                                 <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
-                        <fruitore tipo="API" nome="ClientSoapFault11500">
-                            <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
+                        <fruitore tipo="gw" nome="ClientSoapFault11500">
+                            <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault11500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
                                 <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
-                        <fruitore tipo="API" nome="ClientSoapFault12">
-                            <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
+                        <fruitore tipo="gw" nome="ClientSoapFault12">
+                            <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
                                 <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
-                        <fruitore tipo="API" nome="ClientSoapFault12500">
-                            <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
+                        <fruitore tipo="gw" nome="ClientSoapFault12500">
+                            <connettore tipo="http" nome="CNT_SF_gw/ClientSoapFault12500_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">
                                 <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500&amp;traceIsArrived=mittente"/>
                             </connettore>
                         </fruitore>
@@ -387,25 +393,25 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="ClientSoapFault11">
+	<soggetto tipo="gw" nome="ClientSoapFault11">
     
 		<connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault11"/>
 	
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault11500"> 
+        <soggetto tipo="gw" nome="ClientSoapFault11500"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault11500"/>
         
         </soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12"> 
+        <soggetto tipo="gw" nome="ClientSoapFault12"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault12"/>
         
         </soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12500"> 
+        <soggetto tipo="gw" nome="ClientSoapFault12500"> 
     
                 <connettore tipo="disabilitato" nome="CNT_API_ClientSoapFault12500"/>
         

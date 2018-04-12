@@ -37,6 +37,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 
 /**
@@ -70,6 +72,10 @@ public class Client {
 		}
 
 		String PD = Client.getProperty(reader, "openspcoop2.PD", true);
+		String httpMethod = Client.getProperty(reader, "openspcoop2.httpMethod", false);
+		if(httpMethod==null) {
+			httpMethod = "POST";
+		}
 		String soapActon = Client.getProperty(reader, "openspcoop2.soapAction", true);
 		String contentType = Client.getProperty(reader, "openspcoop2.contentType", true);
 		String urlPD = Client.getProperty(reader, "openspcoop2.portaDiDominio", true);
@@ -119,7 +125,7 @@ public class Client {
 		String printFileReceived = reader.getProperty("openspcoop2.printFileReceived","true");
 		boolean isPrintFileReceived = Boolean.parseBoolean(printFileReceived);
 		
-		System.out.println("Dati utilizzati URL["+SOAPUrl+"] SOAPAction["+soapActon+"] ContentType["+contentType+"] File["+
+		System.out.println("Dati utilizzati URL["+SOAPUrl+"] Method["+httpMethod+"] SOAPAction["+soapActon+"] ContentType["+contentType+"] File["+
 				xmlFile2Send+"] printFileSent["+isPrintFileSent+"] printFileReceived["+isPrintFileReceived+"]");
 		
 		String user = Client.getProperty(reader, "openspcoop2.username", false);
@@ -199,9 +205,10 @@ public class Client {
 		}
 		if(user != null && passw != null)
 			httpConn.setRequestProperty("Authorization",authentication);
-		httpConn.setRequestMethod( "POST" );
-		httpConn.setDoOutput(true);
-		httpConn.setDoInput(true);
+		HttpUtilities.setStream(httpConn, HttpRequestMethod.valueOf(httpMethod), contentType);
+//		httpConn.setRequestMethod( httpMethod );
+//		httpConn.setDoOutput(true);
+//		httpConn.setDoInput(true);
 
 		// Everything's set up; send the XML that was read in to b.
 		OutputStream out = httpConn.getOutputStream();

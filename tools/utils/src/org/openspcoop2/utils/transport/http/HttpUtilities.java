@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -434,7 +435,7 @@ public class HttpUtilities {
 		try{
 			HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
 						
-			httpConn.setRequestMethod(httpMethod.name());
+			setHttpMethod(httpConn, httpMethod);
 			if(params.isDoOutput()){
 				httpConn.setDoOutput(params.isDoOutput());
 			}
@@ -445,6 +446,51 @@ public class HttpUtilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	} 
+	public static void setHttpMethod(HttpURLConnection httpConn, HttpRequestMethod httpMethod) throws UtilsException {
+
+		// NOTA: comunque l'invio di metodi PATCH,LINK,... funzionano solo con java 8
+		
+		try {
+			if(httpMethod.isStandardMethod()) {
+				httpConn.setRequestMethod(httpMethod.name());
+			}
+			else {
+				// Fix errore:
+				//java.net.ProtocolException: HTTP method PATCH doesn't support output
+				//	at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
+				try {
+					// Change protected field called "method" of public class HttpURLConnection
+					_setProtectedFieldValue(HttpURLConnection.class, "method", httpConn, httpMethod.name());
+				} catch (Throwable ex) {
+					throw new Exception("Unsupported Method '"+httpMethod+"' and set by reflection error: "+ex.getMessage(),ex);
+				}
+			}
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	private static void _setProtectedFieldValue(Class<?> clazz, String fieldName, Object object, Object newValue) throws Exception {
+				
+		Field field = null;
+		try {
+			field = clazz.getDeclaredField(fieldName);
+		}catch(Exception e) {
+			Field [] f = clazz.getDeclaredFields();
+			System.out.println("================= (size:"+f.length+" class:"+clazz.getName()+" fieldName:"+fieldName+") ==========================");
+			for (int i = 0; i < f.length; i++) {
+				System.out.println("NOME["+f[i].getName()+"] TIPO["+f[i].getType()+"]");
+			}
+			f = clazz.getFields();
+			System.out.println("================= (FIELDS size:"+f.length+" class:"+clazz.getName()+" fieldName:"+fieldName+") ==========================");
+			for (int i = 0; i < f.length; i++) {
+				System.out.println("NOME["+f[i].getName()+"] TIPO["+f[i].getType()+"]");
+			}
+			throw e;
+		}
+		field.setAccessible(true);
+		field.set(object, newValue);
+	}
+
 	
 
 	/**

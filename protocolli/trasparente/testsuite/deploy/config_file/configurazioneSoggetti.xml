@@ -1,25 +1,25 @@
 <openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
 
-	<soggetto tipo="API" nome="Anonimo"/>
+	<soggetto tipo="gw" nome="Anonimo"/>
 
-	<soggetto tipo="API" nome="applicativoComunePisa"/>
+	<soggetto tipo="gw" nome="applicativoComunePisa"/>
 
-	<soggetto tipo="API" nome="MinisteroReferente"/>
+	<soggetto tipo="gw" nome="MinisteroReferente"/>
 
-	<soggetto tipo="API" nome="MinisteroFruitore">
+	<soggetto tipo="gw" nome="MinisteroFruitore">
 
 
 		<!-- **** Configurazione REST **** -->
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-                         <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-                         <servizio tipo="REST" nome="API"/>
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
                          <azione identificazione="static" nome="invoke"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-                         <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-                         <servizio tipo="REST" nome="API"/>
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                         <servizio tipo="gw" nome="API"/>
                          <azione identificazione="static" nome="invoke"/>
 			 <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/RESTAPI"/>
                 </porta-delegata>
@@ -29,29 +29,29 @@
 
 		<porta-delegata nome="AuthenticationREST_basic" autenticazione="basic" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="REST" nome="API"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione identificazione="static" nome="invokeBasicPdD"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="REST" nome="API"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione identificazione="static" nome="invokeBasicPdD_credenzialiNonBruciate"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationREST_serviceWithBasicAuth" autenticazione="none" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="REST" nome="API"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione identificazione="static" nome="invokeWithBasicAuth"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationREST_serviceWithBasicAuthDomain" autenticazione="none" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="REST" nome="API"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione identificazione="static" nome="invokeWithBasicAuthDomain"/>
 		</porta-delegata>
 
@@ -62,41 +62,41 @@
 		<!-- OneWay -->
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-			 <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-			 <servizio tipo="SOAP" nome="Oneway"/>
+			 <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+			 <servizio tipo="gw" nome="Oneway"/>
 			 <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful/([^/|^?]*).*"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                         <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                         <servizio tipo="SOAP" nome="Oneway"/>
+                         <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                         <servizio tipo="gw" nome="Oneway"/>
                          <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatelessAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="notifica"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/|^?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/|^?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPOnewayLocalForwardStateless"/>
 		</porta-delegata>
@@ -105,41 +105,41 @@
 		<!-- Sincrono -->
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful/([^/|^?]*).*"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatelessAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/|^?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatore"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
 		    <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless"/>
 		</porta-delegata>
@@ -150,43 +150,43 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/echo" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/echo"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/validazione" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
-				      <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+				      <validazione-contenuti-applicativi stato="abilitato" tipo="interface" accept-mtom-message="abilitato"/>
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/validazione"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
-				      <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+				      <validazione-contenuti-applicativi stato="abilitato" tipo="interface" accept-mtom-message="abilitato"/>
 		</porta-delegata>
 
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/packageUnpackage" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="packageUnpackage" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -223,8 +223,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/packageUnpackage"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="packageUnpackage" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -261,8 +261,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/unpackagePackage" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="unpackagePackage" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -299,8 +299,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/unpackagePackage"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="unpackagePackage" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -337,8 +337,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyOk" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -375,8 +375,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyOk"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -413,8 +413,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoRequest" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -455,8 +455,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoRequest"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -497,8 +497,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoResponse" 
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -535,8 +535,8 @@
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoResponse"
 				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
-				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
-				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <soggetto-erogatore tipo="gw" nome="MinisteroErogatore" />
+				      <servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 				      <mtom-processor>
@@ -579,43 +579,43 @@
 
 		<porta-delegata nome="AuthenticationBasic" autenticazione="basic" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationPrincipal" autenticazione="principal" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationOptionalBasic" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationOptionalSsl" autenticazione="ssl" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
 		<porta-delegata nome="AuthenticationOptionalPrincipal" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
@@ -629,8 +629,8 @@
 		-->
 		<porta-delegata nome="AuthorizationAuthenticated" autenticazione="basic" autorizzazione="authenticated" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
 		</porta-delegata>
@@ -642,8 +642,8 @@
 		-->
 		<porta-delegata nome="AuthorizationRolesAll" autenticazione="principal" autorizzazione="roles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -660,8 +660,8 @@
 		-->
 		<porta-delegata nome="AuthorizationRolesAny" autenticazione="principal" autorizzazione="roles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -678,8 +678,8 @@
 		-->
 		<porta-delegata nome="AuthorizationInternalRolesAll" autenticazione="principal" autorizzazione="internalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -695,8 +695,8 @@
 		-->
 		<porta-delegata nome="AuthorizationInternalRolesAny" autenticazione="principal" autorizzazione="internalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -712,8 +712,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalRolesAll" autenticazione="principal" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -729,8 +729,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalRolesAny" autenticazione="principal" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -746,8 +746,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalRolesAll_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -763,8 +763,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalRolesAny_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -781,8 +781,8 @@
 		-->
 		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="all">
@@ -801,8 +801,8 @@
 		-->
 		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="any">
@@ -823,8 +823,8 @@
 		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" />
 		    <ruoli match="all">
@@ -843,8 +843,8 @@
 		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" />
 		    <ruoli match="any">
@@ -864,8 +864,8 @@
 		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="all">
@@ -884,8 +884,8 @@
 		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" />
 		    <ruoli match="any">
@@ -903,8 +903,8 @@
 		-->
 		<porta-delegata nome="AuthorizationXacmlPolicy" autenticazione="principal" autorizzazione="xacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
@@ -915,8 +915,8 @@
 		-->
 		<porta-delegata nome="AuthorizationInternalXacmlPolicy" autenticazione="principal" autorizzazione="internalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
@@ -927,8 +927,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalXacmlPolicy" autenticazione="principal" autorizzazione="externalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
@@ -939,8 +939,8 @@
 		-->
 		<porta-delegata nome="AuthorizationExternalXacmlPolicy_noAuthentication" autenticazione="none" autorizzazione="externalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		</porta-delegata>
 
@@ -1035,13 +1035,13 @@
 	
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatore">
+	<soggetto tipo="gw" nome="MinisteroErogatore">
 
 
 		<!-- **** Configurazione REST **** -->
 
                 <porta-applicativa nome="APIMinisteroErogatore/RESTAPI" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-                    <servizio tipo="REST" nome="API"/>
+                    <servizio tipo="gw" nome="API"/>
                     <azione nome="invoke"/>
                     <servizio-applicativo nome="api"/>
                 </porta-applicativa>
@@ -1050,28 +1050,28 @@
 
 		<porta-applicativa nome="AuthenticationREST_basic" autenticazione="basic" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <servizio tipo="REST" nome="API"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeBasicPdD"/>
 		    <servizio-applicativo nome="api_authBasic"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationREST_basic_forwardCredentials" autenticazione="basicForwardAuthorizationHeader" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <servizio tipo="REST" nome="API"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeBasicPdD_credenzialiNonBruciate"/>
 		    <servizio-applicativo nome="api_authBasic"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationREST_serviceWithBasicAuth" autenticazione="none" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <servizio tipo="REST" nome="API"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeWithBasicAuth"/>
 		    <servizio-applicativo nome="api_authBasic"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationREST_serviceWithBasicAuthDomain" autenticazione="none" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
-		    <servizio tipo="REST" nome="API"/>
+		    <servizio tipo="gw" nome="API"/>
 		    <azione nome="invokeWithBasicAuthDomain"/>
 		    <servizio-applicativo nome="api_authBasicWithDomain"/>
 		</porta-applicativa>
@@ -1086,7 +1086,7 @@
                 <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
                 </porta-applicativa>
@@ -1094,7 +1094,7 @@
                 <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
                 </porta-applicativa>
@@ -1102,33 +1102,33 @@
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPOnewayStateful" 
 			autenticazione="basic" autorizzazione="authenticated"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="applicativoComunePisa"/>
+			<soggetto tipo="gw" nome="applicativoComunePisa"/>
 		    </soggetti>
                 </porta-applicativa>
 
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPOnewayStateless" 
 			autenticazione="basic" autorizzazione="authenticated"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="applicativoComunePisa"/>
+			<soggetto tipo="gw" nome="applicativoComunePisa"/>
 		    </soggetti>
                 </porta-applicativa>
 
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notificaLocalForward"/>
 		    <servizio-applicativo nome="pingSenzaVerifica"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="notificaLocalForward"/>
 		    <servizio-applicativo nome="pingSenzaVerifica"/>
 		</porta-applicativa>
@@ -1136,7 +1136,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
@@ -1144,7 +1144,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
@@ -1152,7 +1152,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
@@ -1160,7 +1160,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
@@ -1168,7 +1168,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
@@ -1176,7 +1176,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
@@ -1184,7 +1184,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
 		    <validazione-contenuti-applicativi/>
@@ -1193,7 +1193,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
 		    <validazione-contenuti-applicativi/>
@@ -1204,7 +1204,7 @@
                 <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
                 </porta-applicativa>
@@ -1212,7 +1212,7 @@
                 <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
                 </porta-applicativa>
@@ -1220,33 +1220,33 @@
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPSincronoStateful" 
 			autenticazione="basic" autorizzazione="authenticated"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="applicativoComunePisa"/>
+			<soggetto tipo="gw" nome="applicativoComunePisa"/>
 		    </soggetti>
                 </porta-applicativa>
 
                 <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPSincronoStateless" 
 			autenticazione="basic" autorizzazione="authenticated"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="applicativoComunePisa"/>
+			<soggetto tipo="gw" nome="applicativoComunePisa"/>
 		    </soggetti>
                 </porta-applicativa>
 
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamentoLocalForward"/>
 		    <servizio-applicativo nome="echoSenzaVerifica"/>
 		</porta-applicativa>		
 		
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="aggiornamentoLocalForward"/>
 		    <servizio-applicativo nome="echoSenzaVerifica"/>
 		</porta-applicativa>		
@@ -1254,7 +1254,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
@@ -1262,7 +1262,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
@@ -1270,7 +1270,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
@@ -1278,7 +1278,7 @@
 		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
@@ -1286,7 +1286,7 @@
                 <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
@@ -1294,7 +1294,7 @@
                 <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
@@ -1302,7 +1302,7 @@
                 <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateful" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
@@ -1310,7 +1310,7 @@
                 <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless" 
 			autenticazione="none" autorizzazione="none"
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
@@ -1321,57 +1321,57 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP11" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP12" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/validazione" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
-			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+			<validazione-contenuti-applicativi stato="abilitato" tipo="interface" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/validazione" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
-			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+			<validazione-contenuti-applicativi stato="abilitato" tipo="interface" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/packageUnpackage" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="packaging">
@@ -1408,11 +1408,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/packageUnpackage" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="packaging">
@@ -1449,11 +1449,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/unpackagePackage" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="unpackaging">
@@ -1490,11 +1490,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/unpackagePackage" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="unpackaging">
@@ -1531,11 +1531,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyOk" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="verify">
@@ -1572,11 +1572,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyOk" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="verify">
@@ -1613,11 +1613,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoRequest" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="verify">
@@ -1658,11 +1658,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoRequest" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 		        <mtom-processor>
 				<request-flow mode="verify">
@@ -1703,11 +1703,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoResponse" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti> 
 			<mtom-processor>
 				<request-flow mode="verify">
@@ -1744,11 +1744,11 @@
 		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoResponse" 
 			autenticazione="basic" autorizzazione="authenticated"
 			stateless="abilitato">
-			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<servizio tipo="gw" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		        <soggetti>
-				<soggetto tipo="API" nome="MinisteroFruitore"/>
+				<soggetto tipo="gw" nome="MinisteroFruitore"/>
 		        </soggetti>
 			<mtom-processor>
 				<request-flow mode="verify">
@@ -1787,49 +1787,49 @@
 
 		<porta-applicativa nome="AuthenticationNone" autenticazione="none" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationBasic" autenticazione="basic" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationPrincipal" autenticazione="principal" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationOptionalBasic" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationOptionalSsl" autenticazione="ssl" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
 
 		<porta-applicativa nome="AuthenticationOptionalPrincipal" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="none" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
@@ -1844,11 +1844,11 @@
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticated" autenticazione="basic" autorizzazione="authenticated" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic"/>
 		    </soggetti>
 		</porta-applicativa>
 
@@ -1859,7 +1859,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationRolesAll" autenticazione="principal" autorizzazione="roles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="all">
@@ -1877,7 +1877,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationRolesAny" autenticazione="principal" autorizzazione="roles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="any">
@@ -1895,7 +1895,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationInternalRolesAll" autenticazione="principal" autorizzazione="internalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="all">
@@ -1912,7 +1912,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationInternalRolesAny" autenticazione="principal" autorizzazione="internalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="any">
@@ -1929,7 +1929,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalRolesAll" autenticazione="principal" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="all">
@@ -1946,7 +1946,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalRolesAny" autenticazione="principal" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="any">
@@ -1963,7 +1963,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalRolesAll_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="all">
@@ -1980,7 +1980,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalRolesAny_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <ruoli match="any">
@@ -1998,11 +1998,11 @@
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal2"/>
 		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2020,11 +2020,11 @@
 		-->
 		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal2"/>
 		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2044,11 +2044,11 @@
 		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic2"/>
 		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2066,11 +2066,11 @@
 		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrInternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparenteBasic2"/>
 		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2089,11 +2089,11 @@
 		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal2"/>
 		    </soggetti>
 		    <ruoli match="all">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2111,11 +2111,11 @@
 		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="principal" autenticazione-opzionale="abilitato" 
 				autorizzazione="authenticatedOrExternalRoles" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		    <soggetti>
-			<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2"/>
+			<soggetto tipo="gw" nome="EsempioSoggettoTrasparentePrincipal2"/>
 		    </soggetti>
 		    <ruoli match="any">
 			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
@@ -2132,7 +2132,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationXacmlPolicy" autenticazione="principal" autorizzazione="xacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
@@ -2144,7 +2144,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationInternalXacmlPolicy" autenticazione="principal" autorizzazione="internalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
@@ -2156,7 +2156,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalXacmlPolicy" autenticazione="principal" autorizzazione="externalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
@@ -2168,7 +2168,7 @@
 		-->
 		<porta-applicativa nome="AuthorizationExternalXacmlPolicy_noAuthentication" autenticazione="none" autorizzazione="externalXacmlPolicy" 
 			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="echo"/>
 		</porta-applicativa>
@@ -2340,123 +2340,123 @@
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="MinisteroErogatoreEsterno"/>
+	<soggetto tipo="gw" nome="MinisteroErogatoreEsterno"/>
 
-	<soggetto tipo="API" nome="ClientSoapFault11">
+	<soggetto tipo="gw" nome="ClientSoapFault11">
 
 		<!-- **** Configurazione SOAP **** -->
 
 		<porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault11"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault11"/>
                 </porta-delegata>
 
 	</soggetto>
 
-	<soggetto tipo="API" nome="ClientSoapFault11500">
+	<soggetto tipo="gw" nome="ClientSoapFault11500">
 
 		<!-- **** Configurazione SOAP **** -->
 
 		<porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault11_500"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault11_500"/>
                 </porta-delegata>
 
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12">
+        <soggetto tipo="gw" nome="ClientSoapFault12">
 
 		<!-- **** Configurazione SOAP **** -->
 
 		<porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault12"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                 </porta-delegata>
 
 	</soggetto>
 
-        <soggetto tipo="API" nome="ClientSoapFault12500">
+        <soggetto tipo="gw" nome="ClientSoapFault12500">
 
 		<!-- **** Configurazione SOAP **** -->
 
 		<porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		</porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                 </porta-delegata>
 
                 <porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="gw" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                 </porta-delegata>
 
 		<porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <soggetto-erogatore tipo="gw" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="gw" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		</porta-delegata>
 

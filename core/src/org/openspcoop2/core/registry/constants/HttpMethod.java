@@ -51,7 +51,11 @@ public enum HttpMethod implements IEnumeration , Serializable , Cloneable {
 	@javax.xml.bind.annotation.XmlEnumValue("TRACE")
 	TRACE ("TRACE"),
 	@javax.xml.bind.annotation.XmlEnumValue("PATCH")
-	PATCH ("PATCH");
+	PATCH ("PATCH"),
+	@javax.xml.bind.annotation.XmlEnumValue("LINK")
+	LINK ("LINK"),
+	@javax.xml.bind.annotation.XmlEnumValue("UNLINK")
+	UNLINK ("UNLINK");
 	
 	
 	/** Value */

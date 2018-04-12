@@ -54,6 +54,8 @@ public class ConnectorCostanti {
 	public final static String CODE_HTTP_METHOD_OPTIONS_UNSUPPORTED = "0016";
 	public final static String CODE_HTTP_METHOD_TRACE_UNSUPPORTED = "0017";
 	public final static String CODE_HTTP_METHOD_PATCH_UNSUPPORTED = "0018";
+	public final static String CODE_HTTP_METHOD_LINK_UNSUPPORTED = "0019";
+	public final static String CODE_HTTP_METHOD_UNLINK_UNSUPPORTED = "0020";
 	
 	public final static String CODE_WSDL = "0021";
 	

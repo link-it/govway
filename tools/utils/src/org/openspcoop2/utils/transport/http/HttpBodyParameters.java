@@ -39,6 +39,8 @@ public class HttpBodyParameters {
 
 		switch (httpMethod) {
 		
+			// standard
+		
 			case OPTIONS:
 				// If the OPTIONS request includes an entity-body then the media type MUST be indicated by a Content-Type field. 
 				if(contentType!=null && !"".equals(contentType)){
@@ -73,11 +75,6 @@ public class HttpBodyParameters {
 				this.doInput = true;
 				break;
 				
-			case PATCH:
-				this.doOutput = true;
-				this.doInput = true;
-				break;
-				
 			case DELETE:
 				this.doOutput = false;
 				this.doInput = true;
@@ -86,6 +83,26 @@ public class HttpBodyParameters {
 			case TRACE:
 				// A TRACE request MUST NOT include an entity
 				this.doOutput = false; 
+				this.doInput = true;
+				break;
+
+			// additional: https://tools.ietf.org/html/rfc2068#section-19.6.1
+				
+			case PATCH:
+				// The PATCH method is similar to PUT
+				this.doOutput = true;
+				this.doInput = true;
+				break;
+				
+			case LINK:
+				// The PATCH method is similar to PUT
+				this.doOutput = true;
+				this.doInput = true;
+				break;
+				
+			case UNLINK:
+				// The PATCH method is similar to PUT
+				this.doOutput = true;
 				this.doInput = true;
 				break;
 				

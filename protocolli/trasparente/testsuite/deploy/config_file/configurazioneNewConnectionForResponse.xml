@@ -39,7 +39,7 @@
           </messaggi-diagnostici>
 
           <!-- Tracciamento su Database -->
-	  <tracciamento buste="abilitato" dump="abilitato" dump-binario-porta-delegata="disabilitato" dump-binario-porta-applicativa="disabilitato">
+	  <tracciamento stato="abilitato">
               <openspcoop-appender tipo="protocol">
 		    <!-- jbossDatasource -->
                     <property nome="datasource" valore="org.openspcoop2.dataSource.tracciamento" />
@@ -50,6 +50,19 @@
                     <property nome="tipoDatabase" valore="@TIPO_DATABASE@" /> 
               </openspcoop-appender>
           </tracciamento>
+
+          <!-- Dump su Database -->
+	  <dump stato="abilitato" dump-binario-porta-delegata="disabilitato" dump-binario-porta-applicativa="disabilitato">
+              <openspcoop-appender tipo="protocol">
+		    <!-- jbossDatasource -->
+                    <property nome="datasource" valore="org.openspcoop2.dataSource.tracciamento" />
+		    <!-- fineJbossDatasource -->
+		    <!-- tomcatDatasource
+		    <property nome="datasource" valore="java:/comp/env/org.openspcoop2.dataSource.tracciamento" />
+		    fineTomcatDatasource -->
+                    <property nome="tipoDatabase" valore="@TIPO_DATABASE@" /> 
+              </openspcoop-appender>
+          </dump>
 
 
           <!-- Gestione di default dell'errore nella fase di spedizione di una busta eGov 

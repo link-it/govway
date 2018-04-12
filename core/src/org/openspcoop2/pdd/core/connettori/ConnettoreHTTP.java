@@ -75,6 +75,12 @@ import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
+	// NOTA: HttpMethod PATCH/LINK/UNLINK funziona solo con java 8
+	// Con java7 si ottiene l'errore:
+	// Caused by: java.net.ProtocolException: HTTP method PATCH doesn't support output
+	//    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1081)
+
+	
 	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
