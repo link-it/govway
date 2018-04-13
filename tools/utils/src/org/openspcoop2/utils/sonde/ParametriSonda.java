@@ -76,7 +76,6 @@ public class ParametriSonda {
 					}
 					
 				} else {
-					System.out.println("Dato: " + dato);
 					String[] nameValue = dato.split(SEPARATOR); 
 					if(nameValue.length != 2){
 						System.err.println("Dato Check ["+dato+"] non nel formato valido nome"+SEPARATOR+"valore");
