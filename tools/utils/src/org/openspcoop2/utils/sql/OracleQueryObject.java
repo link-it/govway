@@ -254,6 +254,23 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	
 	
 	
+	
+	
+	@Override
+	public ISQLQueryObject addWhereIsEmptyCondition(String field) throws SQLQueryObjectException{
+		// In oracle le stringhe vuote equivalgono a null
+		return this.addWhereIsNullCondition(field);
+	}
+	
+	@Override
+	public ISQLQueryObject addWhereIsNotEmptyCondition(String field) throws SQLQueryObjectException{
+		// In oracle le stringhe vuote equivalgono a null
+		return this.addWhereIsNotNullCondition(field);
+	}
+	
+	
+	
+	
 	/**
 	 * Crea una SQL Query con i dati dell'oggetto
 	 * 

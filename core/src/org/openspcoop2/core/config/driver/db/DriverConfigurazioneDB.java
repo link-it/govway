@@ -15981,7 +15981,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++,TipiConnettore.DISABILITATO.getNome());
 				stmt.setString(index++,TipiConnettore.HTTP.getNome());
 				stmt.setString(index++,TipiConnettore.HTTP.getNome());
-				stmt.setString(index++,"");
+				// stmt.setString(index++,"");  OP-708
 			}
 			
 			risultato = stmt.executeQuery();
@@ -16247,7 +16247,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++,TipiConnettore.DISABILITATO.getNome());
 				stmt.setString(index++,TipiConnettore.HTTP.getNome());
 				stmt.setString(index++,TipiConnettore.HTTP.getNome());
-				stmt.setString(index++,"");
+				// stmt.setString(index++,""); OP-708
 			}
 			
 			risultato = stmt.executeQuery();
@@ -16404,9 +16404,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObjectConnettore.addFromTable(CostantiDB.CONNETTORI);
 			sqlQueryObjectConnettore.addSelectField("id");
 			sqlQueryObjectConnettore.addWhereCondition("id_connettore_inv="+CostantiDB.CONNETTORI+".id");
+			
+			// Fix OP-708
+			ISQLQueryObject sqlQueryObject_NullCondition = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject_NullCondition.addWhereIsNotNullCondition("url");
+			ISQLQueryObject sqlQueryObject_EmptyCondition = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject_EmptyCondition.addWhereIsNotEmptyCondition("url");
+			
 			sqlQueryObjectConnettore.addWhereCondition(false,
 					"endpointtype<>? AND endpointtype<>?",
-					"endpointtype=? AND url is not null AND url <> ?");
+					//"endpointtype=? AND url is not null AND url <> ?"); OP-708
+					"endpointtype=? AND "+sqlQueryObject_NullCondition.createSQLConditions()+" AND "+sqlQueryObject_EmptyCondition.createSQLConditions());
 			
 			if(erogazioneIsBound){
 				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectConnettore);

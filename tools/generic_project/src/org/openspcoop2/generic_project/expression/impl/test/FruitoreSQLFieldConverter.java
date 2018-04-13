@@ -34,7 +34,12 @@ import org.openspcoop2.utils.TipiDatabase;
  * @version $Rev$, $Date$
  */
 public class FruitoreSQLFieldConverter extends AbstractSQLFieldConverter {
-
+	
+	private TipiDatabase db = null;
+	public FruitoreSQLFieldConverter(TipiDatabase db) {
+		this.db = db;
+	}
+	
 	@Override
 	public IModel<?> getRootModel() throws ExpressionException {
 		return Fruitore.model();
@@ -42,7 +47,7 @@ public class FruitoreSQLFieldConverter extends AbstractSQLFieldConverter {
 
 	@Override
 	public TipiDatabase getDatabaseType() throws ExpressionException {
-		return TipiDatabase.DEFAULT;
+		return this.db;
 	}
 	
 	

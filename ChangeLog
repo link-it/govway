@@ -1,3 +1,11 @@
+2017-04-13  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug OP-708
+	Aggiunta gestione 'IsEmpty' e 'isNotEmpty' alle utility sql poichè in Oracle la gestione è differente: le stringhe vuote sono trattate come null.
+	Le nuove firme sono state utilizzate nel metodo 'serviziApplicativiList_engine' e 'serviziApplicativiList_engineCount' 
+	del driver di configurazione poichè altrimenti non funzionavano correttamente in oracle.
+
 2018-04-12  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

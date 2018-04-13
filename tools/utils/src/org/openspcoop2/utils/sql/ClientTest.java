@@ -4282,7 +4282,7 @@ public class ClientTest {
 			sqlQueryObject.addSelectField("campo_vuoto");
 			sqlQueryObject.addSelectField("descrizione");
 			sqlQueryObject.addSelectField("gdo");
-			sqlQueryObject.addWhereCondition("campo_vuoto=?");
+			sqlQueryObject.addWhereIsEmptyCondition("campo_vuoto");
 			sqlQueryObject.addOrderBy("gdo");
 			sqlQueryObject.setSortType(true);
 			
@@ -4290,7 +4290,6 @@ public class ClientTest {
 			log.info("\ntest3-"+table+" isEmpty:\n\t"+testIsEmpty);
 			try{
 				stmtQuery = con.prepareStatement(testIsEmpty);
-				stmtQuery.setString(1, "");
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
@@ -4310,7 +4309,7 @@ public class ClientTest {
 				
 				int attesi = 9;
 				if(TipiDatabase.ORACLE.equals(tipo)){
-					attesi = 0; // in oracle le stringhe vuote sono inserite come null
+					attesi = 19; // in oracle le stringhe vuote sono trattate come null
 				}
 				log.info("Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){
@@ -4331,7 +4330,7 @@ public class ClientTest {
 			sqlQueryObject.addSelectField("campo_vuoto");
 			sqlQueryObject.addSelectField("descrizione");
 			sqlQueryObject.addSelectField("gdo");
-			sqlQueryObject.addWhereCondition("campo_vuoto<>?");
+			sqlQueryObject.addWhereIsNotEmptyCondition("campo_vuoto");
 			sqlQueryObject.addOrderBy("gdo");
 			sqlQueryObject.setSortType(true);
 			
@@ -4339,7 +4338,6 @@ public class ClientTest {
 			log.info("\ntest4-"+table+" isNotEmpty:\n\t"+testIsNotEmpty);
 			try{
 				stmtQuery = con.prepareStatement(testIsNotEmpty);
-				stmtQuery.setString(1, "");
 				rs = stmtQuery.executeQuery();
 				int index = 0;
 				while(rs.next()){
@@ -4359,7 +4357,7 @@ public class ClientTest {
 				
 				int attesi = 2;
 				if(TipiDatabase.ORACLE.equals(tipo)){
-					attesi = 0; // in oracle le stringhe vuote sono inserite come null e anche la ricerca con <> '' non funziona
+					attesi = 2; // in oracle le stringhe vuote sono trattate come null
 				}
 				log.info("Attesi ["+attesi+"] trovati["+index+"]");
 				if(attesi != index){

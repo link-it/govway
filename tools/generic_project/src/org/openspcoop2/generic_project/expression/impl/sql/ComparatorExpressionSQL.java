@@ -55,7 +55,7 @@ public class ComparatorExpressionSQL extends ComparatorExpressionImpl implements
 		bf.append("( ");
 		bf.append(this.sqlFieldConverter.toColumn(this.getField(),true));
 		bf.append(" ");
-		bf.append(this.getComparator().getOperatore());
+		bf.append(this.getComparator().getOperatore(this.sqlFieldConverter));
 		if(this.getObject()!=null){
 			bf.append(" ");
 			switch (mode) {

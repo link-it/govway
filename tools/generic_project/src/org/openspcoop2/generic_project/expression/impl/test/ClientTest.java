@@ -66,6 +66,7 @@ import org.openspcoop2.generic_project.expression.impl.test.beans.Version;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationDouble;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationString;
 import org.openspcoop2.generic_project.expression.impl.test.constants.EnumerationWrapperPrimitiveInt;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -80,14 +81,13 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  */
 public class ClientTest {
 
-	private static String tipoDatabase = "oracle"; // uso oracle almeno ho la complessita' di limit/offse e anche forceIndex
+	private static TipiDatabase databaseType = TipiDatabase.ORACLE; // uso oracle almeno ho la complessita' di limit/offse e anche forceIndex
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		
-		
+				
 		/* TEST Funzionalita' non dipendenti dal tipo di gestione del SQL */
 		
 		typeFormatter();
@@ -145,10 +145,10 @@ public class ClientTest {
 	}
 	
 	public static ExpressionImpl newExpressionImplForAuthor() throws ExpressionException{
-		return ClientTest.newExpressionImpl(new AuthorSQLFieldConverter());
+		return ClientTest.newExpressionImpl(new AuthorSQLFieldConverter(databaseType));
 	}
 	public static ExpressionImpl newExpressionImplForBook() throws ExpressionException{
-		return ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		return ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 	}
 	public static ExpressionImpl newExpressionImpl(ISQLFieldConverter sqlFieldConverter) throws ExpressionException{
 		return ClientTest.newExpressionImpl(null,sqlFieldConverter);
@@ -200,10 +200,10 @@ public class ClientTest {
 	}
 	
 	public static PaginatedExpressionImpl newPaginatedExpressionImplForAuthor() throws ExpressionException{
-		return ClientTest.newPaginatedExpressionImpl(new AuthorSQLFieldConverter());
+		return ClientTest.newPaginatedExpressionImpl(new AuthorSQLFieldConverter(databaseType));
 	}
 	public static PaginatedExpressionImpl newPaginatedExpressionImplForBook() throws ExpressionException{
-		return ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter());
+		return ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter(databaseType));
 	}
 	public static PaginatedExpressionImpl newPaginatedExpressionImpl(ISQLFieldConverter sqlFieldConverter) throws ExpressionException{
 		return ClientTest.newPaginatedExpressionImpl(null,sqlFieldConverter);
@@ -287,7 +287,7 @@ public class ClientTest {
 				if(sqlQueryObjectParam!=null){
 					sqlQueryObject = sqlQueryObjectParam;
 				}else{
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
 				if(expSQL!=null){
 					expSQL.toSql(sqlQueryObject);
@@ -304,7 +304,7 @@ public class ClientTest {
 				if(sqlQueryObjectParam!=null){
 					sqlQueryObjectPreparedStatement = sqlQueryObjectParam;
 				}else{
-					sqlQueryObjectPreparedStatement = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+					sqlQueryObjectPreparedStatement = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
 				List<Object> listaQuery = new ArrayList<Object>();
 				if(expSQL!=null)
@@ -325,7 +325,7 @@ public class ClientTest {
 				if(sqlQueryObjectParam!=null){
 					sqlQueryObjectWithFromCondition = sqlQueryObjectParam;
 				}else{
-					sqlQueryObjectWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+					sqlQueryObjectWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
 				if(expSQL!=null){
 					expSQL.toSqlWithFromCondition(sqlQueryObjectWithFromCondition, "NOMETABELLA");
@@ -340,7 +340,7 @@ public class ClientTest {
 				if(sqlQueryObjectParam!=null){
 					sqlQueryObjectPreparedStatementWithFromCondition = sqlQueryObjectParam;
 				}else{
-					sqlQueryObjectPreparedStatementWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+					sqlQueryObjectPreparedStatementWithFromCondition = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 				}
 				listaQuery = new ArrayList<Object>();
 				if(expSQL!=null)
@@ -943,7 +943,7 @@ public class ClientTest {
 		
 		
 		// Test di elementi presenti in condizioni diverse da while
-		IExpression groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		IExpression groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 		groupByExpr.equals(Book.model().TITLE,"Titolo");	
 		groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 		value = groupByExpr.inUseField(Book.model().ENUM_STRING,true);
@@ -1003,7 +1003,7 @@ public class ClientTest {
 		}
 		
 		// Test con metodi addField
-		expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 		expr.equals(Book.model().TITLE,"Titolo");	
 		value = expr.inUseField(Book.model().TITLE,false);
 		valoreAtteso = true;
@@ -1014,7 +1014,7 @@ public class ClientTest {
 		
 		if(expr instanceof ExpressionSQL){
 		
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			((ExpressionSQL)expr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
 			value = expr.inUseField(Book.model().VERSION.DATE,false);
 			valoreAtteso = true;
@@ -1029,8 +1029,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			expr.equals(Book.model().TITLE,"Titolo");	
 			FunctionField ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumVersion");
 			((ExpressionSQL)expr).addField(sqlQueryObject, ffSum, true);
@@ -1047,8 +1047,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore number (solo where): "+valoreAtteso);
 			}
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			IPaginatedExpression paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			IPaginatedExpression paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter(databaseType));
 			paginatedExpr.equals(Book.model().TITLE,"Titolo");
 			paginatedExpr.limit(10).offset(2);
 			((PaginatedExpressionSQL)paginatedExpr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
@@ -1065,8 +1065,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter(databaseType));
 			paginatedExpr.equals(Book.model().TITLE,"Titolo");	
 			paginatedExpr.limit(10).offset(2);
 			ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumNumber");
@@ -1084,8 +1084,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore number (solo where): "+valoreAtteso);
 			}
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			groupByExpr.equals(Book.model().TITLE,"Titolo");
 			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			((ExpressionSQL)groupByExpr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
@@ -1102,8 +1102,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			groupByExpr.equals(Book.model().TITLE,"Titolo");	
 			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumNumber");
@@ -1121,8 +1121,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore number (solo where): "+valoreAtteso);
 			}
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			groupByExpr.equals(Book.model().TITLE,"Titolo");	
 			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			value = groupByExpr.inUseField(Book.model().ENUM_STRING, false);
@@ -1183,7 +1183,7 @@ public class ClientTest {
 		}
 		
 		// Test di elementi presenti in condizioni diverse da while
-		IExpression groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		IExpression groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 		groupByExpr.equals(Book.model().TITLE,"Titolo");	
 		groupByExpr.addGroupBy(Book.model().VERSION.NUMBER);
 		value = groupByExpr.inUseModel(Book.model().VERSION,true);
@@ -1199,7 +1199,7 @@ public class ClientTest {
 			throw new ExpressionException("Valore atteso: "+valoreAtteso);
 		}
 		
-		groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 		groupByExpr.equals(Book.model().TITLE,"Titolo");	
 		groupByExpr.sortOrder(SortOrder.ASC);
 		groupByExpr.addOrder(Book.model().VERSION.DATE);
@@ -1217,7 +1217,7 @@ public class ClientTest {
 		}
 		
 		// Test con metodi addField
-		expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+		expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 		expr.equals(Book.model().TITLE,"Titolo");	
 		value = expr.inUseModel(Book.model().VERSION,false);
 		valoreAtteso = false;
@@ -1228,7 +1228,7 @@ public class ClientTest {
 		
 		if(expr instanceof ExpressionSQL){
 		
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			((ExpressionSQL)expr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
 			value = expr.inUseModel(Book.model().VERSION,false);
 			valoreAtteso = true;
@@ -1243,8 +1243,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			expr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			expr.equals(Book.model().TITLE,"Titolo");	
 			FunctionField ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumVersion");
 			((ExpressionSQL)expr).addField(sqlQueryObject, ffSum, true);
@@ -1261,8 +1261,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore number (solo where): "+valoreAtteso);
 			}
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			IPaginatedExpression paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			IPaginatedExpression paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter(databaseType));
 			paginatedExpr.equals(Book.model().TITLE,"Titolo");
 			paginatedExpr.limit(10).offset(2);
 			((PaginatedExpressionSQL)paginatedExpr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
@@ -1279,8 +1279,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			paginatedExpr = ClientTest.newPaginatedExpressionImpl(new BookSQLFieldConverter(databaseType));
 			paginatedExpr.equals(Book.model().TITLE,"Titolo");	
 			paginatedExpr.limit(10).offset(2);
 			ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumNumber");
@@ -1298,8 +1298,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore number (solo where): "+valoreAtteso);
 			}
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			groupByExpr.equals(Book.model().TITLE,"Titolo");
 			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			((ExpressionSQL)groupByExpr).addField(sqlQueryObject, Book.model().VERSION.DATE, true);
@@ -1316,8 +1316,8 @@ public class ClientTest {
 				throw new ExpressionException("Valore atteso (solo where): "+valoreAtteso);
 			}
 		
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
-			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter());
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
+			groupByExpr = ClientTest.newExpressionImpl(new BookSQLFieldConverter(databaseType));
 			groupByExpr.equals(Book.model().TITLE,"Titolo");	
 			groupByExpr.addGroupBy(Book.model().ENUM_STRING);
 			ffSum = new FunctionField(Book.model().VERSION.NUMBER,Function.SUM,"sumNumber");
@@ -1430,7 +1430,7 @@ public class ClientTest {
 			
 			// SUM
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1451,7 +1451,7 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con SUM (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1475,7 +1475,7 @@ public class ClientTest {
 			
 			// AVG
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1496,7 +1496,7 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con AVG (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1520,7 +1520,7 @@ public class ClientTest {
 			
 			// AVG_DOUBLE
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1541,7 +1541,7 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con AVG_DOUBLE (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1564,7 +1564,7 @@ public class ClientTest {
 			
 			// MAX
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1585,7 +1585,7 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con MAX (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1608,7 +1608,7 @@ public class ClientTest {
 			
 			// MIN
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1629,7 +1629,7 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con MIN (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1652,7 +1652,7 @@ public class ClientTest {
 			
 			// INSIEME PIU' FUNZIONI
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1705,7 +1705,7 @@ public class ClientTest {
 			
 			// MIN (con valore custom)
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1728,7 +1728,7 @@ public class ClientTest {
 			
 			// MIN (con valori e operator)
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1749,11 +1749,11 @@ public class ClientTest {
 			}
 			System.out.println("- test group by con MIN con operatore (groupByExpr): "+ClientTest.toString(groupByExpr,sqlQueryObject));
 						
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 									
 			// FunctionCustom
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1776,7 +1776,7 @@ public class ClientTest {
 			
 			// FunctionCustom (con valore custom)
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -1799,7 +1799,7 @@ public class ClientTest {
 			
 			// FunctionCustom (con operatore)
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.tipoDatabase);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(ClientTest.databaseType);
 			if(paginated){
 				groupByExpr = ClientTest.newPaginatedExpressionImplForBook();
 			}else{
@@ -2431,7 +2431,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** testModelEqualsWithSameFatherType ************************* ");
 		
-		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter();
+		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter(databaseType);
 		IExpression expr = ClientTest.newExpressionImpl(fruitoreConverter);
 		
 		expr.equals(Fruitore.model().ID_FRUITORE.TIPO, "FRUITORE_TIPO");
@@ -2532,7 +2532,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** testSQLFieldConverterToColumn ************************* ");
 		
-		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter();
+		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter(databaseType);
 		
 		
 		// test toColumn con colonna che non ha alias nella colonna ma possiede un alias nella tabella.
@@ -2752,7 +2752,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** testSQLFieldConverterToModelModel ************************* ");
 		
-		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter();
+		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter(databaseType);
 		
 		
 		// test con tabella che possiede un alias
@@ -2816,7 +2816,7 @@ public class ClientTest {
 		
 		System.out.println("\n **************** testSQLFieldConverterToModelField ************************* ");
 		
-		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter();
+		FruitoreSQLFieldConverter fruitoreConverter = new FruitoreSQLFieldConverter(databaseType);
 		
 		
 		// test con tabella che possiede un alias

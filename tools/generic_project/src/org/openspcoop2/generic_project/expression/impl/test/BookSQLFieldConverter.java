@@ -35,6 +35,11 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public class BookSQLFieldConverter extends AbstractSQLFieldConverter {
 
+	private TipiDatabase db = null;
+	public BookSQLFieldConverter(TipiDatabase db) {
+		this.db = db;
+	}
+	
 	@Override
 	public IModel<?> getRootModel() throws ExpressionException {
 		return Book.model();
@@ -42,7 +47,7 @@ public class BookSQLFieldConverter extends AbstractSQLFieldConverter {
 
 	@Override
 	public TipiDatabase getDatabaseType() throws ExpressionException {
-		return TipiDatabase.DEFAULT;
+		return this.db;
 	}
 	
 	

@@ -1251,6 +1251,36 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		this.addWhereCondition(field+" is not null");
 		return this;
 	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca (e associa un operatore logico, se le condizioni di ricerca sono piu' di una)
+	 * es: SELECT * from tabella WHERE (field = '')
+	 * 
+	 * @param field Field da verificare
+	 */
+	@Override
+	public ISQLQueryObject addWhereIsEmptyCondition(String field) throws SQLQueryObjectException{
+		if(field==null || "".equals(field)){
+			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+		}
+		this.addWhereCondition(field+" = ''");
+		return this;
+	}
+	
+	/**
+	 * Aggiunge una condizione di ricerca (e associa un operatore logico, se le condizioni di ricerca sono piu' di una)
+	 * es: SELECT * from tabella WHERE (field <> '')
+	 * 
+	 * @param field Field da verificare
+	 */
+	@Override
+	public ISQLQueryObject addWhereIsNotEmptyCondition(String field) throws SQLQueryObjectException{
+		if(field==null || "".equals(field)){
+			throw new SQLQueryObjectException("IsNullCondition field non puo' essere null");
+		}
+		this.addWhereCondition(field+" <> ''");
+		return this;
+	}
 
 
 	/**

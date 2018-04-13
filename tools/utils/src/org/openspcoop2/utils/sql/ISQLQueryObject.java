@@ -555,6 +555,22 @@ public interface ISQLQueryObject {
 	public ISQLQueryObject addWhereIsNotNullCondition(String field) throws SQLQueryObjectException;
 	
 	/**
+	 * Aggiunge una condizione di ricerca (e associa un operatore logico, se le condizioni di ricerca sono piu' di una)
+	 * es: SELECT * from tabella WHERE (field = '')
+	 * 
+	 * @param field Field da verificare
+	 */
+	public ISQLQueryObject addWhereIsEmptyCondition(String field) throws SQLQueryObjectException;
+	
+	/**
+	 * Aggiunge una condizione di ricerca (e associa un operatore logico, se le condizioni di ricerca sono piu' di una)
+	 * es: SELECT * from tabella WHERE (field <> '')
+	 * 
+	 * @param field Field da verificare
+	 */
+	public ISQLQueryObject addWhereIsNotEmptyCondition(String field) throws SQLQueryObjectException;
+	
+	/**
 	 * Aggiunge una condizione di ricerca in un insieme di valori
 	 * esempio concreto:    SELECT * from tabella WHERE id IN (a,b,c,d);
 	 * Se viene indicato stringValueType a true, ogni valore viene trattato come stringa e nella sql prodotto viene aggiunto il carattere ' all'inizio e alla fine.
