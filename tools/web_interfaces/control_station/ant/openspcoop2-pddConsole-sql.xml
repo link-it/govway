@@ -287,6 +287,7 @@
 		<!-- sql DDL -->
 		
 		<var name="sqlSourceFiles" value="configurazionePdD/configurazionePdD.sql"/>
+		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ControlloCongestione.sql"/>
 		<if>
 			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
 			<then>
@@ -342,6 +343,7 @@
 		<!-- sql Delete (Config) -->
 		
 		<var name="sqlSourceFiles_delete_config" value="configurazionePdD/configurazionePdD_delete.sql"/>
+		<var name="sqlSourceFiles_delete_config" value="${sqlSourceFiles_delete_config} configurazionePdD/configurazionePdD_ControlloCongestione_delete.sql"/>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_pddConsole}"/>
@@ -387,6 +389,7 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 		</if>
 
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_drop.sql"/>
+		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ControlloCongestione_drop.sql"/>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_pddConsole}"/>

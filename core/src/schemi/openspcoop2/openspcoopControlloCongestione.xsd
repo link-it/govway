@@ -21,7 +21,7 @@
 					<linkit:sql>
 						<linkit:sql-script generate="true">
 							<linkit:sql-table-list>
-								<linkit:sql-comment><![CDATA[PLUGINS PER IL CONTROLLO CONGESTIONE]]></linkit:sql-comment>
+								<linkit:sql-comment><![CDATA[CONTROLLO CONGESTIONE]]></linkit:sql-comment>
 								<linkit:sql-table object-name="configurazione-generale" object-type="configurazione-generale"/>
 								<linkit:sql-table object-name="configurazione-policy" object-type="configurazione-policy" />
 								<linkit:sql-table object-name="attivazione-policy" object-type="attivazione-policy" />

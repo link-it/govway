@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="configurazione-generale" class="org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <structure field="controlloTraffico" usage="required" map-as="org.openspcoop2.core.controllo_congestione.ConfigurazioneControlloTraffico"/>
+    <structure field="tempiRispostaFruizione" usage="required" map-as="org.openspcoop2.core.controllo_congestione.TempiRispostaFruizione"/>
+    <structure field="tempiRispostaErogazione" usage="required" map-as="org.openspcoop2.core.controllo_congestione.TempiRispostaErogazione"/>
+    <structure field="rateLimiting" usage="required" map-as="org.openspcoop2.core.controllo_congestione.ConfigurazioneRateLimiting"/>
+    <structure field="cache" usage="required" map-as="org.openspcoop2.core.controllo_congestione.Cache"/>
+  </mapping>
+  <mapping name="elenco-policy" class="org.openspcoop2.core.controllo_congestione.ElencoPolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <collection field="configurazionePolicy" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy"/>
+    </collection>
+  </mapping>
+  <mapping name="elenco-id-policy" class="org.openspcoop2.core.controllo_congestione.ElencoIdPolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <collection field="idPolicy" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.controllo_congestione.IdPolicy"/>
+    </collection>
+  </mapping>
+  <mapping name="elenco-policy-attive" class="org.openspcoop2.core.controllo_congestione.ElencoPolicyAttive">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <collection field="attivazionePolicy" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.controllo_congestione.AttivazionePolicy"/>
+    </collection>
+  </mapping>
+  <mapping name="elenco-id-policy-attive" class="org.openspcoop2.core.controllo_congestione.ElencoIdPolicyAttive">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <collection field="idActivePolicy" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.controllo_congestione.IdActivePolicy"/>
+    </collection>
+  </mapping>
+  <mapping name="tempi-risposta-erogazione" class="org.openspcoop2.core.controllo_congestione.TempiRispostaErogazione">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="connection-timeout" field="connectionTimeout" usage="optional"/>
+    <value name="read-timeout" field="readTimeout" usage="optional"/>
+    <value name="tempo-medio-risposta" field="tempoMedioRisposta" usage="optional"/>
+  </mapping>
+  <mapping name="tempi-risposta-fruizione" class="org.openspcoop2.core.controllo_congestione.TempiRispostaFruizione">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="connection-timeout" field="connectionTimeout" usage="optional"/>
+    <value name="read-timeout" field="readTimeout" usage="optional"/>
+    <value name="tempo-medio-risposta" field="tempoMedioRisposta" usage="optional"/>
+  </mapping>
+  <mapping name="cache" class="org.openspcoop2.core.controllo_congestione.Cache">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="cache" field="cache" default="true" usage="required"/>
+    <value name="size" field="size" usage="optional"/>
+    <value name="algorithm" field="algorithm" usage="optional" enum-value-method="toString"/>
+    <value name="idle-time" field="idleTime" usage="optional"/>
+    <value name="life-time" field="lifeTime" usage="optional"/>
+  </mapping>
+  <mapping name="controllo-traffico" class="org.openspcoop2.core.controllo_congestione.ConfigurazioneControlloTraffico">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="controllo-max-threads-enabled" field="controlloMaxThreadsEnabled" usage="required"/>
+    <value name="controllo-max-threads-warning-only" field="controlloMaxThreadsWarningOnly" usage="required"/>
+    <value name="controllo-max-threads-soglia" field="controlloMaxThreadsSoglia" usage="required"/>
+    <value name="controllo-max-threads-tipo-errore" field="controlloMaxThreadsTipoErrore" usage="required"/>
+    <value name="controllo-max-threads-tipo-errore-includi-descrizione" field="controlloMaxThreadsTipoErroreIncludiDescrizione" usage="required"/>
+    <value name="controllo-congestione-enabled" field="controlloCongestioneEnabled" usage="required"/>
+    <value name="controllo-congestione-threshold" field="controlloCongestioneThreshold" usage="optional"/>
+  </mapping>
+  <mapping name="rate-limiting" class="org.openspcoop2.core.controllo_congestione.ConfigurazioneRateLimiting">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="tipo-errore" field="tipoErrore" usage="required"/>
+    <value name="tipo-errore-includi-descrizione" field="tipoErroreIncludiDescrizione" usage="required"/>
+  </mapping>
+  <mapping name="configurazione-policy" class="org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="id-policy" field="idPolicy" usage="required"/>
+    <value name="descrizione" field="descrizione" usage="required"/>
+    <value name="risorsa" field="risorsa" usage="required"/>
+    <value name="simultanee" field="simultanee" default="false" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
+    <value name="valore-tipo-banda" field="valoreTipoBanda" usage="optional" enum-value-method="toString"/>
+    <value name="valore-tipo-latenza" field="valoreTipoLatenza" usage="optional" enum-value-method="toString"/>
+    <value name="modalita-controllo" field="modalitaControllo" usage="optional" enum-value-method="toString"/>
+    <value name="tipo-intervallo-osservazione-realtime" field="tipoIntervalloOsservazioneRealtime" usage="optional" enum-value-method="toString"/>
+    <value name="tipo-intervallo-osservazione-statistico" field="tipoIntervalloOsservazioneStatistico" usage="optional" enum-value-method="toString"/>
+    <value name="intervallo-osservazione" field="intervalloOsservazione" usage="optional"/>
+    <value name="finestra-osservazione" field="finestraOsservazione" usage="optional" enum-value-method="toString"/>
+    <value name="tipo-applicabilita" field="tipoApplicabilita" default="sempre" usage="required" enum-value-method="toString"/>
+    <value name="applicabilita-con-congestione" field="applicabilitaConCongestione" default="false" usage="required"/>
+    <value name="applicabilita-degrado-prestazionale" field="applicabilitaDegradoPrestazionale" default="false" usage="required"/>
+    <value name="degrado-avg-time-modalita-controllo" field="degradoAvgTimeModalitaControllo" usage="optional" enum-value-method="toString"/>
+    <value name="degrado-avg-time-tipo-intervallo-osservazione-realtime" field="degradoAvgTimeTipoIntervalloOsservazioneRealtime" usage="optional" enum-value-method="toString"/>
+    <value name="degrado-avg-time-tipo-intervallo-osservazione-statistico" field="degradoAvgTimeTipoIntervalloOsservazioneStatistico" usage="optional" enum-value-method="toString"/>
+    <value name="degrado-avg-time-intervallo-osservazione" field="degradoAvgTimeIntervalloOsservazione" usage="optional"/>
+    <value name="degrado-avg-time-finestra-osservazione" field="degradoAvgTimeFinestraOsservazione" usage="optional" enum-value-method="toString"/>
+    <value name="degrado-avg-time-tipo-latenza" field="degradoAvgTimeTipoLatenza" usage="optional" enum-value-method="toString"/>
+    <value name="applicabilita-stato-allarme" field="applicabilitaStatoAllarme" default="false" usage="required"/>
+    <value name="allarme-nome" field="allarmeNome" usage="optional"/>
+    <value name="allarme-stato" field="allarmeStato" usage="optional"/>
+    <value name="allarme-not-stato" field="allarmeNotStato" default="false" usage="required"/>
+  </mapping>
+  <mapping name="attivazione-policy" class="org.openspcoop2.core.controllo_congestione.AttivazionePolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="id-active-policy" field="idActivePolicy" usage="required"/>
+    <value name="alias" field="alias" usage="optional"/>
+    <value name="update-time" field="updateTime" usage="required"/>
+    <value name="id-policy" field="idPolicy" usage="required"/>
+    <value name="enabled" field="enabled" usage="required"/>
+    <value name="warning-only" field="warningOnly" default="false" usage="required"/>
+    <value name="ridefinisci" field="ridefinisci" usage="required"/>
+    <value name="valore" field="valore" usage="optional"/>
+    <structure field="filtro" usage="required" map-as="org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro"/>
+    <structure field="groupBy" usage="required" map-as="org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento"/>
+  </mapping>
+  <mapping name="filtro" class="org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="enabled" field="enabled" default="false" usage="required"/>
+    <value name="protocollo" field="protocollo" usage="optional"/>
+    <value name="ruolo-porta" field="ruoloPorta" usage="optional" enum-value-method="toString"/>
+    <value name="tipo-fruitore" field="tipoFruitore" usage="optional"/>
+    <value name="nome-fruitore" field="nomeFruitore" usage="optional"/>
+    <value name="ruolo-fruitore" field="ruoloFruitore" usage="optional"/>
+    <value name="servizio-applicativo-fruitore" field="servizioApplicativoFruitore" usage="optional"/>
+    <value name="tipo-erogatore" field="tipoErogatore" usage="optional"/>
+    <value name="nome-erogatore" field="nomeErogatore" usage="optional"/>
+    <value name="ruolo-erogatore" field="ruoloErogatore" usage="optional"/>
+    <value name="servizio-applicativo-erogatore" field="servizioApplicativoErogatore" usage="optional"/>
+    <value name="tipo-servizio" field="tipoServizio" usage="optional"/>
+    <value name="nome-servizio" field="nomeServizio" usage="optional"/>
+    <value name="azione" field="azione" usage="optional"/>
+    <value name="informazione-applicativa-enabled" field="informazioneApplicativaEnabled" default="false" usage="required"/>
+    <value name="informazione-applicativa-tipo" field="informazioneApplicativaTipo" usage="optional"/>
+    <value name="informazione-applicativa-nome" field="informazioneApplicativaNome" usage="optional"/>
+    <value name="informazione-applicativa-valore" field="informazioneApplicativaValore" usage="optional"/>
+  </mapping>
+  <mapping name="group-by" class="org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="enabled" field="enabled" usage="required"/>
+    <value name="ruolo-porta" field="ruoloPorta" usage="required"/>
+    <value name="protocollo" field="protocollo" usage="required"/>
+    <value name="fruitore" field="fruitore" usage="required"/>
+    <value name="servizio-applicativo-fruitore" field="servizioApplicativoFruitore" usage="required"/>
+    <value name="erogatore" field="erogatore" usage="required"/>
+    <value name="servizio-applicativo-erogatore" field="servizioApplicativoErogatore" usage="required"/>
+    <value name="servizio" field="servizio" usage="required"/>
+    <value name="azione" field="azione" usage="required"/>
+    <value name="informazione-applicativa-enabled" field="informazioneApplicativaEnabled" usage="required"/>
+    <value name="informazione-applicativa-tipo" field="informazioneApplicativaTipo" usage="optional"/>
+    <value name="informazione-applicativa-nome" field="informazioneApplicativaNome" usage="optional"/>
+  </mapping>
+  <mapping name="id-active-policy" class="org.openspcoop2.core.controllo_congestione.IdActivePolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="id-policy" field="idPolicy" usage="optional"/>
+    <value name="enabled" field="enabled" usage="optional"/>
+    <value name="update-time" field="updateTime" usage="optional"/>
+  </mapping>
+  <mapping name="id-policy" class="org.openspcoop2.core.controllo_congestione.IdPolicy">
+    <namespace uri="http://www.openspcoop2.org/core/controllo_congestione" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+  </mapping>
+</binding>
