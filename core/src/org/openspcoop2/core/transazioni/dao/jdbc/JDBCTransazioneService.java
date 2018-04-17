@@ -57,7 +57,7 @@ public class JDBCTransazioneService extends JDBCTransazioneServiceSearch  implem
 	public JDBCTransazioneService(JDBCServiceManager jdbcServiceManager) throws ServiceException {
 		super(jdbcServiceManager);
 		this.log.debug(JDBCTransazioneService.class.getName()+ " initialized");
-		this.serviceCRUD = JDBCProperties.getInstance(ProjectInfo.getInstance()).getServiceCRUD("transazione");
+		this.serviceCRUD = JDBCProperties.getInstance(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager.class.getPackage(),ProjectInfo.getInstance()).getServiceCRUD("transazione");
 		this.serviceCRUD.setServiceManager(new JDBCLimitedServiceManager(this.jdbcServiceManager));
 	}
 

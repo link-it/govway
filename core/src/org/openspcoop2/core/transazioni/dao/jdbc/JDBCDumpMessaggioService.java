@@ -57,7 +57,7 @@ public class JDBCDumpMessaggioService extends JDBCDumpMessaggioServiceSearch  im
 	public JDBCDumpMessaggioService(JDBCServiceManager jdbcServiceManager) throws ServiceException {
 		super(jdbcServiceManager);
 		this.log.debug(JDBCDumpMessaggioService.class.getName()+ " initialized");
-		this.serviceCRUD = JDBCProperties.getInstance(ProjectInfo.getInstance()).getServiceCRUD("dumpMessaggio");
+		this.serviceCRUD = JDBCProperties.getInstance(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager.class.getPackage(),ProjectInfo.getInstance()).getServiceCRUD("dumpMessaggio");
 		this.serviceCRUD.setServiceManager(new JDBCLimitedServiceManager(this.jdbcServiceManager));
 	}
 

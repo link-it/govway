@@ -38,19 +38,32 @@ public class JDBCProperties extends LoaderProperties {
 	public JDBCProperties(IProjectInfo project) throws ServiceException {
 		super(Utilities.normalizedProjectName(project.getProjectName())+".dao.jdbc.properties");
 	}
+	public JDBCProperties(Package packageName, IProjectInfo project) throws ServiceException {
+		super(packageName.getName().replaceAll("\\.", "/")+"/"+Utilities.normalizedProjectName(project.getProjectName())+".dao.jdbc.properties");
+	}
 
 	private static Hashtable<String, JDBCProperties> mapJDBCProperties = new Hashtable<String, JDBCProperties>();
-	private static synchronized void initJDBCProperties(IProjectInfo project) throws ServiceException{
+	private static synchronized void initJDBCProperties(Package packageName, IProjectInfo project) throws ServiceException{
 		String key = project.getProjectName();
 		if(mapJDBCProperties.containsKey(key)==false){
-			mapJDBCProperties.put(key, new JDBCProperties(project));
+			JDBCProperties jdbcProps = null;
+			if(packageName!=null) {
+				jdbcProps = new JDBCProperties(packageName,project);
+			}
+			else {
+				jdbcProps = new JDBCProperties(project);
+			}
+			mapJDBCProperties.put(key, jdbcProps);
 		}
 	}
 	
 	public static JDBCProperties getInstance(IProjectInfo project) throws ServiceException {
+		return getInstance(null, project);
+	}
+	public static JDBCProperties getInstance(Package packageName, IProjectInfo project) throws ServiceException {
 		String key = project.getProjectName();
 		if(mapJDBCProperties.containsKey(key)==false){
-			initJDBCProperties(project);
+			initJDBCProperties(packageName, project);
 		}
 		return mapJDBCProperties.get(key);
 	}
