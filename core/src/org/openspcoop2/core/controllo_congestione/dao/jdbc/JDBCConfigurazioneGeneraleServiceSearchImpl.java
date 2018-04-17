@@ -19,43 +19,32 @@
  */
 package org.openspcoop2.core.controllo_congestione.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.converter.ConfigurazioneGeneraleFieldConverter;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.fetch.ConfigurazioneGeneraleFetch;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchSingleObject;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchSingleObject;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.converter.ConfigurazioneGeneraleFieldConverter;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.fetch.ConfigurazioneGeneraleFetch;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
-
-import org.openspcoop2.core.controllo_congestione.Cache;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneRateLimiting;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneControlloTraffico;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaErogazione;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaFruizione;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCConfigurazioneGeneraleServiceSearchImpl
@@ -320,6 +309,8 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 		sqlQueryObject = sqlQueryObject.newSQLQueryObject();
 		sqlQueryObject.setANDLogicOperator(true);
 
+		sqlQueryObject.addFromTable(this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model()));
+		sqlQueryObject.addSelectField(this.getConfigurazioneGeneraleFieldConverter().toColumn(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_SOGLIA,true));
 		// Parameter 'tableId' unused in single instance
 
 		// Exists configurazioneGenerale
@@ -332,56 +323,12 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(ConfigurazioneGenerale.model().XXXX,false)){
-			String tableName1 = this.getConfigurazioneGeneraleFieldConverter().toAliasTable(ConfigurazioneGenerale.model());
-			String tableName2 = this.getConfigurazioneGeneraleFieldConverter().toAliasTable(ConfigurazioneGenerale.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(ConfigurazioneGenerale.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(ConfigurazioneGenerale.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(ConfigurazioneGenerale.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(ConfigurazioneGenerale.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getConfigurazioneGeneraleFieldConverter().toTable(ConfigurazioneGenerale.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return rootTableIdValues;
 	}
@@ -391,9 +338,6 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 		ConfigurazioneGeneraleFieldConverter converter = this.getConfigurazioneGeneraleFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// ConfigurazioneGenerale.model()
 		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model()),
@@ -406,38 +350,6 @@ public class JDBCConfigurazioneGeneraleServiceSearchImpl implements IJDBCService
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO))
 			));
-
-		// ConfigurazioneGenerale.model().TEMPI_RISPOSTA_FRUIZIONE
-		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_FRUIZIONE),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_FRUIZIONE))
-			));
-
-		// ConfigurazioneGenerale.model().TEMPI_RISPOSTA_EROGAZIONE
-		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_EROGAZIONE),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_EROGAZIONE))
-			));
-
-		// ConfigurazioneGenerale.model().RATE_LIMITING
-		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model().RATE_LIMITING),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(ConfigurazioneGenerale.model().RATE_LIMITING))
-			));
-
-		// ConfigurazioneGenerale.model().CACHE
-		mapTableToPKColumn.put(converter.toTable(ConfigurazioneGenerale.model().CACHE),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(ConfigurazioneGenerale.model().CACHE))
-			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}

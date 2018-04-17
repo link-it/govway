@@ -82,9 +82,9 @@ public class ConfigurazioneGeneraleFieldConverter extends AbstractSQLFieldConver
 		}
 		if(field.equals(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_SOGLIA)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".controllo_max_threads_soglia";
+				return this.toAliasTable(field)+".max_threads";
 			}else{
-				return "controllo_max_threads_soglia";
+				return "max_threads";
 			}
 		}
 		if(field.equals(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_TIPO_ERRORE)){

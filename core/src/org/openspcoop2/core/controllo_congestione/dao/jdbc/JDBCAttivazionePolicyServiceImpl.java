@@ -21,6 +21,7 @@ package org.openspcoop2.core.controllo_congestione.dao.jdbc;
 
 import java.sql.Connection;
 
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.slf4j.Logger;
@@ -64,8 +65,8 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 		
 		ISQLQueryObject sqlQueryObjectInsert = sqlQueryObject.newSQLQueryObject();
-				
-
+		
+		attivazionePolicy.setUpdateTime(DateManager.getDate());
 
 		// Object attivazionePolicy
 		sqlQueryObjectInsert.addInsertTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model()));
@@ -188,7 +189,19 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObjectGet.newSQLQueryObject();
 		
 
-
+		// Check se è avvenuto effettivamente un aggiornamento
+		AttivazionePolicy attivazioneLettoDaDB = this.get(jdbcProperties, log, connection, sqlQueryObjectUpdate, tableId, idMappingResolutionBehaviour);
+		if(attivazioneLettoDaDB.equals(attivazionePolicy)){
+			log.debug("Non sono state apportate differenze");
+			return;
+		}
+		else{
+			StringBuffer bf = new StringBuffer();
+			attivazioneLettoDaDB.diff(attivazionePolicy, bf);
+			log.debug("Esistono differenze: "+bf.toString());
+			attivazionePolicy.setUpdateTime(DateManager.getDate());
+		}
+		
 		// Object attivazionePolicy
 		sqlQueryObjectUpdate.setANDLogicOperator(true);
 		sqlQueryObjectUpdate.addUpdateTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model()));

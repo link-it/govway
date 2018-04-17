@@ -19,45 +19,38 @@
  */
 package org.openspcoop2.core.controllo_congestione.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.converter.AttivazionePolicyFieldConverter;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.fetch.AttivazionePolicyFetch;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
-import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.converter.AttivazionePolicyFieldConverter;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.fetch.AttivazionePolicyFetch;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
-
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCAttivazionePolicyServiceSearchImpl
@@ -107,23 +100,15 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 	public IdActivePolicy convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AttivazionePolicy attivazionePolicy) throws NotImplementedException, ServiceException, Exception{
 	
 		IdActivePolicy idAttivazionePolicy = new IdActivePolicy();
-		// idAttivazionePolicy.setXXX(attivazionePolicy.getYYY());
-		// ...
-		// idAttivazionePolicy.setXXX(attivazionePolicy.getYYY());
-		// TODO: popola IdActivePolicy
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
+		idAttivazionePolicy.setNome(attivazionePolicy.getIdActivePolicy());
+		
+		// opzionali
+		idAttivazionePolicy.setIdPolicy(attivazionePolicy.getIdPolicy());
+		idAttivazionePolicy.setEnabled(attivazionePolicy.isEnabled());
+		idAttivazionePolicy.setUpdateTime(attivazionePolicy.getUpdateTime());
+		
 		return idAttivazionePolicy;
+		
 	}
 	
 	@Override
@@ -575,58 +560,14 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(AttivazionePolicy.model().XXXX,false)){
-			String tableName1 = this.getAttivazionePolicyFieldConverter().toAliasTable(AttivazionePolicy.model());
-			String tableName2 = this.getAttivazionePolicyFieldConverter().toAliasTable(AttivazionePolicy.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(AttivazionePolicy.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(AttivazionePolicy.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(AttivazionePolicy.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(AttivazionePolicy.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdActivePolicy id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdAttivazionePolicy(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdAttivazionePolicy(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return rootTableIdValues;
 	}
@@ -637,34 +578,11 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
-
 		// AttivazionePolicy.model()
 		mapTableToPKColumn.put(converter.toTable(AttivazionePolicy.model()),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(AttivazionePolicy.model()))
 			));
-
-		// AttivazionePolicy.model().FILTRO
-		mapTableToPKColumn.put(converter.toTable(AttivazionePolicy.model().FILTRO),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(AttivazionePolicy.model().FILTRO))
-			));
-
-		// AttivazionePolicy.model().GROUP_BY
-		mapTableToPKColumn.put(converter.toTable(AttivazionePolicy.model().GROUP_BY),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(AttivazionePolicy.model().GROUP_BY))
-			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}
@@ -752,24 +670,12 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
 		// Object _attivazionePolicy
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_ACTIVE_POLICY,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_POLICY,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ENABLED,true));
+		sqlQueryObjectGet.addSelectField(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().UPDATE_TIME,true));
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -778,9 +684,10 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_attivazionePolicy = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_attivazionePolicy.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_attivazionePolicy.add(IdN.class);
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ID_ACTIVE_POLICY.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ID_POLICY.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().ENABLED.getFieldType());
+		listaFieldIdReturnType_attivazionePolicy.add(AttivazionePolicy.model().UPDATE_TIME.getFieldType());
 		org.openspcoop2.core.controllo_congestione.IdActivePolicy id_attivazionePolicy = null;
 		List<Object> listaFieldId_attivazionePolicy = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_attivazionePolicy, searchParams_attivazionePolicy);
@@ -792,9 +699,10 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 		else{
 			// set _attivazionePolicy
 			id_attivazionePolicy = new org.openspcoop2.core.controllo_congestione.IdActivePolicy();
-			// id_attivazionePolicy.setId1(listaFieldId_attivazionePolicy.get(0));
-			// ...
-			// id_attivazionePolicy.setIdN(listaFieldId_attivazionePolicy.get(N-1));
+			id_attivazionePolicy.setNome((String)listaFieldId_attivazionePolicy.get(0));
+			id_attivazionePolicy.setIdPolicy((String)listaFieldId_attivazionePolicy.get(1));
+			id_attivazionePolicy.setEnabled((Boolean)listaFieldId_attivazionePolicy.get(2));
+			id_attivazionePolicy.setUpdateTime((Date)listaFieldId_attivazionePolicy.get(3));
 		}
 		
 		return id_attivazionePolicy;
@@ -825,34 +733,17 @@ public class JDBCAttivazionePolicyServiceSearchImpl implements IJDBCServiceSearc
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
 		// Object _attivazionePolicy
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getAttivazionePolicyFieldConverter().toTable(AttivazionePolicy.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getAttivazionePolicyFieldConverter().toColumn(AttivazionePolicy.model().ID_ACTIVE_POLICY,true)+"=?");
 
 		// Recupero _attivazionePolicy
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_attivazionePolicy = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getNome(),String.class)
 		};
 		Long id_attivazionePolicy = null;
 		try{

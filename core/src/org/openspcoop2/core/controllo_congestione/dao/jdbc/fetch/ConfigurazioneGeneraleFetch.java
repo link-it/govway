@@ -64,7 +64,7 @@ public class ConfigurazioneGeneraleFetch extends AbstractJDBCFetch {
 				setParameter(object.getControlloTraffico(), "setControlloMaxThreadsWarningOnly", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_WARNING_ONLY.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "max_threads_warning_only", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_WARNING_ONLY.getFieldType()));
 				setParameter(object.getControlloTraffico(), "setControlloMaxThreadsSoglia", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_SOGLIA.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "controllo_max_threads_soglia", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_SOGLIA.getFieldType()));
+					jdbcParameterUtilities.readParameter(rs, "max_threads", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_SOGLIA.getFieldType()));
 				setParameter(object.getControlloTraffico(), "setControlloMaxThreadsTipoErrore", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_TIPO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "max_threads_tipo_errore", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_TIPO_ERRORE.getFieldType()));
 				setParameter(object.getControlloTraffico(), "setControlloMaxThreadsTipoErroreIncludiDescrizione", ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO.CONTROLLO_MAX_THREADS_TIPO_ERRORE_INCLUDI_DESCRIZIONE.getFieldType(),

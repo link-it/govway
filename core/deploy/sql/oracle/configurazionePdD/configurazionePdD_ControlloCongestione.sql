@@ -7,7 +7,7 @@ CREATE TABLE congestion_config
 	-- Numero Massimo Richieste Simultanee
 	max_threads_enabled NUMBER NOT NULL,
 	max_threads_warning_only NUMBER NOT NULL,
-	controllo_traffico_controllo_m NUMBER NOT NULL,
+	max_threads NUMBER NOT NULL,
 	max_threads_tipo_errore VARCHAR2(255) NOT NULL,
 	max_threads_includi_errore NUMBER NOT NULL,
 	-- Controllo della Congestione

@@ -245,6 +245,7 @@ public class JDBCConfigurazioneGeneraleServiceImpl extends JDBCConfigurazioneGen
 	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject) throws NotImplementedException,ServiceException,Exception {
 	
 		// Used by internal elements (if exists)
+		@SuppressWarnings("unused")
 		Long id = null;
 		try{
 			id = this.get(jdbcProperties, log, connection, sqlQueryObject,null).getId();		
