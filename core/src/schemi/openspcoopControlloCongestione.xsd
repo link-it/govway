@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/controllo_congestione"
+	targetNamespace="http://www.openspcoop2.org/core/controllo_congestione"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+		
+	
+	
+	
+	
+	
+	<!-- ********* PLUGINS PER IL CONTROLLO CONGESTIONE ************* -->
+	
+	
+	<!-- Configurazione Generale -->
+	
+	<xsd:element name="configurazione-generale">
+		<xsd:complexType>
+			<xsd:sequence>
+				
+				<!-- Controllo del Traffico -->
+				<xsd:element name="controllo-traffico" type="configurazione-controllo-traffico" />
+				
+				<!-- Tempi di Risposta -->
+				<xsd:element name="tempi-risposta-fruizione" type="tempi-risposta-fruizione"/>
+				<xsd:element name="tempi-risposta-erogazione" type="tempi-risposta-erogazione"/>
+				
+				<!-- Rate Limiting -->
+				<xsd:element name="rate-limiting" type="configurazione-rate-limiting" />
+								
+				<!-- Informazioni cache -->
+				<xsd:element name="cache" type="cache" />
+				
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="configurazione-policy" type="configurazione-policy" />
+	
+	<xsd:element name="attivazione-policy" type="attivazione-policy" />
+	
+	
+	
+	
+	
+	<!-- Raccoglitori -->
+	
+	<xsd:element name="elenco-policy">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="configurazione-policy" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-policy">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-policy" type="id-policy" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="elenco-policy-attive">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="attivazione-policy" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="elenco-id-policy-attive">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-active-policy" type="id-active-policy" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	
+	
+
+	
+	
+	
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	
+	<!-- Parametri -->
+	
+	<xsd:complexType name="tempi-risposta-erogazione">
+		<xsd:sequence>
+			<xsd:element name="connection-timeout" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="read-timeout" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="tempo-medio-risposta" type="xsd:unsignedInt" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="tempi-risposta-fruizione">
+		<xsd:sequence>
+			<xsd:element name="connection-timeout" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="read-timeout" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="tempo-medio-risposta" type="xsd:unsignedInt" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="cache">
+		<xsd:sequence>
+			<xsd:element name="cache" type="xsd:boolean" default="true" />
+			<xsd:element name="size" type="xsd:unsignedLong" minOccurs="0" />
+			<xsd:element name="algorithm" type="cache-algorithm" minOccurs="0" />
+			<xsd:element name="idle-time" type="xsd:unsignedLong" minOccurs="0" />
+			<xsd:element name="life-time" type="xsd:unsignedLong" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="configurazione-controllo-traffico">
+		<xsd:sequence>
+			<xsd:element name="controllo-max-threads-enabled" type="xsd:boolean" default="true" />
+			<xsd:element name="controllo-max-threads-warning-only" type="xsd:boolean" default="false" />
+			<xsd:element name="controllo-max-threads-soglia" type="xsd:unsignedLong" />
+			<xsd:element name="controllo-max-threads-tipo-errore" type="xsd:string" default="fault" />
+			<xsd:element name="controllo-max-threads-tipo-errore-includi-descrizione" type="xsd:boolean" default="true" />
+			
+			<xsd:element name="controllo-congestione-enabled" type="xsd:boolean" default="false"/>
+			<xsd:element name="controllo-congestione-threshold" type="xsd:unsignedInt" minOccurs="0" />			
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="configurazione-rate-limiting">
+		<xsd:sequence>
+			<xsd:element name="tipo-errore" type="xsd:string" default="fault" />
+			<xsd:element name="tipo-errore-includi-descrizione" type="xsd:boolean" default="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="configurazione-policy">
+		<xsd:sequence>
+			
+			<xsd:element name="id-policy" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" />
+			<xsd:element name="risorsa" type="xsd:string" /> <!--  Lascio libero in modo da aggiungere facilmente nuove policy senza intervenire sul db type="tipo-risorsa"  -->	
+			<xsd:element name="simultanee" type="xsd:boolean" default="false" />
+			<xsd:element name="valore" type="xsd:unsignedLong" minOccurs="0" />
+			<xsd:element name="valore-tipo-banda" type="tipo-banda" minOccurs="0" />
+			<xsd:element name="valore-tipo-latenza" type="tipo-latenza" minOccurs="0" />
+			<xsd:element name="modalita-controllo" type="tipo-controllo-periodo" minOccurs="0" />
+			<xsd:element name="tipo-intervallo-osservazione-realtime" type="tipo-periodo-realtime" minOccurs="0" />
+			<xsd:element name="tipo-intervallo-osservazione-statistico" type="tipo-periodo-statistico" minOccurs="0" />
+			<xsd:element name="intervallo-osservazione" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="finestra-osservazione" type="tipo-finestra" minOccurs="0" />		
+			<xsd:element name="tipo-applicabilita" type="tipo-applicabilita" default="sempre" />
+			
+			<!-- Congestione -->
+			<xsd:element name="applicabilita-con-congestione" type="xsd:boolean" default="false" />
+			
+			<!-- Degrado Prestazionale -->
+			<xsd:element name="applicabilita-degrado-prestazionale" type="xsd:boolean" default="false"/>
+			<xsd:element name="degrado-avg-time-modalita-controllo" type="tipo-controllo-periodo" minOccurs="0"/>
+			<xsd:element name="degrado-avg-time-tipo-intervallo-osservazione-realtime" type="tipo-periodo-realtime" minOccurs="0"/>
+			<xsd:element name="degrado-avg-time-tipo-intervallo-osservazione-statistico" type="tipo-periodo-statistico" minOccurs="0"/>
+			<xsd:element name="degrado-avg-time-intervallo-osservazione" type="xsd:unsignedInt" minOccurs="0"/>
+			<xsd:element name="degrado-avg-time-finestra-osservazione" type="tipo-finestra" minOccurs="0"/>
+			<xsd:element name="degrado-avg-time-tipo-latenza" type="tipo-latenza" minOccurs="0"/>
+
+			<!-- Allarme -->
+			<xsd:element name="applicabilita-stato-allarme" type="xsd:boolean" default="false"/>
+			<xsd:element name="allarme-nome" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="allarme-stato" type="xsd:unsignedInt" minOccurs="0" />
+			<xsd:element name="allarme-not-stato" type="xsd:boolean" default="false" />
+			
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="attivazione-policy">
+		<xsd:sequence>
+			
+			<xsd:element name="id-active-policy" type="xsd:string" />
+			<xsd:element name="alias" type="xsd:string" minOccurs="0" />
+			<xsd:element name="update-time" type="xsd:dateTime" />
+			<xsd:element name="id-policy" type="xsd:string" />
+			<xsd:element name="enabled" type="xsd:boolean" />
+			<xsd:element name="warning-only" type="xsd:boolean" default="false" />
+			<xsd:element name="ridefinisci" type="xsd:boolean" /> <!-- Permette di indicare se devono essere ridefiniti i valori di default -->
+			<xsd:element name="valore" type="xsd:unsignedLong" minOccurs="0" />
+			
+			<xsd:element name="filtro" type="attivazione-policy-filtro" minOccurs="1"/>
+			
+			<xsd:element name="group-by" type="attivazione-policy-raggruppamento" minOccurs="1"/>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="attivazione-policy-filtro">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"/> <!-- Permette di indicare se se la policy deve essere attuata solamente per determinate transazioni -->
+
+			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" />
+
+			<xsd:element name="ruolo-porta" type="ruolo-policy" minOccurs="0" />
+			
+			<xsd:element name="tipo-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="ruolo-fruitore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="tipo-erogatore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-erogatore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="ruolo-erogatore" type="xsd:string" minOccurs="0" />
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="tipo-servizio" type="xsd:string" minOccurs="0" />
+			<xsd:element name="nome-servizio" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="azione" type="xsd:string" minOccurs="0" />
+			
+			<xsd:element name="informazione-applicativa-enabled" type="xsd:boolean" default="false" /> <!-- Permette di indicare se il filtro deve utilizzare una informazione applicativa -->		
+			<xsd:element name="informazione-applicativa-tipo" type="xsd:string" minOccurs="0" />			
+			<xsd:element name="informazione-applicativa-nome" type="xsd:string" minOccurs="0" /> <!-- Può contenere un nome di header, il nome di una proprietà, una espressione regolare o espressione xpath -->
+			<xsd:element name="informazione-applicativa-valore" type="xsd:string" minOccurs="0" />
+				
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	<xsd:complexType name="attivazione-policy-raggruppamento">
+		<xsd:sequence>
+			
+			<xsd:element name="enabled" type="xsd:boolean" default="false"/> <!-- Permette di indicare se se la policy deve attuare un raggruppamento -->
+			
+			<xsd:element name="ruolo-porta" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="protocollo" type="xsd:boolean" default="false"/>
+						
+			<xsd:element name="fruitore" type="xsd:boolean" default="false"/>
+			<xsd:element name="servizio-applicativo-fruitore" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="erogatore" type="xsd:boolean" default="false"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:boolean" default="false"/>
+
+			<xsd:element name="servizio" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="azione" type="xsd:boolean" default="false"/>
+			
+			<xsd:element name="informazione-applicativa-enabled" type="xsd:boolean" default="false" /> 
+			<xsd:element name="informazione-applicativa-tipo" type="xsd:string" minOccurs="0" />
+			<xsd:element name="informazione-applicativa-nome" type="xsd:string" minOccurs="0" /> <!-- Può contenere un nome di header, il nome di una proprietà, una espressione regolare o espressione xpath -->
+
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+
+	
+	
+	
+	<!-- ID -->
+	<xsd:complexType name="id-active-policy">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+			<!-- informazione aggiuntiva -->
+			<xsd:element name="id-policy" type="xsd:string" minOccurs="0" />
+			<xsd:element name="enabled" type="xsd:boolean" minOccurs="0" />
+			<xsd:element name="update-time" type="xsd:dateTime" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-policy">
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
+	
+	<!-- Tipi -->
+	
+	<xsd:simpleType name="tipo-filtro-applicativo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="HeaderBased"/>
+			<xsd:enumeration value="URLBased"/>
+			<xsd:enumeration value="FormBased"/>
+			<xsd:enumeration value="SOAPActionBased"/>
+			<xsd:enumeration value="ContentBased"/>
+			<xsd:enumeration value="PluginBased"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-risorsa">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NumeroRichieste"/>
+			<xsd:enumeration value="OccupazioneBanda"/>
+			<xsd:enumeration value="TempoComplessivoRisposta"/>
+			<xsd:enumeration value="TempoMedioRisposta"/>
+			<xsd:enumeration value="NumeroRichiesteFallite"/>
+			<xsd:enumeration value="NumeroRichiesteCompletateConSuccesso"/>
+			<xsd:enumeration value="NumeroFaultApplicativi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="ruolo-policy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="entrambi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-controllo-periodo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="realtime"/>
+			<xsd:enumeration value="statistic"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-periodo-statistico">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="mensile"/>
+			<xsd:enumeration value="settimanale"/>
+			<xsd:enumeration value="giornaliero"/>
+			<xsd:enumeration value="orario"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-periodo-realtime">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="secondi"/>
+			<xsd:enumeration value="minuti"/>
+			<xsd:enumeration value="orario"/>
+			<xsd:enumeration value="giornaliero"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-applicabilita">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="sempre"/>
+			<xsd:enumeration value="condizionale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-latenza">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="servizio"/>
+			<xsd:enumeration value="porta"/>
+			<xsd:enumeration value="totale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-banda">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="complessiva"/>
+			<xsd:enumeration value="interna"/>
+			<xsd:enumeration value="esterna"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-finestra">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="corrente"/>
+			<xsd:enumeration value="precedente"/>
+			<xsd:enumeration value="scorrevole"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="cache-algorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="LRU"/>
+			<xsd:enumeration value="MRU"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-errore">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="fault"/>
+			<xsd:enumeration value="http429"/>
+			<xsd:enumeration value="http503"/>
+			<xsd:enumeration value="http500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+</xsd:schema>
