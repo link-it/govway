@@ -994,6 +994,17 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="versione-servizio" type="xsd:integer" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="filtro_versione_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[L'attivazione della policy riguarda solamente transazioni che possiedono la versione del servizio indicato]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			
 			<xsd:element name="azione" type="xsd:string" minOccurs="0" >
 				<xsd:annotation>

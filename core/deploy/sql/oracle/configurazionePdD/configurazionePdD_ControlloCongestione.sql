@@ -168,6 +168,7 @@ CREATE TABLE congestion_active_policy
 	filtro_sa_erogatore VARCHAR2(255),
 	filtro_tipo_servizio VARCHAR2(255),
 	filtro_nome_servizio VARCHAR2(255),
+	filtro_versione_servizio NUMBER,
 	filtro_azione VARCHAR2(255),
 	-- Filtro per Chiave Applicativa
 	filtro_key_enabled NUMBER NOT NULL,

@@ -123,6 +123,7 @@
     <value name="servizio-applicativo-erogatore" field="servizioApplicativoErogatore" usage="optional"/>
     <value name="tipo-servizio" field="tipoServizio" usage="optional"/>
     <value name="nome-servizio" field="nomeServizio" usage="optional"/>
+    <value name="versione-servizio" field="versioneServizio" usage="optional"/>
     <value name="azione" field="azione" usage="optional"/>
     <value name="informazione-applicativa-enabled" field="informazioneApplicativaEnabled" default="false" usage="required"/>
     <value name="informazione-applicativa-tipo" field="informazioneApplicativaTipo" usage="optional"/>

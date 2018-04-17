@@ -213,6 +213,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 				return "filtro_nome_servizio";
 			}
 		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".filtro_versione_servizio";
+			}else{
+				return "filtro_versione_servizio";
+			}
+		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.AZIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".filtro_azione";
@@ -406,6 +413,9 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.NOME_SERVIZIO)){
+			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
+		}
+		if(field.equals(AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO)){
 			return this.toTable(AttivazionePolicy.model().FILTRO, returnAlias);
 		}
 		if(field.equals(AttivazionePolicy.model().FILTRO.AZIONE)){

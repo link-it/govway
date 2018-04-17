@@ -49,6 +49,7 @@ import java.io.Serializable;
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tipo-servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="nome-servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="versione-servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="informazione-applicativa-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="informazione-applicativa-tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -80,6 +81,7 @@ import java.io.Serializable;
   	"servizioApplicativoErogatore",
   	"tipoServizio",
   	"nomeServizio",
+  	"versioneServizio",
   	"azione",
   	"informazioneApplicativaEnabled",
   	"informazioneApplicativaTipo",
@@ -228,6 +230,14 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
     this.nomeServizio = nomeServizio;
   }
 
+  public java.lang.Integer getVersioneServizio() {
+    return this.versioneServizio;
+  }
+
+  public void setVersioneServizio(java.lang.Integer versioneServizio) {
+    this.versioneServizio = versioneServizio;
+  }
+
   public java.lang.String getAzione() {
     return this.azione;
   }
@@ -332,6 +342,10 @@ public class AttivazionePolicyFiltro extends org.openspcoop2.utils.beans.BaseBea
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome-servizio",required=false,nillable=false)
   protected java.lang.String nomeServizio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="versione-servizio",required=false,nillable=false)
+  protected java.lang.Integer versioneServizio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)

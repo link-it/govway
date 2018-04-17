@@ -98,6 +98,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "filtro_tipo_servizio", AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO.getFieldType()));
 				setParameter(object.getFiltro(), "setNomeServizio", AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_nome_servizio", AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType()));
+				setParameter(object.getFiltro(), "setVersioneServizio", AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "filtro_versione_servizio", AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType()));
 				setParameter(object.getFiltro(), "setAzione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "filtro_azione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType()));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaEnabled", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType(),
@@ -198,6 +200,8 @@ public class AttivazionePolicyFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"filtro.tipo-servizio"));
 				setParameter(object.getFiltro(), "setNomeServizio", AttivazionePolicy.model().FILTRO.NOME_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"filtro.nome-servizio"));
+				setParameter(object.getFiltro(), "setVersioneServizio", AttivazionePolicy.model().FILTRO.VERSIONE_SERVIZIO.getFieldType(),
+					this.getObjectFromMap(map,"filtro.versione-servizio"));
 				setParameter(object.getFiltro(), "setAzione", AttivazionePolicy.model().FILTRO.AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"filtro.azione"));
 				setParameter(object.getFiltro(), "setInformazioneApplicativaEnabled", AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED.getFieldType(),
