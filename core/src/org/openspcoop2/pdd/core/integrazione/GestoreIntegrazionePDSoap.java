@@ -60,7 +60,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDSoap.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePD(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}

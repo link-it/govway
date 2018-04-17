@@ -755,6 +755,14 @@ public class OpenSPCoop2Properties {
 				return false;
 			}
 
+			// Check tipi di default: urlBased, trasporto, soap
+			List<String> headerDefault = new ArrayList<>();
+			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED);
+			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO);
+			headerDefault.add(CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP);	
+			if(checkTipiIntegrazione(headerDefault.toArray(new String[1]))==false)
+				return false;
+			
 			// Integrazione tra Servizi Applicativi e Porta di Dominio
 			if ( this.getTipoIntegrazionePD() == null ){
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
@@ -1695,7 +1703,24 @@ public class OpenSPCoop2Properties {
 
 
 
-
+	public List<String> getKeywordsIntegrazione(){
+		List<String> keywords = new ArrayList<>();
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE);
+		return keywords;
+	}
 
 	private boolean checkTipiIntegrazione(String[] tipiIntegrazione){
 		// Check KeyWord per tipi 'trasporto' e 'urlBased' e 'soap'
@@ -1705,6 +1730,10 @@ public class OpenSPCoop2Properties {
 							CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP.equals(tipiIntegrazione[i]) ){
 				
 				java.util.Properties prop = null;
+				HashMap<String, Boolean> propSetPD = null;
+				HashMap<String, Boolean> propReadPD = null;
+				HashMap<String, Boolean> propSetPA = null;
+				HashMap<String, Boolean> propReadPA = null;
 				String tipo = "";
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneTrasporto() == null ){
@@ -1712,81 +1741,163 @@ public class OpenSPCoop2Properties {
 						return false;
 					}
 					prop = this.getKeyValue_HeaderIntegrazioneTrasporto();
-					tipo="trasporto";
+					try {
+						propSetPD = this.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneTrasporto();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*'.");
+						return false;
+					}
+					try {
+						propSetPA = this.getKeyPASetEnabled_HeaderIntegrazioneTrasporto();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneTrasporto();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*'.");
+						return false;
+					}
+					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneUrlBased() == null ){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*'.");
 						return false;
 					}
 					prop = this.getKeyValue_HeaderIntegrazioneUrlBased();
-					tipo="urlBased";
+					try {
+						propSetPD = this.getKeyPDSetEnabled_HeaderIntegrazioneUrlBased();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneUrlBased();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*'.");
+						return false;
+					}
+					try {
+						propSetPA = this.getKeyPASetEnabled_HeaderIntegrazioneUrlBased();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneUrlBased();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*'.");
+						return false;
+					}
+					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneSoap() == null ){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.keyword.*'.");
 						return false;
 					}
 					prop = this.getKeyValue_HeaderIntegrazioneSoap();
-					tipo="soap";
+					try {
+						propSetPD = this.getKeyPDSetEnabled_HeaderIntegrazioneSoap();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneSoap();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*'.");
+						return false;
+					}
+					try {
+						propSetPA = this.getKeyPASetEnabled_HeaderIntegrazioneSoap();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.enabled.*'.");
+						return false;
+					}
+					try {
+						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneSoap();
+					}catch(Exception e) {
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*'.");
+						return false;
+					}
+					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP;
 				}
 				
+				List<String> keywords = this.getKeywordsIntegrazione();
+				for (String keyword : keywords) {
+					if( prop.get(keyword) == null){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
+								keyword+"'.");
+						return false;
+					}
+					if( propSetPD.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+								keyword+"'.");
+						return false;
+					}
+					if( propReadPD.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
+								keyword+"'.");
+						return false;
+					}
+					if( propSetPA.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+								keyword+"'.");
+						return false;
+					}
+					if( propReadPA.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
+								keyword+"'.");
+						return false;
+					}
+				}
 				
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE+"'.");
+				String keyword = CostantiPdD.HEADER_INTEGRAZIONE_INFO;
+				if( propSetPD.containsKey(keyword) == false){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+							keyword+"'.");
 					return false;
 				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE+"'.");
+				if( propSetPA.containsKey(keyword) == false){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+							keyword+"'.");
 					return false;
 				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO+"'.");
+				
+				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipo)) {
+					keyword = CostantiPdD.HEADER_INTEGRAZIONE_INFO_DOMINIO_ESTERNO;
+					if( propSetPD.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+								keyword+"'.");
+						return false;
+					}
+					if( propSetPA.containsKey(keyword) == false){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+								keyword+"'.");
+						return false;
+					}
+				}
+				
+				keyword = CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO;
+				if( propSetPD.containsKey(keyword) == false){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+							keyword+"'.");
 					return false;
 				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO+"'.");
+				if( propSetPA.containsKey(keyword) == false){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+							keyword+"'.");
 					return false;
 				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_AZIONE+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO_RICHIESTA+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO+"'.");
-					return false;
-				}
-				if( prop.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE) == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE+"'.");
-					return false;
-				}
-				break;
+				
+				//break;
 			}
 			
 			
@@ -6612,6 +6723,138 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto;
 	}
 	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPD = null;
+	public HashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.set.enabled.");
+				keyValue_HeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneTrasporto_setPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPD = null;
+	public HashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.");
+				keyValue_HeaderIntegrazioneTrasporto_readPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneTrasporto_readPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_setPA = null;
+	public HashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.set.enabled.");
+				keyValue_HeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneTrasporto_setPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_setPA;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneTrasporto_readPA = null;
+	public HashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.");
+				keyValue_HeaderIntegrazioneTrasporto_readPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneTrasporto_readPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneTrasporto_readPA;
+	}
+	
 	/**
 	 * Restituisce le proprieta' che identificano gli header di integrazione in caso di 'urlBased'.
 	 *
@@ -6637,6 +6880,138 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased;
 	}
 	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPD = null;
+	public HashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.");
+				keyValue_HeaderIntegrazioneUrlBased_setPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneUrlBased_setPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPD = null;
+	public HashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.");
+				keyValue_HeaderIntegrazioneUrlBased_readPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneUrlBased_readPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_setPA = null;
+	public HashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.");
+				keyValue_HeaderIntegrazioneUrlBased_setPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneUrlBased_setPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_setPA;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneUrlBased_readPA = null;
+	public HashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneUrlBased() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.");
+				keyValue_HeaderIntegrazioneUrlBased_readPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneUrlBased_readPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneUrlBased_readPA;
+	}
+	
 	/**
 	 * Restituisce le proprieta' che identificano gli header di integrazione in caso di 'soap'.
 	 *
@@ -6660,6 +7035,138 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPD = null;
+	public HashMap<String, Boolean> getKeyPDSetEnabled_HeaderIntegrazioneSoap() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.set.enabled.");
+				keyValue_HeaderIntegrazioneSoap_setPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneSoap_setPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pd.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_readPD = null;
+	public HashMap<String, Boolean> getKeyPDReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.");
+				keyValue_HeaderIntegrazioneSoap_readPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneSoap_readPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPD;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_setPA = null;
+	public HashMap<String, Boolean> getKeyPASetEnabled_HeaderIntegrazioneSoap() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.set.enabled.");
+				keyValue_HeaderIntegrazioneSoap_setPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneSoap_setPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pa.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_setPA;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_HeaderIntegrazioneSoap_readPA = null;
+	public HashMap<String, Boolean> getKeyPAReadEnabled_HeaderIntegrazioneSoap() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.");
+				keyValue_HeaderIntegrazioneSoap_readPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_HeaderIntegrazioneSoap_readPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_HeaderIntegrazioneSoap_readPA;
 	}
 	
 	private static String headerIntegrazioneSOAPPdDVersione = null;

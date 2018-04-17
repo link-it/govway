@@ -60,7 +60,7 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePASoap.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePA(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}

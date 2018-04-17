@@ -50,7 +50,7 @@ public class GestoreIntegrazionePATrasporto extends AbstractCore implements IGes
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePATrasporto.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePA(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}

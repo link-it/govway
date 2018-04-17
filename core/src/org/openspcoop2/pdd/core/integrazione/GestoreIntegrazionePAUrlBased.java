@@ -51,7 +51,7 @@ public class GestoreIntegrazionePAUrlBased extends AbstractCore implements IGest
 			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePAUrlBased.class);
 		}
 		try{
-			this.utilities = UtilitiesIntegrazione.getInstance(this.log);
+			this.utilities = UtilitiesIntegrazione.getInstancePA(this.log);
 		}catch(Exception e){
 			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
 		}

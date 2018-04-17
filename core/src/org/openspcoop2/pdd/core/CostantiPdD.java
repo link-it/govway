@@ -167,6 +167,12 @@ public class CostantiPdD {
     /** Costante che indica il valore dell'header di integrazione: identificativo di transazione*/
     public final static String HEADER_INTEGRAZIONE_ID_TRANSAZIONE = "idTransazione";
     
+    /** Costante che indica l'invio delle informazioni di versionamento */
+    public final static String HEADER_INTEGRAZIONE_PROTOCOL_INFO = "protocolInfo";
+    
+    /** Costante che indica l'invio delle informazioni di versionamento */
+    public final static String HEADER_INTEGRAZIONE_INFO = "info";
+    public final static String HEADER_INTEGRAZIONE_INFO_DOMINIO_ESTERNO = "infoDominioEsterno";
     /** Costante che indica il valore dell'header User-Agent*/
     public final static String HEADER_HTTP_USER_AGENT = "User-Agent";
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/

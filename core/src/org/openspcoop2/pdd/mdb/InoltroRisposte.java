@@ -982,12 +982,12 @@ public class InoltroRisposte extends GenericLib{
 			}
 			
 			// User-Agent e X-* header
-			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstance(this.log);
+			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePA(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
 				Properties trasporto = new Properties();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
-			httpUtilities.setRequestTransportProperties(null, connettoreMsg.getPropertiesTrasporto(),null);
+			httpUtilities.setInfoProductRequestTransportProperties(connettoreMsg.getPropertiesTrasporto());
 
 
 			// Informazioni connettore in uscita

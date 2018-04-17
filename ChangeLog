@@ -1,3 +1,12 @@
+2017-04-17  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-710
+	Resi configurabili gli header di integrazione letti o generati dalla PdD nelle sue modalità di integrazione standard: soap, url, trasporto
+	Differenziata la lettura/serializzazione della singola informazione su contesto porta delegata o applicativa.
+	Realizzata un nuovo tipo di integrazione che permetta di annullare qualsiasi meccanismo di integrazione da pddConsole. 
+	Per attivarla impostare il valore 'none' sui metadati della porta delegata o applicativa.
+
 2017-04-13  Andrea Poli <apoli@link.it>
 
 	* [Utils]

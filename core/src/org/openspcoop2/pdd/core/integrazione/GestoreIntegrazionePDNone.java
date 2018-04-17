@@ -20,55 +20,30 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 
 
 
 /**
- * Classe utilizzata per la ricezione di informazioni di integrazione 
- * dai servizi applicativi verso la porta di dominio.
+ * Classe utilizzata per avere una implementazione 'nop'
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13572 $, $Date: 2018-01-26 11:48:01 +0100 (Fri, 26 Jan 2018) $
  */
-public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGestoreIntegrazionePD{
+public class GestoreIntegrazionePDNone extends AbstractCore implements IGestoreIntegrazionePD{
 
-	/** Utility per l'integrazione */
-	UtilitiesIntegrazione utilities = null;
 	
-	/** Logger utilizzato per debug. */
-	private Logger log = null;
-	
-	public GestoreIntegrazionePDUrlBased(){
-		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		if(this.log==null){
-			this.log = LoggerWrapperFactory.getLogger(GestoreIntegrazionePDUrlBased.class);
-		}
-		try{
-			this.utilities = UtilitiesIntegrazione.getInstancePD(this.log);
-		}catch(Exception e){
-			this.log.error("Errore durante l'inizializzazione delle UtilitiesIntegrazione: "+e.getMessage(),e);
-		}
+	public GestoreIntegrazionePDNone(){
 	}
 	
-	
+
 	// IN - Request
-	
+
 	@Override
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
-		
-		try{
-			this.utilities.readUrlProperties(inRequestPDMessage.getUrlProtocolContext().getParametersFormBased(), 
-					integrazione);	
-		}catch(Exception e){
-			throw new HeaderIntegrazioneException("GestoreIntegrazionePDUrlBased, "+e.getMessage(),e);
-		}
-		
+		// nop
 	}
 
 	// OUT - Request
@@ -76,9 +51,7 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 	@Override
 	public void setOutRequestHeader(HeaderIntegrazione integrazione,
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
-	
-		// nop;
-		
+		// nop
 	}
 	
 	// IN - Response
@@ -86,16 +59,14 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 	@Override
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
-		// NOP
-		// Non esiste un header di integrazione basato sulla url per la risposta
+		// nop
 	}
-	
+		
 	// OUT - Response
-	
+
 	@Override
 	public void setOutResponseHeader(HeaderIntegrazione integrazione,
 			OutResponsePDMessage outResponsePDMessage) throws HeaderIntegrazioneException{
-		// NOP
-		// Non esiste un header di integrazione basato sulla url per la risposta
+		// nop
 	}
 }
