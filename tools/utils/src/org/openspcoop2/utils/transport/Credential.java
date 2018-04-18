@@ -51,6 +51,9 @@ public class Credential implements Serializable {
 	// Basic (HTTP-Based)
 	protected String username;
 	protected String password;
+	
+	// Bearer (token)
+	protected String bearerToken;
 		
 	
 	public Credential(){
@@ -164,6 +167,12 @@ public class Credential implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public String getBearerToken() {
+		return this.bearerToken;
+	}
+	public void setBearerToken(String bearerToken) {
+		this.bearerToken = bearerToken;
+	}
 	public java.security.cert.X509Certificate[] getCerts() {
 		return this.certs;
 	}
@@ -230,6 +239,17 @@ public class Credential implements Serializable {
 			
 			bf.append("password(");
 			bf.append(this.password);
+			bf.append(")");
+		}
+		
+		if(this.bearerToken!=null){
+			
+			if(bf.length()>0){
+				bf.append(" ");
+			}
+			
+			bf.append("bearerToken(");
+			bf.append(this.bearerToken);
 			bf.append(")");
 		}
 		

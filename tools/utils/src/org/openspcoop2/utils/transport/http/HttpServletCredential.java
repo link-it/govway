@@ -57,11 +57,12 @@ public class HttpServletCredential extends Credential implements Serializable {
 		
 		this.httpServletRequest = req;
 		
-		// Basic (HTTP-Based)
 		String auth = req.getHeader(HttpConstants.AUTHORIZATION);
-		if(auth != null){
+		
+		// Basic (HTTP-Based)
+		if(auth != null && auth.toLowerCase().startsWith(HttpConstants.AUTHORIZATION_PREFIX_BASIC.toLowerCase())){
 			// Sbustring(6): elimina la parte "Basic "
-			String decodeAuth = new String(Base64.decode(auth.substring(6)));
+			String decodeAuth = new String(Base64.decode(auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BASIC.length())));
 			String [] decodeAuthSplit = decodeAuth.split(":");
 			if(decodeAuthSplit.length>1){
 				this.username = decodeAuthSplit[0];
@@ -70,6 +71,11 @@ public class HttpServletCredential extends Credential implements Serializable {
 			if(debug && log!=null){
 				log.info("BasicAuthentication presente nella richiesta, username ["+this.username+"] e password ["+this.password+"]");
 			}
+		}
+		
+		// Bearer (Token Oauth)
+		if(auth != null && auth.toLowerCase().startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER.toLowerCase())){
+			this.bearerToken = auth.substring(HttpConstants.AUTHORIZATION_PREFIX_BEARER.length());
 		}
 		
 		// SSL (HTTPS)

@@ -63,6 +63,7 @@ public class HttpConstants {
 	/** Authorization */
 	public final static String AUTHORIZATION = "Authorization";
 	public final static String AUTHORIZATION_PREFIX_BASIC = "Basic ";
+	public final static String AUTHORIZATION_PREFIX_BEARER = "Bearer ";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE = "WWW-Authenticate";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_PREFIX = "Basic realm=\"\"";
 	public final static String AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE_BASIC_REALM_SUFFIX = "\"";

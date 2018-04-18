@@ -51,6 +51,7 @@ public class Credenziali  extends HttpServletCredential implements java.io.Seria
 	        if(credentials!=null){
 	                this.username = credentials.getUsername();
 	                this.password = credentials.getPassword();
+	                this.bearerToken = credentials.getBearerToken();
 	                this.certs = credentials.getCerts();
 	                this.subject = credentials.getSubject();
 	                this.principal = credentials.getPrincipalObject();
