@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.web.lib.mvc.Costanti;
-import org.openspcoop2.web.lib.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.web.lib.mvc.properties.utils.ConditionsEngine;
 
 /***

@@ -26,12 +26,12 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.properties.Conditions;
-import org.openspcoop2.web.lib.mvc.properties.Item;
-import org.openspcoop2.web.lib.mvc.properties.ItemValue;
-import org.openspcoop2.web.lib.mvc.properties.ItemValues;
-import org.openspcoop2.web.lib.mvc.properties.Property;
-import org.openspcoop2.web.lib.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.Conditions;
+import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.ItemValue;
+import org.openspcoop2.core.mvc.properties.ItemValues;
+import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 
 /**
  * Bean di tipo Item arricchito delle informazioni grafiche.

@@ -21,23 +21,23 @@ package org.openspcoop2.web.lib.mvc.properties.utils;
 
 import java.util.List;
 
-import org.openspcoop2.web.lib.mvc.properties.Collection;
-import org.openspcoop2.web.lib.mvc.properties.Condition;
-import org.openspcoop2.web.lib.mvc.properties.Conditions;
-import org.openspcoop2.web.lib.mvc.properties.Config;
-import org.openspcoop2.web.lib.mvc.properties.Defined;
-import org.openspcoop2.web.lib.mvc.properties.Equals;
-import org.openspcoop2.web.lib.mvc.properties.Item;
-import org.openspcoop2.web.lib.mvc.properties.Property;
-import org.openspcoop2.web.lib.mvc.properties.Section;
-import org.openspcoop2.web.lib.mvc.properties.Selected;
-import org.openspcoop2.web.lib.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.Collection;
+import org.openspcoop2.core.mvc.properties.Condition;
+import org.openspcoop2.core.mvc.properties.Conditions;
+import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.Defined;
+import org.openspcoop2.core.mvc.properties.Equals;
+import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.Section;
+import org.openspcoop2.core.mvc.properties.Selected;
+import org.openspcoop2.core.mvc.properties.Subsection;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
-import org.openspcoop2.web.lib.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 
 /****
  * 
@@ -288,7 +288,7 @@ public class ValidationEngine {
 	public static ConfigBean getMetadata(Config config)  throws Exception{
 		ConfigBean cbTmp = new ConfigBean();
 		
-		org.openspcoop2.web.lib.mvc.properties.Properties properties = config.getProperties();
+		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
 		if(properties != null) {
 			List<Collection> collectionList = properties.getCollectionList();
 			for (Collection collection : collectionList) {

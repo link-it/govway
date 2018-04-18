@@ -20,11 +20,11 @@
 package org.openspcoop2.web.lib.mvc.properties.utils;
 
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.properties.Condition;
-import org.openspcoop2.web.lib.mvc.properties.Conditions;
-import org.openspcoop2.web.lib.mvc.properties.Defined;
-import org.openspcoop2.web.lib.mvc.properties.Equals;
-import org.openspcoop2.web.lib.mvc.properties.Selected;
+import org.openspcoop2.core.mvc.properties.Condition;
+import org.openspcoop2.core.mvc.properties.Conditions;
+import org.openspcoop2.core.mvc.properties.Defined;
+import org.openspcoop2.core.mvc.properties.Equals;
+import org.openspcoop2.core.mvc.properties.Selected;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 

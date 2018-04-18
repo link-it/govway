@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.web.lib.mvc.Costanti;
-import org.openspcoop2.web.lib.mvc.properties.Collection;
-import org.openspcoop2.web.lib.mvc.properties.Config;
-import org.openspcoop2.web.lib.mvc.properties.Item;
-import org.openspcoop2.web.lib.mvc.properties.Section;
-import org.openspcoop2.web.lib.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.Collection;
+import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.Section;
+import org.openspcoop2.core.mvc.properties.Subsection;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
@@ -48,7 +48,7 @@ public class ReadPropertiesUtilities {
 		
 		ValidationEngine.validateConfig(config);
 		
-		org.openspcoop2.web.lib.mvc.properties.Properties properties = config.getProperties();
+		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
 		if(properties != null) {
 			List<Collection> collectionList = properties.getCollectionList();
 			for (Collection collection : collectionList) {

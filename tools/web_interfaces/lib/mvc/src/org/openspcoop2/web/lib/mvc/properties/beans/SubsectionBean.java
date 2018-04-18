@@ -21,10 +21,10 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.properties.Conditions;
-import org.openspcoop2.web.lib.mvc.properties.Property;
-import org.openspcoop2.web.lib.mvc.properties.Subsection;
-import org.openspcoop2.web.lib.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.Conditions;
+import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 
 /***
  * 
