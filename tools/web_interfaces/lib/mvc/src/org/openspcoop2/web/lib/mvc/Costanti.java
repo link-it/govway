@@ -207,5 +207,14 @@ public class Costanti {
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
 	public final static String INPUT_CSS_CLASS = "inputLink";
 	public final static String LABEL_LONG_CSS_CLASS = "labelLong";
+	
+	
+	/** MVC PROPERTIES **/
+	
+	public static final String PRE_KEY_PROPERTIES_DEFAULT = "___";
+	
+	public static final String KEY_PROPERTIES_DEFAULT_SEPARATOR = "_@@_";
+	
+	public static final String NOME_MAPPA_PROPERTIES_DEFAULT = PRE_KEY_PROPERTIES_DEFAULT + "defaultMap";
 
 }

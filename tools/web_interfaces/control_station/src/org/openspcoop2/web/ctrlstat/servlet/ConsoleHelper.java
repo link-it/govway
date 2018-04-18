@@ -164,6 +164,8 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
+import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -4762,5 +4764,27 @@ public class ConsoleHelper {
 	public boolean isDumpConfigurazioneAbilitato(DumpConfigurazione configurazione) {
 		return isDumpConfigurazioneAbilitato(configurazione, true) || isDumpConfigurazioneAbilitato(configurazione, false);
 	}
+
+	/** Gestione Properties MVC */
 	
+	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
+		for (String key : configurazione.getListakeys()) {
+			configurazione.getItem(key).setValueFromRequest(this.getParameter(key)); 
+		}
+	}
+	
+	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
+		de.setValue(configName);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME);
+		dati.addElement(de);
+		
+		for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
+			dati.addElement(item.toDataElement());
+		}
+		
+		return dati;
+	}
 }

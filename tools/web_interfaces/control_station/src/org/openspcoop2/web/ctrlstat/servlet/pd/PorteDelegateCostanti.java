@@ -84,6 +84,9 @@ public class PorteDelegateCostanti {
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE = "porteDelegateDumpConfigurazione";
 	public final static ForwardParams TIPO_OPERAZIONE_DUMP_CONFIGURAZIONE = ForwardParams.OTHER("");
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = "porteDelegateWSRequestPropertiesConfig";
+	public final static ForwardParams TIPO_OPERAZIONE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = ForwardParams.OTHER("");
 
 	/* SERVLET NAME */
 
@@ -245,6 +248,8 @@ public class PorteDelegateCostanti {
 	
 	public final static String SERVLET_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE = PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE+".do"; 
 	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG = OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG+".do";
+	
 	/* LABEL GENERALI */
 
 	public final static String LABEL_PORTE_DELEGATE = "Porte Delegate";
@@ -337,7 +342,7 @@ public class PorteDelegateCostanti {
 	public final static int ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_CONFIGURAZIONE;
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
-	
+	public final static String PARAMETRO_PORTE_DELEGATE_PROPERTIES_CONFIG_NAME = CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME;
 	
 	/* LABEL PARAMETRI */
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ID = "Id";
@@ -357,6 +362,8 @@ public class PorteDelegateCostanti {
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Sicurezza Messaggio response-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Parametri della Richiesta";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Parametri della Risposta";
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG = "Properties";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_CONFIG_DI = "Configurazione MTOM di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_REQUEST_FLOW_DI = "MTOM request-flow di ";
 //	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MTOM_RESPONSE_FLOW_DI = "MTOM response-flow di ";

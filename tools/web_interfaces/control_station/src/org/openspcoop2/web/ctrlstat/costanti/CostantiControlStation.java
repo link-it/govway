@@ -240,6 +240,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_USCITA = "Uscita";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO = "Configurazione Registrazione Messaggi modificata con successo";
 	
+	public final static String LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME = "Nome";
 	/** PARAMETERS **/
 	
 	public final static String PARAMETRO_ID = "id";
@@ -319,6 +320,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_BODY = "dumpResOutBody";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "dumpResOutAtt";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "dumpResOutHead";
+	
+	public final static String PARAMETRO_PROPERTIES_CONFIG_NAME = "propertiesConfigName";
 	
 	/** PARAMETRI MESSAGE PAGE **/
 	
