@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.core.controllo_congestione.plugins;
+package org.openspcoop2.pdd.core.controllo_congestione.plugins;
 
 /**
  * PluginsException 

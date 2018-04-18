@@ -226,7 +226,6 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.controllo_congestione.dao,org.openspcoop2.core.controllo_congestione.dao.jdbc,org.openspcoop2.core.controllo_congestione.dao.jdbc.converter,org.openspcoop2.core.controllo_congestione.dao.jdbc.fetch" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.controllo_congestione.beans" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.controllo_congestione.driver" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.controllo_congestione.plugins" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/controllo_congestione"/>

@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.date.UnitaTemporale;
@@ -1130,7 +1129,8 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy,
-			MisurazioniTransazione dati) throws PolicyException{
+			MisurazioniTransazione dati,
+			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo) throws PolicyException{
 		
 		if(this.policyRealtime!=null && this.policyRealtime){
 		
@@ -1167,13 +1167,16 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				List<Integer> esitiAppartenentiGruppo = null;
 				try {
 					if(TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(activePolicy.getTipoRisorsaPolicy())) {
-						esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeOk();
+						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeOk();
+						esitiAppartenentiGruppo = esitiCodeOk;
 					}
 					else if(TipoRisorsa.NUMERO_RICHIESTE_FALLITE.equals(activePolicy.getTipoRisorsaPolicy())) {
-						esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();
+						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();
+						esitiAppartenentiGruppo = esitiCodeKo_senzaFaultApplicativo;
 					}
 					else {
-						esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();
+						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();
+						esitiAppartenentiGruppo = esitiCodeFaultApplicativo;
 					}
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);
