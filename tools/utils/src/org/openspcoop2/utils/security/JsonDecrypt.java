@@ -26,7 +26,6 @@ import java.util.Properties;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
 import org.apache.cxf.rs.security.jose.jwe.JweJsonConsumer;
-import org.apache.cxf.rs.security.jose.jwe.JweJsonEncryptionEntry;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.openspcoop2.utils.UtilsException;
 
@@ -106,14 +105,12 @@ public class JsonDecrypt {
 		
 		JweJsonConsumer consumer = new JweJsonConsumer(jsonString);
 		
-		// nuovo
-		JweJsonEncryptionEntry entry = consumer.getRecipients().get(0);
-		System.out.println("ENTRY: "+entry);
-		JweDecryptionOutput output = consumer.decryptWith(this.provider, entry);
-		// nuovo
+		// con gestione recipients
+//		org.apache.cxf.rs.security.jose.jwe.JweJsonEncryptionEntry entry = consumer.getRecipients().get(0);
+//		JweDecryptionOutput output = consumer.decryptWith(this.provider, entry);
 		
-		// vecchio
-		//JweDecryptionOutput output = consumer.decryptWith(this.provider);
+		// senza gestione recipients
+		JweDecryptionOutput output = consumer.decryptWith(this.provider);
 		
 		this.decodedPayload = output.getContentText();
 		this.decodedPayloadAsByte = output.getContent();
