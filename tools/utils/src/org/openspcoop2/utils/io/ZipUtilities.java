@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.io;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -33,6 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -48,6 +52,25 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 public class ZipUtilities {
 
 	public static void main(String[] args) throws Exception {
+
+		// TEST zip unzip singolo contenuto
+		String contenuto = "Hello World";
+		byte [] test = zip(contenuto.getBytes(), "prova");
+		File f = File.createTempFile("test", ".zip");
+		FileSystemUtilities.writeFile(f, test);
+		System.out.println("Zip File scritto in ["+f.getAbsolutePath()+"]");
+		
+		byte [] zipCompress = FileSystemUtilities.readBytesFromFile(f);
+		byte [] decompress = unzip(zipCompress);
+		String letto = new String(decompress);
+		System.out.println("SCRITTO ["+contenuto+"]");
+		System.out.println("LETTO   ["+letto+"]");
+		if(letto.equals(contenuto)) {
+			System.out.println("UGUALI");
+		}
+		else {
+			System.out.println("DIVERSO");
+		}
 		
 		// L'Enumeration ritornato dal metodo standard java.util.zip.ZipFile.entries() 
 		// attraversa le entries presenti nello zip nello stesso ordine in cui sono state salvate.
@@ -76,7 +99,55 @@ public class ZipUtilities {
 			System.out.println("- "+zipEntry.getName());
 		}
 	}
-	
+
+	public static byte[] zip(byte[] content,String name) throws UtilsException{
+		try {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ZipOutputStream zipOut = new ZipOutputStream(bout);
+			ByteArrayInputStream bin = new ByteArrayInputStream(content);
+			ZipEntry zipEntry = new ZipEntry(name);
+			zipOut.putNextEntry(zipEntry);
+			zipOut.write(content);
+			zipOut.flush();
+			zipOut.close();
+			bin.close();
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e){
+			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+		}
+	}
+	public static byte[] unzip(byte[] zipContent) throws UtilsException{
+		try {
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			ByteArrayInputStream bin = new ByteArrayInputStream(zipContent);
+			ZipInputStream zis = new ZipInputStream(bin);
+			int count = 0;
+			ZipEntry zipEntry = zis.getNextEntry();
+	        while(zipEntry != null){
+	        	count++;
+	        	if(count>1) {
+	        		throw new UtilsException("Errore, il metodo supporta solamente archivi zip contenente un file");
+	        	}
+	        	int len;
+	        	byte[] buffer = new byte[1024];
+	            while ((len = zis.read(buffer)) > 0) {
+	            	bout.write(buffer, 0, len);
+	            }
+	            zipEntry = zis.getNextEntry();
+	        }
+	        zis.closeEntry();
+	        zis.close();
+	        bout.flush();
+	        bout.close();
+	        bin.close();
+	        return bout.toByteArray();
+		}catch(Exception e){
+			throw new UtilsException("Errore durante la comprensione zip: "+e.getMessage(),e);
+		}
+	}
+
 	public static String getRootDir(String entry) throws UtilsException{
 		try{
 			String rootDir = null;
