@@ -25,8 +25,8 @@ import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
-import org.apache.cxf.rs.security.jose.jwe.JweHeaders;
 import org.apache.cxf.rs.security.jose.jwe.JweJsonConsumer;
+import org.apache.cxf.rs.security.jose.jwe.JweJsonEncryptionEntry;
 import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.openspcoop2.utils.UtilsException;
 
@@ -53,7 +53,7 @@ public class JsonDecrypt {
 	
 	public JsonDecrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JweUtils.loadDecryptionProvider(props, new JweHeaders(), false);
+			this.provider = JweUtils.loadDecryptionProvider(props, null, false); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
 			this.representation=representation;
 			
 //			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {
@@ -105,9 +105,16 @@ public class JsonDecrypt {
 	private void decryptSelfContained(String jsonString) throws Exception {
 		
 		JweJsonConsumer consumer = new JweJsonConsumer(jsonString);
-		//JweJsonEncryptionEntry entry = consumer.getRecipients().get(0);
-		//return consumer.decryptWith(this.provider, entry).getContentText();
-		JweDecryptionOutput output = consumer.decryptWith(this.provider);
+		
+		// nuovo
+		JweJsonEncryptionEntry entry = consumer.getRecipients().get(0);
+		System.out.println("ENTRY: "+entry);
+		JweDecryptionOutput output = consumer.decryptWith(this.provider, entry);
+		// nuovo
+		
+		// vecchio
+		//JweDecryptionOutput output = consumer.decryptWith(this.provider);
+		
 		this.decodedPayload = output.getContentText();
 		this.decodedPayloadAsByte = output.getContent();
 		

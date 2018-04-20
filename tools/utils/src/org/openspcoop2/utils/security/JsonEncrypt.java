@@ -23,6 +23,7 @@ package org.openspcoop2.utils.security;
 
 import java.util.Properties;
 
+import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
 import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweEncryptionProvider;
@@ -46,18 +47,24 @@ public class JsonEncrypt {
 	private ContentAlgorithm contentAlgorithm;
 	private KeyAlgorithm keyAlgorithm;
 	
+	private boolean deflate = false;
+	
 	public JsonEncrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
 			this.provider = JweUtils.loadEncryptionProvider(props, new JweHeaders(), false);
 			this.representation=representation;
 			
-			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {
-				this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
-				this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
-				if(this.keyAlgorithm==null) {
-					throw new Exception("KeyAlgorithm undefined");
-				}
+			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
+			this.keyAlgorithm = JweUtils.getKeyEncryptionAlgorithm(props, null);
+//			if(this.keyAlgorithm==null) {
+//				throw new Exception("KeyAlgorithm undefined");
+//			}
+			
+			String tmp = props.getProperty(JoseConstants.RSSEC_ENCRYPTION_ZIP_ALGORITHM);
+			if(tmp!=null && JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM.equalsIgnoreCase(tmp.trim())) {
+				this.deflate = true;
 			}
+			
 		}catch(Throwable t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
@@ -81,19 +88,36 @@ public class JsonEncrypt {
 	}
 
 
-	private String encryptCompact(String jsonString) {
-		return this.provider.encrypt(jsonString.getBytes(), new JweHeaders());
+	private String encryptCompact(String jsonString) {	
+		JweHeaders header = null;
+		if(this.keyAlgorithm!=null) {
+			header = new JweHeaders(this.keyAlgorithm,this.contentAlgorithm,this.deflate);
+		}
+		else {
+			header = new JweHeaders(this.contentAlgorithm,this.deflate);
+		}
+		return this.provider.encrypt(jsonString.getBytes(), header);
 	}
 
 
 	private String encryptSelfContained(String jsonString) {
 		
-		JweHeaders sharedUnprotectedHeaders = new JweHeaders();
-		sharedUnprotectedHeaders.setKeyEncryptionAlgorithm(this.keyAlgorithm);
+		JweHeaders sharedUnprotectedHeaders = null;
+		if(this.keyAlgorithm!=null) {
+			sharedUnprotectedHeaders = new JweHeaders();
+			sharedUnprotectedHeaders.setKeyEncryptionAlgorithm(this.keyAlgorithm);
+		}
 
-		JweHeaders protectedHeaders = new JweHeaders(this.contentAlgorithm);
+		JweHeaders protectedHeaders = new JweHeaders(this.contentAlgorithm, this.deflate);
 		
-		JweJsonProducer producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
+		JweJsonProducer producer = null;
+		if(sharedUnprotectedHeaders!=null) {
+			producer = new JweJsonProducer(protectedHeaders, sharedUnprotectedHeaders, jsonString.getBytes());
+		}
+		else {
+			producer = new JweJsonProducer(protectedHeaders, jsonString.getBytes());
+		}
+		
 		return producer.encryptWith(this.provider);
 	}
 

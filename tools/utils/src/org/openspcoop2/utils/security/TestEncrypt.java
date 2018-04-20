@@ -166,13 +166,14 @@ public class TestEncrypt {
 			System.out.println("\n\n ================================");
 			System.out.println("3. Example JsonEncrypt \n");
 			
-			String jsonInput = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"value2\"\n}";
+			String jsonInput = "\n{\n\t\"name\":\"value1\", \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n, \n\t\"name2\":\"value2\"\n}";
 
 			// Firma
 			Properties encryptProps = new Properties();
 			InputStream encryptPropsis = TestSignature.class.getResourceAsStream("jws.encrypt.properties");
 			encryptProps.load(encryptPropsis);
-			encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+			encryptProps.put("rs.security.keystore.file", fTruststore.getPath());
+			//encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
 			
 			Properties decryptProps = new Properties();
 			InputStream decryptPropsis = TestSignature.class.getResourceAsStream("jws.decrypt.properties");
@@ -181,23 +182,28 @@ public class TestEncrypt {
 			
 			
 			
+			
+			
+			
+			// Cifratura con chiave pubblica e decifratura con chiave privata.
+			
 			System.out.println("\n");
 			
 			// 3a. Encrypt Attached 
 			JsonEncrypt jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
-			String attachSign = jsonAttachedEncrypt.encrypt(jsonInput);
+			String attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
 			
-			System.out.println("3a. JsonAttachedEncrypt Encrypted: \n"+attachSign);
+			System.out.println("3a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
 			
 			// Verifica
 			JsonDecrypt jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
-			jsonAttachedVerify.decrypt(attachSign);
-			System.out.println("3a. JsonAttachedEncrypt Verify: \n"+jsonAttachedVerify.getDecodedPayload());
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("3a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
 			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
 				throw new Exception("Found different payload");
 			}
 			try {
-				jsonAttachedVerify.decrypt(attachSign.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
 				throw new Exception("Expected validation error");
 			}catch(Exception e) {
 				System.out.println("Expected error: "+e.getMessage());
@@ -208,19 +214,19 @@ public class TestEncrypt {
 			
 			// 3b. Encrypt Compact
 			JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
-			String compactSign = jsonCompactEncrypt.encrypt(jsonInput);
+			String compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
 			
-			System.out.println("3b. JsonCompactEncrypt Encrypted: \n"+compactSign);
+			System.out.println("3b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
 			
 			// Verifica
 			JsonDecrypt jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
-			jsonCompactVerify.decrypt(compactSign);
-			System.out.println("3b. JsonCompactEncrypt Verify: \n"+jsonCompactVerify.getDecodedPayload());
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("3b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
 			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
 				throw new Exception("Found different payload");
 			}
 			try {
-				jsonCompactVerify.decrypt(compactSign.replace(".", ".CORROMPO"));
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
 				throw new Exception("Expected validation error");
 			}catch(Exception e) {
 				System.out.println("Expected error: "+e.getMessage());
@@ -229,8 +235,147 @@ public class TestEncrypt {
 			
 			System.out.println("\n\n");
 			
-
 			
+			
+			// Ripeto i test disabilitando l'encrypt algorithm
+			
+			encryptProps.remove("rs.security.encryption.key.algorithm");
+			decryptProps.remove("rs.security.encryption.key.algorithm");
+			
+
+			boolean TODO = false;
+			if(TODO) {
+				// 3c. Encrypt Attached
+				jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
+				attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+				
+				System.out.println("3c. JsonAttachedEncrypt OnlyContent (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+				
+				// Verifica
+				jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
+				jsonAttachedVerify.decrypt(attachEncrypt);
+				System.out.println("3c. JsonAttachedEncrypt VerifyOnlyContent (Public): \n"+jsonAttachedVerify.getDecodedPayload());
+				if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+					throw new Exception("Found different payload");
+				}
+				try {
+					jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+					throw new Exception("Expected validation error");
+				}catch(Exception e) {
+					System.out.println("Expected error: "+e.getMessage());
+				}
+			
+			
+			
+				System.out.println("\n\n");
+				
+				// 3d. Encrypt Compact
+				jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+				compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+				
+				System.out.println("3d. JsonCompactEncrypt OnlyContent (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+				
+				// Verifica
+				jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
+				jsonCompactVerify.decrypt(compactEncrypt);
+				System.out.println("3d. JsonCompactEncrypt VerifyContent (Public): \n"+jsonCompactVerify.getDecodedPayload());
+				if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+					throw new Exception("Found different payload");
+				}
+				try {
+					jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+					throw new Exception("Expected validation error");
+				}catch(Exception e) {
+					System.out.println("Expected error: "+e.getMessage());
+				}
+				
+				System.out.println("\n\n");
+			}
+			
+			
+			
+			
+			// Ripeto i test riabilitando l'encrypt algorithm e aggiungendo deflate
+			
+			encryptProps = new Properties();
+			encryptPropsis.close();
+			encryptPropsis = TestSignature.class.getResourceAsStream("jws.encrypt.properties");
+			encryptProps.load(encryptPropsis);
+			encryptProps.put("rs.security.keystore.file", fTruststore.getPath());
+			
+			decryptProps = new Properties();
+			decryptPropsis.close();
+			decryptPropsis = TestSignature.class.getResourceAsStream("jws.decrypt.properties");
+			decryptProps.load(decryptPropsis);
+			decryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+			
+
+			encryptProps.put("rs.security.encryption.zip.algorithm","DEF");
+			decryptProps.put("rs.security.encryption.zip.algorithm","DEF");
+			
+			
+			boolean TODO_Deflater = false;
+			if(TODO_Deflater) {
+				// 3e. Encrypt Attached
+				jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
+				attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+				
+				System.out.println("3e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+				
+				// Verifica
+				jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
+				jsonAttachedVerify.decrypt(attachEncrypt);
+				System.out.println("3e. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
+				if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+					throw new Exception("Found different payload");
+				}
+				try {
+					jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+					throw new Exception("Expected validation error");
+				}catch(Exception e) {
+					System.out.println("Expected error: "+e.getMessage());
+				}
+			
+			
+			
+				System.out.println("\n\n");
+				
+				// 3f. Encrypt Compact
+				jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+				compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+				
+				System.out.println("3f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+				
+				// Verifica
+				jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
+				jsonCompactVerify.decrypt(compactEncrypt);
+				System.out.println("3f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
+				if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+					throw new Exception("Found different payload");
+				}
+				try {
+					jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+					throw new Exception("Expected validation error");
+				}catch(Exception e) {
+					System.out.println("Expected error: "+e.getMessage());
+				}
+				
+				System.out.println("\n\n");
+			}
+			
+			
+			
+			
+			
+			
+//			
+//			
+//			// Cifratura con chiave privata e decifratura con chiave pubblica. Si tratta anche di un caso di firma implicita
+//			
+//			encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
+//					
+//			decryptProps.put("rs.security.keystore.file", fTruststore.getPath());
+//			
 			
 		}finally{
 			try{

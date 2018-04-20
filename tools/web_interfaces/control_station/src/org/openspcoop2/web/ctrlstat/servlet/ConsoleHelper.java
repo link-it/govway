@@ -3735,12 +3735,12 @@ public class ConsoleHelper {
 	// Prepara la lista di azioni delle porte
 	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
-			String labelPerPorta, ServiceBinding serviceBinding) throws Exception {
+			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComune aspc) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
 
 			// setto la barra del titolo
-
+FINIRE
 			String label = this.getLabelAzione(serviceBinding);
 			
 			this.pd.setSearchLabel(label);
