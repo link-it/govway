@@ -23,6 +23,7 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
@@ -37,7 +38,6 @@ import org.openspcoop2.core.controllo_congestione.Cache;
 import org.openspcoop2.core.controllo_congestione.ElencoPolicyAttive;
 import org.openspcoop2.core.controllo_congestione.IdPolicy;
 import org.openspcoop2.core.controllo_congestione.ElencoIdPolicy;
-import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
 import org.openspcoop2.core.controllo_congestione.ElencoIdPolicyAttive;
 
 import java.io.ByteArrayOutputStream;
@@ -129,6 +129,124 @@ public abstract class AbstractSerializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: id-active-policy
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdActivePolicy idActivePolicy) throws SerializerException {
+		this.objToXml(fileName, IdActivePolicy.class, idActivePolicy, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, IdActivePolicy.class, idActivePolicy, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param file Xml file to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdActivePolicy idActivePolicy) throws SerializerException {
+		this.objToXml(file, IdActivePolicy.class, idActivePolicy, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param file Xml file to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, IdActivePolicy.class, idActivePolicy, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdActivePolicy idActivePolicy) throws SerializerException {
+		this.objToXml(out, IdActivePolicy.class, idActivePolicy, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idActivePolicy</var>
+	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, IdActivePolicy.class, idActivePolicy, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param idActivePolicy Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdActivePolicy idActivePolicy) throws SerializerException {
+		return this.objToXml(IdActivePolicy.class, idActivePolicy, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param idActivePolicy Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdActivePolicy.class, idActivePolicy, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param idActivePolicy Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdActivePolicy idActivePolicy) throws SerializerException {
+		return this.objToXml(IdActivePolicy.class, idActivePolicy, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param idActivePolicy Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdActivePolicy.class, idActivePolicy, prettyPrint).toString();
+	}
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: attivazione-policy
@@ -1777,124 +1895,6 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(ElencoIdPolicy elencoIdPolicy,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(ElencoIdPolicy.class, elencoIdPolicy, prettyPrint).toString();
-	}
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: id-active-policy
-	 =================================================================================
-	*/
-	
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,IdActivePolicy idActivePolicy) throws SerializerException {
-		this.objToXml(fileName, IdActivePolicy.class, idActivePolicy, false);
-	}
-	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param fileName Xml file to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(String fileName,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, IdActivePolicy.class, idActivePolicy, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param file Xml file to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,IdActivePolicy idActivePolicy) throws SerializerException {
-		this.objToXml(file, IdActivePolicy.class, idActivePolicy, false);
-	}
-	/**
-	 * Serialize to file system in <var>file</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param file Xml file to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(File file,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, IdActivePolicy.class, idActivePolicy, prettyPrint);
-	}
-	
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param out OutputStream to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,IdActivePolicy idActivePolicy) throws SerializerException {
-		this.objToXml(out, IdActivePolicy.class, idActivePolicy, false);
-	}
-	/**
-	 * Serialize to output stream <var>out</var> the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param out OutputStream to serialize the object <var>idActivePolicy</var>
-	 * @param idActivePolicy Object to be serialized in xml file <var>fileName</var>
-	 * @param prettyPrint if true output the XML with indenting
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public void write(OutputStream out,IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, IdActivePolicy.class, idActivePolicy, prettyPrint);
-	}
-			
-	/**
-	 * Serialize to byte array the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param idActivePolicy Object to be serialized
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(IdActivePolicy idActivePolicy) throws SerializerException {
-		return this.objToXml(IdActivePolicy.class, idActivePolicy, false).toByteArray();
-	}
-	/**
-	 * Serialize to byte array the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param idActivePolicy Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized in byte array
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public byte[] toByteArray(IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(IdActivePolicy.class, idActivePolicy, prettyPrint).toByteArray();
-	}
-	
-	/**
-	 * Serialize to String the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param idActivePolicy Object to be serialized
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(IdActivePolicy idActivePolicy) throws SerializerException {
-		return this.objToXml(IdActivePolicy.class, idActivePolicy, false).toString();
-	}
-	/**
-	 * Serialize to String the object <var>idActivePolicy</var> of type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param idActivePolicy Object to be serialized
-	 * @param prettyPrint if true output the XML with indenting
-	 * @return Object to be serialized as String
-	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
-	 */
-	public String toString(IdActivePolicy idActivePolicy,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(IdActivePolicy.class, idActivePolicy, prettyPrint).toString();
 	}
 	
 	

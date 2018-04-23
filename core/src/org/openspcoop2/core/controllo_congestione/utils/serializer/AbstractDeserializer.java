@@ -21,6 +21,7 @@ package org.openspcoop2.core.controllo_congestione.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
@@ -35,7 +36,6 @@ import org.openspcoop2.core.controllo_congestione.Cache;
 import org.openspcoop2.core.controllo_congestione.ElencoPolicyAttive;
 import org.openspcoop2.core.controllo_congestione.IdPolicy;
 import org.openspcoop2.core.controllo_congestione.ElencoIdPolicy;
-import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
 import org.openspcoop2.core.controllo_congestione.ElencoIdPolicyAttive;
 
 import java.io.ByteArrayInputStream;
@@ -103,6 +103,69 @@ public abstract class AbstractDeserializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: id-active-policy
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdActivePolicy readIdActivePolicy(String fileName) throws DeserializerException {
+		return (IdActivePolicy) this.xmlToObj(fileName, IdActivePolicy.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdActivePolicy readIdActivePolicy(File file) throws DeserializerException {
+		return (IdActivePolicy) this.xmlToObj(file, IdActivePolicy.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdActivePolicy readIdActivePolicy(InputStream in) throws DeserializerException {
+		return (IdActivePolicy) this.xmlToObj(in, IdActivePolicy.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdActivePolicy readIdActivePolicy(byte[] in) throws DeserializerException {
+		return (IdActivePolicy) this.xmlToObj(in, IdActivePolicy.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdActivePolicy readIdActivePolicyFromString(String in) throws DeserializerException {
+		return (IdActivePolicy) this.xmlToObj(in.getBytes(), IdActivePolicy.class);
+	}	
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: attivazione-policy
@@ -981,69 +1044,6 @@ public abstract class AbstractDeserializer {
 	 */
 	public ElencoIdPolicy readElencoIdPolicyFromString(String in) throws DeserializerException {
 		return (ElencoIdPolicy) this.xmlToObj(in.getBytes(), ElencoIdPolicy.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: id-active-policy
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdActivePolicy readIdActivePolicy(String fileName) throws DeserializerException {
-		return (IdActivePolicy) this.xmlToObj(fileName, IdActivePolicy.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdActivePolicy readIdActivePolicy(File file) throws DeserializerException {
-		return (IdActivePolicy) this.xmlToObj(file, IdActivePolicy.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdActivePolicy readIdActivePolicy(InputStream in) throws DeserializerException {
-		return (IdActivePolicy) this.xmlToObj(in, IdActivePolicy.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdActivePolicy readIdActivePolicy(byte[] in) throws DeserializerException {
-		return (IdActivePolicy) this.xmlToObj(in, IdActivePolicy.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @return Object type {@link org.openspcoop2.core.controllo_congestione.IdActivePolicy}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdActivePolicy readIdActivePolicyFromString(String in) throws DeserializerException {
-		return (IdActivePolicy) this.xmlToObj(in.getBytes(), IdActivePolicy.class);
 	}	
 	
 	

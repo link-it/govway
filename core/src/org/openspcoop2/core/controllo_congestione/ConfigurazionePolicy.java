@@ -128,6 +128,14 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
 		this.id=new Long(-1);
   }
 
+  public IdPolicy getOldIdPolicy() {
+    return this.oldIdPolicy;
+  }
+
+  public void setOldIdPolicy(IdPolicy oldIdPolicy) {
+    this.oldIdPolicy=oldIdPolicy;
+  }
+
   public java.lang.String getIdPolicy() {
     return this.idPolicy;
   }
@@ -510,6 +518,9 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBean i
 	  return org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy.modelStaticInstance;
   }
 
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected IdPolicy oldIdPolicy;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=true,nillable=false)

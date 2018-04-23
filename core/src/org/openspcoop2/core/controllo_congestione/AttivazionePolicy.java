@@ -91,6 +91,14 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
 		this.id=new Long(-1);
   }
 
+  public IdActivePolicy getOldIdActivePolicy() {
+    return this.oldIdActivePolicy;
+  }
+
+  public void setOldIdActivePolicy(IdActivePolicy oldIdActivePolicy) {
+    this.oldIdActivePolicy=oldIdActivePolicy;
+  }
+
   public java.lang.String getIdActivePolicy() {
     return this.idActivePolicy;
   }
@@ -201,6 +209,9 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBean impl
 	  return org.openspcoop2.core.controllo_congestione.AttivazionePolicy.modelStaticInstance;
   }
 
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected IdActivePolicy oldIdActivePolicy;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-active-policy",required=true,nillable=false)
