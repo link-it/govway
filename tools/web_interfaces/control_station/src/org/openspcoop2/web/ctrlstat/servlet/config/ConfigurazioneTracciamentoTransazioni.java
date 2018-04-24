@@ -89,7 +89,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			Configurazione oldConfigurazione = confCore.getConfigurazioneGenerale();
 			
 			// Stato [si usa per capire se sono entrato per la prima volta nella schermata]		
-			boolean first = confHelper.isFirstTimeFromHttpParameters();
+			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 			
 			String nuovaConfigurazioneEsiti = confHelper.readConfigurazioneRegistrazioneEsitiFromHttpParameters(oldConfigurazione.getTracciamento().getEsiti(), first);
 			String severita = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -129,7 +129,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, nuovaConfigurazioneEsiti); 
 				
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 				
 				confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
 
@@ -163,7 +163,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 				confHelper.addRegistrazioneMessaggiToDati(dumpApplicativo, dumpPD, dumpPA, oldConfigurazione, dati, contaListe); 
 				
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 			
 				
 				pd.setDati(dati);
@@ -229,7 +229,7 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			confHelper.addRegistrazioneMessaggiToDati(dumpApplicativo, dumpPD, dumpPA, oldConfigurazione, dati, contaListe); 
 			
 			// Set First is false
-			confHelper.addToDatiFirstTimeDisabled(dati);
+			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 			
 			pd.setDati(dati);
 			pd.disableEditMode();

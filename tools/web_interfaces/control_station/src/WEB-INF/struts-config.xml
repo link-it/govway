@@ -2199,8 +2199,80 @@
             <forward name="configurazioneDumpConfigurazioneCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="configurazioneDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
+        
+   		<!-- Configurazione Controllo Congestione () -->
     
+    	<action path="/configurazioneControlloCongestione" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestione"
+            scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneError" path="/jsplib/info.jsp"/>
+        </action>
     
+  		<!-- Configurazione Controllo Congestione (Runtime) -->
+    
+    	<action path="/configurazioneControlloCongestioneRuntime" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneRuntime"
+            scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneRuntimeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneRuntimeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneRuntimeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneRuntimeError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Configurazione Controllo Congestione (Configurazione Policiy) -->
+
+        <action path="/configurazioneControlloCongestioneConfigurazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneConfigurazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneConfigurazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyChange"
+            scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneConfigurazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        
+                <!--  Configurazione Controllo Congestione (Attivazione Policy) -->
+
+        <action path="/configurazioneControlloCongestioneAttivazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneAttivazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyList" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneAttivazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyChange"
+            scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazioneControlloCongestioneAttivazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyDel" 
+        	scope="request" validate="true">
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+        </action>
     
      	<!-- Audit (Pagina Iniziale)  -->
     

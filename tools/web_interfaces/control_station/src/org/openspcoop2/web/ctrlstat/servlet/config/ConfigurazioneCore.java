@@ -37,10 +37,19 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
@@ -370,5 +379,480 @@ public class ConfigurazioneCore extends ControlStationCore {
 		}
 		
 		return configProtocollo;
+	}
+	
+	
+	/**
+	 * Accesso alla configurazione del controllo congestione
+	 * 
+	 * @return configurazione controllo congestione della Pdd
+	 * @throws DriverControlStationNotFound
+	 * @throws DriverControlStationException
+	 */
+	public ConfigurazioneGenerale getConfigurazioneControlloCongestione() throws DriverControlStationNotFound, DriverControlStationException {
+		Connection con = null;
+		String nomeMetodo = "getConfigurazioneControlloCongestione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getConfigurazioneControlloCongestione();
+			
+		} catch (DriverControlStationNotFound de) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public long countConfigurazionePolicy(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException {
+		String nomeMetodo = "countConfigurazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.countConfigurazioneControlloCongestioneConfigurazionePolicy(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public long countAttivazionePolicy(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "countAttivazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.countConfigurazioneControlloCongestioneAttivazionePolicy(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<ConfigurazionePolicy> configurazionePolicyList(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "configurazionePolicyList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.configurazioneControlloCongestioneConfigurazionePolicyList(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<AttivazionePolicy> attivazionePolicyList(Search ricerca)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "attivazionePolicyList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.configurazioneControlloCongestioneAttivazionePolicyList(ricerca);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<InfoPolicy> infoPolicyList()  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "infoPolicyList";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getInfoPolicyList(null);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public InfoPolicy getInfoPolicy(String idPolicyParam)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getInfoPolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			List<InfoPolicy> lst = driver.getInfoPolicyList(idPolicyParam); 
+			return (lst != null && lst.size() > 0) ? lst.get(0) : null;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<AttivazionePolicy> findInUseAttivazioni(String idPolicy)   throws DriverControlStationNotFound, DriverControlStationException{
+		return findInUseAttivazioni(idPolicy, false);
+	}
+	
+	public List<AttivazionePolicy> findInUseAttivazioni(String idPolicy, boolean escludiDisabilitate)   throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "findInUseAttivazioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.findInUseAttivazioni(idPolicy, escludiDisabilitate);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public long countInUseAttivazioni(String idPolicy)   throws DriverControlStationNotFound, DriverControlStationException{
+		return countInUseAttivazioni(idPolicy, false);
+	}
+	
+	public long countInUseAttivazioni(String idPolicy, boolean escludiDisabilitate)   throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "countInUseAttivazioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);	
+			
+			return driver.countInUseAttivazioni(idPolicy, escludiDisabilitate);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(long id)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getConfigurazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getConfigurazionePolicy(id);
+		} catch (DriverControlStationNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Configurazione ["+id+"] non presente");
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(String nomePolicy)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getConfigurazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getConfigurazionePolicy(nomePolicy);
+		} catch (DriverControlStationNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Configurazione ["+nomePolicy+"] non presente");
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(long id)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getAttivazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAttivazionePolicy(id);
+		} catch (DriverControlStationNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] AttivazionePolicy ["+id+"] non presente");
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(String nomePolicy)  throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getAttivazionePolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getAttivazionePolicy(nomePolicy);
+		} catch (DriverControlStationNotFound e) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Configurazione ["+nomePolicy+"] non presente");
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public Integer getFreeCounterForGlobalPolicy(String policyId) throws DriverControlStationException{
+		String nomeMetodo = "getFreeCounterForGlobalPolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getFreeCounterForGlobalPolicy(policyId);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy) throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getGlobalPolicy";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getGlobalPolicy(policyId, filtro, groupBy); 
+		} catch (DriverControlStationNotFound e) {
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public AttivazionePolicy getGlobalPolicyByAlias(String alias) throws DriverControlStationNotFound, DriverControlStationException{
+		String nomeMetodo = "getGlobalPolicyByAlias";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getGlobalPolicyByAlias(alias);
+		} catch (DriverControlStationNotFound e) {
+			throw e;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	
+	public List<String> getSoggettiErogatori(String protocollo) throws DriverControlStationException{
+		String nomeMetodo = "getSoggettiErogatori";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+		
+			return driver.getSoggettiErogatori(protocollo);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<String> getServizi(String protocollo, String tipoErogatore, String nomeErogatore) throws DriverControlStationException{
+		String nomeMetodo = "getServizi";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+			
+			return driver.getServizi(protocollo, tipoErogatore, nomeErogatore);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<String> getAzioni(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+		String nomeMetodo = "getAzioni";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+		
+			return driver.getAzioni(protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio); 
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<String> getServiziApplicativiErogatori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException {
+		String nomeMetodo = "getServiziApplicativiErogatori";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+		
+			return driver.getServiziApplicativiErogatori(protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<String> getSoggettiFruitori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+		String nomeMetodo = "getSoggettiFruitori";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+		
+			return driver.getSoggettiFruitori(protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	public List<String> getServiziApplicativiFruitore(String protocollo, String tipoFruitore, String nomeFruitore,	String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException{
+		String nomeMetodo = "getServiziApplicativiFruitore";
+		Connection con = null;
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+		
+			return driver.getServiziApplicativiFruitore(protocollo, tipoFruitore, nomeFruitore, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}finally{
+			ControlStationCore.dbM.releaseConnection(con);
+		}
 	}
 }

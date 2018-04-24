@@ -59,6 +59,9 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
@@ -2415,7 +2418,23 @@ public class ControlStationCore {
 						driver.getDriverAuditDB().createFiltro(filtro);
 						doSetDati = false;
 					}
-
+					
+					/***********************************************************
+					 * Operazioni su Controllo Congestione *
+					 **********************************************************/
+					// Configurazione Policy
+					if(oggetto instanceof ConfigurazionePolicy) {
+						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
+						driver.createConfigurazionePolicy(policy);
+						doSetDati = false;
+					}
+					
+					// Attivazione Policy
+					if(oggetto instanceof AttivazionePolicy) {
+						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
+						driver.createAttivazionePolicy(policy);
+						doSetDati = false;
+					}
 					
 					/***********************************************************
 					 * Extended *
@@ -2898,8 +2917,31 @@ public class ControlStationCore {
 						driver.getDriverAuditDB().updateFiltro(filtro);
 						doSetDati = false;
 					}
-
 					
+					/***********************************************************
+					 * Operazioni su Controllo Congestione *
+					 **********************************************************/
+
+					// Configurazione Controllo Congestione 
+					if(oggetto instanceof ConfigurazioneGenerale) {
+						ConfigurazioneGenerale configurazioneControlloCongestione = (ConfigurazioneGenerale) oggetto;
+						driver.updateConfigurazioneControlloCongestione(configurazioneControlloCongestione);
+						doSetDati = false;
+					}
+
+					// Configurazione Policy
+					if(oggetto instanceof ConfigurazionePolicy) {
+						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
+						driver.updateConfigurazionePolicy(policy);
+						doSetDati = false;
+					}
+					
+					// Attivazione Policy
+					if(oggetto instanceof AttivazionePolicy) {
+						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
+						driver.updateAttivazionePolicy(policy);
+						doSetDati = false;
+					}
 					
 					/***********************************************************
 					 * Extended *
@@ -3327,8 +3369,23 @@ public class ControlStationCore {
 						driver.getDriverAuditDBAppender().deleteOperation(auditOp);
 						doSetDati = false;
 					}
-
 					
+					/***********************************************************
+					 * Operazioni su Controllo Congestione *
+					 **********************************************************/
+					// Configurazione Policy
+					if(oggetto instanceof ConfigurazionePolicy) {
+						ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
+						driver.deleteConfigurazionePolicy(policy); 
+						doSetDati = false;
+					}
+					
+					// Attivazione Policy
+					if(oggetto instanceof AttivazionePolicy) {
+						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
+						driver.deleteAttivazionePolicy(policy); 
+						doSetDati = false;
+					}
 					
 					/***********************************************************
 					 * Extended *
@@ -4302,7 +4359,25 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":EliminazioneMessaggiBasatiSuFiltro<"+filtro.toString()+">";
 		}
-
+		
+		// Configurazione Controllo Congestione
+		else if(oggetto instanceof ConfigurazioneGenerale) {
+			msg+=":"+oggetto.getClass().getSimpleName();
+		}
+		// Configurazione Policy
+		else if(oggetto instanceof ConfigurazionePolicy) {
+			ConfigurazionePolicy policy = (ConfigurazionePolicy) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			msg+=":<"+policy.getIdPolicy()+">";
+		}
+		// Attivazione Policy
+		else if(oggetto instanceof AttivazionePolicy) {
+			AttivazionePolicy policy = (AttivazionePolicy) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuffer bf = new StringBuffer();
+			bf.append("IDActivePolicy[").append(policy.getIdActivePolicy()).append("] IDPolicy[").append(policy.getIdPolicy()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
 		// IExtendedBean
 		else if(oggetto instanceof IExtendedBean){
 			IExtendedBean w = (IExtendedBean) oggetto;

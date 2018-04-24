@@ -27,6 +27,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -38,8 +39,23 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
+import org.openspcoop2.core.controllo_congestione.IdPolicy;
+import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_congestione.constants.TipoApplicabilita;
+import org.openspcoop2.core.controllo_congestione.constants.TipoControlloPeriodo;
+import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_congestione.dao.IDBAttivazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_congestione.dao.IDBConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -55,10 +71,18 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_LIB;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.LikeMode;
+import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -2174,7 +2198,1542 @@ public class DriverControlStationDB  {
 	}
 	
 
-	
+	// Controllo Congestione
+	/**
+	 * Restituisce la configurazione generale della Porta di Dominio
+	 * 
+	 * @return Configurazione
+	 * 
+	 */
+	public ConfigurazioneGenerale getConfigurazioneControlloCongestione() throws DriverControlStationException,DriverControlStationNotFound {
+		String nomeMetodo = "getConfigurazioneControlloCongestione";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
 
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		ConfigurazioneGenerale config = null;
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			try {
+				config = serviceManager.getConfigurazioneGeneraleServiceSearch().get();
+			}catch (NotFoundException e) {
+				throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione non presente.");
+			}
+		}catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return config;
+	}
+
+	/***
+	 * Aggiorna la configurazione del controllo congestione
+	 * 
+	 * @param configurazioneControlloCongestione
+	 * @throws DriverControlStationException
+	 */
+	public void updateConfigurazioneControlloCongestione(ConfigurazioneGenerale configurazioneControlloCongestione) throws DriverControlStationException {
+		String nomeMetodo = "updateConfigurazioneControlloCongestione";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			serviceManager.getConfigurazioneGeneraleService().update(configurazioneControlloCongestione);
+		} catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 	
+	/**
+	 * Restituisce il numero di Configurazione Policy
+	 * 
+	 * @return Configurazione
+	 * 
+	 */
+	public long countConfigurazioneControlloCongestioneConfigurazionePolicy(ISearch ricerca) throws DriverControlStationException {
+		String nomeMetodo = "countConfigurazioneControlloCongestioneConfigurazionePolicy";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;
+		String search = null;
+
+		if(ricerca != null) {
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		}
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		long count = 0;
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
+			
+			if(search != null  && !"".equals(search)){
+				expr.ilike(ConfigurazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
+			}
+			
+			NonNegativeNumber nnn = serviceManager.getConfigurazionePolicyServiceSearch().count(expr);
+			
+			count = nnn != null ? nnn.longValue() : 0;
+		}catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return count;
+	}
+	
+	/**
+	 * Restituisce il numero di Attivazione Policy
+	 * 
+	 * @return Configurazione
+	 * 
+	 */
+	public long countConfigurazioneControlloCongestioneAttivazionePolicy(ISearch ricerca) throws DriverControlStationException {
+		String nomeMetodo = "countConfigurazioneControlloCongestioneAttivazionePolicy";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;
+		String search = null;
+
+		if(ricerca != null) {
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		}
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		long count = 0;
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			if(search != null  && !"".equals(search)){
+				expr.ilike(AttivazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
+			}
+			NonNegativeNumber nnn = serviceManager.getAttivazionePolicyServiceSearch().count(expr);
+			
+			count = nnn != null ? nnn.longValue() : 0;
+		}catch (Exception se) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		return count;
+	}
+
+	public List<ConfigurazionePolicy> configurazioneControlloCongestioneConfigurazionePolicyList(Search ricerca) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloCongestioneConfigurazionePolicyList";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;
+		String search = null;
+		int offset = 0;
+		int limit =0 ;
+
+		if(ricerca != null) {
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			limit = ricerca.getPageSize(idLista);
+			offset = ricerca.getIndexIniziale(idLista);
+		}
+		if (limit == 0) // con limit
+			limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<ConfigurazionePolicy> listaPolicy = new ArrayList<ConfigurazionePolicy>();
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
+			
+			if(search != null  && !"".equals(search)){
+				expr.ilike(ConfigurazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
+			}
+			
+			IPaginatedExpression pagExpr = serviceManager.getConfigurazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.offset(offset).limit(limit);
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(ConfigurazionePolicy.model().ID_POLICY);
+			
+			listaPolicy = serviceManager.getConfigurazionePolicyServiceSearch().findAll(pagExpr);
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listaPolicy;
+	}
+
+	public List<AttivazionePolicy> configurazioneControlloCongestioneAttivazionePolicyList(Search ricerca) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloCongestioneAttivazionePolicyList";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;
+		String search = null;
+		int offset = 0;
+		int limit =0 ;
+
+		if(ricerca != null) {
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+			limit = ricerca.getPageSize(idLista);
+			offset = ricerca.getIndexIniziale(idLista);
+		}
+		if (limit == 0) // con limit
+			limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<AttivazionePolicy> listaPolicy = new ArrayList<AttivazionePolicy>();
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			if(search != null  && !"".equals(search)){
+				expr.ilike(AttivazionePolicy.model().ID_POLICY, search, LikeMode.ANYWHERE);
+			}
+		
+			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.offset(offset).limit(limit);
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(AttivazionePolicy.model().ALIAS);
+			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);
+			
+			listaPolicy = serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr);
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listaPolicy;
+	}
+	
+	public List<InfoPolicy> getInfoPolicyList(String idPolicyParam) throws DriverControlStationException{
+		String nomeMetodo = "getInfoPolicyList";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int offset = 0;
+		int limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<InfoPolicy> listaPolicy = new ArrayList<InfoPolicy>();
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
+			
+			if(idPolicyParam != null  && !"".equals(idPolicyParam)){
+				expr.equals(ConfigurazionePolicy.model().ID_POLICY, idPolicyParam);
+			}
+			
+			IPaginatedExpression pagExpr = serviceManager.getConfigurazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.offset(offset).limit(limit);
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(ConfigurazionePolicy.model().ID_POLICY);
+			
+			List<java.util.Map<String, Object>> mapList = null;
+			try{
+				mapList = serviceManager.getConfigurazionePolicyServiceSearch().select(pagExpr, 
+						ConfigurazionePolicy.model().ID_POLICY,
+						ConfigurazionePolicy.model().RISORSA,
+						ConfigurazionePolicy.model().DESCRIZIONE,
+						ConfigurazionePolicy.model().VALORE,
+						ConfigurazionePolicy.model().SIMULTANEE,
+						ConfigurazionePolicy.model().MODALITA_CONTROLLO,
+						ConfigurazionePolicy.model().TIPO_APPLICABILITA,
+						ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE,
+						ConfigurazionePolicy.model().DEGRADO_AVG_TIME_MODALITA_CONTROLLO
+						);
+			}catch(NotFoundException notFound){}
+			if(mapList!=null){
+				// caso get puntuale
+				if(idPolicyParam != null  && !"".equals(idPolicyParam) && mapList.size()>1){
+					throw new Exception("More than one results ("+mapList.size()+")");
+				}
+				
+				
+				for (java.util.Map<String, Object> map : mapList) {
+					String idPolicy = (String) map.get(ConfigurazionePolicy.model().ID_POLICY.getFieldName());
+					String resource = (String) map.get(ConfigurazionePolicy.model().RISORSA.getFieldName());
+					InfoPolicy info = new InfoPolicy();
+					info.setIdPolicy(idPolicy);
+					info.setTipoRisorsa(TipoRisorsa.toEnumConstant(resource, true));
+					
+					Object descr =  map.get(ConfigurazionePolicy.model().DESCRIZIONE.getFieldName());
+					if(descr!=null && descr instanceof String){
+						info.setDescrizione((String)descr);
+					}
+					
+					Object v =  map.get(ConfigurazionePolicy.model().VALORE.getFieldName());
+					if(v!=null && v instanceof Long){
+						info.setValore((Long)v);
+					}
+					
+					Object simultanee =  map.get(ConfigurazionePolicy.model().SIMULTANEE.getFieldName());
+					if(simultanee!=null && simultanee instanceof Boolean){
+						boolean simultaneeBoolean = (Boolean) simultanee;
+						info.setCheckRichiesteSimultanee(simultaneeBoolean);
+						if(!simultaneeBoolean){
+							Object controllo =  map.get(ConfigurazionePolicy.model().MODALITA_CONTROLLO.getFieldName());
+                        	if(controllo!=null && controllo instanceof String){
+                        		TipoControlloPeriodo tipo = TipoControlloPeriodo.toEnumConstant((String)controllo, true);
+                        		info.setIntervalloUtilizzaRisorseStatistiche(TipoControlloPeriodo.STATISTIC.equals(tipo));
+                        		info.setIntervalloUtilizzaRisorseRealtime(TipoControlloPeriodo.REALTIME.equals(tipo));
+                        	}
+						}
+					}
+										
+						
+					// verifico anche degrado prestazionale
+                    Object app =  map.get(ConfigurazionePolicy.model().TIPO_APPLICABILITA.getFieldName());
+                    if(app!=null && app instanceof String){
+                        TipoApplicabilita tipoApplicabilita = TipoApplicabilita.toEnumConstant((String)app, true);
+                        if(TipoApplicabilita.CONDIZIONALE.equals(tipoApplicabilita)){
+                        	Object enabled =  map.get(ConfigurazionePolicy.model().APPLICABILITA_DEGRADO_PRESTAZIONALE.getFieldName());
+                            boolean degrado = false;   
+                            if(enabled!=null && (enabled instanceof Boolean)){
+                            	degrado = (Boolean)enabled;
+                            }
+                            if(degrado){
+                            	Object controllo =  map.get(ConfigurazionePolicy.model().DEGRADO_AVG_TIME_MODALITA_CONTROLLO.getFieldName());
+                            	if(controllo!=null && controllo instanceof String){
+                            		TipoControlloPeriodo tipo = TipoControlloPeriodo.toEnumConstant((String)controllo, true);
+                            		info.setDegradoPrestazionaleUtilizzaRisorseStatistiche(TipoControlloPeriodo.STATISTIC.equals(tipo));
+                            		info.setDegradoPrestazionaleUtilizzaRisorseRealtime(TipoControlloPeriodo.REALTIME.equals(tipo));
+                            	}
+                            }
+                        }
+                    }
+
+					
+                    listaPolicy.add(info);
+				}
+			}
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listaPolicy;
+	}
+	
+	public List<AttivazionePolicy> findInUseAttivazioni(String idPolicy, boolean escludiDisabilitate) throws DriverControlStationException{
+		String nomeMetodo = "findInUseAttivazioni";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+		int offset = 0;
+		int limit = 10000 ;  // valore altissimo che non dovrebbe accadare
+		
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		List<AttivazionePolicy> listaPolicy = new ArrayList<AttivazionePolicy>();
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expr.equals(AttivazionePolicy.model().ID_POLICY, idPolicy);
+			if(escludiDisabilitate) {
+				expr.equals(AttivazionePolicy.model().ENABLED, true);
+			}
+		
+			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().toPaginatedExpression(expr);
+			pagExpr.offset(offset).limit(limit);
+			pagExpr.sortOrder(SortOrder.ASC);
+			pagExpr.addOrder(AttivazionePolicy.model().ALIAS);
+			pagExpr.addOrder(AttivazionePolicy.model().ID_POLICY);
+			
+			listaPolicy = serviceManager.getAttivazionePolicyServiceSearch().findAll(pagExpr);
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listaPolicy;
+	}
+	
+	public long countInUseAttivazioni(String idPolicy, boolean escludiDisabilitate) throws DriverControlStationException{
+		String nomeMetodo = "countInUseAttivazioni";
+		// ritorna la configurazione controllo congestione della PdD
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expr.equals(AttivazionePolicy.model().ID_POLICY, idPolicy);
+			if(escludiDisabilitate) {
+				expr.equals(AttivazionePolicy.model().ENABLED, true);
+			}
+			
+			NonNegativeNumber nnn = serviceManager.getAttivazionePolicyServiceSearch().count(expr);
+			return nnn != null ? nnn.longValue(): 0;
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(long id) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getConfigurazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		ConfigurazionePolicy policy = null;
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			policy = ((IDBConfigurazionePolicyServiceSearch)serviceManager.getConfigurazionePolicyServiceSearch()).get(id);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return policy;
+	}
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(String nomePolicy) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getConfigurazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		ConfigurazionePolicy policy = null;
+		
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IdPolicy id = new IdPolicy();
+			id.setNome(nomePolicy);
+			policy = serviceManager.getConfigurazionePolicyServiceSearch().get(id);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return policy;
+	}
+
+	public void createConfigurazionePolicy(ConfigurazionePolicy policy) throws DriverControlStationException{
+		String nomeMetodo = "createConfigurazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			serviceManager.getConfigurazionePolicyService().create(policy); 
+			
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}	
+	}
+
+	public void createAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException {
+		String nomeMetodo = "createAttivazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			serviceManager.getAttivazionePolicyService().create(policy);
+			
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}	
+	}
+
+	public void updateConfigurazionePolicy(ConfigurazionePolicy policy)throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "updateConfigurazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IdPolicy idToUpdate = new IdPolicy();
+			
+			if(policy.getOldIdPolicy()!=null){
+				idToUpdate.setNome(policy.getOldIdPolicy().getNome());
+			}
+			else{
+				idToUpdate.setNome(policy.getIdPolicy());
+			}
+			
+			// ElencoPolicyModificareInSeguitoModificaSogliaPolicy
+			List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato = this.findInUseAttivazioni(idToUpdate.getNome(), true);
+			
+			if(listPolicyAttiveConStatoDisabilitato !=null && listPolicyAttiveConStatoDisabilitato.size()>0) {
+				//System.out.println("UPDATEEEEEEE SOGLIA ("+listPolicyAttiveConStatoDisabilitato.size()+") DISABILITO");
+				Hashtable<String, Boolean> mapStati = new Hashtable<String, Boolean>();
+				// NOTA: Devo fare la dobbia modifica perche' c'e' un controllo sul livello db layer che verifica se ci sono state modifiche
+				for (AttivazionePolicy ap : listPolicyAttiveConStatoDisabilitato) {
+					IdActivePolicy idActivePolicy = new IdActivePolicy();
+					idActivePolicy.setNome(ap.getIdActivePolicy());
+					mapStati.put(ap.getIdActivePolicy(), ap.isEnabled());
+					//System.out.println("SALVATO ["+ap.getIdActivePolicy()+"] = ["+ap.isEnabled()+"]");
+					ap.setEnabled(false);
+					//System.out.println("UPDATEEEEEEE SOGLIA ("+ap.getIdActivePolicy()+") CON STATO=FALSE");
+					serviceManager.getAttivazionePolicyService().update(idActivePolicy,ap);
+				}
+				
+				for (AttivazionePolicy ap : listPolicyAttiveConStatoDisabilitato) {
+					IdActivePolicy idActivePolicy = new IdActivePolicy();
+					idActivePolicy.setNome(ap.getIdActivePolicy());
+					//System.out.println("RIPRISTINO ["+ap.getIdActivePolicy()+"] = ["+mapStati.get(ap.getIdActivePolicy())+"]");
+					ap.setEnabled(mapStati.get(ap.getIdActivePolicy()));
+					//System.out.println("UPDATE SOGLIA ("+ap.getIdActivePolicy()+") CON STATO=true");
+					serviceManager.getAttivazionePolicyService().update(idActivePolicy,ap);
+				}
+			}
+			
+			serviceManager.getConfigurazionePolicyService().update(idToUpdate, policy); 
+			
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}	
+	}
+
+	public void updateAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "updateAttivazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IdActivePolicy id = new IdActivePolicy();
+			id.setNome(policy.getIdActivePolicy()); 
+			serviceManager.getAttivazionePolicyService().update(id, policy); 
+			
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}	
+	}
+
+	public void deleteConfigurazionePolicy(ConfigurazionePolicy policy) throws DriverControlStationException {
+		String nomeMetodo = "deleteConfigurazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			serviceManager.getConfigurazionePolicyService().delete(policy); 
+			
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public void deleteAttivazionePolicy(AttivazionePolicy policy) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "deleteAttivazionePolicy";
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try {
+			
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			serviceManager.getAttivazionePolicyService().delete(policy);
+			
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(long id) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getAttivazionePolicy"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		AttivazionePolicy policy = null;
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			policy = ((IDBAttivazionePolicyServiceSearch)serviceManager.getAttivazionePolicyServiceSearch()).get(id);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return policy;
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(String nomePolicy) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getAttivazionePolicy"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		AttivazionePolicy policy = null;
+		
+		try {
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			IdActivePolicy idPolicy = new IdActivePolicy();
+			idPolicy.setNome(nomePolicy);
+			policy = serviceManager.getAttivazionePolicyServiceSearch().get(idPolicy);
+			
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return policy;
+	}
+	
+	public Integer getFreeCounterForGlobalPolicy(String policyId) throws DriverControlStationException{
+		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			
+			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			pagExpr.and();
+			pagExpr.equals(AttivazionePolicy.model().ID_POLICY, policyId);
+			
+			pagExpr.addOrder(AttivazionePolicy.model().ID_ACTIVE_POLICY, SortOrder.DESC);
+			pagExpr.limit(1);
+			
+			try{
+				List<Object> list = serviceManager.getAttivazionePolicyServiceSearch().select(pagExpr, AttivazionePolicy.model().ID_ACTIVE_POLICY);
+				if(list!=null && list.size()>0){
+					Object r = list.get(0); // limit 1
+					if(r instanceof String){
+						String s = (String)r;
+						if(s.contains(":")){
+							int last = s.lastIndexOf(":");
+							if(last<(s.length()-1)){
+								return Integer.parseInt(s.substring(s.lastIndexOf(":")+1,s.length())) + 1;
+							}
+						}
+					}
+				}
+			}catch(NotFoundException notF){
+				
+			}
+			return 1;
+			
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public AttivazionePolicy getGlobalPolicy(String policyId, AttivazionePolicyFiltro filtro, AttivazionePolicyRaggruppamento groupBy) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			IExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expression.and();
+			expression.equals(AttivazionePolicy.model().ID_POLICY, policyId);
+			
+			expression.equals(AttivazionePolicy.model().FILTRO.ENABLED, filtro.isEnabled());
+			if(filtro.isEnabled()){
+				if(filtro.getRuoloPorta()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, filtro.getRuoloPorta());
+				}
+				else{
+					expression.equals(AttivazionePolicy.model().FILTRO.RUOLO_PORTA, RuoloPolicy.ENTRAMBI);
+				}
+					
+				if(filtro.getProtocollo()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.PROTOCOLLO, filtro.getProtocollo());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.PROTOCOLLO);
+				}
+				
+				if(filtro.getTipoErogatore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.TIPO_EROGATORE, filtro.getTipoErogatore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.TIPO_EROGATORE);
+				}
+				if(filtro.getNomeErogatore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.NOME_EROGATORE, filtro.getNomeErogatore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.NOME_EROGATORE);
+				}
+								
+				if(filtro.getTipoServizio()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO, filtro.getTipoServizio());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.TIPO_SERVIZIO);
+				}
+				if(filtro.getNomeServizio()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.NOME_SERVIZIO, filtro.getNomeServizio());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.NOME_SERVIZIO);
+				}
+				
+				if(filtro.getAzione()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.AZIONE, filtro.getAzione());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.AZIONE);
+				}
+				
+				if(filtro.getServizioApplicativoErogatore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE, filtro.getServizioApplicativoErogatore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_EROGATORE);
+				}
+				
+				if(filtro.getTipoFruitore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE, filtro.getTipoFruitore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.TIPO_FRUITORE);
+				}
+				if(filtro.getNomeFruitore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.NOME_FRUITORE, filtro.getNomeFruitore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.NOME_FRUITORE);
+				}
+				
+				if(filtro.getServizioApplicativoFruitore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_FRUITORE, filtro.getServizioApplicativoFruitore());
+				}
+				else{
+					expression.isNull(AttivazionePolicy.model().FILTRO.SERVIZIO_APPLICATIVO_FRUITORE);
+				}
+				
+				expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_ENABLED, filtro.isInformazioneApplicativaEnabled());
+				if(filtro.isInformazioneApplicativaEnabled() &&
+						filtro.getInformazioneApplicativaTipo()!=null &&
+						filtro.getInformazioneApplicativaNome()!=null &&
+						filtro.getInformazioneApplicativaValore()!=null){
+					expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_TIPO, filtro.getInformazioneApplicativaTipo());
+					expression.like(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_NOME, filtro.getInformazioneApplicativaNome(), LikeMode.EXACT); // Colonna CLOB
+					expression.equals(AttivazionePolicy.model().FILTRO.INFORMAZIONE_APPLICATIVA_VALORE, filtro.getInformazioneApplicativaValore());
+				}
+			}
+			
+			expression.equals(AttivazionePolicy.model().GROUP_BY.ENABLED, groupBy.isEnabled());
+			if(groupBy.isEnabled()){
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.RUOLO_PORTA, groupBy.isRuoloPorta());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.PROTOCOLLO, groupBy.isProtocollo());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.EROGATORE, groupBy.isErogatore());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.SERVIZIO, groupBy.isServizio());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.AZIONE, groupBy.isAzione());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_EROGATORE, groupBy.isServizioApplicativoErogatore());
+					
+				expression.equals(AttivazionePolicy.model().GROUP_BY.FRUITORE, groupBy.isFruitore());
+				
+				expression.equals(AttivazionePolicy.model().GROUP_BY.SERVIZIO_APPLICATIVO_FRUITORE, groupBy.isServizioApplicativoFruitore());
+
+				expression.equals(AttivazionePolicy.model().GROUP_BY.INFORMAZIONE_APPLICATIVA_ENABLED, groupBy.isInformazioneApplicativaEnabled());
+				if(groupBy.isInformazioneApplicativaEnabled() &&
+						groupBy.getInformazioneApplicativaTipo()!=null &&
+						groupBy.getInformazioneApplicativaNome()!=null){
+					expression.equals(AttivazionePolicy.model().GROUP_BY.INFORMAZIONE_APPLICATIVA_TIPO, groupBy.getInformazioneApplicativaTipo());
+					expression.like(AttivazionePolicy.model().GROUP_BY.INFORMAZIONE_APPLICATIVA_NOME, groupBy.getInformazioneApplicativaNome(), LikeMode.EXACT); // Colonna CLOB
+				}
+			}
+			
+			return serviceManager.getAttivazionePolicyServiceSearch().find(expression);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Attivazione Policy non presente.");	
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public AttivazionePolicy getGlobalPolicyByAlias(String alias) throws DriverControlStationException,DriverControlStationNotFound{
+		String nomeMetodo = "getFreeCounterForGlobalPolicy"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			IExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
+			
+			expression.and();
+			expression.equals(AttivazionePolicy.model().ALIAS, alias);
+		
+			return serviceManager.getAttivazionePolicyServiceSearch().find(expression);
+		}catch (NotFoundException e) {
+			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Attivazione Policy non presente.");
+		} catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public List<String> getSoggettiErogatori(String protocollo) throws DriverControlStationException{
+		String nomeMetodo = "getSoggettiErogatori"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con); 
+			
+			return RegistroCore.getSoggettiErogatori(serviceManager, protocollo);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<String> getServizi(String protocollo, String tipoErogatore, String nomeErogatore) throws DriverControlStationException{
+		String nomeMetodo = "getServizi"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getServizi(serviceManager, protocollo, tipoErogatore, nomeErogatore);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<String> getAzioni(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+		String nomeMetodo = "getAzioni"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getAzioni(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<String> getServiziApplicativiErogatori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException {
+		String nomeMetodo = "getServiziApplicativiErogatori"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getServiziApplicativiErogatori(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<String> getSoggettiFruitori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+		String nomeMetodo = "getSoggettiFruitori"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getSoggettiFruitori(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<String> getServiziApplicativiFruitore(String protocollo, String tipoFruitore, String nomeFruitore,	String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException{
+		String nomeMetodo = "getServiziApplicativiFruitore"; 
+		Connection con = null;
+		if (this.atomica) {
+			try {
+				con = this.datasource.getConnection();
+
+			} catch (SQLException e) {
+				throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] SQLException accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+		try{
+			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
+			return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocollo, tipoFruitore, nomeFruitore, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+		}catch (Exception qe) {
+			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
 }
