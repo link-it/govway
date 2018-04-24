@@ -21,6 +21,8 @@
 
 package org.openspcoop2.core.commons;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,6 +64,25 @@ public class ProtocolFactoryReflectionUtils
 				
 			}
 			
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
+	public static List<String> getProtocolli() throws Exception{
+		try{
+			Class<?> cProtocolFactoryManager = Class.forName("org.openspcoop2.protocol.engine.ProtocolFactoryManager");
+			Object protocolFactoryManager = cProtocolFactoryManager.getMethod("getInstance").invoke(null);
+			
+			@SuppressWarnings("unchecked")
+			Enumeration<String> protocolli = (Enumeration<String>) cProtocolFactoryManager.getMethod("getProtocolNames").invoke(protocolFactoryManager);
+			List<String> l = new ArrayList<String>();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = (String) protocolli.nextElement();
+				l.add(protocollo);
+			}
+			return l;
+						
 		}catch(Exception e){
 			throw new CoreException(e.getMessage(),e);
 		}
