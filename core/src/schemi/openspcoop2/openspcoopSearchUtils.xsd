@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/commons/search" targetNamespace="http://www.openspcoop2.org/core/commons/search"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="commons_search">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="false"/>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+
+
+	<!-- Metodi di servizio -->
+	
+	<xsd:element name="soggetto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-soggetto"/>
+					<linkit:sql-table-mapping name="soggetti"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome-soggetto" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-soggetto" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="server" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="server"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="identificativo-porta" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="identificativo_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-dominio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-porta-dominio"/>
+					<linkit:sql-table-mapping name="pdd" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo" type="TipoPdD" minOccurs="0">
+					<xsd:annotation> 
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo"/>
+								<linkit:sql-column-comment><![CDATA[Tipo della Porta]]></linkit:sql-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:simpleType name="TipoPdD">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="operativo"/>
+			<xsd:enumeration value="nonoperativo"/>
+			<xsd:enumeration value="esterno"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <xsd:element name="accordo-servizio-parte-comune">
+        <xsd:annotation>
+            <xsd:appinfo>
+                    <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:interface crud="false" id="id-accordo-servizio-parte-comune"/>
+                            <linkit:sql-table-mapping name="accordi" />
+                    </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+             <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string">
+                        <xsd:annotation>
+                                <xsd:appinfo>
+                                        <linkit:generator
+                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                <linkit:sql-column-mapping name="nome"/>
+                                        </linkit:generator>
+                                </xsd:appinfo>
+                        </xsd:annotation>
+                </xsd:element>
+				<xsd:element name="versione" type="xsd:string">
+                        <xsd:annotation>
+                                <xsd:appinfo>
+                                        <linkit:generator
+                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                <linkit:sql-column-mapping name="versione"/>
+                                        </linkit:generator>
+                                </xsd:appinfo>
+                        </xsd:annotation>
+                </xsd:element>
+		        <xsd:element name="id-referente" type="id-soggetto">
+                		<xsd:annotation>
+                        		<xsd:appinfo>
+                                		<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                        		<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+                                                		object-type="soggetto"/>
+												<linkit:sql-column-mapping name="id_referente"/>
+                                		</linkit:generator>
+                        		</xsd:appinfo>
+                		</xsd:annotation>
+		        </xsd:element>
+             	<xsd:element ref="accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded">
+             		<xsd:annotation>
+             			<xsd:appinfo>
+             				<linkit:generator
+             					xmlns:linkit="http://www.link.it/project_generator">
+             					<linkit:sql-column-mapping name="id_accordo"/>
+             				</linkit:generator>
+             			</xsd:appinfo>
+             		</xsd:annotation>
+             	</xsd:element>
+                <xsd:element ref="port-type" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                                <xsd:appinfo>
+                                        <linkit:generator
+                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                <linkit:sql-column-mapping name="id_accordo"/>
+                                        </linkit:generator>
+                                </xsd:appinfo>
+                        </xsd:annotation>
+                </xsd:element>
+             </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+	<xsd:element name="accordo-servizio-parte-comune-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-accordo-servizio-parte-comune-azione"/>
+					<linkit:sql-table-mapping name="accordi_azioni" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="port-type">
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:interface crud="false" id="id-port-type"/>
+                                <linkit:sql-table-mapping name="port_type" />
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+		<xsd:complexType>
+           <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string">
+                        <xsd:annotation>
+                                <xsd:appinfo>
+                                        <linkit:generator
+                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                <linkit:sql-column-mapping name="nome"/>
+                                        </linkit:generator>
+                                </xsd:appinfo>
+                        </xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="operation" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                                <xsd:appinfo>
+                                        <linkit:generator
+                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                <linkit:sql-column-mapping name="id_port_type"/>
+                                        </linkit:generator>
+                                </xsd:appinfo>
+                        </xsd:annotation>
+                </xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune" />
+           </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+	<xsd:element name="operation">
+         <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:interface crud="false" id="id-operation"/>
+                                <linkit:sql-table-mapping name="port_type_azioni" />
+                        </linkit:generator>
+                </xsd:appinfo>
+         </xsd:annotation>
+         <xsd:complexType>
+            <xsd:sequence>
+                    <xsd:element name="nome" type="xsd:string">
+                            <xsd:annotation>
+                                    <xsd:appinfo>
+                                            <linkit:generator
+                                                    xmlns:linkit="http://www.link.it/project_generator">
+                                                    <linkit:sql-column-mapping name="nome"/>
+                                            </linkit:generator>
+                                    </xsd:appinfo>
+                            </xsd:annotation>
+                    </xsd:element>
+					<xsd:element name="id-port-type" type="id-port-type" />
+            </xsd:sequence>
+        </xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="accordo-servizio-parte-specifica">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-accordo-servizio-parte-specifica"/>
+					<linkit:sql-table-mapping name="servizi" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="port-type" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="port_type"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-erogatore" type="id-soggetto">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+									object-type="soggetto"/>
+								<linkit:sql-column-mapping name="id_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="accordo-servizio-parte-comune"
+									object-type="accordo-servizio-parte-comune"/>
+								<linkit:sql-column-mapping name="id_accordo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="fruitore">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-fruitore"/>
+					<linkit:sql-table-mapping name="servizi_fruitori" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-fruitore" type="id-soggetto">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+									object-type="soggetto"/>
+								<linkit:sql-column-mapping name="id_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-specifica" type="id-accordo-servizio-parte-specifica">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="accordo-servizio-parte-specifica"
+									object-type="accordo-servizio-parte-specifica"/>
+								<linkit:sql-column-mapping name="id_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ora-registrazione" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="ora_registrazione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="servizio-applicativo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-servizio-applicativo"/>
+					<linkit:sql-table-mapping name="servizi_applicativi" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-soggetto" type="id-soggetto">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+									object-type="soggetto"/>
+								<linkit:sql-column-mapping name="id_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-delegata">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-porta-delegata"/>
+					<linkit:sql-table-mapping name="porte_delegate" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="id-soggetto" type="id-soggetto">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+									object-type="soggetto"/>
+								<linkit:sql-column-mapping name="id_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo_soggetto_erogatore" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_soggetto_erogatore"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome_soggetto_erogatore" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_soggetto_erogatore"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo_servizio" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome_servizio" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome_azione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_azione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-delegata-servizio-applicativo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="porte_delegate_sa" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-servizio-applicativo" type="id-servizio-applicativo">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="servizio-applicativo"
+									object-type="servizio-applicativo"/>
+								<linkit:sql-column-mapping name="id_servizio_applicativo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-applicativa">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-porta-applicativa"/>
+					<linkit:sql-table-mapping name="porte_applicative" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="id-soggetto" type="id-soggetto">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="soggetto"
+									object-type="soggetto"/>
+								<linkit:sql-column-mapping name="id_soggetto"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo_servizio" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo_servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome_servizio" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="servizio"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome_azione" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="azione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-applicativa-servizio-applicativo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="porte_applicative_sa" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-servizio-applicativo" type="id-servizio-applicativo">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping relationship="reversed" object-name="servizio-applicativo"
+									object-type="servizio-applicativo"/>
+								<linkit:sql-column-mapping name="id_servizio_applicativo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+	<!-- ID -->
+
+	<xsd:complexType name="id-soggetto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="soggetto"
+						object-type="soggetto"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="tipo_soggetto"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="nome_soggetto"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-porta-dominio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="porta-dominio"
+                                                object-type="porta-dominio"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-accordo-servizio-parte-comune">
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-id-mapping relationship="none" object-name="accordo-servizio-parte-comune"
+                                        object-type="accordo-servizio-parte-comune"/>
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="id-soggetto" type="id-soggetto"/>
+			<xsd:element name="versione" type="xsd:string"/>
+        </xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-accordo-servizio-parte-comune-azione">
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                        	<linkit:sql-id-mapping relationship="none" object-name="accordo-servizio-parte-comune-azione"
+                        		object-type="accordo-servizio-parte-comune-azione"/>
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+        	<xsd:element name="nome" type="xsd:string"/>
+        	<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+	<xsd:complexType name="id-port-type">
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-id-mapping relationship="none" object-name="port-type"
+                                        object-type="port-type"/>
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string"/>
+                <xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune"/>
+        </xsd:sequence>
+	</xsd:complexType>
+
+    <xsd:complexType name="id-operation">
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-id-mapping relationship="none" object-name="operation"
+                                        object-type="operation"/>
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+                <xsd:element name="nome" type="xsd:string"/>
+                <xsd:element name="id-port-type" type="id-port-type"/>
+        </xsd:sequence>
+    </xsd:complexType>
+	
+	<xsd:complexType name="id-accordo-servizio-parte-specifica">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="accordo-servizio-parte-specifica"
+						object-type="accordo-servizio-parte-specifica"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string"/>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="id-erogatore" type="id-soggetto"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-fruitore">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="fruitore"
+						object-type="fruitore"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="id-fruitore" type="id-soggetto"/>
+			<xsd:element name="id-accordo-servizio-parte-specifica" type="id-accordo-servizio-parte-specifica"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-servizio-applicativo">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="servizio-applicativo"
+						object-type="servizio-applicativo"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="id-soggetto" type="id-soggetto"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-porta-delegata">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="porta-delegata"
+						object-type="porta-delegata"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-porta-applicativa">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="porta-applicativa"
+						object-type="porta-applicativa"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+
+
+</xsd:schema>
