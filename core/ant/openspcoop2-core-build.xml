@@ -421,8 +421,8 @@
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/commons/search"/>
 					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="core-commons-search"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
-					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
-					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="dao/jdbc/*.properties"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/core/commons/search"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.core.commons.search"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="core"/>
 				</antcall>
