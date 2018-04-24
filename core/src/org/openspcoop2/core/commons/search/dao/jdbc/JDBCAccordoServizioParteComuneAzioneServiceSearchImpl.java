@@ -53,9 +53,11 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.AccordoServizioParteComuneAzioneFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.AccordoServizioParteComuneAzioneFetch;
+import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 
 /**     
  * JDBCAccordoServizioParteComuneAzioneServiceSearchImpl
@@ -105,22 +107,8 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 	public IdAccordoServizioParteComuneAzione convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, AccordoServizioParteComuneAzione accordoServizioParteComuneAzione) throws NotImplementedException, ServiceException, Exception{
 	
 		IdAccordoServizioParteComuneAzione idAccordoServizioParteComuneAzione = new IdAccordoServizioParteComuneAzione();
-		// idAccordoServizioParteComuneAzione.setXXX(accordoServizioParteComuneAzione.getYYY());
-		// ...
-		// idAccordoServizioParteComuneAzione.setXXX(accordoServizioParteComuneAzione.getYYY());
-		// TODO: popola IdAccordoServizioParteComuneAzione
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
+		idAccordoServizioParteComuneAzione.setNome(accordoServizioParteComuneAzione.getNome());
+		idAccordoServizioParteComuneAzione.setIdAccordoServizioParteComune(accordoServizioParteComuneAzione.getIdAccordoServizioParteComune());
 		return idAccordoServizioParteComuneAzione;
 	}
 	
@@ -499,7 +487,27 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			new JDBCObject(tableId,Long.class));
 
 
-
+		// Recupero idAccordo
+		ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_accordoServizioParteComune.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model()));
+		sqlQueryObjectGet_accordoServizioParteComune.addSelectField("id_accordo");
+		sqlQueryObjectGet_accordoServizioParteComune.setANDLogicOperator(true);
+		sqlQueryObjectGet_accordoServizioParteComune.addWhereCondition("id=?");
+		
+		// Recupero _accordoServizioParteComune_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_accordoServizioParteComune = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+				new JDBCObject(accordoServizioParteComuneAzione.getId(), Long.class)
+		};
+		Long id_accordoServizioParteComune = 
+			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune.createSQLQuery(), jdbcProperties.isShowSql(),
+			Long.class, searchParams_accordoServizioParteComune);
+		
+		AccordoServizioParteComune as = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().getAccordoServizioParteComuneServiceSearch()).get(id_accordoServizioParteComune);
+		IdAccordoServizioParteComune idAccordo = new IdAccordoServizioParteComune();
+		idAccordo.setNome(as.getNome());
+		idAccordo.setVersione(as.getVersione());
+		idAccordo.setIdSoggetto(as.getIdReferente());
+		accordoServizioParteComuneAzione.setIdAccordoServizioParteComune(idAccordo);
 		
         return accordoServizioParteComuneAzione;  
 	
@@ -536,59 +544,30 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(AccordoServizioParteComuneAzione.model().XXXX,false)){
-			String tableName1 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model());
-			String tableName2 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+		if(expression.inUseModel(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
+			String tableName1 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			String tableName2 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_accordo");
 		}
-		*/
+		if(expression.inUseModel(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			String tableName1 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			String tableName2 = this.getAccordoServizioParteComuneAzioneFieldConverter().toAliasTable(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
+		}
 		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(AccordoServizioParteComuneAzione.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(AccordoServizioParteComuneAzione.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model().LEVEL1));
+        if(expression.inUseModel(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			if(expression.inUseModel(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)==false){
+				sqlQueryObject.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE));
 			}
 		}
-		...
-		if(expression.inUseModel(AccordoServizioParteComuneAzione.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(AccordoServizioParteComuneAzione.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdAccordoServizioParteComuneAzione id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdAccordoServizioParteComuneAzione(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdAccordoServizioParteComuneAzione(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -597,9 +576,6 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 		AccordoServizioParteComuneAzioneFieldConverter converter = this.getAccordoServizioParteComuneAzioneFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// AccordoServizioParteComuneAzione.model()
 		mapTableToPKColumn.put(converter.toTable(AccordoServizioParteComuneAzione.model()),
@@ -618,14 +594,6 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO))
 			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}
@@ -711,26 +679,12 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
-		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
+		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();               
 
 		// Object _accordoServizioParteComuneAzione
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME,true));
+		sqlQueryObjectGet.addSelectField("id_accordo");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -739,9 +693,8 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_accordoServizioParteComuneAzione = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_accordoServizioParteComuneAzione.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_accordoServizioParteComuneAzione.add(IdN.class);
+		listaFieldIdReturnType_accordoServizioParteComuneAzione.add(String.class);
+		listaFieldIdReturnType_accordoServizioParteComuneAzione.add(Long.class);
 		org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneAzione id_accordoServizioParteComuneAzione = null;
 		List<Object> listaFieldId_accordoServizioParteComuneAzione = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_accordoServizioParteComuneAzione, searchParams_accordoServizioParteComuneAzione);
@@ -753,9 +706,11 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 		else{
 			// set _accordoServizioParteComuneAzione
 			id_accordoServizioParteComuneAzione = new org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneAzione();
-			// id_accordoServizioParteComuneAzione.setId1(listaFieldId_accordoServizioParteComuneAzione.get(0));
-			// ...
-			// id_accordoServizioParteComuneAzione.setIdN(listaFieldId_accordoServizioParteComuneAzione.get(N-1));
+			id_accordoServizioParteComuneAzione.setNome((String)listaFieldId_accordoServizioParteComuneAzione.get(0));
+			Long idAccordoFK = (Long) listaFieldId_accordoServizioParteComuneAzione.get(1);
+			id_accordoServizioParteComuneAzione.
+				setIdAccordoServizioParteComune(((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().
+						getAccordoServizioParteComuneServiceSearch()).findId(idAccordoFK, true));
 		}
 		
 		return id_accordoServizioParteComuneAzione;
@@ -786,34 +741,30 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
+		if(id.getIdAccordoServizioParteComune()==null){
+			throw new ServiceException("IdAccordoServizioParteComune non fornito");
 		}
- 		// Delete this line when you have implemented the method                
-
+		if(id.getIdAccordoServizioParteComune().getIdSoggetto()==null){
+			throw new ServiceException("IdAccordoServizioParteComune.getIdSoggetto non fornito");
+		}
+		
+		// Recupero idAccordo
+		AccordoServizioParteComune as = this.getServiceManager().getAccordoServizioParteComuneServiceSearch().get(id.getIdAccordoServizioParteComune());
+		
+             
 		// Object _accordoServizioParteComuneAzione
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getAccordoServizioParteComuneAzioneFieldConverter().toTable(AccordoServizioParteComuneAzione.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME_COLONNA_N,true)+"=?");
-
+		sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteComuneAzioneFieldConverter().toColumn(AccordoServizioParteComuneAzione.model().NOME,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition("id_accordo=?");
+		
 		// Recupero _accordoServizioParteComuneAzione
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_accordoServizioParteComuneAzione = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+				new JDBCObject(id.getNome(), String.class),
+				new JDBCObject(as.getId(), Long.class)
 		};
 		Long id_accordoServizioParteComuneAzione = null;
 		try{

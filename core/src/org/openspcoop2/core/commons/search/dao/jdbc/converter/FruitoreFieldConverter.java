@@ -82,16 +82,16 @@ public class FruitoreFieldConverter extends AbstractSQLFieldConverter {
 		}
 		if(field.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.TIPO)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".tipo";
+				return this.toAliasTable(field)+".tipo_servizio";
 			}else{
-				return "tipo";
+				return "tipo_servizio";
 			}
 		}
 		if(field.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.NOME)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".nome";
+				return this.toAliasTable(field)+".nome_servizio";
 			}else{
-				return "nome";
+				return "nome_servizio";
 			}
 		}
 		if(field.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE.TIPO)){
@@ -166,13 +166,21 @@ public class FruitoreFieldConverter extends AbstractSQLFieldConverter {
 			return "servizi_fruitori";
 		}
 		if(model.equals(Fruitore.model().ID_FRUITORE)){
-			return "soggetti";
+			if(returnAlias){
+				return "sfr";
+			}else{
+				return "soggetti sfr";
+			}
 		}
 		if(model.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA)){
 			return "servizi";
 		}
 		if(model.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE)){
-			return "soggetti";
+			if(returnAlias){
+				return "ser";
+			}else{
+				return "soggetti ser";
+			}
 		}
 
 

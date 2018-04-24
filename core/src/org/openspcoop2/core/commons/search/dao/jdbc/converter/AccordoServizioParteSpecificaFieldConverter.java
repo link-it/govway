@@ -186,13 +186,21 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 			return "servizi";
 		}
 		if(model.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE)){
-			return "soggetti";
+			if(returnAlias){
+				return "sogerog";
+			}else{
+				return "soggetti sogerog";
+			}
 		}
 		if(model.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
 			return "accordi";
 		}
 		if(model.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
-			return "soggetti";
+			if(returnAlias){
+				return "sogref";
+			}else{
+				return "soggetti sogref";
+			}
 		}
 
 

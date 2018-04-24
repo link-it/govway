@@ -34,6 +34,8 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
 import org.openspcoop2.core.commons.search.IdPortaApplicativa;
+import org.openspcoop2.core.commons.search.IdServizioApplicativo;
+import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.InUse;
@@ -53,6 +55,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortaApplicativaFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaApplicativaFetch;
+import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.PortaApplicativa;
@@ -106,22 +109,7 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 	public IdPortaApplicativa convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, PortaApplicativa portaApplicativa) throws NotImplementedException, ServiceException, Exception{
 	
 		IdPortaApplicativa idPortaApplicativa = new IdPortaApplicativa();
-		// idPortaApplicativa.setXXX(portaApplicativa.getYYY());
-		// ...
-		// idPortaApplicativa.setXXX(portaApplicativa.getYYY());
-		// TODO: popola IdPortaApplicativa
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
+		idPortaApplicativa.setNome(portaApplicativa.getNome());
 		return idPortaApplicativa;
 	}
 	
@@ -473,10 +461,12 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 					List<org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo> listImgSaved_ = imgSaved.getPortaApplicativaServizioApplicativoList();
 					for(org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo itemImgSaved_ : listImgSaved_){
 						boolean objEqualsToImgSaved_ = false;
-						// TODO verify equals
-						// objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getXXX(),itemImgSaved_.getXXX()) &&
-						// 						 			...
-						//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getYYY(),itemImgSaved_.getYYY());
+						if(itemObj_.getIdServizioApplicativo()!=null && itemObj_.getIdServizioApplicativo().getIdSoggetto()!=null &&
+								itemImgSaved_.getIdServizioApplicativo()!=null && itemImgSaved_.getIdServizioApplicativo().getIdSoggetto()!=null){
+							objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdServizioApplicativo().getNome(),itemImgSaved_.getIdServizioApplicativo().getNome()) &&
+													 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdServizioApplicativo().getIdSoggetto().getTipo(),itemImgSaved_.getIdServizioApplicativo().getIdSoggetto().getTipo()) &&
+													 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getIdServizioApplicativo().getIdSoggetto().getNome(),itemImgSaved_.getIdServizioApplicativo().getIdSoggetto().getNome());
+						}
 						if(objEqualsToImgSaved_){
 							itemAlreadySaved_=itemImgSaved_;
 							break;
@@ -496,17 +486,7 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 				}
 			}
 		}
-
-		/* 
-         * TODO: implement code for id mapping
-        */
-
-        // Delete this line when you have implemented the method
-        int throwNotImplemented = 1;
-        if(throwNotImplemented==1){
-                throw new NotImplementedException("NotImplemented");
-        }
-        // Delete this line when you have implemented the method                
+              
 	}
 	
 	@Override
@@ -541,28 +521,36 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 			new JDBCObject(tableId,Long.class));
 
 
-		if(idMappingResolutionBehaviour==null ||
-			(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
-		){
-			// Object _portaApplicativa_soggetto (recupero id)
-			ISQLQueryObject sqlQueryObjectGet_portaApplicativa_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-			sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addFromTable(this.getPortaApplicativaFieldConverter().toTable(org.openspcoop2.core.commons.search.PortaApplicativa.model()));
-			sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addSelectField("id_soggetto");
-			sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addWhereCondition("id=?");
-			sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.setANDLogicOperator(true);
-			Long idFK_portaApplicativa_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
-					new JDBCObject(portaApplicativa.getId(),Long.class));
-			
-			org.openspcoop2.core.commons.search.IdSoggetto id_portaApplicativa_soggetto = null;
-			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_portaApplicativa_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_portaApplicativa_soggetto, false);
-			}else{
-				id_portaApplicativa_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
-			}
-			id_portaApplicativa_soggetto.setId(idFK_portaApplicativa_soggetto);
-			//TODO Impostare il corretto metodo che contiene l'identificativo logico
-			//portaApplicativa.setSoggetto(id_portaApplicativa_soggetto);
-		}
+		// Object _portaApplicativa_soggetto (recupero id)
+		ISQLQueryObject sqlQueryObjectGet_portaApplicativa_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addFromTable(this.getPortaApplicativaFieldConverter().toTable(org.openspcoop2.core.commons.search.PortaApplicativa.model()));
+		sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addSelectField("id_soggetto");
+		sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.addWhereCondition("id=?");
+		sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.setANDLogicOperator(true);
+		Long idFK_portaApplicativa_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+				new JDBCObject(portaApplicativa.getId(),Long.class));
+		
+		// Object _portaApplicativa_soggetto
+		ISQLQueryObject sqlQueryObjectGet_portaApplicativa_soggetto = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_portaApplicativa_soggetto.addFromTable("soggetti");
+		sqlQueryObjectGet_portaApplicativa_soggetto.addSelectField("tipo_soggetto");
+		sqlQueryObjectGet_portaApplicativa_soggetto.addSelectField("nome_soggetto");
+		sqlQueryObjectGet_portaApplicativa_soggetto.setANDLogicOperator(true);
+		sqlQueryObjectGet_portaApplicativa_soggetto.addWhereCondition("id=?");
+
+		// Recupero _portaApplicativa_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portaApplicativa_soggetto = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idFK_portaApplicativa_soggetto,Long.class)
+		};
+		List<Class<?>> listaFieldIdReturnType_portaApplicativa_soggetto = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_portaApplicativa_soggetto.add(String.class);
+		listaFieldIdReturnType_portaApplicativa_soggetto.add(String.class);
+		List<Object> listaFieldId_portaApplicativa_soggetto = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_soggetto.createSQLQuery(), jdbcProperties.isShowSql(),
+				listaFieldIdReturnType_portaApplicativa_soggetto, searchParams_portaApplicativa_soggetto);
+		IdSoggetto idSoggetto = new IdSoggetto();
+		idSoggetto.setTipo((String)listaFieldId_portaApplicativa_soggetto.get(0));
+		idSoggetto.setNome((String)listaFieldId_portaApplicativa_soggetto.get(1));
+		portaApplicativa.setIdSoggetto(idSoggetto);
 
 
 		// Object portaApplicativa_portaApplicativaServizioApplicativo
@@ -581,43 +569,44 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 				PortaApplicativaServizioApplicativo portaApplicativa_portaApplicativaServizioApplicativo = (PortaApplicativaServizioApplicativo) portaApplicativa_portaApplicativaServizioApplicativo_object;
 
 
-				if(idMappingResolutionBehaviour==null ||
-					(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
-				){
-					// Object _portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo (recupero id)
-					ISQLQueryObject sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-					sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addFromTable(this.getPortaApplicativaFieldConverter().toTable(org.openspcoop2.core.commons.search.PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO));
-					sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addSelectField("id_servizio_applicativo");
-					sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addWhereCondition("id=?");
-					sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.setANDLogicOperator(true);
-					Long idFK_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
-							new JDBCObject(portaApplicativa_portaApplicativaServizioApplicativo.getId(),Long.class));
-					
-					org.openspcoop2.core.commons.search.IdServizioApplicativo id_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = null;
-					if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-						id_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = ((JDBCServizioApplicativoServiceSearch)(this.getServiceManager().getServizioApplicativoServiceSearch())).findId(idFK_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo, false);
-					}else{
-						id_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = new org.openspcoop2.core.commons.search.IdServizioApplicativo();
-					}
-					id_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.setId(idFK_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo);
-					//TODO Impostare il corretto metodo che contiene l'identificativo logico
-					//portaApplicativa_portaApplicativaServizioApplicativo.setServizioApplicativo(id_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo);
-				}
+				// Object _portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo (recupero id)
+				ISQLQueryObject sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addFromTable(this.getPortaApplicativaFieldConverter().toTable(org.openspcoop2.core.commons.search.PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO));
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addSelectField("id_servizio_applicativo");
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.addWhereCondition("id=?");
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.setANDLogicOperator(true);
+				Long idFK_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+						new JDBCObject(portaApplicativa_portaApplicativaServizioApplicativo.getId(),Long.class));
+				
+				// Object _portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo
+				ISQLQueryObject sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = sqlQueryObjectGet.newSQLQueryObject();
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.addFromTable("servizi_applicativi");
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.addSelectField("nome");
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.addSelectField("id_soggetto");
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.setANDLogicOperator(true);
+				sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.addWhereCondition("id=?");
 
+				// Recupero _portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo
+				org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idFK_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo,Long.class)
+				};
+				List<Class<?>> listaFieldIdReturnType_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = new ArrayList<Class<?>>();
+				listaFieldIdReturnType_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.add(String.class);
+				listaFieldIdReturnType_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.add(Long.class);
+				List<Object> listaFieldId_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.createSQLQuery(), jdbcProperties.isShowSql(),
+						listaFieldIdReturnType_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo, searchParams_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo);
+				IdServizioApplicativo idServizioApplicativo = new IdServizioApplicativo();
+				idServizioApplicativo.setNome((String)listaFieldId_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.get(0));
+				Long idSoggettoLong = (Long) listaFieldId_portaApplicativa_portaApplicativaServizioApplicativo_servizioApplicativo.get(1);
+				IdSoggetto idSoggettoSA = this.jdbcServiceManager.getSoggettoServiceSearch().convertToId(
+						((IDBSoggettoServiceSearch)this.jdbcServiceManager.getSoggettoServiceSearch()).get(idSoggettoLong)
+						);
+				idServizioApplicativo.setIdSoggetto(idSoggettoSA);
+				portaApplicativa_portaApplicativaServizioApplicativo.setIdServizioApplicativo(idServizioApplicativo);
+				
 				portaApplicativa.addPortaApplicativaServizioApplicativo(portaApplicativa_portaApplicativaServizioApplicativo);
 			}
-		}
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method                
+		}              
 		
         return portaApplicativa;  
 	
@@ -654,58 +643,71 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(PortaApplicativa.model().XXXX,false)){
+		if(expression.inUseModel(PortaApplicativa.model().ID_SOGGETTO,false)){
 			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model());
-			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
 		}
-		*/
+		if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO,false)){
+			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model());
+			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_porta");
+		}
+		if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO,false)){
+			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO);
+			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_servizio_applicativo="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO,false)){
+			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO);
+			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
+		}
 		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(PortaApplicativa.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(PortaApplicativa.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().LEVEL1));
+		
+		boolean addFromPDSA = false;
+        if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO,false)){
+			if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO,false)==false){
+				
+				sqlQueryObject.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO));
+				
+				String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model());
+				String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO);
+				try{
+					sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_porta");
+				}catch(Exception e){
+					// exception se gia' esiste
+				}
+				
+				addFromPDSA = true;
 			}
 		}
-		...
-		if(expression.inUseModel(PortaApplicativa.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(PortaApplicativa.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().LEVELN));
+        if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO,false)){
+			if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO,false)==false){
+				
+				sqlQueryObject.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO));
+				
+				String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO);
+				String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO);
+				try{
+					sqlQueryObject.addWhereCondition(tableName1+".id_servizio_applicativo="+tableName2+".id");
+				}catch(Exception e){
+					// exception se gia' esiste
+				}
+				
+			}
+			if(addFromPDSA==false){
+				sqlQueryObject.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO));
 			}
 		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPortaApplicativa id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdPortaApplicativa(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdPortaApplicativa(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return rootTableIdValues;
 	}
@@ -715,9 +717,6 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		PortaApplicativaFieldConverter converter = this.getPortaApplicativaFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// PortaApplicativa.model()
 		mapTableToPKColumn.put(converter.toTable(PortaApplicativa.model()),
@@ -748,14 +747,6 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO))
 			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}
@@ -842,25 +833,11 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
+               
 		// Object _portaApplicativa
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME,true));
+		sqlQueryObjectGet.addSelectField("id_soggetto");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -869,9 +846,8 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_portaApplicativa = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_portaApplicativa.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_portaApplicativa.add(IdN.class);
+		listaFieldIdReturnType_portaApplicativa.add(String.class);
+		listaFieldIdReturnType_portaApplicativa.add(Long.class);
 		org.openspcoop2.core.commons.search.IdPortaApplicativa id_portaApplicativa = null;
 		List<Object> listaFieldId_portaApplicativa = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_portaApplicativa, searchParams_portaApplicativa);
@@ -883,9 +859,8 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		else{
 			// set _portaApplicativa
 			id_portaApplicativa = new org.openspcoop2.core.commons.search.IdPortaApplicativa();
-			// id_portaApplicativa.setId1(listaFieldId_portaApplicativa.get(0));
-			// ...
-			// id_portaApplicativa.setIdN(listaFieldId_portaApplicativa.get(N-1));
+			id_portaApplicativa.setNome((String)listaFieldId_portaApplicativa.get(0));
+
 		}
 		
 		return id_portaApplicativa;
@@ -916,34 +891,25 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
 
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
+		if(id==null){
+			throw new ServiceException("Id not defined");
 		}
- 		// Delete this line when you have implemented the method                
+		if(id.getNome()==null){
+			throw new ServiceException("Id.nome not defined");
+		}
 
 		// Object _portaApplicativa
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().NOME,true)+"=?");
 
 		// Recupero _portaApplicativa
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portaApplicativa = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getNome(),String.class)
 		};
 		Long id_portaApplicativa = null;
 		try{

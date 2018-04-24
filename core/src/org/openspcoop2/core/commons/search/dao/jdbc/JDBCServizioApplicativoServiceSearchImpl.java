@@ -34,6 +34,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
 import org.openspcoop2.core.commons.search.IdServizioApplicativo;
+import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.InUse;
@@ -53,9 +54,12 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.ServizioApplicativoFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.ServizioApplicativoFetch;
+import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
+import org.openspcoop2.core.commons.search.Soggetto;
 
 /**     
  * JDBCServizioApplicativoServiceSearchImpl
@@ -105,23 +109,10 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 	public IdServizioApplicativo convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, ServizioApplicativo servizioApplicativo) throws NotImplementedException, ServiceException, Exception{
 	
 		IdServizioApplicativo idServizioApplicativo = new IdServizioApplicativo();
-		// idServizioApplicativo.setXXX(servizioApplicativo.getYYY());
-		// ...
-		// idServizioApplicativo.setXXX(servizioApplicativo.getYYY());
-		// TODO: popola IdServizioApplicativo
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
-		return idServizioApplicativo;
+		idServizioApplicativo.setNome(servizioApplicativo.getNome());
+        idServizioApplicativo.setIdSoggetto(servizioApplicativo.getIdSoggetto());
+        return idServizioApplicativo;
+
 	}
 	
 	@Override
@@ -495,41 +486,39 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 			new JDBCObject(tableId,Long.class));
 
 
-		if(idMappingResolutionBehaviour==null ||
-			(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
-		){
-			// Object _servizioApplicativo_soggetto (recupero id)
-			ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-			sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addFromTable(this.getServizioApplicativoFieldConverter().toTable(org.openspcoop2.core.commons.search.ServizioApplicativo.model()));
-			sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addSelectField("id_soggetto");
-			sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addWhereCondition("id=?");
-			sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.setANDLogicOperator(true);
-			Long idFK_servizioApplicativo_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
-					new JDBCObject(servizioApplicativo.getId(),Long.class));
-			
-			org.openspcoop2.core.commons.search.IdSoggetto id_servizioApplicativo_soggetto = null;
-			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_servizioApplicativo_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_servizioApplicativo_soggetto, false);
-			}else{
-				id_servizioApplicativo_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
-			}
-			id_servizioApplicativo_soggetto.setId(idFK_servizioApplicativo_soggetto);
-			//TODO Impostare il corretto metodo che contiene l'identificativo logico
-			//servizioApplicativo.setSoggetto(id_servizioApplicativo_soggetto);
-		}
-
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
+		// Object _servizioApplicativo_soggetto (recupero id)
+		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addFromTable("servizi_applicativi");
+		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addSelectField("id_soggetto");
+		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.addWhereCondition("id=?");
+		sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.setANDLogicOperator(true);
+		Long idFK_servizioApplicativo_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_servizioApplicativo_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+				new JDBCObject(servizioApplicativo.getId(),Long.class));
 		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method                
-		
+		// Object _servizioApplicativo_soggetto
+		ISQLQueryObject sqlQueryObjectGet_servizioApplicativo_soggetto = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_servizioApplicativo_soggetto.addFromTable("soggetti");
+		sqlQueryObjectGet_servizioApplicativo_soggetto.addSelectField("tipo_soggetto");
+		sqlQueryObjectGet_servizioApplicativo_soggetto.addSelectField("nome_soggetto");
+		sqlQueryObjectGet_servizioApplicativo_soggetto.setANDLogicOperator(true);
+		sqlQueryObjectGet_servizioApplicativo_soggetto.addWhereCondition("id=?");
+
+		// Recupero _servizioApplicativo_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_servizioApplicativo_soggetto = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idFK_servizioApplicativo_soggetto,Long.class)
+		};
+		List<Class<?>> listaFieldIdReturnType_servizioApplicativo_soggetto = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_servizioApplicativo_soggetto.add(String.class);
+		listaFieldIdReturnType_servizioApplicativo_soggetto.add(String.class);
+		List<Object> listaFieldId_servizioApplicativo_soggetto = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_servizioApplicativo_soggetto.createSQLQuery(), jdbcProperties.isShowSql(),
+				listaFieldIdReturnType_servizioApplicativo_soggetto, searchParams_servizioApplicativo_soggetto);
+		// set _servizioApplicativo_soggetto
+		IdSoggetto id_servizioApplicativo_soggetto = new IdSoggetto();
+		id_servizioApplicativo_soggetto.setTipo((String)listaFieldId_servizioApplicativo_soggetto.get(0));
+		id_servizioApplicativo_soggetto.setNome((String)listaFieldId_servizioApplicativo_soggetto.get(1));
+		servizioApplicativo.setIdSoggetto(id_servizioApplicativo_soggetto);
+
+            
         return servizioApplicativo;  
 	
 	} 
@@ -565,59 +554,19 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(ServizioApplicativo.model().XXXX,false)){
-			String tableName1 = this.getServizioApplicativoFieldConverter().toAliasTable(ServizioApplicativo.model());
-			String tableName2 = this.getServizioApplicativoFieldConverter().toAliasTable(ServizioApplicativo.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+		if(expression.inUseModel(ServizioApplicativo.model().ID_SOGGETTO,false)){
+			String tableName1 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model());
+			String tableName2 = this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
 		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(ServizioApplicativo.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(ServizioApplicativo.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(ServizioApplicativo.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(ServizioApplicativo.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
-        
+		        
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdServizioApplicativo id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdServizioApplicativo(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdServizioApplicativo(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -626,9 +575,6 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		ServizioApplicativoFieldConverter converter = this.getServizioApplicativoFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// ServizioApplicativo.model()
 		mapTableToPKColumn.put(converter.toTable(ServizioApplicativo.model()),
@@ -642,14 +588,6 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 				new CustomField("id", Long.class, "id", converter.toTable(ServizioApplicativo.model().ID_SOGGETTO))
 			));
 
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return mapTableToPKColumn;		
 	}
 	
@@ -734,26 +672,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
-		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
+		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();               
 
 		// Object _servizioApplicativo
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME,true));
+		sqlQueryObjectGet.addSelectField("id_soggetto");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -762,9 +686,8 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_servizioApplicativo = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_servizioApplicativo.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_servizioApplicativo.add(IdN.class);
+		listaFieldIdReturnType_servizioApplicativo.add(String.class);
+		listaFieldIdReturnType_servizioApplicativo.add(Long.class);
 		org.openspcoop2.core.commons.search.IdServizioApplicativo id_servizioApplicativo = null;
 		List<Object> listaFieldId_servizioApplicativo = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_servizioApplicativo, searchParams_servizioApplicativo);
@@ -776,9 +699,12 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 		else{
 			// set _servizioApplicativo
 			id_servizioApplicativo = new org.openspcoop2.core.commons.search.IdServizioApplicativo();
-			// id_servizioApplicativo.setId1(listaFieldId_servizioApplicativo.get(0));
-			// ...
-			// id_servizioApplicativo.setIdN(listaFieldId_servizioApplicativo.get(N-1));
+			id_servizioApplicativo.setNome((String)listaFieldId_servizioApplicativo.get(0));
+			
+			Long idSoggettoFK = (Long) listaFieldId_servizioApplicativo.get(1);
+			id_servizioApplicativo.
+				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager().
+						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
 		}
 		
 		return id_servizioApplicativo;
@@ -809,34 +735,27 @@ public class JDBCServizioApplicativoServiceSearchImpl implements IJDBCServiceSea
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
+		if(id.getIdSoggetto()==null){
+			throw new ServiceException("IdSoggetto non fornito");
 		}
- 		// Delete this line when you have implemented the method                
-
+		
+		// Recupero id soggetto
+		ISoggettoServiceSearch soggettoServiceSearch = this.getServiceManager().getSoggettoServiceSearch();
+		Soggetto sa_id_soggetto = ((IDBSoggettoServiceSearch)soggettoServiceSearch).get(id.getIdSoggetto());
+		
 		// Object _servizioApplicativo
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getServizioApplicativoFieldConverter().toTable(ServizioApplicativo.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getServizioApplicativoFieldConverter().toColumn(ServizioApplicativo.model().NOME,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition("id_soggetto=?");
 
 		// Recupero _servizioApplicativo
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_servizioApplicativo = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getNome(),String.class),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(sa_id_soggetto.getId(),Long.class)
 		};
 		Long id_servizioApplicativo = null;
 		try{

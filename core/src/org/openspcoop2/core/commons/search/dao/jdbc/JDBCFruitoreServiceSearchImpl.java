@@ -34,6 +34,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
 import org.openspcoop2.core.commons.search.IdFruitore;
+import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.InUse;
@@ -53,9 +54,12 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.FruitoreFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.FruitoreFetch;
+import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteSpecificaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.Fruitore;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
 
 /**     
  * JDBCFruitoreServiceSearchImpl
@@ -105,23 +109,9 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	public IdFruitore convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Fruitore fruitore) throws NotImplementedException, ServiceException, Exception{
 	
 		IdFruitore idFruitore = new IdFruitore();
-		// idFruitore.setXXX(fruitore.getYYY());
-		// ...
-		// idFruitore.setXXX(fruitore.getYYY());
-		// TODO: popola IdFruitore
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
-		return idFruitore;
+		idFruitore.setIdAccordoServizioParteSpecifica(fruitore.getIdAccordoServizioParteSpecifica());
+        idFruitore.setIdFruitore(fruitore.getIdFruitore());
+        return idFruitore;
 	}
 	
 	@Override
@@ -503,63 +493,100 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			new JDBCObject(tableId,Long.class));
 
 
-		if(idMappingResolutionBehaviour==null ||
-			(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
-		){
-			// Object _fruitore_soggetto (recupero id)
-			ISQLQueryObject sqlQueryObjectGet_fruitore_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-			sqlQueryObjectGet_fruitore_soggetto_readFkId.addFromTable(this.getFruitoreFieldConverter().toTable(org.openspcoop2.core.commons.search.Fruitore.model()));
-			sqlQueryObjectGet_fruitore_soggetto_readFkId.addSelectField("id_soggetto");
-			sqlQueryObjectGet_fruitore_soggetto_readFkId.addWhereCondition("id=?");
-			sqlQueryObjectGet_fruitore_soggetto_readFkId.setANDLogicOperator(true);
-			Long idFK_fruitore_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
-					new JDBCObject(fruitore.getId(),Long.class));
-			
-			org.openspcoop2.core.commons.search.IdSoggetto id_fruitore_soggetto = null;
-			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_fruitore_soggetto = ((JDBCSoggettoServiceSearch)(this.getServiceManager().getSoggettoServiceSearch())).findId(idFK_fruitore_soggetto, false);
-			}else{
-				id_fruitore_soggetto = new org.openspcoop2.core.commons.search.IdSoggetto();
-			}
-			id_fruitore_soggetto.setId(idFK_fruitore_soggetto);
-			//TODO Impostare il corretto metodo che contiene l'identificativo logico
-			//fruitore.setSoggetto(id_fruitore_soggetto);
-		}
-
-		if(idMappingResolutionBehaviour==null ||
-			(org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour) || org.openspcoop2.generic_project.beans.IDMappingBehaviour.USE_TABLE_ID.equals(idMappingResolutionBehaviour))
-		){
-			// Object _fruitore_accordoServizioParteSpecifica (recupero id)
-			ISQLQueryObject sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId = sqlQueryObjectGet.newSQLQueryObject();
-			sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addFromTable(this.getFruitoreFieldConverter().toTable(org.openspcoop2.core.commons.search.Fruitore.model()));
-			sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addSelectField("id_servizio");
-			sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addWhereCondition("id=?");
-			sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.setANDLogicOperator(true);
-			Long idFK_fruitore_accordoServizioParteSpecifica = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
-					new JDBCObject(fruitore.getId(),Long.class));
-			
-			org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica id_fruitore_accordoServizioParteSpecifica = null;
-			if(idMappingResolutionBehaviour==null || org.openspcoop2.generic_project.beans.IDMappingBehaviour.ENABLED.equals(idMappingResolutionBehaviour)){
-				id_fruitore_accordoServizioParteSpecifica = ((JDBCAccordoServizioParteSpecificaServiceSearch)(this.getServiceManager().getAccordoServizioParteSpecificaServiceSearch())).findId(idFK_fruitore_accordoServizioParteSpecifica, false);
-			}else{
-				id_fruitore_accordoServizioParteSpecifica = new org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica();
-			}
-			id_fruitore_accordoServizioParteSpecifica.setId(idFK_fruitore_accordoServizioParteSpecifica);
-			//TODO Impostare il corretto metodo che contiene l'identificativo logico
-			//fruitore.setAccordoServizioParteSpecifica(id_fruitore_accordoServizioParteSpecifica);
-		}
-
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
+		// Object _fruitore_soggetto (recupero id)
+		ISQLQueryObject sqlQueryObjectGet_fruitore_soggetto_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_fruitore_soggetto_readFkId.addFromTable("servizi_fruitori");
+		sqlQueryObjectGet_fruitore_soggetto_readFkId.addSelectField("id_soggetto");
+		sqlQueryObjectGet_fruitore_soggetto_readFkId.addWhereCondition("id=?");
+		sqlQueryObjectGet_fruitore_soggetto_readFkId.setANDLogicOperator(true);
+		Long idFK_fruitore_soggetto = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_soggetto_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+				new JDBCObject(fruitore.getId(),Long.class));
 		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method                
+		// Object _fruitore_soggetto
+		ISQLQueryObject sqlQueryObjectGet_fruitore_soggetto = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_fruitore_soggetto.addFromTable("soggetti");
+		sqlQueryObjectGet_fruitore_soggetto.addSelectField("tipo_soggetto");
+		sqlQueryObjectGet_fruitore_soggetto.addSelectField("nome_soggetto");
+		sqlQueryObjectGet_fruitore_soggetto.setANDLogicOperator(true);
+		sqlQueryObjectGet_fruitore_soggetto.addWhereCondition("id=?");
+
+		// Recupero _fruitore_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_fruitore_soggetto = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idFK_fruitore_soggetto,Long.class)
+		};
+		List<Class<?>> listaFieldIdReturnType_fruitore_soggetto = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_fruitore_soggetto.add(String.class);
+		listaFieldIdReturnType_fruitore_soggetto.add(String.class);
+		List<Object> listaFieldId_fruitore_soggetto = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_soggetto.createSQLQuery(), jdbcProperties.isShowSql(),
+				listaFieldIdReturnType_fruitore_soggetto, searchParams_fruitore_soggetto);
+		// set _fruitore_soggetto
+		IdSoggetto id_fruitore_soggetto = new IdSoggetto();
+		id_fruitore_soggetto.setTipo((String)listaFieldId_fruitore_soggetto.get(0));
+		id_fruitore_soggetto.setNome((String)listaFieldId_fruitore_soggetto.get(1));
+		fruitore.setIdFruitore(id_fruitore_soggetto);
+
+		// Object _fruitore_accordoServizioParteSpecifica (recupero id)
+		ISQLQueryObject sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addFromTable("servizi_fruitori");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addSelectField("id_servizio");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.addWhereCondition("id=?");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.setANDLogicOperator(true);
+		Long idFK_fruitore_accordoServizioParteSpecifica = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica_readFkId.createSQLQuery(), jdbcProperties.isShowSql(),Long.class,
+				new JDBCObject(fruitore.getId(),Long.class));
+		
+		// Object _fruitore_accordoServizioParteSpecifica
+		ISQLQueryObject sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.addFromTable("servizi");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.addSelectField("tipo_servizio");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.addSelectField("nome_servizio");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.addSelectField("id_soggetto");
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.setANDLogicOperator(true);
+		sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.addWhereCondition("id=?");
+
+		// Recupero _fruitore_accordoServizioParteSpecifica
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_fruitore_accordoServizioParteSpecifica = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idFK_fruitore_accordoServizioParteSpecifica,Long.class)
+		};
+		List<Class<?>> listaFieldIdReturnType_fruitore_accordoServizioParteSpecifica = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_fruitore_accordoServizioParteSpecifica.add(String.class);
+		listaFieldIdReturnType_fruitore_accordoServizioParteSpecifica.add(String.class);
+		listaFieldIdReturnType_fruitore_accordoServizioParteSpecifica.add(Long.class);
+		List<Object> listaFieldId_fruitore_accordoServizioParteSpecifica = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_accordoServizioParteSpecifica.createSQLQuery(), jdbcProperties.isShowSql(),
+				listaFieldIdReturnType_fruitore_accordoServizioParteSpecifica, searchParams_fruitore_accordoServizioParteSpecifica);
+		// set _fruitore_accordoServizioParteSpecifica
+		IdAccordoServizioParteSpecifica id_fruitore_accordoServizioParteSpecifica = new IdAccordoServizioParteSpecifica();
+		id_fruitore_accordoServizioParteSpecifica.setTipo((String)listaFieldId_fruitore_accordoServizioParteSpecifica.get(0));
+		id_fruitore_accordoServizioParteSpecifica.setNome((String)listaFieldId_fruitore_accordoServizioParteSpecifica.get(1));
+		
+		// Recupero IdSoggettoAPS
+		long idSoggettoAccordoParteSpecifica = (Long) listaFieldId_fruitore_accordoServizioParteSpecifica.get(2);
+		
+		// Recupero IdSoggettoAPS query
+		ISQLQueryObject sqlQueryObjectGet_erogatore_soggetto = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_erogatore_soggetto.addFromTable("soggetti");
+		sqlQueryObjectGet_erogatore_soggetto.addSelectField("tipo_soggetto");
+		sqlQueryObjectGet_erogatore_soggetto.addSelectField("nome_soggetto");
+		sqlQueryObjectGet_erogatore_soggetto.setANDLogicOperator(true);
+		sqlQueryObjectGet_erogatore_soggetto.addWhereCondition("id=?");
+		
+		// Recupero IdSoggettoAPS execute
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_erogatore_soggetto = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idSoggettoAccordoParteSpecifica,Long.class)
+		};
+		List<Class<?>> listaFieldIdReturnType_erogatore_soggetto = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_erogatore_soggetto.add(String.class);
+		listaFieldIdReturnType_erogatore_soggetto.add(String.class);
+		List<Object> listaFieldId_erogatore_soggetto = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_fruitore_soggetto.createSQLQuery(), jdbcProperties.isShowSql(),
+				listaFieldIdReturnType_erogatore_soggetto, searchParams_erogatore_soggetto);
+		// set _fruitore_soggetto
+		IdSoggetto id_erogatore_soggetto = new IdSoggetto();
+		id_erogatore_soggetto.setTipo((String)listaFieldId_erogatore_soggetto.get(0));
+		id_erogatore_soggetto.setNome((String)listaFieldId_erogatore_soggetto.get(1));
+		id_fruitore_accordoServizioParteSpecifica.setIdErogatore(id_erogatore_soggetto);
+		
+		// Set idAccordoServizioParteSpecifica nel fruitore
+		fruitore.setIdAccordoServizioParteSpecifica(id_fruitore_accordoServizioParteSpecifica);
+
 		
         return fruitore;  
 	
@@ -596,59 +623,38 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(Fruitore.model().XXXX,false)){
-			String tableName1 = this.getFruitoreFieldConverter().toAliasTable(Fruitore.model());
-			String tableName2 = this.getFruitoreFieldConverter().toAliasTable(Fruitore.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+		if(expression.inUseModel(Fruitore.model().ID_FRUITORE,false)){
+			String tableName1 = this.getFruitoreFieldConverter().toTable(Fruitore.model());
+			//String tableName2 = "sfr";
+			String tableName2 =  this.getFruitoreFieldConverter().toAliasTable(Fruitore.model().ID_FRUITORE);
+			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
 		}
-		*/
+		if(expression.inUseModel(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA,false)){
+			String tableName1 = this.getFruitoreFieldConverter().toTable(Fruitore.model());
+			String tableName2 = this.getFruitoreFieldConverter().toTable(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+			sqlQueryObject.addWhereCondition(tableName1+".id_servizio="+tableName2+".id");
+		}
+		if(expression.inUseModel(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE,false)){
+			String tableName1 = this.getFruitoreFieldConverter().toTable(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+			String tableName2 = this.getFruitoreFieldConverter().toAliasTable(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE);
+			//String tableName2 = "ser";
+			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
+		}
 		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(Fruitore.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(Fruitore.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getFruitoreFieldConverter().toTable(Fruitore.model().LEVEL1));
+		
+        if(expression.inUseModel(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE,false)){
+			if(expression.inUseModel(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA,false)==false){
+				sqlQueryObject.addFromTable(this.getFruitoreFieldConverter().toTable(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA));
 			}
 		}
-		...
-		if(expression.inUseModel(Fruitore.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(Fruitore.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getFruitoreFieldConverter().toTable(Fruitore.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdFruitore id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdFruitore(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdFruitore(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -657,9 +663,6 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		FruitoreFieldConverter converter = this.getFruitoreFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// Fruitore.model()
 		mapTableToPKColumn.put(converter.toTable(Fruitore.model()),
@@ -685,14 +688,6 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 				new CustomField("id", Long.class, "id", converter.toTable(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.ID_EROGATORE))
 			));
 
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return mapTableToPKColumn;		
 	}
 	
@@ -778,25 +773,11 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
+         
 		// Object _fruitore
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getFruitoreFieldConverter().toTable(Fruitore.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getFruitoreFieldConverter().toColumn(Fruitore.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getFruitoreFieldConverter().toColumn(Fruitore.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField("id_soggetto");
+		sqlQueryObjectGet.addSelectField("id_servizio");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -805,9 +786,8 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_fruitore = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_fruitore.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_fruitore.add(IdN.class);
+		listaFieldIdReturnType_fruitore.add(Long.class);
+		listaFieldIdReturnType_fruitore.add(Long.class);
 		org.openspcoop2.core.commons.search.IdFruitore id_fruitore = null;
 		List<Object> listaFieldId_fruitore = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_fruitore, searchParams_fruitore);
@@ -819,9 +799,16 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 		else{
 			// set _fruitore
 			id_fruitore = new org.openspcoop2.core.commons.search.IdFruitore();
-			// id_fruitore.setId1(listaFieldId_fruitore.get(0));
-			// ...
-			// id_fruitore.setIdN(listaFieldId_fruitore.get(N-1));
+			
+			Long idSoggettoFK = (Long) listaFieldId_fruitore.get(0);
+			id_fruitore.
+				setIdFruitore(((IDBSoggettoServiceSearch)this.getServiceManager().
+						getSoggettoServiceSearch()).findId(idSoggettoFK, true));
+			
+			Long idParteSpecificaFK = (Long) listaFieldId_fruitore.get(1);
+			id_fruitore.
+				setIdAccordoServizioParteSpecifica(((IDBAccordoServizioParteSpecificaServiceSearch)this.getServiceManager().
+						getAccordoServizioParteSpecificaServiceSearch()).findId(idParteSpecificaFK, true));
 		}
 		
 		return id_fruitore;
@@ -852,34 +839,25 @@ public class JDBCFruitoreServiceSearchImpl implements IJDBCServiceSearchWithId<F
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
+		IDBSoggettoServiceSearch soggettoServiceSearch = (IDBSoggettoServiceSearch) this.getServiceManager().getSoggettoServiceSearch();
+		Long idSoggettoFruitore = soggettoServiceSearch.get(id.getIdFruitore()).getId();
+		
+		IDBAccordoServizioParteSpecificaServiceSearch accordoServizioParteSpecificaServiceSearch = (IDBAccordoServizioParteSpecificaServiceSearch) this.getServiceManager().getAccordoServizioParteSpecificaServiceSearch();
+		Long idAccordoServizioParteSpecifica = accordoServizioParteSpecificaServiceSearch.get(id.getIdAccordoServizioParteSpecifica()).getId();
+		
 		// Object _fruitore
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getFruitoreFieldConverter().toTable(Fruitore.model()));
 		sqlQueryObjectGet.addSelectField("id");
 		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getFruitoreFieldConverter().toColumn(Fruitore.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getFruitoreFieldConverter().toColumn(Fruitore.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition("id_soggetto=?");
+		sqlQueryObjectGet.addWhereCondition("id_servizio=?");
 
 		// Recupero _fruitore
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_fruitore = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idSoggettoFruitore,Long.class),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(idAccordoServizioParteSpecifica,Long.class)
 		};
 		Long id_fruitore = null;
 		try{

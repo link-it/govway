@@ -33,6 +33,8 @@ import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdPortType;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
@@ -53,6 +55,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.PortTypeFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortTypeFetch;
+import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.PortType;
@@ -106,23 +109,10 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 	public IdPortType convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, PortType portType) throws NotImplementedException, ServiceException, Exception{
 	
 		IdPortType idPortType = new IdPortType();
-		// idPortType.setXXX(portType.getYYY());
-		// ...
-		// idPortType.setXXX(portType.getYYY());
-		// TODO: popola IdPortType
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
-		return idPortType;
+		idPortType.setNome(portType.getNome());
+        idPortType.setIdAccordoServizioParteComune(portType.getIdAccordoServizioParteComune());
+        return idPortType;
+
 	}
 	
 	@Override
@@ -469,10 +459,7 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 					List<org.openspcoop2.core.commons.search.Operation> listImgSaved_ = imgSaved.getOperationList();
 					for(org.openspcoop2.core.commons.search.Operation itemImgSaved_ : listImgSaved_){
 						boolean objEqualsToImgSaved_ = false;
-						// TODO verify equals
-						// objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getXXX(),itemImgSaved_.getXXX()) &&
-						// 						 			...
-						//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getYYY(),itemImgSaved_.getYYY());
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
 						if(objEqualsToImgSaved_){
 							itemAlreadySaved_=itemImgSaved_;
 							break;
@@ -504,17 +491,7 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 				obj.getIdAccordoServizioParteComune().getIdSoggetto().setId(imgSaved.getIdAccordoServizioParteComune().getIdSoggetto().getId());
 			}
 		}
-
-		/* 
-         * TODO: implement code for id mapping
-        */
-
-        // Delete this line when you have implemented the method
-        int throwNotImplemented = 1;
-        if(throwNotImplemented==1){
-                throw new NotImplementedException("NotImplemented");
-        }
-        // Delete this line when you have implemented the method                
+              
 	}
 	
 	@Override
@@ -544,7 +521,29 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 		portType = (PortType) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_portType.createSQLQuery(), jdbcProperties.isShowSql(), PortType.model(), this.getPortTypeFetch(),
 			new JDBCObject(tableId,Long.class));
 
-
+		
+		// Recupero idAccordo
+		ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_accordoServizioParteComune.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model()));
+		sqlQueryObjectGet_accordoServizioParteComune.addSelectField("id_accordo");
+		sqlQueryObjectGet_accordoServizioParteComune.setANDLogicOperator(true);
+		sqlQueryObjectGet_accordoServizioParteComune.addWhereCondition("id=?");
+		
+		// Recupero _accordoServizioParteComune_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_accordoServizioParteComune = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+				new JDBCObject(portType.getId(), Long.class)
+		};
+		Long id_accordoServizioParteComune = 
+			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune.createSQLQuery(), jdbcProperties.isShowSql(),
+			Long.class, searchParams_accordoServizioParteComune);
+		
+		AccordoServizioParteComune as = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().getAccordoServizioParteComuneServiceSearch()).get(id_accordoServizioParteComune);
+		IdAccordoServizioParteComune idAccordo = new IdAccordoServizioParteComune();
+		idAccordo.setNome(as.getNome());
+		idAccordo.setVersione(as.getVersione());
+		idAccordo.setIdSoggetto(as.getIdReferente());
+		portType.setIdAccordoServizioParteComune(idAccordo);
+		
 
 		// Object portType_operation
 		ISQLQueryObject sqlQueryObjectGet_portType_operation = sqlQueryObjectGet.newSQLQueryObject();
@@ -603,59 +602,51 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(PortType.model().XXXX,false)){
-			String tableName1 = this.getPortTypeFieldConverter().toAliasTable(PortType.model());
-			String tableName2 = this.getPortTypeFieldConverter().toAliasTable(PortType.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+		if(expression.inUseModel(PortType.model().OPERATION,false)){
+			String tableName1 = this.getPortTypeFieldConverter().toTable(PortType.model().OPERATION);
+			String tableName2 = this.getPortTypeFieldConverter().toTable(PortType.model());
+			sqlQueryObject.addWhereCondition(tableName1+".id_port_type="+tableName2+".id");
 		}
-		*/
+		if(expression.inUseModel(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
+			String tableName1 = this.getPortTypeFieldConverter().toTable(PortType.model());
+			String tableName2 = this.getPortTypeFieldConverter().toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			String tableName1 = this.getPortTypeFieldConverter().toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			String tableName2 = this.getPortTypeFieldConverter().toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
+			String tableName1 = this.getPortTypeFieldConverter().toTable(PortType.model());
+			String tableName2 = this.getPortTypeFieldConverter().toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			String tableName1 = this.getPortTypeFieldConverter().toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			String tableName2 = this.getPortTypeFieldConverter().toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
+		}
 		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(PortType.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(PortType.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model().LEVEL1));
+		// Check FROM Table necessarie per le join di oggetti annidati dal secondo livello in poi dove pero' non viene poi utilizzato l'oggetto del livello precedente nella espressione
+		if(expression.inUseModel(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			if(expression.inUseModel(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)==false){
+				sqlQueryObject.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE));
 			}
 		}
-		...
-		if(expression.inUseModel(PortType.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(PortType.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model().LEVELN));
+		if(expression.inUseModel(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			if(expression.inUseModel(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)==false){
+				sqlQueryObject.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE));
 			}
 		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPortType id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdPortType(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdPortType(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -664,9 +655,6 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 		PortTypeFieldConverter converter = this.getPortTypeFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// PortType.model()
 		mapTableToPKColumn.put(converter.toTable(PortType.model()),
@@ -710,14 +698,6 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 				new CustomField("id", Long.class, "id", converter.toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO))
 			));
 
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return mapTableToPKColumn;		
 	}
 	
@@ -802,26 +782,12 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
-		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
+		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();              
 
 		// Object _portType
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME,true));
+		sqlQueryObjectGet.addSelectField("id_accordo");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -830,9 +796,8 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_portType = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_portType.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_portType.add(IdN.class);
+		listaFieldIdReturnType_portType.add(String.class);
+		listaFieldIdReturnType_portType.add(Long.class);
 		org.openspcoop2.core.commons.search.IdPortType id_portType = null;
 		List<Object> listaFieldId_portType = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_portType, searchParams_portType);
@@ -844,9 +809,12 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 		else{
 			// set _portType
 			id_portType = new org.openspcoop2.core.commons.search.IdPortType();
-			// id_portType.setId1(listaFieldId_portType.get(0));
-			// ...
-			// id_portType.setIdN(listaFieldId_portType.get(N-1));
+			id_portType.setNome((String)listaFieldId_portType.get(0));
+			
+			Long idAccordoFK = (Long) listaFieldId_portType.get(1);
+			id_portType.
+				setIdAccordoServizioParteComune(((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().
+						getAccordoServizioParteComuneServiceSearch()).findId(idAccordoFK, true));
 		}
 		
 		return id_portType;
@@ -877,34 +845,28 @@ public class JDBCPortTypeServiceSearchImpl implements IJDBCServiceSearchWithId<P
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
+		if(id.getIdAccordoServizioParteComune()==null){
+			throw new ServiceException("IdAccordoServizioParteComune non fornito");
 		}
- 		// Delete this line when you have implemented the method                
-
+		if(id.getIdAccordoServizioParteComune().getIdSoggetto()==null){
+			throw new ServiceException("IdAccordoServizioParteComune.getIdSoggetto non fornito");
+		}
+		
+		// Recupero idAccordo
+		AccordoServizioParteComune as = this.getServiceManager().getAccordoServizioParteComuneServiceSearch().get(id.getIdAccordoServizioParteComune());
+		
 		// Object _portType
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortTypeFieldConverter().toTable(PortType.model()));
 		sqlQueryObjectGet.addSelectField("id");
-		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getPortTypeFieldConverter().toColumn(PortType.model().NOME,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition("id_accordo=?");
 
 		// Recupero _portType
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portType = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+				new JDBCObject(id.getNome(), String.class),
+				new JDBCObject(as.getId(), Long.class)
 		};
 		Long id_portType = null;
 		try{

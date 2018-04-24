@@ -105,23 +105,9 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 	public IdPortaDominio convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, PortaDominio portaDominio) throws NotImplementedException, ServiceException, Exception{
 	
 		IdPortaDominio idPortaDominio = new IdPortaDominio();
-		// idPortaDominio.setXXX(portaDominio.getYYY());
-		// ...
-		// idPortaDominio.setXXX(portaDominio.getYYY());
-		// TODO: popola IdPortaDominio
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
-		return idPortaDominio;
+		idPortaDominio.setNome(portaDominio.getNome());
+        return idPortaDominio;
+
 	}
 	
 	@Override
@@ -529,59 +515,15 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(PortaDominio.model().XXXX,false)){
-			String tableName1 = this.getPortaDominioFieldConverter().toAliasTable(PortaDominio.model());
-			String tableName2 = this.getPortaDominioFieldConverter().toAliasTable(PortaDominio.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(PortaDominio.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(PortaDominio.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getPortaDominioFieldConverter().toTable(PortaDominio.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(PortaDominio.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(PortaDominio.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getPortaDominioFieldConverter().toTable(PortaDominio.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
+		// nop;
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdPortaDominio id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdPortaDominio(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdPortaDominio(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -591,23 +533,12 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
-
 		// PortaDominio.model()
 		mapTableToPKColumn.put(converter.toTable(PortaDominio.model()),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(PortaDominio.model()))
 			));
 
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return mapTableToPKColumn;		
 	}
 	
@@ -692,26 +623,11 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
-		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
+		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();             
 
 		// Object _portaDominio
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortaDominioFieldConverter().toTable(PortaDominio.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME,true));
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -720,9 +636,7 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_portaDominio = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_portaDominio.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_portaDominio.add(IdN.class);
+		listaFieldIdReturnType_portaDominio.add(String.class);
 		org.openspcoop2.core.commons.search.IdPortaDominio id_portaDominio = null;
 		List<Object> listaFieldId_portaDominio = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_portaDominio, searchParams_portaDominio);
@@ -734,9 +648,7 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 		else{
 			// set _portaDominio
 			id_portaDominio = new org.openspcoop2.core.commons.search.IdPortaDominio();
-			// id_portaDominio.setId1(listaFieldId_portaDominio.get(0));
-			// ...
-			// id_portaDominio.setIdN(listaFieldId_portaDominio.get(N-1));
+			id_portaDominio.setNome((String)listaFieldId_portaDominio.get(0));
 		}
 		
 		return id_portaDominio;
@@ -767,34 +679,15 @@ public class JDBCPortaDominioServiceSearchImpl implements IJDBCServiceSearchWith
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
-
-		// Object _portaDominio
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getPortaDominioFieldConverter().toTable(PortaDominio.model()));
 		sqlQueryObjectGet.addSelectField("id");
-		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
+		sqlQueryObjectGet.addWhereCondition(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME,true)+"=?");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getPortaDominioFieldConverter().toColumn(PortaDominio.model().NOME_COLONNA_N,true)+"=?");
-
-		// Recupero _portaDominio
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
+		
+		// Recupero _porta-dominio
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_portaDominio = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+				new JDBCObject(id.getNome(), id.getNome().getClass())
 		};
 		Long id_portaDominio = null;
 		try{

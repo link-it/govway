@@ -34,6 +34,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
 import org.openspcoop2.core.commons.search.IdOperation;
+import org.openspcoop2.core.commons.search.IdPortType;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.InUse;
@@ -53,9 +54,11 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.core.commons.search.dao.jdbc.converter.OperationFieldConverter;
 import org.openspcoop2.core.commons.search.dao.jdbc.fetch.OperationFetch;
+import org.openspcoop2.core.commons.search.dao.IDBPortTypeServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.commons.search.PortType;
 
 /**     
  * JDBCOperationServiceSearchImpl
@@ -105,23 +108,10 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 	public IdOperation convertToId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Operation operation) throws NotImplementedException, ServiceException, Exception{
 	
 		IdOperation idOperation = new IdOperation();
-		// idOperation.setXXX(operation.getYYY());
-		// ...
-		// idOperation.setXXX(operation.getYYY());
-		// TODO: popola IdOperation
-	
-		/* 
-	     * TODO: implement code that returns the object id
-	    */
-	
-	    // Delete this line when you have implemented the method
-	    int throwNotImplemented = 1;
-	    if(throwNotImplemented==1){
-	            throw new NotImplementedException("NotImplemented");
-	    }
-	    // Delete this line when you have implemented the method 
-	
-		return idOperation;
+		idOperation.setNome(operation.getNome());
+        idOperation.setIdPortType(operation.getIdPortType());
+        return idOperation;
+
 	}
 	
 	@Override
@@ -502,8 +492,27 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 		operation = (Operation) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_operation.createSQLQuery(), jdbcProperties.isShowSql(), Operation.model(), this.getOperationFetch(),
 			new JDBCObject(tableId,Long.class));
 
-
-
+		
+		// Recupero idPortType
+		ISQLQueryObject sqlQueryObjectGet_accordoServizioParteComune_pt = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_accordoServizioParteComune_pt.addFromTable(this.getOperationFieldConverter().toTable(Operation.model()));
+		sqlQueryObjectGet_accordoServizioParteComune_pt.addSelectField("id_port_type");
+		sqlQueryObjectGet_accordoServizioParteComune_pt.setANDLogicOperator(true);
+		sqlQueryObjectGet_accordoServizioParteComune_pt.addWhereCondition("id=?");
+		
+		// Recupero _accordoServizioParteComune_soggetto
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_accordoServizioParteComune_pt = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
+				new JDBCObject(operation.getId(), Long.class)
+		};
+		Long id_accordoServizioParteComune_pt = 
+			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune_pt.createSQLQuery(), jdbcProperties.isShowSql(),
+			Long.class, searchParams_accordoServizioParteComune_pt);
+		
+		PortType pt = ((IDBPortTypeServiceSearch)this.getServiceManager().getPortTypeServiceSearch()).get(id_accordoServizioParteComune_pt);
+		IdPortType idPt = new IdPortType();
+		idPt.setNome(pt.getNome());
+		idPt.setIdAccordoServizioParteComune(pt.getIdAccordoServizioParteComune());
+		operation.setIdPortType(idPt);
 		
         return operation;  
 	
@@ -540,59 +549,41 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(Operation.model().XXXX,false)){
-			String tableName1 = this.getOperationFieldConverter().toAliasTable(Operation.model());
-			String tableName2 = this.getOperationFieldConverter().toAliasTable(Operation.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
+		if(expression.inUseModel(Operation.model().ID_PORT_TYPE,false)){
+			String tableName1 = this.getOperationFieldConverter().toTable(Operation.model());
+			String tableName2 = this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE);
+			sqlQueryObject.addWhereCondition(tableName1+".id_port_type="+tableName2+".id");
 		}
-		*/
+		if(expression.inUseModel(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
+			String tableName1 = this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE);
+			String tableName2 = this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			sqlQueryObject.addWhereCondition(tableName1+".id_accordo="+tableName2+".id");
+		}
+		if(expression.inUseModel(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			String tableName1 = this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			String tableName2 = this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO);
+			sqlQueryObject.addWhereCondition(tableName1+".id_referente="+tableName2+".id");
+		}
 		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(Operation.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(Operation.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getOperationFieldConverter().toTable(Operation.model().LEVEL1));
+		// Check FROM Table necessarie per le join di oggetti annidati dal secondo livello in poi dove pero' non viene poi utilizzato l'oggetto del livello precedente nella espressione
+		if(expression.inUseModel(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)){
+			if(expression.inUseModel(Operation.model().ID_PORT_TYPE,false)==false){
+				sqlQueryObject.addFromTable(this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE));
 			}
 		}
-		...
-		if(expression.inUseModel(Operation.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(Operation.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getOperationFieldConverter().toTable(Operation.model().LEVELN));
+		if(expression.inUseModel(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO,false)){
+			if(expression.inUseModel(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE,false)==false){
+				sqlQueryObject.addFromTable(this.getOperationFieldConverter().toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE));
 			}
 		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdOperation id) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		Long longId = this.findIdOperation(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
+        Long longId = this.findIdOperation(jdbcProperties, log, connection, sqlQueryObject.newSQLQueryObject(), id, true);
 		rootTableIdValues.add(longId);
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return rootTableIdValues;
 	}
 	
@@ -601,9 +592,6 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 		OperationFieldConverter converter = this.getOperationFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// Operation.model()
 		mapTableToPKColumn.put(converter.toTable(Operation.model()),
@@ -629,14 +617,6 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 				new CustomField("id", Long.class, "id", converter.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO))
 			));
 
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
         return mapTableToPKColumn;		
 	}
 	
@@ -721,26 +701,12 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
 
-		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
- 		// Delete this line when you have implemented the method                
+		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();              
 
 		// Object _operation
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getOperationFieldConverter().toTable(Operation.model()));
-		// TODO select field for identify ObjectId
-		//sqlQueryObjectGet.addSelectField(this.getOperationFieldConverter().toColumn(Operation.model().NOME_COLONNA_1,true));
-		//...
-		//sqlQueryObjectGet.addSelectField(this.getOperationFieldConverter().toColumn(Operation.model().NOME_COLONNA_N,true));
+		sqlQueryObjectGet.addSelectField(this.getOperationFieldConverter().toColumn(Operation.model().NOME,true));
+		sqlQueryObjectGet.addSelectField("id_port_type");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -749,9 +715,8 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_operation = new ArrayList<Class<?>>();
-		//listaFieldIdReturnType_operation.add(Id1.class);
-		//...
-		//listaFieldIdReturnType_operation.add(IdN.class);
+		listaFieldIdReturnType_operation.add(String.class);
+		listaFieldIdReturnType_operation.add(Long.class);
 		org.openspcoop2.core.commons.search.IdOperation id_operation = null;
 		List<Object> listaFieldId_operation = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_operation, searchParams_operation);
@@ -763,9 +728,12 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 		else{
 			// set _operation
 			id_operation = new org.openspcoop2.core.commons.search.IdOperation();
-			// id_operation.setId1(listaFieldId_operation.get(0));
-			// ...
-			// id_operation.setIdN(listaFieldId_operation.get(N-1));
+			id_operation.setNome((String)listaFieldId_operation.get(0));
+			
+			Long idPortTypeFK = (Long) listaFieldId_operation.get(1);
+			id_operation.
+				setIdPortType(((IDBPortTypeServiceSearch)this.getServiceManager().
+						getPortTypeServiceSearch()).findId(idPortTypeFK, true));
 		}
 		
 		return id_operation;
@@ -796,34 +764,33 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 
 		ISQLQueryObject sqlQueryObjectGet = sqlQueryObject.newSQLQueryObject();
 
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
+		if(id.getIdPortType()==null){
+			throw new ServiceException("IdPortType non definito");
 		}
- 		// Delete this line when you have implemented the method                
-
+		if(id.getIdPortType().getIdAccordoServizioParteComune()==null){
+			throw new ServiceException("IdPortType.getIdAccordoServizioParteComune non definito");
+		}
+		if(id.getIdPortType().getIdAccordoServizioParteComune().getIdSoggetto()==null){
+			throw new ServiceException("IdPortType.getIdAccordoServizioParteComune.getIdSoggetto non definito");
+		}
+		
+		
+		// Recupero idPortType
+		PortType pt = this.getServiceManager().getPortTypeServiceSearch().get(id.getIdPortType());
+		
+		
 		// Object _operation
-		//TODO Implementare la ricerca dell'id
 		sqlQueryObjectGet.addFromTable(this.getOperationFieldConverter().toTable(Operation.model()));
 		sqlQueryObjectGet.addSelectField("id");
-		// Devono essere mappati nella where condition i metodi dell'oggetto id.getXXX
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-		//sqlQueryObjectGet.addWhereCondition(this.getOperationFieldConverter().toColumn(Operation.model().NOME_COLONNA_1,true)+"=?");
-		// ...
-		//sqlQueryObjectGet.addWhereCondition(this.getOperationFieldConverter().toColumn(Operation.model().NOME_COLONNA_N,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getOperationFieldConverter().toColumn(Operation.model().NOME,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition("id_port_type=?");
 
 		// Recupero _operation
-		// TODO Aggiungere i valori dei parametri di ricerca sopra definiti recuperandoli con i metodi dell'oggetto id.getXXX
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_operation = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class),
-			//...
-			//new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(object,object.class)
+				new JDBCObject(id.getNome(), String.class),
+				new JDBCObject(pt.getId(), Long.class)
 		};
 		Long id_operation = null;
 		try{
