@@ -778,7 +778,15 @@ public class SPCoopTraduttore extends BasicTraduttore {
 	 */
 	@Override
 	public String getIdentificativoPortaDefault(IDSoggetto soggetto){
-		return soggetto.getNome()+"SPCoopIT";
+		if(SPCoopCostanti.SERVIZIO_SPC.equalsIgnoreCase(soggetto.getTipo())) {
+			return soggetto.getNome()+"SPCoopIT";
+		}
+		else if(SPCoopCostanti.SERVIZIO_AOO.equalsIgnoreCase(soggetto.getTipo())) {
+			return "PDD"+soggetto.getNome();
+		}
+		else {
+			return soggetto.getNome()+"PdD"+soggetto.getTipo(); // aggiungo tipo per avere l'univocita'. Tipicamente i tipi diversi da SPC e AOO non esistono. TEST non e' quasi mai stato usato
+		}
 	}
 
 	@Override

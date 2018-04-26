@@ -34,6 +34,7 @@ package org.openspcoop2.protocol.spcoop.constants;
 public class SPCoopCostanti {
    
 	public static final String SERVIZIO_SPC = "SPC";
+	public static final String SERVIZIO_AOO = "AOO";
 
     public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
 	
