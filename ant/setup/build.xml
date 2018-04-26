@@ -495,7 +495,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${tmp_sql}/init_soggetto_trasparente.sql"/>
 					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
 					<param name="sql_tipo" value="${antinstaller_tiposoggetto_trasparente}"/>
-					<param name="sql_idporta" value="${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_idporta" value="gw/${antinstaller_nomesoggetto}PdD"/>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
@@ -547,7 +547,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${tmp_sql}/init_soggetto_as4.sql"/>
 					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
 					<param name="sql_tipo" value="${antinstaller_tiposoggetto_as4}"/>
-					<param name="sql_idporta" value="SDI/${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_idporta" value="as4/${antinstaller_nomesoggetto}PdD"/>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_as4}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
@@ -577,7 +577,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${tmp_sql}/init_soggetto_sdi.sql"/>
 					<param name="sql_nome" value="${antinstaller_nomesoggetto}"/>
 					<param name="sql_tipo" value="${antinstaller_tiposoggetto_sdi}"/>
-					<param name="sql_idporta" value="PROXY/${antinstaller_nomesoggetto}PdD"/>
+					<param name="sql_idporta" value="sdi/${antinstaller_nomesoggetto}PdD"/>
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_sdi}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
