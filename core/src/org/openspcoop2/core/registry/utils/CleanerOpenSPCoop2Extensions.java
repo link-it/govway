@@ -31,6 +31,9 @@ import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.BindingUse;
@@ -63,6 +66,12 @@ public class CleanerOpenSPCoop2Extensions {
 		
 		if(soggettoRegistro.getConnettore()!=null){
 			this.clean(soggettoRegistro.getConnettore());
+		}
+		
+		if(soggettoRegistro.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : soggettoRegistro.getProtocolPropertyList()) {
+				this.clean(pp);
+			}
 		}
 	}
 
@@ -122,6 +131,18 @@ public class CleanerOpenSPCoop2Extensions {
 								}
 							}
 						}
+						
+						if(operation.sizeProtocolPropertyList()>0) {
+							for (ProtocolProperty pp : operation.getProtocolPropertyList()) {
+								this.clean(pp);
+							}
+						}
+					}
+				}
+				
+				if(portType.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty pp : portType.getProtocolPropertyList()) {
+						this.clean(pp);
 					}
 				}
 			}
@@ -131,6 +152,34 @@ public class CleanerOpenSPCoop2Extensions {
 			for (Azione azione : accordo.getAzioneList()) {
 				azione.setProfAzione(null);
 				azione.setIdAccordo(null);
+				
+				if(azione.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+						this.clean(pp);
+					}
+				}
+			}
+		}
+		
+		if(accordo.sizeResourceList()>0){
+			for (Resource resource : accordo.getResourceList()) {
+				resource.setIdAccordo(null);
+				
+				if(resource.getRequest()!=null) {
+					resource.getRequest().setIdResource(null);
+				}
+				
+				if(resource.sizeResponseList()>0) {
+					for (ResourceResponse rr : resource.getResponseList()) {
+						rr.setIdResource(null);
+					}
+				}
+				
+				if(resource.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+						this.clean(pp);
+					}
+				}
 			}
 		}
 		
@@ -145,6 +194,11 @@ public class CleanerOpenSPCoop2Extensions {
 			}
 		}
 		
+		if(accordo.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				this.clean(pp);
+			}
+		}
 	}
 
 	public void clean(AccordoServizioParteSpecifica accordo){
@@ -210,6 +264,12 @@ public class CleanerOpenSPCoop2Extensions {
 				this.clean(documento);
 			}
 		}
+		
+		if(accordo.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				this.clean(pp);
+			}
+		}
 	}
 	
 	public void clean(AccordoCooperazione accordo){
@@ -232,6 +292,7 @@ public class CleanerOpenSPCoop2Extensions {
 				this.clean(documento);
 			}
 		}
+		
 		if(accordo.getElencoPartecipanti()!=null){
 			if(accordo.getElencoPartecipanti().sizeSoggettoPartecipanteList()>0){
 				for (IdSoggetto idSoggetto : accordo.getElencoPartecipanti().getSoggettoPartecipanteList()) {
@@ -240,6 +301,12 @@ public class CleanerOpenSPCoop2Extensions {
 					}
 				}	
 			}	
+		}
+		
+		if(accordo.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				this.clean(pp);
+			}
 		}
 		
 	}
@@ -260,6 +327,12 @@ public class CleanerOpenSPCoop2Extensions {
 			fruitore.removeServizioApplicativo(0);
 		}
 		
+		if(fruitore.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty pp : fruitore.getProtocolPropertyList()) {
+				this.clean(pp);
+			}
+		}
+		
 	}
 
 	
@@ -274,5 +347,11 @@ public class CleanerOpenSPCoop2Extensions {
 		documento.setRuolo(null);
 		documento.setTipoProprietarioDocumento(null);
 		documento.setIdProprietarioDocumento(null);
+	}
+	
+	private void clean(ProtocolProperty pp){
+		pp.setByteFile(null);
+		pp.setIdProprietario(null);
+		pp.setTipoProprietario(null);
 	}
 }

@@ -1977,7 +1977,7 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
 
-						doSetDati = true;
+						doSetDati = false;
 
 					}
 					
@@ -1991,7 +1991,7 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
 
-						doSetDati = true;
+						doSetDati = false;
 
 					}
 
@@ -2991,7 +2991,7 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
 
-						doSetDati = true;
+						doSetDati = false;
 
 					}
 					
@@ -3007,7 +3007,7 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
 
-						doSetDati = true;
+						doSetDati = false;
 
 					}
 					

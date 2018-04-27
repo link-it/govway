@@ -643,8 +643,12 @@ public class ImporterArchiveUtils {
 				
 				
 				// --- set dati obbligatori nel db ----
+				String server = this.nomePddOperativa;
+				if(PddTipologia.ESTERNO.equals(this.tipoPddDefault)) {
+					server = null; // non gli assegno alcuna pdd se non definita
+				}
 				org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
-					impostaInformazioniRegistroDB_Soggetto(archiveSoggetto.getSoggettoRegistro(),this.nomePddOperativa);
+					impostaInformazioniRegistroDB_Soggetto(archiveSoggetto.getSoggettoRegistro(),server);
 				
 				archiveSoggetto.getSoggettoRegistro().setSuperUser(this.userLogin);			
 				
@@ -1733,14 +1737,11 @@ public class ImporterArchiveUtils {
 			}
 			
 			// gestione portaApplicativaAssociata
-			if(archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()!=null &&
-					archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate().size()>0){
-				for (IDPortaApplicativa idPortaApplicativa_associata : archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()) {
-					if(idPACheck.contains(idPortaApplicativa_associata)==false){
-						MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
-						mapping.setIdServizio(idAccordoServizioParteSpecifica);
-						mapping.setIdPortaApplicativa(idPortaApplicativa_associata);
-						listMappingErogazionePA.add(mapping);
+			if(archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()!=null &&
+					archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate().size()>0){
+				for (MappingErogazionePortaApplicativa mappingPortaApplicativaAssociata : archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()) {
+					if(idPACheck==null || idPACheck.size()<=0 || (idPACheck.contains(mappingPortaApplicativaAssociata.getIdPortaApplicativa())==false)){
+						listMappingErogazionePA.add(mappingPortaApplicativaAssociata);
 					}	
 				}
 			}
@@ -1911,16 +1912,12 @@ public class ImporterArchiveUtils {
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
 			
 			// gestione portaDelegataAssociata
-			if(archiveFruitore.getIdPorteDelegateAssociate()!=null &&
-					archiveFruitore.getIdPorteDelegateAssociate().size()>0){
+			if(archiveFruitore.getMappingPorteDelegateAssociate()!=null &&
+					archiveFruitore.getMappingPorteDelegateAssociate().size()>0){
 				List<IDPortaDelegata> idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-				for (IDPortaDelegata idPortaDelegata_associata : archiveFruitore.getIdPorteDelegateAssociate()) {
-					if(idPDCheck.contains(idPortaDelegata_associata)==false){
-						MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
-						mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
-						mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
-						mapping.setIdPortaDelegata(idPortaDelegata_associata);
-						listMappingFruizionePD.add(mapping);
+				for (MappingFruizionePortaDelegata mappingPortaDelegataAssociata : archiveFruitore.getMappingPorteDelegateAssociate()) {
+					if(idPDCheck==null || idPDCheck.size()<=0 || idPDCheck.contains(mappingPortaDelegataAssociata.getIdPortaDelegata())==false){
+						listMappingFruizionePD.add(mappingPortaDelegataAssociata);
 					}	
 				}
 			}

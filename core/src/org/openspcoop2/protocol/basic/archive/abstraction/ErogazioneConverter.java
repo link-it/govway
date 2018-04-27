@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.protocol.abstraction.Erogazione;
 import org.openspcoop2.protocol.abstraction.Soggetto;
 import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
@@ -89,8 +90,8 @@ public class ErogazioneConverter extends AbstractConverter {
 	
 	// ----- Instance method -----
 
-	public ErogazioneConverter(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
-		super(log, registryReader,configIntegrationReader);
+	public ErogazioneConverter(Logger log,ZIPReadUtils zipReader) throws ProtocolException{
+		super(log, zipReader);
 	}
 	
 	// ritorna l'identificativo di correlazione.
@@ -390,10 +391,18 @@ public class ErogazioneConverter extends AbstractConverter {
 					for (int j = 0; j < archive.getAccordiServizioParteSpecifica().size(); j++) {
 						ArchiveAccordoServizioParteSpecifica aASPS = archive.getAccordiServizioParteSpecifica().get(j);
 						if(idCorrelazione.equals(aASPS.getIdCorrelazione())){
-							if(aASPS.getIdPorteApplicativeAssociate()==null) {
-								aASPS.setIdPorteApplicativeAssociate(new ArrayList<IDPortaApplicativa>());
+								
+							MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+							mapping.setNome("regola_"+i+"_"+aPA.getIdPortaApplicativa().getNome());
+							mapping.setIdServizio(aASPS.getIdAccordoServizioParteSpecifica());
+							mapping.setIdPortaApplicativa(aPA.getIdPortaApplicativa());
+							mapping.setDefault(aPA.getPortaApplicativa().getAzione()==null || 
+									!PortaApplicativaAzioneIdentificazione.DELEGATED_BY.equals(aPA.getPortaApplicativa().getAzione().getIdentificazione()));
+							
+							if(aASPS.getMappingPorteApplicativeAssociate()==null) {
+								aASPS.setMappingPorteApplicativeAssociate(new ArrayList<>());
 							}
-							aASPS.getIdPorteApplicativeAssociate().add(aPA.getIdPortaApplicativa());
+							aASPS.getMappingPorteApplicativeAssociate().add(mapping);
 						}
 					}
 				}

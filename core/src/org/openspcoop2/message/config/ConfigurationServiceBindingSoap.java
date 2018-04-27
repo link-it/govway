@@ -71,11 +71,13 @@ public class ConfigurationServiceBindingSoap extends AbstractConfigurationServic
 	@Override
 	public List<MessageType> getMessageTypeSupported(){
 		 List<MessageType> list = new ArrayList<MessageType>();
-		 if(this.binding.isBinding_soap11()) {
-			 list.add(MessageType.SOAP_11);
-		 }
-		 if(this.binding.isBinding_soap12()) {
-			 list.add(MessageType.SOAP_12);
+		 if(this.binding!=null) {
+			 if(this.binding.isBinding_soap11()) {
+				 list.add(MessageType.SOAP_11);
+			 }
+			 if(this.binding.isBinding_soap12()) {
+				 list.add(MessageType.SOAP_12);
+			 }
 		 }
 		 return list;
 	}

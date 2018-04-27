@@ -47,6 +47,8 @@ import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -109,13 +111,33 @@ public class ZIPReadUtils  {
 	protected IRegistryReader registryReader;
 	protected IConfigIntegrationReader configIntegrationReader;
 	
-	protected org.openspcoop2.core.registry.utils.serializer.JibxDeserializer jibxRegistryDeserializer = null;
-	protected org.openspcoop2.core.config.utils.serializer.JibxDeserializer jibxConfigDeserializer = null;
-	protected org.openspcoop2.protocol.information_missing.utils.serializer.JibxDeserializer jibxInformationMissingDeserializer = null;
+	protected org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer jibxRegistryDeserializer = null;
+	protected org.openspcoop2.core.config.utils.serializer.JaxbDeserializer jibxConfigDeserializer = null;
+	protected org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer jibxInformationMissingDeserializer = null;
 	
 	private org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer jaxbAbstractionDeserializer = null;
-	private ErogazioneConverter erogazioneConverter = null;
-	private FruizioneConverter fruizioneConverter = null;
+	private ErogazioneConverter _erogazioneConverter = null;
+	private FruizioneConverter _fruizioneConverter = null;
+	private ErogazioneConverter getErogazioneConverter() throws ProtocolException {
+		if(this._erogazioneConverter==null) {
+			_initializeConverter();
+		}
+		return this._erogazioneConverter;
+	}
+	private FruizioneConverter getFruizioneConverter() throws ProtocolException {
+		if(this._fruizioneConverter==null) {
+			_initializeConverter();
+		}
+		return this._fruizioneConverter;
+	}
+	private synchronized void _initializeConverter() throws ProtocolException {
+		if(this._erogazioneConverter==null) {
+			this._erogazioneConverter = new ErogazioneConverter(this.log,this);
+		}
+		if(this._fruizioneConverter==null) {
+			this._fruizioneConverter = new FruizioneConverter(this.log,this);
+		}
+	}
 	
 	private TemplateErogazione templateErogazione;
 	private List<Erogazione> erogazioni;
@@ -151,14 +173,12 @@ public class ZIPReadUtils  {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		this.jibxRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JibxDeserializer();
-		this.jibxConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JibxDeserializer();
-		this.jibxInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JibxDeserializer();
+		this.jibxRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+		this.jibxConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+		this.jibxInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer();
 		
 		// abstract
 		this.jaxbAbstractionDeserializer = new org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer();
-		this.erogazioneConverter = new ErogazioneConverter(log,registryReader,configIntegrationReader);
-		this.fruizioneConverter = new FruizioneConverter(log, registryReader,configIntegrationReader);
 	}
 	
 	
@@ -850,7 +870,7 @@ public class ZIPReadUtils  {
 		}
 		if(this.erogazioni!=null){
 			for (Erogazione erogazione : this.erogazioni) {
-				this.erogazioneConverter.fillArchive(archivio, erogazione, this.templateErogazione, this.registryReader, this.configIntegrationReader, validationDocuments);
+				this.getErogazioneConverter().fillArchive(archivio, erogazione, this.templateErogazione, this.registryReader, this.configIntegrationReader, validationDocuments);
 			}
 		}
 
@@ -862,7 +882,7 @@ public class ZIPReadUtils  {
 		}
 		if(this.fruizioni!=null){
 			for (Fruizione fruizione : this.fruizioni) {
-				this.fruizioneConverter.fillArchive(archivio, fruizione, this.templateFruizione, this.registryReader, this.configIntegrationReader, validationDocuments);
+				this.getFruizioneConverter().fillArchive(archivio, fruizione, this.templateFruizione, this.registryReader, this.configIntegrationReader, validationDocuments);
 			}
 		
 		}
@@ -1654,17 +1674,38 @@ public class ZIPReadUtils  {
 			if(idLine==null || "".equals(idLine)){
 				throw new Exception("id non contiene valori");
 			}
-			
-			IDPortaApplicativa idPA = new IDPortaApplicativa();
-			idPA.setNome(idLine);
-			if(archiveASPS.getIdPorteApplicativeAssociate()==null) {
-				archiveASPS.setIdPorteApplicativeAssociate(new ArrayList<>());
+			if(idLine.endsWith("\n")) {
+				idLine = idLine.substring(0, idLine.length()-1);
 			}
-			archiveASPS.getIdPorteApplicativeAssociate().add(idPA);
+			String [] tmp = idLine.split(" ");
+			if(tmp.length!=3) {
+				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault)");
+			}
+			String nomeRegola = tmp[0];
+			String nomePorta = tmp[1];
+			boolean isDefault = false;
+			try {
+				isDefault = Boolean.parseBoolean(tmp[2]);
+			}catch(Exception e) {
+				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
+			}
+			
+			MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+			mapping.setNome(nomeRegola);
+			mapping.setIdServizio(IDServizioFactory.getInstance().getIDServizioFromAccordo(archiveASPS.getAccordoServizioParteSpecifica()));
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(nomePorta);
+			mapping.setIdPortaApplicativa(idPA);
+			mapping.setDefault(isDefault);
+			
+			if(archiveASPS.getMappingPorteApplicativeAssociate()==null) {
+				archiveASPS.setMappingPorteApplicativeAssociate(new ArrayList<>());
+			}
+			archiveASPS.getMappingPorteApplicativeAssociate().add(mapping);
 			
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura csv (mapping asps-pa) non valida: "
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura id (mapping asps-pa) non valida: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -1782,6 +1823,21 @@ public class ZIPReadUtils  {
 			if(idLine==null || "".equals(idLine)){
 				throw new Exception("id non contiene valori");
 			}
+			if(idLine.endsWith("\n")) {
+				idLine = idLine.substring(0, idLine.length()-1);
+			}
+			String [] tmp = idLine.split(" ");
+			if(tmp.length!=3) {
+				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault)");
+			}
+			String nomeRegola = tmp[0];
+			String nomePorta = tmp[1];
+			boolean isDefault = false;
+			try {
+				isDefault = Boolean.parseBoolean(tmp[2]);
+			}catch(Exception e) {
+				throw new Exception("Attesi tre valori separati da spazio (nomeRegola nomePorta isDefault) in cui l'ultimo valore di tipo booleano: "+e.getMessage(),e);
+			}
 			
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
 			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
@@ -1789,12 +1845,19 @@ public class ZIPReadUtils  {
 			}
 			
 			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
+			MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+			mapping.setNome(nomeRegola);
+			mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
+			mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
 			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setNome(idLine);
-			if(archiveFruitore.getIdPorteDelegateAssociate()==null) {
-				archiveFruitore.setIdPorteDelegateAssociate(new ArrayList<>());
+			idPD.setNome(nomePorta);
+			mapping.setIdPortaDelegata(idPD);
+			mapping.setDefault(isDefault);
+			
+			if(archiveFruitore.getMappingPorteDelegateAssociate()==null) {
+				archiveFruitore.setMappingPorteDelegateAssociate(new ArrayList<>());
 			}
-			archiveFruitore.getIdPorteDelegateAssociate().add(idPD);
+			archiveFruitore.getMappingPorteDelegateAssociate().add(mapping);
 			
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);

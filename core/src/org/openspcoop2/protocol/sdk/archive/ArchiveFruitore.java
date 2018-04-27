@@ -19,12 +19,11 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
-import org.openspcoop2.core.id.IDServizio;
-
 import java.util.List;
 
-import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
@@ -94,12 +93,12 @@ public class ArchiveFruitore implements IArchiveObject {
 	private IDServizio idAccordoServizioParteSpecifica;
 	private Fruitore fruitore;
 	
-	private List<IDPortaDelegata> idPorteDelegateAssociate;
-	public List<IDPortaDelegata> getIdPorteDelegateAssociate() {
-		return this.idPorteDelegateAssociate;
+	private List<MappingFruizionePortaDelegata> mappingPorteDelegateAssociate;
+	public List<MappingFruizionePortaDelegata> getMappingPorteDelegateAssociate() {
+		return this.mappingPorteDelegateAssociate;
 	}
-	public void setIdPorteDelegateAssociate(List<IDPortaDelegata> idPorteDelegateAssociate) {
-		this.idPorteDelegateAssociate = idPorteDelegateAssociate;
+	public void setMappingPorteDelegateAssociate(List<MappingFruizionePortaDelegata> mappingPorteDelegateAssociate) {
+		this.mappingPorteDelegateAssociate = mappingPorteDelegateAssociate;
 	}
 
 

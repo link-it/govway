@@ -40,9 +40,10 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -84,8 +85,8 @@ public class ZIPWriteUtils {
 	protected IRegistryReader registryReader;
 	protected IConfigIntegrationReader configIntegrationReader;
 
-	private org.openspcoop2.core.registry.utils.serializer.JibxSerializer jibxRegistrySerializer = null;
-	private org.openspcoop2.core.config.utils.serializer.JibxSerializer jibxConfigSerializer = null;
+	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jibxRegistrySerializer = null;
+	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jibxConfigSerializer = null;
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 	private org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsConfig = null;
 	
@@ -96,8 +97,8 @@ public class ZIPWriteUtils {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		this.jibxRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JibxSerializer();
-		this.jibxConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JibxSerializer();
+		this.jibxRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
+		this.jibxConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
 		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsConfig = new org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions();
 		
@@ -396,7 +397,7 @@ public class ZIPWriteUtils {
 						ArchiveAccordoServizioParteSpecifica archiveAccordo = archiveListaOggettiSoggetto.getAccordiServizioParteSpecifica().get(i);
 						AccordoServizioParteSpecifica accordo = archiveAccordo.getAccordoServizioParteSpecifica();
 						IDServizio idAccordo = archiveAccordo.getIdAccordoServizioParteSpecifica();
-						this.saveAccordo(accordo, idAccordo, archiveAccordo.getIdPorteApplicativeAssociate(), rootDir, zipOut, map_IdApsScritti_nomeFileSystem);
+						this.saveAccordo(accordo, idAccordo, archiveAccordo.getMappingPorteApplicativeAssociate(), rootDir, zipOut, map_IdApsScritti_nomeFileSystem);
 					}
 				}
 				
@@ -460,13 +461,18 @@ public class ZIPWriteUtils {
 								archiveFruitore.getIdAccordoServizioParteSpecifica().toString(), true, fruitore);
 						
 						// PortaDelegata Associata
-						if(archiveFruitore.getIdPorteDelegateAssociate()!=null){
-							for (int j = 0; j < archiveFruitore.getIdPorteDelegateAssociate().size(); j++) {
+						if(archiveFruitore.getMappingPorteDelegateAssociate()!=null){
+							for (int j = 0; j < archiveFruitore.getMappingPorteDelegateAssociate().size(); j++) {
 								String nomeFilePDAssociata = nomeFruitore+File.separatorChar+
 										(j+1)+
 										Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD_SUFFIX;
 								zipOut.putNextEntry(new ZipEntry(rootDir+nomeFilePDAssociata));
-								zipOut.write(archiveFruitore.getIdPorteDelegateAssociate().get(j).getNome().getBytes());	
+								MappingFruizionePortaDelegata mappingPortaDelegataAssociata = archiveFruitore.getMappingPorteDelegateAssociate().get(j);
+								// Non serializzo l'ìd del servizio e  l'id del fruiotre, poiche' sono gia' dentro la fruizione del servizio 
+								String id = mappingPortaDelegataAssociata.getNome() + " " + 
+										mappingPortaDelegataAssociata.getIdPortaDelegata().getNome() + " " + 
+										mappingPortaDelegataAssociata.isDefault();
+								zipOut.write(id.getBytes());	
 							}
 						}
 					}
@@ -874,7 +880,7 @@ public class ZIPWriteUtils {
 		}
 	}
 	
-	private void saveAccordo(AccordoServizioParteSpecifica accordo, IDServizio idServizio, List<IDPortaApplicativa> idPorteApplicativeAssociate,
+	private void saveAccordo(AccordoServizioParteSpecifica accordo, IDServizio idServizio, List<MappingErogazionePortaApplicativa> mappingPorteApplicativeAssociate,
 			String parentDir, ZipOutputStream zipOut,
 			Hashtable<String, String> map_IdApsScritti_nomeFileSystem) throws IOException, SerializerException, ProtocolException{
 		
@@ -1101,13 +1107,18 @@ public class ZIPWriteUtils {
 			}
 			
 			// PortaApplicativa Associata
-			if(idPorteApplicativeAssociate!=null){
-				for (int i = 0; i < idPorteApplicativeAssociate.size(); i++) {
+			if(mappingPorteApplicativeAssociate!=null){
+				for (int i = 0; i < mappingPorteApplicativeAssociate.size(); i++) {
 					String nomeFilePAAssociata = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_MAPPING+File.separatorChar+
 							(i+1)+
 							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA_SUFFIX;
 					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFilePAAssociata));
-					zipOut.write(idPorteApplicativeAssociate.get(i).getNome().getBytes());	
+					MappingErogazionePortaApplicativa mappingPortaApplicativaAssociata = mappingPorteApplicativeAssociate.get(i);
+					// Non serializzo l'ìd del servizio, poiche' sono gia' dentro il servizio
+					String id = mappingPortaApplicativaAssociata.getNome() + " " + 
+							mappingPortaApplicativaAssociata.getIdPortaApplicativa().getNome() + " " + 
+							mappingPortaApplicativaAssociata.isDefault();
+					zipOut.write(id.getBytes());	
 				}
 			}
 						

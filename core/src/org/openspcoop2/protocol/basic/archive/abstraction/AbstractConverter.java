@@ -60,11 +60,11 @@ public abstract class AbstractConverter {
 	protected Logger log;
 	protected ZIPReadUtils filler;
 	
-	protected AbstractConverter(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
+	protected AbstractConverter(Logger log,ZIPReadUtils zipReader) throws ProtocolException{
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
 		this.log = log;
-		this.filler = new ZIPReadUtils(log,registryReader,configIntegrationReader);
+		this.filler = zipReader;
 	}
 			
 	protected boolean existsPdd(Archive archive, IRegistryReader registryReader, String pdd) {

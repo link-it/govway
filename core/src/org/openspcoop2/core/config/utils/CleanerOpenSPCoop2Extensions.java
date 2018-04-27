@@ -45,6 +45,7 @@ public class CleanerOpenSPCoop2Extensions {
 			if(configurazionePdD.getAccessoRegistro().sizeRegistroList()>0){
 				for (AccessoRegistroRegistro accessoRegistro : configurazionePdD.getAccessoRegistro().getRegistroList()) {
 					accessoRegistro.setTipoDatabase(null);
+					accessoRegistro.setGenericPropertiesMap(null);
 				}
 			}
 		}

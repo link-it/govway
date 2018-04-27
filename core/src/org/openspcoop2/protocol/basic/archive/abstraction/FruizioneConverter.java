@@ -25,9 +25,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.abstraction.Fruizione;
+import org.openspcoop2.protocol.abstraction.constants.Autenticazione;
+import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
+import org.openspcoop2.protocol.abstraction.constants.Tipologia;
+import org.openspcoop2.protocol.abstraction.template.DatiFruizione;
+import org.openspcoop2.protocol.abstraction.template.DatiServizio;
+import org.openspcoop2.protocol.abstraction.template.DatiServizioApplicativoFruitore;
+import org.openspcoop2.protocol.abstraction.template.DatiSoggetto;
+import org.openspcoop2.protocol.abstraction.template.IdSoggetto;
+import org.openspcoop2.protocol.abstraction.template.TemplateFruizione;
+import org.openspcoop2.protocol.basic.archive.ZIPReadUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
@@ -40,17 +52,6 @@ import org.openspcoop2.utils.RandomString;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.TemplateUtils;
 import org.slf4j.Logger;
-
-import org.openspcoop2.protocol.abstraction.Fruizione;
-import org.openspcoop2.protocol.abstraction.constants.Autenticazione;
-import org.openspcoop2.protocol.abstraction.constants.CostantiAbstraction;
-import org.openspcoop2.protocol.abstraction.constants.Tipologia;
-import org.openspcoop2.protocol.abstraction.template.DatiFruizione;
-import org.openspcoop2.protocol.abstraction.template.DatiServizio;
-import org.openspcoop2.protocol.abstraction.template.DatiServizioApplicativoFruitore;
-import org.openspcoop2.protocol.abstraction.template.DatiSoggetto;
-import org.openspcoop2.protocol.abstraction.template.IdSoggetto;
-import org.openspcoop2.protocol.abstraction.template.TemplateFruizione;
 
 /**     
  * FruizioneConverter
@@ -98,8 +99,8 @@ public class FruizioneConverter extends AbstractConverter {
 	
 	// ----- Instance method -----
 
-	public FruizioneConverter(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
-		super(log, registryReader,configIntegrationReader);
+	public FruizioneConverter(Logger log,ZIPReadUtils zipReader) throws ProtocolException{
+		super(log, zipReader);
 	}
 	
 	// ritorna l'identificativo di correlazione.
@@ -400,10 +401,19 @@ public class FruizioneConverter extends AbstractConverter {
 					for (int j = 0; j < archive.getAccordiFruitori().size(); j++) {
 						ArchiveFruitore aFruitore = archive.getAccordiFruitori().get(j);
 						if(idCorrelazione.equals(aFruitore.getIdCorrelazione())){
-							if(aFruitore.getIdPorteDelegateAssociate()==null) {
-								aFruitore.setIdPorteDelegateAssociate(new ArrayList<IDPortaDelegata>());
+							
+							MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+							mapping.setNome("regola_"+i+"_"+aPD.getIdPortaDelegata().getNome());
+							mapping.setIdServizio(aFruitore.getIdAccordoServizioParteSpecifica());
+							mapping.setIdFruitore(aFruitore.getIdSoggettoFruitore());
+							mapping.setIdPortaDelegata(aPD.getIdPortaDelegata());
+							mapping.setDefault(aPD.getPortaDelegata().getAzione()==null || 
+									!PortaDelegataAzioneIdentificazione.DELEGATED_BY.equals(aPD.getPortaDelegata().getAzione().getIdentificazione()));
+							
+							if(aFruitore.getMappingPorteDelegateAssociate()==null) {
+								aFruitore.setMappingPorteDelegateAssociate(new ArrayList<>());
 							}
-							aFruitore.getIdPorteDelegateAssociate().add(aPD.getIdPortaDelegata());
+							aFruitore.getMappingPorteDelegateAssociate().add(mapping);
 						}
 					}
 				}

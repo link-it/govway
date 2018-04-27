@@ -107,15 +107,16 @@ public class DeleterArchiveUtils {
 				archiveAccordoServizioParteSpecifica.update();
 				
 				// gestione portaApplicativaAssociata
-				if(archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()!=null &&
-						archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate().size()>0){
-					List<IDPortaApplicativa> idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
-					for (IDPortaApplicativa idPA_associata : archiveAccordoServizioParteSpecifica.getIdPorteApplicativeAssociate()) {
-						if(idPACheck.contains(idPA_associata)){
-							MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
-							mapping.setIdServizio(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
-							mapping.setIdPortaApplicativa(idPA_associata);
-							listMappingErogazionePA.add(mapping);	
+				if(archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()!=null &&
+						archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate().size()>0){
+					List<IDPortaApplicativa> idPACheck = null;
+					if(this.importerEngine.existsAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()) && 
+							this.importerEngine.existsIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())) {
+						idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+					}
+					for (MappingErogazionePortaApplicativa mappingPorteApplicativeAssociata : archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()) {
+						if(idPACheck!=null && idPACheck.size()>0 && idPACheck.contains(mappingPorteApplicativeAssociata.getIdPortaApplicativa())){
+							listMappingErogazionePA.add(mappingPorteApplicativeAssociata);	
 						}	
 					}
 				}
@@ -127,16 +128,16 @@ public class DeleterArchiveUtils {
 				archiveFruitore.update();
 			
 				// gestione portaDelegataAssociata
-				if(archiveFruitore.getIdPorteDelegateAssociate()!=null &&
-						archiveFruitore.getIdPorteDelegateAssociate().size()>0){
-					List<IDPortaDelegata> idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-					for (IDPortaDelegata idPD_associata : archiveFruitore.getIdPorteDelegateAssociate()) {
-						if(idPDCheck!=null){
-							MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
-							mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
-							mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
-							mapping.setIdPortaDelegata(idPD_associata);
-							listMappingFruizionePD.add(mapping);
+				if(archiveFruitore.getMappingPorteDelegateAssociate()!=null &&
+						archiveFruitore.getMappingPorteDelegateAssociate().size()>0){
+					List<IDPortaDelegata> idPDCheck = null;
+					if(this.importerEngine.existsAccordoServizioParteSpecifica(archiveFruitore.getIdAccordoServizioParteSpecifica()) &&
+							this.importerEngine.existsIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore())) {
+						idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+					}
+					for (MappingFruizionePortaDelegata mappingPorteDelegateAssociata : archiveFruitore.getMappingPorteDelegateAssociate()) {
+						if(idPDCheck!=null && idPDCheck.size()>0 && idPDCheck.contains(mappingPorteDelegateAssociata.getIdPortaDelegata())){
+							listMappingFruizionePD.add(mappingPorteDelegateAssociata);
 						}
 					}
 				}
@@ -482,6 +483,14 @@ public class DeleterArchiveUtils {
 			}
 			
 			
+			// ---- controllo non sia una pdd 'operativa' ---
+			
+			String tipoPdd = this.importerEngine.getTipoPortaDominio(nomePdd);
+			if(!PddTipologia.ESTERNO.equals(tipoPdd)) {
+				throw new Exception("Porta di Dominio ["+nomePdd+"] non è eliminabile poichè di dominio interno");
+			}
+						
+			
 			// ---- tipo di Pdd ---
 			if(PddTipologia.OPERATIVO.toString().equals(this.importerEngine.getTipoPortaDominio(nomePdd))){
 				throw new Exception("La Porta di Dominio ["+nomePdd+"] non è eliminabile essendo di tipo '"+PddTipologia.OPERATIVO.toString()+"'");
@@ -583,6 +592,14 @@ public class DeleterArchiveUtils {
 					HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 					if (this.importerEngine.isSoggettoRegistroInUso(idSoggetto, whereIsInUso)){
 						throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idSoggetto, whereIsInUso,false,NEW_LINE));
+					}
+					
+					// ---- controllo che il soggetto non sia un soggetto 'operativo' ---
+					if(old.getPortaDominio()!=null){
+						String tipoPdd = this.importerEngine.getTipoPortaDominio(old.getPortaDominio());
+						if(!PddTipologia.ESTERNO.equals(tipoPdd)) {
+							throw new Exception("Il soggetto non è eliminabile poichè di dominio interno");
+						}
 					}
 					
 					// --- delete ---

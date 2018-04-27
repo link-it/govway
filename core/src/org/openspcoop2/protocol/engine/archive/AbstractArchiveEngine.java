@@ -45,6 +45,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -440,6 +442,24 @@ public abstract class AbstractArchiveEngine {
 		return this.driverRegistroServizi.existsAccordoServizioParteSpecifica(idServizio);
 	}
 	
+	public boolean existsFruzioneAccordoServizioParteSpecifica(IDServizio idServizio, IDSoggetto fruitore) throws DriverRegistroServiziException {
+		if( this.driverRegistroServizi.existsAccordoServizioParteSpecifica(idServizio) ) {
+			try {
+				AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idServizio, false);
+				if(asps.sizeFruitoreList()>0) {
+					for (Fruitore fr : asps.getFruitoreList()) {
+						if(fr.getTipo().equals(fruitore.getTipo()) && fr.getNome().equals(fruitore.getNome())) {
+							return true;
+						}
+					}
+				}
+			}catch(Exception e) {
+				return false;
+			}			
+		}
+		return false;
+	}
+	
 	public void createAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) throws DriverRegistroServiziException {
 		this.driverRegistroServizi.createAccordoServizioParteSpecifica(accordoServizioParteSpecifica);
 	}
@@ -672,6 +692,22 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	public MappingErogazionePortaApplicativa getMappingErogazionePortaApplicativa(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getMappingErogazionePortaApplicativa");
+			return DBMappingUtils.getMappingErogazione(idServizio, idPortaApplicativa, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
 	public void initMappingErogazione(Logger log) throws DriverRegistroServiziException {
 		try{
 			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
@@ -852,6 +888,22 @@ public abstract class AbstractArchiveEngine {
 		try{
 			con = this.driverRegistroServizi.getConnection("existsMappingFruizione");
 			return DBMappingUtils.existsMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public MappingFruizionePortaDelegata getMappingFruizionePortaDelegata(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getMappingFruizionePortaDelegata");
+			return DBMappingUtils.getMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
 		}
 		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);

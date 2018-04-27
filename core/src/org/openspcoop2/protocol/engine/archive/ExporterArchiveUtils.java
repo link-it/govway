@@ -903,7 +903,12 @@ public class ExporterArchiveUtils {
 					// porteApplicative associate
 					List<IDPortaApplicativa> listIDPA = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizio);
 					if(listIDPA!=null && listIDPA.size()>0){
-						archiveAs.setIdPorteApplicativeAssociate(listIDPA);
+						if(archiveAs.getMappingPorteApplicativeAssociate()==null) {
+							archiveAs.setMappingPorteApplicativeAssociate(new ArrayList<>());
+						}
+						for (IDPortaApplicativa idPortaApplicativa : listIDPA) {
+							archiveAs.getMappingPorteApplicativeAssociate().add(this.archiveEngine.getMappingErogazionePortaApplicativa(idAccordoServizio, idPortaApplicativa));
+						}
 					}
 					
 					
@@ -1054,7 +1059,12 @@ public class ExporterArchiveUtils {
 					// porteDelegate associate
 					List<IDPortaDelegata> listIDPD = this.archiveEngine.getIDPorteDelegateAssociateFruizione(idAccordoServizio, idFruitore);
 					if(listIDPD!=null && listIDPD.size()>0){
-						archiveFruitore.setIdPorteDelegateAssociate(listIDPD);
+						if(archiveFruitore.getMappingPorteDelegateAssociate()==null) {
+							archiveFruitore.setMappingPorteDelegateAssociate(new ArrayList<>());
+						}
+						for (IDPortaDelegata idPortaDelegata : listIDPD) {
+							archiveFruitore.getMappingPorteDelegateAssociate().add( this.archiveEngine.getMappingFruizionePortaDelegata(idAccordoServizio, idFruitore, idPortaDelegata));
+						}
 					}
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***

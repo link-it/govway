@@ -71,17 +71,19 @@ public class ConfigurationServiceBindingRest extends AbstractConfigurationServic
 	@Override
 	public List<MessageType> getMessageTypeSupported(){
 		 List<MessageType> list = new ArrayList<MessageType>();
-		 if(this.binding.isBinding_xml()) {
-			 list.add(MessageType.XML);
-		 }
-		 if(this.binding.isBinding_json()) {
-			 list.add(MessageType.JSON);
-		 }
-		 if(this.binding.isBinding_binary()) {
-			 list.add(MessageType.BINARY);
-		 }
-		 if(this.binding.isBinding_mimeMultipart()) {
-			 list.add(MessageType.MIME_MULTIPART);
+		 if(this.binding!=null) {
+			 if(this.binding.isBinding_xml()) {
+				 list.add(MessageType.XML);
+			 }
+			 if(this.binding.isBinding_json()) {
+				 list.add(MessageType.JSON);
+			 }
+			 if(this.binding.isBinding_binary()) {
+				 list.add(MessageType.BINARY);
+			 }
+			 if(this.binding.isBinding_mimeMultipart()) {
+				 list.add(MessageType.MIME_MULTIPART);
+			 }
 		 }
 		 return list;
 	}
