@@ -4633,7 +4633,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				Operation azione = portType.getAzione(i);			
 				DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.CREATE,as,portType,azione, connection, portType.getId());
 			}
-			DriverRegistroServiziDB_LIB.log.debug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
+			this.log.debug("inserite " + portType.sizeAzioneList() + " azioni relative al port type["+portType.getNome()+"] id-porttype["+portType.getId()+"]");
 		} 
 //		catch (SQLException se) {
 //			this.log.error(se);
@@ -6828,11 +6828,23 @@ IDriverWS ,IMonitoraggioRisorsa{
 			else
 				con = this.globalConnection;
 		
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			if(pddTipologia!=null) {
-				sqlQueryObject.addFromTable(CostantiDB.PDD);
-			}
 			sqlQueryObject.setSelectDistinct(true);
 			sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"id", "idTableSoggetto");
 			sqlQueryObject.addSelectField("tipo_soggetto");
@@ -6848,13 +6860,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			if(pddTipologia!=null) {
 				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
-					ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-					sqlQueryObjectPdd.setANDLogicOperator(false);
-					sqlQueryObjectPdd.addWhereIsNullCondition("server");
-					sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
-					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());									
 				}
 				else {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
 					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 				}
 			}
@@ -9565,7 +9574,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			DriverRegistroServiziDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -9629,7 +9638,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idConnettore);
 
-			DriverRegistroServiziDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
 
@@ -13495,7 +13504,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObjectPdd.setANDLogicOperator(false);
-				sqlQueryObjectPdd.addWhereIsNullCondition("server");
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
 			}	
 			
@@ -17749,6 +17758,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObjectSoggetti.getWhereLikeCondition("nome_soggetto", search, true, true));
 			}
 
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}
+			
 			if (!search.equals("")) {
 				//query con search
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -17757,9 +17781,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(permessiUtente!=null || filterTipoAPI!=null) {
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
-				}
-				if(pddTipologia!=null) {
-					sqlQueryObject.addFromTable(CostantiDB.PDD);
 				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
@@ -17779,13 +17800,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
-						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-						sqlQueryObjectPdd.setANDLogicOperator(false);
-						sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
-						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
 					}
 					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
@@ -17821,9 +17839,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
-				if(pddTipologia!=null) {
-					sqlQueryObject.addFromTable(CostantiDB.PDD);
-				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
@@ -17842,13 +17857,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
-						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-						sqlQueryObjectPdd.setANDLogicOperator(false);
-						sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
-						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
 					}
 					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
@@ -17901,9 +17913,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
-				if(pddTipologia!=null) {
-					sqlQueryObject.addFromTable(CostantiDB.PDD);
-				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
@@ -17938,13 +17947,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
-						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-						sqlQueryObjectPdd.setANDLogicOperator(false);
-						sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
-						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
 					}
 					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}
@@ -17995,9 +18001,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo="+CostantiDB.ACCORDI+".id");
 				}
-				if(pddTipologia!=null) {
-					sqlQueryObject.addFromTable(CostantiDB.PDD);
-				}
 				if(gestioneFruitori) {
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
 					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI, aliasSoggettiFruitori);
@@ -18033,13 +18036,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 				if(pddTipologia!=null) {
 					if(PddTipologia.ESTERNO.equals(pddTipologia)) {
-						ISQLQueryObject sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-						sqlQueryObjectPdd.setANDLogicOperator(false);
-						sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
-						sqlQueryObjectPdd.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 						sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
 					}
 					else {
+						sqlQueryObject.addFromTable(CostantiDB.PDD);
 						sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
 					}
 				}

@@ -40,7 +40,7 @@ public class API {
 	private String id;
 	private Map<String, Azione> actions;
 	
-	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, int indiceInizialeAzione, 
+	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, Index index, 
 			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
 		this.base = base;
 		this.id = id;
@@ -49,7 +49,7 @@ public class API {
 		if(ServiceBinding.SOAP.equals(base.getServiceBinding())) {
 			if(base.sizeAzioneList()>0) {
 				for (org.openspcoop2.core.registry.Azione az : base.getAzioneList()) {
-					String idAzione = this.id+"_"+ "AzioneAccordo_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
+					String idAzione = this.id+"_"+ "AzioneAccordo_" + index.getNextActionId(); // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
 				}
 			}
@@ -57,7 +57,7 @@ public class API {
 				for (org.openspcoop2.core.registry.PortType pt : base.getPortTypeList()) {
 					if(pt.sizeAzioneList()>0) {
 						for (org.openspcoop2.core.registry.Operation az : pt.getAzioneList()) {
-							String idAzione = this.id+"_"+"Azione_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
+							String idAzione = this.id+"_"+"Azione_" + index.getNextActionId(); // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
 						}
 					}
@@ -67,7 +67,7 @@ public class API {
 		else {
 			if(base.sizeResourceList()>0) {
 				for (org.openspcoop2.core.registry.Resource resource : base.getResourceList()) {
-					String idAzione = this.id+"_"+"Resource_" + indiceInizialeAzione++; // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
+					String idAzione = this.id+"_"+"Resource_" + index.getNextActionId(); // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
 					this.actions.put(idAzione, new Azione(resource, idAzione, payloadProfiles, properties));
 				}
 			}

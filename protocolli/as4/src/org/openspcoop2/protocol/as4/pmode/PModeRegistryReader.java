@@ -36,11 +36,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.pmode.beans.APC;
 import org.openspcoop2.protocol.as4.pmode.beans.API;
+import org.openspcoop2.protocol.as4.pmode.beans.Index;
 import org.openspcoop2.protocol.as4.pmode.beans.PayloadProfiles;
 import org.openspcoop2.protocol.as4.pmode.beans.Policy;
 import org.openspcoop2.protocol.as4.pmode.beans.Properties;
@@ -155,8 +155,7 @@ public class PModeRegistryReader {
 			customGW = this.as4Properties.getDomibusGatewayRegistrySoggettoCustomList();
 		}
 		
-		int legId = 1;
-		int processId = 1;
+		Index index = new Index();
 		for(IDSoggetto idSoggetto: allIdSoggetti) {
 			org.openspcoop2.core.registry.Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
 			
@@ -191,10 +190,8 @@ public class PModeRegistryReader {
 				}
 			}
 			
-			Soggetto soggettoPM = new Soggetto(soggetto, accordi, legId, processId);
+			Soggetto soggettoPM = new Soggetto(soggetto, accordi, index);
 			soggetti.add(soggettoPM);
-			processId += soggettoPM.getBase().sizeAccordoServizioParteSpecificaList();
-			legId += soggettoPM.sizeAzioni();
 		}
 		
 		return soggetti;
@@ -284,25 +281,11 @@ public class PModeRegistryReader {
 		
 		Map<IDAccordo, API> map = new HashMap<IDAccordo, API>();
 
-		int i = 1;
-		int indexAzione = 1;
+		Index index = new Index();
 		for(IDAccordo idAccordo: allId) {
 			AccordoServizioParteComune apc = this.registryReader.getAccordoServizioParteComune(idAccordo);
-			String nomeApc = "Servizio_" + i++;
-			map.put(idAccordo, new API(apc, nomeApc, indexAzione, findPayloadProfile,findProperties));
-			if(ServiceBinding.SOAP.equals(apc.getServiceBinding())) {
-				if(apc.sizeAzioneList()>0) {
-					indexAzione+= apc.sizeAzioneList();
-				}
-				if(apc.sizePortTypeList()>0) {
-					for (org.openspcoop2.core.registry.PortType pt : apc.getPortTypeList()) {
-						indexAzione+= pt.sizeAzioneList();
-					}
-				}
-			}
-			else {
-				indexAzione+= apc.sizeResourceList();
-			}
+			String nomeApc = "Servizio_" + index.getNextServiceId();
+			map.put(idAccordo, new API(apc, nomeApc, index, findPayloadProfile,findProperties));
 		}
 		return map;
 	}

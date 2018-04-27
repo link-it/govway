@@ -49,7 +49,7 @@ public class APS {
 	private String id;
 	private List<String> cnFruitori = new ArrayList<String>();
 	
-	public APS(AccordoServizioParteSpecifica base, API pt, int idInizialeLeg, String id) throws Exception {
+	public APS(AccordoServizioParteSpecifica base, API pt, Index index, String id) throws Exception {
 		this.base = base;
 		this.pt = pt;
 		this.id = id;
@@ -64,7 +64,7 @@ public class APS {
 		
 		this.azioni = new HashMap<>();
 		for(Azione azione: pt.getActions().values()) {
-			this.azioni.put("Leg_" + idInizialeLeg++, azione);
+			this.azioni.put("Leg_" + index.getNextLegId(), azione);
 		}
 	}
 	public AccordoServizioParteSpecifica getBase() {

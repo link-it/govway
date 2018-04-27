@@ -49,7 +49,7 @@ public class Soggetto  {
 	
 	private List<APS> aps;
 
-	public Soggetto(org.openspcoop2.core.registry.Soggetto base, Map<IDAccordo, API> accordi, int indiceInizialeLeg, int indiceInizialeProcess) throws Exception {
+	public Soggetto(org.openspcoop2.core.registry.Soggetto base, Map<IDAccordo, API> accordi, Index index) throws Exception {
 		this.base = base;
 		for(ProtocolProperty prop: this.base.getProtocolPropertyList()) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME)) {
@@ -82,17 +82,13 @@ public class Soggetto  {
 		
 		
 		this.aps = new ArrayList<>();
-		int numeroLegPerSoggetto = 0;
-		int numeroProcessPerSoggetto = 0;
 		for(AccordoServizioParteSpecifica aps: base.getAccordoServizioParteSpecificaList()) {
 
 			IDAccordo apcKey = IDAccordoFactory.getInstance().getIDAccordoFromUri(aps.getAccordoServizioParteComune());
 			
 			if(accordi.containsKey(apcKey)) {
 				API api = accordi.get(apcKey);
-				this.aps.add(new APS(aps, api, indiceInizialeLeg+numeroLegPerSoggetto, "Process_" + (indiceInizialeProcess+numeroProcessPerSoggetto)));
-				numeroLegPerSoggetto += api.getActions().size();
-				numeroProcessPerSoggetto++;
+				this.aps.add(new APS(aps, api, index, "Process_" + index.getNextProcessId()));
 			} else {
 				throw new Exception("APC["+apcKey+"] erogato dal soggetto ["+base.getTipo()+"/"+base.getNome()+"] non trovato");
 			}
