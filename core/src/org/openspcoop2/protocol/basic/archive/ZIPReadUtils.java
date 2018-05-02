@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -52,12 +53,18 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.protocol.abstraction.Erogazione;
@@ -326,6 +333,9 @@ public class ZIPReadUtils  {
 			// Map per identificativi documenti
 			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti = new Hashtable<String, IdentificativoDocumento>();
 			
+			// Map per identificativi protocol properties
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties = new Hashtable<String, IdentificativoProprietaProtocollo>();
+			
 			String rootDir = null;
 			
 			Iterator<ZipEntry> it = ZipUtilities.entries(zip, true);
@@ -467,8 +477,37 @@ public class ZIPReadUtils  {
 								}
 								else{
 
+									// ------------ protocolProperties del soggetto ------------
+									if(nomeFile.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
+
+										org.openspcoop2.core.registry.Soggetto soggettoRegistroServizi = null;
+										String key = ArchiveSoggetto.buildKey(tipoSoggetto, nomeSoggetto);
+										if(archivio.getSoggetti().containsKey(key)){
+											soggettoRegistroServizi = archivio.getSoggetti().get(key).getSoggettoRegistro();
+										}
+										else {
+											throw new ProtocolException("Elemento ["+entryName+"] errato. Non risulta la definizione del soggetto ["+tipoSoggetto+"/"+nomeSoggetto+"]");
+										}
+										
+										List<ProtocolProperty> listPP = new ArrayList<>();
+										if(soggettoRegistroServizi.sizeProtocolPropertyList()>0) {
+											for (ProtocolProperty protocolProperty : soggettoRegistroServizi.getProtocolPropertyList()) {
+												if(protocolProperty.getTipoProprietario()==null) {
+													protocolProperty.setTipoProprietario(ProprietariProtocolProperty.SOGGETTO.name());
+												}
+												listPP.add(protocolProperty);
+											}
+										}
+										processProtocolProperty(nomeFile, archiveVersion, entryName, xml, 
+												ProprietarioProprietaProtocollo.SOGGETTO, 
+												tipoSoggetto, nomeSoggetto, null, null, 
+												null, null, 
+												mapKeyProtocolProperties, listPP, null);
+										
+									}
+									
 									// ------------ servizio applicativo --------------------
-									if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar)) ){
+									else if(nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR+File.separatorChar)) ){
 										this.readServizioApplicativo(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, validationDocuments, idCorrelazione);
 									}
 									
@@ -624,19 +663,19 @@ public class ZIPReadUtils  {
 													if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
 														this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
 																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,false, validationDocuments, idCorrelazione,
-																archiveVersion, mapKeyDocumenti);
+																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties);
 													}
 													// ------------ accordo servizio composto -------------------
 													else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR+File.separatorChar)) ){
 														this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
 																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,true, validationDocuments, idCorrelazione,
-																archiveVersion, mapKeyDocumenti);
+																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties);
 													}
 													// ------------ accordo cooperazione -------------------
 													else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar)) ){
 														this.readAccordoCooperazione(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
 																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo, validationDocuments, idCorrelazione,
-																archiveVersion, mapKeyDocumenti);
+																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties);
 													}
 													
 												}
@@ -748,7 +787,7 @@ public class ZIPReadUtils  {
 													// ------------ accordo servizio parte specifica -------------------
 													this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
 																nomeFileSenzaAccordo,tipoServizio,nomeServizio,versioneServizio, validationDocuments, idCorrelazione,
-																archiveVersion, mapKeyDocumenti);
+																archiveVersion, mapKeyDocumenti, mapKeyProtocolProperties);
 												}
 												
 											}
@@ -841,6 +880,41 @@ public class ZIPReadUtils  {
 		else if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO+File.separatorChar)){
 			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO);
 		}
+		bf.append("_");
+		bf.append(nomeDocumento);
+		return bf.toString();
+	}
+	
+	private String getKeyProtocolProperty(String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo, 
+			String tipoSoggettoFruitore, String nomeSoggettoFruitore,
+			ProprietarioProprietaProtocollo proprietario,
+			String nomeDocumento){
+		StringBuffer bf = new StringBuffer();
+		bf.append(proprietario.name());
+		bf.append("_");
+		if(ProprietarioProprietaProtocollo.ACCORDO_COOPERAZIONE.equals(proprietario) ||
+				ProprietarioProprietaProtocollo.ACCORDO_SERVIZIO_PARTE_COMUNE.equals(proprietario)  ||
+				ProprietarioProprietaProtocollo.ACCORDO_SERVIZIO_PARTE_SPECIFICA.equals(proprietario) ||
+				ProprietarioProprietaProtocollo.FRUITORE.equals(proprietario) ) {
+			bf.append(tipoSoggetto==null?"":tipoSoggetto);
+			bf.append("_");
+			bf.append(nomeSoggetto==null?"":nomeSoggetto);
+			bf.append("_");
+			String nomeVersioneAccordo = (nomeAccordo==null?"":nomeAccordo) + (versioneAccordo==null?"":versioneAccordo);
+			bf.append(nomeVersioneAccordo==null?"":nomeVersioneAccordo);
+		}
+		else {
+			bf.append(tipoSoggetto==null?"":tipoSoggetto);
+			bf.append("_");
+			bf.append(nomeSoggetto==null?"":nomeSoggetto);
+		}
+		bf.append("_");
+		if(ProprietarioProprietaProtocollo.FRUITORE.equals(proprietario)) {
+			bf.append(tipoSoggetto==null?"":tipoSoggettoFruitore);
+			bf.append("_");
+			bf.append(nomeSoggetto==null?"":nomeSoggettoFruitore);
+		}
+
 		bf.append("_");
 		bf.append(nomeDocumento);
 		return bf.toString();
@@ -1282,7 +1356,9 @@ public class ZIPReadUtils  {
 	
 	public void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
-			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
+			ArchiveVersion archiveVersion,
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -1471,13 +1547,107 @@ public class ZIPReadUtils  {
 						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, as.getServizioComposto().getSpecificaCoordinamentoList());
 				
 			}
+			
+			// protocolProperties
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
+
+				List<ProtocolProperty> listPP = new ArrayList<>();
+				HashMap<String,Long> mapIdToLong = new HashMap<>();			
+				_updateListProtocolProperties(as, listPP, mapIdToLong);
+				processProtocolProperty(nomeFileSenzaAccordo, archiveVersion, entryName, xml, 
+						ProprietarioProprietaProtocollo.ACCORDO_SERVIZIO_PARTE_COMUNE, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, 
+						null, null, 
+						mapKeyProtocolProperties, listPP, mapIdToLong);
+				
+			}
 		}
 		
 	}
 	
+	private void _updateListProtocolProperties(AccordoServizioParteComune as,
+			List<ProtocolProperty> listPP, HashMap<String,Long> mapIdToLong) {
+		long idLongForMap = 1;
+		if(as.sizeProtocolPropertyList()>0) {
+			for (ProtocolProperty protocolProperty : as.getProtocolPropertyList()) {
+				if(protocolProperty.getTipoProprietario()==null) {
+					protocolProperty.setTipoProprietario(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE.name());
+				}
+				listPP.add(protocolProperty);
+			}
+		}
+		if(as.sizeAzioneList()>0) {
+			for (Azione az : as.getAzioneList()) {
+				if(az.sizeProtocolPropertyList()>0) {
+					String key = buildKeyPPAccordoParteComuneItem(ProprietariProtocolProperty.AZIONE_ACCORDO, az.getNome());
+					Long idLong = idLongForMap++;
+					mapIdToLong.put(key,idLong);
+					for (ProtocolProperty protocolProperty : az.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.AZIONE_ACCORDO.name());
+						}
+						protocolProperty.setIdProprietario(idLong);
+						listPP.add(protocolProperty);
+					}
+				}
+			}
+		}
+		if(as.sizePortTypeList()>0) {
+			for (PortType pt : as.getPortTypeList()) {
+				if(pt.sizeProtocolPropertyList()>0) {
+					String key = buildKeyPPAccordoParteComuneItem(ProprietariProtocolProperty.PORT_TYPE, pt.getNome());
+					Long idLong = idLongForMap++;
+					mapIdToLong.put(key,idLong);
+					for (ProtocolProperty protocolProperty : pt.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.PORT_TYPE.name());
+						}
+						protocolProperty.setIdProprietario(idLong);
+						listPP.add(protocolProperty);
+					}
+				}
+				if(pt.sizeAzioneList()>0) {
+					for (Operation op : pt.getAzioneList()) {
+						if(op.sizeProtocolPropertyList()>0) {
+							String key = buildKeyPPAccordoParteComuneItem(ProprietariProtocolProperty.OPERATION, op.getNome());
+							Long idLong = idLongForMap++;
+							mapIdToLong.put(key,idLong);
+							for (ProtocolProperty protocolProperty : op.getProtocolPropertyList()) {
+								if(protocolProperty.getTipoProprietario()==null) {
+									protocolProperty.setTipoProprietario(ProprietariProtocolProperty.OPERATION.name());
+								}
+								protocolProperty.setIdProprietario(idLong);
+								listPP.add(protocolProperty);
+							}
+						}
+					}
+				}
+			}
+		}
+		if(as.sizeResourceList()>0) {
+			for (Resource resource : as.getResourceList()) {
+				if(resource.sizeProtocolPropertyList()>0) {
+					String key = buildKeyPPAccordoParteComuneItem(ProprietariProtocolProperty.RESOURCE, resource.getNome());
+					Long idLong = idLongForMap++;
+					mapIdToLong.put(key,idLong);
+					for (ProtocolProperty protocolProperty : resource.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.RESOURCE.name());
+						}
+						protocolProperty.setIdProprietario(idLong);
+						listPP.add(protocolProperty);
+					}
+				}
+			}
+		}
+
+	}
+
 	public void readAccordoServizioParteSpecifica(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String tipoServizio,String nomeServizio,String versioneServizio,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
-			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
+			ArchiveVersion archiveVersion,
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -1633,6 +1803,26 @@ public class ZIPReadUtils  {
 				
 			}
 			
+			// protocolProperties
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
+
+				List<ProtocolProperty> listPP = new ArrayList<>();
+				if(as.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty protocolProperty : as.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name());
+						}
+						listPP.add(protocolProperty);
+					}
+				}
+				processProtocolProperty(nomeFileSenzaAccordo, archiveVersion, entryName, xml, 
+						ProprietarioProprietaProtocollo.ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
+						tipoSoggetto, nomeSoggetto, tipoServizio+"/"+nomeServizio, versioneServizio, 
+						null, null, 
+						mapKeyProtocolProperties, listPP, null);
+				
+			}
+			
 			// fruitori (politiche di sicurezza)
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar) &&
 					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI)){
@@ -1653,8 +1843,11 @@ public class ZIPReadUtils  {
 			// fruitori
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)){
 				this.readAccordoServizioParteSpecifica_Fruitore(archivio, bin, xml, entryName, 
+						nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length()),
 						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
-						validationDocuments, idCorrelazione);
+						validationDocuments, idCorrelazione,
+						archiveVersion,
+						mapKeyProtocolProperties);
 			}
 			
 		}
@@ -1710,9 +1903,11 @@ public class ZIPReadUtils  {
 		}
 	}
 	
-	public void readAccordoServizioParteSpecifica_Fruitore(Archive archivio,InputStream bin,byte[]xml,String entryName,
+	public void readAccordoServizioParteSpecifica_Fruitore(Archive archivio,InputStream bin,byte[]xml,String entryName,String nomeFileSenzaAccordo,
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
-			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
+			ArchiveVersion archiveVersion,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -1727,30 +1922,104 @@ public class ZIPReadUtils  {
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
 		Integer versioneKey = (versioneServizioInt!=null ? versioneServizioInt : -1 );
 
-		try{
-			if(validationDocuments){
-				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+		if(nomeFileSenzaAccordo.contains((File.separatorChar+""))==false){
+			
+			// definizione dell'accordo
+			try{
+				if(validationDocuments){
+					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+				}
+				
+				if(USE_VERSION_XML_BEAN.equals(versioneServizio)){
+					// devo recuperare la versione dell'accordo
+					String keyAccordo = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeServizio, tipoServizio, versioneKey);
+					versioneKey = archivio.getAccordiServizioParteSpecifica().get(keyAccordo).getAccordoServizioParteSpecifica().getVersione();
+					versioneServizioInt = versioneKey;
+				}
+				
+				Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
+				String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
+				if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
+				}
+				
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggetto, nomeSoggetto, versioneServizioInt);
+				archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idServizio,fruitore,idCorrelazione,true));
+			}catch(Exception eDeserializer){
+				String xmlString = this.toStringXmlElementForErrorMessage(xml);
+				throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
+						+eDeserializer.getMessage(),eDeserializer);
 			}
 			
-			if(USE_VERSION_XML_BEAN.equals(versioneServizio)){
-				// devo recuperare la versione dell'accordo
-				String keyAccordo = ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeServizio, tipoServizio, versioneKey);
-				versioneKey = archivio.getAccordiServizioParteSpecifica().get(keyAccordo).getAccordoServizioParteSpecifica().getVersione();
-				versioneServizioInt = versioneKey;
+		}
+		
+		else {
+			
+			// comprendo tipo e nome soggetto fruitore
+			String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring(0,nomeFileSenzaAccordo.indexOf(File.separatorChar));
+			if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+						"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
+			}
+			tipoNomeSoggettoFruitore = tipoNomeSoggettoFruitore.trim();
+			String tipoSoggettoFruitore = null;
+			String nomeSoggettoFruitore = null;
+			if(tipoNomeSoggettoFruitore.equals("_")){
+				// caso eccezionale senza ne tipo ne nome
+			}
+			else if(tipoNomeSoggettoFruitore.startsWith("_")){
+				// caso eccezionale con solo il nome
+				nomeSoggettoFruitore = tipoNomeSoggettoFruitore.substring(1);
+			}
+			else if(tipoNomeSoggettoFruitore.endsWith("_")){
+				// caso eccezionale con solo il tipo
+				tipoSoggettoFruitore = tipoNomeSoggettoFruitore.substring(0,tipoNomeSoggettoFruitore.length()-1);
+			}
+			else{
+				// caso normale
+				tipoSoggettoFruitore = tipoNomeSoggettoFruitore.split("_")[0];
+				nomeSoggettoFruitore = tipoNomeSoggettoFruitore.split("_")[1];
+				if(tipoSoggettoFruitore==null || "".equals(tipoSoggettoFruitore)){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+							"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: tipo non identificato");
+				}
+				if(nomeSoggettoFruitore==null || "".equals(nomeSoggettoFruitore)){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
+							"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: nome non identificato");
+				}
 			}
 			
-			Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
-			String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
-			if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
-				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
+			// recupero archivio precedentemente letto
+			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitore, nomeSoggettoFruitore, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
+			ArchiveFruitore archiveFruitore = null;
+			Fruitore fruitore = null;
+			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire delle proprietà di protocollo di un fruitore senza fornire la definizione xml del fruitore");
+			}
+			archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
+			fruitore = archiveFruitore.getFruitore();
+			
+			nomeFileSenzaAccordo = nomeFileSenzaAccordo.substring((tipoNomeSoggettoFruitore+File.separatorChar).length());
+			
+			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
+
+				List<ProtocolProperty> listPP = new ArrayList<>();
+				if(fruitore.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty protocolProperty : fruitore.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.FRUITORE.name());
+						}
+						listPP.add(protocolProperty);
+					}
+				}
+				processProtocolProperty(nomeFileSenzaAccordo, archiveVersion, entryName, xml, 
+						ProprietarioProprietaProtocollo.FRUITORE, 
+						tipoSoggetto, nomeSoggetto, tipoServizio+"/"+nomeServizio, versioneServizio, 
+						tipoSoggettoFruitore, nomeSoggettoFruitore, 
+						mapKeyProtocolProperties, listPP, null);
+				
 			}
 			
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggetto, nomeSoggetto, versioneServizioInt);
-			archivio.getAccordiFruitori().add(keyFruitore,new ArchiveFruitore(idServizio,fruitore,idCorrelazione,true));
-		}catch(Exception eDeserializer){
-			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (fruitore) non valida rispetto allo schema (RegistroServizi): "
-					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
 	
@@ -1869,7 +2138,9 @@ public class ZIPReadUtils  {
 	
 	public void readAccordoCooperazione(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
 			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
-			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
+			ArchiveVersion archiveVersion,
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -1988,6 +2259,27 @@ public class ZIPReadUtils  {
 				
 			}
 			
+			
+			// protocolProperties
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar)){
+
+				List<ProtocolProperty> listPP = new ArrayList<>();
+				if(ac.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty protocolProperty : ac.getProtocolPropertyList()) {
+						if(protocolProperty.getTipoProprietario()==null) {
+							protocolProperty.setTipoProprietario(ProprietariProtocolProperty.ACCORDO_COOPERAZIONE.name());
+						}
+						listPP.add(protocolProperty);
+					}
+				}
+				processProtocolProperty(nomeFileSenzaAccordo, archiveVersion, entryName, xml, 
+						ProprietarioProprietaProtocollo.ACCORDO_COOPERAZIONE, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, 
+						null, null, 
+						mapKeyProtocolProperties, listPP, null);
+				
+			}
+			
 		}
 		
 	}
@@ -2059,6 +2351,83 @@ public class ZIPReadUtils  {
 		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un documento di un accordo senza definirlo anche all'interno della definizione xml dell'accordo");
 	}
 	
+	
+	
+	private void processProtocolProperty(String nomeFileSenzaAccordo,ArchiveVersion archiveVersion, String entryName, byte[] xml,
+			ProprietarioProprietaProtocollo proprietario,
+			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo, 
+			String tipoSoggettoFruitore, String nomeSoggettoFruitore,
+			Hashtable<String, IdentificativoProprietaProtocollo> mapKeyProtocolProperties, 
+			List<ProtocolProperty> protocolProperties,
+			HashMap<String,Long> mapIdToLong) throws ProtocolException{
+		String nomePP = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar).length());
+		
+		String nomePPSenzaEstensione = nomePP;
+		if(nomePP.contains(".")==false){
+			throw new ProtocolException("Elemento ["+entryName+"] errato. Per le protocol properties è attesa una estensione");
+		}
+		nomePPSenzaEstensione = nomePP.substring(0,nomePP.lastIndexOf("."));
+		String keyProtocolProperty = getKeyProtocolProperty(tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, 
+				tipoSoggettoFruitore, nomeSoggettoFruitore, proprietario, nomePPSenzaEstensione);
+		if(nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID)){
+			String tmp = new String(xml);
+			IdentificativoProprietaProtocollo identificativoPP = new IdentificativoProprietaProtocollo();
+			identificativoPP.tipo = ProprietariProtocolProperty.valueOf(tmp.split(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR)[0]); 
+			int prefixLength = identificativoPP.tipo.name().length()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR.length();
+			if(ProprietariProtocolProperty.AZIONE_ACCORDO.equals(identificativoPP.tipo) ||
+					ProprietariProtocolProperty.PORT_TYPE.equals(identificativoPP.tipo) ||
+					ProprietariProtocolProperty.OPERATION.equals(identificativoPP.tipo) ||
+					ProprietariProtocolProperty.RESOURCE.equals(identificativoPP.tipo)) {
+				identificativoPP.idProprietario = tmp.split(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR)[1]; 
+				prefixLength+=identificativoPP.idProprietario.length()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR.length();
+			}
+			identificativoPP.nome = tmp.substring(prefixLength);
+			mapKeyProtocolProperties.put(keyProtocolProperty, identificativoPP);
+		}
+		else if(nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT)){
+			IdentificativoProprietaProtocollo identificativoPP = mapKeyProtocolProperties.get(keyProtocolProperty);
+			if(identificativoPP==null){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Non è stato rilevato precedentemente il corrispettivo file contenente l'identificativo (con estensione '"+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID+"')");
+			}
+			this.getProtocolProperty(proprietario, protocolProperties, 
+					identificativoPP.nome, identificativoPP.tipo,
+					identificativoPP.idProprietario, mapIdToLong,
+					entryName).setByteFile(xml);
+		}
+		else {
+			throw new ProtocolException("Elemento ["+entryName+"] non atteso.");
+		}
+
+	}
+	private String buildKeyPPAccordoParteComuneItem(ProprietariProtocolProperty tipo,String idProprietario) {
+		return tipo.name()+"_"+idProprietario;
+	}
+	private ProtocolProperty getProtocolProperty(ProprietarioProprietaProtocollo proprietario,
+			List<ProtocolProperty> protocolProperties, String nome, ProprietariProtocolProperty tipo, 
+			String idProprietario, HashMap<String,Long> mapIdToLong, 
+			String entryName) throws ProtocolException{
+			
+		for (ProtocolProperty pp : protocolProperties) {
+			if(pp.getTipoProprietario().equals(tipo.name()) && pp.getName().equals(nome)) {
+				if(mapIdToLong==null || ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE.equals(tipo)) {
+					return pp;
+				}
+				else {
+					String key = buildKeyPPAccordoParteComuneItem(tipo, idProprietario);
+					Long l = mapIdToLong.get(key);
+					if(l.longValue() == pp.getIdProprietario().longValue()) {
+						return pp;
+					}
+				}
+			}
+		}
+		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire una proprietà di protocollo senza definirlo anche all'interno della definizione xml ("+proprietario.name()+")");
+	}
+	
+	
+	
+	
 	protected String toStringXmlElementForErrorMessage(byte[]xml){
 		return xml!=null ? "Xml: ["+new String(xml)+"] \n" : "Xml Undefined. \n";
 	}
@@ -2076,5 +2445,23 @@ class IdentificativoDocumento{
 	
 	protected String nome;
 	protected String tipo;
+	
+}
+
+class IdentificativoProprietaProtocollo{
+	
+	protected String nome;
+	protected String idProprietario;
+	protected ProprietariProtocolProperty tipo;
+	
+}
+
+enum ProprietarioProprietaProtocollo{
+	
+	SOGGETTO, 
+	ACCORDO_COOPERAZIONE,
+	ACCORDO_SERVIZIO_PARTE_COMUNE,
+	ACCORDO_SERVIZIO_PARTE_SPECIFICA,
+	FRUITORE
 	
 }

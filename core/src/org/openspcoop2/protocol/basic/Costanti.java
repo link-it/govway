@@ -187,8 +187,8 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_RUOLI_DIR = "ruoli";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR = "soggetti";
-	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_REGISTRO = "soggettoRegistroServizi.xml";
-	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_CONFIG = "soggettoConfigurazione.xml";
+	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_REGISTRO = "_soggettoRegistroServizi.xml"; // aggiungo _ inziale per ordine lessicografico con le proprieta di protocollo
+	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_CONFIG = "_soggettoConfigurazione.xml"; // aggiungo _ inziale per ordine lessicografico con le proprieta di protocollo
 	
 	public static final String OPENSPCOOP2_ARCHIVE_SERVIZI_APPLICATIVI_DIR = "serviziApplicativi";
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DELEGATE_DIR = "porteDelegate";
@@ -230,13 +230,14 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX = "attachment_";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID = ".id";
-	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT = ".raw";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT = ".raw"; // ".bin"; // ci vuole un nome che in ordine lessicografico venga dopo .id
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI = "allegati";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI = "specificheSemiformali";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO = "specificheCoordinamento";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO = "specificheLivelliServizio";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA = "specificheSicurezza";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_MAPPING = "mapping";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES = "proprietaProtocollo";
 	
 	
 }

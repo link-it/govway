@@ -45,6 +45,7 @@ import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ManagerUtils;
@@ -360,9 +361,10 @@ public class FruizioneConverter extends AbstractConverter {
 			byte[]xml = TemplateUtils.toByteArray(templateFruizione.getTemplateFruitore(), data);
 			try{
 				this.filler.readAccordoServizioParteSpecifica_Fruitore(archive, new ByteArrayInputStream(xml), xml, 
-						"fruizione", soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
+						"fruizione", "servizio", soggettoErogatore.getTipo(), soggettoErogatore.getNome(), 
 						idAccordoServizioParteSpecifica.getTipo(), idAccordoServizioParteSpecifica.getNome(), idAccordoServizioParteSpecifica.getVersione()+"", 
-						validationDocuments, idCorrelazione);
+						validationDocuments, idCorrelazione,
+						ArchiveVersion.V_1,null);
 			}catch(Exception e){
 				throw new Exception("XmlTemplate["+new String(xml)+"]\n"+e.getMessage(),e);
 			}

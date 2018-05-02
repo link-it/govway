@@ -47,10 +47,16 @@ import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -282,11 +288,51 @@ public class ZIPWriteUtils {
 					ArchiveSoggetto archiveSoggetto = archiveListaOggettiSoggetto.getSoggetti().get(0);
 					
 					if(archiveSoggetto.getSoggettoRegistro()!=null){
+						
+						// protocolProperties
+						Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+						for (ProtocolProperty pp : archiveSoggetto.getSoggettoRegistro().getProtocolPropertyList()) {
+							if(pp.getByteFile()==null) {
+								continue;
+							}
+							if(pp.getFile()==null){
+								throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+							}
+							ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.SOGGETTO;
+							String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
+							protocolPropertiesList.put(id, pp.getByteFile());
+							pp.setByteFile(null);
+						}
+						
+						// Soggetto
 						nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_REGISTRO;
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						org.openspcoop2.core.registry.Soggetto soggettoRegistro = archiveSoggetto.getSoggettoRegistro();
 						this.cleanerOpenSPCoop2ExtensionsRegistry.clean(soggettoRegistro);
 						write(zipOut, "SoggettoRegistro", archiveSoggetto.getIdSoggetto(), true, soggettoRegistro);
+						
+						// protocolProperties
+						if(protocolPropertiesList.size()>0){
+							int indexPP = 1;
+							Enumeration<String> enumPP = protocolPropertiesList.keys();
+							while (enumPP.hasMoreElements()) {
+								String id = (String) enumPP.nextElement();
+								
+								nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID;
+								zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+								zipOut.write(id.getBytes());
+								
+								nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT;
+								zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+								zipOut.write(protocolPropertiesList.get(id));
+								
+								indexPP++;
+							}
+						}
 					}
 					if(archiveSoggetto.getSoggettoConfigurazione()!=null){
 						nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_CONFIG;
@@ -448,17 +494,61 @@ public class ZIPWriteUtils {
 							dirAsps = map_IdApsScritti_nomeFileSystem.get(idAps);
 						}
 						
+						Fruitore fruitore = archiveFruitore.getFruitore();			
+						
+						// protocolProperties (devo rimuovere campo bytes)
+						Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+						if(fruitore.sizeProtocolPropertyList()>0) {
+							for (ProtocolProperty pp : fruitore.getProtocolPropertyList()) {
+								if(pp.getByteFile()==null) {
+									continue;
+								}
+								if(pp.getFile()==null){
+									throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+								}
+								ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.FRUITORE;
+								String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
+								protocolPropertiesList.put(id, pp.getByteFile());
+								pp.setByteFile(null);
+							}
+						}
+						
 						// il converName sui soggetti serve a poco, visto che devono essere simpleName (solo caratteri e numeri)
+						// Fruitore
 						String nomeFruitore = dirAsps +
 								Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar+
 								ZIPUtils.convertNameToSistemaOperativoCompatible(archiveFruitore.getIdSoggettoFruitore().getTipo())+"_"+
 								ZIPUtils.convertNameToSistemaOperativoCompatible(archiveFruitore.getIdSoggettoFruitore().getNome());
 						nomeFile = nomeFruitore+".xml";
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
-						Fruitore fruitore = archiveFruitore.getFruitore();						
 						this.cleanerOpenSPCoop2ExtensionsRegistry.clean(fruitore);
 						write(zipOut, "Fruitore", archiveFruitore.getIdSoggettoFruitore().toString()+" di "+
 								archiveFruitore.getIdAccordoServizioParteSpecifica().toString(), true, fruitore);
+						
+						// protocolProperties
+						if(protocolPropertiesList.size()>0){
+							int indexPP = 1;
+							Enumeration<String> enumPP = protocolPropertiesList.keys();
+							while (enumPP.hasMoreElements()) {
+								String id = (String) enumPP.nextElement();
+								
+								nomeFile = nomeFruitore+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID;
+								zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+								zipOut.write(id.getBytes());
+								
+								nomeFile = nomeFruitore+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+										Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT;
+								zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+								zipOut.write(protocolPropertiesList.get(id));
+								
+								indexPP++;
+							}
+						}
 						
 						// PortaDelegata Associata
 						if(archiveFruitore.getMappingPorteDelegateAssociate()!=null){
@@ -735,6 +825,92 @@ public class ZIPWriteUtils {
 				}
 			}
 			
+			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				if(pp.getByteFile()==null) {
+					continue;
+				}
+				if(pp.getFile()==null){
+					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+				}
+				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE;
+				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
+				protocolPropertiesList.put(id, pp.getByteFile());
+				pp.setByteFile(null);
+			}
+			if(accordo.sizeAzioneList()>0) {
+				for (Azione az : accordo.getAzioneList()) {
+					for (ProtocolProperty pp : az.getProtocolPropertyList()) {
+						if(pp.getByteFile()==null) {
+							continue;
+						}
+						if(pp.getFile()==null){
+							throw new Exception("ProtocolProperties (azione:"+az.getNome()+") ["+pp.getName()+"] senza nome file");
+						}
+						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.AZIONE_ACCORDO;
+						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
+								az.getNome()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+ // uso il nome dell'azione che e' univoco
+								pp.getName(); // uso la property name che è univoca
+						protocolPropertiesList.put(id, pp.getByteFile());
+						pp.setByteFile(null);
+					}
+				}
+			}
+			if(accordo.sizePortTypeList()>0) {
+				for (PortType pt : accordo.getPortTypeList()) {
+					for (ProtocolProperty pp : pt.getProtocolPropertyList()) {
+						if(pp.getByteFile()==null) {
+							continue;
+						}
+						if(pp.getFile()==null){
+							throw new Exception("ProtocolProperties (pt:"+pt.getNome()+") ["+pp.getName()+"] senza nome file");
+						}
+						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.PORT_TYPE;
+						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
+								pt.getNome()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+ // uso il nome del port type che e' univoco
+								pp.getName(); // uso la property name che è univoca
+						protocolPropertiesList.put(id, pp.getByteFile());
+						pp.setByteFile(null);
+					}
+					if(pt.sizeAzioneList()>0) {
+						for (Operation op : pt.getAzioneList()) {
+							for (ProtocolProperty pp : op.getProtocolPropertyList()) {
+								if(pp.getByteFile()==null) {
+									continue;
+								}
+								if(pp.getFile()==null){
+									throw new Exception("ProtocolProperties (op:"+op.getNome()+") ["+pp.getName()+"] senza nome file");
+								}
+								ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.OPERATION;
+								String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
+										op.getNome()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+ // uso il nome dell'operation che e' univoco
+										pp.getName(); // uso la property name che è univoca
+								protocolPropertiesList.put(id, pp.getByteFile());
+								pp.setByteFile(null);
+							}
+						}
+					}
+				}
+			}
+			if(accordo.sizeResourceList()>0) {
+				for (Resource resource : accordo.getResourceList()) {
+					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+						if(pp.getByteFile()==null) {
+							continue;
+						}
+						if(pp.getFile()==null){
+							throw new Exception("ProtocolProperties (resource:"+resource.getNome()+") ["+pp.getName()+"] senza nome file");
+						}
+						ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.RESOURCE;
+						String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+
+								resource.getNome()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+ // uso il nome della risorsa che e' univoco
+								pp.getName(); // uso la property name che è univoca
+						protocolPropertiesList.put(id, pp.getByteFile());
+						pp.setByteFile(null);
+					}
+				}
+			}
+			
 			// id
 			String nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME;
 			zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
@@ -844,6 +1020,7 @@ public class ZIPWriteUtils {
 				}
 			}
 			
+			// specificaCoordinamento
 			if(servizioComposto){
 				if(specificaCoordinamentoList.size()>0){
 					int index = 1;
@@ -865,6 +1042,29 @@ public class ZIPWriteUtils {
 						
 						index++;
 					}
+				}
+			}
+			
+			// protocolProperties
+			if(protocolPropertiesList.size()>0){
+				int indexPP = 1;
+				Enumeration<String> enumPP = protocolPropertiesList.keys();
+				while (enumPP.hasMoreElements()) {
+					String id = (String) enumPP.nextElement();
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(id.getBytes());
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(protocolPropertiesList.get(id));
+					
+					indexPP++;
 				}
 			}
 			
@@ -963,6 +1163,20 @@ public class ZIPWriteUtils {
 				String id = documento.getTipo()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+documento.getFile();
 				specificaSicurezzaList.put(id, documento.getByteContenuto());
 				documento.setByteContenuto(null);
+			}
+			
+			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				if(pp.getByteFile()==null) {
+					continue;
+				}
+				if(pp.getFile()==null){
+					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+				}
+				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA;
+				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
+				protocolPropertiesList.put(id, pp.getByteFile());
+				pp.setByteFile(null);
 			}
 			
 			List<Fruitore> listFruitore = new ArrayList<Fruitore>();
@@ -1093,6 +1307,29 @@ public class ZIPWriteUtils {
 				}
 			}
 			
+			// protocolProperties
+			if(protocolPropertiesList.size()>0){
+				int indexPP = 1;
+				Enumeration<String> enumPP = protocolPropertiesList.keys();
+				while (enumPP.hasMoreElements()) {
+					String id = (String) enumPP.nextElement();
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(id.getBytes());
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(protocolPropertiesList.get(id));
+					
+					indexPP++;
+				}
+			}
+			
 			// fruitori (questo caso non dovrebbe essere presente, ci dovrebbe invece essere l'archiveFruitore)
 			if(listFruitore.size()>0){
 				for (Fruitore fruitore : listFruitore) {
@@ -1177,6 +1414,20 @@ public class ZIPWriteUtils {
 				documento.setByteContenuto(null);
 			}
 			
+			Hashtable<String, byte[]> protocolPropertiesList = new Hashtable<String, byte[]>();
+			for (ProtocolProperty pp : accordo.getProtocolPropertyList()) {
+				if(pp.getByteFile()==null) {
+					continue;
+				}
+				if(pp.getFile()==null){
+					throw new Exception("ProtocolProperties ["+pp.getName()+"] senza nome file");
+				}
+				ProprietariProtocolProperty tipologiaProprietarioProtocolProperty = ProprietariProtocolProperty.ACCORDO_COOPERAZIONE;
+				String id = tipologiaProprietarioProtocolProperty.name()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR+pp.getName(); // uso la property name che è univoca
+				protocolPropertiesList.put(id, pp.getByteFile());
+				pp.setByteFile(null);
+			}
+			
 			// id
 			String nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME;
 			zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
@@ -1237,6 +1488,29 @@ public class ZIPWriteUtils {
 					zipOut.write(specificaSemiformaleList.get(id));
 					
 					index++;
+				}
+			}
+			
+			// protocolProperties
+			if(protocolPropertiesList.size()>0){
+				int indexPP = 1;
+				Enumeration<String> enumPP = protocolPropertiesList.keys();
+				while (enumPP.hasMoreElements()) {
+					String id = (String) enumPP.nextElement();
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(id.getBytes());
+					
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_PROTOCOL_PROPERTIES+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX+indexPP+
+							Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT;
+					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
+					zipOut.write(protocolPropertiesList.get(id));
+					
+					indexPP++;
 				}
 			}
 		
