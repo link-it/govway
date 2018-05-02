@@ -21,14 +21,19 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
@@ -56,8 +61,9 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
+			JDBCServiceManager serviceManagerControlloCongestione,
 			ArchiviCore archiviCore,boolean smista,String userLogin) {
-		super(driverRegistroServizi, driverConfigurazione);
+		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloCongestione);
 		this.archiviCore = archiviCore;
 		this.smista = smista;
 		this.userLogin = userLogin;
@@ -472,5 +478,104 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 
 
-
+	// --- Controllo Congestione (Configurazione) ---
+	
+	@Override
+	public void updateControlloCongestione_configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteControlloCongestione_Configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- Controllo Congestione (ConfigurazionePolicy) ---
+	
+	@Override
+	public void createControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- Controllo Congestione (AttivazionePolicy) ---
+	
+	@Override
+	public void createControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, policy);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- ConfigurazionePdD ---
+	
+	@Override
+	public void updateConfigurazione(Configurazione configurazione) throws DriverConfigurazioneException{
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteConfigurazione(Configurazione configurazione) throws DriverConfigurazioneException{
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, configurazione);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
 }

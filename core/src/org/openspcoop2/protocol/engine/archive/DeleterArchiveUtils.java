@@ -53,6 +53,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoDelete;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
@@ -95,6 +97,32 @@ public class DeleterArchiveUtils {
 			
 			ArchiveEsitoDelete esito = new ArchiveEsitoDelete();
 			
+			
+			// ControlloCongestione (AttivazionePolicy)
+			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloCongestione_activePolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteActivePolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloCongestione_activePolicies().add(detail);
+			}
+			
+			// ControlloCongestione (ConfigurazionePolicy)
+			for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+				ArchiveConfigurationPolicy archivePolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
+				try{
+					this.deleteConfigPolicy(archivePolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloCongestione_configurationPolicies().add(detail);
+			}
 			
 			
 			// Preparo Liste di Mapping da creare una volta registrati sia gli accordi (servizi e fruitori) che le porte (delegate e applicative)
@@ -423,7 +451,7 @@ public class DeleterArchiveUtils {
 			if(archive.getConfigurazionePdD()!=null && archive.getConfigurazionePdD().sizeExtendedInfoList()>0) {
 				Configurazione newConfig = new Configurazione();
 				newConfig.getExtendedInfoList().addAll(archive.getConfigurazionePdD().getExtendedInfoList());
-				ArchiveEsitoImportDetailConfigurazione detail = new ArchiveEsitoImportDetailConfigurazione(newConfig);
+				ArchiveEsitoImportDetailConfigurazione<Configurazione> detail = new ArchiveEsitoImportDetailConfigurazione<Configurazione>(newConfig);
 				try{
 					this.deleteConfigurazione(newConfig, detail);
 				}catch(Exception e){
@@ -442,7 +470,7 @@ public class DeleterArchiveUtils {
 	}
 	
 	
-	public void deleteConfigurazione(Configurazione config, ArchiveEsitoImportDetailConfigurazione detail){
+	public void deleteConfigurazione(Configurazione config, ArchiveEsitoImportDetailConfigurazione<Configurazione> detail){
 		
 		try{
 						
@@ -454,6 +482,84 @@ public class DeleterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'eliminazione della configurazione: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	public void deleteConfigPolicy(ArchiveConfigurationPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			List<String> whereIsInUso = new ArrayList<String>();
+			if (this.importerEngine.isControlloCongestione_configurationPolicyInUso(nomePolicy, whereIsInUso)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione della configurazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	public void deleteActivePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// non esistenti
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			List<String> whereIsInUso = new ArrayList<String>();
+			if (this.importerEngine.isControlloCongestione_activePolicyInUso(nomePolicy, whereIsInUso)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteControlloCongestione_activePolicy(archivePolicy.getPolicy());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
@@ -1033,17 +1139,5 @@ public class DeleterArchiveUtils {
 	}
 	
 	
-	
-	public void importConfigurazione(Configurazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione detail){		
-		try{
-			// update
-			this.importerEngine.updateConfigurazione(configurazionePdD);
-			detail.setState(ArchiveStatoImport.UPDATED);
-		}			
-		catch(Exception e){
-			this.log.error("Errore durante l'import della configurazione: "+e.getMessage(),e);
-			detail.setState(ArchiveStatoImport.ERROR);
-			detail.setException(e);
-		}
-	}
+
 }

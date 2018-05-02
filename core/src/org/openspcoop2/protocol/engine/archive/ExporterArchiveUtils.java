@@ -32,6 +32,8 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
+import org.openspcoop2.core.controllo_congestione.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -64,7 +66,9 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
+import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
@@ -193,10 +197,13 @@ public class ExporterArchiveUtils {
 			}
 			break;
 		case CONFIGURAZIONE:
+			readControlloCongestioneConfiguration(archive);
 			archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			break;
 		case ALL:
 		case ALL_WITHOUT_CONFIGURAZIONE:
+			
+			// soggetti e tutti gli oggetti interni
 			FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
 			try{
 				ArchiveCascadeConfiguration cascadeAll = new ArchiveCascadeConfiguration(true);
@@ -207,7 +214,10 @@ public class ExporterArchiveUtils {
 					}
 				}
 			}catch(DriverConfigurazioneNotFound notFound){}
+			
+			// configurazione solo se richiesta
 			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
+				readControlloCongestioneConfiguration(archive);
 				archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			}
 			
@@ -261,6 +271,30 @@ public class ExporterArchiveUtils {
 		}
 		
 	}
+	
+	private void readControlloCongestioneConfiguration(Archive archive) throws Exception {
+		
+		archive.setControlloCongestione_configurazione(this.archiveEngine.getControlloCongestione_Configurazione());
+		
+		List<IdPolicy> listControlloCongestione_configurationPolicies = this.archiveEngine.getAllIdControlloCongestione_configurationPolicies();
+		if(listControlloCongestione_configurationPolicies!=null && listControlloCongestione_configurationPolicies.size()>0) {
+			for (IdPolicy idPolicy : listControlloCongestione_configurationPolicies) {
+				archive.getControlloCongestione_configurationPolicies().add(new ArchiveConfigurationPolicy(
+						this.archiveEngine.getControlloCongestione_configurationPolicy(idPolicy),
+						this.idCorrelazione));
+			}
+		}
+		
+		List<IdActivePolicy> listControlloCongestione_activePolicies = this.archiveEngine.getAllIdControlloCongestione_activePolicies();
+		if(listControlloCongestione_activePolicies!=null && listControlloCongestione_activePolicies.size()>0) {
+			for (IdActivePolicy idPolicy : listControlloCongestione_activePolicies) {
+				archive.getControlloCongestione_activePolicies().add(new ArchiveActivePolicy(
+						this.archiveEngine.getControlloCongestione_activePolicy(idPolicy),
+						this.idCorrelazione));
+			}
+		}
+	}
+	
 
 	private void readPdd(Archive archive, String nomePdd, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readPdd(archive, nomePdd, cascadeConfig, true, provenienza);

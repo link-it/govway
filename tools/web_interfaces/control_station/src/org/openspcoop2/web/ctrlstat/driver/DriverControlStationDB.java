@@ -56,6 +56,7 @@ import org.openspcoop2.core.controllo_congestione.constants.TipoControlloPeriodo
 import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_congestione.dao.IDBAttivazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_congestione.dao.IDBConfigurazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -132,6 +133,7 @@ public class DriverControlStationDB  {
 	private DriverUsersDB usersDB = null;
 	private DriverAudit auditDB = null;
 	private DriverAuditDBAppender auditDBappender = null;
+	private JDBCServiceManager jdbcServiceManagerControlloCongestione = null;
 
 	private IDAccordoFactory idAccordoFactory = null;
 	@SuppressWarnings("unused")
@@ -160,6 +162,10 @@ public class DriverControlStationDB  {
 	public DriverAuditDBAppender getDriverAuditDBAppender() {
 		return this.auditDBappender;
 	}
+	
+	public JDBCServiceManager getJdbcServiceManagerControlloCongestione() {
+		return this.jdbcServiceManagerControlloCongestione;
+	}
 
 	public DriverControlStationDB(Connection connection, Properties context, String tipoDB) throws DriverControlStationException {
 		this.log = ControlStationLogger.getDriverDBPddConsoleLogger();
@@ -186,6 +192,10 @@ public class DriverControlStationDB  {
 			this.usersDB = new DriverUsersDB(connection, this.tipoDB);
 			this.auditDB = new DriverAudit(connection, this.tipoDB);
 			this.auditDBappender = new DriverAuditDBAppender(connection, this.tipoDB);
+			ServiceManagerProperties properties = new ServiceManagerProperties();
+			properties.setDatabaseType(this.tipoDB);
+			properties.setShowSql(true);
+			this.jdbcServiceManagerControlloCongestione = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
 			this.idAccordoFactory = IDAccordoFactory.getInstance();
 			this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		} catch (Exception e) {

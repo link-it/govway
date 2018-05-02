@@ -50,7 +50,19 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveAccordoServizioParteSpecifica> accordiServizioParteSpecifica = new ArchiveSortedMap<ArchiveAccordoServizioParteSpecifica>();
 	private ArchiveSortedMap<ArchiveFruitore> accordiFruitori = new ArchiveSortedMap<ArchiveFruitore>();
 	
+	private ArchiveSortedMap<ArchiveConfigurationPolicy> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveConfigurationPolicy>();
+	private ArchiveSortedMap<ArchiveActivePolicy> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
+	private org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale controlloCongestione_configurazione;
+	
 	private Configurazione configurazionePdD;
+	
+	public org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale getControlloCongestione_configurazione() {
+		return this.controlloCongestione_configurazione;
+	}
+	public void setControlloCongestione_configurazione(
+			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale controlloCongestione_configurazione) {
+		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
+	}
 	
 	public Configurazione getConfigurazionePdD() {
 		return this.configurazionePdD;
@@ -96,6 +108,12 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchiveFruitore> getAccordiFruitori() {
 		return this.accordiFruitori;
+	}
+	public ArchiveSortedMap<ArchiveConfigurationPolicy> getControlloCongestione_configurationPolicies() {
+		return this.controlloCongestione_configurationPolicies;
+	}
+	public ArchiveSortedMap<ArchiveActivePolicy> getControlloCongestione_activePolicies() {
+		return this.controlloCongestione_activePolicies;
 	}
 	
 }

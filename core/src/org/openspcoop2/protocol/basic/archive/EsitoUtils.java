@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -42,6 +43,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
@@ -409,11 +412,64 @@ public class EsitoUtils {
 		}
 		
 		
+		// Controllo Congestione (Configurazione)
+		if(archive.getControlloCongestione_configurazione()!=null){
+			bfEsito.append("Controllo del Traffico (Configurazione)\n");
+			try{
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> configurazione = 
+						archive.getControlloCongestione_configurazione();
+				bfEsito.append("\t- ");
+				serializeStato(configurazione, bfEsito);
+			}catch(Exception e){
+				bfEsito.append("\t- non importata: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+			bfEsito.append("\n");
+		}
+		
+		// Controllo Congestione (ConfigurazionePolicies)
+		if(archive.getControlloCongestione_configurationPolicies().size()>0){
+			bfEsito.append("Controllo del Traffico (Registro Policy) (").append(archive.getControlloCongestione_configurationPolicies().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+				String nomePolicy = ((ArchiveConfigurationPolicy)archiveCCPolicy.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nomePolicy).append("] ");
+				serializeStato(archiveCCPolicy, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPdd().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Controllo Congestione (AttivazionePolicies)
+		if(archive.getControlloCongestione_activePolicies().size()>0){
+			bfEsito.append("Controllo del Traffico (Policy) (").append(archive.getControlloCongestione_activePolicies().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+				String nomePolicy = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getNomePolicy();
+				bfEsito.append("\t- [").append(nomePolicy).append("] ");
+				serializeStato(archiveCCPolicy, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getPdd().size()>0){
+			bfEsito.append("\n");	
+		}
+		
 		// Configurazione
 		if(archive.getConfigurazionePdD()!=null){
 			bfEsito.append("Configurazione\n");
 			try{
-				ArchiveEsitoImportDetailConfigurazione configurazione = archive.getConfigurazionePdD();
+				ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazione = archive.getConfigurazionePdD();
 				bfEsito.append("\t- ");
 				serializeStato(configurazione, bfEsito);
 			}catch(Exception e){
@@ -458,7 +514,7 @@ public class EsitoUtils {
 			break;
 		}
 	}
-	public void serializeStato(ArchiveEsitoImportDetailConfigurazione detail,StringBuffer bfEsito){
+	public void serializeStato(ArchiveEsitoImportDetailConfigurazione<?> detail,StringBuffer bfEsito){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();
@@ -598,9 +654,41 @@ public class EsitoUtils {
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPorteApplicative().add(archivePortaApplicativa);
 		}
 		
+		// ControlloCongestione (Configurazione)
+		if(archive.getControlloCongestione_configurazione()!=null){
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> configurazione = 
+					archive.getControlloCongestione_configurazione();
+			if(mapIdCorrelazione.size()>1){
+				throw new ProtocolException("Configurazione permessa solo con una unica correlazione tra oggetti");
+			}
+			ArchiveIdCorrelazione idCorrelazione = null; 
+			if(mapIdCorrelazione.size()==1){
+				idCorrelazione = mapIdCorrelazione.values().iterator().next();
+			}
+			else if(mapIdCorrelazione.size()==0){
+				// l'archivio non contiene altri oggetti se non la configurazione
+				idCorrelazione = new ArchiveIdCorrelazione(ZIPUtils.ID_CORRELAZIONE_DEFAULT);
+			}
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).setControlloCongestione_configurazione(configurazione);
+		}
+		
+		// ControlloCongestione (ConfigurazionePolicy)
+		for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveConfigurationPolicy)archiveCCPolicy.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloCongestione_configurationPolicies().add(archiveCCPolicy);
+		}
+		
+		// ControlloCongestione (AttivazionePolicy)
+		for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloCongestione_activePolicies().add(archiveCCPolicy);
+		}
+		
 		// Configurazione
 		if(archive.getConfigurazionePdD()!=null){
-			ArchiveEsitoImportDetailConfigurazione configurazione = archive.getConfigurazionePdD();
+			ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazione = archive.getConfigurazionePdD();
 			if(mapIdCorrelazione.size()>1){
 				throw new ProtocolException("Configurazione permessa solo con una unica correlazione tra oggetti");
 			}

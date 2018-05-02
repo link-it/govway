@@ -20,7 +20,6 @@
 
 package org.openspcoop2.protocol.sdk.archive;
 
-import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 
 /**
@@ -30,21 +29,21 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiveEsitoImportDetailConfigurazione {
+public class ArchiveEsitoImportDetailConfigurazione<T> {
 
-	private Configurazione archiveObject;
+	private T archiveObject;
 	private ArchiveStatoImport state;
 	private String stateDetail;
 	private Throwable exception;
 	
-	public ArchiveEsitoImportDetailConfigurazione(Configurazione archiveObject){
+	public ArchiveEsitoImportDetailConfigurazione(T archiveObject){
 		this.archiveObject = archiveObject;
 	}
 	
-	public Configurazione getArchiveObject() {
+	public T getArchiveObject() {
 		return this.archiveObject;
 	}
-	public void setArchiveObject(Configurazione archiveObject) {
+	public void setArchiveObject(T archiveObject) {
 		this.archiveObject = archiveObject;
 	}
 	public ArchiveStatoImport getState() {

@@ -65,6 +65,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
@@ -93,8 +95,10 @@ public class ZIPWriteUtils {
 
 	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jibxRegistrySerializer = null;
 	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jibxConfigSerializer = null;
+	private org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer jibxControlloCongestioneSerializer = null;
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 	private org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsConfig = null;
+	private org.openspcoop2.core.controllo_congestione.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsControlloCongestione = null;
 	
 	
 	public ZIPWriteUtils(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
@@ -105,8 +109,10 @@ public class ZIPWriteUtils {
 		
 		this.jibxRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
 		this.jibxConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
+		this.jibxControlloCongestioneSerializer = new org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer();
 		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsConfig = new org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions();
+		this.cleanerOpenSPCoop2ExtensionsControlloCongestione = new org.openspcoop2.core.controllo_congestione.utils.CleanerOpenSPCoop2Extensions();
 		
 	}
 	
@@ -164,17 +170,25 @@ public class ZIPWriteUtils {
 
 
 	
-	private void write(ZipOutputStream zipOut,String elemento,Object idElemento,boolean registry,Object object) throws ProtocolException{
+	private void write(ZipOutputStream zipOut,String elemento,Object idElemento,SerializationType serializationType,Object object) throws ProtocolException{
 		try{
 			Method method = null;
 			byte[]bytes = null;
-			if(registry){
+			switch (serializationType) {
+			case REGISTRY:
 				method = this.jibxRegistrySerializer.getClass().getMethod("toByteArray", object.getClass());
 				bytes = (byte[]) method.invoke(this.jibxRegistrySerializer, object);
-			}else{
+				break;
+			case CONFIG:
 				method = this.jibxConfigSerializer.getClass().getMethod("toByteArray", object.getClass());
 				bytes = (byte[]) method.invoke(this.jibxConfigSerializer, object);
+				break;
+			case CONTROLLO_CONGESTIONE:
+				method = this.jibxControlloCongestioneSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jibxControlloCongestioneSerializer, object);
+				break;
 			}
+			
 			zipOut.write(bytes);
 		}catch(Exception e){
 			String xml = null;
@@ -215,7 +229,7 @@ public class ZIPWriteUtils {
 				zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 				Configurazione configurazionePdD = archive.getConfigurazionePdD();
 				this.cleanerOpenSPCoop2ExtensionsConfig.clean(configurazionePdD);
-				write(zipOut, "ConfigurazionePdD", "", false, configurazionePdD);
+				write(zipOut, "ConfigurazionePdD", "", SerializationType.CONFIG, configurazionePdD);
 			}
 			
 			// extendedConfigurazione
@@ -236,6 +250,44 @@ public class ZIPWriteUtils {
 				}
 			}
 			
+			// controlloCongestione
+			if(archive.getControlloCongestione_configurazione()!=null){
+				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
+						Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_FILE_NAME;
+				zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+				org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneCC = archive.getControlloCongestione_configurazione();
+				this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(configurazioneCC);
+				write(zipOut, "ControlloCongestione_Configurazione", "", SerializationType.CONTROLLO_CONGESTIONE, configurazioneCC);
+			}
+			
+			// controlloCongestione (configurationPolicy)
+			if(archive.getControlloCongestione_configurationPolicies()!=null && archive.getControlloCongestione_configurationPolicies().size()>0){
+				for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+					ArchiveConfigurationPolicy archiveCC = archive.getControlloCongestione_configurationPolicies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIG_POLICY_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy policy = archiveCC.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(policy);
+					write(zipOut, "ControlloCongestione_ConfigurazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_CONGESTIONE, policy);
+				}
+			}
+			
+			// controlloCongestione (activePolicy)
+			if(archive.getControlloCongestione_activePolicies()!=null && archive.getControlloCongestione_activePolicies().size()>0){
+				for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+					ArchiveActivePolicy archiveCC = archive.getControlloCongestione_activePolicies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_ACTIVE_POLICY_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getNomePolicy())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					org.openspcoop2.core.controllo_congestione.AttivazionePolicy policy = archiveCC.getPolicy();
+					this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(policy);
+					write(zipOut, "ControlloCongestione_AttivazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_CONGESTIONE, policy);
+				}
+			}
+			
 			// porteDominio
 			if(archive.getPdd()!=null && archive.getPdd().size()>0){
 				for (int i = 0; i < archive.getPdd().size(); i++) {
@@ -245,7 +297,7 @@ public class ZIPWriteUtils {
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					PortaDominio pdd = archivePdd.getPortaDominio();
 					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(pdd);
-					write(zipOut, "PortaDominio", archivePdd.getNomePdd(), true, pdd);
+					write(zipOut, "PortaDominio", archivePdd.getNomePdd(), SerializationType.REGISTRY, pdd);
 				}
 			}
 			
@@ -258,7 +310,7 @@ public class ZIPWriteUtils {
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					Ruolo ruolo = archiveRuolo.getRuolo();
 					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(ruolo);
-					write(zipOut, "Ruolo", archiveRuolo.getIdRuolo().getNome(), true, ruolo);
+					write(zipOut, "Ruolo", archiveRuolo.getIdRuolo().getNome(), SerializationType.REGISTRY, ruolo);
 				}
 			}
 			
@@ -309,7 +361,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						org.openspcoop2.core.registry.Soggetto soggettoRegistro = archiveSoggetto.getSoggettoRegistro();
 						this.cleanerOpenSPCoop2ExtensionsRegistry.clean(soggettoRegistro);
-						write(zipOut, "SoggettoRegistro", archiveSoggetto.getIdSoggetto(), true, soggettoRegistro);
+						write(zipOut, "SoggettoRegistro", archiveSoggetto.getIdSoggetto(), SerializationType.REGISTRY, soggettoRegistro);
 						
 						// protocolProperties
 						if(protocolPropertiesList.size()>0){
@@ -339,7 +391,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						org.openspcoop2.core.config.Soggetto soggettoConfigurazione = archiveSoggetto.getSoggettoConfigurazione();
 						this.cleanerOpenSPCoop2ExtensionsConfig.clean(soggettoConfigurazione);
-						write(zipOut, "SoggettoConfigurazione", archiveSoggetto.getIdSoggetto(), false, soggettoConfigurazione);
+						write(zipOut, "SoggettoConfigurazione", archiveSoggetto.getIdSoggetto(), SerializationType.CONFIG, soggettoConfigurazione);
 					}
 				}
 				
@@ -352,7 +404,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						ServizioApplicativo servizioApplicativo = archiveServizioApplicativo.getServizioApplicativo();
 						this.cleanerOpenSPCoop2ExtensionsConfig.clean(servizioApplicativo);
-						write(zipOut, "ServizioApplicativo", archiveServizioApplicativo.getIdServizioApplicativo(), false, servizioApplicativo);
+						write(zipOut, "ServizioApplicativo", archiveServizioApplicativo.getIdServizioApplicativo(), SerializationType.CONFIG, servizioApplicativo);
 					}
 				}
 				
@@ -367,7 +419,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						PortaDelegata portaDelegata = archivePortaDelegata.getPortaDelegata();
 						this.cleanerOpenSPCoop2ExtensionsConfig.clean(portaDelegata);
-						write(zipOut, "PortaDelegata", archivePortaDelegata.getIdPortaDelegata(), false, portaDelegata);
+						write(zipOut, "PortaDelegata", archivePortaDelegata.getIdPortaDelegata(), SerializationType.CONFIG, portaDelegata);
 						
 						// extended porteDelegata
 						if(archivePortaDelegata.getPortaDelegata()!=null && archivePortaDelegata.getPortaDelegata().sizeExtendedInfoList()>0){
@@ -402,7 +454,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						PortaApplicativa portaApplicativa = archivePortaApplicativa.getPortaApplicativa();
 						this.cleanerOpenSPCoop2ExtensionsConfig.clean(portaApplicativa);
-						write(zipOut, "PortaApplicativa", archivePortaApplicativa.getIdPortaApplicativa(), false, portaApplicativa);
+						write(zipOut, "PortaApplicativa", archivePortaApplicativa.getIdPortaApplicativa(), SerializationType.CONFIG, portaApplicativa);
 						
 						// extended portaApplicativa
 						if(archivePortaApplicativa.getPortaApplicativa()!=null && archivePortaApplicativa.getPortaApplicativa().sizeExtendedInfoList()>0){
@@ -523,7 +575,7 @@ public class ZIPWriteUtils {
 						zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 						this.cleanerOpenSPCoop2ExtensionsRegistry.clean(fruitore);
 						write(zipOut, "Fruitore", archiveFruitore.getIdSoggettoFruitore().toString()+" di "+
-								archiveFruitore.getIdAccordoServizioParteSpecifica().toString(), true, fruitore);
+								archiveFruitore.getIdAccordoServizioParteSpecifica().toString(), SerializationType.REGISTRY, fruitore);
 						
 						// protocolProperties
 						if(protocolPropertiesList.size()>0){
@@ -1525,4 +1577,10 @@ public class ZIPWriteUtils {
 			throw new ProtocolException("[AccordoCooperazione]["+idAccordo+"] ("+xml+"): "+e.getMessage(),e);
 		}
 	}
+}
+
+enum SerializationType {
+	
+	CONFIG, REGISTRY, CONTROLLO_CONGESTIONE
+	
 }

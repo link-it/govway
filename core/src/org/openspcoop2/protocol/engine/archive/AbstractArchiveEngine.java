@@ -36,6 +36,12 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
+import org.openspcoop2.core.controllo_congestione.IdPolicy;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -61,6 +67,8 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.slf4j.Logger;
 
 /**
@@ -82,9 +90,16 @@ public abstract class AbstractArchiveEngine {
 		return this.driverConfigurazione;
 	}
 
-	public AbstractArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,DriverConfigurazioneDB driverConfigurazione){
+	private JDBCServiceManager serviceManagerControlloCongestione;
+	public JDBCServiceManager getServiceManagerControlloCongestione() {
+		return this.serviceManagerControlloCongestione;
+	}
+
+	public AbstractArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,DriverConfigurazioneDB driverConfigurazione,
+			JDBCServiceManager serviceManagerControlloCongestione){
 		this.driverRegistroServizi = driverRegistroServizi;
 		this.driverConfigurazione = driverConfigurazione;
+		this.serviceManagerControlloCongestione = serviceManagerControlloCongestione;
 	}
 	
 	// --- Users ---
@@ -982,6 +997,219 @@ public abstract class AbstractArchiveEngine {
 		this.driverConfigurazione.updatePortaApplicativa(portaApplicativa);
 	}
 	
+	
+	
+	
+	// --- Controllo Congestione (Configurazione) ---
+	
+	public void updateControlloCongestione_configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+		try {
+			this.serviceManagerControlloCongestione.getConfigurazioneGeneraleService().update(configurazione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void deleteControlloCongestione_Configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+		try {
+			this.serviceManagerControlloCongestione.getConfigurazioneGeneraleService().delete(configurazione);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public ConfigurazioneGenerale getControlloCongestione_Configurazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			return this.serviceManagerControlloCongestione.getConfigurazioneGeneraleService().get();
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- Controllo Congestione (ConfigurazionePolicy) ---
+	
+	public List<IdPolicy> getAllIdControlloCongestione_configurationPolicies() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerControlloCongestione.getConfigurazionePolicyServiceSearch().newPaginatedExpression();
+			List<IdPolicy> l = this.serviceManagerControlloCongestione.getConfigurazionePolicyServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono policy");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public ConfigurazionePolicy getControlloCongestione_configurationPolicy(String idPolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		IdPolicy idPolicyObject = new IdPolicy();
+		idPolicyObject.setNome(idPolicy);
+		return this.getControlloCongestione_configurationPolicy(idPolicyObject);
+	}
+	public ConfigurazionePolicy getControlloCongestione_configurationPolicy(IdPolicy idPolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			return this.serviceManagerControlloCongestione.getConfigurazionePolicyServiceSearch().get(idPolicy);
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean existsControlloCongestione_configurationPolicy(String idPolicy) throws DriverConfigurazioneException {
+		IdPolicy idPolicyObject = new IdPolicy();
+		idPolicyObject.setNome(idPolicy);
+		return this.existsControlloCongestione_configurationPolicy(idPolicyObject);
+	}
+	public boolean existsControlloCongestione_configurationPolicy(IdPolicy idPolicy) throws DriverConfigurazioneException {
+		try {
+			return this.serviceManagerControlloCongestione.getConfigurazionePolicyServiceSearch().exists(idPolicy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void createControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerControlloCongestione.getConfigurazionePolicyService().create(policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void updateControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			IdPolicy oldId = new IdPolicy();
+			oldId.setNome(policy.getIdPolicy());
+			if(policy.getOldIdPolicy()!=null && policy.getOldIdPolicy().getNome()!=null) {
+				oldId.setNome(policy.getOldIdPolicy().getNome());
+			}
+			this.serviceManagerControlloCongestione.getConfigurazionePolicyService().update(oldId, policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void deleteControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerControlloCongestione.getConfigurazionePolicyService().delete(policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isControlloCongestione_configurationPolicyInUso(String idPolicy, List<String> whereIsInUso) throws DriverConfigurazioneException {
+		IdPolicy idPolicyObject = new IdPolicy();
+		idPolicyObject.setNome(idPolicy);
+		return this.isControlloCongestione_configurationPolicyInUso(idPolicyObject,whereIsInUso);
+	}
+	public boolean isControlloCongestione_configurationPolicyInUso(IdPolicy idPolicy, List<String> whereIsInUso) throws DriverConfigurazioneException {
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			pagExpr.equals(AttivazionePolicy.model().ID_POLICY, idPolicy.getNome());
+			List<IdActivePolicy> l = this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				return false;
+			}
+			else {
+				for (IdActivePolicy idActivePolicy : l) {
+					whereIsInUso.add(idActivePolicy.getNome());
+				}
+				return true;	
+			}
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- Controllo Congestione (AttivazionePolicy) ---
+	
+	public List<IdActivePolicy> getAllIdControlloCongestione_activePolicies() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		try {
+			IPaginatedExpression pagExpr = this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().newPaginatedExpression();
+			List<IdActivePolicy> l = this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().findAllIds(pagExpr);
+			if(l==null || l.size()<=0) {
+				throw new NotFoundException("Non esistono policy");
+			}
+			return l;
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public AttivazionePolicy getControlloCongestione_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
+		IdActivePolicyObject.setNome(IdActivePolicy);
+		return this.getControlloCongestione_activePolicy(IdActivePolicyObject);
+	}
+	public AttivazionePolicy getControlloCongestione_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		try {
+			return this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().get(IdActivePolicy);
+		}catch(NotFoundException e) {
+			throw new DriverConfigurazioneNotFound(e.getMessage(),e);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean existsControlloCongestione_activePolicy(String IdActivePolicy) throws DriverConfigurazioneException {
+		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
+		IdActivePolicyObject.setNome(IdActivePolicy);
+		return this.existsControlloCongestione_activePolicy(IdActivePolicyObject);
+	}
+	public boolean existsControlloCongestione_activePolicy(IdActivePolicy IdActivePolicy) throws DriverConfigurazioneException {
+		try {
+			return this.serviceManagerControlloCongestione.getAttivazionePolicyServiceSearch().exists(IdActivePolicy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void createControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerControlloCongestione.getAttivazionePolicyService().create(policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void updateControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			IdActivePolicy oldId = new IdActivePolicy();
+			oldId.setNome(policy.getIdActivePolicy());
+			if(policy.getOldIdActivePolicy()!=null && policy.getOldIdActivePolicy().getNome()!=null) {
+				oldId.setNome(policy.getOldIdActivePolicy().getNome());
+			}
+			this.serviceManagerControlloCongestione.getAttivazionePolicyService().update(oldId, policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public void deleteControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+		try {
+			this.serviceManagerControlloCongestione.getAttivazionePolicyService().delete(policy);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+	}
+	
+	public boolean isControlloCongestione_activePolicyInUso(String IdActivePolicy, List<String> whereIsInUso) throws DriverRegistroServiziException {
+		IdActivePolicy IdActivePolicyObject = new IdActivePolicy();
+		IdActivePolicyObject.setNome(IdActivePolicy);
+		return this.isControlloCongestione_configurationPolicyInUso(IdActivePolicyObject,whereIsInUso);
+	}
+	public boolean isControlloCongestione_configurationPolicyInUso(IdActivePolicy IdActivePolicy, List<String> whereIsInUso) throws DriverRegistroServiziException {
+		return false;
+	}
 	
 	
 	

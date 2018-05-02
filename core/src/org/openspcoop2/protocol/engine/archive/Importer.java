@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.engine.archive;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
@@ -97,6 +98,7 @@ public class Importer {
 		// Inizializzo Reader
 		DriverRegistroServiziDB driverRegistroServizi = null; 
 		DriverConfigurazioneDB driverConfigurazione = null;
+		JDBCServiceManager serviceManager = null;
 		// TODO INIT
 		RegistryReader archiveRegistryReader = new RegistryReader(driverRegistroServizi,log);
 		ConfigIntegrationReader archiveConfigIntegrationReader = new ConfigIntegrationReader(driverConfigurazione,log);
@@ -117,7 +119,7 @@ public class Importer {
 		
 		
 		// Import
-		ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroServizi, driverConfigurazione);
+		ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroServizi, driverConfigurazione, serviceManager);
 		ImporterArchiveUtils importerArchiveUtils = 
 				new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, tipoPddDefault,
 						isShowGestioneWorkflowStatoDocumenti, updateAbilitato);

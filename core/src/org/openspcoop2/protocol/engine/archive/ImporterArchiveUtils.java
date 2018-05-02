@@ -29,6 +29,8 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -68,6 +70,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
+import org.openspcoop2.protocol.sdk.archive.ArchiveConfigurationPolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImport;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
@@ -396,13 +400,52 @@ public class ImporterArchiveUtils {
 				}
 			}
 			
+						
+			// Controllo Congestione (Configurazione)
+			if(archive.getControlloCongestione_configurazione()!=null){
+				org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione = archive.getControlloCongestione_configurazione();
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> detail = 
+						new ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale>(configurazione);
+				try{
+					this.importControlloCongestione_configurazione(configurazione, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.setControlloCongestione_configurazione(detail);
+			}
+					
+			// Controllo Congestione (ConfigurazionePolicy)
+			for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+				ArchiveConfigurationPolicy archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
+				try{
+					this.importControlloCongestione_configurationPolicy(archiveCCPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloCongestione_configurationPolicies().add(detail);
+			}
 			
+			// Controllo Congestione (AttivazionePolicy)
+			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+				ArchiveActivePolicy archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
+				try{
+					this.importControlloCongestione_activePolicy(archiveCCPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getControlloCongestione_activePolicies().add(detail);
+			}
 			
 			
 			// Configurazione
 			if(archive.getConfigurazionePdD()!=null){
 				Configurazione configurazione = archive.getConfigurazionePdD();
-				ArchiveEsitoImportDetailConfigurazione detail = new ArchiveEsitoImportDetailConfigurazione(configurazione);
+				ArchiveEsitoImportDetailConfigurazione<Configurazione> detail = new ArchiveEsitoImportDetailConfigurazione<Configurazione>(configurazione);
 				try{
 					this.importConfigurazione(configurazione, detail);
 				}catch(Exception e){
@@ -2275,7 +2318,164 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	public void importConfigurazione(Configurazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione detail){		
+	
+	public void importControlloCongestione_configurazione(org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione, 
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> detail){		
+		try{
+			// update
+			this.importerEngine.updateControlloCongestione_configurazione(configurazione);
+			detail.setState(ArchiveStatoImport.UPDATED);
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import della configurazione del controllo congestione: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	public void importControlloCongestione_configurationPolicy(ArchiveConfigurationPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)){
+				
+				ConfigurazionePolicy old = this.importerEngine.getControlloCongestione_configurationPolicy(nomePolicy);
+				archivePolicy.getPolicy().setId(old.getId());
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updateControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import della configurazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	public void importControlloCongestione_activePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
+		
+		String nomePolicy = archivePolicy.getNomePolicy();
+		try{
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			if(this.importerEngine.existsControlloCongestione_configurationPolicy(archivePolicy.getPolicy().getIdPolicy()) == false ){
+				throw new Exception("Configurazione della policy ["+archivePolicy.getPolicy().getIdPolicy()+"] non esistente nel registro");
+			}
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			// non esistenti
+			
+			
+			// --- ora registrazione
+			// non esistenti
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)){
+				
+				AttivazionePolicy old = this.importerEngine.getControlloCongestione_activePolicy(nomePolicy);
+				archivePolicy.getPolicy().setId(old.getId());
+				
+				// visibilita' oggetto stesso per update
+				// non esistenti
+
+				// update
+				this.importerEngine.updateControlloCongestione_activePolicy(archivePolicy.getPolicy());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createControlloCongestione_activePolicy(archivePolicy.getPolicy());
+				create = true;
+			}
+				
+			
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import dell'attivazione della policy ["+nomePolicy+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	public void importConfigurazione(Configurazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione<Configurazione> detail){		
 		try{
 			// update
 			this.importerEngine.updateConfigurazione(configurazionePdD);

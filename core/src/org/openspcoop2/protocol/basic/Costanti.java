@@ -182,6 +182,11 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR = "configurazione";
 	public static final String OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_FILE_NAME = "configurazione.xml";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR = "controlloCongestione";
+	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_FILE_NAME = "configurazione.xml";
+	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIG_POLICY_DIR = "configPolicies";
+	public static final String OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_ACTIVE_POLICY_DIR = "policies"; // devo utilizzare un nome che in ordine lessicografico venga dopo configPolicies
+	
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR = "porteDominio";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_RUOLI_DIR = "ruoli";

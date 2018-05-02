@@ -18,30 +18,37 @@
  *
  */
 
-package org.openspcoop2.protocol.engine.archive;
+package org.openspcoop2.core.controllo_congestione.utils;
 
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
 
 /**
- *  ArchiveEngine
+ * CleanerOpenSPCoop2Extensions
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13896 $, $Date: 2018-04-27 16:44:32 +0200 (Fri, 27 Apr 2018) $
  */
-public class ArchiveEngine extends AbstractArchiveEngine {
+public class CleanerOpenSPCoop2Extensions {
 
-	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
-			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloCongestione) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloCongestione);
+	// implementata per simmetrica con config e registry
+	// per adesso nop
+	
+	public void clean(ConfigurazioneGenerale configurazionePdD){
+
+		
 	}
 
-	@Override
-	public boolean isVisioneOggettiGlobale(String userLogin) {
-		return true;
+	public void clean(ConfigurazionePolicy policy){
+		
+		
+	}
+
+	public void clean(AttivazionePolicy policy){
+		
+		
 	}
 
 }

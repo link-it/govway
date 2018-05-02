@@ -42,6 +42,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.sdk.archive.ArchiveActivePolicy;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -187,7 +188,7 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public void filterByProtocol(List<String> tipiSoggetti,Archive archive) throws ProtocolException {
+	public void filterByProtocol(List<String> tipiSoggetti,List<String> tipiServizi,Archive archive) throws ProtocolException {
 		
 		// soggetti
 		if(archive.getSoggetti()!=null && archive.getSoggetti().size()>0) {
@@ -356,6 +357,43 @@ public class ExporterUtils {
 			if(listFiltrata.size()>0) {
 				for (ArchiveFruitore archiveFiltrato : listFiltrata) {
 					archive.getAccordiFruitori().add(archiveFiltrato);		
+				}
+			}
+		}
+		
+		// controllo congestione
+		if(archive.getControlloCongestione_activePolicies()!=null && archive.getControlloCongestione_activePolicies().size()>0) {
+			List<ArchiveActivePolicy> listFiltrata = new ArrayList<>();
+			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloCongestione_activePolicies().get(i);
+				boolean filtra = false;
+				if(archivePolicy.getPolicy().getFiltro()!=null) {
+					if(archivePolicy.getPolicy().getFiltro().getTipoErogatore()!=null) {
+						if(tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoErogatore())==false) {
+							filtra = true;
+						}
+					}
+					if(archivePolicy.getPolicy().getFiltro().getTipoFruitore()!=null) {
+						if(tipiSoggetti.contains(archivePolicy.getPolicy().getFiltro().getTipoFruitore())==false) {
+							filtra = true;
+						}
+					}
+					if(archivePolicy.getPolicy().getFiltro().getTipoServizio()!=null) {
+						if(tipiServizi.contains(archivePolicy.getPolicy().getFiltro().getTipoServizio())==false) {
+							filtra = true;
+						}
+					}
+				}
+				if(!filtra) {
+					listFiltrata.add(archivePolicy);
+				}
+			}
+			while(archive.getControlloCongestione_activePolicies().size()>0) {
+				archive.getControlloCongestione_activePolicies().remove(0);
+			}
+			if(listFiltrata.size()>0) {
+				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
+					archive.getControlloCongestione_activePolicies().add(archiveFiltrato);		
 				}
 			}
 		}

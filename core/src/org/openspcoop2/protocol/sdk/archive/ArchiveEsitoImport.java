@@ -20,6 +20,8 @@
 
 package org.openspcoop2.protocol.sdk.archive;
 
+import org.openspcoop2.core.config.Configurazione;
+
 /**
  *  ArchiveEsitoImport
  *
@@ -47,7 +49,11 @@ public class ArchiveEsitoImport {
 
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiFruitori = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
-	private ArchiveEsitoImportDetailConfigurazione configurazionePdD;
+	private ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> controlloCongestione_configurazione;
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
+	private ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD;
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPdd() {
 		return this.pdd;
@@ -97,11 +103,28 @@ public class ArchiveEsitoImport {
 		return this.accordiFruitori;
 	}
 
-	public ArchiveEsitoImportDetailConfigurazione getConfigurazionePdD() {
+	public ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> getControlloCongestione_configurazione() {
+		return this.controlloCongestione_configurazione;
+	}
+
+	public void setControlloCongestione_configurazione(
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> controlloCongestione_configurazione) {
+		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloCongestione_configurationPolicies() {
+		return this.controlloCongestione_configurationPolicies;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloCongestione_activePolicies() {
+		return this.controlloCongestione_activePolicies;
+	}
+	
+	public ArchiveEsitoImportDetailConfigurazione<Configurazione> getConfigurazionePdD() {
 		return this.configurazionePdD;
 	}
 	
-	public void setConfigurazionePdD(ArchiveEsitoImportDetailConfigurazione configurazionePdD) {
+	public void setConfigurazionePdD(ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD) {
 		this.configurazionePdD = configurazionePdD;
 	}
 }

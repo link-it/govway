@@ -111,7 +111,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
+					driver.getDriverConfigurazioneDB(), 
+					driver.getJdbcServiceManagerControlloCongestione(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -140,7 +142,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
+					driver.getDriverConfigurazioneDB(), 
+					driver.getJdbcServiceManagerControlloCongestione(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -163,7 +167,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
+					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerControlloCongestione(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -189,7 +195,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
+					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerControlloCongestione(),
 					this, smista, userLogin);
 			
 			ImporterArchiveUtils importerArchiveUtils = 
@@ -222,7 +230,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), driver.getDriverConfigurazioneDB(), 
+			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
+					driver.getDriverConfigurazioneDB(),
+					driver.getJdbcServiceManagerControlloCongestione(),
 					this, smista, userLogin);
 			
 			DeleterArchiveUtils deleterArchiveUtils = 

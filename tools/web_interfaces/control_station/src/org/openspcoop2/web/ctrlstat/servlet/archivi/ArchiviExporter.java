@@ -47,6 +47,7 @@ import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -98,6 +99,7 @@ public class ArchiviExporter extends HttpServlet {
 			ArchiviHelper archiviHelper = new ArchiviHelper(request, pd, session);
 			ArchiviCore archiviCore = new ArchiviCore();
 			SoggettiCore soggettiCore = new SoggettiCore(archiviCore);
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(archiviCore);
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 		
@@ -242,10 +244,12 @@ public class ArchiviExporter extends HttpServlet {
 			// Filtro per il protocollo attivo sulla console
 			List<String> protocolli = archiviCore.getProtocolli(session);
 			List<String> tipiSoggetti = new ArrayList<>();
+			List<String> tipiServizi = new ArrayList<>();
 			for (String protocolloUtente : protocolli) {
 				tipiSoggetti.addAll(soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloUtente));
+				tipiServizi.addAll(aspsCore.getTipiServiziGestitiProtocollo(protocolloUtente,null));
 			}
-			exporterUtils.filterByProtocol(tipiSoggetti,archive);
+			exporterUtils.filterByProtocol(tipiSoggetti,tipiServizi,archive);
 			
 			
 			// extension
