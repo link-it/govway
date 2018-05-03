@@ -320,7 +320,7 @@ public class LoaderCore{
 			DataSource ds = (DataSource) jndi.lookup(this.dataSourceRegistroServizi);
 			con = ds.getConnection();
 			// istanzio il driver
-			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseRegistroServizi);
+			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseRegistroServizi, LoaderCore.log);
 			
 			return driver.existsUser(login);
 
@@ -345,7 +345,7 @@ public class LoaderCore{
 			DataSource ds = (DataSource) jndi.lookup(this.dataSourceConfigurazionePdD);
 			con = ds.getConnection();
 			// istanzio il driver
-			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseConfigurazionePdD);
+			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseConfigurazionePdD, LoaderCore.log);
 			
 			return driver.existsUser(login);
 
@@ -370,7 +370,7 @@ public class LoaderCore{
 			DataSource ds = (DataSource) jndi.lookup(this.dataSourceRegistroServizi);
 			con = ds.getConnection();
 			// istanzio il driver
-			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseRegistroServizi);
+			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseRegistroServizi, LoaderCore.log);
 			
 			return driver.getUser(login);
 
@@ -395,7 +395,7 @@ public class LoaderCore{
 			DataSource ds = (DataSource) jndi.lookup(this.dataSourceConfigurazionePdD);
 			con = ds.getConnection();
 			// istanzio il driver
-			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseConfigurazionePdD);
+			DriverUsersDB driver = new DriverUsersDB(con, this.tipoDatabaseConfigurazionePdD, LoaderCore.log);
 			
 			return driver.getUser(login);
 

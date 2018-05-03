@@ -189,7 +189,7 @@ public class DriverControlStationDB  {
 		try {
 			this.configDB = new DriverConfigurazioneDB(connection, this.tipoDB);
 			this.regservDB = new DriverRegistroServiziDB(connection, this.tipoDB);
-			this.usersDB = new DriverUsersDB(connection, this.tipoDB);
+			this.usersDB = new DriverUsersDB(connection, this.tipoDB, this.log);
 			this.auditDB = new DriverAudit(connection, this.tipoDB);
 			this.auditDBappender = new DriverAuditDBAppender(connection, this.tipoDB);
 			ServiceManagerProperties properties = new ServiceManagerProperties();
