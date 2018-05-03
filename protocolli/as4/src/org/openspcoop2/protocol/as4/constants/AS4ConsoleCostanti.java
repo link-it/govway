@@ -34,6 +34,7 @@ package org.openspcoop2.protocol.as4.constants;
 public class AS4ConsoleCostanti {
    
 	private static final String AS4_TITLE_LABEL = "eDelivery";
+	@SuppressWarnings("unused")
 	private static final String AS4_PREFIX_TITLE_LABEL = "eDelivery - ";
 	
 	
@@ -132,11 +133,29 @@ public class AS4ConsoleCostanti {
 	
 	// Erogazioni
 	
-	public static final String AS4_TITLE_EROGAZIONE_LABEL = AS4_PREFIX_TITLE_LABEL+"Service Info";
+	public static final String AS4_TITLE_EROGAZIONE_LABEL = AS4_TITLE_LABEL;
 	public static final String AS4_TITLE_EROGAZIONE_ID = "as4ErogazioneTitleId";
 	
-	public static final String AS4_EROGAZIONE_SECURITY_PROFILE_LABEL = "Security Profile";
+	public static final String AS4_TITLE_EROGAZIONE_SECURITY_LABEL = "Security";
+	public static final String AS4_TITLE_EROGAZIONE_SECURITY_ID = "as4ErogazioneSecuritySubTitleId";
+	
+	public static final String AS4_EROGAZIONE_SECURITY_PROFILE_LABEL = "Profile";
 	public static final String AS4_EROGAZIONE_SECURITY_PROFILE_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE;
+	
+	public static final String AS4_TITLE_EROGAZIONE_RELIABILITY_LABEL = "Reliability";
+	public static final String AS4_TITLE_EROGAZIONE_RELIABILITY_ID = "as4ErogazioneReliabilitySubTitleId";
+	
+	public static final String AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_LABEL = "Non Repudiation";
+	public static final String AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION;
+	public static final Boolean AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_DEFAULT = true;
+	
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_LABEL = "Reply Pattern";
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_ID = AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN;
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_RESPONSE_LABEL = "Response";
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_RESPONSE_VALUE = "response";
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_CALLBACK_LABEL = "Callback";
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_CALLBACK_VALUE = "callback";
+	public static final String AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_DEFAULT = AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_RESPONSE_VALUE;
 
 }
 

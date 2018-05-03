@@ -42,6 +42,7 @@ public class RiscontroModel extends AbstractModel<Riscontro> {
 	
 		this.IDENTIFICATIVO = new Field("identificativo",java.lang.String.class,"riscontro",Riscontro.class);
 		this.ORA_REGISTRAZIONE = new org.openspcoop2.core.tracciamento.model.DataModel(new Field("ora-registrazione",org.openspcoop2.core.tracciamento.Data.class,"riscontro",Riscontro.class));
+		this.RICEVUTA = new Field("ricevuta",java.lang.String.class,"riscontro",Riscontro.class);
 	
 	}
 	
@@ -51,6 +52,7 @@ public class RiscontroModel extends AbstractModel<Riscontro> {
 	
 		this.IDENTIFICATIVO = new ComplexField(father,"identificativo",java.lang.String.class,"riscontro",Riscontro.class);
 		this.ORA_REGISTRAZIONE = new org.openspcoop2.core.tracciamento.model.DataModel(new ComplexField(father,"ora-registrazione",org.openspcoop2.core.tracciamento.Data.class,"riscontro",Riscontro.class));
+		this.RICEVUTA = new ComplexField(father,"ricevuta",java.lang.String.class,"riscontro",Riscontro.class);
 	
 	}
 	
@@ -59,6 +61,8 @@ public class RiscontroModel extends AbstractModel<Riscontro> {
 	public IField IDENTIFICATIVO = null;
 	 
 	public org.openspcoop2.core.tracciamento.model.DataModel ORA_REGISTRAZIONE = null;
+	 
+	public IField RICEVUTA = null;
 	 
 
 	@Override

@@ -122,18 +122,24 @@
 	    port-type="GestioneFileSOAP">
             <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy" />
+	    <protocol-property name="ebmsReliabilityNonRepudiation" boolean-value="true" />
+            <protocol-property name="ebmsReliabilityReplyPattern" value="response" />
         </accordo-servizio-parte-specifica>
 
 	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
             accordo-servizio-parte-comune="as4/Blue:RestExample:1">
             <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy_noSignature" />
+	    <protocol-property name="ebmsReliabilityNonRepudiation" boolean-value="true" />
+            <protocol-property name="ebmsReliabilityReplyPattern" value="callback" />
         </accordo-servizio-parte-specifica>
 
 	<accordo-servizio-parte-specifica tipo="as4" nome="RestExample"
             accordo-servizio-parte-comune="as4/Blue:RestExample:2" versione="2">
             <fruitore tipo="as4" nome="Red"/>
 	    <protocol-property name="ebmsSecurityProfile" value="eDeliveryPolicy_noSignature" />
+	    <protocol-property name="ebmsReliabilityNonRepudiation" boolean-value="false" />
+            <protocol-property name="ebmsReliabilityReplyPattern" value="response" />
         </accordo-servizio-parte-specifica>
 
     </soggetto>

@@ -111,17 +111,21 @@ ${payloadProfiles.payloadProfileDefault}
 		</actions>
 		<as4>
 			<receptionAwareness name="receptionAwareness" retry="12;4;CONSTANT" duplicateDetection="true"/>
-			<reliability name="AS4Reliability" nonRepudiation="true" replyPattern="response"/>
+			<#list soggetti as soggetto>
+			<#list soggetto.getAps(soggettoOperativo) as aps>
+			<reliability name="Reliability_${aps.id}" nonRepudiation="${aps.ebmsReliabilityNonRepudiation?c}" replyPattern="${aps.ebmsReliabilityReplyPattern}"/>
+			</#list>
+		</#list>
 		</as4>
 		<legConfigurations>
 		<#list soggetti as soggetto>
 			<#list soggetto.getAps(soggettoOperativo) as aps>
 					<#list aps.azioni as azioneK, azione>
 			<legConfiguration name="${azioneK}" 
-					service="${aps.pt.id}" 
+					service="${aps.api.id}" 
 					action="${azione.id}" 
 					defaultMpc="defaultMpc" 
-					reliability="AS4Reliability" 
+					reliability="Reliability_${aps.id}" 
 					security="${aps.ebmsSecurityProfile}"
 					receptionAwareness="receptionAwareness" 
 					propertySet="${azione.ebmsActionPropertySet}"

@@ -55,6 +55,9 @@ public class AS4Costanti {
     
     public final static String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
     
+    public final static String AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION = "ebmsReliabilityNonRepudiation";
+    public final static String AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN = "ebmsReliabilityReplyPattern";
+    
     public final static String AS4_PROTOCOL_PROPERTIES_SERVICE_PAYLOAD_PROFILE = "ebmsServicePayloadProfile";
     public static final String AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE = "ebmsActionPayloadProfile";
     public static final String AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD = "ebmsActionCompressPayload";
@@ -141,6 +144,35 @@ public class AS4Costanti {
 	public final static String AS4_BUSTA_SERVIZIO_MESSAGE_INFO_SEND_STATUS = AS4_BUSTA_PREFIX+"SendStatus";
 	
 	public final static String AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX = AS4_BUSTA_PREFIX+"Property_";
+	
+	
+	/** Tabelle */
+	
+	/*
+	 * select RAW_XML from TB_RECEIPT_DATA WHERE RECEIPT_ID = (
+	 * 			select receipt_ID_PK FROM TB_SIGNAL_MESSAGE where messageInfo_ID_PK=( 
+	 * 				select ID_PK from TB_MESSAGE_INFO WHERE REF_TO_MESSAGE_ID='446f28c9-db65-402d-8614-00aabe0a49b2@domibus.eu'
+	 * 			)
+	 * );
+	 **/
+	
+	public final static String AS4_MESSAGE_SEND_SUCCESS = "MESSAGE_SEND_SUCCESS";
+	
+	public final static String AS4_TABELLA_RICEVUTA = "TB_RECEIPT_DATA";
+	public final static String AS4_TABELLA_RICEVUTA_COLONNA_ID_RICEVUTA = "RECEIPT_ID";
+	public final static String AS4_TABELLA_RICEVUTA_COLONNA_XML = "RAW_XML";
+	
+	public final static String AS4_TABELLA_SIGNAL_MESSAGE = "TB_SIGNAL_MESSAGE";
+	public final static String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_RICEVUTA = "receipt_ID_PK";
+	public final static String AS4_TABELLA_SIGNAL_MESSAGE_COLONNA_ID_MESSAGE = "messageInfo_ID_PK";
+	
+	public final static String AS4_TABELLA_MESSAGE_INFO = "TB_MESSAGE_INFO";
+	public final static String AS4_TABELLA_MESSAGE_INFO_ID_PK = "ID_PK";
+	public final static String AS4_TABELLA_MESSAGE_INFO_REF_ID_MESSAGE = "REF_TO_MESSAGE_ID";
+	public final static String AS4_TABELLA_MESSAGE_INFO_ID_MESSAGE = "MESSAGE_ID";
+	public final static String AS4_TABELLA_MESSAGE_INFO_TIMESTAMP = "TIME_STAMP";
+	
+	
 }
 
 

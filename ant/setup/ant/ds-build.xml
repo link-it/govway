@@ -58,5 +58,62 @@
 		</antcall>
 
 	</target>
+
+	<target name="as4_ds_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_as4_dbname}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_as4_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_as4_oracle_mode}" arg2="serviceName" />
+					<then>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value=":@INSTANCE@"/>
+							<param name="value" value="/${antinstaller_as4_dbname}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value="@INSTANCE@"/>
+							<param name="value" value="${antinstaller_as4_dbname}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@HOST@"/>
+			<param name="value" value="${antinstaller_as4_dbhost}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PORT@"/>
+			<param name="value" value="${antinstaller_as4_dbport}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@USERNAME@"/>
+			<param name="value" value="${antinstaller_as4_dbusername}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PASSWORD@"/>
+			<param name="value" value="${antinstaller_as4_dbpassword}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.dataSource"/>
+			<param name="value" value="org.openspcoop2.dataSource.domibus"/>
+		</antcall>
+
+	</target>
 		
 </project>

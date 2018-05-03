@@ -80,6 +80,7 @@ CREATE TABLE tracce_riscontri
 (
 	idtraccia BIGINT NOT NULL,
 	riscontro VARCHAR(255),
+	ricevuta TEXT,
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR(255),
 	tipo_ora_reg_meta VARCHAR(255),

@@ -145,6 +145,7 @@
     <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>
     <value name="identificativo" field="identificativo" usage="optional"/>
     <structure name="ora-registrazione" field="oraRegistrazione" usage="optional" map-as="_Data_Type"/>
+    <value name="ricevuta" field="ricevuta" usage="optional"/>
   </mapping>
   <mapping name="eccezioni" class="org.openspcoop2.core.tracciamento.Eccezioni">
     <namespace uri="http://www.openspcoop2.org/core/tracciamento" default="elements"/>

@@ -95,6 +95,16 @@ public class Riscontro implements java.io.Serializable {
 	public String getID(){
 		return this.riscontro.getIdentificativo();
 	}
+	
+	
+	
+	// ricevuta [wrapper]
+	public void setRicevuta(String ricevuta ){
+		this.riscontro.setRicevuta(ricevuta);
+	}
+	public String getRicevuta(){
+		return this.riscontro.getRicevuta();
+	}
 
 
 

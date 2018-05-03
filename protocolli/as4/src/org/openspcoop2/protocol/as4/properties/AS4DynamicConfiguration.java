@@ -901,8 +901,18 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_LABEL);
 		configuration.addConsoleItem(titolo );
 		
-		StringConsoleItem securityProfileItem = (StringConsoleItem) ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-				ConsoleItemType.SELECT,AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_ID, AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_LABEL);
+		
+		BaseConsoleItem subTitleSecurity = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_SECURITY_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_SECURITY_LABEL);
+		configuration.addConsoleItem(subTitleSecurity );
+		
+		StringConsoleItem securityProfileItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.STRING,
+						ConsoleItemType.SELECT,
+						AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_ID, 
+						AS4ConsoleCostanti.AS4_EROGAZIONE_SECURITY_PROFILE_LABEL);
 		List<Policy> listPolicy = null;
 		try {
 			listPolicy = pmodeRR.findAllPolicies();
@@ -917,6 +927,40 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			securityProfileItem.setDefaultValue(props.getSecurityPolicyDefault());
 		}
 		configuration.addConsoleItem(securityProfileItem);
+		
+		
+		
+		BaseConsoleItem subTitleReliability = ProtocolPropertiesFactory.newSubTitleItem(
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_RELIABILITY_ID, 
+				AS4ConsoleCostanti.AS4_TITLE_EROGAZIONE_RELIABILITY_LABEL);
+		configuration.addConsoleItem(subTitleReliability );
+		
+		
+		
+		BooleanConsoleItem reliabilityNonRepudiationItem = (BooleanConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(
+						ConsoleItemValueType.BOOLEAN,
+						ConsoleItemType.CHECKBOX,
+						AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_ID, 
+						AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_LABEL);
+		reliabilityNonRepudiationItem.setRequired(false);
+		reliabilityNonRepudiationItem.setDefaultValue(AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_NON_REPUDIATION_DEFAULT);
+		configuration.addConsoleItem(reliabilityNonRepudiationItem);
+		
+		
+		
+		StringConsoleItem reliabilityReplyPatternItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_ID, 
+				AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_LABEL);
+		reliabilityReplyPatternItem.addLabelValue(AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_RESPONSE_LABEL,
+				AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_RESPONSE_VALUE);
+		reliabilityReplyPatternItem.addLabelValue(AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_CALLBACK_LABEL,
+				AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_CALLBACK_VALUE);
+		reliabilityReplyPatternItem.setDefaultValue(AS4ConsoleCostanti.AS4_EROGAZIONE_RELIABILITY_REPLY_PATTERN_DEFAULT);
+		configuration.addConsoleItem(reliabilityReplyPatternItem);
+		
 		
 		return configuration;
 	}

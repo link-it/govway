@@ -44,26 +44,43 @@ public class APS {
 
 	private AccordoServizioParteSpecifica base;
 	private Map<String, Azione> azioni;
-	private API pt;
+	private API api;
 	private String ebmsSecurityProfile;
+	private Boolean ebmsReliabilityNonRepudiation;
+	private String ebmsReliabilityReplyPattern;
 	private String id;
 	private List<String> cnFruitori = new ArrayList<String>();
 	
-	public APS(AccordoServizioParteSpecifica base, API pt, Index index, String id) throws Exception {
+	public APS(AccordoServizioParteSpecifica base, API api, Index index, String id) throws Exception {
 		this.base = base;
-		this.pt = pt;
+		this.api = api;
 		this.id = id;
 		for(ProtocolProperty prop: base.getProtocolPropertyList()) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE)) {
 				this.ebmsSecurityProfile = prop.getValue();
 			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION)) {
+				if(prop.getBooleanValue()!=null) {
+					this.ebmsReliabilityNonRepudiation = prop.getBooleanValue();
+				}
+				else if(prop.getValue()!=null) {
+					this.ebmsReliabilityNonRepudiation = Boolean.parseBoolean(prop.getValue());
+				}
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN)) {
+				this.ebmsReliabilityReplyPattern = prop.getValue();
+			}
 		}
 		
 		if(this.ebmsSecurityProfile == null)
-			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE+" non definita per l'aps ["+base.getNome()+"]");
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
+		if(this.ebmsReliabilityNonRepudiation == null)
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_NON_REPUDIATION+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
+		if(this.ebmsReliabilityReplyPattern == null)
+			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
 		
 		this.azioni = new HashMap<>();
-		for(Azione azione: pt.getActions().values()) {
+		for(Azione azione: api.getActions().values()) {
 			this.azioni.put("Leg_" + index.getNextLegId(), azione);
 		}
 	}
@@ -73,11 +90,11 @@ public class APS {
 	public void setBase(AccordoServizioParteSpecifica base) {
 		this.base = base;
 	}
-	public API getPt() {
-		return this.pt;
+	public API getApi() {
+		return this.api;
 	}
-	public void setPt(API pt) {
-		this.pt = pt;
+	public void setApi(API pt) {
+		this.api = pt;
 	}
 	public Map<String, Azione> getAzioni() {
 		return this.azioni;
@@ -90,6 +107,18 @@ public class APS {
 	}
 	public void setEbmsSecurityProfile(String ebmsSecurityProfile) {
 		this.ebmsSecurityProfile = ebmsSecurityProfile;
+	}
+	public Boolean getEbmsReliabilityNonRepudiation() {
+		return this.ebmsReliabilityNonRepudiation;
+	}
+	public void setEbmsReliabilityNonRepudiation(Boolean ebmsReliabilityNonRepudiation) {
+		this.ebmsReliabilityNonRepudiation = ebmsReliabilityNonRepudiation;
+	}
+	public String getEbmsReliabilityReplyPattern() {
+		return this.ebmsReliabilityReplyPattern;
+	}
+	public void setEbmsReliabilityReplyPattern(String ebmsReliabilityReplyPattern) {
+		this.ebmsReliabilityReplyPattern = ebmsReliabilityReplyPattern;
 	}
 	public String getId() {
 		return this.id;

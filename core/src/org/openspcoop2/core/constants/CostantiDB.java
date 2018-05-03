@@ -268,6 +268,7 @@ public final class CostantiDB {
     /*COLONNE TABELLA TRACCE RISCONTRI*/
     public static final String TRACCE_RISCONTRI_COLUMN_ID_TRACCIA = "idtraccia";
     public static final String TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO = "riscontro";
+    public static final String TRACCE_RISCONTRI_COLUMN_RICEVUTA = "ricevuta";
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE = "ora_registrazione";
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO = "tipo_ora_reg";
     public static final String TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT = "tipo_ora_reg_meta";

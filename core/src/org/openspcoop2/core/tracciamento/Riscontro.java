@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="ricevuta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -51,7 +52,8 @@ import java.io.Serializable;
 @XmlType(name = "riscontro", 
   propOrder = {
   	"identificativo",
-  	"oraRegistrazione"
+  	"oraRegistrazione",
+  	"ricevuta"
   }
 )
 
@@ -91,6 +93,14 @@ public class Riscontro extends org.openspcoop2.utils.beans.BaseBean implements S
     this.oraRegistrazione = oraRegistrazione;
   }
 
+  public java.lang.String getRicevuta() {
+    return this.ricevuta;
+  }
+
+  public void setRicevuta(java.lang.String ricevuta) {
+    this.ricevuta = ricevuta;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -104,5 +114,9 @@ public class Riscontro extends org.openspcoop2.utils.beans.BaseBean implements S
 
   @XmlElement(name="ora-registrazione",required=false,nillable=false)
   protected Data oraRegistrazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="ricevuta",required=false,nillable=false)
+  protected java.lang.String ricevuta;
 
 }

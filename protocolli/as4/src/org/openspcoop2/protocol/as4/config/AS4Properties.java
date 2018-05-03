@@ -210,6 +210,12 @@ public class AS4Properties {
 				}
 				this.getAckTraceDatasource_jndiContext();
 				this.getAckTraceTipoDatabase();
+				
+				if(this.getAckDomibusDatasource()==null) {
+					throw new Exception("Datasource non definito per il tracing delle notifiche di ack");
+				}
+				this.getAckDomibusDatasource_jndiContext();
+				this.getAckDomibusTipoDatabase();
 			}
 
 		}catch(java.lang.Exception e) {
@@ -1128,5 +1134,67 @@ public class AS4Properties {
 			}
     	}
 		return AS4Properties.ackTraceDatasource_jndiContext;
+	}
+	
+	
+	private static Boolean ackDomibusDatasource_read;
+	private static String ackDomibusDatasource;
+	public String getAckDomibusDatasource() throws ProtocolException {
+		if(AS4Properties.ackDomibusDatasource_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.ackDomibusDatasource = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.domibus.dataSource', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				ackDomibusDatasource_read = true;
+			}
+    	}
+		return AS4Properties.ackDomibusDatasource;
+	}
+	
+	private static Boolean ackDomibusTipoDatabase_read;
+	private static String ackDomibusTipoDatabase;
+	public String getAckDomibusTipoDatabase() throws ProtocolException {
+		if(AS4Properties.ackDomibusTipoDatabase_read==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.ackDomibusTipoDatabase = value;
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}finally {
+				ackDomibusTipoDatabase_read = true;
+			}
+    	}
+		return AS4Properties.ackDomibusTipoDatabase;
+	}
+	
+	private static Properties ackDomibusDatasource_jndiContext = null;
+	public Properties getAckDomibusDatasource_jndiContext() throws ProtocolException {
+		if(AS4Properties.ackDomibusDatasource_jndiContext==null){
+	    	try{  
+	    		AS4Properties.ackDomibusDatasource_jndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.");
+	    		if (AS4Properties.ackDomibusDatasource_jndiContext == null || AS4Properties.ackDomibusDatasource_jndiContext.size()<0){
+	    			AS4Properties.ackDomibusDatasource_jndiContext = new Properties(); // context jndi vuoto
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.ack.domibus.dataSource.property.*', errore:"+e.getMessage());
+				throw new ProtocolException(e);
+			}
+    	}
+		return AS4Properties.ackDomibusDatasource_jndiContext;
 	}
 }

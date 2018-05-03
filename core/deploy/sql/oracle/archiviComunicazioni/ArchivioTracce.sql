@@ -94,6 +94,7 @@ CREATE TABLE tracce_riscontri
 (
 	idtraccia NUMBER NOT NULL,
 	riscontro VARCHAR2(255),
+	ricevuta CLOB,
 	ora_registrazione TIMESTAMP,
 	tipo_ora_reg VARCHAR2(255),
 	tipo_ora_reg_meta VARCHAR2(255),

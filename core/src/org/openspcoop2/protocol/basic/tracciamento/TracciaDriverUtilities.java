@@ -899,6 +899,8 @@ public class TracciaDriverUtilities {
 					Riscontro trris = new  Riscontro();
 					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO))==false))
 						trris.setID(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO));
+					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA))==false))
+						trris.setRicevuta(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA));
 					if(rsLista.getTimestamp(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE)!=null )
 						trris.setOraRegistrazione(rsLista.getTimestamp(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE));
 					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO))==false))

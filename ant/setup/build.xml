@@ -21,6 +21,7 @@
 	<import file="./ant/loader-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/jar-build.xml" />
+	<import file="../commons/utils.xml" />
 	
 	<property name="deploy_resources" location="deploy/resources" />
 	<property name="deploy_sw" location="deploy/sw" />
@@ -96,10 +97,12 @@
 		<then>
 			<var name="datasource_pdd_name" value="org.openspcoop2.dataSource"/>
 			<var name="datasource_console_name" value="org.openspcoop2.dataSource.pddConsole"/>
+			<var name="datasource_domibus_name" value="org.openspcoop2.dataSource.domibus"/>
 		</then>
 		<else>
 			<var name="datasource_pdd_name" value="java:/comp/env/org.openspcoop2.dataSource"/>
 			<var name="datasource_console_name" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
+			<var name="datasource_domibus_name" value="java:/comp/env/org.openspcoop2.dataSource.domibus"/>
 		</else>
 	</if>
 	<if>
@@ -240,10 +243,33 @@
                 </pathconvert>
 		<!-- <echo message="FILE_NAME [${archiveAS4_name.txt}]"/> -->
                 
+		<delete dir="${tmp_cfg}/JAR_AS4"/>
 		<unzip src="${deploy_sw}/${archiveAS4_name.txt}" dest="${tmp_cfg}/JAR_AS4"/>
-		<concat destfile="${tmp_cfg}/JAR_AS4/as4.properties" append="yes">
-<![CDATA[# WorkDir
-org.openspcoop2.protocol.as4.confDirectory=${work_dir}]]></concat>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.as4.ack.trace.dataSource"/>
+			<param name="value" value="${datasource_pdd_name}"/>
+		</antcall>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.as4.ack.domibus.dataSource"/>
+			<param name="value" value="${datasource_domibus_name}"/>
+		</antcall>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"/>
+			<param name="value" value="${antinstaller_as4_tipo_database}"/>
+		</antcall>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.as4.confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
 		<delete file="${deploy_sw}/${archiveAS4_name.txt}"/>
 		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
 		<delete dir="${tmp_cfg}/JAR_AS4"/>
@@ -642,6 +668,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
 				</antcall>
+
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_as4_tipo_database}/openspcoop2-ds.xml" 
+							tofile="${tmp_ds}/domibus-ds.xml"/>
+						<antcall target="as4_ds_settings">
+						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
 			</then>
 		</if>
 		<if>
@@ -655,6 +692,17 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/openspcoop2_console-ds.xml"/>
 				</antcall>
+
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy file="${deploy_ds}/wildfly/${antinstaller_as4_tipo_database}/openspcoop2-ds.xml" 
+							tofile="${tmp_ds}/domibus-ds.xml"/>
+						<antcall target="as4_ds_settings">
+						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
 			</then>
 		</if>
 		<if>
@@ -693,6 +741,25 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
 				</antcall>
+
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_as4_tipo_database}/domibus.xml" 
+							tofile="${tmp_ds}/domibus.xml"/>
+						<antcall target="as4_ds_settings">
+						    <param name="file" value="${tmp_ds}/domibus.xml"/>
+						</antcall>
+						<replace file="${tmp_ds}/openspcoop2.xml" token="&lt;/Context>" value=""/>
+						<concat destfile="${tmp_ds}/openspcoop2.xml" append="yes" >
+						  <filelist dir="${tmp_ds}"
+							   files="domibus.xml"/>
+						</concat>
+						<delete file="${tmp_ds}/domibus.xml"/>
+						<concat destfile="${tmp_ds}/openspcoop2.xml" append="yes">
+<![CDATA[</Context>]]></concat>
+					</then>
+				</if>
 			</then>
 		</if>
 	</target>

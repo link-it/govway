@@ -110,8 +110,6 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 		String idCorrelazioneApplicativa = traccia.getCorrelazioneApplicativa();
 		String idCorrelazioneApplicativaRisposta = traccia.getCorrelazioneApplicativaRisposta();
 		
-		String idTransazione = traccia.getProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-		
 		if(this.debug){
 			this.log.debug("@@ log["+busta.getID()+"] ....");
 		}
@@ -218,7 +216,7 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_PROTOCOLLO, traccia.getProtocollo(), InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_DIGEST, busta.getDigest(), InsertAndGeneratedKeyJDBCType.STRING) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_SOAP, headerProtocollo, InsertAndGeneratedKeyJDBCType.STRING) );
-			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ID_TRANSAZIONE, idTransazione, InsertAndGeneratedKeyJDBCType.STRING) );
+			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.TRACCE_COLUMN_ID_TRANSAZIONE, traccia.getIdTransazione(), InsertAndGeneratedKeyJDBCType.STRING) );
 			
 			
 			// ** Insert and return generated key
@@ -248,15 +246,17 @@ public class TracciaProducer extends BasicProducer implements ITracciaProducer{
 				sqlString = "INSERT INTO "+CostantiDB.TRACCE_RISCONTRI+" ("+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_TRACCIA+", "+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO+", "+
+						CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA+", "+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE+", "+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO+", "+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT+", "+
 						CostantiDB.TRACCE_RISCONTRI_COLUMN_GDO+
-						") VALUES (?, ?, ?, ?, ?, ?)";
+						") VALUES (?, ?, ?, ?, ?, ?, ?)";
 				stmt = con.prepareStatement(sqlString);
 				int index = 1;
 				stmt.setLong(index++, idtraccia);
 				JDBCUtilities.setSQLStringValue(stmt,index++, riscontro.getID());
+				JDBCUtilities.setSQLStringValue(stmt,index++, riscontro.getRicevuta());
 				if(riscontro.getOraRegistrazione()!=null)
 					stmt.setTimestamp(index++, new java.sql.Timestamp(riscontro.getOraRegistrazione().getTime()));
 				else

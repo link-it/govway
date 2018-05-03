@@ -215,13 +215,63 @@
 	<validated defaultValue="http://127.0.0.1:8080/domibus/services/msh" property="antinstaller_as4_msh" displayText="Domibus MSH URL" regex="http(s?):\/\/(.+)\/(.*)"/>
 	<validated defaultValue="http://127.0.0.1:8080/domibus/services/backend" property="antinstaller_as4_backend" displayText="Domibus Backend WS URL" regex="http(s?):\/\/(.+)\/(.*)"/>
 
-	<comment displayText=""/>
 	<comment displayText="Broker JMS" bold="true"/>
 	<validated defaultValue="tcp://127.0.0.1:61616" property="antinstaller_as4_jms_url" displayText="Provider URL" regex="(.+):\/\/(.+)"/>
 	<validated defaultValue="admin" property="antinstaller_as4_jms_username" displayText="Username" regex="^[^ ]+$" />
 	<validated defaultValue="123456" property="antinstaller_as4_jms_password" displayText="Password" regex="^[^ ]+$" />
 
+        <comment displayText="DBMS" bold="true"/>
+	<large-select defaultValue="mysql" property="antinstaller_as4_tipo_database" displayText="Tipo">
+            <option value="mysql" text="MySQL"/>
+            <option value="oracle" text="Oracle"/>
+        </large-select>
+
     </page>
+
+<page name="infoDB_EDelivery_oracle" type="input" displayText="Configurazione eDelivery (DBMS)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}==oracle)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_as4_dbhost" displayText="Hostname"
+            regex=".+"/>
+        <hidden property="porta-db_as4" value="1521"/>
+        <hidden property="TABLESPACE_as4" value="XE"/>
+        <hidden property="antinstaller_as4_driver_jdbc" value="oracle.jdbc.OracleDriver"/>
+        <validated defaultValue="${porta-db_as4}" regex="^[0-9]{1,5}$" property="antinstaller_as4_dbport"
+            displayText="Porta"/>
+
+ 	<large-select defaultValue="SID" property="antinstaller_as4_oracle_mode" displayText="Tipo Accesso">
+            <option value="SID" text="SID"/>
+            <option value="serviceName" text="Service Name"/>
+        </large-select>
+        <validated defaultValue="${TABLESPACE_as4}" property="antinstaller_as4_dbname"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="domibus" property="antinstaller_as4_dbusername"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="domibus" property="antinstaller_as4_dbpassword"
+            displayText="Password" regex=".+"/>
+
+    </page>
+
+ <page name="infoDB_EDelivery_notOracle" type="input" displayText="Configurazione eDelivery (DBMS)" ifProperty="(${antinstaller_protocollo_as4}==true) AND (${antinstaller_as4_tipo_database}!=oracle)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_as4_dbhost" displayText="Hostname"
+            regex=".+"/>
+        <conditional ifProperty="${antinstaller_as4_tipo_database}=mysql">
+            <hidden property="porta-db_as4" value="3306"/>
+            <hidden property="TABLESPACE_as4" value="domibus"/>
+            <hidden property="antinstaller_as4_driver_jdbc" value="com.mysql.jdbc.Driver"/>
+        </conditional>
+        <validated defaultValue="${porta-db_as4}" regex="^[0-9]{1,5}$" property="antinstaller_as4_dbport"
+            displayText="Porta"/>
+
+        <validated defaultValue="${TABLESPACE_as4}" property="antinstaller_as4_dbname"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="domibus" property="antinstaller_as4_dbusername"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="domibus" property="antinstaller_as4_dbpassword"
+            displayText="Password" regex=".+"/>
+
+    </page>
+
 
     <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
         

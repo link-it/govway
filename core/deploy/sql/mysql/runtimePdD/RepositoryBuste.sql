@@ -64,6 +64,7 @@ CREATE TABLE LISTA_RISCONTRI
 	ID_MESSAGGIO VARCHAR(255) NOT NULL,
 	TIPO VARCHAR(255) NOT NULL,
 	ID_RISCONTRO VARCHAR(255),
+	RICEVUTA LONGTEXT,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ORA_REGISTRAZIONE TIMESTAMP(3) DEFAULT 0,
 	TIPO_ORA_REGISTRAZIONE VARCHAR(255),

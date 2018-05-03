@@ -104,7 +104,7 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 			String idBustaRisposta = msgDiagnostico.getIdBustaRisposta();
 			String codiceDiagnostico = msgDiagnostico.getCodice();
 			
-			String idTransazione = msgDiagnostico.getProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			String idTransazione = msgDiagnostico.getIdTransazione();
 			
 			if(this.debug){
 				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] ....");

@@ -276,7 +276,10 @@ public class ExporterArchiveUtils {
 		
 		archive.setControlloCongestione_configurazione(this.archiveEngine.getControlloCongestione_Configurazione());
 		
-		List<IdPolicy> listControlloCongestione_configurationPolicies = this.archiveEngine.getAllIdControlloCongestione_configurationPolicies();
+		List<IdPolicy> listControlloCongestione_configurationPolicies = null;
+		try {
+			listControlloCongestione_configurationPolicies = this.archiveEngine.getAllIdControlloCongestione_configurationPolicies();
+		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listControlloCongestione_configurationPolicies!=null && listControlloCongestione_configurationPolicies.size()>0) {
 			for (IdPolicy idPolicy : listControlloCongestione_configurationPolicies) {
 				archive.getControlloCongestione_configurationPolicies().add(new ArchiveConfigurationPolicy(
@@ -285,7 +288,10 @@ public class ExporterArchiveUtils {
 			}
 		}
 		
-		List<IdActivePolicy> listControlloCongestione_activePolicies = this.archiveEngine.getAllIdControlloCongestione_activePolicies();
+		List<IdActivePolicy> listControlloCongestione_activePolicies = null;
+		try {
+			listControlloCongestione_activePolicies = this.archiveEngine.getAllIdControlloCongestione_activePolicies();
+		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listControlloCongestione_activePolicies!=null && listControlloCongestione_activePolicies.size()>0) {
 			for (IdActivePolicy idPolicy : listControlloCongestione_activePolicies) {
 				archive.getControlloCongestione_activePolicies().add(new ArchiveActivePolicy(

@@ -200,6 +200,7 @@
         <xsd:sequence>
             <xsd:element minOccurs="0" name="identificativo" type="xsd:string"/>
             <xsd:element minOccurs="0" name="ora-registrazione" type="data"/>
+            <xsd:element minOccurs="0" name="ricevuta" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
     

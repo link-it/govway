@@ -136,7 +136,12 @@ public class Azione {
 
 			}
 			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_COMPRESS_PAYLOAD)) {
-				this.ebmsActionCompressPayload = Boolean.parseBoolean(prop.getValue());
+				if(prop.getBooleanValue()!=null) {
+					this.ebmsActionCompressPayload = prop.getBooleanValue();
+				}
+				else if(prop.getValue()!=null) {
+					this.ebmsActionCompressPayload = Boolean.parseBoolean(prop.getValue());
+				}
 			}
 		}
 		

@@ -976,33 +976,34 @@ public class RepositoryBuste  {
 			query.append(",RIFERIMENTO_MESSAGGIO,SCADENZA_BUSTA,DUPLICATI,LOCATION_PD,SERVIZIO_APPLICATIVO,MODULO_IN_ATTESA,SCENARIO,PROTOCOLLO) ");
 			query.append(" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 			pstmtBusta = connectionDB.prepareStatement(query.toString());
-			pstmtBusta.setString(1,busta.getID());
-			pstmtBusta.setString(2,tipoBusta);
-			pstmtBusta.setString(3,busta.getMittente());
-			pstmtBusta.setString(4,busta.getIdentificativoPortaMittente());
-			pstmtBusta.setString(5,busta.getTipoMittente());
-			pstmtBusta.setString(6,busta.getIndirizzoMittente());
-			pstmtBusta.setString(7,busta.getDestinatario());
-			pstmtBusta.setString(8,busta.getIdentificativoPortaDestinatario());
-			pstmtBusta.setString(9,busta.getTipoDestinatario());
-			pstmtBusta.setString(10,busta.getIndirizzoDestinatario());
-			pstmtBusta.setInt(11,busta.getVersioneServizio());
-			pstmtBusta.setString(12,busta.getServizio());
-			pstmtBusta.setString(13,busta.getTipoServizio());
-			pstmtBusta.setString(14,busta.getAzione());
-			pstmtBusta.setString(15,busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue());
-			pstmtBusta.setString(16,busta.getServizioCorrelato());
-			pstmtBusta.setString(17,busta.getTipoServizioCorrelato());
-			pstmtBusta.setString(18,busta.getCollaborazione());
-			pstmtBusta.setLong(19, busta.getSequenza() );
+			int index = 1;
+			pstmtBusta.setString(index++,busta.getID());
+			pstmtBusta.setString(index++,tipoBusta);
+			pstmtBusta.setString(index++,busta.getMittente());
+			pstmtBusta.setString(index++,busta.getIdentificativoPortaMittente());
+			pstmtBusta.setString(index++,busta.getTipoMittente());
+			pstmtBusta.setString(index++,busta.getIndirizzoMittente());
+			pstmtBusta.setString(index++,busta.getDestinatario());
+			pstmtBusta.setString(index++,busta.getIdentificativoPortaDestinatario());
+			pstmtBusta.setString(index++,busta.getTipoDestinatario());
+			pstmtBusta.setString(index++,busta.getIndirizzoDestinatario());
+			pstmtBusta.setInt(index++,busta.getVersioneServizio());
+			pstmtBusta.setString(index++,busta.getServizio());
+			pstmtBusta.setString(index++,busta.getTipoServizio());
+			pstmtBusta.setString(index++,busta.getAzione());
+			pstmtBusta.setString(index++,busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue());
+			pstmtBusta.setString(index++,busta.getServizioCorrelato());
+			pstmtBusta.setString(index++,busta.getTipoServizioCorrelato());
+			pstmtBusta.setString(index++,busta.getCollaborazione());
+			pstmtBusta.setLong(index++, busta.getSequenza() );
 			if(Inoltro.SENZA_DUPLICATI.equals(busta.getInoltro()))
-				pstmtBusta.setInt(20,1);
+				pstmtBusta.setInt(index++,1);
 			else
-				pstmtBusta.setInt(20,0);
+				pstmtBusta.setInt(index++,0);
 			if(busta.isConfermaRicezione())
-				pstmtBusta.setInt(21,1);
+				pstmtBusta.setInt(index++,1);
 			else
-				pstmtBusta.setInt(21,0);
+				pstmtBusta.setInt(index++,0);
 			Timestamp oraRec = null;
 			TipoOraRegistrazione tipoOraRec = null;
 			if(busta.getOraRegistrazione()!=null && busta.getTipoOraRegistrazione()!=null){
@@ -1013,19 +1014,19 @@ public class RepositoryBuste  {
 				oraRec = DateManager.getTimestamp();
 				tipoOraRec = TipoOraRegistrazione.SINCRONIZZATO;
 			}
-			pstmtBusta.setTimestamp(22,oraRec);
-			pstmtBusta.setString(23,tipoOraRec.getEngineValue());
-			pstmtBusta.setString(24,busta.getRiferimentoMessaggio());
-			pstmtBusta.setTimestamp(25,scadenzaT);
-			pstmtBusta.setInt(26,0);
-			pstmtBusta.setString(27,null); // locationPD
-			pstmtBusta.setString(28,null); // servizioApplicativo
-			pstmtBusta.setString(29,null); // moduloInAttesa
-			pstmtBusta.setString(30,null); // scenario
+			pstmtBusta.setTimestamp(index++,oraRec);
+			pstmtBusta.setString(index++,tipoOraRec.getEngineValue());
+			pstmtBusta.setString(index++,busta.getRiferimentoMessaggio());
+			pstmtBusta.setTimestamp(index++,scadenzaT);
+			pstmtBusta.setInt(index++,0);
+			pstmtBusta.setString(index++,null); // locationPD
+			pstmtBusta.setString(index++,null); // servizioApplicativo
+			pstmtBusta.setString(index++,null); // moduloInAttesa
+			pstmtBusta.setString(index++,null); // scenario
 			if(busta.getProtocollo()!=null)
-				pstmtBusta.setString(31,busta.getProtocollo()); // protocollo
+				pstmtBusta.setString(index++,busta.getProtocollo()); // protocollo
 			else if(this.protocolFactory!=null){
-				pstmtBusta.setString(31,this.protocolFactory.getProtocol()); // protocollo
+				pstmtBusta.setString(index++,this.protocolFactory.getProtocol()); // protocollo
 			}
 			else{
 				throw new ProtocolException("Protocol unknow");
@@ -1043,8 +1044,9 @@ public class RepositoryBuste  {
 			query.append(this.gestoreRepositoryBuste.createSQLSet_PdD(true));
 			query.append(" WHERE  ID_MESSAGGIO = ? AND TIPO=?");
 			pstmtUpdateAccessoPdD = connectionDB.prepareStatement(query.toString());
-			pstmtUpdateAccessoPdD.setString(1,busta.getID());
-			pstmtUpdateAccessoPdD.setString(2,tipoBusta);
+			index = 1;
+			pstmtUpdateAccessoPdD.setString(index++,busta.getID());
+			pstmtUpdateAccessoPdD.setString(index++,tipoBusta);
 			// Add PreparedStatement
 			//stateMSG.getPreparedStatement().put("UPDATE RegistrazioneBustaAccessoPdD"+tipoBusta+"_"+busta.getID(),pstmtUpdateAccessoPdD);
 			stateMSG.getPreparedStatement().put("INSERT RegistrazioneBusta"+tipoBusta+"_"+busta.getID()+" UPDATE RegistrazioneBustaAccessoPdD",pstmtUpdateAccessoPdD);
@@ -1059,18 +1061,20 @@ public class RepositoryBuste  {
 					query.delete(0,query.length());
 					query.append("INSERT INTO  ");
 					query.append(Costanti.LISTA_RISCONTRI);
-					query.append(" (ID_MESSAGGIO,TIPO,ID_RISCONTRO,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
-					query.append(" VALUES (?,?,?,?,?)");
+					query.append(" (ID_MESSAGGIO,TIPO,ID_RISCONTRO,RICEVUTA,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
+					query.append(" VALUES (?,?,?,?,?,?)");
 					pstmtListaRiscontri = connectionDB.prepareStatement(query.toString());
-					pstmtListaRiscontri.setString(1,busta.getID());
-					pstmtListaRiscontri.setString(2,tipoBusta);
-					pstmtListaRiscontri.setString(3,riscontro.getID());
+					index = 1;
+					pstmtListaRiscontri.setString(index++,busta.getID());
+					pstmtListaRiscontri.setString(index++,tipoBusta);
+					pstmtListaRiscontri.setString(index++,riscontro.getID());
+					pstmtListaRiscontri.setString(index++,riscontro.getRicevuta());
 					Timestamp oraRecRiscontro = null;
 					if(riscontro.getOraRegistrazione()!=null ){
 						oraRecRiscontro = new Timestamp( riscontro.getOraRegistrazione().getTime() );
 					}
-					pstmtListaRiscontri.setTimestamp(4,oraRecRiscontro);
-					pstmtListaRiscontri.setString(5,riscontro.getTipoOraRegistrazione().getEngineValue());
+					pstmtListaRiscontri.setTimestamp(index++,oraRecRiscontro);
+					pstmtListaRiscontri.setString(index++,riscontro.getTipoOraRegistrazione().getEngineValue());
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT RegistrazioneListaRiscontri_riscontro["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaRiscontri);
@@ -1086,18 +1090,19 @@ public class RepositoryBuste  {
 					query.append(" (ID_MESSAGGIO,TIPO,ORIGINE,TIPO_ORIGINE,DESTINAZIONE,TIPO_DESTINAZIONE,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
 					query.append(" VALUES (?,?,?,?,?,?,?,?)");
 					pstmtListaTrasmissioni = connectionDB.prepareStatement(query.toString());
-					pstmtListaTrasmissioni.setString(1,busta.getID());
-					pstmtListaTrasmissioni.setString(2,tipoBusta);
-					pstmtListaTrasmissioni.setString(3,trasmissione.getOrigine());
-					pstmtListaTrasmissioni.setString(4,trasmissione.getTipoOrigine());
-					pstmtListaTrasmissioni.setString(5,trasmissione.getDestinazione());
-					pstmtListaTrasmissioni.setString(6,trasmissione.getTipoDestinazione());
+					index = 1;
+					pstmtListaTrasmissioni.setString(index++,busta.getID());
+					pstmtListaTrasmissioni.setString(index++,tipoBusta);
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getOrigine());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTipoOrigine());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getDestinazione());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTipoDestinazione());
 					Timestamp oraRecTrasmissione = null;
 					if( trasmissione.getOraRegistrazione()!=null ){
 						oraRecTrasmissione = new Timestamp( trasmissione.getOraRegistrazione().getTime()  );
 					}
-					pstmtListaTrasmissioni.setTimestamp(7,oraRecTrasmissione);
-					pstmtListaTrasmissioni.setString(8,trasmissione.getTempo().getEngineValue());
+					pstmtListaTrasmissioni.setTimestamp(index++,oraRecTrasmissione);
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTempo().getEngineValue());
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT RegistrazioneListaTrasmissioni_trasmissione["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaTrasmissioni);
@@ -1112,13 +1117,14 @@ public class RepositoryBuste  {
 					query.append(" (ID_MESSAGGIO,TIPO,VALIDAZIONE,CONTESTO,CODICE,RILEVANZA,POSIZIONE)");
 					query.append(" VALUES (?,?,?,?,?,?,?)");
 					pstmtListaEccezioni = connectionDB.prepareStatement(query.toString());
-					pstmtListaEccezioni.setString(1,busta.getID());
-					pstmtListaEccezioni.setString(2,tipoBusta);
-					pstmtListaEccezioni.setInt(3,0); // eccezione proprietaria delle busta
-					pstmtListaEccezioni.setString(4,eccezione.getContestoCodifica().getEngineValue());
-					pstmtListaEccezioni.setInt(5,eccezione.getCodiceEccezione().getCodice());
-					pstmtListaEccezioni.setString(6,eccezione.getRilevanza().getEngineValue());
-					pstmtListaEccezioni.setString(7,eccezione.getDescrizione(this.protocolFactory));
+					index = 1;
+					pstmtListaEccezioni.setString(index++,busta.getID());
+					pstmtListaEccezioni.setString(index++,tipoBusta);
+					pstmtListaEccezioni.setInt(index++,0); // eccezione proprietaria delle busta
+					pstmtListaEccezioni.setString(index++,eccezione.getContestoCodifica().getEngineValue());
+					pstmtListaEccezioni.setInt(index++,eccezione.getCodiceEccezione().getCodice());
+					pstmtListaEccezioni.setString(index++,eccezione.getRilevanza().getEngineValue());
+					pstmtListaEccezioni.setString(index++,eccezione.getDescrizione(this.protocolFactory));
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT RegistrazioneListaEccezioni_eccezioneBusta["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaEccezioni);
@@ -1134,13 +1140,14 @@ public class RepositoryBuste  {
 						query.append(" (ID_MESSAGGIO,TIPO,VALIDAZIONE,CONTESTO,CODICE,RILEVANZA,POSIZIONE)");
 						query.append(" VALUES (?,?,?,?,?,?,?)");
 						pstmtListaEccezioniValidazione = connectionDB.prepareStatement(query.toString());
-						pstmtListaEccezioniValidazione.setString(1,busta.getID());
-						pstmtListaEccezioniValidazione.setString(2,tipoBusta);
-						pstmtListaEccezioniValidazione.setInt(3,1); // eccezione arrivata dopo la validazione
-						pstmtListaEccezioniValidazione.setString(4,eccezione.getContestoCodifica().getEngineValue());
-						pstmtListaEccezioniValidazione.setInt(5,eccezione.getCodiceEccezione().getCodice());
-						pstmtListaEccezioniValidazione.setString(6,eccezione.getRilevanza().getEngineValue());
-						pstmtListaEccezioniValidazione.setString(7,eccezione.getDescrizione(this.protocolFactory));
+						index = 1;
+						pstmtListaEccezioniValidazione.setString(index++,busta.getID());
+						pstmtListaEccezioniValidazione.setString(index++,tipoBusta);
+						pstmtListaEccezioniValidazione.setInt(index++,1); // eccezione arrivata dopo la validazione
+						pstmtListaEccezioniValidazione.setString(index++,eccezione.getContestoCodifica().getEngineValue());
+						pstmtListaEccezioniValidazione.setInt(index++,eccezione.getCodiceEccezione().getCodice());
+						pstmtListaEccezioniValidazione.setString(index++,eccezione.getRilevanza().getEngineValue());
+						pstmtListaEccezioniValidazione.setString(index++,eccezione.getDescrizione(this.protocolFactory));
 
 						// Add PreparedStatement
 						stateMSG.getPreparedStatement().put("INSERT RegistrazioneListaEccezioni_eccezioneValidazione["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaEccezioniValidazione);
@@ -1161,10 +1168,11 @@ public class RepositoryBuste  {
 							query.append(" (ID_MESSAGGIO,TIPO,NOME,VALORE)");
 							query.append(" VALUES (?,?,?,?)");
 							pstmtListaExtInfo = connectionDB.prepareStatement(query.toString());
-							pstmtListaExtInfo.setString(1,busta.getID());
-							pstmtListaExtInfo.setString(2,tipoBusta);
-							pstmtListaExtInfo.setString(3,name);
-							pstmtListaExtInfo.setString(4,value);
+							index = 1;
+							pstmtListaExtInfo.setString(index++,busta.getID());
+							pstmtListaExtInfo.setString(index++,tipoBusta);
+							pstmtListaExtInfo.setString(index++,name);
+							pstmtListaExtInfo.setString(index++,value);
 
 							// Add PreparedStatement
 							stateMSG.getPreparedStatement().put("INSERT RegistrazioneListaExtInfoProtocol_info["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaExtInfo);
@@ -1373,43 +1381,44 @@ public class RepositoryBuste  {
 			query.append("SCADENZA_BUSTA = ? ");
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 			pstmtBusta = connectionDB.prepareStatement(query.toString());
-			pstmtBusta.setString(1,busta.getMittente());
-			pstmtBusta.setString(2,busta.getIdentificativoPortaMittente());
-			pstmtBusta.setString(3,busta.getTipoMittente());
-			pstmtBusta.setString(4,busta.getIndirizzoMittente());
-			pstmtBusta.setString(5,busta.getDestinatario());
-			pstmtBusta.setString(6,busta.getIdentificativoPortaDestinatario());
-			pstmtBusta.setString(7,busta.getTipoDestinatario());
-			pstmtBusta.setString(8,busta.getIndirizzoDestinatario());
-			pstmtBusta.setInt(9,busta.getVersioneServizio());
-			pstmtBusta.setString(10,busta.getServizio());
-			pstmtBusta.setString(11,busta.getTipoServizio());
-			pstmtBusta.setString(12,busta.getAzione());
-			pstmtBusta.setString(13,busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue());
-			pstmtBusta.setString(14,busta.getServizioCorrelato());
-			pstmtBusta.setString(15,busta.getTipoServizioCorrelato());
-			pstmtBusta.setString(16,busta.getCollaborazione());
-			pstmtBusta.setLong(17, busta.getSequenza());
+			int index = 1;
+			pstmtBusta.setString(index++,busta.getMittente());
+			pstmtBusta.setString(index++,busta.getIdentificativoPortaMittente());
+			pstmtBusta.setString(index++,busta.getTipoMittente());
+			pstmtBusta.setString(index++,busta.getIndirizzoMittente());
+			pstmtBusta.setString(index++,busta.getDestinatario());
+			pstmtBusta.setString(index++,busta.getIdentificativoPortaDestinatario());
+			pstmtBusta.setString(index++,busta.getTipoDestinatario());
+			pstmtBusta.setString(index++,busta.getIndirizzoDestinatario());
+			pstmtBusta.setInt(index++,busta.getVersioneServizio());
+			pstmtBusta.setString(index++,busta.getServizio());
+			pstmtBusta.setString(index++,busta.getTipoServizio());
+			pstmtBusta.setString(index++,busta.getAzione());
+			pstmtBusta.setString(index++,busta.getProfiloDiCollaborazione() == null ? null : busta.getProfiloDiCollaborazione().getEngineValue());
+			pstmtBusta.setString(index++,busta.getServizioCorrelato());
+			pstmtBusta.setString(index++,busta.getTipoServizioCorrelato());
+			pstmtBusta.setString(index++,busta.getCollaborazione());
+			pstmtBusta.setLong(index++, busta.getSequenza());
 			if(Inoltro.SENZA_DUPLICATI.equals(busta.getInoltro()))
-				pstmtBusta.setInt(18,1);
+				pstmtBusta.setInt(index++,1);
 			else
-				pstmtBusta.setInt(18,0);
+				pstmtBusta.setInt(index++,0);
 			if(busta.isConfermaRicezione())
-				pstmtBusta.setInt(19,1);
+				pstmtBusta.setInt(index++,1);
 			else
-				pstmtBusta.setInt(19,0);
+				pstmtBusta.setInt(index++,0);
 			Timestamp oraRec = null;
 			TipoOraRegistrazione tipoOraRec = null;
 			if(busta.getOraRegistrazione()!=null && busta.getTipoOraRegistrazione()!=null){
 				oraRec = new Timestamp( busta.getOraRegistrazione().getTime() );
 				tipoOraRec = busta.getTipoOraRegistrazione();
 			}
-			pstmtBusta.setTimestamp(20,oraRec);
-			pstmtBusta.setString(21,tipoOraRec.getEngineValue());
-			pstmtBusta.setString(22,busta.getRiferimentoMessaggio());
-			pstmtBusta.setTimestamp(23,scadenzaT);
-			pstmtBusta.setString(24,busta.getID());
-			pstmtBusta.setString(25,tipoBusta);
+			pstmtBusta.setTimestamp(index++,oraRec);
+			pstmtBusta.setString(index++,tipoOraRec.getEngineValue());
+			pstmtBusta.setString(index++,busta.getRiferimentoMessaggio());
+			pstmtBusta.setTimestamp(index++,scadenzaT);
+			pstmtBusta.setString(index++,busta.getID());
+			pstmtBusta.setString(index++,tipoBusta);
 
 			// Add PreparedStatement
 			stateMSG.getPreparedStatement().put("UPDATE AggiornamentoBusta"+tipoBusta+"_"+busta.getID(),pstmtBusta);
@@ -1423,8 +1432,9 @@ public class RepositoryBuste  {
 				queryDelete.append(Costanti.LISTA_TRASMISSIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
 				pstmtDeleteListaRiscontri = connectionDB.prepareStatement(queryDelete.toString());
-				pstmtDeleteListaRiscontri.setString(1,busta.getID());
-				pstmtDeleteListaRiscontri.setString(2,tipoBusta);
+				index = 1;
+				pstmtDeleteListaRiscontri.setString(index++,busta.getID());
+				pstmtDeleteListaRiscontri.setString(index++,tipoBusta);
 
 				//	Add PreparedStatement
 				stateMSG.getPreparedStatement().put("DELETE(UPDATE) AggiornamentoBusta_listaRiscontri"+tipoBusta+"_"+busta.getID(),pstmtDeleteListaRiscontri);
@@ -1435,8 +1445,9 @@ public class RepositoryBuste  {
 				queryDelete.append(Costanti.LISTA_RISCONTRI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
 				pstmtDeleteListaTrasmissioni = connectionDB.prepareStatement(queryDelete.toString());
-				pstmtDeleteListaTrasmissioni.setString(1,busta.getID());
-				pstmtDeleteListaTrasmissioni.setString(2,tipoBusta);
+				index = 1;
+				pstmtDeleteListaTrasmissioni.setString(index++,busta.getID());
+				pstmtDeleteListaTrasmissioni.setString(index++,tipoBusta);
 
 				//	Add PreparedStatement
 				stateMSG.getPreparedStatement().put("DELETE(UPDATE) AggiornamentoBusta_listaTrasmissioni"+tipoBusta+"_"+busta.getID(),pstmtDeleteListaTrasmissioni);
@@ -1447,8 +1458,9 @@ public class RepositoryBuste  {
 				queryDelete.append(Costanti.LISTA_ECCEZIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
 				pstmtDeleteListaEccezioni = connectionDB.prepareStatement(queryDelete.toString());
-				pstmtDeleteListaEccezioni.setString(1,busta.getID());
-				pstmtDeleteListaEccezioni.setString(2,tipoBusta);
+				index = 1;
+				pstmtDeleteListaEccezioni.setString(index++,busta.getID());
+				pstmtDeleteListaEccezioni.setString(index++,tipoBusta);
 
 				//	Add PreparedStatement
 				stateMSG.getPreparedStatement().put("DELETE(UPDATE) AggiornamentoBusta_listaEccezioni"+tipoBusta+"_"+busta.getID(),pstmtDeleteListaEccezioni);
@@ -1459,8 +1471,9 @@ public class RepositoryBuste  {
 				queryDelete.append(Costanti.LISTA_EXT_INFO);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
 				pstmtDeleteListaExtInfo = connectionDB.prepareStatement(queryDelete.toString());
-				pstmtDeleteListaExtInfo.setString(1,busta.getID());
-				pstmtDeleteListaExtInfo.setString(2,tipoBusta);
+				index = 1;
+				pstmtDeleteListaExtInfo.setString(index++,busta.getID());
+				pstmtDeleteListaExtInfo.setString(index++,tipoBusta);
 
 				//	Add PreparedStatement
 				stateMSG.getPreparedStatement().put("DELETE(UPDATE) AggiornamentoBusta_listaExtInfo"+tipoBusta+"_"+busta.getID(),pstmtDeleteListaExtInfo);
@@ -1474,18 +1487,20 @@ public class RepositoryBuste  {
 					query.delete(0,query.length());
 					query.append("INSERT INTO  ");
 					query.append(Costanti.LISTA_RISCONTRI);
-					query.append(" (ID_MESSAGGIO,TIPO,ID_RISCONTRO,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
-					query.append(" VALUES (?,?,?,?,?)");
+					query.append(" (ID_MESSAGGIO,TIPO,ID_RISCONTRO,RICEVUTA,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
+					query.append(" VALUES (?,?,?,?,?,?)");
 					pstmtListaRiscontri = connectionDB.prepareStatement(query.toString());
-					pstmtListaRiscontri.setString(1,busta.getID());
-					pstmtListaRiscontri.setString(2,tipoBusta);
-					pstmtListaRiscontri.setString(3,riscontro.getID());
+					index = 1;
+					pstmtListaRiscontri.setString(index++,busta.getID());
+					pstmtListaRiscontri.setString(index++,tipoBusta);
+					pstmtListaRiscontri.setString(index++,riscontro.getID());
+					pstmtListaRiscontri.setString(index++,riscontro.getRicevuta());
 					Timestamp oraRecRiscontro = null;
 					if(riscontro.getOraRegistrazione()!=null ){
 						oraRecRiscontro = new Timestamp( riscontro.getOraRegistrazione().getTime() );
 					}
-					pstmtListaRiscontri.setTimestamp(4,oraRecRiscontro);
-					pstmtListaRiscontri.setString(5,riscontro.getTipoOraRegistrazione().getEngineValue());
+					pstmtListaRiscontri.setTimestamp(index++,oraRecRiscontro);
+					pstmtListaRiscontri.setString(index++,riscontro.getTipoOraRegistrazione().getEngineValue());
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT(UPDATE) RegistrazioneListaRiscontri_riscontro["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaRiscontri);
@@ -1500,18 +1515,19 @@ public class RepositoryBuste  {
 					query.append(" (ID_MESSAGGIO,TIPO,ORIGINE,TIPO_ORIGINE,DESTINAZIONE,TIPO_DESTINAZIONE,ORA_REGISTRAZIONE,TIPO_ORA_REGISTRAZIONE)");
 					query.append(" VALUES (?,?,?,?,?,?,?,?)");
 					pstmtListaTrasmissioni = connectionDB.prepareStatement(query.toString());
-					pstmtListaTrasmissioni.setString(1,busta.getID());
-					pstmtListaTrasmissioni.setString(2,tipoBusta);
-					pstmtListaTrasmissioni.setString(3,trasmissione.getOrigine());
-					pstmtListaTrasmissioni.setString(4,trasmissione.getTipoOrigine());
-					pstmtListaTrasmissioni.setString(5,trasmissione.getDestinazione());
-					pstmtListaTrasmissioni.setString(6,trasmissione.getTipoDestinazione());
+					index = 1;
+					pstmtListaTrasmissioni.setString(index++,busta.getID());
+					pstmtListaTrasmissioni.setString(index++,tipoBusta);
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getOrigine());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTipoOrigine());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getDestinazione());
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTipoDestinazione());
 					Timestamp oraRecTrasmissione = null;
 					if( trasmissione.getOraRegistrazione()!=null ){
 						oraRecTrasmissione = new Timestamp( trasmissione.getOraRegistrazione().getTime()  );
 					}
-					pstmtListaTrasmissioni.setTimestamp(7,oraRecTrasmissione);
-					pstmtListaTrasmissioni.setString(8,trasmissione.getTempo().getEngineValue());
+					pstmtListaTrasmissioni.setTimestamp(index++,oraRecTrasmissione);
+					pstmtListaTrasmissioni.setString(index++,trasmissione.getTempo().getEngineValue());
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT(UPDATE) RegistrazioneListaTrasmissioni_trasmissione["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaTrasmissioni);
@@ -1526,13 +1542,14 @@ public class RepositoryBuste  {
 					query.append(" (ID_MESSAGGIO,TIPO,VALIDAZIONE,CONTESTO,CODICE,RILEVANZA,POSIZIONE)");
 					query.append(" VALUES (?,?,?,?,?,?,?)");
 					pstmtListaEccezioni = connectionDB.prepareStatement(query.toString());
-					pstmtListaEccezioni.setString(1,busta.getID());
-					pstmtListaEccezioni.setString(2,tipoBusta);
-					pstmtListaEccezioni.setInt(3,0); // eccezione proprietaria delle busta
-					pstmtListaEccezioni.setString(4,eccezione.getContestoCodifica().getEngineValue());
-					pstmtListaEccezioni.setInt(5,eccezione.getCodiceEccezione().getCodice());
-					pstmtListaEccezioni.setString(6,eccezione.getRilevanza().getEngineValue());
-					pstmtListaEccezioni.setString(7,eccezione.getDescrizione(this.protocolFactory));
+					index = 1;
+					pstmtListaEccezioni.setString(index++,busta.getID());
+					pstmtListaEccezioni.setString(index++,tipoBusta);
+					pstmtListaEccezioni.setInt(index++,0); // eccezione proprietaria delle busta
+					pstmtListaEccezioni.setString(index++,eccezione.getContestoCodifica().getEngineValue());
+					pstmtListaEccezioni.setInt(index++,eccezione.getCodiceEccezione().getCodice());
+					pstmtListaEccezioni.setString(index++,eccezione.getRilevanza().getEngineValue());
+					pstmtListaEccezioni.setString(index++,eccezione.getDescrizione(this.protocolFactory));
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT(UPDATE) RegistrazioneListaEccezioni_eccezioneBusta["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaEccezioni);
@@ -1547,13 +1564,14 @@ public class RepositoryBuste  {
 					query.append(" (ID_MESSAGGIO,TIPO,VALIDAZIONE,CONTESTO,CODICE,RILEVANZA,POSIZIONE)");
 					query.append(" VALUES (?,?,?,?,?,?,?)");
 					pstmtListaEccezioniValidazione = connectionDB.prepareStatement(query.toString());
-					pstmtListaEccezioniValidazione.setString(1,busta.getID());
-					pstmtListaEccezioniValidazione.setString(2,tipoBusta);
-					pstmtListaEccezioniValidazione.setInt(3,1); // eccezione arrivata dopo la validazione
-					pstmtListaEccezioniValidazione.setString(4,eccezione.getContestoCodifica().getEngineValue());
-					pstmtListaEccezioniValidazione.setInt(5,eccezione.getCodiceEccezione().getCodice());
-					pstmtListaEccezioniValidazione.setString(6,eccezione.getRilevanza().getEngineValue());
-					pstmtListaEccezioniValidazione.setString(7,eccezione.getDescrizione(this.protocolFactory));
+					index = 1;
+					pstmtListaEccezioniValidazione.setString(index++,busta.getID());
+					pstmtListaEccezioniValidazione.setString(index++,tipoBusta);
+					pstmtListaEccezioniValidazione.setInt(index++,1); // eccezione arrivata dopo la validazione
+					pstmtListaEccezioniValidazione.setString(index++,eccezione.getContestoCodifica().getEngineValue());
+					pstmtListaEccezioniValidazione.setInt(index++,eccezione.getCodiceEccezione().getCodice());
+					pstmtListaEccezioniValidazione.setString(index++,eccezione.getRilevanza().getEngineValue());
+					pstmtListaEccezioniValidazione.setString(index++,eccezione.getDescrizione(this.protocolFactory));
 
 					// Add PreparedStatement
 					stateMSG.getPreparedStatement().put("INSERT(UPDATE) RegistrazioneListaEccezioni_eccezioneValidazione["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaEccezioniValidazione);
@@ -1573,10 +1591,11 @@ public class RepositoryBuste  {
 							query.append(" (ID_MESSAGGIO,TIPO,NOME,VALORE)");
 							query.append(" VALUES (?,?,?,?)");
 							pstmtListaExtInfo = connectionDB.prepareStatement(query.toString());
-							pstmtListaExtInfo.setString(1,busta.getID());
-							pstmtListaExtInfo.setString(2,tipoBusta);
-							pstmtListaExtInfo.setString(3,name);
-							pstmtListaExtInfo.setString(4,value);
+							index = 1;
+							pstmtListaExtInfo.setString(index++,busta.getID());
+							pstmtListaExtInfo.setString(index++,tipoBusta);
+							pstmtListaExtInfo.setString(index++,name);
+							pstmtListaExtInfo.setString(index++,value);
 
 							// Add PreparedStatement
 							stateMSG.getPreparedStatement().put("INSERT(UPDATE) RegistrazioneListaExtInfoProtocol_info["+i+"]_"+tipoBusta+"_"+busta.getID(),pstmtListaExtInfo);
@@ -2167,6 +2186,7 @@ public class RepositoryBuste  {
 				while(rs.next()){
 					Riscontro riscontro = new Riscontro();
 					riscontro.setID(rs.getString("ID_RISCONTRO"));
+					riscontro.setRicevuta(rs.getString("RICEVUTA"));
 					riscontro.setOraRegistrazione(rs.getTimestamp("ORA_REGISTRAZIONE"));
 					riscontro.setTipoOraRegistrazione(TipoOraRegistrazione.toTipoOraRegistrazione(rs.getString("TIPO_ORA_REGISTRAZIONE")));
 					busta.addRiscontro(riscontro);

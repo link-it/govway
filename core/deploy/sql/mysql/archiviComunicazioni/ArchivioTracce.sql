@@ -79,6 +79,7 @@ CREATE TABLE tracce_riscontri
 (
 	idtraccia BIGINT NOT NULL,
 	riscontro VARCHAR(255),
+	ricevuta LONGTEXT,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	ora_registrazione TIMESTAMP(3) DEFAULT 0,
 	tipo_ora_reg VARCHAR(255),
