@@ -273,7 +273,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+						this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 				
 				pd.setDati(dati);
 				

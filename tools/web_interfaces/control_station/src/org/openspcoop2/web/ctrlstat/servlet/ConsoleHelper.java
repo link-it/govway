@@ -868,7 +868,13 @@ public class ConsoleHelper {
 						break;
 					case NUMBER:
 						String lvS = this.getParameter(item.getId());
-						Long longValue = StringUtils.isNotEmpty(lvS) ? Long.parseLong(lvS) : null;
+						Long longValue = null;
+						try{
+							// soluzione necessaria perche' il tipo di dato number puo' essere utilizzato anche negli input di tipo text che possono non controllare il tipo di dato inserito
+							longValue = StringUtils.isNotEmpty(lvS) ? Long.parseLong(lvS) : null;
+						}catch(NumberFormatException e) {
+							longValue = null;
+						}
 						NumberProperty numberProperty = ProtocolPropertiesFactory.newProperty(item.getId(), longValue);
 						if(primoAccessoAdd) {
 							numberProperty.setValue(((NumberConsoleItem) item).getDefaultValue());

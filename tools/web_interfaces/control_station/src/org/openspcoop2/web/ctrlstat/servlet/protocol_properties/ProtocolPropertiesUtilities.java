@@ -379,15 +379,15 @@ public class ProtocolPropertiesUtilities {
 		// [TODO] controllare casi che ci possono essere
 		case BOOLEAN:
 			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setValue(booleanItem.getDefaultValue() + "");
+			de.setValue(booleanItem.getDefaultValue() != null ? booleanItem.getDefaultValue() + "" : "");
 			break;
 		case NUMBER:
 			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setValue(numberItem.getDefaultValue() + "");
+			de.setValue(numberItem.getDefaultValue() != null ? numberItem.getDefaultValue() + "" : "");
 			break;
 		case STRING:
 			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setValue(stringItem.getDefaultValue());
+			de.setValue(stringItem.getDefaultValue() != null ? stringItem.getDefaultValue() + "" : "");
 			break;
 		case BINARY: // [TODO] da decidere 
 			de.setValue("");
