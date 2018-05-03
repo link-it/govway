@@ -691,16 +691,21 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.accordoCooperazioneId, this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, 
 						listaTipiProtocollo, used, this.serviceBinding,this.messageType,this.interfaceType);
 				
-				// backtostato per chiudere la modifica dopo la conferma
-				DataElement de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
-				de.setValue(this.backToStato);
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
-				dati.addElement(de);
+				if(this.backToStato!= null) {
+					// backtostato per chiudere la modifica dopo la conferma
+					DataElement de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+					de.setValue(this.backToStato);
+					de.setType(DataElementType.HIDDEN);
+					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+					dati.addElement(de);
+				}
 				
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				
+				// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
+				dati = apcHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				
 				pd.setDati(dati);
 

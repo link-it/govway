@@ -125,6 +125,45 @@ public class ProtocolPropertiesUtilities {
 
 		return dati;
 	}
+	
+	public static Vector<DataElement> itemToDataElementAsHidden(Vector<DataElement> dati ,BaseConsoleItem item, Object defaultItemValue,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
+			Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
+		if(item == null)
+			return dati;
+
+		// tipi con valore
+		if(item instanceof AbstractConsoleItem<?>){
+			AbstractConsoleItem<?> abItem = (AbstractConsoleItem<?>) item;
+			switch (abItem.getType()) {
+			case CHECKBOX:
+			case CRYPT:
+			case FILE:
+			case HIDDEN:
+			case SELECT:
+			case TEXT:
+			case TEXT_AREA:
+			case TEXT_AREA_NO_EDIT:
+			case TEXT_EDIT:
+				dati = getHidden(dati,abItem, size);
+				break;
+			default:
+				throw new ProtocolException("Item con classe ["+abItem.getClass()+"] identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
+			}
+		} else {
+			// titoli e note non vengono aggiunti lascio il controllo dei tipi per sicurezza
+			switch (item.getType()) {
+			case NOTE:
+			case SUBTITLE:
+			case TITLE:
+				break;
+			default:
+				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
+			}
+		}
+
+		return dati;
+	}
 
 	public static Vector<DataElement> getTitle(Vector<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) throws Exception{
 		DataElement de = new DataElement();

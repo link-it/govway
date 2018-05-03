@@ -452,6 +452,12 @@ public final class AccordiCooperazioneChange extends Action {
 				dati = acHelper.addAccordiCooperazioneToDatiAsHidden(dati, nome, descr, id,
 						tipoOp, referente, versione, providersList, providersListLabel,
 						privato,statoPackage,oldStatoPackage,tipoProtocollo, listaTipiProtocollo,used);
+			
+				// aggiunta campi custom
+				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+				
+				// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
+				dati = acHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 				
 				String msg = "Attenzione, esistono Accordi di Servizio Composto che riferiscono l''Accordo di Cooperazione [{0}] che si sta modificando, continuare?";
 				String uriAccordo = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);

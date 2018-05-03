@@ -1232,16 +1232,21 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
 							);
 					
-					// backtostato per chiudere la modifica dopo la conferma
-					DataElement de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
-					de.setValue(backToStato);
-					de.setType(DataElementType.HIDDEN);
-					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
-					dati.addElement(de);
+					if(backToStato != null) {
+						// backtostato per chiudere la modifica dopo la conferma
+						DataElement de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_NOME);
+						de.setValue(backToStato);
+						de.setType(DataElementType.HIDDEN);
+						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+						dati.addElement(de);
+					}
 					
 					// aggiunta campi custom
 					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+					
+					// aggiunta campi custom come hidden, quelli sopra vengono bruciati dal no-edit
+					dati = apsHelper.addProtocolPropertiesToDatiAsHidden(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 					
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
 					

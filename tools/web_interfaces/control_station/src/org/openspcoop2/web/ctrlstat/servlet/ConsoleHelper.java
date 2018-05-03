@@ -2714,6 +2714,40 @@ public class ConsoleHelper {
 
 		return dati;
 	}
+	
+	
+	public Vector<DataElement> addProtocolPropertiesToDatiAsHidden(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties) throws Exception{
+		return addProtocolPropertiesToDatiAsHidden(dati, consoleConfiguration, consoleOperationType, consoleInterfaceType, protocolProperties, null, null);
+	}
+
+	public Vector<DataElement> addProtocolPropertiesToDatiAsHidden(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
+		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
+			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
+			// imposto nel default value il valore attuale.
+			// Mi tengo cmq il default value attuale per le opzioni di selected
+			Object defaultItemValue = null;
+			if(item instanceof AbstractConsoleItem<?> ) {
+				AbstractConsoleItem<?> itemConsole = (AbstractConsoleItem<?>) item;
+				defaultItemValue = itemConsole.getDefaultValue();
+			}
+			ProtocolPropertiesUtils.setDefaultValue(item, property); 
+
+			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(item.getId(), listaProtocolPropertiesDaDB); 
+			dati = ProtocolPropertiesUtilities.itemToDataElementAsHidden(dati,item, defaultItemValue,
+					consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
+		}
+
+		// Imposto il flag per indicare che ho caricato la configurazione
+		DataElement de = new DataElement();
+		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("ok");
+		dati.add(de);
+
+		return dati;
+	}
 
 	//	public void impostaDefaultValuesConsoleItems(ConsoleConfiguration consoleConfiguration,
 	//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
