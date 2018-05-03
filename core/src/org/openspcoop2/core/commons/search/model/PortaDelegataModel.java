@@ -47,6 +47,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.NOME_SOGGETTO_EROGATORE = new Field("nome_soggetto_erogatore",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.TIPO_SERVIZIO = new Field("tipo_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_SERVIZIO = new Field("nome_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.VERSIONE_SERVIZIO = new Field("versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new Field("porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 	
@@ -63,6 +64,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.NOME_SOGGETTO_EROGATORE = new ComplexField(father,"nome_soggetto_erogatore",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.TIPO_SERVIZIO = new ComplexField(father,"tipo_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_SERVIZIO = new ComplexField(father,"nome_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 	
@@ -83,6 +85,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField TIPO_SERVIZIO = null;
 	 
 	public IField NOME_SERVIZIO = null;
+	 
+	public IField VERSIONE_SERVIZIO = null;
 	 
 	public IField NOME_AZIONE = null;
 	 

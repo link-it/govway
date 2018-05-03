@@ -20,10 +20,12 @@
                             <linkit:sql-table-list>
                                 <linkit:sql-comment><![CDATA[**** Utenti ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="users" object-type="users"/>
+                                <linkit:sql-table object-name="users-soggetti" object-type="users-soggetti"/>
+                                <linkit:sql-table object-name="users-servizi" object-type="users-servizi"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
-                            on-delete-cascade="false" force-tolowercase-sqlname="false"/>
+                            on-delete-cascade="false" force-tolowercase-sqlname="false" check-tables-order-list="false"/>
                     </linkit:sql>
                 </linkit:dao>
             </linkit:generator>
@@ -146,6 +148,151 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="users-soggetti">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="users_soggetti"
+                        comment="Soggetti associati all'utente">
+                        <linkit:sql-table-foreign-key reference-table="users">
+                            <linkit:sql-table-fk-field name="id_utente"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="soggetti"
+                            reference-object-type="soggetti"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_soggetto"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_utente" />
+                            <linkit:sql-table-unique-column name="id_soggetto" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_utente" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_utente"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'utente [FK verso tabella users(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_soggetto" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto associato all'utente nella colonna 'id_utente' [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="users-servizi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="users_servizi"
+                        comment="Servizi associati all'utente">
+                        <linkit:sql-table-foreign-key reference-table="users">
+                            <linkit:sql-table-fk-field name="id_utente"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="servizi"
+                            reference-object-type="servizi"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_servizio"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_utente" />
+                            <linkit:sql-table-unique-column name="id_servizio" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_utente" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_utente"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'utente [FK verso tabella users(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_servizio" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio associato all'utente nella colonna 'id_utente' [FK verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    
+    <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->
+    
+    <xsd:element name="soggetti">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="soggetti">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="servizi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>

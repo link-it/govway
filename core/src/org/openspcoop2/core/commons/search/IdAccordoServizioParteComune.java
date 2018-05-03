@@ -37,7 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -93,11 +93,11 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
     this.idSoggetto = idSoggetto;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -115,8 +115,8 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="id-soggetto",required=true,nillable=false)
   protected IdSoggetto idSoggetto;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="versione",required=true,nillable=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione;
 
 }

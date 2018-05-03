@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="port-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-erogatore" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/commons/search}id-accordo-servizio-parte-comune" minOccurs="1" maxOccurs="1"/>
@@ -55,6 +56,7 @@ import java.io.Serializable;
   propOrder = {
   	"tipo",
   	"nome",
+  	"versione",
   	"portType",
   	"idErogatore",
   	"idAccordoServizioParteComune"
@@ -95,6 +97,14 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
   public void setNome(java.lang.String nome) {
     this.nome = nome;
+  }
+
+  public java.lang.Integer getVersione() {
+    return this.versione;
+  }
+
+  public void setVersione(java.lang.Integer versione) {
+    this.versione = versione;
   }
 
   public java.lang.String getPortType() {
@@ -147,6 +157,10 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="versione",required=true,nillable=false)
+  protected java.lang.Integer versione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="port-type",required=true,nillable=false)

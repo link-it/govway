@@ -66,6 +66,8 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "tipo_servizio", PortaDelegata.model().TIPO_SERVIZIO.getFieldType()));
 				setParameter(object, "setNomeServizio", PortaDelegata.model().NOME_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_servizio", PortaDelegata.model().NOME_SERVIZIO.getFieldType()));
+				setParameter(object, "setVersioneServizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "versione_servizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType()));
 				setParameter(object, "setNomeAzione", PortaDelegata.model().NOME_AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_azione", PortaDelegata.model().NOME_AZIONE.getFieldType()));
 				return object;
@@ -108,6 +110,8 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"tipo_servizio"));
 				setParameter(object, "setNomeServizio", PortaDelegata.model().NOME_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"nome_servizio"));
+				setParameter(object, "setVersioneServizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType(),
+					this.getObjectFromMap(map,"versione_servizio"));
 				setParameter(object, "setNomeAzione", PortaDelegata.model().NOME_AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"nome_azione"));
 				return object;

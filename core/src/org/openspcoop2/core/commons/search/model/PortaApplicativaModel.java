@@ -45,6 +45,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"porta-applicativa",PortaApplicativa.class));
 		this.TIPO_SERVIZIO = new Field("tipo_servizio",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_SERVIZIO = new Field("nome_servizio",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.VERSIONE_SERVIZIO = new Field("versione_servizio",java.lang.Integer.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new Field("porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 	
@@ -59,6 +60,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"porta-applicativa",PortaApplicativa.class));
 		this.TIPO_SERVIZIO = new ComplexField(father,"tipo_servizio",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_SERVIZIO = new ComplexField(father,"nome_servizio",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione_servizio",java.lang.Integer.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 	
@@ -75,6 +77,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField TIPO_SERVIZIO = null;
 	 
 	public IField NOME_SERVIZIO = null;
+	 
+	public IField VERSIONE_SERVIZIO = null;
 	 
 	public IField NOME_AZIONE = null;
 	 

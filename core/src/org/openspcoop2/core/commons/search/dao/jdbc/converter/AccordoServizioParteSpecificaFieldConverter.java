@@ -80,6 +80,13 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 				return "nome_servizio";
 			}
 		}
+		if(field.equals(AccordoServizioParteSpecifica.model().VERSIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".versione";
+			}else{
+				return "versione";
+			}
+		}
 		if(field.equals(AccordoServizioParteSpecifica.model().PORT_TYPE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".port_type";
@@ -146,6 +153,9 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 			return this.toTable(AccordoServizioParteSpecifica.model(), returnAlias);
 		}
 		if(field.equals(AccordoServizioParteSpecifica.model().NOME)){
+			return this.toTable(AccordoServizioParteSpecifica.model(), returnAlias);
+		}
+		if(field.equals(AccordoServizioParteSpecifica.model().VERSIONE)){
 			return this.toTable(AccordoServizioParteSpecifica.model(), returnAlias);
 		}
 		if(field.equals(AccordoServizioParteSpecifica.model().PORT_TYPE)){

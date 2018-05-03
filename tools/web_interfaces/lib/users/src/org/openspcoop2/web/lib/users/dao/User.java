@@ -25,6 +25,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+
 
 /**
  * User
@@ -48,6 +51,8 @@ public class User implements Serializable {
 	private List<String> protocolliSupportati;
 	private String protocolloSelezionato;
 	private boolean permitMultiTenant = false;
+	private List<IDSoggetto> soggetti = new ArrayList<>();
+	private List<IDServizio> servizi = new ArrayList<>();
 	
 	public List<String> getProtocolliSupportati() {
 		return this.protocolliSupportati;
@@ -185,6 +190,14 @@ public class User implements Serializable {
 	public void setPermitMultiTenant(boolean permitMultiTenant) {
 		this.permitMultiTenant = permitMultiTenant;
 	}
+	
+	public List<IDSoggetto> getSoggetti() {
+		return this.soggetti;
+	}
+	public List<IDServizio> getServizi() {
+		return this.servizi;
+	}
+	
 	
 	private static final long serialVersionUID = 1L;
 

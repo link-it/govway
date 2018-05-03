@@ -113,6 +113,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica = new IdAccordoServizioParteSpecifica();
 		idAccordoServizioParteSpecifica.setTipo(accordoServizioParteSpecifica.getTipo());
         idAccordoServizioParteSpecifica.setNome(accordoServizioParteSpecifica.getNome());
+        idAccordoServizioParteSpecifica.setVersione(accordoServizioParteSpecifica.getVersione());
         idAccordoServizioParteSpecifica.setIdErogatore(accordoServizioParteSpecifica.getIdErogatore());
         return idAccordoServizioParteSpecifica;
 
@@ -170,6 +171,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
         	List<IField> fields = new ArrayList<IField>();
     		fields.add(AccordoServizioParteSpecifica.model().TIPO);
     		fields.add(AccordoServizioParteSpecifica.model().NOME);
+    		fields.add(AccordoServizioParteSpecifica.model().VERSIONE);
     		fields.add(AccordoServizioParteSpecifica.model().PORT_TYPE);
     		String aliasAccordoNome = "accordoNome";
     		fields.add(new AliasField(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, aliasAccordoNome));
@@ -206,8 +208,8 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 	    				if(apcNome!=null && apcNome instanceof String) {
 	    					idAccordoServizioParteComune.setNome((String) apcNome);
 	    				}
-	    				if(apcVersione!=null && apcVersione instanceof String) {
-	    					idAccordoServizioParteComune.setVersione((String) apcVersione);
+	    				if(apcVersione!=null && apcVersione instanceof Integer) {
+	    					idAccordoServizioParteComune.setVersione((Integer) apcVersione);
 	    				}
 	    				if(apcSoggettoReferenteTipo!=null && apcSoggettoReferenteNome!=null) {
 	    					IdSoggetto idSoggetto = new IdSoggetto();
@@ -581,6 +583,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		sqlQueryObjectGet_accordoServizioParteSpecifica.addSelectField("id");
 		sqlQueryObjectGet_accordoServizioParteSpecifica.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().TIPO,true));
 		sqlQueryObjectGet_accordoServizioParteSpecifica.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().NOME,true));
+		sqlQueryObjectGet_accordoServizioParteSpecifica.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().VERSIONE,true));
 		sqlQueryObjectGet_accordoServizioParteSpecifica.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().PORT_TYPE,true));
 		sqlQueryObjectGet_accordoServizioParteSpecifica.addWhereCondition("id=?");
 
@@ -648,13 +651,13 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		List<Class<?>> listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune.add(String.class);
 		listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune.add(Long.class);
-		listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune.add(String.class);
+		listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune.add(Integer.class);
 
 		List<Object> listaFieldId_accordoServizioParteSpecifica_accordoServizioParteComune = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteSpecifica_accordoServizioParteComune.createSQLQuery(), jdbcProperties.isShowSql(),
 				listaFieldIdReturnType_accordoServizioParteSpecifica_accordoServizioParteComune, searchParams_accordoServizioParteSpecifica_accordoServizioParteComune);
 		String accordo_nome = (String) listaFieldId_accordoServizioParteSpecifica_accordoServizioParteComune.get(0);
 		Long accordo_id_referente = (Long) listaFieldId_accordoServizioParteSpecifica_accordoServizioParteComune.get(1);
-		String accordo_versione = (String) listaFieldId_accordoServizioParteSpecifica_accordoServizioParteComune.get(2);
+		Integer accordo_versione = (Integer) listaFieldId_accordoServizioParteSpecifica_accordoServizioParteComune.get(2);
 		
 		// Recupero SoggettoReferente accordo
 		Soggetto accordo_id_referente_soggetto = null;
@@ -939,12 +942,14 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		sqlQueryObjectGet.setSelectDistinct(true);
 		sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().TIPO,true)+"=?");
 		sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().NOME,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().VERSIONE,true)+"=?");
 		sqlQueryObjectGet.addWhereCondition("id_soggetto=?");
 
 		// Recupero _accordoServizioParteSpecifica
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_accordoServizioParteSpecifica = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getTipo(),String.class),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getNome(),String.class),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(id.getVersione(),Integer.class),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(accordo_id_referente_soggetto.getId(),Long.class)
 		};
 		Long id_accordoServizioParteSpecifica = null;

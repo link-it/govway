@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-erogatore" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -53,6 +54,7 @@ import java.io.Serializable;
   propOrder = {
   	"tipo",
   	"nome",
+  	"versione",
   	"idErogatore"
   }
 )
@@ -93,6 +95,14 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
     this.nome = nome;
   }
 
+  public java.lang.Integer getVersione() {
+    return this.versione;
+  }
+
+  public void setVersione(java.lang.Integer versione) {
+    this.versione = versione;
+  }
+
   public IdSoggetto getIdErogatore() {
     return this.idErogatore;
   }
@@ -115,6 +125,10 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="versione",required=true,nillable=false)
+  protected java.lang.Integer versione;
 
   @XmlElement(name="id-erogatore",required=true,nillable=false)
   protected IdSoggetto idErogatore;

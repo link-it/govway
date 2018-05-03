@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tipo_servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="versione_servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="porta-applicativa-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -62,6 +63,7 @@ import java.util.List;
   	"idSoggetto",
   	"tipoServizio",
   	"nomeServizio",
+  	"versioneServizio",
   	"nomeAzione",
   	"portaApplicativaServizioApplicativo"
   }
@@ -125,6 +127,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setNomeServizio(java.lang.String nomeServizio) {
     this.nomeServizio = nomeServizio;
+  }
+
+  public java.lang.Integer getVersioneServizio() {
+    return this.versioneServizio;
+  }
+
+  public void setVersioneServizio(java.lang.Integer versioneServizio) {
+    this.versioneServizio = versioneServizio;
   }
 
   public java.lang.String getNomeAzione() {
@@ -196,6 +206,10 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome_servizio",required=true,nillable=false)
   protected java.lang.String nomeServizio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @XmlElement(name="versione_servizio",required=true,nillable=false)
+  protected java.lang.Integer versioneServizio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome_azione",required=true,nillable=false)

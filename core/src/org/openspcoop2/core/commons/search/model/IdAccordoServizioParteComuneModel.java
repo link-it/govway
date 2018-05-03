@@ -42,7 +42,7 @@ public class IdAccordoServizioParteComuneModel extends AbstractModel<IdAccordoSe
 	
 		this.NOME = new Field("nome",java.lang.String.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class));
-		this.VERSIONE = new Field("versione",java.lang.String.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
 	
 	}
 	
@@ -52,7 +52,7 @@ public class IdAccordoServizioParteComuneModel extends AbstractModel<IdAccordoSe
 	
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
 		this.ID_SOGGETTO = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-soggetto",org.openspcoop2.core.commons.search.IdSoggetto.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class));
-		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"id-accordo-servizio-parte-comune",IdAccordoServizioParteComune.class);
 	
 	}
 	

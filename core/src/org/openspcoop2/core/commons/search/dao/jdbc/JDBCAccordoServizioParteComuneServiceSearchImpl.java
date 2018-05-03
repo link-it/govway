@@ -939,7 +939,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		};
 		List<Class<?>> listaFieldIdReturnType_accordoServizioParteComune = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_accordoServizioParteComune.add(String.class);
-		listaFieldIdReturnType_accordoServizioParteComune.add(String.class);
+		listaFieldIdReturnType_accordoServizioParteComune.add(Integer.class);
 		listaFieldIdReturnType_accordoServizioParteComune.add(Long.class);
 		org.openspcoop2.core.commons.search.IdAccordoServizioParteComune id_accordoServizioParteComune = null;
 		List<Object> listaFieldId_accordoServizioParteComune = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
@@ -953,7 +953,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 			// set _accordoServizioParteComune
 			id_accordoServizioParteComune = new org.openspcoop2.core.commons.search.IdAccordoServizioParteComune();
 			id_accordoServizioParteComune.setNome((String)listaFieldId_accordoServizioParteComune.get(0));
-			id_accordoServizioParteComune.setVersione((String)listaFieldId_accordoServizioParteComune.get(1));
+			id_accordoServizioParteComune.setVersione((Integer)listaFieldId_accordoServizioParteComune.get(1));
 			Long idSoggettoFK = (Long) listaFieldId_accordoServizioParteComune.get(2);
 			id_accordoServizioParteComune.
 				setIdSoggetto(((IDBSoggettoServiceSearch)this.getServiceManager().

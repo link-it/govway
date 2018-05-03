@@ -38,7 +38,7 @@ import java.util.List;
  * &lt;complexType name="accordo-servizio-parte-comune">
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-referente" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="accordo-servizio-parte-comune-azione" type="{http://www.openspcoop2.org/core/commons/search}accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/commons/search}port-type" minOccurs="0" maxOccurs="unbounded"/>
@@ -91,11 +91,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.nome = nome;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -178,9 +178,9 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="versione",required=true,nillable=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione;
 
   @XmlElement(name="id-referente",required=true,nillable=false)
   protected IdSoggetto idReferente;

@@ -57,6 +57,8 @@ public class AccordoServizioParteSpecificaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "tipo_servizio", AccordoServizioParteSpecifica.model().TIPO.getFieldType()));
 				setParameter(object, "setNome", AccordoServizioParteSpecifica.model().NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_servizio", AccordoServizioParteSpecifica.model().NOME.getFieldType()));
+				setParameter(object, "setVersione", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "versione", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType()));
 				setParameter(object, "setPortType", AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "port_type", AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldType()));
 				return object;
@@ -85,6 +87,8 @@ public class AccordoServizioParteSpecificaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"tipo"));
 				setParameter(object, "setNome", AccordoServizioParteSpecifica.model().NOME.getFieldType(),
 					this.getObjectFromMap(map,"nome"));
+				setParameter(object, "setVersione", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType(),
+					this.getObjectFromMap(map,"versione"));
 				setParameter(object, "setPortType", AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldType(),
 					this.getObjectFromMap(map,"port-type"));
 				return object;

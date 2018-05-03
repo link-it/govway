@@ -42,6 +42,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	
 		this.TIPO = new Field("tipo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PORT_TYPE = new Field("port-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_EROGATORE = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new Field("id-erogatore",org.openspcoop2.core.commons.search.IdSoggetto.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.ID_ACCORDO_SERVIZIO_PARTE_COMUNE = new org.openspcoop2.core.commons.search.model.IdAccordoServizioParteComuneModel(new Field("id-accordo-servizio-parte-comune",org.openspcoop2.core.commons.search.IdAccordoServizioParteComune.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
@@ -54,6 +55,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PORT_TYPE = new ComplexField(father,"port-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ID_EROGATORE = new org.openspcoop2.core.commons.search.model.IdSoggettoModel(new ComplexField(father,"id-erogatore",org.openspcoop2.core.commons.search.IdSoggetto.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.ID_ACCORDO_SERVIZIO_PARTE_COMUNE = new org.openspcoop2.core.commons.search.model.IdAccordoServizioParteComuneModel(new ComplexField(father,"id-accordo-servizio-parte-comune",org.openspcoop2.core.commons.search.IdAccordoServizioParteComune.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
@@ -65,6 +67,8 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	public IField TIPO = null;
 	 
 	public IField NOME = null;
+	 
+	public IField VERSIONE = null;
 	 
 	public IField PORT_TYPE = null;
 	 

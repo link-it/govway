@@ -62,6 +62,8 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "tipo_servizio", PortaApplicativa.model().TIPO_SERVIZIO.getFieldType()));
 				setParameter(object, "setNomeServizio", PortaApplicativa.model().NOME_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "servizio", PortaApplicativa.model().NOME_SERVIZIO.getFieldType()));
+				setParameter(object, "setVersioneServizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "versione_servizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType()));
 				setParameter(object, "setNomeAzione", PortaApplicativa.model().NOME_AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "azione", PortaApplicativa.model().NOME_AZIONE.getFieldType()));
 				return object;
@@ -100,6 +102,8 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"tipo_servizio"));
 				setParameter(object, "setNomeServizio", PortaApplicativa.model().NOME_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"nome_servizio"));
+				setParameter(object, "setVersioneServizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType(),
+					this.getObjectFromMap(map,"versione_servizio"));
 				setParameter(object, "setNomeAzione", PortaApplicativa.model().NOME_AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"nome_azione"));
 				return object;

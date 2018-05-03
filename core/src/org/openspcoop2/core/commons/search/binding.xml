@@ -46,6 +46,7 @@
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <value name="tipo" field="tipo" usage="required"/>
     <value name="nome" field="nome" usage="required"/>
+    <value name="versione" field="versione" usage="required"/>
     <value name="port-type" field="portType" usage="required"/>
     <structure name="id-erogatore" field="idErogatore" usage="required" map-as="_IdSoggetto_Type"/>
     <structure name="id-accordo-servizio-parte-comune" field="idAccordoServizioParteComune" usage="required" map-as="_IdAccordoServizioParteComune_Type"/>
@@ -70,6 +71,7 @@
     <value name="nome_soggetto_erogatore" field="nomeSoggettoErogatore" usage="required"/>
     <value name="tipo_servizio" field="tipoServizio" usage="required"/>
     <value name="nome_servizio" field="nomeServizio" usage="required"/>
+    <value name="versione_servizio" field="versioneServizio" usage="required"/>
     <value name="nome_azione" field="nomeAzione" usage="required"/>
     <collection field="portaDelegataServizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo"/>
@@ -86,6 +88,7 @@
     <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
     <value name="tipo_servizio" field="tipoServizio" usage="required"/>
     <value name="nome_servizio" field="nomeServizio" usage="required"/>
+    <value name="versione_servizio" field="versioneServizio" usage="required"/>
     <value name="nome_azione" field="nomeAzione" usage="required"/>
     <collection field="portaApplicativaServizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo"/>
@@ -148,6 +151,7 @@
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <value name="tipo" field="tipo" usage="required"/>
     <value name="nome" field="nome" usage="required"/>
+    <value name="versione" field="versione" usage="required"/>
     <structure name="id-erogatore" field="idErogatore" usage="required" map-as="_IdSoggetto_Type"/>
   </mapping>
 
@@ -155,6 +159,7 @@
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <value name="tipo" field="tipo" usage="required"/>
     <value name="nome" field="nome" usage="required"/>
+    <value name="versione" field="versione" usage="required"/>
     <structure name="id-erogatore" field="idErogatore" usage="required" map-as="_IdSoggetto_Type"/>
   </mapping>
   <mapping name="id-fruitore" class="org.openspcoop2.core.commons.search.IdFruitore">
