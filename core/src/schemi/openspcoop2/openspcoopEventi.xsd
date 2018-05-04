@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/eventi"
+	targetNamespace="http://www.openspcoop2.org/core/eventi"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="eventi">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[PLUGINS PER GLI EVENTI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="evento" object-type="evento"/>
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="true" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+
+
+
+
+
+
+	
+	<xsd:element name="evento">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" />
+					<linkit:sql-table-mapping name="notifiche_eventi">
+						<linkit:sql-table-index name="INDEX_EVENTI">
+							<linkit:sql-table-index-field name="ora-registrazione" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-field name="severita"/>
+							<linkit:sql-table-index-field name="tipo"/>
+							<linkit:sql-table-index-field name="codice"/>
+							<linkit:sql-table-index-field name="id-configurazione"/>
+							<linkit:sql-table-index-field name="cluster-id"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo" varchar="100"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="codice" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="codice" varchar="100"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="severita" type="xsd:int">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="severita"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ora-registrazione" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="ora_registrazione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="descrizione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="descrizione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-transazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_transazione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-configurazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_configurazione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="configurazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="configurazione" medium-text="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="cluster-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="cluster_id" varchar="100" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+
+
+	
+	<!-- Oggetti Servizio -->
+	
+	<xsd:complexType name="dati-evento-generico">
+		<xsd:sequence>
+			<xsd:element name="id-evento" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="data" type="xsd:dateTime" minOccurs="0"/>
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="dati-consumati-thread" type="xsd:boolean" minOccurs="0"/>
+			<xsd:element name="codice-evento" type="xsd:string" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+
+	<!-- Tipi -->
+	
+	<xsd:simpleType name="TipoSeverita">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DEBUG"/>
+			<xsd:enumeration value="INFO"/>
+			<xsd:enumeration value="ERROR"/>
+			<xsd:enumeration value="WARN"/>
+			<xsd:enumeration value="FATAL"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="TipoEvento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="StatoPortaDominio"/>
+			<xsd:enumeration value="ControlloTraffico_NumeroMassimoRichiesteSimultanee"/>
+			<xsd:enumeration value="ControlloTraffico_SogliaCongestione"/>
+			<xsd:enumeration value="RateLimiting_Policy"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CodiceEventoStatoPortaDominio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Start"/>
+			<xsd:enumeration value="Stop"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="CodiceEventoControlloCongestione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Violazione"/>
+			<xsd:enumeration value="ViolazioneRisolta"/>
+			<xsd:enumeration value="Violazione_WarningOnly"/>
+			<xsd:enumeration value="ViolazioneRisolta_WarningOnly"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	
+
+</xsd:schema>

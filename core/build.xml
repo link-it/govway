@@ -444,18 +444,18 @@
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
-			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql DBInfo.sql"/>
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql archiviComunicazioni/ArchivioEventi.sql DBInfo.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Archivio delle tracce e dei messaggi diagnostici emessi dalla Porta di Dominio OpenSPCoop2');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici_delete.sql"/>
-			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql archiviComunicazioni/ArchivioTracce_delete.sql archiviComunicazioni/ArchivioTransazioni_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql archiviComunicazioni/ArchivioTracce_delete.sql archiviComunicazioni/ArchivioTransazioni_delete.sql archiviComunicazioni/ArchivioEventi_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici_drop.sql"/>
-			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql archiviComunicazioni/ArchivioTracce_drop.sql archiviComunicazioni/ArchivioTransazioni_drop.sql DBInfo_drop.sql"/>
+			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql archiviComunicazioni/ArchivioTracce_drop.sql archiviComunicazioni/ArchivioTransazioni_drop.sql archiviComunicazioni/ArchivioEventi_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 		
 		<!-- ConfigurazionePdD -->

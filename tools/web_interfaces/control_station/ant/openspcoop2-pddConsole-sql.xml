@@ -294,6 +294,7 @@
 				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioTracce.sql"/>
 				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioMessaggiDiagnostici.sql"/>
 				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioTransazioni.sql"/>
+				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioEventi.sql"/>
 			</then>
 		</if>
 		
@@ -330,6 +331,7 @@
 				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioTracce_delete.sql"/>
 				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql"/>
 				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioTransazioni_delete.sql"/>
+				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioEventi_delete.sql"/>
 			</then>
 		</if>
 		
@@ -385,6 +387,7 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioTracce_drop.sql"/>
 				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql"/>
 				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioTransazioni_drop.sql"/>
+				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioEventi_drop.sql"/>
 			</then>
 		</if>
 
