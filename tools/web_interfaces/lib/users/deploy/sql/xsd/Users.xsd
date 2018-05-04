@@ -20,6 +20,7 @@
                             <linkit:sql-table-list>
                                 <linkit:sql-comment><![CDATA[**** Utenti ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="users" object-type="users"/>
+                                <linkit:sql-table object-name="users-stati" object-type="users-stati"/>
                                 <linkit:sql-table object-name="users-soggetti" object-type="users-soggetti"/>
                                 <linkit:sql-table object-name="users-servizi" object-type="users-servizi"/>
                             </linkit:sql-table-list>
@@ -148,6 +149,58 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                
+                <xsd:element ref="users-stati" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_utente" required="true" />
+                                <linkit:sql-ddl-column-comment>Identificativo dell'utente [FK verso tabella users(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                    
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="users-stati">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="users_stati"
+                        comment="Contiene gli stati associati all'utente. Uno stato puo' descrivere ad es. dei criteri di visualizzazione scelti da un utente">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="oggetto" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="oggetto"/>
+                                <linkit:sql-ddl-column-comment>Tipologia di informazione a cui questo stato e' associata</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="stato" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="stato" medium-text="true"/>
+                                <linkit:sql-ddl-column-comment>Serializzazione dello stato dell'utente</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -257,6 +310,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
     
     
     

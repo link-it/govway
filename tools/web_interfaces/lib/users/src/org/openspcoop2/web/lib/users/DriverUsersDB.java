@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
 import org.openspcoop2.core.commons.Liste;
@@ -156,6 +157,25 @@ public class DriverUsersDB {
 			JDBCServiceManager search = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
 			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) search.getSoggettoServiceSearch();
 			IDBAccordoServizioParteSpecificaServiceSearch serviziSearch = (IDBAccordoServizioParteSpecificaServiceSearch) search.getAccordoServizioParteSpecificaServiceSearch();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_STATI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm.setLong(1, user.getId());
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				String oggetto = rs.getString("oggetto");
+				String stato = rs.getString("stato");
+				Stato statoObject = new Stato();
+				statoObject.setOggetto(oggetto);
+				statoObject.setStato(stato);
+				user.getStati().add(statoObject);
+			}
+			rs.close();
+			stm.close();
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
@@ -511,12 +531,12 @@ public class DriverUsersDB {
 			stm.executeUpdate();
 			stm.close();
 						
-			if(user.getSoggetti().size()>0 || user.getServizi().size()>0) {
+			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
 			
 				// recupero id
 				long idUser = this._getIdUser(login);
 				
-				_addListaSoggettiServizi(user, idUser);
+				_addListeUtente(user, idUser);
 				
 			}
 			
@@ -579,10 +599,10 @@ public class DriverUsersDB {
 			
 			long idUser = this._getIdUser(user);
 				
-			_deleteListaSoggettiServizi(idUser);
+			_deleteListeUtente(idUser);
 			
-			if(user.getSoggetti().size()>0 || user.getServizi().size()>0) {
-				_addListaSoggettiServizi(user, idUser);
+			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
+				_addListeUtente(user, idUser);
 			}
 			
 		} catch (Exception qe) {
@@ -621,7 +641,7 @@ public class DriverUsersDB {
 			
 			long idUser = this._getIdUser(user);
 			
-			_deleteListaSoggettiServizi(idUser);
+			_deleteListeUtente(idUser);
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS);
@@ -653,11 +673,30 @@ public class DriverUsersDB {
 
 	
 	
-	private void _addListaSoggettiServizi(User user, long idUser) throws Exception {
+	private void _addListeUtente(User user, long idUser) throws Exception {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		try {
 		
+			if(user.getStati().size()>0) {
+				for (Stato stato : user.getStati()) {
+					
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.USERS_STATI);
+					sqlQueryObject.addInsertField("id_utente", "?");
+					sqlQueryObject.addInsertField("oggetto", "?");
+					sqlQueryObject.addInsertField("stato", "?");
+					String sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = this.connectionDB.prepareStatement(sqlQuery);
+					int index = 1;
+					stm.setLong(index++, idUser);
+					stm.setString(index++, stato.getOggetto());
+					stm.setString(index++, stato.getStato());
+					stm.executeUpdate();
+					stm.close();
+				}
+			}
+			
 			if(user.getSoggetti().size()>0) {
 				for (IDSoggetto idSoggetto : user.getSoggetti()) {
 					
@@ -719,13 +758,22 @@ public class DriverUsersDB {
 		}
 	}
 	
-	private void _deleteListaSoggettiServizi(long idUser) throws Exception {
+	private void _deleteListeUtente(long idUser) throws Exception {
 		PreparedStatement stm = null;
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.USERS_SOGGETTI);
+			sqlQueryObject.addDeleteTable(CostantiDB.USERS_STATI);
 			sqlQueryObject.addWhereCondition("id_utente = ?");
 			String sqlQuery = sqlQueryObject.createSQLDelete();
+			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm.setLong(1, idUser);
+			stm.executeUpdate();
+			stm.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.USERS_SOGGETTI);
+			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQuery = sqlQueryObject.createSQLDelete();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, idUser);
 			stm.executeUpdate();

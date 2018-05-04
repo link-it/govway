@@ -185,6 +185,7 @@ public final class CostantiDB {
     
     /*PddConsole*/
     public static final String USERS = "users";
+    public static final String USERS_STATI = "users_stati";
     public static final String USERS_SOGGETTI = "users_soggetti";
     public static final String USERS_SERVIZI = "users_servizi";
     public static final String MAPPING_FRUIZIONE_PD	= "mapping_fruizione_pd";

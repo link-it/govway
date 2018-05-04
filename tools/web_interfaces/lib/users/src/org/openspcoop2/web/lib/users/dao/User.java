@@ -53,6 +53,7 @@ public class User implements Serializable {
 	private boolean permitMultiTenant = false;
 	private List<IDSoggetto> soggetti = new ArrayList<>();
 	private List<IDServizio> servizi = new ArrayList<>();
+	private List<Stato> stati = new ArrayList<>();
 	
 	public List<String> getProtocolliSupportati() {
 		return this.protocolliSupportati;
@@ -196,6 +197,9 @@ public class User implements Serializable {
 	}
 	public List<IDServizio> getServizi() {
 		return this.servizi;
+	}
+	public List<Stato> getStati() {
+		return this.stati;
 	}
 	
 	

@@ -34,6 +34,34 @@ end;
 
 
 
+CREATE SEQUENCE seq_users_stati MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE users_stati
+(
+	oggetto VARCHAR2(255) NOT NULL,
+	stato CLOB NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	id_utente NUMBER NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_users_stati
+BEFORE
+insert on users_stati
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_users_stati.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
 CREATE SEQUENCE seq_users_soggetti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
 CREATE TABLE users_soggetti

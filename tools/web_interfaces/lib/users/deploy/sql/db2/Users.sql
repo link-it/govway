@@ -21,6 +21,21 @@ CREATE TABLE users
 
 
 
+CREATE TABLE users_stati
+(
+	oggetto VARCHAR(255) NOT NULL,
+	stato CLOB NOT NULL,
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+);
+
+
+
+
 CREATE TABLE users_soggetti
 (
 	id_utente BIGINT NOT NULL,

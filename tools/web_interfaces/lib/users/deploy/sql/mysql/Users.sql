@@ -21,6 +21,21 @@ CREATE TABLE users
 
 
 
+CREATE TABLE users_stati
+(
+	oggetto VARCHAR(255) NOT NULL,
+	stato MEDIUMTEXT NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+
+
+
 CREATE TABLE users_soggetti
 (
 	id_utente BIGINT NOT NULL,

@@ -23,6 +23,23 @@ CREATE TABLE users
 
 
 
+CREATE SEQUENCE seq_users_stati start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE users_stati
+(
+	oggetto VARCHAR(255) NOT NULL,
+	stato TEXT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_users_stati') NOT NULL,
+	id_utente BIGINT NOT NULL,
+	-- fk/pk keys constraints
+	CONSTRAINT fk_users_stati_1 FOREIGN KEY (id_utente) REFERENCES users(id),
+	CONSTRAINT pk_users_stati PRIMARY KEY (id)
+);
+
+
+
+
 CREATE SEQUENCE seq_users_soggetti start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE users_soggetti
