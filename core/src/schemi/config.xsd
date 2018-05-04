@@ -382,6 +382,7 @@
 			Se non viene indicato, per default la sicurezza viene sempre applicato prima del processo di packaging e dopo il processo di unpackaging
 		-->
 		<xsd:attribute name="apply-to-mtom" type="StatoFunzionalita" use="optional"/>
+		<xsd:attribute name="mode" type="xsd:string" use="optional" default="default"/>
 	</xsd:complexType>
 	<xsd:complexType name="message-security-flow-parameter">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

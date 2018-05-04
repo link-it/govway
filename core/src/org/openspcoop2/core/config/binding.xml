@@ -439,6 +439,7 @@
       <structure map-as="org.openspcoop2.core.config.MessageSecurityFlowParameter"/>
     </collection>
     <value name="apply-to-mtom" field="applyToMtom" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="mode" field="mode" default="default" usage="optional" style="attribute"/>
   </mapping>
 
   <mapping type-name="_MessageSecurityFlow_Type" class="org.openspcoop2.core.config.MessageSecurityFlow" abstract="true">
@@ -447,6 +448,7 @@
       <structure map-as="org.openspcoop2.core.config.MessageSecurityFlowParameter"/>
     </collection>
     <value name="apply-to-mtom" field="applyToMtom" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="mode" field="mode" default="default" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="parameter" class="org.openspcoop2.core.config.MessageSecurityFlowParameter">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

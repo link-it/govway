@@ -27,11 +27,13 @@ CREATE TABLE porte_applicative
 	-- disable/packaging/unpackaging/verify
 	mtom_response_mode VARCHAR(255),
 	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)
-	ws_security VARCHAR(255),
+	security VARCHAR(255),
 	-- abilitato/disabilitato
-	ws_security_mtom_req VARCHAR(255),
+	security_mtom_req VARCHAR(255),
 	-- abilitato/disabilitato
-	ws_security_mtom_res VARCHAR(255),
+	security_mtom_res VARCHAR(255),
+	security_request_mode VARCHAR(255),
+	security_response_mode VARCHAR(255),
 	-- abilitato/disabilitato
 	ricevuta_asincrona_sim VARCHAR(255),
 	-- abilitato/disabilitato

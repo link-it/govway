@@ -42,6 +42,7 @@ public class MessageSecurityFlowModel extends AbstractModel<MessageSecurityFlow>
 	
 		this.PARAMETER = new org.openspcoop2.core.config.model.MessageSecurityFlowParameterModel(new Field("parameter",org.openspcoop2.core.config.MessageSecurityFlowParameter.class,"message-security-flow",MessageSecurityFlow.class));
 		this.APPLY_TO_MTOM = new Field("apply-to-mtom",java.lang.String.class,"message-security-flow",MessageSecurityFlow.class);
+		this.MODE = new Field("mode",java.lang.String.class,"message-security-flow",MessageSecurityFlow.class);
 	
 	}
 	
@@ -51,6 +52,7 @@ public class MessageSecurityFlowModel extends AbstractModel<MessageSecurityFlow>
 	
 		this.PARAMETER = new org.openspcoop2.core.config.model.MessageSecurityFlowParameterModel(new ComplexField(father,"parameter",org.openspcoop2.core.config.MessageSecurityFlowParameter.class,"message-security-flow",MessageSecurityFlow.class));
 		this.APPLY_TO_MTOM = new ComplexField(father,"apply-to-mtom",java.lang.String.class,"message-security-flow",MessageSecurityFlow.class);
+		this.MODE = new ComplexField(father,"mode",java.lang.String.class,"message-security-flow",MessageSecurityFlow.class);
 	
 	}
 	
@@ -59,6 +61,8 @@ public class MessageSecurityFlowModel extends AbstractModel<MessageSecurityFlow>
 	public org.openspcoop2.core.config.model.MessageSecurityFlowParameterModel PARAMETER = null;
 	 
 	public IField APPLY_TO_MTOM = null;
+	 
+	public IField MODE = null;
 	 
 
 	@Override

@@ -7056,7 +7056,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	/**
 	 * Ritorna la lista di porte applicative con settati i campi id, nome,
-	 * descrizione e se il ws_security e' abilitato allora crea un oggetto
+	 * descrizione e se il security e' abilitato allora crea un oggetto
 	 * MessageSecurity vuoto altrimenti null.
 	 */
 	public List<PortaApplicativa> porteAppList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
@@ -7124,8 +7124,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome_porta");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("ws_security");
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_porta",search,true, true);
@@ -7141,8 +7139,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome_porta");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("ws_security");
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.addOrderBy("nome_porta");
@@ -8294,10 +8290,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome_porta");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("autenticazione");
-				sqlQueryObject.addSelectField("autorizzazione");
-				sqlQueryObject.addSelectField("ws_security");
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_porta", search, true, true);
@@ -8313,10 +8305,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addSelectField("nome_porta");
-				sqlQueryObject.addSelectField("descrizione");
-				sqlQueryObject.addSelectField("autenticazione");
-				sqlQueryObject.addSelectField("autorizzazione");
-				sqlQueryObject.addSelectField("ws_security");
 				sqlQueryObject.addSelectField("id_soggetto");
 				sqlQueryObject.addWhereCondition("id_soggetto = ?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -11896,9 +11884,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("validazione_contenuti_mtom");
 			sqlQueryObject.addSelectField("mtom_request_mode");
 			sqlQueryObject.addSelectField("mtom_response_mode");
-			sqlQueryObject.addSelectField("ws_security");
-			sqlQueryObject.addSelectField("ws_security_mtom_req");
-			sqlQueryObject.addSelectField("ws_security_mtom_res");
+			sqlQueryObject.addSelectField("security");
+			sqlQueryObject.addSelectField("security_mtom_req");
+			sqlQueryObject.addSelectField("security_mtom_res");
+			sqlQueryObject.addSelectField("security_request_mode");
+			sqlQueryObject.addSelectField("security_response_mode");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_APPLICATIVE+".id", "idPA");
 			sqlQueryObject.addSelectAliasField(this.tabellaSoggetti+".id", "idSoggetto");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_APPLICATIVE+".descrizione", "descrizionePorta");
@@ -12150,22 +12140,45 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				// messageSecurity
 				
-				String ws_security = rs.getString("ws_security");
-				String ws_security_mtom_req = rs.getString("ws_security_mtom_req");
-				String ws_security_mtom_res = rs.getString("ws_security_mtom_res");
+				String security = rs.getString("security");
+				String security_mtom_req = rs.getString("security_mtom_req");
+				String security_mtom_res = rs.getString("security_mtom_res");
+				String security_request_mode = rs.getString("security_request_mode");
+				String security_response_mode = rs.getString("security_response_mode");
 				MessageSecurity messageSecurity = null;
-				if(  (ws_security_mtom_req!=null && !ws_security_mtom_req.equals(""))  
+				if(  (security_mtom_req!=null && !security_mtom_req.equals(""))  
 						||
-						(ws_security_mtom_res!=null && !ws_security_mtom_res.equals(""))  	)
+						(security_request_mode!=null && !security_request_mode.equals(""))  
+						||
+						(security_mtom_res!=null && !security_mtom_res.equals(""))  	
+						||
+						(security_response_mode!=null && !security_response_mode.equals("")) 
+						)
 				{
 					messageSecurity = new MessageSecurity();
-					if((ws_security_mtom_req!=null && !ws_security_mtom_req.equals(""))  ){
-						messageSecurity.setRequestFlow(new MessageSecurityFlow());
-						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(ws_security_mtom_req));
+					if((security_mtom_req!=null && !security_mtom_req.equals(""))  ){
+						if(messageSecurity.getRequestFlow()==null) {
+							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(security_mtom_req));
 					}
-					if((ws_security_mtom_res!=null && !ws_security_mtom_res.equals(""))  ){
-						messageSecurity.setResponseFlow(new MessageSecurityFlow());
-						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(ws_security_mtom_res));
+					if((security_mtom_res!=null && !security_mtom_res.equals(""))  ){
+						if(messageSecurity.getResponseFlow()==null) {
+							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(security_mtom_res));
+					}
+					if((security_request_mode!=null && !security_request_mode.equals(""))  ){
+						if(messageSecurity.getRequestFlow()==null) {
+							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getRequestFlow().setMode(security_request_mode);
+					}
+					if((security_response_mode!=null && !security_response_mode.equals(""))  ){
+						if(messageSecurity.getResponseFlow()==null) {
+							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getResponseFlow().setMode(security_response_mode);
 					}
 				}
 				
@@ -12207,8 +12220,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
-				// stato wss
-				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(ws_security)) {
+				// stato security
+				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(security)) {
 					pa.setStatoMessageSecurity(CostantiConfigurazione.ABILITATO.toString());
 				}else{
 					pa.setStatoMessageSecurity(CostantiConfigurazione.DISABILITATO.toString());
@@ -12592,9 +12605,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("validazione_contenuti_mtom");
 			sqlQueryObject.addSelectField("mtom_request_mode");
 			sqlQueryObject.addSelectField("mtom_response_mode");
-			sqlQueryObject.addSelectField("ws_security");
-			sqlQueryObject.addSelectField("ws_security_mtom_req");
-			sqlQueryObject.addSelectField("ws_security_mtom_res");
+			sqlQueryObject.addSelectField("security");
+			sqlQueryObject.addSelectField("security_mtom_req");
+			sqlQueryObject.addSelectField("security_mtom_res");
+			sqlQueryObject.addSelectField("security_request_mode");
+			sqlQueryObject.addSelectField("security_response_mode");
 			sqlQueryObject.addSelectField("allega_body");
 			sqlQueryObject.addSelectField("scarta_body");
 			sqlQueryObject.addSelectField("gestione_manifest");
@@ -12850,22 +12865,45 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 
 				// messageSecurity			
-				String ws_security = rs.getString("ws_security");
-				String ws_security_mtom_req = rs.getString("ws_security_mtom_req");
-				String ws_security_mtom_res = rs.getString("ws_security_mtom_res");
+				String security = rs.getString("security");
+				String security_mtom_req = rs.getString("security_mtom_req");
+				String security_mtom_res = rs.getString("security_mtom_res");
+				String security_request_mode = rs.getString("security_request_mode");
+				String security_response_mode = rs.getString("security_response_mode");
 				MessageSecurity messageSecurity = null;
-				if(  (ws_security_mtom_req!=null && !ws_security_mtom_req.equals(""))  
+				if(  (security_mtom_req!=null && !security_mtom_req.equals(""))  
 						||
-						(ws_security_mtom_res!=null && !ws_security_mtom_res.equals(""))  	)
+						(security_request_mode!=null && !security_request_mode.equals(""))  
+						||
+						(security_mtom_res!=null && !security_mtom_res.equals(""))  	
+						||
+						(security_response_mode!=null && !security_response_mode.equals("")) 
+						)
 				{
 					messageSecurity = new MessageSecurity();
-					if((ws_security_mtom_req!=null && !ws_security_mtom_req.equals(""))  ){
-						messageSecurity.setRequestFlow(new MessageSecurityFlow());
-						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(ws_security_mtom_req));
+					if((security_mtom_req!=null && !security_mtom_req.equals(""))  ){
+						if(messageSecurity.getRequestFlow()==null) {
+							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getRequestFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(security_mtom_req));
 					}
-					if((ws_security_mtom_res!=null && !ws_security_mtom_res.equals(""))  ){
-						messageSecurity.setResponseFlow(new MessageSecurityFlow());
-						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(ws_security_mtom_res));
+					if((security_mtom_res!=null && !security_mtom_res.equals(""))  ){
+						if(messageSecurity.getResponseFlow()==null) {
+							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(security_mtom_res));
+					}
+					if((security_request_mode!=null && !security_request_mode.equals(""))  ){
+						if(messageSecurity.getRequestFlow()==null) {
+							messageSecurity.setRequestFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getRequestFlow().setMode(security_request_mode);
+					}
+					if((security_response_mode!=null && !security_response_mode.equals(""))  ){
+						if(messageSecurity.getResponseFlow()==null) {
+							messageSecurity.setResponseFlow(new MessageSecurityFlow());	
+						}
+						messageSecurity.getResponseFlow().setMode(security_response_mode);
 					}
 				}
 
@@ -12907,8 +12945,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
-				// stato wss
-				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(ws_security)) {
+				// stato security
+				if (CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(security)) {
 					pd.setStatoMessageSecurity(CostantiConfigurazione.ABILITATO.toString());
 				}else{
 					pd.setStatoMessageSecurity(CostantiConfigurazione.DISABILITATO.toString());

@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/config}message-security-flow-parameter" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="apply-to-mtom" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
+ * 		&lt;attribute name="mode" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="default"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -122,6 +123,14 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBean im
     this.applyToMtom = applyToMtom;
   }
 
+  public java.lang.String getMode() {
+    return this.mode;
+  }
+
+  public void setMode(java.lang.String mode) {
+    this.mode = mode;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -164,5 +173,9 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBean im
 
   @XmlAttribute(name="apply-to-mtom",required=false)
   protected StatoFunzionalita applyToMtom;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="mode",required=false)
+  protected java.lang.String mode = "default";
 
 }

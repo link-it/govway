@@ -287,12 +287,12 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="ws_security" type="xsd:string" minOccurs="0">
+                <xsd:element name="security" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="ws_security"/>
+                                <linkit:sql-column-mapping name="security"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indicazione se è attivo o meno un trattamento del messaggio tramite WSSecurity (abilitato/disabilitato). 
 Se attivo le regole specifiche di trattamento della richiesta e/o della risposta sono definite rispettivamente nella tabella 'pa_ws_request' e 'pa_ws_response' ]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)]]></linkit:sql-column-comment>
@@ -300,26 +300,48 @@ Se attivo le regole specifiche di trattamento della richiesta e/o della risposta
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="ws_security_mtom_req" type="xsd:string" minOccurs="0">
+                <xsd:element name="security_mtom_req" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="ws_security_mtom_req"/>
+                                <linkit:sql-column-mapping name="security_mtom_req"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se prima di attuare un processamento WSSecurity sulla richiesta deve essere effettuato il trattamento mtom (se abilitato tramite la colonna 'mtom_request_mode') (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="ws_security_mtom_res" type="xsd:string" minOccurs="0">
+                <xsd:element name="security_mtom_res" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="ws_security_mtom_res"/>
+                                <linkit:sql-column-mapping name="security_mtom_res"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se prima di attuare un processamento WSSecurity sulla risposta deve essere effettuato il trattamento mtom (se abilitato tramite la colonna 'mtom_response_mode') (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="security_request_mode" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="security_request_mode"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di gestione della sicurezza per il messaggio di richiesta]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="security_response_mode" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="security_response_mode"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di gestione della sicurezza per il messaggio di risposta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

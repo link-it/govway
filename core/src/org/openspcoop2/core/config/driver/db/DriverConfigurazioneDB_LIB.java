@@ -1263,12 +1263,16 @@ public class DriverConfigurazioneDB_LIB {
 		String messageSecurityStatus = aPD.getStatoMessageSecurity();
 		StatoFunzionalita messageSecurityApplyMtom_request = null;
 		StatoFunzionalita messageSecurityApplyMtom_response = null;
+		String securityRequestMode = null;
+		String securityResponseMode = null;
 		if(messageSecurity!=null){
 			if(messageSecurity.getRequestFlow()!=null){
 				messageSecurityApplyMtom_request = messageSecurity.getRequestFlow().getApplyToMtom();
+				securityRequestMode = messageSecurity.getRequestFlow().getMode();
 			}
 			if(messageSecurity.getResponseFlow()!=null){
 				messageSecurityApplyMtom_response = messageSecurity.getResponseFlow().getApplyToMtom();
+				securityResponseMode = messageSecurity.getResponseFlow().getMode();
 			}
 		}
 		
@@ -1360,9 +1364,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
 				sqlQueryObject.addInsertField("mtom_response_mode", "?");
-				sqlQueryObject.addInsertField("ws_security", "?");
-				sqlQueryObject.addInsertField("ws_security_mtom_req", "?");
-				sqlQueryObject.addInsertField("ws_security_mtom_res", "?");
+				sqlQueryObject.addInsertField("security", "?");
+				sqlQueryObject.addInsertField("security_mtom_req", "?");
+				sqlQueryObject.addInsertField("security_mtom_res", "?");
+				sqlQueryObject.addInsertField("security_request_mode", "?");
+				sqlQueryObject.addInsertField("security_response_mode", "?");
 				sqlQueryObject.addInsertField("id_soggetto", "?");
 				sqlQueryObject.addInsertField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addInsertField("ricevuta_asincrona_asim", "?");
@@ -1416,6 +1422,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, messageSecurityStatus);
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, securityRequestMode);
+				stm.setString(index++, securityResponseMode);
 				// proprietario
 				stm.setLong(index++, idSoggettoProprietario);
 				//ricevuta asincrona_asimmetrica/simmetrica
@@ -1463,7 +1471,7 @@ public class DriverConfigurazioneDB_LIB {
 								idAzione, nomeAzione, modeAzione, patternAzione, nomePortaDeleganteAzione, getValue(forceInterfaceBased),
 								autenticazione, autorizzazione, autorizzazioneContenuto,
 								mtomMode_request, mtomMode_response,
-								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response,
+								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response, securityRequestMode, securityResponseMode,
 								idSoggettoProprietario,
 								aPD.getRicevutaAsincronaSimmetrica(),aPD.getRicevutaAsincronaAsimmetrica(),aPD.getIntegrazione(),
 								(aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null),
@@ -1566,7 +1574,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 				}
 				
-				// se ws_security abilitato setto la lista
+				// se security abilitato setto la lista
 				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
@@ -1898,9 +1906,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
 				sqlQueryObject.addUpdateField("mtom_response_mode", "?");
-				sqlQueryObject.addUpdateField("ws_security", "?");
-				sqlQueryObject.addUpdateField("ws_security_mtom_req", "?");
-				sqlQueryObject.addUpdateField("ws_security_mtom_res", "?");
+				sqlQueryObject.addUpdateField("security", "?");
+				sqlQueryObject.addUpdateField("security_mtom_req", "?");
+				sqlQueryObject.addUpdateField("security_mtom_res", "?");
+				sqlQueryObject.addUpdateField("security_request_mode", "?");
+				sqlQueryObject.addUpdateField("security_response_mode", "?");
 				sqlQueryObject.addUpdateField("id_soggetto", "?");
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_asim", "?");
@@ -1955,6 +1965,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, messageSecurityStatus);
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, securityRequestMode);
+				stm.setString(index++, securityResponseMode);
 				// soggettoProprietario
 				stm.setLong(index++, idSoggettoProprietario);
 				//ricevuta asincrona_asimmetrica/simmetrica
@@ -2084,7 +2096,7 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
-				// se ws_security abilitato setto la lista
+				// se security abilitato setto la lista
 				// la lista contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
 				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
@@ -3360,12 +3372,16 @@ public class DriverConfigurazioneDB_LIB {
 		String messageSecurityStatus = aPA.getStatoMessageSecurity();
 		StatoFunzionalita messageSecurityApplyMtom_request = null;
 		StatoFunzionalita messageSecurityApplyMtom_response = null;
+		String securityRequestMode = null;
+		String securityResponseMode = null;
 		if(messageSecurity!=null){
 			if(messageSecurity.getRequestFlow()!=null){
 				messageSecurityApplyMtom_request = messageSecurity.getRequestFlow().getApplyToMtom();
+				securityRequestMode = messageSecurity.getRequestFlow().getMode();
 			}
 			if(messageSecurity.getResponseFlow()!=null){
 				messageSecurityApplyMtom_response = messageSecurity.getResponseFlow().getApplyToMtom();
+				securityResponseMode = messageSecurity.getResponseFlow().getMode();
 			}
 		}
 		
@@ -3452,9 +3468,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("force_interface_based_azione", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
 				sqlQueryObject.addInsertField("mtom_response_mode", "?");
-				sqlQueryObject.addInsertField("ws_security", "?");
-				sqlQueryObject.addInsertField("ws_security_mtom_req", "?");
-				sqlQueryObject.addInsertField("ws_security_mtom_res", "?");
+				sqlQueryObject.addInsertField("security", "?");
+				sqlQueryObject.addInsertField("security_mtom_req", "?");
+				sqlQueryObject.addInsertField("security_mtom_res", "?");
+				sqlQueryObject.addInsertField("security_request_mode", "?");
+				sqlQueryObject.addInsertField("security_response_mode", "?");
 				sqlQueryObject.addInsertField("id_soggetto", "?");
 				sqlQueryObject.addInsertField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addInsertField("ricevuta_asincrona_asim", "?");
@@ -3508,6 +3526,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, messageSecurityStatus);
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, securityRequestMode);
+				stm.setString(index++, securityResponseMode);
 				// proprietario
 				stm.setLong(index++, idProprietario);
 				//ricevuta asincrona_asimmetrica/simmetrica
@@ -3640,7 +3660,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 				}
 				
-				// se ws_security abilitato setto la lista
+				// se security abilitato setto la lista
 				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
 				if ((messageSecurity != null) )  {
@@ -3971,9 +3991,11 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("force_interface_based_azione", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
 				sqlQueryObject.addUpdateField("mtom_response_mode", "?");
-				sqlQueryObject.addUpdateField("ws_security", "?");
-				sqlQueryObject.addUpdateField("ws_security_mtom_req", "?");
-				sqlQueryObject.addUpdateField("ws_security_mtom_res", "?");
+				sqlQueryObject.addUpdateField("security", "?");
+				sqlQueryObject.addUpdateField("security_mtom_req", "?");
+				sqlQueryObject.addUpdateField("security_mtom_res", "?");
+				sqlQueryObject.addUpdateField("security_request_mode", "?");
+				sqlQueryObject.addUpdateField("security_response_mode", "?");
 				sqlQueryObject.addUpdateField("nome_porta", "?");
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_asim", "?");
@@ -4038,6 +4060,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, messageSecurityStatus);
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(messageSecurityApplyMtom_response));
+				stm.setString(index++, securityRequestMode);
+				stm.setString(index++, securityResponseMode);
 				// nomePorta
 				stm.setString(index++, nomePorta);
 				//ricevuta asincrona_asimmetrica/simmetrica
@@ -4165,7 +4189,7 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				
-				// se ws_security abilitato setto la lista
+				// se security abilitato setto la lista
 				// la lista contiene tutti e soli gli elementi necessari quindi resetto la lista nel db e riscrivo la lista nuova
 				//if ((messageSecurity != null) && CostantiConfigurazione.ABILITATO.toString().equals(messageSecurityStatus) )  {
 				// Devo settarli sempre se ci sono, in modo che lo switch abilitato-disabilitato funzioni
