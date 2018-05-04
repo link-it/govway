@@ -117,6 +117,10 @@ public final class CostantiDB {
     
     public static final String CONFIG_PROTOCOLLI = "config_protocolli";
     
+    public static final String CONGESTIONE_CONFIG = "congestion_config";
+    public static final String CONGESTIONE_CONFIG_POLICY = "congestion_config_policy";
+    public static final String CONGESTIONE_ACTIVE_POLICY = "congestion_active_policy";
+    
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
     public final static String MSG_DIAGN_APPENDER_COLUMN_ID = "id";
     public final static String MSG_DIAGN_APPENDER_SEQUENCE = "seq_msgdiag_appender";
@@ -182,6 +186,20 @@ public final class CostantiDB {
     public final static String TRACCE_COLUMN_ID = "id";
     public final static String TRACCE_SEQUENCE = "seq_tracce";
     public final static String TRACCE_TABLE_FOR_ID = "tracce_init_seq";
+    
+    /*TRANSAZIONI*/
+    public static final String DUMP_TRANSAZIONI = "transazioni";
+    
+    /*EVENTI*/
+    public static final String DUMP_EVENTI = "notifiche_eventi";
+    
+    /*DUMP*/
+    public static final String DUMP_MESSAGGI = "dump_messaggi";
+    public static final String DUMP_MULTIPART_HEADER = "dump_multipart_header";
+    public static final String DUMP_HEADER_TRASPORTO = "dump_header_trasporto";
+    public static final String DUMP_ALLEGATI = "dump_allegati";
+    public static final String DUMP_ALLEGATI_HEADER = "dump_header_allegato";
+    public static final String DUMP_CONTENUTI = "dump_contenuti";
     
     /*PddConsole*/
     public static final String USERS = "users";

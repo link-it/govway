@@ -109,16 +109,40 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 
         List<Evento> list = new ArrayList<Evento>();
         
-        // TODO: implementazione non efficente. 
-		// Per ottenere una implementazione efficente:
-		// 1. Usare metodo select di questa classe indirizzando esattamente i field necessari
-		// 2. Usare metodo getEventoFetch() sul risultato della select per ottenere un oggetto Evento
-		//	  La fetch con la map inserirà nell'oggetto solo i valori estratti 
-
-        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+        boolean efficente = true;
         
-        for(Long id: ids) {
-        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+        if(efficente){
+            
+    		List<IField> fields = new ArrayList<IField>();
+    		fields.add(new CustomField("id", Long.class, "id", this.getEventoFieldConverter().toTable(Evento.model())));  
+    		fields.add(Evento.model().TIPO);
+    		fields.add(Evento.model().CODICE);
+    		fields.add(Evento.model().SEVERITA);
+    		fields.add(Evento.model().ORA_REGISTRAZIONE);
+    		fields.add(Evento.model().DESCRIZIONE);
+    		fields.add(Evento.model().ID_TRANSAZIONE);
+    		fields.add(Evento.model().ID_CONFIGURAZIONE);
+    		fields.add(Evento.model().CONFIGURAZIONE);
+    		fields.add(Evento.model().CLUSTER_ID);
+    			
+    		List<Map<String, Object>> returnMap = null;
+    		try{
+    			boolean distinct = false; // e' piu' efficente senza il distinct
+	    		returnMap = this.select(jdbcProperties, log, connection, sqlQueryObject, expression, distinct, fields.toArray(new IField[1]));
+	
+	    		for(Map<String, Object> map: returnMap) {
+	    			list.add((Evento)this.getEventoFetch().fetch(jdbcProperties.getDatabase(), Evento.model(), map));
+	    		}
+    		}catch(NotFoundException notFound){}
+        }
+        else{
+
+	        List<Long> ids = this.findAllTableIds(jdbcProperties, log, connection, sqlQueryObject, expression);
+	        
+	        for(Long id: ids) {
+	        	list.add(this.get(jdbcProperties, log, connection, sqlQueryObject, id, idMappingResolutionBehaviour));
+	        }
+	        
         }
 
         return list;      
@@ -144,7 +168,14 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.prepareCount(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getEventoFieldConverter(), Evento.model());
 		
-		sqlQueryObject.addSelectCountField(this.getEventoFieldConverter().toTable(Evento.model())+".id","tot",true);
+		boolean distinct = false; // e' piu' efficente senza il distinct
+        if(!distinct && expression.inUseField(Evento.model().ORA_REGISTRAZIONE, true)){
+        	// uso la prima colonna dell'indice (se c'è la data e non è distinct)
+        	sqlQueryObject.addSelectCountField(this.getEventoFieldConverter().toColumn(Evento.model().ORA_REGISTRAZIONE, true),"tot",distinct);
+        }
+        else{
+        	sqlQueryObject.addSelectCountField(this.getEventoFieldConverter().toTable(Evento.model())+".id","tot",distinct);
+        }
 		
 		_join(expression,sqlQueryObject);
 		
@@ -451,58 +482,15 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(Evento.model().XXXX,false)){
-			String tableName1 = this.getEventoFieldConverter().toAliasTable(Evento.model());
-			String tableName2 = this.getEventoFieldConverter().toAliasTable(Evento.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(Evento.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(Evento.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getEventoFieldConverter().toTable(Evento.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(Evento.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(Evento.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getEventoFieldConverter().toTable(Evento.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
+		// nop;
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Evento evento) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		rootTableIdValues.add(evento.getId());
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
+        rootTableIdValues.add(evento.getId());
+                
         return rootTableIdValues;
 	}
 	
@@ -512,22 +500,11 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
-
 		// Evento.model()
 		mapTableToPKColumn.put(converter.toTable(Evento.model()),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(Evento.model()))
 			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}
@@ -537,7 +514,9 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 		
 		List<Long> list = new ArrayList<Long>();
 
-		sqlQueryObject.setSelectDistinct(true);
+		boolean distinct = false; // e' piu' efficente senza il distinct
+		
+		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);
 		sqlQueryObject.addSelectField(this.getEventoFieldConverter().toTable(Evento.model())+".id");
 		Class<?> objectIdClass = Long.class;
@@ -560,7 +539,9 @@ public class JDBCEventoServiceSearchImpl implements IJDBCServiceSearchWithoutId<
 	@Override
 	public long findTableId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, Exception {
 	
-		sqlQueryObject.setSelectDistinct(true);
+		boolean distinct = false; // e' piu' efficente senza il distinct
+		
+		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);
 		sqlQueryObject.addSelectField(this.getEventoFieldConverter().toTable(Evento.model())+".id");
 		Class<?> objectIdClass = Long.class;

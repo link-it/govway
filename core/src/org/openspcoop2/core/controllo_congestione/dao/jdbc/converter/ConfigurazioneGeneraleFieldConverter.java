@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
 
 
@@ -293,22 +293,22 @@ public class ConfigurazioneGeneraleFieldConverter extends AbstractSQLFieldConver
 		// the full definition of the table containing the alias
 		
 		if(model.equals(ConfigurazioneGenerale.model())){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO)){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_FRUIZIONE)){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_EROGAZIONE)){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().RATE_LIMITING)){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().CACHE)){
-			return "congestion_config";
+			return CostantiDB.CONGESTIONE_CONFIG;
 		}
 
 

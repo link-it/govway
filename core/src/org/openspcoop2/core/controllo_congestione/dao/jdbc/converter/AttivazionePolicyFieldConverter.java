@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
 
 
@@ -483,13 +483,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(AttivazionePolicy.model())){
-			return "congestion_active_policy";
+			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
 		}
 		if(model.equals(AttivazionePolicy.model().FILTRO)){
-			return "congestion_active_policy";
+			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
 		}
 		if(model.equals(AttivazionePolicy.model().GROUP_BY)){
-			return "congestion_active_policy";
+			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
 		}
 
 

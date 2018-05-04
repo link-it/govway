@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 
 
@@ -413,22 +413,22 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(DumpMessaggio.model())){
-			return "dump_messaggi";
+			return CostantiDB.DUMP_MESSAGGI;
 		}
 		if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
-			return "dump_multipart_header";
+			return CostantiDB.DUMP_MULTIPART_HEADER;
 		}
 		if(model.equals(DumpMessaggio.model().HEADER_TRASPORTO)){
-			return "dump_header_trasporto";
+			return CostantiDB.DUMP_HEADER_TRASPORTO;
 		}
 		if(model.equals(DumpMessaggio.model().ALLEGATO)){
-			return "dump_allegati";
+			return CostantiDB.DUMP_ALLEGATI;
 		}
 		if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
-			return "dump_header_allegato";
+			return CostantiDB.DUMP_ALLEGATI_HEADER;
 		}
 		if(model.equals(DumpMessaggio.model().CONTENUTO)){
-			return "dump_contenuti";
+			return CostantiDB.DUMP_CONTENUTI;
 		}
 
 

@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.beans.IModel;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
-
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.Transazione;
 
 
@@ -1183,25 +1183,25 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Transazione.model())){
-			return "transazioni";
+			return CostantiDB.DUMP_TRANSAZIONI;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO)){
-			return "dump_messaggi";
+			return CostantiDB.DUMP_MESSAGGI;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER)){
-			return "dump_multipart_header";
+			return CostantiDB.DUMP_MULTIPART_HEADER;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_TRASPORTO)){
-			return "dump_header_trasporto";
+			return CostantiDB.DUMP_HEADER_TRASPORTO;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO)){
-			return "dump_allegati";
+			return CostantiDB.DUMP_ALLEGATI;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER)){
-			return "dump_header_allegato";
+			return CostantiDB.DUMP_ALLEGATI_HEADER;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO)){
-			return "dump_contenuti";
+			return CostantiDB.DUMP_CONTENUTI;
 		}
 		if(model.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO)){
 			return "transazione_extended_info";

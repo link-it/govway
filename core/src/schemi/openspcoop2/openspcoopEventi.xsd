@@ -70,6 +70,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="tipo" varchar="100"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -80,6 +81,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="codice" varchar="100"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Codice dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -90,6 +92,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="severita"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Livello di Severità dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -100,6 +103,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="ora_registrazione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di emissione dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -110,6 +114,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="descrizione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Descrizione dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -120,6 +125,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="id_transazione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Id della transazione in cui è scaturito l'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -130,6 +136,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="id_configurazione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Id della configurazione che ha causato la generazione dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -140,6 +147,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="configurazione" medium-text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Configurazione che ha causato la generazione dell'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -150,6 +158,7 @@
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping name="cluster_id" varchar="100" />
+								<linkit:sql-ddl-column-comment><![CDATA[Id del nodo di un cluster di PdD in cui è scaturito l'evento]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>			        
