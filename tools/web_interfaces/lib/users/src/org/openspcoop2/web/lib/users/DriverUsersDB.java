@@ -25,29 +25,32 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.PermessiUtente;
-import org.openspcoop2.web.lib.users.dao.Stato;
-import org.openspcoop2.web.lib.users.dao.User;
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.Filtri;
+import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.dao.IDBAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
-import org.openspcoop2.core.commons.DBUtils;
-import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.web.lib.users.dao.InterfaceType;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.Stato;
+import org.openspcoop2.web.lib.users.dao.User;
+import org.slf4j.Logger;
 
 /**
  * Sono forniti metodi per la lettura dei dati di Users
@@ -162,6 +165,9 @@ public class DriverUsersDB {
 			sqlQueryObject.addFromTable(CostantiDB.USERS_STATI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQueryObject.addOrderBy(CostantiDB.USERS_STATI+".oggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
@@ -179,8 +185,16 @@ public class DriverUsersDB {
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_SOGGETTI+".id_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
@@ -196,8 +210,24 @@ public class DriverUsersDB {
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_SERVIZI+".id_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".versione_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_utente = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = "+CostantiDB.SERVIZI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".versione_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
@@ -879,29 +909,103 @@ public class DriverUsersDB {
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
+		List<String> tipoServiziProtocollo = null;
+		try {
+			tipoServiziProtocollo = Filtri.convertToTipiServizi(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverUsersDBException(e.getMessage(),e);
+		}
+
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
+		}
+		
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterDominio : " + filterDominio);
+		
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
 			
+			ISQLQueryObject sqlQueryObjectSoggetti = null;
+			if (!search.equals("")) {
+				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
+				sqlQueryObjectSoggetti.setANDLogicOperator(true);
+				sqlQueryObjectSoggetti.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+				sqlQueryObjectSoggetti.addWhereCondition(false,
+						//sqlQueryObjectSoggetti.getWhereLikeCondition("tipo_soggetto", search, true, true),
+						sqlQueryObjectSoggetti.getWhereLikeCondition("nome_soggetto", search, true, true));
+			}
+
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}
+			
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addSelectCountField("*", "cont");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_utente = "+CostantiDB.USERS+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = "+CostantiDB.SERVIZI+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			
 			if (!search.equals("")) {
 				//query con search
-				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true);
+				sqlQueryObject.addWhereCondition(false, 
+						// - ricerca su tipo/nome servizio
+						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
 			}
 			
+			if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
+				sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+			}
+			if(pddTipologia!=null) {
+				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+				}
+				else {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+				}
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = this.connectionDB.prepareStatement(queryString);
-			stmt.setString(1, login);
+			int index = 1;
+			stmt.setString(index++, login);
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista, risultato.getInt(1));
@@ -914,26 +1018,59 @@ public class DriverUsersDB {
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addSelectField(CostantiDB.USERS_SERVIZI+".id_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".versione_servizio");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_utente = "+CostantiDB.USERS+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = "+CostantiDB.SERVIZI+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			
-			if (!search.equals("")) { // con search
-				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true);
-			}  
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereCondition(false, 
+						// - ricerca su tipo/nome servizio
+						//sqlQueryObject.getWhereLikeCondition("tipo_servizio", search, true, true), 
+						sqlQueryObject.getWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true),
+						//sqlQueryObject.getWhereLikeCondition("versione_servizio", search, true, true),
+						sqlQueryObject.getWhereExistsCondition(false, sqlQueryObjectSoggetti));
+			} 
 			
-			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".tipo_servizio");
+			if(tipoServiziProtocollo!=null && tipoServiziProtocollo.size()>0) {
+				sqlQueryObject.addWhereINCondition(CostantiDB.SERVIZI+".tipo_servizio", true, tipoServiziProtocollo.toArray(new String[1]));
+			}
+			if(pddTipologia!=null) {
+				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+				}
+				else {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+				}
+			}
+			
 			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".versione_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
-			
+			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = this.connectionDB.prepareStatement(queryString);
-			stmt.setString(1, login);
+			index = 1;
+			stmt.setString(index++, login);
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			risultato = stmt.executeQuery();
 			
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
@@ -985,29 +1122,83 @@ public class DriverUsersDB {
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		String filterProtocollo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
+		String filterProtocolli = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLI);
+		List<String> tipoSoggettiProtocollo = null;
+		try {
+			tipoSoggettiProtocollo = Filtri.convertToTipiSoggetti(filterProtocollo, filterProtocolli);
+		}catch(Exception e) {
+			throw new DriverUsersDBException(e.getMessage(),e);
+		}
+		
+		String filterDominio = SearchUtils.getFilter(ricerca, idLista,  Filtri.FILTRO_DOMINIO);
+		PddTipologia pddTipologia = null;
+		if(filterDominio!=null && !"".equals(filterDominio)) {
+			pddTipologia = PddTipologia.toPddTipologia(filterDominio);
+		}
+		
+		this.log.debug("search : " + search);
+		this.log.debug("filterProtocollo : " + filterProtocollo);
+		this.log.debug("filterProtocolli : " + filterProtocolli);
+		this.log.debug("filterDominio : " + filterDominio);
+		
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<IDSoggetto> lista = new ArrayList<IDSoggetto>();
 
 		try {
 			
+			ISQLQueryObject sqlQueryObjectPdd = null;
+			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
+				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
+				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
+				
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd.setANDLogicOperator(false);
+				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
+				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
+			}
+			
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addSelectCountField("*", "cont");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_utente = "+CostantiDB.USERS+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			
 			if (!search.equals("")) {
 				//query con search
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true);
 			}
 			
+			if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+				sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+			}
+			if(pddTipologia!=null) {
+				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());							
+				}
+				else {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+				}
+			}
+			
+			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = this.connectionDB.prepareStatement(queryString);
-			stmt.setString(1, login);
+			int index = 1;
+			stmt.setString(index++, login);
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista, risultato.getInt(1));
@@ -1020,26 +1211,45 @@ public class DriverUsersDB {
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addSelectField(CostantiDB.USERS_SOGGETTI+".id_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_utente = "+CostantiDB.USERS+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
 			
 			if (!search.equals("")) { // con search
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true);
 			}  
 			
-			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
+			if(tipoSoggettiProtocollo!=null && tipoSoggettiProtocollo.size()>0) {
+				sqlQueryObject.addWhereINCondition(CostantiDB.SOGGETTI+".tipo_soggetto", true, tipoSoggettiProtocollo.toArray(new String[1]));
+			}
+			if(pddTipologia!=null) {
+				if(PddTipologia.ESTERNO.equals(pddTipologia)) {
+					sqlQueryObject.addWhereCondition(sqlQueryObjectPdd.createSQLConditions());									
+				}
+				else {
+					sqlQueryObject.addFromTable(CostantiDB.PDD);
+					sqlQueryObject.addWhereCondition(true,CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server",CostantiDB.PDD+".tipo=?");
+				}
+			}
+			
 			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setLimit(limit);
 			sqlQueryObject.setOffset(offset);
-			
+			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = this.connectionDB.prepareStatement(queryString);
-			stmt.setString(1, login);
+			index = 1;
+			stmt.setString(index++, login);
+			if(pddTipologia!=null) {
+				stmt.setString(index++, pddTipologia.toString());
+			}
 			risultato = stmt.executeQuery();
 			
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
