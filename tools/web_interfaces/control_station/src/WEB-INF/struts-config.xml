@@ -2243,7 +2243,7 @@
             <forward name="configurazioneDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
         
-   		<!-- Configurazione Controllo Congestione () -->
+   		<!-- Configurazione Controllo Congestione -->
     
     	<action path="/configurazioneControlloCongestione" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestione"
             scope="request" validate="true">

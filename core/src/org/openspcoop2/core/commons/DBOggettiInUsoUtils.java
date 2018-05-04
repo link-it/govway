@@ -394,6 +394,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> accordi_list = whereIsInUso.get(ErrorsHandlerCostant.IS_REFERENTE);
 			List<String> accordi_coop_list = whereIsInUso.get(ErrorsHandlerCostant.IS_REFERENTE_COOPERAZIONE);
 			List<String> partecipanti_list = whereIsInUso.get(ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE);
+			List<String> utenti_list = whereIsInUso.get(ErrorsHandlerCostant.UTENTE);
 
 			if (servizi_fruitori_list == null) {
 				servizi_fruitori_list = new ArrayList<String>();
@@ -426,6 +427,10 @@ public class DBOggettiInUsoUtils  {
 			if (partecipanti_list == null) {
 				partecipanti_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE, partecipanti_list);
+			}
+			if (utenti_list == null) {
+				utenti_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.UTENTE, utenti_list);
 			}
 
 			if(idSoggettoRegistro!=null){
@@ -663,7 +668,28 @@ public class DBOggettiInUsoUtils  {
 				stmt.close();
 
 			}
+			
+			// Controllo che il soggetto non sia associato ad utenti
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
+			sqlQueryObject.addSelectField("login");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".id = "+CostantiDB.USERS_SOGGETTI+".id_soggetto");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSoggetto);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				utenti_list.add(risultato.getString("login"));
 
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
+
+			
 			return isInUso;
 
 		} catch (Exception se) {
@@ -731,6 +757,11 @@ public class DBOggettiInUsoUtils  {
 			case IS_PARTECIPANTE_COOPERAZIONE:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "- partecipante in Accordi di Cooperazione: " + messages.toString() + separator;
+				}
+				break;
+			case UTENTE:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "- associato ad Utenti: " + messages.toString() + separator;
 				}
 				break;
 			default:
@@ -1024,6 +1055,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> servizioComponente_list = whereIsInUso.get(ErrorsHandlerCostant.IS_SERVIZIO_COMPONENTE_IN_ACCORDI);
 			List<String> mappingErogazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
 			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
+			List<String> utenti_list = whereIsInUso.get(ErrorsHandlerCostant.UTENTE);
 
 			if (porteApplicative_list == null) {
 				porteApplicative_list = new ArrayList<String>();
@@ -1049,7 +1081,10 @@ public class DBOggettiInUsoUtils  {
 				mappingFruizionePD_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
 			}
-
+			if (utenti_list == null) {
+				utenti_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.UTENTE, utenti_list);
+			}
 			
 			
 			// Raccolgo Dati Servizio.
@@ -1331,7 +1366,25 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			
-			
+			// Controllo che il soggetto non sia associato ad utenti
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
+			sqlQueryObject.addSelectField("login");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".id = "+CostantiDB.USERS_SERVIZI+".id_servizio");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idAccordoServizioParteSpecifica);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				utenti_list.add(risultato.getString("login"));
+
+				isInUso = true;
+			}
+			risultato.close();
+			stmt.close();
 			
 			
 
@@ -1412,6 +1465,11 @@ public class DBOggettiInUsoUtils  {
 			case IN_USO_IN_MAPPING_FRUIZIONE_PD:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "- associato alle Porte Delegate: " + messages.toString() + separator;
+				}
+				break;
+			case UTENTE:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "- associato ad Utenti: " + messages.toString() + separator;
 				}
 				break;
 			default:
