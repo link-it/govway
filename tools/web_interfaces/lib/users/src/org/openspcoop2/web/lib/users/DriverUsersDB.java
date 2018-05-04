@@ -818,4 +818,210 @@ public class DriverUsersDB {
 			}
 		}
 	}
+	
+	public List<IDServizio> utentiServiziList(String login, ISearch ricerca) throws DriverUsersDBException {
+		String nomeMetodo = "utentiServiziList";
+		int idLista = Liste.UTENTI_SERVIZI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		ArrayList<IDServizio> lista = new ArrayList<IDServizio>();
+
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = "+CostantiDB.SERVIZI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt.setString(1, login);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista, risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_SERVIZI+".id_servizio");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SERVIZI+".id_servizio = "+CostantiDB.SERVIZI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			
+			if (!search.equals("")) { // con search
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI+".nome_servizio", search, true, true);
+			}  
+			
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObject.addOrderBy(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt.setString(1, login);
+			risultato = stmt.executeQuery();
+			
+			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
+			jdbcProperties.setDatabaseType(this.tipoDB);
+			jdbcProperties.setShowSql(true);
+			JDBCServiceManager manager = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
+//			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) manager.getSoggettoServiceSearch();
+			IDBAccordoServizioParteSpecificaServiceSearch serviziSearch = (IDBAccordoServizioParteSpecificaServiceSearch) manager.getAccordoServizioParteSpecificaServiceSearch();
+			
+			while (risultato.next()) {
+				long id = risultato.getLong("id_servizio");
+				AccordoServizioParteSpecifica servizio = serviziSearch.get(id);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servizio.getTipo(), 
+						servizio.getNome(), 
+						servizio.getIdErogatore().getTipo(),
+						servizio.getIdErogatore().getNome(), 
+						servizio.getVersione());
+				lista.add(idServizio);
+			}
+			risultato.close();
+			return lista;
+
+		} catch (Exception qe) {
+			throw new DriverUsersDBException("[DriverUsersDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if (risultato != null)
+					risultato.close();
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
+	
+	public List<IDSoggetto> utentiSoggettiList(String login, ISearch ricerca) throws DriverUsersDBException {
+		String nomeMetodo = "utentiSoggettiList";
+		int idLista = Liste.UTENTI_SOGGETTI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		ArrayList<IDSoggetto> lista = new ArrayList<IDSoggetto>();
+
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true);
+			}
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt.setString(1, login);
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista, risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_SOGGETTI+".id_soggetto");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_SOGGETTI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS+".login = ?");
+			
+			if (!search.equals("")) { // con search
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SOGGETTI+".nome_soggetto", search, true, true);
+			}  
+			
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".tipo_soggetto");
+			sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI+".nome_soggetto");
+			sqlQueryObject.setSortType(true);
+			sqlQueryObject.setLimit(limit);
+			sqlQueryObject.setOffset(offset);
+			
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt.setString(1, login);
+			risultato = stmt.executeQuery();
+			
+			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
+			jdbcProperties.setDatabaseType(this.tipoDB);
+			jdbcProperties.setShowSql(true);
+			JDBCServiceManager manager = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
+			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) manager.getSoggettoServiceSearch();
+			
+			while (risultato.next()) {
+				long id = risultato.getLong("id_soggetto");
+				Soggetto soggetto = soggettiSearch.get(id);
+				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto(), soggetto.getIdentificativoPorta());
+				lista.add(idSoggetto);
+			}
+			risultato.close();
+			return lista;
+
+		} catch (Exception qe) {
+			throw new DriverUsersDBException("[DriverUsersDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if (risultato != null)
+					risultato.close();
+				if (stmt != null)
+					stmt.close();
+			} catch (Exception e) {
+				//ignore
+			}
+		}
+	}
 }

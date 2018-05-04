@@ -26,6 +26,8 @@ import java.util.List;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -160,7 +162,6 @@ public class UtentiCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
-
 	}
 	
 	public List<String> getUsersByProtocolloSupportato(String protocollo) throws DriverUsersDBException {
@@ -222,5 +223,49 @@ public class UtentiCore extends ControlStationCore {
 		}
 		
 		return false;
+	}
+	
+	public List<IDServizio> utentiServiziList(String login, ISearch ricerca) throws DriverUsersDBException {
+		Connection con = null;
+		String nomeMetodo = "utentiServiziList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverUsersDB().utentiServiziList(login,ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public List<IDSoggetto> utentiSoggettiList(String login, ISearch ricerca) throws DriverUsersDBException {
+		Connection con = null;
+		String nomeMetodo = "utentiSoggettiList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverUsersDB().utentiSoggettiList(login,ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
 	}
 }

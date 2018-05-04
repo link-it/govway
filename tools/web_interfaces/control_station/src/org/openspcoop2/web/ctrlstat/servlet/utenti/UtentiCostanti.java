@@ -36,6 +36,10 @@ public class UtentiCostanti {
 	
 	public final static String OBJECT_NAME_UTENTE = "utente";
 	
+	public final static String OBJECT_NAME_UTENTI_SERVIZI = "utentiServizi";
+	
+	public final static String OBJECT_NAME_UTENTI_SOGGETTI = "utentiSoggetti";
+	
 	/* SERVLET NAME */
 	
 	public final static String SERVLET_NAME_UTENTI_ADD = OBJECT_NAME_UTENTI+"Add.do";
@@ -54,6 +58,26 @@ public class UtentiCostanti {
 	public final static Vector<String> SERVLET_UTENTE = new Vector<String>();
 	static{
 		SERVLET_UTENTE.add(SERVLET_NAME_UTENTE_CHANGE);
+	}
+	
+	public final static String SERVLET_NAME_UTENTI_SERVIZI_ADD = OBJECT_NAME_UTENTI_SERVIZI+"Add.do";
+	public final static String SERVLET_NAME_UTENTI_SERVIZI_DELETE = OBJECT_NAME_UTENTI_SERVIZI+"Del.do";
+	public final static String SERVLET_NAME_UTENTI_SERVIZI_LIST = OBJECT_NAME_UTENTI_SERVIZI+"List.do";
+	public final static Vector<String> SERVLET_UTENTI_SERVIZI = new Vector<String>();
+	static{
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_ADD);
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_DELETE);
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SERVIZI_LIST);
+	}
+	
+	public final static String SERVLET_NAME_UTENTI_SOGGETTI_ADD = OBJECT_NAME_UTENTI_SOGGETTI+"Add.do";
+	public final static String SERVLET_NAME_UTENTI_SOGGETTI_DELETE = OBJECT_NAME_UTENTI_SOGGETTI+"Del.do";
+	public final static String SERVLET_NAME_UTENTI_SOGGETTI_LIST = OBJECT_NAME_UTENTI_SOGGETTI+"List.do";
+	public final static Vector<String> SERVLET_UTENTI_SOGGETTI = new Vector<String>();
+	static{
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SOGGETTI_ADD);
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SOGGETTI_DELETE);
+		SERVLET_UTENTI.add(SERVLET_NAME_UTENTI_SOGGETTI_LIST);
 	}
 	
 
@@ -76,7 +100,9 @@ public class UtentiCostanti {
 	public final static String LABEL_CAMBIA_IDENTITA = "Cambia identità";
 	public final static String LABEL_ACCEDI = "Accedi";
 	public final static String LABEL_MODIFICA = "Modifica";
-	
+	public final static String LABEL_MONITORAGGIO = "Diagnostica";
+	public final static String LABEL_UTENTI_SERVIZI = "Servizi";
+	public final static String LABEL_UTENTI_SOGGETTI = "Soggetti";
 	
 	/* PARAMETRI */
 	

@@ -89,6 +89,49 @@
             <forward name="utenteChangeCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="utenteError" path="/jsplib/info.jsp"/>
         </action>
+        
+       	<!--  Utenti Servizi-->
+    
+        <action path="/utentiServiziAdd" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiServiziAdd"
+            scope="request" validate="true">
+            <forward name="utentiServiziAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiServiziAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiServiziAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiServiziError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiServiziList" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiServiziList"
+            scope="request" validate="true">
+            <forward name="utentiServiziList" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiServiziError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiServiziDel" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiServiziDel"
+            scope="request" validate="true">
+            <forward name="utentiServiziDel" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiServiziDelInfo" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiServiziError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        
+      	<!--  Utenti Soggetti -->
+    
+        <action path="/utentiSoggettiAdd" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiSoggettiAdd"
+            scope="request" validate="true">
+            <forward name="utentiSoggettiAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiSoggettiAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiSoggettiAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiSoggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiSoggettiList" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiSoggettiList"
+            scope="request" validate="true">
+            <forward name="utentiSoggettiList" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiSoggettiError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/utentiSoggettiDel" type="org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiSoggettiDel"
+            scope="request" validate="true">
+            <forward name="utentiSoggettiDel" path="/jsplib/listElement.jsp"/>
+            <forward name="utentiSoggettiDelInfo" path="/jsplib/addElement.jsp"/>
+            <forward name="utentiSoggettiError" path="/jsplib/info.jsp"/>
+        </action>
     
     
     

@@ -107,6 +107,8 @@ public final class Liste
 	public final static int STATISTICHE_STATO;
 	
 	public final static int SU;
+	public final static int UTENTI_SERVIZI;
+	public final static int UTENTI_SOGGETTI;
 
 	public final static int MONITOR_MSG;
 	
@@ -193,6 +195,8 @@ public final class Liste
     	SYSTEM_PROPERTIES = numeroListe ++;
     	STATISTICHE_STATO = numeroListe ++;
     	SU = numeroListe ++;
+    	UTENTI_SERVIZI = numeroListe ++;
+    	UTENTI_SOGGETTI = numeroListe ++;
     	MONITOR_MSG = numeroListe ++;
     	FILTRI = numeroListe ++;
     	AUDIT_REPORT = numeroListe ++;

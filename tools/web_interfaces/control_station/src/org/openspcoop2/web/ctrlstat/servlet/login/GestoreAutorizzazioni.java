@@ -330,6 +330,8 @@ public class GestoreAutorizzazioni {
 		this.servletGestioneUtenti = new Vector<String>();
 		this.servletGestioneUtenti.addAll(LoginCostanti.SERVLET_LOGIN_AS_SU);
 		this.servletGestioneUtenti.addAll(UtentiCostanti.SERVLET_UTENTI);
+		this.servletGestioneUtenti.addAll(UtentiCostanti.SERVLET_UTENTI_SERVIZI);
+		this.servletGestioneUtenti.addAll(UtentiCostanti.SERVLET_UTENTI_SOGGETTI);
 		/** Permessi associati alla gestione degli utenti */
 		this.permessiGestioneUtenti = new PermessiUtente();
 		this.permessiGestioneUtenti.setUtenti(true);

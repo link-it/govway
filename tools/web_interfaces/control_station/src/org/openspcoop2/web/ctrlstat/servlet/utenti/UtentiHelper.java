@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -78,6 +79,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway, String multiTenant, boolean forceEnableMultitenant) throws Exception{
 
+		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		boolean onlyUser = ServletUtils.isCheckBoxEnabled(isUtenti) &&
 				!ServletUtils.isCheckBoxEnabled(isServizi) &&
@@ -258,6 +260,39 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setSelected(interfaceType.toString());
 		dati.addElement(de);
 
+		// se sono in modifica ed e' stato selezionato il diritto diagnostica mostro i link per la definizione di soggetti e servizi
+		if(ServletUtils.isCheckBoxEnabled(isDiagnostica) && TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_MONITORAGGIO);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
+			if(contaListe){
+				Search searchForCount = new Search(true,1);
+				this.utentiCore.utentiServiziList(nomesu, searchForCount);
+				int num = searchForCount.getNumEntries(Liste.UTENTI_SERVIZI);
+				ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SERVIZI, (long) num);
+			}else {
+				de.setValue(UtentiCostanti.LABEL_UTENTI_SERVIZI);
+			}
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
+			if(contaListe){
+				Search searchForCount = new Search(true,1);
+				this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
+				int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
+				ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SOGGETTI, (long) num);
+			}else {
+				de.setValue(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+			}
+			dati.addElement(de);
+		}
 
 		
 		de = new DataElement();
