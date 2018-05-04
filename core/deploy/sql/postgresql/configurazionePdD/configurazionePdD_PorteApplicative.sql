@@ -28,7 +28,7 @@ CREATE TABLE porte_applicative
 	mtom_request_mode VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_response_mode VARCHAR(255),
-	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)
+	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._security_request/response)
 	security VARCHAR(255),
 	-- abilitato/disabilitato
 	security_mtom_req VARCHAR(255),
@@ -170,41 +170,41 @@ CREATE INDEX INDEX_PA_MTOMTRES ON pa_mtom_response (id_porta);
 
 
 
-CREATE SEQUENCE seq_pa_ws_request start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+CREATE SEQUENCE seq_pa_security_request start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
-CREATE TABLE pa_ws_request
+CREATE TABLE pa_security_request
 (
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT NOT NULL,
 	-- fk/pk columns
-	id BIGINT DEFAULT nextval('seq_pa_ws_request') NOT NULL,
+	id BIGINT DEFAULT nextval('seq_pa_security_request') NOT NULL,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pa_ws_request_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
-	CONSTRAINT pk_pa_ws_request PRIMARY KEY (id)
+	CONSTRAINT fk_pa_security_request_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_security_request PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PA_WSSREQ ON pa_ws_request (id_porta);
+CREATE INDEX INDEX_PA_WSSREQ ON pa_security_request (id_porta);
 
 
 
-CREATE SEQUENCE seq_pa_ws_response start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+CREATE SEQUENCE seq_pa_security_response start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
-CREATE TABLE pa_ws_response
+CREATE TABLE pa_security_response
 (
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
 	valore TEXT NOT NULL,
 	-- fk/pk columns
-	id BIGINT DEFAULT nextval('seq_pa_ws_response') NOT NULL,
+	id BIGINT DEFAULT nextval('seq_pa_security_response') NOT NULL,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pa_ws_response_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
-	CONSTRAINT pk_pa_ws_response PRIMARY KEY (id)
+	CONSTRAINT fk_pa_security_response_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_security_response PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PA_WSSRES ON pa_ws_response (id_porta);
+CREATE INDEX INDEX_PA_WSSRES ON pa_security_response (id_porta);
 
 
 

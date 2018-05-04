@@ -2536,7 +2536,7 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ws_request flow associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_request flow associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE);
@@ -2547,7 +2547,7 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ws_response flow associate alla PortaDelegata[" + idPortaDelegata + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_response flow associate alla PortaDelegata[" + idPortaDelegata + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_CORRELAZIONE);
@@ -4673,7 +4673,7 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ws_request flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_request flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
@@ -4684,7 +4684,7 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)
-					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " ws_response flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " security_response flow associate alla PortaApplicativa[" + idPortaApplicativa + "]");
 
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

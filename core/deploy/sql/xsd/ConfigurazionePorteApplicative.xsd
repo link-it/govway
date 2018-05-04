@@ -24,8 +24,8 @@
                                 <linkit:sql-table object-name="porte-applicative-prop" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-request" object-type="MtomFlowParameter"/>
                                 <linkit:sql-table object-name="porte-applicative-mtom-response" object-type="MtomFlowParameter"/>
-                                <linkit:sql-table object-name="porte-applicative-ws-request" object-type="NomeValoreAsText"/>
-                                <linkit:sql-table object-name="porte-applicative-ws-response" object-type="NomeValoreAsText"/>
+                                <linkit:sql-table object-name="porte-applicative-security-request" object-type="NomeValoreAsText"/>
+                                <linkit:sql-table object-name="porte-applicative-security-response" object-type="NomeValoreAsText"/>
                                 <linkit:sql-table object-name="porte-applicative-correlazione" object-type="porte-applicative-correlazione"/>
                                 <linkit:sql-table object-name="porte-applicative-correlazione-risposta" object-type="porte-applicative-correlazione-risposta"/>
                                 <linkit:sql-table object-name="porte-applicative-ruoli" object-type="porte-applicative-ruoli"/>
@@ -294,8 +294,8 @@
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="security"/>
                                 <linkit:sql-ddl-column-comment><![CDATA[Indicazione se è attivo o meno un trattamento del messaggio tramite WSSecurity (abilitato/disabilitato). 
-Se attivo le regole specifiche di trattamento della richiesta e/o della risposta sono definite rispettivamente nella tabella 'pa_ws_request' e 'pa_ws_response' ]]></linkit:sql-ddl-column-comment>
-                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)]]></linkit:sql-column-comment>
+Se attivo le regole specifiche di trattamento della richiesta e/o della risposta sono definite rispettivamente nella tabella 'pa_security_request' e 'pa_security_response' ]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._security_request/response)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -749,14 +749,14 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
     </xsd:element>
     
     
-    <xsd:element name="porte-applicative-ws-request" type="NomeValoreAsText">
+    <xsd:element name="porte-applicative-security-request" type="NomeValoreAsText">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pa_ws_request"
-                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di richiesta (es. ws-security)">
-                        <linkit:sql-table-constraint unique="uniq_pa_ws_request" index="idx_pa_ws_request"/>
+                    <linkit:sql-table-mapping name="pa_security_request"
+                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di richiesta">
+                        <linkit:sql-table-constraint unique="uniq_pa_sec_request" index="idx_pa_sec_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"
@@ -773,14 +773,14 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
     </xsd:element>
     
     
-    <xsd:element name="porte-applicative-ws-response" type="NomeValoreAsText">
+    <xsd:element name="porte-applicative-security-response" type="NomeValoreAsText">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pa_ws_response"
-                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di risposta (es. ws-security)">
-                        <linkit:sql-table-constraint unique="uniq_pa_ws_response" index="idx_pa_ws_response"/>
+                    <linkit:sql-table-mapping name="pa_security_response"
+                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di risposta">
+                        <linkit:sql-table-constraint unique="uniq_pa_sec_response" index="idx_pa_sec_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-applicative"
                             reference-object-type="porte-applicative"

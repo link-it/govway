@@ -42,7 +42,7 @@ CREATE TABLE porte_delegate
 	mtom_request_mode VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_response_mode VARCHAR2(255),
-	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)
+	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._security_request/response)
 	security VARCHAR2(255),
 	-- abilitato/disabilitato
 	security_mtom_req VARCHAR2(255),
@@ -240,9 +240,9 @@ end;
 
 
 
-CREATE SEQUENCE seq_pd_ws_request MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_pd_security_request MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE pd_ws_request
+CREATE TABLE pd_security_request
 (
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
@@ -250,19 +250,19 @@ CREATE TABLE pd_ws_request
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pd_ws_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
-	CONSTRAINT pk_pd_ws_request PRIMARY KEY (id)
+	CONSTRAINT fk_pd_security_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_security_request PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PD_WSSREQ ON pd_ws_request (id_porta);
-CREATE TRIGGER trg_pd_ws_request
+CREATE INDEX INDEX_PD_WSSREQ ON pd_security_request (id_porta);
+CREATE TRIGGER trg_pd_security_request
 BEFORE
-insert on pd_ws_request
+insert on pd_security_request
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_pd_ws_request.nextval INTO :new.id
+      SELECT seq_pd_security_request.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -270,9 +270,9 @@ end;
 
 
 
-CREATE SEQUENCE seq_pd_ws_response MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_pd_security_response MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE pd_ws_response
+CREATE TABLE pd_security_response
 (
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
@@ -280,19 +280,19 @@ CREATE TABLE pd_ws_response
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pd_ws_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
-	CONSTRAINT pk_pd_ws_response PRIMARY KEY (id)
+	CONSTRAINT fk_pd_security_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_security_response PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PD_WSSRES ON pd_ws_response (id_porta);
-CREATE TRIGGER trg_pd_ws_response
+CREATE INDEX INDEX_PD_WSSRES ON pd_security_response (id_porta);
+CREATE TRIGGER trg_pd_security_response
 BEFORE
-insert on pd_ws_response
+insert on pd_security_response
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_pd_ws_response.nextval INTO :new.id
+      SELECT seq_pd_security_response.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

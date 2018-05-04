@@ -85,8 +85,8 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_PROP = "pa_properties";
-    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "pa_ws_request";
-    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "pa_ws_response";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = "pa_security_request";
+    public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "pa_security_response";
     public static final String PORTE_APPLICATIVE_MTOM_REQUEST = "pa_mtom_request";
     public static final String PORTE_APPLICATIVE_MTOM_RESPONSE = "pa_mtom_response";
     public static final String PORTE_APPLICATIVE_CORRELAZIONE = "pa_correlazione";
@@ -97,8 +97,8 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_PROP = "pd_properties";
-    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_ws_request";
-    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "pd_ws_response";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_security_request";
+    public static final String PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "pd_security_response";
     public static final String PORTE_DELEGATE_MTOM_REQUEST = "pd_mtom_request";
     public static final String PORTE_DELEGATE_MTOM_RESPONSE = "pd_mtom_response";
     public static final String PORTE_DELEGATE_CORRELAZIONE = "pd_correlazione";

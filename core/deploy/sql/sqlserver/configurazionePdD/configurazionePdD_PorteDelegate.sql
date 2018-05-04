@@ -40,7 +40,7 @@ CREATE TABLE porte_delegate
 	mtom_request_mode VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_response_mode VARCHAR(255),
-	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)
+	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._security_request/response)
 	security VARCHAR(255),
 	-- abilitato/disabilitato
 	security_mtom_req VARCHAR(255),
@@ -173,7 +173,7 @@ CREATE INDEX INDEX_PD_MTOMTRES ON pd_mtom_response (id_porta);
 
 
 
-CREATE TABLE pd_ws_request
+CREATE TABLE pd_security_request
 (
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
@@ -181,16 +181,16 @@ CREATE TABLE pd_ws_request
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pd_ws_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
-	CONSTRAINT pk_pd_ws_request PRIMARY KEY (id)
+	CONSTRAINT fk_pd_security_request_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_security_request PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PD_WSSREQ ON pd_ws_request (id_porta);
+CREATE INDEX INDEX_PD_WSSREQ ON pd_security_request (id_porta);
 
 
 
-CREATE TABLE pd_ws_response
+CREATE TABLE pd_security_response
 (
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
@@ -198,12 +198,12 @@ CREATE TABLE pd_ws_response
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints
-	CONSTRAINT fk_pd_ws_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
-	CONSTRAINT pk_pd_ws_response PRIMARY KEY (id)
+	CONSTRAINT fk_pd_security_response_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_security_response PRIMARY KEY (id)
 );
 
 -- index
-CREATE INDEX INDEX_PD_WSSRES ON pd_ws_response (id_porta);
+CREATE INDEX INDEX_PD_WSSRES ON pd_security_response (id_porta);
 
 
 
