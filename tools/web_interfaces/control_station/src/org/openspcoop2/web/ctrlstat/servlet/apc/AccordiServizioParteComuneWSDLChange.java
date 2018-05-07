@@ -306,7 +306,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
 
-			Parameter parameterApcChange = new Parameter(uriAS,
+			Parameter parameterApcChange = new Parameter(labelASTitle,
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+

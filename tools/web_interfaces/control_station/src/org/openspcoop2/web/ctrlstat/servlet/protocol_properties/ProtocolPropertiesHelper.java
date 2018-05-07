@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
+import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -239,11 +240,53 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		}
 		return null;
 	}
+	
+	public String getStatoOggettoProprietario(String idProprietario, String nomeProprieta, String nomeParentProprieta, ProprietariProtocolProperty tipoProprietario, String tipoAccordo) throws Exception {
+		try{
+			if(tipoProprietario != null && idProprietario != null){
+				int idProp = Integer.parseInt(idProprietario);
+
+				switch (tipoProprietario) {
+				case ACCORDO_COOPERAZIONE:
+					AccordoCooperazione ac = this.acCore.getAccordoCooperazione(idProp);
+					return ac.getStatoPackage();
+				case ACCORDO_SERVIZIO_PARTE_COMUNE:
+					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idProp);
+					return as.getStatoPackage();
+				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+					AccordoServizioParteSpecifica aps = this.apsCore.getAccordoServizioParteSpecifica(idProp);
+					return aps.getStatoPackage();
+				case AZIONE_ACCORDO:
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					return apca.getStatoPackage();
+				case FRUITORE:
+					Fruitore servFru = this.apsCore.getServizioFruitore(idProp);
+					return servFru.getStatoPackage();
+				case OPERATION:
+					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					return apcop.getStatoPackage();
+				case PORT_TYPE:
+					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					return apc.getStatoPackage();
+				case RESOURCE:
+					AccordoServizioParteComune apcr = this.apcCore.getAccordoServizio(idProp);
+					return apcr.getStatoPackage();
+				case SOGGETTO:
+					return null;
+				}
+			}
+		}  catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (DriverRegistroServiziException e) {
+			throw e;
+		}
+		return null;
+	}
 
 	public Vector<DataElement> addProtocolPropertyChangeToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String protocollo, String id, String nome,
 			String idProprietario, ProprietariProtocolProperty tipoProprietario, String tipoAccordo, String nomeProprietario,String nomeParentProprietario, String urlChange, String label,
 			BinaryParameter contenutoDocumento, StringBuffer contenutoDocumentoStringBuffer, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem,
-			boolean readOnly) { 
+			boolean readOnly) throws Exception { 
 
 		/* ID */
 		DataElement de = new DataElement();
@@ -316,33 +359,52 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(binaryConsoleItem.getLabel());
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String statoPackage = this.getStatoOggettoProprietario(idProprietario, nomeProprietario, nomeParentProprietario, tipoProprietario, tipoAccordo);
 
-		/* Contenuto Documento */
-		if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
-			de = new DataElement();
-			de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
-			de.setType(DataElementType.TEXT);
-			de.setValue(contenutoDocumento.getFilename());
-			dati.addElement(de);
-
-			if(errore!=null){
+		// solo per le properties con stato finale blocco l'edit
+		if(statoPackage != null && StatiAccordo.finale.toString().equals(statoPackage)) {
+			this.pd.disableEditMode();
+			
+			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
 				de = new DataElement();
-				de.setValue(errore);
-				de.setLabel(binaryConsoleItem.getLabel());
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
 				de.setType(DataElementType.TEXT);
+				de.setValue(contenutoDocumento.getFilename());
+				dati.addElement(de);
+				
+				if(errore!=null){
+					de = new DataElement();
+					de.setValue(errore);
+					de.setLabel(binaryConsoleItem.getLabel());
+					de.setType(DataElementType.TEXT);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
+				else{
+					de = new DataElement();
+					de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue(contenutoDocumentoStringBuffer.toString());
+					de.setRows(30);
+					de.setCols(110);
+					dati.addElement(de);
+				}
+			}else {
+				de = new DataElement();
+//				de.setLabel(binaryConsoleItem.getLabel());
+				de.setType(DataElementType.TEXT);
+				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_NOT_FOUND);
 				de.setSize(this.getSize());
 				dati.addElement(de);
 			}
-			else{
-				de = new DataElement();
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE +":");
-				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(contenutoDocumentoStringBuffer.toString());
-				de.setRows(30);
-				de.setCols(110);
-				dati.addElement(de);
-			}
-
+			
+			
 			if(id != null && !"".equals(id)){
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
@@ -353,62 +415,112 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
 				dati.add(saveAs);
 			}
-
+			
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			de.setValue(contenutoDocumento.getFilename());
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			de.setValue(contenutoDocumento.getId());
+			dati.addElement(de);
+		}else {
+			/* Contenuto Documento */
+			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
+				de = new DataElement();
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
+				de.setType(DataElementType.TEXT);
+				de.setValue(contenutoDocumento.getFilename());
+				dati.addElement(de);
+	
+				if(errore!=null){
+					de = new DataElement();
+					de.setValue(errore);
+					de.setLabel(binaryConsoleItem.getLabel());
+					de.setType(DataElementType.TEXT);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
+				else{
+					de = new DataElement();
+					de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					de.setValue(contenutoDocumentoStringBuffer.toString());
+					de.setRows(30);
+					de.setCols(110);
+					dati.addElement(de);
+				}
+	
+				if(id != null && !"".equals(id)){
+					DataElement saveAs = new DataElement();
+					saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
+					saveAs.setType(DataElementType.LINK);
+					saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+							new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_ALLEGATO, id),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
+					dati.add(saveAs);
+				}
+	
+				if(!readOnly) {
+					de = new DataElement();
+					de.setType(DataElementType.TITLE);
+					de.setLabel(ProtocolPropertiesCostanti.LABEL_AGGIORNAMENTO +" " +binaryConsoleItem.getLabel());
+					de.setValue("");
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
+	
+			}else {
+				de = new DataElement();
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
+				de.setType(DataElementType.TEXT);
+				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_NOT_FOUND);
+				dati.addElement(de);
+			}
+	
 			if(!readOnly) {
 				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_AGGIORNAMENTO);
+				de.setLabel(ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO);
 				de.setValue("");
+				de.setType(DataElementType.FILE);
+				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 				de.setSize(this.getSize());
+				de.setRequired(binaryConsoleItem.isRequired()); 
 				dati.addElement(de);
 			}
-
-		}else {
+	
 			de = new DataElement();
-			de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE +":");
-			de.setType(DataElementType.TEXT);
-			de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_NOT_FOUND);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			de.setValue(contenutoDocumento.getFilename());
 			dati.addElement(de);
-		}
-
-		if(!readOnly) {
+	
 			de = new DataElement();
-			de.setLabel(ProtocolPropertiesCostanti.LABEL_CONTENUTO_NUOVO +":");
-			de.setValue("");
-			de.setType(DataElementType.FILE);
-			de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-			de.setSize(this.getSize());
-			de.setRequired(binaryConsoleItem.isRequired()); 
+			de.setType(DataElementType.HIDDEN);
+			de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			de.setValue(contenutoDocumento.getId());
 			dati.addElement(de);
-		}
-
-		de = new DataElement();
-		de.setType(DataElementType.HIDDEN);
-		de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-		de.setValue(contenutoDocumento.getFilename());
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.HIDDEN);
-		de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
-		de.setValue(contenutoDocumento.getId());
-		dati.addElement(de);
-
-		if(!readOnly) {
-			if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
-				de = new DataElement();
-				de.setBold(true);
-				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
-				de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
-				de.setType(DataElementType.NOTE);
-				de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+	
+			if(!readOnly) {
+				if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
+					de = new DataElement();
+					de.setBold(true);
+					de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);
+					de.setValue(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR);
+					de.setType(DataElementType.NOTE);
+					de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO_WARN);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}
 			}
-		}
-
-		if(readOnly) {
-			this.pd.disableEditMode();
+	
+			if(readOnly) {
+				this.pd.disableEditMode();
+			}
 		}
 		
 		return dati;

@@ -2464,7 +2464,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(this.core.isShowInterfacceAPI()) {
 				de = new DataElement();
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setType(DataElementType.HIDDEN);
+//				de.setType(DataElementType.HIDDEN);
 				de.setValue(oldwsdl);
 				de.setRows(30);
 				de.setCols(110);
@@ -2481,6 +2481,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE));
 				dati.add(saveAs);
+			} else {
+				de = new DataElement();
+//				de.setLabel(labelWSDL);
+				de.setType(DataElementType.TEXT);
+				de.setValue(AccordiServizioParteComuneCostanti.LABEL_WSDL_NOT_FOUND);
+				dati.addElement(de);
 			}
 			
 		}
@@ -2490,7 +2496,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				if(this.core.isShowInterfacceAPI()) {
 					de = new DataElement();
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					de.setType(DataElementType.HIDDEN);
+//					de.setType(DataElementType.HIDDEN);
 					de.setValue(oldwsdl);
 					de.setRows(30);
 					de.setCols(110);
