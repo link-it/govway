@@ -28,12 +28,16 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -786,6 +790,10 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			// in modalita change devo controllare che se ho cambiato le modalita' all'utente ci sia almeno un altro utente che puo' gestire le modalita' che lascio
 			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
+				
+				// prelevo l'utenza dal db
+				User user = this.utentiCore.getUser(nomesu);
+				
 				// se l'utente aveva solo il controllo degli utenti, questo controllo non importa tanto non ha modalita' associate
 				if(!oldUserHasOnlyPermessiUtenti) {
 					
@@ -832,6 +840,48 @@ public class UtentiHelper extends ConsoleHelper {
 							}
 							return false;
 						}
+						
+						// Controlli su eventuali soggetti/servizi associati alle modalita' deselezionate
+						for (String protocolloDaControllare : protocolliEliminati) {
+							// controllo servizi
+							if(user.getServizi().size() > 0) {
+								for (IDServizio idServizio : user.getServizi()) {
+									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getTipo());
+									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
+										this.pd.setMessage("L'utente " + nomesu 
+												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi appartenenti alla Modalit&agrave; '"
+												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+										return false;
+									}
+								}
+							}
+							// controllo soggetti
+							if(user.getSoggetti().size() > 0) {
+								for (IDSoggetto idSoggetto : user.getSoggetti()) {
+									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
+									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
+										this.pd.setMessage("L'utente " + nomesu 
+												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti appartenenti alla Modalit&agrave; '"
+												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				// Controlli su soggetti/servizi associati
+				//1. l'utente aveva un permesso di tipo 'D' e' stato eliminato, devo controllare che non abbia soggetti/servizi associati
+				if((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)){
+					boolean oldDiagnostica = user.getPermessi().isDiagnostica();
+					if(oldDiagnostica && user.getServizi().size() > 0) {
+						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+						return false;
+					}
+					if(oldDiagnostica && user.getSoggetti().size() > 0) {
+						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+						return false;
 					}
 				}
 			}
@@ -1295,5 +1345,299 @@ public class UtentiHelper extends ConsoleHelper {
 		
 		return true;
 		
+	}
+
+	public void prepareUtentiSoggettiList(Search ricerca, List<IDSoggetto> lista, User user) throws Exception{
+		try {
+			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SOGGETTI,
+					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
+
+			int idLista = Liste.UTENTI_SOGGETTI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+			
+			addFilterProtocol(ricerca, idLista, user.getProtocolliSupportati());
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			boolean showProtocolli = (user.getProtocolliSupportati() != null && user.getProtocolliSupportati().size() >1);
+			
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
+			lstParam.add(new Parameter(user.getLogin(), UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
+			// setto la barra del titolo
+			if (search.equals("")) {
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SOGGETTI, null));
+			}else {
+				lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SOGGETTI, UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST,
+						new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));	
+			}
+			
+			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO);
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, UtentiCostanti.LABEL_UTENTI_SOGGETTI, search);
+			}
+			
+			ServletUtils.setPageDataTitle(this.pd,lstParam); 
+					
+			// setto le label delle colonne
+			int totEl = 1;
+			if( showProtocolli ) {
+				totEl++;
+			}
+			String[] labels = new String[totEl];
+			int i = 0;
+			labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO;
+			if( showProtocolli ) {
+				labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO;
+			}
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			
+			if (lista != null) {
+				Iterator<IDSoggetto> it = lista.iterator();
+				while (it.hasNext()) {
+					IDSoggetto soggetto = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo());
+					// soggetto
+					DataElement de = new DataElement();
+					de.setValue(this.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
+					de.setIdToRemove(soggetto.getTipo() + "/" + soggetto.getNome());
+					de.setToolTip(this.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome()));
+					e.addElement(de);
+					
+					if(showProtocolli) {
+						de = new DataElement();
+						de.setValue(this.getLabelProtocollo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(soggetto.getTipo())));
+						e.addElement(de);
+					}
+					
+					dati.addElement(e);
+				}
+			}
+					
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void prepareUtentiServiziList(Search ricerca, List<IDServizio> lista, User user) throws Exception{
+		try {
+			ServletUtils.addListElementIntoSession(this.session, UtentiCostanti.OBJECT_NAME_UTENTI_SERVIZI,
+					new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin()));
+
+			int idLista = Liste.UTENTI_SERVIZI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+			
+			addFilterProtocol(ricerca, idLista, user.getProtocolliSupportati());
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			boolean showProtocolli = (user.getProtocolliSupportati() != null && user.getProtocolliSupportati().size() >1);
+			
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+			lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI ,UtentiCostanti.SERVLET_NAME_UTENTI_LIST));
+			lstParam.add(new Parameter(user.getLogin(), UtentiCostanti.SERVLET_NAME_UTENTI_CHANGE, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
+			// setto la barra del titolo
+			if (search.equals("")) {
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SERVIZI, null));
+			}else {
+				lstParam.add(new Parameter(UtentiCostanti.LABEL_UTENTI_SERVIZI, UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST,
+						new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, user.getLogin())));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));	
+			}
+			
+			// controllo eventuali risultati ricerca
+			this.pd.setSearchLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO);
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, UtentiCostanti.LABEL_UTENTI_SERVIZI, search);
+			}
+			
+			ServletUtils.setPageDataTitle(this.pd,lstParam); 
+					
+			// setto le label delle colonne
+			int totEl = 1;
+			if( showProtocolli ) {
+				totEl++;
+			}
+			String[] labels = new String[totEl];
+			int i = 0;
+			labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO;
+			if( showProtocolli ) {
+				labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO;
+			}
+			this.pd.setLabels(labels);
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			
+			if (lista != null) {
+				Iterator<IDServizio> it = lista.iterator();
+				while (it.hasNext()) {
+					IDServizio servizio = it.next();
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(servizio.getTipo());
+					String uriASPS = this.idServizioFactory.getUriFromIDServizio(servizio);
+					// soggetto
+					DataElement de = new DataElement();
+					de.setValue(this.getLabelNomeServizio(protocollo, servizio.getTipo(), servizio.getNome(), servizio.getVersione()));
+					de.setIdToRemove(uriASPS);
+					de.setToolTip(this.getLabelNomeServizio(protocollo, servizio.getTipo(), servizio.getNome(), servizio.getVersione()));
+					e.addElement(de);
+					
+					if(showProtocolli) {
+						de = new DataElement();
+						de.setValue(this.getLabelProtocollo(protocollo));
+						e.addElement(de);
+					}
+					
+					dati.addElement(e);
+				}
+			}
+					
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public void addUtentiSoggettiToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String soggetto, String[] soggettiValues, String[] soggettiLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setValue(nomesu);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
+		if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+				de.setValues(listaTipiProtocollo);
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
+				de.setSelected(tipoProtocollo);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+		} else {
+			de.setValue(tipoProtocollo);
+			de.setType(DataElementType.HIDDEN);
+		}
+		
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_SOGGETTO);
+		if(soggettiValues != null && soggettiValues.length > 1){
+			de.setType(DataElementType.SELECT);		
+			de.setValues(soggettiValues);
+			de.setLabels(soggettiLabels);
+			de.setSelected(soggetto);
+			de.setRequired(true);
+		} else {
+			de.setValue(soggetto);
+			de.setType(DataElementType.HIDDEN);
+		}
+		dati.addElement(de);
+		
+	}
+	
+	public void addUtentiServiziToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, String nomesu, String servizio, String[] serviziValues, String[] serviziLabels, List<String> listaTipiProtocollo, String tipoProtocollo) throws Exception {
+
+		DataElement de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_UTENTI_SERVIZI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME);
+		de.setValue(nomesu);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_PROTOCOLLO);
+		if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO);
+				de.setValues(listaTipiProtocollo);
+				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
+				de.setSelected(tipoProtocollo);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+		} else {
+			de.setValue(tipoProtocollo);
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_SERVIZIO);
+		if(serviziValues != null && serviziValues.length > 1){
+			de.setType(DataElementType.SELECT);		
+			de.setValues(serviziValues);
+			de.setLabels(serviziLabels);
+			de.setSelected(servizio);
+			de.setRequired(true);
+		} else {
+			de.setValue(servizio);
+			de.setType(DataElementType.HIDDEN);
+		}
+		dati.addElement(de);
+		
+	}
+
+	public boolean utentiSoggettiCheckData(TipoOperazione tipoOperazione, String nomesu, String soggetto) throws Exception{
+		// controllo selezione soggetto
+		if (StringUtils.isEmpty(soggetto) || soggetto.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean utentiServiziCheckData(TipoOperazione tipoOperazione, String nomesu, String servizio) throws Exception{
+		// controllo selezione soggetto
+		if (StringUtils.isEmpty(servizio) || servizio.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO);
+			return false;
+		}
+		
+		return true;
 	}
 }

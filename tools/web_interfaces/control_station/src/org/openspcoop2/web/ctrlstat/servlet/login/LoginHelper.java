@@ -22,10 +22,13 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -81,6 +84,14 @@ public class LoginHelper extends ConsoleHelper {
 				}
 				return false;
 			}
+			
+			// controllo modalita' associate all'utenza
+			if(trovato) {
+				if(this.hasOnlyPermessiDiagnostica(this.utentiCore.getUser(login))) {
+					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
+					return false;
+				}
+			}
 
 			// setto l utente in sessione
 			ServletUtils.setUserIntoSession(this.session, u);
@@ -91,5 +102,21 @@ public class LoginHelper extends ConsoleHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	private boolean hasOnlyPermessiDiagnostica(User user) throws Exception {
+		PermessiUtente pu = user.getPermessi();
+		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+
+		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isSistema = (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isMessaggi = (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isUtenti = (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isAuditing = (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isAccordiCooperazione = (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		
+		return this.hasOnlyPermessiDiagnostica(isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
+
 	}
 }

@@ -105,6 +105,10 @@ public class UtentiCostanti {
 	public final static String LABEL_MONITORAGGIO = "Diagnostica";
 	public final static String LABEL_UTENTI_SERVIZI = "Servizi";
 	public final static String LABEL_UTENTI_SOGGETTI = "Soggetti";
+	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI = "Non esistono altri soggetti associabili all'utente";
+	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri soggetti della modalit&agrave; {0} associabili all''utente";
+	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI = "Non esistono altri servizi associabili all'utente";
+	public final static String LABEL_UTENTI_SERVIZI_DISPONIBILI_ESAURITI_PER_LA_MODALITA_XX = "Non esistono altri servizi della modalit&agrave; {0} associabili all''utente";
 	
 	/* PARAMETRI */
 	
@@ -124,6 +128,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_SINGLE_SU_SERVIZI = "singleSuS";
 	public final static String PARAMETRO_UTENTI_SINGLE_SU_ACCORDI_COOPERAZIONE = "singleSuAC";
 	public final static String PARAMETRO_UTENTI_MODALITA_PREFIX = "mod_";
+	public final static String PARAMETRO_UTENTI_PROTOCOLLO = "protocollo";
 	
 	public final static String PARAMETRO_UTENTE_LOGIN = "login";
 	public final static String PARAMETRO_UTENTE_PASSWORD = "password";
@@ -139,7 +144,8 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTE_TIPO_MODALITA_LIST = "tipo_mod_list";
 	public final static String PARAMETRO_UTENTE_CHANGE_MODALITA = "change_mod";
 	public final static String PARAMETRO_UTENTE_MULTI_TENANT = "multi_tenant";
-	
+	public final static String PARAMETRO_UTENTI_SOGGETTO = "soggetto";
+	public final static String PARAMETRO_UTENTI_SERVIZIO = "servizio";
 	
 	/* LABEL PARAMETRI */
 	
@@ -160,6 +166,10 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTE_CONFERMA_NUOVA_PASSWORD = "Conferma Nuova";
 	public final static String LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD = "Nuova";
 	
+	public final static String LABEL_PARAMETRO_UTENTI_SOGGETTO = "Soggetto";
+	public final static String LABEL_PARAMETRO_UTENTI_SERVIZIO = "Servizio";
+	public final static String LABEL_PARAMETRO_UTENTI_PROTOCOLLO = CostantiControlStation.LABEL_PARAMETRO_PROTOCOLLO;
+	
 	public final static String LABEL_UTENTE_PERMESSI = "Utente";
 	private final static String LABEL_UTENTE_PERMESSI_PREFIX_NOTE = "Utente a cui verranno assegnati gli oggetti creati con il permesso '";
 	public final static String LABEL_UTENTE_PERMESSI_SERVIZI_NOTE = LABEL_UTENTE_PERMESSI_PREFIX_NOTE + LABEL_PARAMETRO_UTENTI_IS_SERVIZI+"'";
@@ -171,4 +181,10 @@ public class UtentiCostanti {
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";
+	
+	/* MESSAGGI ERRORE */
+	public final static String MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO = "Selezionare un soggetto";
+	public final static String MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO = "Selezionare un servizio";
+	 
+	
 }

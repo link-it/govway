@@ -106,4 +106,6 @@ public class LoginCostanti {
 	
 	/* EVENTO PRESSIONE TASTO LOGIN */
 	public final static String LOGIN_JS_FUNCTION = "CheckDati();return false;";
+
+	public static final String MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE = "L'utente non &egrave; abilitato ad utilizzare la console"; 
 }

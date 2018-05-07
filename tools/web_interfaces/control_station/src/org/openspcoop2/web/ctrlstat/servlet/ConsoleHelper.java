@@ -4021,6 +4021,14 @@ public class ConsoleHelper {
 	}
 	public void addFilterProtocol(ISearch ricerca, int idLista) throws Exception{
 		List<String> protocolli = this.core.getProtocolli(this.session);
+		_addFilterProtocol(ricerca, idLista, protocolli);
+	}
+	
+	public void addFilterProtocol(ISearch ricerca, int idLista,List<String> protocolli) throws Exception{
+		_addFilterProtocol(ricerca, idLista, protocolli);
+	}
+
+	private void _addFilterProtocol(ISearch ricerca, int idLista, List<String> protocolli) throws Exception {
 		if(protocolli!=null && protocolli.size()>1) {
 			String filterProtocol = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_PROTOCOLLO);
 			this.addFilterProtocollo(protocolli, filterProtocol, false);
@@ -4839,5 +4847,16 @@ public class ConsoleHelper {
 		}
 		
 		return dati;
+	}
+	
+	public boolean hasOnlyPermessiDiagnostica(String isServizi,String isDiagnostica,String isSistema,String isMessaggi,
+			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
+		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
+				(!singlePdD || (singlePdD && ((isDiagnostica == null) || ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+				((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
+				((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
+				((isUtenti != null) || !ServletUtils.isCheckBoxEnabled(isUtenti)) &&
+				((isAuditing == null) || !ServletUtils.isCheckBoxEnabled(isAuditing)) &&
+				((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)));
 	}
 }

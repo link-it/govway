@@ -363,6 +363,8 @@ public final class UtentiDel extends Action {
 				for (int i = 0; i < nomiUtentiDaRimuovere.size(); i++) {
 					nomesu = nomiUtentiDaRimuovere.get(i);
 					
+										//TODO Aggiungi controllo se permesso D e ha servizi /soggetti deve prima eliminarli
+					
 					// Non posso rimuovere me stesso
 					if (nomesu.equals(userLogin))
 						msg += "Non è possibile rimuovere l'utente ("+nomesu+") con cui si è collegati all'interfaccia<br>";

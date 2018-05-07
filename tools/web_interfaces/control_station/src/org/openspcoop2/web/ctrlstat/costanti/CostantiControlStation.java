@@ -398,6 +398,7 @@ public class CostantiControlStation {
 	
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
+	public static final String DEFAULT_VALUE_NON_SELEZIONATO = "-";
 	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";
