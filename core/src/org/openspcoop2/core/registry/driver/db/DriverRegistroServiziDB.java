@@ -9354,6 +9354,35 @@ IDriverWS ,IMonitoraggioRisorsa{
 						
 					}
 					
+					// Tempi Risposta
+					int connectionTimeout = rs.getInt("connection_timeout");
+					if(connectionTimeout>0){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
+						prop.setValore(connectionTimeout+"");
+						connettore.addProperty(prop);
+						
+					}
+					int readTimeout = rs.getInt("read_timeout");
+					if(readTimeout>0){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
+						prop.setValore(readTimeout+"");
+						connettore.addProperty(prop);
+						
+					}
+					int avgResponseTime = rs.getInt("avg_response_time");
+					if(avgResponseTime>0){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
+						prop.setValore(avgResponseTime+"");
+						connettore.addProperty(prop);
+						
+					}
+					
 					// transfer_mode
 					String transferMode = rs.getString("transfer_mode");
 					if(transferMode!=null && !"".equals(transferMode)){

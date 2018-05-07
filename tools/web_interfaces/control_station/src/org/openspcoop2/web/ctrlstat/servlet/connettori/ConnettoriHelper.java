@@ -373,6 +373,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -387,6 +388,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
 				isConnettoreCustomUltimaImmagineSalvata,
 				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+				tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 				requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -663,6 +665,52 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
+	public Vector<DataElement> addOpzioniAvanzateHttpToDatiAsHidden(Vector<DataElement> dati,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
+		
+		boolean showOpzioniAvanzate = this.isModalitaAvanzata()
+				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
+		
+		if(!showOpzioniAvanzate){
+			if(this.isModalitaAvanzata() &&
+					!ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
+				transfer_mode=null;
+				transfer_mode_chunk_size=null;
+				redirect_mode=null;
+				redirect_max_hop=null;
+			}
+		}
+		
+		// DataTransferMode
+		DataElement de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(transfer_mode);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(transfer_mode_chunk_size);
+		dati.addElement(de);
+		
+		
+		// Redirect
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(redirect_mode);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(redirect_max_hop);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
 	public Vector<DataElement> addProxyToDati(Vector<DataElement> dati,
 			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
 		
@@ -705,6 +753,110 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
 		de.setSize(this.getSize());
 		de.setRequired(false);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addProxyToDatiAsHidden(Vector<DataElement> dati,
+			String proxyEnabled, String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
+		
+		DataElement de = new DataElement();
+		de.setValue(proxyEnabled);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(proxyHostname);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(proxyPort);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(StringEscapeUtils.escapeHtml(proxyPassword));
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addTempiRispostaToDati(Vector<DataElement> dati,
+			String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta){
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+		de.setValue(tempiRisposta_connectionTimeout);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+		de.setValue(tempiRisposta_readTimeout);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+		de.setValue(tempiRisposta_tempoMedioRisposta);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addTempiRispostaToDatiAsHidden(Vector<DataElement> dati,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta){
+		
+		DataElement de = new DataElement();
+		de.setValue(tempiRisposta_enabled);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(tempiRisposta_connectionTimeout);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(tempiRisposta_readTimeout);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(tempiRisposta_tempoMedioRisposta);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 		dati.addElement(de);
 		
 		return dati;
@@ -910,6 +1062,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -1101,6 +1254,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setPostBack(true);
 				dati.addElement(de);
 				
+				// TempiRisposta
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+				de.setType(DataElementType.CHECKBOX);
+				if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+					de.setSelected(true);
+				}
+				de.setPostBack(true);
+				dati.addElement(de);
+				
 			}	
 			
 			// Extended
@@ -1146,6 +1310,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 				if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
 					this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+				}
+			}
+			
+			// TempiRisposta
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+					this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
 				}
 			}
 			
@@ -1293,6 +1464,17 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 				de.setType(DataElementType.CHECKBOX);
 				if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+					de.setSelected(true);
+				}
+				de.setPostBack(true);
+				dati.addElement(de);
+				
+				// TempiRisposta
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+				de.setType(DataElementType.CHECKBOX);
+				if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
 					de.setSelected(true);
 				}
 				de.setPostBack(true);
@@ -1479,6 +1661,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 			}
 			
+			// TempiRisposta
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+					this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
+				}
+			}
+			
 			// Extended
 			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
 				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
@@ -1509,6 +1698,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
 			String elem4, String elem5, String elem6, String elem7, String stato,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime
 			) {
@@ -1693,6 +1885,21 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 		}
 		
+		// Proxy
+		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+			this.addProxyToDatiAsHidden(dati, proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword);
+		}
+		
+		// TempiRisposta
+		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+			this.addTempiRispostaToDatiAsHidden(dati, tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
+		}
+		
+		// Opzioni Avanzate
+		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+			this.addOpzioniAvanzateHttpToDatiAsHidden(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+		}
+		
 		return dati;
 	}
 
@@ -1714,6 +1921,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String proxy_port = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxy_username = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxy_password = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// tempiRisposta
+			String tempiRisposta_enabled = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRisposta_connectionTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRisposta_readTimeout = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRisposta_tempoMedioRisposta = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 
 			// opzioni avanzate
 			String transfer_mode = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
@@ -1780,6 +1993,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn, autenticazioneHttp,
 					proxy_enabled,proxy_hostname,proxy_port,proxy_username,proxy_password,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -1803,6 +2017,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String autenticazioneHttp,
 			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -1868,6 +2083,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 				proxy_username = "";
 			if (proxy_password == null)
 				proxy_password = "";
+			if (tempiRisposta_enabled == null)
+				tempiRisposta_enabled = "";
+			if (tempiRisposta_connectionTimeout == null)
+				tempiRisposta_connectionTimeout = "";
+			if (tempiRisposta_readTimeout == null)
+				tempiRisposta_readTimeout = "";
+			if (tempiRisposta_tempoMedioRisposta == null)
+				tempiRisposta_tempoMedioRisposta = "";
 			if (transfer_mode == null)
 				transfer_mode = "";
 			if (transfer_mode_chunk_size == null)
@@ -1911,6 +2134,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(proxy_port.indexOf(" ") != -1) ||
 					(proxy_username.indexOf(" ") != -1) ||
 					(proxy_password.indexOf(" ") != -1) ||
+					(tempiRisposta_connectionTimeout.indexOf(" ") != -1) ||
+					(tempiRisposta_readTimeout.indexOf(" ") != -1) ||
+					(tempiRisposta_tempoMedioRisposta.indexOf(" ") != -1) ||
 					(transfer_mode.indexOf(" ") != -1) ||
 					(transfer_mode_chunk_size.indexOf(" ") != -1) ||
 					(redirect_mode.indexOf(" ") != -1) ||
@@ -1952,6 +2178,43 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}catch(Exception e){
 					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" e "+
 							ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicati per il Proxy non sono corretti: "+e.getMessage());
+					return false;
+				}
+				
+			}
+			
+			if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
+				
+				try{
+					int v = Integer.parseInt(tempiRisposta_connectionTimeout);
+					if(v<=0) {
+						throw new Exception("fornire un valore maggiore di zero");
+					}
+				}catch(Exception e){
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT+" indicato nella sezione '"+
+							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
+					return false;
+				}
+				
+				try{
+					int v = Integer.parseInt(tempiRisposta_readTimeout);
+					if(v<=0) {
+						throw new Exception("fornire un valore maggiore di zero");
+					}
+				}catch(Exception e){
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT+" indicato nella sezione '"+
+							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
+					return false;
+				}
+				
+				try{
+					int v = Integer.parseInt(tempiRisposta_tempoMedioRisposta);
+					if(v<=0) {
+						throw new Exception("fornire un valore maggiore di zero");
+					}
+				}catch(Exception e){
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA+" indicato nella sezione '"+
+							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
 					return false;
 				}
 				
@@ -2278,6 +2541,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -2414,6 +2678,32 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 			}
 			
+			// TempiRisposta
+			if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
+				
+				if(tempiRisposta_connectionTimeout!=null && !"".equals(tempiRisposta_connectionTimeout)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
+					prop.setValore(tempiRisposta_connectionTimeout);
+					connettore.addProperty(prop);
+				}
+				
+				if(tempiRisposta_readTimeout!=null && !"".equals(tempiRisposta_readTimeout)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
+					prop.setValore(tempiRisposta_readTimeout);
+					connettore.addProperty(prop);
+				}
+				
+				if(tempiRisposta_tempoMedioRisposta!=null && !"".equals(tempiRisposta_tempoMedioRisposta)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
+					prop.setValore(tempiRisposta_tempoMedioRisposta);
+					connettore.addProperty(prop);
+				}
+				
+			}
+			
 			// OpzioniAvanzate
 			//if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){ li devo impostare anche in caso di HIDDEN
 				
@@ -2482,6 +2772,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
@@ -2598,6 +2889,32 @@ public class ConnettoriHelper extends ConsoleHelper {
 					prop = new org.openspcoop2.core.config.Property();
 					prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 					prop.setValore(proxyPassword);
+					connettore.addProperty(prop);
+				}
+				
+			}
+			
+			// TempiRisposta
+			if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
+				
+				if(tempiRisposta_connectionTimeout!=null && !"".equals(tempiRisposta_connectionTimeout)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
+					prop.setValore(tempiRisposta_connectionTimeout);
+					connettore.addProperty(prop);
+				}
+				
+				if(tempiRisposta_readTimeout!=null && !"".equals(tempiRisposta_readTimeout)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
+					prop.setValore(tempiRisposta_readTimeout);
+					connettore.addProperty(prop);
+				}
+				
+				if(tempiRisposta_tempoMedioRisposta!=null && !"".equals(tempiRisposta_tempoMedioRisposta)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
+					prop.setValore(tempiRisposta_tempoMedioRisposta);
 					connettore.addProperty(prop);
 				}
 				

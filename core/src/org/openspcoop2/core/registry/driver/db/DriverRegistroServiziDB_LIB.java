@@ -780,6 +780,10 @@ public class DriverRegistroServiziDB_LIB {
 		String proxy_port = null;
 		String proxy_username = null;
 		String proxy_password = null;
+		
+		Integer tempiRisposta_connectionTimeout = null;
+		Integer tempiRisposta_readTimeout = null;
+		Integer tempiRisposta_avgResponseTime = null;
 
 		String redirect_mode = null; // in caso di tipo http e https
 		Integer redirect_max_hop = null; // in caso di tipo http e https
@@ -842,6 +846,20 @@ public class DriverRegistroServiziDB_LIB {
 						proxy_password = propertyCheck.getValore();
 					}
 				}
+			}
+			
+			// Tempi Risposta
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				tempiRisposta_connectionTimeout = Integer.parseInt(valoreProperty);
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				tempiRisposta_readTimeout = Integer.parseInt(valoreProperty);
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				tempiRisposta_avgResponseTime = Integer.parseInt(valoreProperty);
 			}
 			
 			// TransferMode
@@ -935,6 +953,9 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("proxy_port", "?");		
 				sqlQueryObject.addInsertField("proxy_username", "?");		
 				sqlQueryObject.addInsertField("proxy_password", "?");
+				sqlQueryObject.addInsertField("connection_timeout", "?");		
+				sqlQueryObject.addInsertField("read_timeout", "?");		
+				sqlQueryObject.addInsertField("avg_response_time", "?");
 				sqlQueryObject.addInsertField("custom", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = connection.prepareStatement(sqlQuery);
@@ -981,6 +1002,24 @@ public class DriverRegistroServiziDB_LIB {
 				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
 				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
 				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
+				if(tempiRisposta_connectionTimeout!=null) {
+					stm.setInt(index++, tempiRisposta_connectionTimeout);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
+				if(tempiRisposta_readTimeout!=null) {
+					stm.setInt(index++, tempiRisposta_readTimeout);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
+				if(tempiRisposta_avgResponseTime!=null) {
+					stm.setInt(index++, tempiRisposta_avgResponseTime);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
 				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(index++, 1);
 				}else{
@@ -992,6 +1031,7 @@ public class DriverRegistroServiziDB_LIB {
 								transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, 
 								proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
 								(connettore.getCustom()!=null && connettore.getCustom())));
 				int n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);
@@ -1117,6 +1157,9 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("proxy_port", "?");		
 				sqlQueryObject.addUpdateField("proxy_username", "?");		
 				sqlQueryObject.addUpdateField("proxy_password", "?");
+				sqlQueryObject.addUpdateField("connection_timeout", "?");		
+				sqlQueryObject.addUpdateField("read_timeout", "?");		
+				sqlQueryObject.addUpdateField("avg_response_time", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -1164,6 +1207,24 @@ public class DriverRegistroServiziDB_LIB {
 				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
 				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
 				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
+				if(tempiRisposta_connectionTimeout!=null) {
+					stm.setInt(index++, tempiRisposta_connectionTimeout);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
+				if(tempiRisposta_readTimeout!=null) {
+					stm.setInt(index++, tempiRisposta_readTimeout);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
+				if(tempiRisposta_avgResponseTime!=null) {
+					stm.setInt(index++, tempiRisposta_avgResponseTime);
+				}
+				else {
+					stm.setNull(index++, Types.INTEGER);
+				}
 				if(connettore.getCustom()!=null && connettore.getCustom()){
 					stm.setInt(index++, 1);
 				}else{
@@ -1176,6 +1237,7 @@ public class DriverRegistroServiziDB_LIB {
 								transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 								nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,
 								proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_avgResponseTime,
 								(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
 				n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);

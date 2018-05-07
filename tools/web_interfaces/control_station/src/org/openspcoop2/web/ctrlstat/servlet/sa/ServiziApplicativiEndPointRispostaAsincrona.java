@@ -49,6 +49,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -65,6 +66,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -152,6 +154,12 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String proxy_port = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxy_username = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxy_password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+				
+			// tempi risposta
+			String tempiRisposta_enabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+			String tempiRisposta_connectionTimeout = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
+			String tempiRisposta_readTimeout = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
+			String tempiRisposta_tempoMedioRisposta = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
 			
 			// opzioni avanzate
 			String transfer_mode = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
@@ -398,6 +406,63 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					}
 				}
 				
+				if(tempiRisposta_enabled == null ||
+						tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+						|| 
+						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+						|| 
+						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+					
+					ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+					
+					if(props!=null) {
+						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_connectionTimeout = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+							}
+						}
+							
+						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_readTimeout = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+							}
+						}
+						
+						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_tempoMedioRisposta = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+							}
+						}
+					}
+					else {
+						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
+						}
+						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
+						}
+						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
+						}
+					}
+				}
+				
 				if(transfer_mode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 					if(v!=null && !"".equals(v)){
@@ -595,6 +660,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -644,6 +710,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
@@ -715,6 +782,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

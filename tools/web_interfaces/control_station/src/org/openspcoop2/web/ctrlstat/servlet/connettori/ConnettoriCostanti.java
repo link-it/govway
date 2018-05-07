@@ -61,6 +61,7 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_PROXY = "Proxy";
 	public final static String LABEL_CONNETTORE_HTTP = "Autenticazione Http";
 	public final static String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
+	public final static String LABEL_CONNETTORE_TEMPI_RISPOSTA = "Tempi Risposta";
 	public final static String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_CONNETTORE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE = "Autenticazione Https";
@@ -101,6 +102,11 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_PROXY_PORT = "connettore_proxy_port";
 	public final static String PARAMETRO_CONNETTORE_PROXY_USERNAME = "connettore_proxy_username";
 	public final static String PARAMETRO_CONNETTORE_PROXY_PASSWORD = "connettore_proxy_password";
+	
+	public final static String PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE = "connettore_tempi_redefine";
+	public final static String PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = "connettore_tempi_ct";
+	public final static String PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = "connettore_tempi_rt";
+	public final static String PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA = "connettore_tempi_avg";
 	
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE = "opzioni_avanzate";
 	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "transfer_mode";
@@ -191,6 +197,12 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PORT = "Porta";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME = "Username";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD = "Password";
+	
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE = "Ridefinisci Tempi Risposta";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT = "Connection Timeout";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT = "Read Timeout";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA = "Tempo Medio di Risposta";
+	public final static String LABEL_PARAMETRO_CONNETTORE_TEMPI_MILLISECONDI_NOTE = "Indicazione in millisecondi (ms)";
 	
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE = LABEL_CONNETTORE_OPZIONI_AVANZATE;
 	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "Modalità Data Transfer";

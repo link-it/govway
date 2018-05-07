@@ -40,6 +40,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -70,6 +71,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -423,6 +425,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpspwdprivatekey = "";
 			String httpsalgoritmokey = "";
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
+			String tempiRisposta_enabled = null, tempiRisposta_connectionTimeout = null, tempiRisposta_readTimeout = null, tempiRisposta_tempoMedioRisposta = null;
 			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null;
 			// file
 			String requestOutputFileName = null;
@@ -491,6 +494,64 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 						v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
 						if(v!=null && !"".equals(v)){
 							proxy_password = v.trim();
+						}
+					}
+				}
+				
+				// tempiRisposta
+				if(tempiRisposta_enabled == null ||
+						tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
+						|| 
+						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
+						|| 
+						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
+					
+					ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+					
+					if( props!=null ) {
+						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_connectionTimeout = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+							}
+						}
+							
+						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_readTimeout = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+							}
+						}
+						
+						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
+							if(v!=null && !"".equals(v)){
+								tempiRisposta_tempoMedioRisposta = v.trim();
+								tempiRisposta_enabled =  Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+							else {
+								tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
+							}
+						}
+					}
+					else {
+						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
+							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
+						}
+						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
+							tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
+						}
+						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
+							tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
 						}
 					}
 				}
@@ -707,6 +768,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					nomeservizio, tiposervizio, versioneservizio.intValue()+"", null, null, null, null, true,
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,

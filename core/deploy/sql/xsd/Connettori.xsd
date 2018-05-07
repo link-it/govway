@@ -318,6 +318,42 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="connection_timeout" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connection_timeout"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sull'intervallo massimo di tempo necessario per instaurare una connessione (intervallo in ms)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Indicazione sull'intervallo massimo di tempo necessario per instaurare una connessione (intervallo in ms)]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="read_timeout" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="read_timeout"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sull'intervallo massimo di tempo che può occorrere prima di ricevere una risposta (intervallo in ms)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Indicazione sull'intervallo massimo di tempo che può occorrere prima di ricevere una risposta (intervallo in ms)]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="avg_response_time" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="avg_response_time"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sull'intervallo di tempo medio atteso prima di ricevere una risposta (intervallo in ms)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Indicazione sull'intervallo massimo di tempo medio atteso prima di ricevere una risposta (intervallo in ms)]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="custom" type="xsd:int" minOccurs="0" default="0">
                     <xsd:annotation>
                         <xsd:appinfo>

@@ -378,6 +378,10 @@ public final class CostantiDB {
     public static final String CONNETTORE_PROXY_USERNAME = CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME;
     public static final String CONNETTORE_PROXY_PASSWORD = CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD;
     
+    public static final String CONNETTORE_CONNECTION_TIMEOUT = CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT;
+    public static final String CONNETTORE_READ_CONNECTION_TIMEOUT = CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT;
+    public static final String CONNETTORE_TEMPO_MEDIO_RISPOSTA = CostantiConnettori.CONNETTORE_TEMPO_MEDIO_RISPOSTA;
+    
     public static final String CONNETTORE_HTTP_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
     
     public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE;

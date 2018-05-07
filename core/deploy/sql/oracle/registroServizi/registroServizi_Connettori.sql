@@ -42,6 +42,12 @@ CREATE TABLE connettori
 	proxy_port VARCHAR2(255),
 	proxy_username VARCHAR2(255),
 	proxy_password VARCHAR2(255),
+	-- Indicazione sull'intervallo massimo di tempo necessario per instaurare una connessione (intervallo in ms)
+	connection_timeout NUMBER,
+	-- Indicazione sull'intervallo massimo di tempo che può occorrere prima di ricevere una risposta (intervallo in ms)
+	read_timeout NUMBER,
+	-- Indicazione sull'intervallo massimo di tempo medio atteso prima di ricevere una risposta (intervallo in ms)
+	avg_response_time NUMBER,
 	-- 1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom
 	custom NUMBER,
 	-- fk/pk columns
