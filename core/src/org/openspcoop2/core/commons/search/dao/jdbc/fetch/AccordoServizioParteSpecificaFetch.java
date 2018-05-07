@@ -58,7 +58,7 @@ public class AccordoServizioParteSpecificaFetch extends AbstractJDBCFetch {
 				setParameter(object, "setNome", AccordoServizioParteSpecifica.model().NOME.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_servizio", AccordoServizioParteSpecifica.model().NOME.getFieldType()));
 				setParameter(object, "setVersione", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "versione", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType()));
+					jdbcParameterUtilities.readParameter(rs, "versione_servizio", AccordoServizioParteSpecifica.model().VERSIONE.getFieldType()));
 				setParameter(object, "setPortType", AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "port_type", AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldType()));
 				return object;
