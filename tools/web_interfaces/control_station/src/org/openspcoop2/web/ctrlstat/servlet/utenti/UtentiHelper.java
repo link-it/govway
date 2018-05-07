@@ -273,6 +273,19 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
+			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
+			if(contaListe){
+				Search searchForCount = new Search(true,1);
+				this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
+				int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
+				ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SOGGETTI, (long) num);
+			}else {
+				de.setValue(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
+			}
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
 			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
 			if(contaListe){
 				Search searchForCount = new Search(true,1);
@@ -284,18 +297,6 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			dati.addElement(de);
 			
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
-			if(contaListe){
-				Search searchForCount = new Search(true,1);
-				this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
-				int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
-				ServletUtils.setDataElementCustomLabel(de, UtentiCostanti.LABEL_UTENTI_SOGGETTI, (long) num);
-			}else {
-				de.setValue(UtentiCostanti.LABEL_UTENTI_SOGGETTI);
-			}
-			dati.addElement(de);
 		}
 
 		
@@ -1475,13 +1476,14 @@ public class UtentiHelper extends ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd,lstParam); 
 					
 			// setto le label delle colonne
-			int totEl = 1;
+			int totEl = 2;
 			if( showProtocolli ) {
 				totEl++;
 			}
 			String[] labels = new String[totEl];
 			int i = 0;
 			labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_SERVIZIO;
+			labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_SOGGETTO_EROGATORE;
 			if( showProtocolli ) {
 				labels[i++] = UtentiCostanti.LABEL_PARAMETRO_UTENTI_PROTOCOLLO;
 			}
@@ -1499,11 +1501,16 @@ public class UtentiHelper extends ConsoleHelper {
 
 					String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(servizio.getTipo());
 					String uriASPS = this.idServizioFactory.getUriFromIDServizio(servizio);
-					// soggetto
+
+					// servizio
 					DataElement de = new DataElement();
 					de.setValue(this.getLabelNomeServizio(protocollo, servizio.getTipo(), servizio.getNome(), servizio.getVersione()));
 					de.setIdToRemove(uriASPS);
-					de.setToolTip(this.getLabelNomeServizio(protocollo, servizio.getTipo(), servizio.getNome(), servizio.getVersione()));
+					e.addElement(de);
+					
+					// soggetto
+					de = new DataElement();
+					de.setValue(this.getLabelNomeSoggetto(protocollo, servizio.getSoggettoErogatore().getTipo(), servizio.getSoggettoErogatore().getNome()));
 					e.addElement(de);
 					
 					if(showProtocolli) {

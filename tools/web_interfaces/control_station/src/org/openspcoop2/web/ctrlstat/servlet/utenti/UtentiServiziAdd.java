@@ -128,7 +128,8 @@ public class UtentiServiziAdd extends Action {
 			for (int i = 0; i < listaServiziNonUtilizzati.size(); i++) {
 				AccordoServizioParteSpecifica asps = listaServiziNonUtilizzati.get(i);
 				String _protocollo = aspsCore.getProtocolloAssociatoTipoServizio(asps.getTipo());
-				serviziLabels[(i+1)] = utentiHelper.getLabelNomeServizio(_protocollo, asps.getTipo(), asps.getNome(), asps.getVersione());
+				serviziLabels[(i+1)] = utentiHelper.getLabelNomeServizio(_protocollo, asps.getTipo(), asps.getNome(), asps.getVersione()) + 
+						" ("+utentiHelper.getLabelNomeSoggetto(_protocollo, asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore())+")";
 				serviziValues[(i+1)] = asps.getId() + "";
 			}
 	
