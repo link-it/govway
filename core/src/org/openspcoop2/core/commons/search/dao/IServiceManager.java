@@ -143,6 +143,24 @@ public interface IServiceManager {
 	
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:resource type:resource
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Resource}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Resource}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IResourceServiceSearch getResourceServiceSearch() throws ServiceException,NotImplementedException;
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:accordo-servizio-parte-specifica type:accordo-servizio-parte-specifica
 	 =====================================================================================================================
 	*/

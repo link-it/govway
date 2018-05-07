@@ -17,11 +17,15 @@
     <value name="nome" field="nome" usage="required"/>
     <value name="versione" field="versione" usage="required"/>
     <structure name="id-referente" field="idReferente" usage="required" map-as="_IdSoggetto_Type"/>
+    <value name="service-binding" field="serviceBinding" usage="required"/>
     <collection field="accordoServizioParteComuneAzione" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione"/>
     </collection>
     <collection field="portType" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.PortType"/>
+    </collection>
+    <collection field="resource" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.commons.search.Resource"/>
     </collection>
   </mapping>
   <mapping name="accordo-servizio-parte-comune-azione" class="org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione">
@@ -41,6 +45,13 @@
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <value name="nome" field="nome" usage="required"/>
     <structure name="id-port-type" field="idPortType" usage="required" map-as="_IdPortType_Type"/>
+  </mapping>
+  <mapping name="resource" class="org.openspcoop2.core.commons.search.Resource">
+    <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="http-method" field="httpMethod" usage="optional"/>
+    <value name="path" field="path" usage="optional"/>
+    <structure name="id-accordo-servizio-parte-comune" field="idAccordoServizioParteComune" usage="required" map-as="_IdAccordoServizioParteComune_Type"/>
   </mapping>
   <mapping name="accordo-servizio-parte-specifica" class="org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
@@ -76,10 +87,17 @@
     <collection field="portaDelegataServizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo"/>
     </collection>
+    <collection field="portaDelegataAzione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.commons.search.PortaDelegataAzione"/>
+    </collection>
   </mapping>
   <mapping name="porta-delegata-servizio-applicativo" class="org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <structure name="id-servizio-applicativo" field="idServizioApplicativo" usage="required" map-as="_IdServizioApplicativo_Type"/>
+  </mapping>
+  <mapping name="porta-delegata-azione" class="org.openspcoop2.core.commons.search.PortaDelegataAzione">
+    <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
   </mapping>
   <mapping name="porta-applicativa" class="org.openspcoop2.core.commons.search.PortaApplicativa">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
@@ -93,10 +111,17 @@
     <collection field="portaApplicativaServizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo"/>
     </collection>
+    <collection field="portaApplicativaAzione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.commons.search.PortaApplicativaAzione"/>
+    </collection>
   </mapping>
   <mapping name="porta-applicativa-servizio-applicativo" class="org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <structure name="id-servizio-applicativo" field="idServizioApplicativo" usage="required" map-as="_IdServizioApplicativo_Type"/>
+  </mapping>
+  <mapping name="porta-applicativa-azione" class="org.openspcoop2.core.commons.search.PortaApplicativaAzione">
+    <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
   </mapping>
   <mapping name="id-fruitore" class="org.openspcoop2.core.commons.search.IdSoggetto" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
@@ -118,6 +143,7 @@
     <value name="nome" field="nome" usage="required"/>
     <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
     <value name="versione" field="versione" usage="required"/>
+    <value name="service-binding" field="serviceBinding" usage="optional"/>
   </mapping>
 
   <mapping type-name="_IdAccordoServizioParteComune_Type" class="org.openspcoop2.core.commons.search.IdAccordoServizioParteComune" abstract="true">
@@ -125,6 +151,7 @@
     <value name="nome" field="nome" usage="required"/>
     <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
     <value name="versione" field="versione" usage="required"/>
+    <value name="service-binding" field="serviceBinding" usage="optional"/>
   </mapping>
   <mapping name="id-accordo-servizio-parte-comune-azione" class="org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneAzione">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
@@ -146,6 +173,13 @@
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
     <value name="nome" field="nome" usage="required"/>
     <structure name="id-port-type" field="idPortType" usage="required" map-as="_IdPortType_Type"/>
+  </mapping>
+  <mapping name="id-resource" class="org.openspcoop2.core.commons.search.IdResource">
+    <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>
+    <value name="nome" field="nome" usage="required"/>
+    <value name="http-method" field="httpMethod" usage="optional"/>
+    <value name="path" field="path" usage="optional"/>
+    <structure name="id-accordo-servizio-parte-comune" field="idAccordoServizioParteComune" usage="required" map-as="_IdAccordoServizioParteComune_Type"/>
   </mapping>
   <mapping name="id-accordo-servizio-parte-specifica" class="org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/commons/search" default="elements"/>

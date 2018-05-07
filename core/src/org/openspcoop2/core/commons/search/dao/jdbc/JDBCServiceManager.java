@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServic
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneAzioneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IFruitoreServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IServizioApplicativoServiceSearch;
@@ -276,6 +277,27 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	@Override
 	public IOperationServiceSearch getOperationServiceSearch() throws ServiceException,NotImplementedException{
 		return new JDBCOperationServiceSearch(this);
+	}
+	
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:resource type:resource
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Resource}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.commons.search.Resource}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IResourceServiceSearch getResourceServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCResourceServiceSearch(this);
 	}
 	
 	

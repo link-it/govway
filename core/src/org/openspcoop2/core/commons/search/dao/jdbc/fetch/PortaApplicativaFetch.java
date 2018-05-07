@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 
 
 /**     
@@ -74,6 +75,14 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				return object;
 			}
+			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE)){
+				PortaApplicativaAzione object = new PortaApplicativaAzione();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "azione", PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE.NOME.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -114,6 +123,14 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"porta-applicativa-servizio-applicativo.id"));
 				return object;
 			}
+			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE)){
+				PortaApplicativaAzione object = new PortaApplicativaAzione();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"porta-applicativa-azione.id"));
+				setParameter(object, "setNome", PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE.NOME.getFieldType(),
+					this.getObjectFromMap(map,"porta-applicativa-azione.nome"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -136,6 +153,9 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_applicative_sa","id","seq_porte_applicative_sa","porte_applicative_sa_init_seq");
+			}
+			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("pa_azioni","id","seq_pa_azioni","pa_azioni_init_seq");
 			}
 			
 			else{

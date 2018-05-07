@@ -61,6 +61,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -3546,7 +3547,7 @@ public class DriverControlStationDB  {
 		}
 	}
 	
-	public List<String> getSoggettiErogatori(String protocollo) throws DriverControlStationException{
+	public List<IDSoggetto> getSoggettiErogatori(String protocolloSelezionato,List<String> protocolliSupportati) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiErogatori"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3567,7 +3568,12 @@ public class DriverControlStationDB  {
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con); 
 			
-			return RegistroCore.getSoggettiErogatori(serviceManager, protocollo);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getSoggettiErogatori(serviceManager, protocolloSelezionato);
+			}
+			else {
+				return RegistroCore.getSoggettiErogatori(serviceManager, protocolliSupportati);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -3581,7 +3587,8 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-	public List<String> getServizi(String protocollo, String tipoErogatore, String nomeErogatore) throws DriverControlStationException{
+	public List<IDServizio> getServizi(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoErogatore, String nomeErogatore) throws DriverControlStationException{
 		String nomeMetodo = "getServizi"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3600,7 +3607,12 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
-			return RegistroCore.getServizi(serviceManager, protocollo, tipoErogatore, nomeErogatore);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServizi(serviceManager, protocolloSelezionato, tipoErogatore, nomeErogatore);
+			}
+			else{
+				return RegistroCore.getServizi(serviceManager, protocolliSupportati, tipoErogatore, nomeErogatore);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -3614,7 +3626,8 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-	public List<String> getAzioni(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+	public List<String> getAzioni(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getAzioni"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3633,7 +3646,14 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
-			return RegistroCore.getAzioni(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getAzioni(serviceManager, protocolloSelezionato, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			}
+			else {
+				return RegistroCore.getAzioni(serviceManager, protocolliSupportati, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -3647,7 +3667,9 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-	public List<String> getServiziApplicativiErogatori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException {
+	public List<IDServizioApplicativo> getServiziApplicativiErogatori(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, 
+			String azione) throws DriverControlStationException {
 		String nomeMetodo = "getServiziApplicativiErogatori"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3666,7 +3688,16 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
-			return RegistroCore.getServiziApplicativiErogatori(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServiziApplicativiErogatori(serviceManager, protocolloSelezionato, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, 
+						azione);
+			}
+			else {
+				return RegistroCore.getServiziApplicativiErogatori(serviceManager, protocolliSupportati, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, 
+						azione);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -3680,7 +3711,8 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-	public List<String> getSoggettiFruitori(String protocollo, String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio) throws DriverControlStationException{
+	public List<IDSoggetto> getSoggettiFruitori(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverControlStationException{
 		String nomeMetodo = "getSoggettiFruitori"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3699,7 +3731,14 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
-			return RegistroCore.getSoggettiFruitori(serviceManager, protocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getSoggettiFruitori(serviceManager, protocolloSelezionato, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			}
+			else {
+				return RegistroCore.getSoggettiFruitori(serviceManager, protocolliSupportati, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {
@@ -3713,7 +3752,10 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-	public List<String> getServiziApplicativiFruitore(String protocollo, String tipoFruitore, String nomeFruitore,	String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, String azione) throws DriverControlStationException{
+	public List<IDServizioApplicativo> getServiziApplicativiFruitore(String protocolloSelezionato,List<String> protocolliSupportati, 
+			String tipoFruitore, String nomeFruitore,	
+			String tipoErogatore, String nomeErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio,
+			String azione) throws DriverControlStationException{
 		String nomeMetodo = "getServiziApplicativiFruitore"; 
 		Connection con = null;
 		if (this.atomica) {
@@ -3732,7 +3774,18 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 		try{
 			org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager serviceManager = RegistroCore.getServiceManager(this.log, this.tipoDB, con);
-			return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocollo, tipoFruitore, nomeFruitore, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, azione);
+			if(protocolloSelezionato!=null) {
+				return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocolloSelezionato, 
+						tipoFruitore, nomeFruitore, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, 
+						azione);
+			}
+			else {
+				return RegistroCore.getServiziApplicativiFruitore(serviceManager, protocolliSupportati, 
+						tipoFruitore, nomeFruitore, 
+						tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio, 
+						azione);
+			}
 		}catch (Exception qe) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo +"] Errore : " + qe.getMessage(),qe);
 		} finally {

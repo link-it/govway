@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="versione_servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="porta-applicativa-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="porta-applicativa-azione" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -65,7 +66,8 @@ import java.util.List;
   	"nomeServizio",
   	"versioneServizio",
   	"nomeAzione",
-  	"portaApplicativaServizioApplicativo"
+  	"portaApplicativaServizioApplicativo",
+  	"portaApplicativaAzione"
   }
 )
 
@@ -169,6 +171,30 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     return this.portaApplicativaServizioApplicativo.size();
   }
 
+  public void addPortaApplicativaAzione(PortaApplicativaAzione portaApplicativaAzione) {
+    this.portaApplicativaAzione.add(portaApplicativaAzione);
+  }
+
+  public PortaApplicativaAzione getPortaApplicativaAzione(int index) {
+    return this.portaApplicativaAzione.get( index );
+  }
+
+  public PortaApplicativaAzione removePortaApplicativaAzione(int index) {
+    return this.portaApplicativaAzione.remove( index );
+  }
+
+  public List<PortaApplicativaAzione> getPortaApplicativaAzioneList() {
+    return this.portaApplicativaAzione;
+  }
+
+  public void setPortaApplicativaAzioneList(List<PortaApplicativaAzione> portaApplicativaAzione) {
+    this.portaApplicativaAzione=portaApplicativaAzione;
+  }
+
+  public int sizePortaApplicativaAzioneList() {
+    return this.portaApplicativaAzione.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -243,6 +269,36 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @Deprecated
   public int sizePortaApplicativaServizioApplicativo() {
   	return this.portaApplicativaServizioApplicativo.size();
+  }
+
+  @XmlElement(name="porta-applicativa-azione",required=true,nillable=false)
+  protected List<PortaApplicativaAzione> portaApplicativaAzione = new ArrayList<PortaApplicativaAzione>();
+
+  /**
+   * @deprecated Use method getPortaApplicativaAzioneList
+   * @return List<PortaApplicativaAzione>
+  */
+  @Deprecated
+  public List<PortaApplicativaAzione> getPortaApplicativaAzione() {
+  	return this.portaApplicativaAzione;
+  }
+
+  /**
+   * @deprecated Use method setPortaApplicativaAzioneList
+   * @param portaApplicativaAzione List<PortaApplicativaAzione>
+  */
+  @Deprecated
+  public void setPortaApplicativaAzione(List<PortaApplicativaAzione> portaApplicativaAzione) {
+  	this.portaApplicativaAzione=portaApplicativaAzione;
+  }
+
+  /**
+   * @deprecated Use method sizePortaApplicativaAzioneList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizePortaApplicativaAzione() {
+  	return this.portaApplicativaAzione.size();
   }
 
 }

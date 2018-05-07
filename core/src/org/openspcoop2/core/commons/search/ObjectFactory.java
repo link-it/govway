@@ -108,6 +108,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaDelegataAzione }
+     */
+    public PortaDelegataAzione createPortaDelegataAzione() {
+        return new PortaDelegataAzione();
+    }
+
+    /**
      * Create an instance of {@link IdPortaDominio }
      */
     public IdPortaDominio createIdPortaDominio() {
@@ -164,6 +171,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativaAzione }
+     */
+    public PortaApplicativaAzione createPortaApplicativaAzione() {
+        return new PortaApplicativaAzione();
+    }
+
+    /**
      * Create an instance of {@link PortType }
      */
     public PortType createPortType() {
@@ -206,10 +220,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdResource }
+     */
+    public IdResource createIdResource() {
+        return new IdResource();
+    }
+
+    /**
      * Create an instance of {@link IdPortaApplicativa }
      */
     public IdPortaApplicativa createIdPortaApplicativa() {
         return new IdPortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link Resource }
+     */
+    public Resource createResource() {
+        return new Resource();
     }
 
     /**

@@ -508,10 +508,9 @@ public class JDBCOperationServiceSearchImpl implements IJDBCServiceSearchWithId<
 			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune_pt.createSQLQuery(), jdbcProperties.isShowSql(),
 			Long.class, searchParams_accordoServizioParteComune_pt);
 		
-		PortType pt = ((IDBPortTypeServiceSearch)this.getServiceManager().getPortTypeServiceSearch()).get(id_accordoServizioParteComune_pt);
-		IdPortType idPt = new IdPortType();
-		idPt.setNome(pt.getNome());
-		idPt.setIdAccordoServizioParteComune(pt.getIdAccordoServizioParteComune());
+		IDBPortTypeServiceSearch search = ((IDBPortTypeServiceSearch)this.getServiceManager().getPortTypeServiceSearch());
+		PortType pt = search.get(id_accordoServizioParteComune_pt);
+		IdPortType idPt = search.convertToId(pt);
 		operation.setIdPortType(idPt);
 		
         return operation;  

@@ -160,8 +160,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING = "Tipo";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_SOAP = "Soap";
 	public final static String LABEL_PARAMETRO_SERVICE_BINDING_REST = "Rest";
-	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = "Qualsiasi";
-	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_SERVICE_BINDING_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	public final static String LABEL_PARAMETRO_HTTP_METHOD_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_HTTP_METHOD = "HTTP Method";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_MESSAGE_TYPE_DEFAULT = "Default";
@@ -208,6 +208,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
+	
+	public final static String LABEL_QUALSIASI = "Qualsiasi";
 	
 	public final static String LABEL_DUMP = "Dump";
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
@@ -362,12 +364,12 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI = "";
 	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = "Registro";
 	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = "Esterna";
-	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = "";
 	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
 	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
-	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
 	

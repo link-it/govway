@@ -496,7 +496,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_RESPONSE = "Tipo Messaggio Risposta";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_FORMATO_SPECIFICA = "Formato Specifica";
 	
-	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI = "*";
 	

@@ -4083,6 +4083,13 @@ public class ConsoleHelper {
 		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
 	}
 	
+	public String getLabelNomeSoggetto(IDSoggetto idSoggetto) throws Exception{
+		return getLabelNomeSoggetto(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo()), 
+				idSoggetto.getTipo(), idSoggetto.getNome());
+	}
+	public String getLabelNomeSoggetto(String protocollo, IDSoggetto idSoggetto) throws Exception{
+		return getLabelNomeSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome());
+	}
 	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
 		StringBuffer bf = new StringBuffer();
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
@@ -4143,6 +4150,9 @@ public class ConsoleHelper {
 		return this.getLabelIdServizio(
 				this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore()), 
 				this.idServizioFactory.getIDServizioFromAccordo(as));
+	}
+	public String getLabelIdServizio(IDServizio idServizio) throws Exception{
+		return this.getLabelIdServizio(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo()), idServizio);
 	}
 	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws Exception{
 		StringBuffer bf = new StringBuffer();

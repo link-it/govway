@@ -94,6 +94,13 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return "nome_soggetto";
 			}
 		}
+		if(field.equals(AccordoServizioParteComune.model().SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
 		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -127,6 +134,13 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return this.toAliasTable(field)+".versione";
 			}else{
 				return "versione";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
 			}
 		}
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.NOME)){
@@ -178,6 +192,13 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return "versione";
 			}
 		}
+		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -204,6 +225,69 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 				return this.toAliasTable(field)+".versione";
 			}else{
 				return "versione";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.HTTP_METHOD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".http_method";
+			}else{
+				return "http_method";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.PATH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".path";
+			}else{
+				return "path";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome";
+			}else{
+				return "nome";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipo_soggetto";
+			}else{
+				return "tipo_soggetto";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome_soggetto";
+			}else{
+				return "nome_soggetto";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".versione";
+			}else{
+				return "versione";
+			}
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
 			}
 		}
 
@@ -231,6 +315,9 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 		if(field.equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME)){
 			return this.toTable(AccordoServizioParteComune.model().ID_REFERENTE, returnAlias);
 		}
+		if(field.equals(AccordoServizioParteComune.model().SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model(), returnAlias);
+		}
 		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME)){
 			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE, returnAlias);
 		}
@@ -244,6 +331,9 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
 		}
 		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
 			return this.toTable(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.NOME)){
@@ -267,6 +357,9 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
 			return this.toTable(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
+		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
 			return this.toTable(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
@@ -278,6 +371,33 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 		}
 		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
 			return this.toTable(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.HTTP_METHOD)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.PATH)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
 
 
@@ -326,6 +446,15 @@ public class AccordoServizioParteComuneFieldConverter extends AbstractSQLFieldCo
 			return "accordi";
 		}
 		if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
+			return "soggetti";
+		}
+		if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
+			return "api_resources";
+		}
+		if(model.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
+			return "accordi";
+		}
+		if(model.equals(AccordoServizioParteComune.model().RESOURCE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
 			return "soggetti";
 		}
 

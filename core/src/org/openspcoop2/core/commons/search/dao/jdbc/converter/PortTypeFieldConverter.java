@@ -115,6 +115,13 @@ public class PortTypeFieldConverter extends AbstractSQLFieldConverter {
 				return "versione";
 			}
 		}
+		if(field.equals(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
 		if(field.equals(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -141,6 +148,13 @@ public class PortTypeFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".versione";
 			}else{
 				return "versione";
+			}
+		}
+		if(field.equals(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
 			}
 		}
 
@@ -177,6 +191,9 @@ public class PortTypeFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
 			return this.toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
+		if(field.equals(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(PortType.model().OPERATION.ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
 		if(field.equals(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
 			return this.toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
@@ -187,6 +204,9 @@ public class PortTypeFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
 		}
 		if(field.equals(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
 			return this.toTable(PortType.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
 

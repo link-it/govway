@@ -110,7 +110,7 @@ public class SoggettiCostanti {
 	public final static String PARAMETRO_SOGGETTO_RUOLO_ID = "ruoloId";
 	
 	/* LABEL PARAMETRI */
-	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_PARAMETRO_SOGGETTO_DOMINIO = "Dominio";
 	public final static String LABEL_PARAMETRO_SOGGETTO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPO = "Tipo";

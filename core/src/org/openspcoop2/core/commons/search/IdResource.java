@@ -28,17 +28,17 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for id-accordo-servizio-parte-comune complex type.
+/** <p>Java class for id-resource complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-accordo-servizio-parte-comune">
+ * &lt;complexType name="id-resource">
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="service-binding" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="path" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="id-accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/commons/search}id-accordo-servizio-parte-comune" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -50,19 +50,19 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "id-accordo-servizio-parte-comune", 
+@XmlType(name = "id-resource", 
   propOrder = {
   	"nome",
-  	"idSoggetto",
-  	"versione",
-  	"serviceBinding"
+  	"httpMethod",
+  	"path",
+  	"idAccordoServizioParteComune"
   }
 )
 
-@XmlRootElement(name = "id-accordo-servizio-parte-comune")
+@XmlRootElement(name = "id-resource")
 
-public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public IdAccordoServizioParteComune() {
+public class IdResource extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public IdResource() {
   }
 
   public Long getId() {
@@ -87,28 +87,28 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
     this.nome = nome;
   }
 
-  public IdSoggetto getIdSoggetto() {
-    return this.idSoggetto;
+  public java.lang.String getHttpMethod() {
+    return this.httpMethod;
   }
 
-  public void setIdSoggetto(IdSoggetto idSoggetto) {
-    this.idSoggetto = idSoggetto;
+  public void setHttpMethod(java.lang.String httpMethod) {
+    this.httpMethod = httpMethod;
   }
 
-  public java.lang.Integer getVersione() {
-    return this.versione;
+  public java.lang.String getPath() {
+    return this.path;
   }
 
-  public void setVersione(java.lang.Integer versione) {
-    this.versione = versione;
+  public void setPath(java.lang.String path) {
+    this.path = path;
   }
 
-  public java.lang.String getServiceBinding() {
-    return this.serviceBinding;
+  public IdAccordoServizioParteComune getIdAccordoServizioParteComune() {
+    return this.idAccordoServizioParteComune;
   }
 
-  public void setServiceBinding(java.lang.String serviceBinding) {
-    this.serviceBinding = serviceBinding;
+  public void setIdAccordoServizioParteComune(IdAccordoServizioParteComune idAccordoServizioParteComune) {
+    this.idAccordoServizioParteComune = idAccordoServizioParteComune;
   }
 
   private static final long serialVersionUID = 1L;
@@ -122,15 +122,15 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
 
-  @XmlElement(name="id-soggetto",required=true,nillable=false)
-  protected IdSoggetto idSoggetto;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="versione",required=true,nillable=false)
-  protected java.lang.Integer versione;
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="http-method",required=false,nillable=false)
+  protected java.lang.String httpMethod;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="service-binding",required=false,nillable=false)
-  protected java.lang.String serviceBinding;
+  @XmlElement(name="path",required=false,nillable=false)
+  protected java.lang.String path;
+
+  @XmlElement(name="id-accordo-servizio-parte-comune",required=true,nillable=false)
+  protected IdAccordoServizioParteComune idAccordoServizioParteComune;
 
 }

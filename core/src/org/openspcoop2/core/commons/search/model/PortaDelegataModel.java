@@ -50,6 +50,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.VERSIONE_SERVIZIO = new Field("versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new Field("porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.PORTA_DELEGATA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaDelegataAzioneModel(new Field("porta-delegata-azione",org.openspcoop2.core.commons.search.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 	
 	}
 	
@@ -67,6 +68,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.PORTA_DELEGATA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaDelegataAzioneModel(new ComplexField(father,"porta-delegata-azione",org.openspcoop2.core.commons.search.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 	
 	}
 	
@@ -91,6 +93,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField NOME_AZIONE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel PORTA_DELEGATA_SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.commons.search.model.PortaDelegataAzioneModel PORTA_DELEGATA_AZIONE = null;
 	 
 
 	@Override

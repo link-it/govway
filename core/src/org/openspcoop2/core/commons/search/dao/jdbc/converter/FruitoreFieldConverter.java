@@ -96,7 +96,7 @@ public class FruitoreFieldConverter extends AbstractSQLFieldConverter {
 		}
 		if(field.equals(Fruitore.model().ID_ACCORDO_SERVIZIO_PARTE_SPECIFICA.VERSIONE)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".versione";
+				return this.toAliasTable(field)+".versione_servizio";
 			}else{
 				return "versione_servizio";
 			}

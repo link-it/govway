@@ -28,17 +28,14 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for id-accordo-servizio-parte-comune complex type.
+/** <p>Java class for porta-delegata-azione complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-accordo-servizio-parte-comune">
+ * &lt;complexType name="porta-delegata-azione">
  * 		&lt;sequence>
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="service-binding" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -50,19 +47,16 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "id-accordo-servizio-parte-comune", 
+@XmlType(name = "porta-delegata-azione", 
   propOrder = {
-  	"nome",
-  	"idSoggetto",
-  	"versione",
-  	"serviceBinding"
+  	"nome"
   }
 )
 
-@XmlRootElement(name = "id-accordo-servizio-parte-comune")
+@XmlRootElement(name = "porta-delegata-azione")
 
-public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public IdAccordoServizioParteComune() {
+public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public PortaDelegataAzione() {
   }
 
   public Long getId() {
@@ -87,30 +81,6 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
     this.nome = nome;
   }
 
-  public IdSoggetto getIdSoggetto() {
-    return this.idSoggetto;
-  }
-
-  public void setIdSoggetto(IdSoggetto idSoggetto) {
-    this.idSoggetto = idSoggetto;
-  }
-
-  public java.lang.Integer getVersione() {
-    return this.versione;
-  }
-
-  public void setVersione(java.lang.Integer versione) {
-    this.versione = versione;
-  }
-
-  public java.lang.String getServiceBinding() {
-    return this.serviceBinding;
-  }
-
-  public void setServiceBinding(java.lang.String serviceBinding) {
-    this.serviceBinding = serviceBinding;
-  }
-
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -121,16 +91,5 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=true,nillable=false)
   protected java.lang.String nome;
-
-  @XmlElement(name="id-soggetto",required=true,nillable=false)
-  protected IdSoggetto idSoggetto;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="versione",required=true,nillable=false)
-  protected java.lang.Integer versione;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="service-binding",required=false,nillable=false)
-  protected java.lang.String serviceBinding;
 
 }

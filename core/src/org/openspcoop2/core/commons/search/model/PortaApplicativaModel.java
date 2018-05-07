@@ -48,6 +48,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.VERSIONE_SERVIZIO = new Field("versione_servizio",java.lang.Integer.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new Field("porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PORTA_APPLICATIVA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaApplicativaAzioneModel(new Field("porta-applicativa-azione",org.openspcoop2.core.commons.search.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 	
 	}
 	
@@ -63,6 +64,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione_servizio",java.lang.Integer.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"porta-applicativa-servizio-applicativo",org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.PORTA_APPLICATIVA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaApplicativaAzioneModel(new ComplexField(father,"porta-applicativa-azione",org.openspcoop2.core.commons.search.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 	
 	}
 	
@@ -83,6 +85,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField NOME_AZIONE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.PortaApplicativaServizioApplicativoModel PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.commons.search.model.PortaApplicativaAzioneModel PORTA_APPLICATIVA_AZIONE = null;
 	 
 
 	@Override

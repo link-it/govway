@@ -34,6 +34,7 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.PortType;
+import org.openspcoop2.core.commons.search.Resource;
 
 
 /**     
@@ -60,6 +61,8 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "nome", AccordoServizioParteComune.model().NOME.getFieldType()));
 				setParameter(object, "setVersione", AccordoServizioParteComune.model().VERSIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "versione", AccordoServizioParteComune.model().VERSIONE.getFieldType()));
+				setParameter(object, "setServiceBinding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "service_binding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType()));
 				return object;
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){
@@ -86,6 +89,18 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "nome", AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME.getFieldType()));
 				return object;
 			}
+			if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
+				Resource object = new Resource();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", AccordoServizioParteComune.model().RESOURCE.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome", AccordoServizioParteComune.model().RESOURCE.NOME.getFieldType()));
+				setParameter(object, "setHttpMethod", AccordoServizioParteComune.model().RESOURCE.HTTP_METHOD.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "http_method", AccordoServizioParteComune.model().RESOURCE.HTTP_METHOD.getFieldType()));
+				setParameter(object, "setPath", AccordoServizioParteComune.model().RESOURCE.PATH.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "path", AccordoServizioParteComune.model().RESOURCE.PATH.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -110,6 +125,8 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"nome"));
 				setParameter(object, "setVersione", AccordoServizioParteComune.model().VERSIONE.getFieldType(),
 					this.getObjectFromMap(map,"versione"));
+				setParameter(object, "setServiceBinding", AccordoServizioParteComune.model().SERVICE_BINDING.getFieldType(),
+					this.getObjectFromMap(map,"service-binding"));
 				return object;
 			}
 			if(model.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE)){
@@ -134,6 +151,18 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"port-type.operation.id"));
 				setParameter(object, "setNome", AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME.getFieldType(),
 					this.getObjectFromMap(map,"port-type.operation.nome"));
+				return object;
+			}
+			if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
+				Resource object = new Resource();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"resource.id"));
+				setParameter(object, "setNome", AccordoServizioParteComune.model().RESOURCE.NOME.getFieldType(),
+					this.getObjectFromMap(map,"resource.nome"));
+				setParameter(object, "setHttpMethod", AccordoServizioParteComune.model().RESOURCE.HTTP_METHOD.getFieldType(),
+					this.getObjectFromMap(map,"resource.http-method"));
+				setParameter(object, "setPath", AccordoServizioParteComune.model().RESOURCE.PATH.getFieldType(),
+					this.getObjectFromMap(map,"resource.path"));
 				return object;
 			}
 			
@@ -164,6 +193,9 @@ public class AccordoServizioParteComuneFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("port_type_azioni","id","seq_port_type_azioni","port_type_azioni_init_seq");
+			}
+			if(model.equals(AccordoServizioParteComune.model().RESOURCE)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("api_resources","id","seq_api_resources","api_resources_init_seq");
 			}
 			
 			else{

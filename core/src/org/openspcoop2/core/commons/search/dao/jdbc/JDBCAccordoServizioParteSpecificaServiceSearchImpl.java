@@ -868,6 +868,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		sqlQueryObjectGet.addFromTable(this.getAccordoServizioParteSpecificaFieldConverter().toTable(AccordoServizioParteSpecifica.model()));
 		sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().TIPO,true));
 		sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().NOME,true));
+		sqlQueryObjectGet.addSelectField(this.getAccordoServizioParteSpecificaFieldConverter().toColumn(AccordoServizioParteSpecifica.model().VERSIONE,true));
 		sqlQueryObjectGet.addSelectField("id_soggetto");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
@@ -879,6 +880,7 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 		List<Class<?>> listaFieldIdReturnType_accordoServizioParteSpecifica = new ArrayList<Class<?>>();
 		listaFieldIdReturnType_accordoServizioParteSpecifica.add(String.class);
 		listaFieldIdReturnType_accordoServizioParteSpecifica.add(String.class);
+		listaFieldIdReturnType_accordoServizioParteSpecifica.add(Integer.class);
 		listaFieldIdReturnType_accordoServizioParteSpecifica.add(Long.class);
 		org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica id_accordoServizioParteSpecifica = null;
 		List<Object> listaFieldId_accordoServizioParteSpecifica = jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),
@@ -893,7 +895,8 @@ public class JDBCAccordoServizioParteSpecificaServiceSearchImpl implements IJDBC
 			id_accordoServizioParteSpecifica = new org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica();
 			id_accordoServizioParteSpecifica.setTipo((String)listaFieldId_accordoServizioParteSpecifica.get(0));
 			id_accordoServizioParteSpecifica.setNome((String)listaFieldId_accordoServizioParteSpecifica.get(1));
-			Long idSoggettoFK = (Long) listaFieldId_accordoServizioParteSpecifica.get(2);
+			id_accordoServizioParteSpecifica.setVersione((Integer)listaFieldId_accordoServizioParteSpecifica.get(2));
+			Long idSoggettoFK = (Long) listaFieldId_accordoServizioParteSpecifica.get(3);
 			id_accordoServizioParteSpecifica.
 				setIdErogatore(((IDBSoggettoServiceSearch)this.getServiceManager().
 						getSoggettoServiceSearch()).findId(idSoggettoFK, true));

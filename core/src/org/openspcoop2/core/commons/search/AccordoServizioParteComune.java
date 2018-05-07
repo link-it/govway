@@ -40,8 +40,10 @@ import java.util.List;
  * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="id-referente" type="{http://www.openspcoop2.org/core/commons/search}id-soggetto" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="service-binding" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="accordo-servizio-parte-comune-azione" type="{http://www.openspcoop2.org/core/commons/search}accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/commons/search}port-type" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/commons/search}resource" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -58,8 +60,10 @@ import java.util.List;
   	"nome",
   	"versione",
   	"idReferente",
+  	"serviceBinding",
   	"accordoServizioParteComuneAzione",
-  	"portType"
+  	"portType",
+  	"resource"
   }
 )
 
@@ -105,6 +109,14 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setIdReferente(IdSoggetto idReferente) {
     this.idReferente = idReferente;
+  }
+
+  public java.lang.String getServiceBinding() {
+    return this.serviceBinding;
+  }
+
+  public void setServiceBinding(java.lang.String serviceBinding) {
+    this.serviceBinding = serviceBinding;
   }
 
   public void addAccordoServizioParteComuneAzione(AccordoServizioParteComuneAzione accordoServizioParteComuneAzione) {
@@ -155,6 +167,30 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     return this.portType.size();
   }
 
+  public void addResource(Resource resource) {
+    this.resource.add(resource);
+  }
+
+  public Resource getResource(int index) {
+    return this.resource.get( index );
+  }
+
+  public Resource removeResource(int index) {
+    return this.resource.remove( index );
+  }
+
+  public List<Resource> getResourceList() {
+    return this.resource;
+  }
+
+  public void setResourceList(List<Resource> resource) {
+    this.resource=resource;
+  }
+
+  public int sizeResourceList() {
+    return this.resource.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -184,6 +220,10 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @XmlElement(name="id-referente",required=true,nillable=false)
   protected IdSoggetto idReferente;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="service-binding",required=true,nillable=false)
+  protected java.lang.String serviceBinding;
 
   @XmlElement(name="accordo-servizio-parte-comune-azione",required=true,nillable=false)
   protected List<AccordoServizioParteComuneAzione> accordoServizioParteComuneAzione = new ArrayList<AccordoServizioParteComuneAzione>();
@@ -243,6 +283,36 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @Deprecated
   public int sizePortType() {
   	return this.portType.size();
+  }
+
+  @XmlElement(name="resource",required=true,nillable=false)
+  protected List<Resource> resource = new ArrayList<Resource>();
+
+  /**
+   * @deprecated Use method getResourceList
+   * @return List<Resource>
+  */
+  @Deprecated
+  public List<Resource> getResource() {
+  	return this.resource;
+  }
+
+  /**
+   * @deprecated Use method setResourceList
+   * @param resource List<Resource>
+  */
+  @Deprecated
+  public void setResource(List<Resource> resource) {
+  	this.resource=resource;
+  }
+
+  /**
+   * @deprecated Use method sizeResourceList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeResource() {
+  	return this.resource.size();
   }
 
 }

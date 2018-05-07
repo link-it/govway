@@ -60,6 +60,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.commons.search.PortaDelegataAzione;
 
 /**     
  * JDBCPortaDelegataServiceSearchImpl
@@ -486,6 +487,26 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 				}
 			}
 		}
+		if(obj.getPortaDelegataAzioneList()!=null){
+			List<org.openspcoop2.core.commons.search.PortaDelegataAzione> listObj_ = obj.getPortaDelegataAzioneList();
+			for(org.openspcoop2.core.commons.search.PortaDelegataAzione itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.PortaDelegataAzione itemAlreadySaved_ = null;
+				if(imgSaved.getPortaDelegataAzioneList()!=null){
+					List<org.openspcoop2.core.commons.search.PortaDelegataAzione> listImgSaved_ = imgSaved.getPortaDelegataAzioneList();
+					for(org.openspcoop2.core.commons.search.PortaDelegataAzione itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+				}
+			}
+		}
              
 	}
 	
@@ -609,7 +630,28 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 				
 				portaDelegata.addPortaDelegataServizioApplicativo(portaDelegata_portaDelegataServizioApplicativo);
 			}
-		}        
+		}
+
+		// Object portaDelegata_portaDelegataAzione
+		ISQLQueryObject sqlQueryObjectGet_portaDelegata_portaDelegataAzione = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.setANDLogicOperator(true);
+		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.addFromTable(this.getPortaDelegataFieldConverter().toTable(PortaDelegata.model().PORTA_DELEGATA_AZIONE));
+		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.addSelectField("id");
+		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.addSelectField(this.getPortaDelegataFieldConverter().toColumn(PortaDelegata.model().PORTA_DELEGATA_AZIONE.NOME,true));
+		sqlQueryObjectGet_portaDelegata_portaDelegataAzione.addWhereCondition("id_porta=?");
+
+		// Get portaDelegata_portaDelegataAzione
+		java.util.List<Object> portaDelegata_portaDelegataAzione_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaDelegata_portaDelegataAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaDelegata.model().PORTA_DELEGATA_AZIONE, this.getPortaDelegataFetch(),
+			new JDBCObject(portaDelegata.getId(),Long.class));
+
+		if(portaDelegata_portaDelegataAzione_list != null) {
+			for (Object portaDelegata_portaDelegataAzione_object: portaDelegata_portaDelegataAzione_list) {
+				PortaDelegataAzione portaDelegata_portaDelegataAzione = (PortaDelegataAzione) portaDelegata_portaDelegataAzione_object;
+
+
+				portaDelegata.addPortaDelegataAzione(portaDelegata_portaDelegataAzione);
+			}
+		}      
 		
         return portaDelegata;  
 	
@@ -665,6 +707,11 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 			String tableName1 = this.getPortaDelegataFieldConverter().toAliasTable(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO);
 			String tableName2 = this.getPortaDelegataFieldConverter().toAliasTable(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO);
 			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortaDelegata.model().PORTA_DELEGATA_AZIONE,false)){
+			String tableName1 = this.getPortaDelegataFieldConverter().toAliasTable(PortaDelegata.model());
+			String tableName2 = this.getPortaDelegataFieldConverter().toAliasTable(PortaDelegata.model().PORTA_DELEGATA_AZIONE);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_porta");
 		}
 		
 		
@@ -748,6 +795,12 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		mapTableToPKColumn.put(converter.toTable(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO))
+			));
+
+		// PortaDelegata.model().PORTA_DELEGATA_AZIONE
+		mapTableToPKColumn.put(converter.toTable(PortaDelegata.model().PORTA_DELEGATA_AZIONE),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(PortaDelegata.model().PORTA_DELEGATA_AZIONE))
 			));
         
         return mapTableToPKColumn;		

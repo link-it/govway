@@ -32,6 +32,7 @@ import org.openspcoop2.utils.jdbc.IKeyGeneratorObject;
 
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.commons.search.PortaDelegataAzione;
 
 
 /**     
@@ -78,6 +79,14 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				return object;
 			}
+			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_AZIONE)){
+				PortaDelegataAzione object = new PortaDelegataAzione();
+				setParameter(object, "setId", Long.class,
+					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
+				setParameter(object, "setNome", PortaDelegata.model().PORTA_DELEGATA_AZIONE.NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "azione", PortaDelegata.model().PORTA_DELEGATA_AZIONE.NOME.getFieldType()));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -122,6 +131,14 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"porta-delegata-servizio-applicativo.id"));
 				return object;
 			}
+			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_AZIONE)){
+				PortaDelegataAzione object = new PortaDelegataAzione();
+				setParameter(object, "setId", Long.class,
+					this.getObjectFromMap(map,"porta-delegata-azione.id"));
+				setParameter(object, "setNome", PortaDelegata.model().PORTA_DELEGATA_AZIONE.NOME.getFieldType(),
+					this.getObjectFromMap(map,"porta-delegata-azione.nome"));
+				return object;
+			}
 			
 			else{
 				throw new ServiceException("Model ["+model.toString()+"] not supported by fetch: "+this.getClass().getName());
@@ -144,6 +161,9 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 			}
 			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO)){
 				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("porte_delegate_sa","id","seq_porte_delegate_sa","porte_delegate_sa_init_seq");
+			}
+			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_AZIONE)){
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("pd_azioni","id","seq_pd_azioni","pd_azioni_init_seq");
 			}
 			
 			else{

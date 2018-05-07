@@ -175,6 +175,16 @@
                         		</xsd:appinfo>
                 		</xsd:annotation>
 		        </xsd:element>
+             	<xsd:element name="service-binding" type="xsd:string">
+             		<xsd:annotation>
+             			<xsd:appinfo>
+             				<linkit:generator
+             					xmlns:linkit="http://www.link.it/project_generator">
+             					<linkit:sql-column-mapping name="service_binding"/>
+             				</linkit:generator>
+             			</xsd:appinfo>
+             		</xsd:annotation>
+             	</xsd:element>
              	<xsd:element ref="accordo-servizio-parte-comune-azione" minOccurs="0" maxOccurs="unbounded">
              		<xsd:annotation>
              			<xsd:appinfo>
@@ -195,6 +205,16 @@
                                 </xsd:appinfo>
                         </xsd:annotation>
                 </xsd:element>
+             	<xsd:element ref="resource" minOccurs="0" maxOccurs="unbounded">
+             		<xsd:annotation>
+             			<xsd:appinfo>
+             				<linkit:generator
+             					xmlns:linkit="http://www.link.it/project_generator">
+             					<linkit:sql-column-mapping name="id_accordo"/>
+             				</linkit:generator>
+             			</xsd:appinfo>
+             		</xsd:annotation>
+             	</xsd:element>
              </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -285,6 +305,52 @@
 					<xsd:element name="id-port-type" type="id-port-type" />
             </xsd:sequence>
         </xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="resource">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-resource"/>
+					<linkit:sql-table-mapping name="api_resources" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="nome"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="http-method" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="http_method"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="path" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="path"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune" />
+			</xsd:sequence>
+		</xsd:complexType>
 	</xsd:element>
 
 	<xsd:element name="accordo-servizio-parte-specifica">
@@ -549,6 +615,16 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="porta-delegata-azione" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -570,6 +646,29 @@
 								<linkit:sql-id-mapping relationship="reversed" object-name="servizio-applicativo"
 									object-type="servizio-applicativo"/>
 								<linkit:sql-column-mapping name="id_servizio_applicativo"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="porta-delegata-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="pd_azioni" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="azione"/>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
@@ -661,6 +760,16 @@
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="porta-applicativa-azione" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_porta"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -689,6 +798,30 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
+	
+	<xsd:element name="porta-applicativa-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="pa_azioni" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="azione"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
 
 
 
@@ -756,6 +889,7 @@
             <xsd:element name="nome" type="xsd:string"/>
 			<xsd:element name="id-soggetto" type="id-soggetto"/>
         	<xsd:element name="versione" type="xsd:integer"/>
+        	<xsd:element name="service-binding" type="xsd:string" minOccurs="0"/>
         </xsd:sequence>
 	</xsd:complexType>
 
@@ -803,6 +937,23 @@
                 <xsd:element name="id-port-type" type="id-port-type"/>
         </xsd:sequence>
     </xsd:complexType>
+	
+	<xsd:complexType name="id-resource">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="resource"
+						object-type="resource"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="nome" type="xsd:string"/>
+			<xsd:element name="http-method" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="path" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="id-accordo-servizio-parte-comune" type="id-accordo-servizio-parte-comune"/>
+		</xsd:sequence>
+	</xsd:complexType>
 	
 	<xsd:complexType name="id-accordo-servizio-parte-specifica">
 		<xsd:annotation>

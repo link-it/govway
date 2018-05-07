@@ -25,31 +25,31 @@ import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.expression.impl.sql.AbstractSQLFieldConverter;
 import org.openspcoop2.utils.TipiDatabase;
 
-import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.commons.search.Resource;
 
 
 /**     
- * OperationFieldConverter
+ * ResourceFieldConverter
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class OperationFieldConverter extends AbstractSQLFieldConverter {
+public class ResourceFieldConverter extends AbstractSQLFieldConverter {
 
 	private TipiDatabase databaseType;
 	
-	public OperationFieldConverter(String databaseType){
+	public ResourceFieldConverter(String databaseType){
 		this.databaseType = TipiDatabase.toEnumConstant(databaseType);
 	}
-	public OperationFieldConverter(TipiDatabase databaseType){
+	public ResourceFieldConverter(TipiDatabase databaseType){
 		this.databaseType = databaseType;
 	}
 
 
 	@Override
 	public IModel<?> getRootModel() throws ExpressionException {
-		return Operation.model();
+		return Resource.model();
 	}
 	
 	@Override
@@ -66,49 +66,56 @@ public class OperationFieldConverter extends AbstractSQLFieldConverter {
 		// it is possible to drive the choice whether to return only the alias or 
 		// the full definition of the column containing the alias
 		
-		if(field.equals(Operation.model().NOME)){
+		if(field.equals(Resource.model().NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
 			}else{
 				return "nome";
 			}
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.NOME)){
+		if(field.equals(Resource.model().HTTP_METHOD)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".http_method";
+			}else{
+				return "http_method";
+			}
+		}
+		if(field.equals(Resource.model().PATH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".path";
+			}else{
+				return "path";
+			}
+		}
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
 			}else{
 				return "nome";
 			}
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
-			if(appendTablePrefix){
-				return this.toAliasTable(field)+".nome";
-			}else{
-				return "nome";
-			}
-		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_soggetto";
 			}else{
 				return "tipo_soggetto";
 			}
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome_soggetto";
 			}else{
 				return "nome_soggetto";
 			}
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".versione";
 			}else{
 				return "versione";
 			}
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".service_binding";
 			}else{
@@ -128,26 +135,29 @@ public class OperationFieldConverter extends AbstractSQLFieldConverter {
 		// it is possible to drive the choice whether to return only the alias or 
 		// the full definition of the table containing the alias
 		
-		if(field.equals(Operation.model().NOME)){
-			return this.toTable(Operation.model(), returnAlias);
+		if(field.equals(Resource.model().NOME)){
+			return this.toTable(Resource.model(), returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.NOME)){
-			return this.toTable(Operation.model().ID_PORT_TYPE, returnAlias);
+		if(field.equals(Resource.model().HTTP_METHOD)){
+			return this.toTable(Resource.model(), returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
-			return this.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		if(field.equals(Resource.model().PATH)){
+			return this.toTable(Resource.model(), returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
-			return this.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME)){
+			return this.toTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
-			return this.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO)){
+			return this.toTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
-			return this.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME)){
+			return this.toTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
 		}
-		if(field.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
-			return this.toTable(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			return this.toTable(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
 
 
@@ -162,16 +172,13 @@ public class OperationFieldConverter extends AbstractSQLFieldConverter {
 		// it is possible to drive the choice whether to return only the alias or 
 		// the full definition of the table containing the alias
 		
-		if(model.equals(Operation.model())){
-			return "port_type_azioni";
+		if(model.equals(Resource.model())){
+			return "api_resources";
 		}
-		if(model.equals(Operation.model().ID_PORT_TYPE)){
-			return "port_type";
-		}
-		if(model.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
+		if(model.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE)){
 			return "accordi";
 		}
-		if(model.equals(Operation.model().ID_PORT_TYPE.ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
+		if(model.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO)){
 			return "soggetti";
 		}
 

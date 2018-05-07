@@ -21,16 +21,19 @@ package org.openspcoop2.core.commons.search.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
+import org.openspcoop2.core.commons.search.IdResource;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdPortaDelegata;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Fruitore;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.commons.search.PortaDelegataAzione;
 import org.openspcoop2.core.commons.search.IdPortaDominio;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.Operation;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdOperation;
 import org.openspcoop2.core.commons.search.IdPortType;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
@@ -41,6 +44,7 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.IdFruitore;
 import org.openspcoop2.core.commons.search.Soggetto;
@@ -111,6 +115,132 @@ public abstract class AbstractDeserializer {
 
 
 
+	/*
+	 =================================================================================
+	 Object: id-resource
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdResource readIdResource(String fileName) throws DeserializerException {
+		return (IdResource) this.xmlToObj(fileName, IdResource.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdResource readIdResource(File file) throws DeserializerException {
+		return (IdResource) this.xmlToObj(file, IdResource.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdResource readIdResource(InputStream in) throws DeserializerException {
+		return (IdResource) this.xmlToObj(in, IdResource.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdResource readIdResource(byte[] in) throws DeserializerException {
+		return (IdResource) this.xmlToObj(in, IdResource.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdResource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdResource readIdResourceFromString(String in) throws DeserializerException {
+		return (IdResource) this.xmlToObj(in.getBytes(), IdResource.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: id-accordo-servizio-parte-comune
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(String fileName) throws DeserializerException {
+		return (IdAccordoServizioParteComune) this.xmlToObj(fileName, IdAccordoServizioParteComune.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(File file) throws DeserializerException {
+		return (IdAccordoServizioParteComune) this.xmlToObj(file, IdAccordoServizioParteComune.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(InputStream in) throws DeserializerException {
+		return (IdAccordoServizioParteComune) this.xmlToObj(in, IdAccordoServizioParteComune.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(byte[] in) throws DeserializerException {
+		return (IdAccordoServizioParteComune) this.xmlToObj(in, IdAccordoServizioParteComune.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdAccordoServizioParteComune readIdAccordoServizioParteComuneFromString(String in) throws DeserializerException {
+		return (IdAccordoServizioParteComune) this.xmlToObj(in.getBytes(), IdAccordoServizioParteComune.class);
+	}	
+	
+	
+	
 	/*
 	 =================================================================================
 	 Object: id-porta-delegata
@@ -365,6 +495,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: resource
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Resource readResource(String fileName) throws DeserializerException {
+		return (Resource) this.xmlToObj(fileName, Resource.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Resource readResource(File file) throws DeserializerException {
+		return (Resource) this.xmlToObj(file, Resource.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Resource readResource(InputStream in) throws DeserializerException {
+		return (Resource) this.xmlToObj(in, Resource.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Resource readResource(byte[] in) throws DeserializerException {
+		return (Resource) this.xmlToObj(in, Resource.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.Resource}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Resource readResourceFromString(String in) throws DeserializerException {
+		return (Resource) this.xmlToObj(in.getBytes(), Resource.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: porta-delegata
 	 =================================================================================
 	*/
@@ -485,6 +678,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public PortaDelegataServizioApplicativo readPortaDelegataServizioApplicativoFromString(String in) throws DeserializerException {
 		return (PortaDelegataServizioApplicativo) this.xmlToObj(in.getBytes(), PortaDelegataServizioApplicativo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: porta-delegata-azione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaDelegataAzione readPortaDelegataAzione(String fileName) throws DeserializerException {
+		return (PortaDelegataAzione) this.xmlToObj(fileName, PortaDelegataAzione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaDelegataAzione readPortaDelegataAzione(File file) throws DeserializerException {
+		return (PortaDelegataAzione) this.xmlToObj(file, PortaDelegataAzione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaDelegataAzione readPortaDelegataAzione(InputStream in) throws DeserializerException {
+		return (PortaDelegataAzione) this.xmlToObj(in, PortaDelegataAzione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaDelegataAzione readPortaDelegataAzione(byte[] in) throws DeserializerException {
+		return (PortaDelegataAzione) this.xmlToObj(in, PortaDelegataAzione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaDelegataAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaDelegataAzione readPortaDelegataAzioneFromString(String in) throws DeserializerException {
+		return (PortaDelegataAzione) this.xmlToObj(in.getBytes(), PortaDelegataAzione.class);
 	}	
 	
 	
@@ -674,69 +930,6 @@ public abstract class AbstractDeserializer {
 	 */
 	public Operation readOperationFromString(String in) throws DeserializerException {
 		return (Operation) this.xmlToObj(in.getBytes(), Operation.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: id-accordo-servizio-parte-comune
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(String fileName) throws DeserializerException {
-		return (IdAccordoServizioParteComune) this.xmlToObj(fileName, IdAccordoServizioParteComune.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(File file) throws DeserializerException {
-		return (IdAccordoServizioParteComune) this.xmlToObj(file, IdAccordoServizioParteComune.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(InputStream in) throws DeserializerException {
-		return (IdAccordoServizioParteComune) this.xmlToObj(in, IdAccordoServizioParteComune.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdAccordoServizioParteComune readIdAccordoServizioParteComune(byte[] in) throws DeserializerException {
-		return (IdAccordoServizioParteComune) this.xmlToObj(in, IdAccordoServizioParteComune.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @return Object type {@link org.openspcoop2.core.commons.search.IdAccordoServizioParteComune}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public IdAccordoServizioParteComune readIdAccordoServizioParteComuneFromString(String in) throws DeserializerException {
-		return (IdAccordoServizioParteComune) this.xmlToObj(in.getBytes(), IdAccordoServizioParteComune.class);
 	}	
 	
 	
@@ -1367,6 +1560,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public PortaApplicativaServizioApplicativo readPortaApplicativaServizioApplicativoFromString(String in) throws DeserializerException {
 		return (PortaApplicativaServizioApplicativo) this.xmlToObj(in.getBytes(), PortaApplicativaServizioApplicativo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: porta-applicativa-azione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAzione readPortaApplicativaAzione(String fileName) throws DeserializerException {
+		return (PortaApplicativaAzione) this.xmlToObj(fileName, PortaApplicativaAzione.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAzione readPortaApplicativaAzione(File file) throws DeserializerException {
+		return (PortaApplicativaAzione) this.xmlToObj(file, PortaApplicativaAzione.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAzione readPortaApplicativaAzione(InputStream in) throws DeserializerException {
+		return (PortaApplicativaAzione) this.xmlToObj(in, PortaApplicativaAzione.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAzione readPortaApplicativaAzione(byte[] in) throws DeserializerException {
+		return (PortaApplicativaAzione) this.xmlToObj(in, PortaApplicativaAzione.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @return Object type {@link org.openspcoop2.core.commons.search.PortaApplicativaAzione}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public PortaApplicativaAzione readPortaApplicativaAzioneFromString(String in) throws DeserializerException {
+		return (PortaApplicativaAzione) this.xmlToObj(in.getBytes(), PortaApplicativaAzione.class);
 	}	
 	
 	

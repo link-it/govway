@@ -58,6 +58,7 @@ import org.openspcoop2.core.commons.search.dao.jdbc.fetch.PortaApplicativaFetch;
 import org.openspcoop2.core.commons.search.dao.IDBSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 
+import org.openspcoop2.core.commons.search.PortaApplicativaAzione;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
 
@@ -486,6 +487,26 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 				}
 			}
 		}
+		if(obj.getPortaApplicativaAzioneList()!=null){
+			List<org.openspcoop2.core.commons.search.PortaApplicativaAzione> listObj_ = obj.getPortaApplicativaAzioneList();
+			for(org.openspcoop2.core.commons.search.PortaApplicativaAzione itemObj_ : listObj_){
+				org.openspcoop2.core.commons.search.PortaApplicativaAzione itemAlreadySaved_ = null;
+				if(imgSaved.getPortaApplicativaAzioneList()!=null){
+					List<org.openspcoop2.core.commons.search.PortaApplicativaAzione> listImgSaved_ = imgSaved.getPortaApplicativaAzioneList();
+					for(org.openspcoop2.core.commons.search.PortaApplicativaAzione itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getNome(),itemImgSaved_.getNome());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
+				}
+			}
+		}
               
 	}
 	
@@ -607,7 +628,28 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 				
 				portaApplicativa.addPortaApplicativaServizioApplicativo(portaApplicativa_portaApplicativaServizioApplicativo);
 			}
-		}              
+		}
+
+		// Object portaApplicativa_portaApplicativaAzione
+		ISQLQueryObject sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione = sqlQueryObjectGet.newSQLQueryObject();
+		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.setANDLogicOperator(true);
+		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.addFromTable(this.getPortaApplicativaFieldConverter().toTable(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE));
+		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.addSelectField("id");
+		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.addSelectField(this.getPortaApplicativaFieldConverter().toColumn(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE.NOME,true));
+		sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.addWhereCondition("id_porta=?");
+
+		// Get portaApplicativa_portaApplicativaAzione
+		java.util.List<Object> portaApplicativa_portaApplicativaAzione_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectGet_portaApplicativa_portaApplicativaAzione.createSQLQuery(), jdbcProperties.isShowSql(), PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE, this.getPortaApplicativaFetch(),
+			new JDBCObject(portaApplicativa.getId(),Long.class));
+
+		if(portaApplicativa_portaApplicativaAzione_list != null) {
+			for (Object portaApplicativa_portaApplicativaAzione_object: portaApplicativa_portaApplicativaAzione_list) {
+				PortaApplicativaAzione portaApplicativa_portaApplicativaAzione = (PortaApplicativaAzione) portaApplicativa_portaApplicativaAzione_object;
+
+
+				portaApplicativa.addPortaApplicativaAzione(portaApplicativa_portaApplicativaAzione);
+			}
+		}             
 		
         return portaApplicativa;  
 	
@@ -663,6 +705,11 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO);
 			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO);
 			sqlQueryObject.addWhereCondition(tableName1+".id_soggetto="+tableName2+".id");
+		}
+		if(expression.inUseModel(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE,false)){
+			String tableName1 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model());
+			String tableName2 = this.getPortaApplicativaFieldConverter().toAliasTable(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE);
+			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_porta");
 		}
 		
 		
@@ -747,6 +794,12 @@ public class JDBCPortaApplicativaServiceSearchImpl implements IJDBCServiceSearch
 		mapTableToPKColumn.put(converter.toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.ID_SOGGETTO))
+			));
+
+		// PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE
+		mapTableToPKColumn.put(converter.toTable(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE),
+			utilities.newList(
+				new CustomField("id", Long.class, "id", converter.toTable(PortaApplicativa.model().PORTA_APPLICATIVA_AZIONE))
 			));
         
         return mapTableToPKColumn;		

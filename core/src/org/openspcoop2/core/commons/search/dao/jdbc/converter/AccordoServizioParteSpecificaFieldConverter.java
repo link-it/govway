@@ -82,9 +82,9 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 		}
 		if(field.equals(AccordoServizioParteSpecifica.model().VERSIONE)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".versione";
+				return this.toAliasTable(field)+".versione_servizio";
 			}else{
-				return "versione";
+				return "versione_servizio";
 			}
 		}
 		if(field.equals(AccordoServizioParteSpecifica.model().PORT_TYPE)){
@@ -136,6 +136,13 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 				return "versione";
 			}
 		}
+		if(field.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".service_binding";
+			}else{
+				return "service_binding";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -177,6 +184,9 @@ public class AccordoServizioParteSpecificaFieldConverter extends AbstractSQLFiel
 			return this.toTable(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO, returnAlias);
 		}
 		if(field.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE)){
+			return this.toTable(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
+		}
+		if(field.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING)){
 			return this.toTable(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE, returnAlias);
 		}
 

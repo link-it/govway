@@ -348,6 +348,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA =  "Runtime"; //"Configurazione di Sistema";
 	
+	public final static String LABEL_CONFIGURAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
 	public final static String LABEL_CONFIGURAZIONE_DESTINAZIONI = "Destinazioni";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA = "Rotta";
 	public final static String LABEL_CONFIGURAZIONE_ROTTA_DI_DEFAULT = "Rotta di Default";
@@ -433,7 +435,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_BANDA_INTERNA = "Banda Interna";
 	public final static String LABEL_CONFIGURAZIONE_BANDA_ESTERNA = "Banda Esterna";
 	
-	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_ENTRAMBE = "Qualsiasi";
+	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_ENTRAMBE = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_DELEGATA = "Fruitore";
 	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_APPLICATIVA = "Erogatore";
 	

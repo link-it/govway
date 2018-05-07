@@ -502,11 +502,9 @@ public class JDBCAccordoServizioParteComuneAzioneServiceSearchImpl implements IJ
 			(Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet_accordoServizioParteComune.createSQLQuery(), jdbcProperties.isShowSql(),
 			Long.class, searchParams_accordoServizioParteComune);
 		
-		AccordoServizioParteComune as = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().getAccordoServizioParteComuneServiceSearch()).get(id_accordoServizioParteComune);
-		IdAccordoServizioParteComune idAccordo = new IdAccordoServizioParteComune();
-		idAccordo.setNome(as.getNome());
-		idAccordo.setVersione(as.getVersione());
-		idAccordo.setIdSoggetto(as.getIdReferente());
+		IDBAccordoServizioParteComuneServiceSearch search = ((IDBAccordoServizioParteComuneServiceSearch)this.getServiceManager().getAccordoServizioParteComuneServiceSearch());
+		AccordoServizioParteComune as = search.get(id_accordoServizioParteComune);
+		IdAccordoServizioParteComune idAccordo = search.convertToId(as);
 		accordoServizioParteComuneAzione.setIdAccordoServizioParteComune(idAccordo);
 		
         return accordoServizioParteComuneAzione;  

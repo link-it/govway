@@ -40,6 +40,8 @@ public class ModelFactory {
 	
 	public static OperationModel OPERATION = new OperationModel();
 	
+	public static ResourceModel RESOURCE = new ResourceModel();
+	
 	public static AccordoServizioParteSpecificaModel ACCORDO_SERVIZIO_PARTE_SPECIFICA = new AccordoServizioParteSpecificaModel();
 	
 	public static FruitoreModel FRUITORE = new FruitoreModel();

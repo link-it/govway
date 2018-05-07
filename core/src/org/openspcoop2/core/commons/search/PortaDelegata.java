@@ -47,6 +47,7 @@ import java.util.List;
  * 			&lt;element name="versione_servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="porta-delegata-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="porta-delegata-azione" type="{http://www.openspcoop2.org/core/commons/search}porta-delegata-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -69,7 +70,8 @@ import java.util.List;
   	"nomeServizio",
   	"versioneServizio",
   	"nomeAzione",
-  	"portaDelegataServizioApplicativo"
+  	"portaDelegataServizioApplicativo",
+  	"portaDelegataAzione"
   }
 )
 
@@ -189,6 +191,30 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     return this.portaDelegataServizioApplicativo.size();
   }
 
+  public void addPortaDelegataAzione(PortaDelegataAzione portaDelegataAzione) {
+    this.portaDelegataAzione.add(portaDelegataAzione);
+  }
+
+  public PortaDelegataAzione getPortaDelegataAzione(int index) {
+    return this.portaDelegataAzione.get( index );
+  }
+
+  public PortaDelegataAzione removePortaDelegataAzione(int index) {
+    return this.portaDelegataAzione.remove( index );
+  }
+
+  public List<PortaDelegataAzione> getPortaDelegataAzioneList() {
+    return this.portaDelegataAzione;
+  }
+
+  public void setPortaDelegataAzioneList(List<PortaDelegataAzione> portaDelegataAzione) {
+    this.portaDelegataAzione=portaDelegataAzione;
+  }
+
+  public int sizePortaDelegataAzioneList() {
+    return this.portaDelegataAzione.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -271,6 +297,36 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @Deprecated
   public int sizePortaDelegataServizioApplicativo() {
   	return this.portaDelegataServizioApplicativo.size();
+  }
+
+  @XmlElement(name="porta-delegata-azione",required=true,nillable=false)
+  protected List<PortaDelegataAzione> portaDelegataAzione = new ArrayList<PortaDelegataAzione>();
+
+  /**
+   * @deprecated Use method getPortaDelegataAzioneList
+   * @return List<PortaDelegataAzione>
+  */
+  @Deprecated
+  public List<PortaDelegataAzione> getPortaDelegataAzione() {
+  	return this.portaDelegataAzione;
+  }
+
+  /**
+   * @deprecated Use method setPortaDelegataAzioneList
+   * @param portaDelegataAzione List<PortaDelegataAzione>
+  */
+  @Deprecated
+  public void setPortaDelegataAzione(List<PortaDelegataAzione> portaDelegataAzione) {
+  	this.portaDelegataAzione=portaDelegataAzione;
+  }
+
+  /**
+   * @deprecated Use method sizePortaDelegataAzioneList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizePortaDelegataAzione() {
+  	return this.portaDelegataAzione.size();
   }
 
 }

@@ -21,6 +21,8 @@ package org.openspcoop2.web.ctrlstat.servlet.utenti;
 
 import java.util.Vector;
 
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+
 /**
  * UtentiCostanti
  *
@@ -165,7 +167,7 @@ public class UtentiCostanti {
 	
 	public final static String LABEL_PARAMETRO_UTENTE_MULTI_TENANT = "Multi-Tenant";
 	
-	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Qualsiasi";
+	public final static String LABEL_PARAMETRO_MODALITA_ALL = CostantiControlStation.LABEL_QUALSIASI;
 	
 	/* VALORI PARAMETRI */
 	public final static String VALORE_PARAMETRO_MODALITA_ALL = "all";
