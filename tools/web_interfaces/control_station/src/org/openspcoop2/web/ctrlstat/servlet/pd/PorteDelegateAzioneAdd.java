@@ -294,7 +294,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 			
 			lstParam =  porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			porteDelegateHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPD, lstParam, nomePorta, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_AZIONE, 
-					listaParametriSessione, labelPerPorta, serviceBinding);
+					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 			
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

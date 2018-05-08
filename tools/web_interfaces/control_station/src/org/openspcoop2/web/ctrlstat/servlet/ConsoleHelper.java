@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,6 +74,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
@@ -3784,9 +3786,9 @@ public class ConsoleHelper {
 	}
 	
 	// Prepara la lista di azioni delle porte
-	public void preparePorteAzioneList(List<String> listaAzioni, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
+	public void preparePorteAzioneList(List<String> listaAzioniParam, String idPorta, Integer parentConfigurazione, List<Parameter> lstParametriBreadcrumbs, 
 			String nomePorta, String objectName, List<Parameter> listaParametriSessione,
-			String labelPerPorta, ServiceBinding serviceBinding) throws Exception {
+			String labelPerPorta, ServiceBinding serviceBinding, AccordoServizioParteComune aspc) throws Exception {
 		try {
 			ServletUtils.addListElementIntoSession(this.session, objectName,listaParametriSessione);
 
@@ -3794,8 +3796,34 @@ public class ConsoleHelper {
 
 			String label = this.getLabelAzione(serviceBinding);
 			
-			this.pd.setSearchLabel(label);
-			this.pd.setSearchDescription("");
+			ServletUtils.disabledPageDataSearch(this.pd);
+			//this.pd.setSearchLabel(label);
+			//this.pd.setSearchDescription("");
+			this.pd.setPageSize(1000);
+			
+			List<String> listaAzioni = new ArrayList<>();
+			HashMap<String, Resource> mapToResource = new HashMap<>();
+			for (String azione : listaAzioniParam) {
+				if(ServiceBinding.SOAP.equals(serviceBinding)) {
+					listaAzioni.add(azione);
+				}
+				else {
+					Resource risorsa = null;
+					for (Resource resourceTmp : aspc.getResourceList()) {
+						if(resourceTmp.getNome().equals(azione)) {
+							risorsa = resourceTmp;
+							break;
+						}
+					}
+					String nomeRisorsaConPathPerOrderBy = 
+							(risorsa.getPath()==null ? "*" : risorsa.getPath())
+							+" " +
+							(risorsa.getMethod()==null ? "ALL" : risorsa.getMethod())	;
+					listaAzioni.add(nomeRisorsaConPathPerOrderBy);
+					mapToResource.put(nomeRisorsaConPathPerOrderBy, risorsa);
+				}
+			}
+			Collections.sort(listaAzioni);
 			
 			lstParametriBreadcrumbs.add(new Parameter(labelPerPorta,null));
 
@@ -3803,23 +3831,60 @@ public class ConsoleHelper {
 			ServletUtils.setPageDataTitle(this.pd, lstParametriBreadcrumbs.toArray(new Parameter[lstParametriBreadcrumbs.size()]));
 
 			// setto le label delle colonne
-			String[] labels = { label };
+			String[] labels = null;
+			if(ServiceBinding.SOAP.equals(serviceBinding)) {
+				labels = new String[1];
+				labels[0] = label;
+			}
+			else {
+				labels = new String[2];
+				//labels[0] = label;
+				labels[0] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD;
+				labels[1] = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH;
+			}
 			this.pd.setLabels(labels);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (listaAzioni != null) {
+				
 				Iterator<String> it = listaAzioni.iterator();
 				while (it.hasNext()) {
 					String nomeAzione = it.next();
 
 					Vector<DataElement> e = new Vector<DataElement>();
 
-					DataElement de = new DataElement();
-					de.setValue(nomeAzione);
-					de.setIdToRemove(nomeAzione);
-					e.addElement(de);
+					if(ServiceBinding.SOAP.equals(serviceBinding)) {
+						DataElement de = new DataElement();
+						de.setValue(nomeAzione);
+						de.setIdToRemove(nomeAzione);
+						e.addElement(de);
+					}
+					else {
+						Resource risorsa = mapToResource.get(nomeAzione);
+						
+						DataElement de = new DataElement();
+						if(risorsa.getMethod()==null) {
+							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI);
+						}
+						else {
+							de.setValue(risorsa.getMethod().toString());
+						}
+						de.setWidthPx(100);
+						e.addElement(de);
+						
+						de = new DataElement();
+						if(risorsa.getPath()==null || "".equals(risorsa.getPath())) {
+							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI);
+						}
+						else {
+							de.setValue(risorsa.getPath());
+						}
+						de.setToolTip(risorsa.getNome());
+						de.setIdToRemove(risorsa.getNome());
+						e.addElement(de);
+					}
 
 					dati.addElement(e);
 				}

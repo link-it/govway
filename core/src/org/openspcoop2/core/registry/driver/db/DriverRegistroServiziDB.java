@@ -1388,6 +1388,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_AZIONI);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 
 				stm = con.prepareStatement(sqlQuery);
@@ -1579,6 +1582,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_accordo = ?");
 			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, as.getId());
@@ -1701,6 +1706,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_port_type = ?");
 			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, pt.getId());
@@ -1967,6 +1974,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_accordo = ?");
 			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("path");
+			sqlQueryObject.addOrderBy("http_method");
+			sqlQueryObject.setSortType(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, as.getId());

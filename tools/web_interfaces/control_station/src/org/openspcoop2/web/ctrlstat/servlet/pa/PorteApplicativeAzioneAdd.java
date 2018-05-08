@@ -274,7 +274,7 @@ public final class PorteApplicativeAzioneAdd extends Action {
 			
 			lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			porteApplicativeHelper.preparePorteAzioneList(listaAzioni, idPorta, parentPA, lstParam, nomePorta, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_AZIONE, 
-					listaParametriSessione, labelPerPorta, serviceBinding);
+					listaParametriSessione, labelPerPorta, serviceBinding, aspc);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
