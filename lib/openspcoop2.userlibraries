@@ -120,6 +120,9 @@
 	<archive path="/op2_3.0.dev/lib/json/networknt_json-schema-validator-0.1.11.jar"/>
 	<archive path="/op2_3.0.dev/lib/json/org.everit.json.schema-1.6.0.jar"/>
 	<archive path="/op2_3.0.dev/lib/json/uri-template-0.9.jar"/>
+	<archive path="/op2_3.0.dev/lib/json/accessors-smart-1.2.jar"/>
+	<archive path="/op2_3.0.dev/lib/json/json-path-2.4.0.jar"/>
+	<archive path="/op2_3.0.dev/lib/json/json-smart-2.3.jar"/>
 	<!-- log -->
         <archive path="/op2_3.0.dev/lib/log/slf4j-api-1.7.21.jar"/>
 	<archive path="/op2_3.0.dev/lib/log/log4j-1.2-api-2.6.2.jar"/>
