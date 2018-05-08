@@ -3624,6 +3624,58 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		//de.setPostBack(true);
 		dati.addElement(de);
 		
+				
+		boolean resetAllCaches = false;
+		for (String alias : this.confCore.getJmxPdD_aliases()) {
+			
+			Object gestoreRisorseJMX = this.confCore.getGestoreRisorseJMX(alias);
+			
+			List<String> caches = this.confCore.getJmxPdD_caches(alias);
+			if(caches!=null && caches.size()>0){
+				for (String cache : caches) {
+				
+					String stato = null;
+					try{
+						stato = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+								cache,
+								this.confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(alias));
+						if(stato.equalsIgnoreCase("true")){
+							stato = "abilitata";
+						}
+						else if(stato.equalsIgnoreCase("false")){
+							stato = "disabilitata";
+						}
+						else{
+							throw new Exception("Stato ["+stato+"] sconosciuto");
+						}
+					}catch(Exception e){
+						this.log.error("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD): "+e.getMessage(),e);
+						stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+					}
+					
+					if("abilitata".equals(stato)){
+						resetAllCaches = true;
+						break;
+					}
+				}
+			}
+			if(resetAllCaches) {
+				break;
+			}
+		}
+		if(resetAllCaches){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES+
+					"&"+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO+"="+ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES);
+			de.setType(DataElementType.LINK);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setValue(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}		
+		
 		return dati;
 	}
 	
@@ -6191,7 +6243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String[] labels = { 
 					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_IDENTIFICATIVO,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_STATO,
-					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_JMX_INFO,
+					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_FILTRO,
 					ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN
 			};

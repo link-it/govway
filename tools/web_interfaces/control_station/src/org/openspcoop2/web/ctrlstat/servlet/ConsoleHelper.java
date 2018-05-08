@@ -1157,13 +1157,20 @@ public class ConsoleHelper {
 					}
 				}
 				
-				if ( pu.isCodeMessaggi() || pu.isAuditing() || (listStrumenti!=null && listStrumenti.size()>0) ) {
+				List<String> aliases = this.confCore.getJmxPdD_aliases();
+				
+				if ( pu.isCodeMessaggi() || pu.isAuditing() || 
+						(aliases!=null && aliases.size()>0) ||
+						(listStrumenti!=null && listStrumenti.size()>0) ) {
 					// Se l'utente non ha i permessi "diagnostica", devo
 					// gestire la reportistica
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
 					int totEntries = 0;
+					if(aliases!=null && aliases.size()>0){
+						totEntries++; // runtime
+					}
 					if(this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
 						totEntries++;
 					}
@@ -1187,6 +1194,12 @@ public class ConsoleHelper {
 
 					int i = 0;
 
+					if(aliases!=null && aliases.size()>0){
+						entries[i][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME;
+						entries[i][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
+						i++;
+					}
+					
 					if (pu.isAuditing()) {
 						entries[i][0] = AuditCostanti.LABEL_AUDIT;
 						entries[i][1] = AuditCostanti.SERVLET_NAME_AUDITING;
@@ -1197,7 +1210,7 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
-
+					
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -1233,10 +1246,7 @@ public class ConsoleHelper {
 
 
 					dimensioneEntries = 4; // configurazione, tracciamento, controllo congestione e audit
-					List<String> aliases = this.confCore.getJmxPdD_aliases();
-					if(aliases!=null && aliases.size()>0){
-						dimensioneEntries++; // runtime
-					}
+
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
 						if(exporterUtils.existsAtLeastOneExportMpde(ArchiveType.CONFIGURAZIONE, this.session)){
@@ -1277,11 +1287,6 @@ public class ConsoleHelper {
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE;
 					index++;
-					if(aliases!=null && aliases.size()>0){
-						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA;
-						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
-						index++;
-					}
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
 						for (int j = 0; j < entriesUtenti.length; j++) {

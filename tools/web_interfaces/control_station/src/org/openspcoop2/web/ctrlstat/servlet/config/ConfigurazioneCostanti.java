@@ -346,7 +346,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA = "Propriet&agrave; di Sistema";
 	
-	public final static String LABEL_CONFIGURAZIONE_SISTEMA =  "Runtime"; //"Configurazione di Sistema";
+	public final static String LABEL_CONFIGURAZIONE_RUNTIME =  "Runtime"; //"Configurazione di Sistema";
 	
 	public final static String LABEL_CONFIGURAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
@@ -484,8 +484,6 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_RAGGRUPPAMENTO_COLUMN = "Collezionamento dei Dati";
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_INTERVALLO_OSSERVAZIONE = "Intervallo Osservazione";
 	
-	public final static String LABEL_CONFIGURAZIONE_JMX_INFO = "Runtime";
-	
 	/* PARAMETRI */
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -566,6 +564,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES = "__resetAllCachesAllNodes__";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "versionePdD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "versioneBaseDati";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA = "vendorJava";

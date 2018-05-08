@@ -102,11 +102,91 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				}
 				else{
 				
+					if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES.equals(nomeCache) &&
+							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO_RESET_ALL_CACHE_ALL_NODES.equals(nomeMetodo)) {
+						boolean rilevatoErrore = false;
+						String messagePerOperazioneEffettuata = "";
+						int index = 0;
+						for (String aliasForResetCache : aliases) {
+							StringBuffer bfExternal = new StringBuffer();
+							String descrizione = confCore.getJmxPdD_descrizione(aliasForResetCache);
+							if(index>0) {
+								bfExternal.append("<BR/>");
+							}
+							bfExternal.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER).append(" ").append(descrizione).append("<BR/>");
+							List<String> caches = confCore.getJmxPdD_caches(aliasForResetCache);
+							if(caches!=null && caches.size()>0){
+								
+								StringBuffer bfCaches = new StringBuffer();
+								for (String cache : caches) {
+																		
+									String stato = null;
+									try{
+										stato = confCore.readJMXAttribute(confCore.getGestoreRisorseJMX(aliasForResetCache), aliasForResetCache,confCore.getJmxPdD_configurazioneSistema_type(aliasForResetCache), 
+												cache,
+												confCore.getJmxPdD_cache_nomeAttributo_cacheAbilitata(aliasForResetCache));
+										if(stato.equalsIgnoreCase("true")){
+											stato = "abilitata";
+										}
+										else if(stato.equalsIgnoreCase("false")){
+											stato = "disabilitata";
+										}
+										else{
+											throw new Exception("Stato ["+stato+"] sconosciuto");
+										}
+									}catch(Exception e){
+										ControlStationCore.logError("Errore durante la lettura dello stato della cache ["+cache+"](jmxResourcePdD) (node:"+aliasForResetCache+"): "+e.getMessage(),e);
+										stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+										rilevatoErrore = true;
+										if(bfCaches.length()>0){
+											bfCaches.append("<BR/>");
+										}
+										bfCaches.append("- Cache ["+cache+"]: "+stato);
+									}
+									
+									if("abilitata".equals(stato)){
+										if(bfCaches.length()>0){
+											bfCaches.append("<BR/>");
+										}
+										String result = null;
+										try{
+											String nomeMetodoResetCache = confCore.getJmxPdD_cache_nomeMetodo_resetCache(aliasForResetCache);
+											result = confCore.invokeJMXMethod(confCore.getGestoreRisorseJMX(aliasForResetCache),aliasForResetCache,confCore.getJmxPdD_cache_type(aliasForResetCache), 
+													cache,
+													nomeMetodoResetCache);
+										}catch(Exception e){
+											String errorMessage = "Errore durante l'invocazione dell'operazione ["+nomeMetodo+"] sulla cache ["+nomeCache+"] (node:"+aliasForResetCache+"): "+e.getMessage();
+											ControlStationCore.getLog().error(errorMessage,e);
+											result = errorMessage;
+											rilevatoErrore = true;
+										}
+										bfCaches.append("- Cache ["+cache+"]: "+result);
+									}
+									
+								}
+								bfExternal.append(bfCaches.toString());
+								
+								if(messagePerOperazioneEffettuata.length()>0){
+									messagePerOperazioneEffettuata+= "<BR/>";
+								}
+								messagePerOperazioneEffettuata+= bfExternal.toString();
+							
+							}
+							index++;
+						}
+						if(messagePerOperazioneEffettuata!=null){
+							if(rilevatoErrore)
+								pd.setMessage(messagePerOperazioneEffettuata);
+							else 
+								pd.setMessage(messagePerOperazioneEffettuata,Costanti.MESSAGE_TYPE_INFO);
+						}
+					}
+						
 					// setto la barra del titolo
 					List<Parameter> lstParam = new ArrayList<Parameter>();
 
 					//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
+					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 							 null));
 
 					ServletUtils.setPageDataTitle(pd, lstParam);
@@ -332,17 +412,17 @@ public final class ConfigurazioneSistemaAdd extends Action {
 			if(confCore.isSinglePdD()){
 				//lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_GENERALE, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_GENERALE));
 				if(aliases.size()>1){
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
+					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 							ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD));
 					lstParam.add(new Parameter(descrizioneAlias, 
 							 null));
 				}else{
-					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
+					lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 							 null));
 				}
 			}else{
 				lstParam.add(new Parameter(PddCostanti.LABEL_PORTE_DI_DOMINIO, PddCostanti.SERVLET_NAME_PDD_LIST));
-				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA, 
+				lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME, 
 						 null));
 			}
 
