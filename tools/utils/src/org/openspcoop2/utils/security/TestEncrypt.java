@@ -238,6 +238,7 @@ public class TestEncrypt {
 			
 			
 			// Ripeto i test disabilitando l'encrypt algorithm
+			// Non sembra possibile?
 			
 			encryptProps.remove("rs.security.encryption.key.algorithm");
 			decryptProps.remove("rs.security.encryption.key.algorithm");
@@ -295,7 +296,7 @@ public class TestEncrypt {
 			
 			
 			
-			// Ripeto i test riabilitando l'encrypt algorithm e aggiungendo deflate
+			// Ripeto i test riabilitando l'encrypt algorithm e aggiungendo DEFLATE!!!
 			
 			encryptProps = new Properties();
 			encryptPropsis.close();
@@ -311,57 +312,57 @@ public class TestEncrypt {
 			
 
 			encryptProps.put("rs.security.encryption.zip.algorithm","DEF");
-			decryptProps.put("rs.security.encryption.zip.algorithm","DEF");
+			//decryptProps.put("rs.security.encryption.zip.algorithm","DEF"); non serve, l'informazione viaggia
 			
 			
-			boolean TODO_Deflater = false;
-			if(TODO_Deflater) {
-				// 3e. Encrypt Attached
-				jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
-				attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-				
-				System.out.println("3e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-				
-				// Verifica
-				jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
-				jsonAttachedVerify.decrypt(attachEncrypt);
-				System.out.println("3e. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-				if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-					throw new Exception("Found different payload");
-				}
-				try {
-					jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-					throw new Exception("Expected validation error");
-				}catch(Exception e) {
-					System.out.println("Expected error: "+e.getMessage());
-				}
+
 			
+			// 3e. Encrypt Attached
+			jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
+			attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
 			
+			System.out.println("3e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
 			
-				System.out.println("\n\n");
-				
-				// 3f. Encrypt Compact
-				jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
-				compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-				
-				System.out.println("3f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-				
-				// Verifica
-				jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
-				jsonCompactVerify.decrypt(compactEncrypt);
-				System.out.println("3f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
-				if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-					throw new Exception("Found different payload");
-				}
-				try {
-					jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-					throw new Exception("Expected validation error");
-				}catch(Exception e) {
-					System.out.println("Expected error: "+e.getMessage());
-				}
-				
-				System.out.println("\n\n");
+			// Verifica
+			jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("3e. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
 			}
+			try {
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+		
+		
+		
+			System.out.println("\n\n");
+			
+			// 3f. Encrypt Compact
+			jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
+			compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("3f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+			
+			// Verifica
+			jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("3f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			System.out.println("\n\n");
+			
 			
 			
 			
