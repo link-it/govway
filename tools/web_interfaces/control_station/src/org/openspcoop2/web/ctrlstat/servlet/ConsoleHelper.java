@@ -1721,7 +1721,10 @@ public class ConsoleHelper {
 		initializeFilter(ricerca, Liste.PORTE_APPLICATIVE);
 	}
 	public void initializeFilter(Search ricerca, int idLista) throws Exception {
-		this.setFilterSelectedProtocol(ricerca, idLista);
+		// Non devo inizializzare la lista degli utenti
+		if(Liste.UTENTI_SERVIZI != idLista && Liste.UTENTI_SOGGETTI != idLista) {
+			this.setFilterSelectedProtocol(ricerca, idLista);
+		}
 		this.setFilterRuoloServizioApplicativo(ricerca, idLista);
 	}
 	
