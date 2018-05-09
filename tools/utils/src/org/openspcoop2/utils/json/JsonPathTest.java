@@ -3,10 +3,10 @@
  */
 package org.openspcoop2.utils.json;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
