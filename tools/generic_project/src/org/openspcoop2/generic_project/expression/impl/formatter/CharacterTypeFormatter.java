@@ -68,7 +68,7 @@ public class CharacterTypeFormatter implements ITypeFormatter<Character> {
 			throw new ExpressionException("Object parameter has wrong length ("+o.length()+") (required 1 for character object)");
 		}
 		try{
-			return new Character(o.charAt(0));
+			return Character.valueOf(o.charAt(0));
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

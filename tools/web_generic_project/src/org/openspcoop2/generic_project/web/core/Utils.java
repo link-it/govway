@@ -167,7 +167,7 @@ public abstract class Utils {
 		String propAsString = getProperty(reader,name, required);
 
 		if(propAsString != null){
-			Boolean b = new Boolean(propAsString.equalsIgnoreCase("true"));
+			Boolean b = propAsString.equalsIgnoreCase("true");
 			return b;
 		}
 		return null;

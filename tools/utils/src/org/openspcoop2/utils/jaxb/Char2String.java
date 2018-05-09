@@ -38,7 +38,7 @@ public class Char2String extends XmlAdapter<String, Character> {
     		return null;
     	}
     	String value = valueParam.trim();
-    	return new Character(value.charAt(0));
+    	return Character.valueOf(value.charAt(0));
     }
 
     @Override

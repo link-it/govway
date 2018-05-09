@@ -65,7 +65,7 @@ public class FloatTypeFormatter implements ITypeFormatter<Float> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Float(o);
+			return Float.parseFloat(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

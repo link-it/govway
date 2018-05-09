@@ -32,6 +32,7 @@ import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 /**
@@ -146,7 +147,7 @@ public class JDBCServiceManager {
 		
 		try{
 			
-			Class.forName(driverJDBC).newInstance();
+			ClassLoaderUtilities.newInstance(driverJDBC);
 			if(username!=null){
 				this.connection = DriverManager.getConnection(connectionUrl,username,password);
 			}else{

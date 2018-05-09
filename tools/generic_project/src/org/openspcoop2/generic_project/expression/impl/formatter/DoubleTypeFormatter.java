@@ -65,7 +65,7 @@ public class DoubleTypeFormatter implements ITypeFormatter<Double> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Double(o);
+			return Double.parseDouble(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

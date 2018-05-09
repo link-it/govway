@@ -59,14 +59,14 @@ public class PortaDelegataLocalForward extends org.openspcoop2.utils.beans.BaseB
     if(this.id!=null)
 		return this.id;
 	else
-		return new Long(-1);
+		return Long.valueOf(-1);
   }
 
   public void setId(Long id) {
     if(id!=null)
 		this.id=id;
 	else
-		this.id=new Long(-1);
+		this.id=Long.valueOf(-1);
   }
 
   public void set_value_stato(String value) {

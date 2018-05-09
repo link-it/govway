@@ -30,6 +30,7 @@ import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactoryManag
 import org.openspcoop2.generic_project.web.impl.jsf1.CostantiJsf1Impl;
 import org.openspcoop2.generic_project.web.output.OutputField;
 import org.openspcoop2.generic_project.web.view.IViewBean;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /***
  * 
@@ -79,7 +80,7 @@ public abstract class BaseBean<DTOType, KeyType>  implements IViewBean<DTOType, 
 		if(this.dto==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.dto = ((Class<DTOType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.dto = (DTOType) ClassLoaderUtilities.newInstance( (Class<DTOType>)parameterizedType.getActualTypeArguments()[0]);
 			}catch (Exception e) {
 
 			}

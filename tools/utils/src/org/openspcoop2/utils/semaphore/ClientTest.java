@@ -41,6 +41,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -183,7 +184,7 @@ public class ClientTest {
 			}
 		}
 		
-		Class.forName(driver).newInstance();
+		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		List<Connection> conThreads = new ArrayList<Connection>();
 		try{

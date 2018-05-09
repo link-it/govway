@@ -122,6 +122,6 @@ public class LongGenerator extends AbstractLongIdentifierGenerator implements Se
                 value = this.count++;
             }
         }
-        return new Long(value);
+        return value;
     }
 }

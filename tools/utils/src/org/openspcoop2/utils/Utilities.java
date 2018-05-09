@@ -601,7 +601,7 @@ public class Utilities {
 		Double len = null;
 		String res = "";
 		//il valore e' in byte
-		len = new Long(value).doubleValue();
+		len = Long.valueOf(value).doubleValue();
 		long d = Math.round(len/Utilities.KB); 
 		if(d<=1){
 			//byte

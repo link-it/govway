@@ -33,6 +33,7 @@ import javax.management.ObjectName;
 import javax.naming.Context;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
 
@@ -244,7 +245,7 @@ public class GestoreRisorseJMX {
 			if(this.mbeanServer==null){
 				throw new Exception("Operazione di registrazione permessa solo se il gestore viene inizializzato con il costruttore di default o indicando l'MBeanServer");
 			}
-			this.mbeanServer.registerMBean(c.newInstance(), jmxName);
+			this.mbeanServer.registerMBean(ClassLoaderUtilities.newInstance(c), jmxName);
 			this.jmxNames.add(jmxName);
 		}catch(Exception e){
 			if((e instanceof javax.management.InstanceAlreadyExistsException) && !throwExceptionAlreadyExists){

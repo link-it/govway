@@ -29,6 +29,7 @@ import org.openspcoop2.generic_project.web.iservice.IBaseService;
 import org.openspcoop2.generic_project.web.mbean.IManagedBean;
 import org.openspcoop2.generic_project.web.table.PagedDataTable;
 import org.openspcoop2.generic_project.web.view.IViewBean;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /***
  * 
@@ -118,7 +119,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 			try{
 
 				ParameterizedType parameterizedType =  (ParameterizedType) getClass().getGenericSuperclass();
-				this.dataModel = ((Class<DMType>)parameterizedType.getActualTypeArguments()[5]).newInstance();
+				this.dataModel = (DMType) ClassLoaderUtilities.newInstance((Class<DMType>)parameterizedType.getActualTypeArguments()[5]);
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 				throw e;
@@ -139,7 +140,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 		if(this.metadata==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
+				this.metadata = (BeanType) ClassLoaderUtilities.newInstance((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]);
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 				throw e;
@@ -154,7 +155,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 		if(this.selectedElement==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]).newInstance();
+				this.selectedElement = (BeanType) ClassLoaderUtilities.newInstance((Class<BeanType>)parameterizedType.getActualTypeArguments()[2]);
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 				throw e;

@@ -442,7 +442,7 @@ public class JDBCParameterUtilities {
 				s = rs.getString(index);
 			}
 			if(s!=null){
-				return new Character(s.charAt(0));
+				return Character.valueOf(s.charAt(0));
 			}else{
 				if(type.toString().equals(char.class.toString())){
 					// primitive default value

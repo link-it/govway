@@ -30,9 +30,9 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
  */
 public enum EnumerationWrapperPrimitiveInt implements IEnumeration {
 
-	_1 (new java.lang.Integer("1")),
-	_2 (new java.lang.Integer("2")),
-	_3 (new java.lang.Integer("3"));
+	_1 (java.lang.Integer.parseInt("1")),
+	_2 (java.lang.Integer.parseInt("2")),
+	_3 (java.lang.Integer.parseInt("3"));
 	
 	
 	/** Value */

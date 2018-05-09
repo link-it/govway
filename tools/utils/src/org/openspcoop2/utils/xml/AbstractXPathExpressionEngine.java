@@ -267,7 +267,7 @@ public abstract class AbstractXPathExpressionEngine {
 	
 	public abstract Element readXPathElement(Element contenutoAsElement);
 	
-	private static Integer synchronizedObjectForBugFWK005ParseXerces = new Integer(1);
+	private static Integer synchronizedObjectForBugFWK005ParseXerces = Integer.valueOf(1);
 	private Object _engine_getMatchPattern(
 			Element contenutoAsElement, String contenutoAsString, 
 			DynamicNamespaceContext dncPrivate,String pattern, XPathReturnType returnType) 

@@ -69,7 +69,7 @@ public class NumberConverter implements Converter{
 		Matcher m = this.pattern.matcher(value);
 
 		if(m.matches())
-			return (Number) new Long(value);
+			return (Number) Long.parseLong(value);
 
 		
 		String msg = Utils.getInstance().getMessageWithParamsFromResourceBundle("commons.formatoNonValidoConParametri",value);

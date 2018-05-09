@@ -267,7 +267,7 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 	 * 
 	 */
 	@Override
-	public java.util.Iterator<?> getPrefixes(String namespace)
+	public java.util.Iterator<String> getPrefixes(String namespace)
 	{	
 		/**
 		 * getPrefixes(namespaceURI) return value for specified Namespace URIs

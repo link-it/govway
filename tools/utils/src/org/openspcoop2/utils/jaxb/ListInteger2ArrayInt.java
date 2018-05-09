@@ -41,7 +41,7 @@ public class ListInteger2ArrayInt extends XmlAdapter<List<Integer>, int[]>
 		}
 		List<Integer> list = new ArrayList<Integer>();
 		for(int j=0; j<i.length; j++)
-			list.add(new Integer(i[j]));
+			list.add(i[j]);
 		return list;
 	}
 	@Override

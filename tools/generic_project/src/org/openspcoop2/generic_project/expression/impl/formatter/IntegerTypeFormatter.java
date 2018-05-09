@@ -55,7 +55,7 @@ public class IntegerTypeFormatter implements ITypeFormatter<Integer> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Integer(o);
+			return Integer.parseInt(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

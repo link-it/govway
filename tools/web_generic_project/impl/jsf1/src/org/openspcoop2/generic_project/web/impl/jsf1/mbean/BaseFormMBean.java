@@ -49,6 +49,7 @@ import org.openspcoop2.generic_project.web.mbean.exception.NuovoException;
 import org.openspcoop2.generic_project.web.mbean.exception.ResetException;
 import org.openspcoop2.generic_project.web.mbean.exception.RestoreSearchException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * BaseFormMBean classe generica che fornisce il supporto ad una form.
@@ -115,7 +116,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 		if(this.selectedElement==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.selectedElement = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.selectedElement = (BeanType) ClassLoaderUtilities.newInstance((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]);
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 			}
@@ -153,7 +154,7 @@ public abstract class BaseFormMBean<BeanType,KeyType,FormType extends Form> impl
 		if(this.metadata==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.metadata = ((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.metadata = (BeanType) ClassLoaderUtilities.newInstance((Class<BeanType>)parameterizedType.getActualTypeArguments()[0]);
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 			}

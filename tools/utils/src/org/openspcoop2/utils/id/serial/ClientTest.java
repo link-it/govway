@@ -42,6 +42,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * ClientTest
@@ -191,7 +192,7 @@ public class ClientTest {
 			}
 		}
 		
-		Class.forName(driver).newInstance();
+		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		List<Connection> conThreads = new ArrayList<Connection>();
 		Statement stmtDelete = null;

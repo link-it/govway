@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.sonde.Sonda.StatoSonda;
 import org.openspcoop2.utils.sonde.impl.SondaBatch;
 import org.openspcoop2.utils.sonde.impl.SondaCoda;
@@ -132,7 +133,7 @@ public class ClientTest {
 		}
 
 
-		Class.forName(driver).newInstance();
+		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		try{
 			con = DriverManager.getConnection(url, userName, password);

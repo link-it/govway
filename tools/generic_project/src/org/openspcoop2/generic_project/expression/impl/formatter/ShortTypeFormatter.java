@@ -55,7 +55,7 @@ public class ShortTypeFormatter implements ITypeFormatter<Short> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Short(o);
+			return Short.parseShort(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

@@ -23,6 +23,7 @@ import java.lang.reflect.ParameterizedType;
 
 import org.openspcoop2.generic_project.web.business.BaseBD;
 import org.openspcoop2.generic_project.web.form.SearchForm;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 
 /**
@@ -46,7 +47,7 @@ public class BaseServiceWithBD<S extends SearchForm, BD extends BaseBD<?, ?>> {
 	public BaseServiceWithBD() throws Exception{
 		try{
 			ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-			this.business = ((Class<BD>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+			this.business = (BD) ClassLoaderUtilities.newInstance((Class<BD>)parameterizedType.getActualTypeArguments()[0]);
 		}catch (Exception e) {
 			 throw e;
 		}

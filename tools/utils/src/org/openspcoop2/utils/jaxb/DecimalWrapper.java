@@ -116,16 +116,16 @@ public class DecimalWrapper {
 				return (Float) fValue;
 			}
 			else if(dValue!=null){
-				return new Float(dValue);
+				return dValue.floatValue();
 			}
 			else if(lValue!=null){
-				return new Float(lValue);
+				return lValue.floatValue();
 			}
 			else if(iValue!=null){
-				return new Float(iValue);
+				return iValue.floatValue();
 			}
 			else if(sValue!=null){
-				return new Float(sValue);
+				return  sValue.floatValue();
 			}
 		}
 		else if(c.getName().equals(Double.class.getName())){
@@ -136,13 +136,13 @@ public class DecimalWrapper {
 				return dValue;
 			}
 			else if(lValue!=null){
-				return new Double(lValue);
+				return lValue.doubleValue();
 			}
 			else if(iValue!=null){
-				return new Double(iValue);
+				return iValue.doubleValue();
 			}
 			else if(sValue!=null){
-				return new Double(sValue);
+				return sValue.doubleValue();
 			}
 		} 
 		else if(c.getName().equals(Long.class.getName())){
@@ -156,10 +156,10 @@ public class DecimalWrapper {
 				return lValue;
 			}
 			else if(iValue!=null){
-				return new Long(iValue);
+				return iValue.longValue();
 			}
 			else if(sValue!=null){
-				return new Long(sValue);
+				return sValue.longValue();
 			}
 		} 
 		else if(c.getName().equals(Integer.class.getName())){
@@ -176,7 +176,7 @@ public class DecimalWrapper {
 				return iValue;
 			}
 			else if(sValue!=null){
-				return new Integer(sValue);
+				return sValue.intValue();
 			}
 		}
 		else if(c.getName().equals(Short.class.getName())){

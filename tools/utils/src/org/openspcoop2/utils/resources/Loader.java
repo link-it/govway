@@ -85,16 +85,25 @@ public class Loader {
 		this.classLoader = classLoader;
 	}
 	
-	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		return forName(className).newInstance();
+	public Object newInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		return this.newInstance(forName(className));
+	}
+	public Object newInstance(Class<?> c) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		return c.getConstructor().newInstance();
 	}
 	
 	public Object newInstance(String className,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
 		if(params==null || params.length<=0){
 			return newInstance(className);
 		}
-		
 		Class<?> c = forName(className);
+		return this.newInstance(c, params);
+	}
+	public Object newInstance(Class<?> c,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+		if(params==null || params.length<=0){
+			return newInstance(c);
+		}
+		
 		Constructor<?> constructor = null;
 		if(params.length==1){
 			constructor = c.getConstructor(params[0].getClass());

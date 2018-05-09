@@ -39,7 +39,7 @@ public class ListLong2ArrayLong extends XmlAdapter<ArrayList<Long>, long[]>
 		}
 		ArrayList<Long> list = new ArrayList<Long>();
 		for(int i=0; i<array.length; i++)
-			list.add(new Long(array[i]));
+			list.add(array[i]);
 		return list;
 	}
 	@Override

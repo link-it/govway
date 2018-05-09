@@ -55,7 +55,7 @@ public class LongTypeFormatter implements ITypeFormatter<Long> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Long(o);
+			return Long.parseLong(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

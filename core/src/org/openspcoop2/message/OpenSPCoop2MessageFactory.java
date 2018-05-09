@@ -79,17 +79,21 @@ public abstract class OpenSPCoop2MessageFactory {
 		return OpenSPCoop2MessageFactory.openspcoopMessageFactory;
 	}
 	
-	public static void initMessageFactory() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static void initMessageFactory() throws MessageException {
 		initMessageFactory(false);
 	}
-	public static void initMessageFactory(boolean force) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
-			OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
-			//System.out.println("CREATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");
+	public static void initMessageFactory(boolean force) throws MessageException {
+		try {
+			if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
+				OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
+				//System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");
+			}
+	//		else{
+	//			System.out.println("GIA ESISTE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
+	//		}
+		}catch(Exception e) {
+			throw new MessageException(e.getMessage(),e);
 		}
-//		else{
-//			System.out.println("GIA ESISTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
-//		}
 	}
 	
 	

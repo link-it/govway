@@ -55,7 +55,7 @@ public class ByteTypeFormatter implements ITypeFormatter<Byte> {
 			throw new ExpressionException("Object parameter is null");
 		}
 		try{
-			return new Byte(o);
+			return Byte.parseByte(o);
 		}catch(Exception e){
 			throw new ExpressionException("Conversion failure: "+e.getMessage(),e);
 		}

@@ -20,7 +20,10 @@
 
 package org.openspcoop2.utils.json;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * ValidatorFactory
@@ -32,8 +35,8 @@ import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 public class ValidatorFactory {
 
 
-	public static IJsonSchemaValidator newJsonSchemaValidator(ApiName apiName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		return (IJsonSchemaValidator) Class.forName(JsonValidatorAPI.get(apiName).getValidatorClass()).newInstance();
+	public static IJsonSchemaValidator newJsonSchemaValidator(ApiName apiName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return (IJsonSchemaValidator) ClassLoaderUtilities.newInstance(JsonValidatorAPI.get(apiName).getValidatorClass());
 	}
 
 }

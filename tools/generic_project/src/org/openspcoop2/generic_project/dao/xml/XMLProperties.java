@@ -23,6 +23,7 @@ import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.LoaderProperties;
 import org.openspcoop2.generic_project.utils.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * XMLProperties
@@ -59,7 +60,7 @@ public class XMLProperties extends LoaderProperties {
 	@SuppressWarnings("unchecked")
 	public <CRUD> CRUD getServiceCRUD(String object) throws ServiceException{
 		try{
-			return (CRUD) getServiceCRUDClass(object).newInstance();
+			return (CRUD) ClassLoaderUtilities.newInstance(getServiceCRUDClass(object));
 		}catch(Exception e){
 			throw new ServiceException("Loading service CRUD class failed: "+e.getMessage(),e);
 		}
@@ -83,7 +84,7 @@ public class XMLProperties extends LoaderProperties {
 	@SuppressWarnings("unchecked")
 	public <SEARCH> SEARCH getServiceSearch(String object) throws ServiceException{
 		try{
-			return (SEARCH) getServiceSearchClass(object).newInstance();
+			return (SEARCH) ClassLoaderUtilities.newInstance(getServiceSearchClass(object));
 		}catch(Exception e){
 			throw new ServiceException("Loading service Search class failed: "+e.getMessage(),e);
 		}

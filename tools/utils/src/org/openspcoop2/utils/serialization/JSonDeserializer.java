@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 import net.sf.ezmorph.MorpherRegistry;
 import net.sf.json.JSONArray;
@@ -228,7 +229,7 @@ public class JSonDeserializer implements IDeserializer{
 			JSONArray jsonArray = JSONArray.fromObject( object ); 
 			Object[] oarray = jsonArray.toArray();
 			@SuppressWarnings("unchecked")
-			List<Object> listReturn = (List<Object>) classType.newInstance();		
+			List<Object> listReturn = (List<Object>) ClassLoaderUtilities.newInstance(classType);		
 			for(int i=0; i<oarray.length;i++){
 				JSONObject json = (JSONObject) oarray[i];
 				Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
@@ -246,7 +247,7 @@ public class JSonDeserializer implements IDeserializer{
 			JSONArray jsonArray = JSONArray.fromObject( object ); 
 			Object[] oarray = jsonArray.toArray();
 			@SuppressWarnings("unchecked")
-			Set<Object> setReturn = (Set<Object>) classType.newInstance();		
+			Set<Object> setReturn = (Set<Object>) ClassLoaderUtilities.newInstance(classType);		
 			for(int i=0; i<oarray.length;i++){
 				JSONObject json = (JSONObject) oarray[i];
 				Object o =  fromJSONObjectToOriginalObject(elementsTypes, json);
