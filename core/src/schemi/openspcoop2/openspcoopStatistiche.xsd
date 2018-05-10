@@ -1231,6 +1231,8 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
+	
+	
 	<!-- Vincoli per riuscire ad utilizzare funzioni di group by -->
 	<xsd:simpleType name="string-max-4000">
 		<xsd:restriction base="xsd:string">

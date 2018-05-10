@@ -42,6 +42,7 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 
 import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
 
 /**     
@@ -103,9 +104,8 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		lstObjects.add(new JDBCObject(statisticaInfo.getTipoStatistica(), StatisticaInfo.model().TIPO_STATISTICA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE,false), "?");
 		lstObjects.add(new JDBCObject(statisticaInfo.getDataUltimaGenerazione(), StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE.getFieldType()));
-		// TODO Indicare le colonne che identificano l'oggetto
-		sqlQueryObjectUpdate.addWhereCondition("NOME_COLONNA=?");
-		//TODO UNCOMMENT lstObjects.add(new JDBCObject(longIdByLogicId, longIdByLogicId.getClass()));
+		sqlQueryObjectUpdate.addWhereCondition(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,false)+"=?");
+		lstObjects.add(new JDBCObject(statisticaInfo.get_value_tipoStatistica(), String.class));
 
 		if(isUpdate) {
 			// Update statisticaInfo
@@ -113,14 +113,6 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 				lstObjects.toArray(new JDBCObject[]{}));
 		}
 
-
-		/* 
-         * TODO: resolved TODO references
-       	*/
-        
-        // Delete this line when you have implemented the method
-		throw new NotImplementedException("NotImplemented");
-        // Delete this line when you have implemented the method
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, StatisticaInfo statisticaInfo, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
@@ -175,19 +167,13 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 	@Override
 	public void updateOrCreate(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaInfo statisticaInfo, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotImplementedException,ServiceException,Exception {
 	
-		Object idObject = null;
-		/* 
-         * TODO: build id object from param
-       	*/
-		if(this._exists(jdbcProperties, log, connection, sqlQueryObject, idObject)) {
-			this.update(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo,idMappingResolutionBehaviour);
-		} else {
-			this.create(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo,idMappingResolutionBehaviour);
-		}
+//		Long id = statisticaInfo.getId();
+//		if(id != null && this.exists(jdbcProperties, log, connection, sqlQueryObject, id)) {
+		this.update(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo,idMappingResolutionBehaviour);
+//		} else {
+//			this.create(jdbcProperties, log, connection, sqlQueryObject, statisticaInfo,idMappingResolutionBehaviour);
+//		}
 		
-		// Delete this line when you have implemented the method
-		throw new NotImplementedException("NotImplemented");
-        // Delete this line when you have implemented the method
 	}
 	
 	@Override
@@ -198,17 +184,10 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 	@Override
 	public void delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaInfo statisticaInfo) throws NotImplementedException,ServiceException,Exception {
 		
-		
-		Object idObject = null;
-		/* 
-         * TODO: build id object from param
-       	*/
+		TipoIntervalloStatistico idObject = statisticaInfo.getTipoStatistica();
 		this._delete(jdbcProperties, log, connection, sqlQueryObject, idObject);
-        
-        // Delete this line when you have implemented the method
-		throw new NotImplementedException("NotImplemented");
-        // Delete this line when you have implemented the method
-        
+                
+
 	}
 
 	private void _delete(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Object id) throws NotImplementedException,ServiceException,Exception {
@@ -218,25 +197,23 @@ public class JDBCStatisticaInfoServiceImpl extends JDBCStatisticaInfoServiceSear
 		
 		ISQLQueryObject sqlQueryObjectDelete = sqlQueryObject.newSQLQueryObject();
 		
+		if(id == null ){
+			throw new ServiceException("ID Logico non trovato");
+		}
+		if(id instanceof TipoIntervalloStatistico == false){
+			throw new ServiceException("Tipo dell'id non valido, atteso["+TipoIntervalloStatistico.class.getName()+"] trovato["+id.getClass().getName()+"]");
+		}
+		TipoIntervalloStatistico tipoStatistica = (TipoIntervalloStatistico) id;
 
 		// Object statisticaInfo
 		sqlQueryObjectDelete.setANDLogicOperator(true);
 		sqlQueryObjectDelete.addDeleteTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()));
-		// TODO Indicare le colonne che identificano l'oggetto
-		sqlQueryObjectDelete.addWhereCondition("NOME_COLONNA=?");
+		sqlQueryObjectDelete.addWhereCondition(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,false)+"=?");
 
 		// Delete statisticaInfo
 		jdbcUtilities.execute(sqlQueryObjectDelete.createSQLDelete(), jdbcProperties.isShowSql(), 
-			//TODO Fornire il parametro della WhereCondition:
-			new JDBCObject(id,id.getClass()));
+			new JDBCObject(tipoStatistica.getValue(),String.class));
 
-		/* 
-         * TODO: resolved TODO references
-       	*/
-        
-        // Delete this line when you have implemented the method
-		throw new NotImplementedException("NotImplemented");
-        // Delete this line when you have implemented the method
 	}
 
 	

@@ -19,44 +19,39 @@
  */
 package org.openspcoop2.core.statistiche.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.statistiche.StatisticaContenuti;
+import org.openspcoop2.core.statistiche.StatisticaMensile;
+import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaMensileFieldConverter;
+import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaMensileFetch;
+import org.openspcoop2.core.statistiche.utils.AliasTableRicerchePersonalizzate;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithoutId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithoutId;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaMensileFieldConverter;
-import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaMensileFetch;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
-
-import org.openspcoop2.core.statistiche.Statistica;
-import org.openspcoop2.core.statistiche.StatisticaContenuti;
-import org.openspcoop2.core.statistiche.StatisticaMensile;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.generic_project.utils.UtilsTemplate;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.SQLQueryObjectCore;
+import org.slf4j.Logger;
 
 /**     
  * JDBCStatisticaMensileServiceSearchImpl
@@ -146,7 +141,20 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.prepareCount(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getStatisticaMensileFieldConverter(), StatisticaMensile.model());
 		
-		sqlQueryObject.addSelectCountField(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model())+".id","tot",true);
+        // Il distinct serve solo se ci sono le statistiche con contenuto.
+        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+        boolean distinct = false;
+        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+        _join(expression, sqlQueryObjectCheckJoin);
+        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+		
+        if(!distinct && expression.inUseField(StatisticaMensile.model().STATISTICA_BASE.DATA, true)){
+        	// uso la prima colonna dell'indice (se c'è la data e non è distinct)
+        	sqlQueryObject.addSelectCountField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.DATA, true),"tot",distinct);
+        }
+        else{
+        	sqlQueryObject.addSelectCountField(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model())+".id","tot",distinct);
+        }
 		
 		_join(expression,sqlQueryObject);
 		
@@ -512,58 +520,15 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(StatisticaMensile.model().XXXX,false)){
-			String tableName1 = this.getStatisticaMensileFieldConverter().toAliasTable(StatisticaMensile.model());
-			String tableName2 = this.getStatisticaMensileFieldConverter().toAliasTable(StatisticaMensile.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(StatisticaMensile.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(StatisticaMensile.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(StatisticaMensile.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(StatisticaMensile.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
+		AliasTableRicerchePersonalizzate.join(expression, sqlQueryObject, StatisticaMensile.model().STATISTICA_BASE, 
+				StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getFieldConverter());
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaMensile statisticaMensile) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		rootTableIdValues.add(statisticaMensile.getId());
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
+        rootTableIdValues.add(statisticaMensile.getId());        
         return rootTableIdValues;
 	}
 	
@@ -572,9 +537,6 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		StatisticaMensileFieldConverter converter = this.getStatisticaMensileFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
 
 		// StatisticaMensile.model()
 		mapTableToPKColumn.put(converter.toTable(StatisticaMensile.model()),
@@ -593,14 +555,6 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI))
 			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}
@@ -610,7 +564,14 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 		
 		List<Long> list = new ArrayList<Long>();
 
-		sqlQueryObject.setSelectDistinct(true);
+		// Il distinct serve solo se ci sono le statistiche con contenuto.
+        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+        boolean distinct = false;
+        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+        _join(paginatedExpression, sqlQueryObjectCheckJoin);
+        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+		
+		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);
 		sqlQueryObject.addSelectField(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model())+".id");
 		Class<?> objectIdClass = Long.class;
@@ -633,7 +594,14 @@ public class JDBCStatisticaMensileServiceSearchImpl implements IJDBCServiceSearc
 	@Override
 	public long findTableId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, Exception {
 	
-		sqlQueryObject.setSelectDistinct(true);
+		// Il distinct serve solo se ci sono le statistiche con contenuto.
+        // NOTA: il distinct rende le ricerce inefficenti (ed inoltre non e' utilizzabile con campi clob in oracle)
+        boolean distinct = false;
+        ISQLQueryObject sqlQueryObjectCheckJoin = sqlQueryObject.newSQLQueryObject();
+        _join(expression, sqlQueryObjectCheckJoin);
+        distinct = ((SQLQueryObjectCore)sqlQueryObjectCheckJoin).sizeConditions()>0;
+		
+		sqlQueryObject.setSelectDistinct(distinct);
 		sqlQueryObject.setANDLogicOperator(true);
 		sqlQueryObject.addSelectField(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model())+".id");
 		Class<?> objectIdClass = Long.class;

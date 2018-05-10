@@ -19,42 +19,35 @@
  */
 package org.openspcoop2.core.statistiche.dao.jdbc;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import java.sql.Connection;
-
-import org.slf4j.Logger;
-
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-
-import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
+import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaInfoFieldConverter;
+import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaInfoFetch;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.InUse;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithoutId;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
-import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithoutId;
-import org.openspcoop2.generic_project.utils.UtilsTemplate;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.InUse;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCExpression;
-import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
-
-import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
-import org.openspcoop2.core.statistiche.dao.jdbc.converter.StatisticaInfoFieldConverter;
-import org.openspcoop2.core.statistiche.dao.jdbc.fetch.StatisticaInfoFetch;
-import org.openspcoop2.core.statistiche.dao.jdbc.JDBCServiceManager;
-
-import org.openspcoop2.core.statistiche.StatisticaInfo;
+import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 /**     
  * JDBCStatisticaInfoServiceSearchImpl
@@ -392,32 +385,26 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 				
 		StatisticaInfo statisticaInfo = new StatisticaInfo();
 		
+		if(objectId == null ){
+			throw new ServiceException("ID Logico non trovato");
+		}
+		if(objectId instanceof TipoIntervalloStatistico == false){
+			throw new ServiceException("Tipo dell'id non valido, atteso["+TipoIntervalloStatistico.class.getName()+"] trovato["+objectId.getClass().getName()+"]");
+		}
+		TipoIntervalloStatistico tipoStatistica = (TipoIntervalloStatistico) objectId;
+		
 
 		// Object statisticaInfo
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addFromTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().DATA_ULTIMA_GENERAZIONE,true));
-		// TODO Indicare le colonne che identificano l'oggetto
-		sqlQueryObjectGet.addWhereCondition("NOME_COLONNA=?");
+		sqlQueryObjectGet.addWhereCondition(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true)+"=?");
 
 		// Get statisticaInfo
 		statisticaInfo = (StatisticaInfo) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaInfo.model(), this.getStatisticaInfoFetch(),
-			//TODO Fornire il parametro della WhereCondition:
-			new JDBCObject(objectId,objectId.getClass()));
-
-
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method                
+			new JDBCObject(tipoStatistica.getValue(),String.class));
+               
 		
         return statisticaInfo;  
 	
@@ -435,29 +422,24 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 				
 		boolean existsStatisticaInfo = false;
 
+		if(objectId == null ){
+			throw new ServiceException("ID Logico non trovato");
+		}
+		if(objectId instanceof TipoIntervalloStatistico == false){
+			throw new ServiceException("Tipo dell'id non valido, atteso["+TipoIntervalloStatistico.class.getName()+"] trovato["+objectId.getClass().getName()+"]");
+		}
+		TipoIntervalloStatistico tipoStatistica = (TipoIntervalloStatistico) objectId;
+		
 		sqlQueryObject = sqlQueryObject.newSQLQueryObject();
 		sqlQueryObject.setANDLogicOperator(true);
 
 		sqlQueryObject.addFromTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model()));
 		sqlQueryObject.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true));
-		// TODO Indicare le colonne che identificano l'oggetto
-		sqlQueryObject.addWhereCondition("NOME_COLONNA=?");
+		sqlQueryObject.addWhereCondition(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true)+"=?");
 
 		// Exists statisticaInfo
 		existsStatisticaInfo = jdbcUtilities.exists(sqlQueryObject.createSQLQuery(), jdbcProperties.isShowSql(),
-			//TODO Fornire il parametro della WhereCondition:
-			new JDBCObject(objectId,objectId.getClass()));
-
-		/* 
-		 * TODO: implement code that returns the object identified by the id
-		*/
-		
-		// Delete this line when you have implemented the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the method                
+				new JDBCObject(tipoStatistica.getValue(),String.class));
 		
         return existsStatisticaInfo;
 	
@@ -465,83 +447,27 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 	
 	private void _join(IExpression expression, ISQLQueryObject sqlQueryObject) throws NotImplementedException, ServiceException, Exception{
 	
-		/* 
-		 * TODO: implement code that implement the join condition
-		*/
-		/*
-		if(expression.inUseModel(StatisticaInfo.model().XXXX,false)){
-			String tableName1 = this.getStatisticaInfoFieldConverter().toAliasTable(StatisticaInfo.model());
-			String tableName2 = this.getStatisticaInfoFieldConverter().toAliasTable(StatisticaInfo.model().XXX);
-			sqlQueryObject.addWhereCondition(tableName1+".id="+tableName2+".id_table1");
-		}
-		*/
-		
-		/* 
-         * TODO: implementa il codice che aggiunge la condizione FROM Table per le condizioni di join di oggetti annidati dal secondo livello in poi 
-         *       La addFromTable deve essere aggiunta solo se l'oggetto del livello precedente non viene utilizzato nella espressione 
-         *		 altrimenti il metodo sopra 'toSqlForPreparedStatementWithFromCondition' si occupa gia' di aggiungerla
-        */
-        /*
-        if(expression.inUseModel(StatisticaInfo.model().LEVEL1.LEVEL2,false)){
-			if(expression.inUseModel(StatisticaInfo.model().LEVEL1,false)==false){
-				sqlQueryObject.addFromTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model().LEVEL1));
-			}
-		}
-		...
-		if(expression.inUseModel(StatisticaInfo.model()....LEVELN.LEVELN+1,false)){
-			if(expression.inUseModel(StatisticaInfo.model().LEVELN,false)==false){
-				sqlQueryObject.addFromTable(this.getStatisticaInfoFieldConverter().toTable(StatisticaInfo.model().LEVELN));
-			}
-		}
-		*/
-		
-		// Delete this line when you have implemented the join condition
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have implemented the join condition
+		// nop;
         
 	}
 	
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatisticaInfo statisticaInfo) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
-        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
-		rootTableIdValues.add(statisticaInfo.getId());
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
+        java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>(); 
         return rootTableIdValues;
 	}
 	
 	protected Map<String, List<IField>> _getMapTableToPKColumn() throws NotImplementedException, Exception{
 	
-		StatisticaInfoFieldConverter converter = this.getStatisticaInfoFieldConverter();
+		//StatisticaInfoFieldConverter converter = this.getStatisticaInfoFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.Hashtable<String, List<IField>>();
-		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
+		//UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
 
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
-
-		// StatisticaInfo.model()
-		mapTableToPKColumn.put(converter.toTable(StatisticaInfo.model()),
-			utilities.newList(
-				new CustomField("id", Long.class, "id", converter.toTable(StatisticaInfo.model()))
-			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
+//		// StatisticaInfo.model()
+//		mapTableToPKColumn.put(converter.toTable(StatisticaInfo.model()),
+//			utilities.newList(
+//				new CustomField("id", Long.class, "id", converter.toTable(StatisticaInfo.model()))
+//			));
         
         return mapTableToPKColumn;		
 	}
@@ -555,24 +481,9 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 	public List<Object> _findAllObjectIds(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCPaginatedExpression paginatedExpression) throws ServiceException, NotImplementedException, Exception {
 		
 
-		sqlQueryObject.setSelectDistinct(true);
-		sqlQueryObject.setANDLogicOperator(true);
-		// TODO select field for identify ObjectId
-		//sqlQueryObject.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().NOME_FIELD,true);
-		// TODO set class type
-		Class<?> objectIdClass = Object.class; 
-		
-		// NOTE: if you have a object id with more columns
-		//		 use a list (List<Class<?>> objectIdClass) as parameter for method org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.findAll
-		//		 The method return a List<List<Object>>.
-		
-		// Delete this line when you have implemented the join condition
-        int throwNotImplemented = 1;
-        if(throwNotImplemented==1){
-                throw new NotImplementedException("NotImplemented");
-        }
-        // Delete this line when you have implemented the join condition
-		
+		sqlQueryObject.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true));
+		Class<?> objectIdClass = String.class; 
+				
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.prepareFindAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 												this.getStatisticaInfoFieldConverter(), StatisticaInfo.model());
 		
@@ -580,7 +491,12 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 		
 		List<Object> listObjects = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.findAll(jdbcProperties, log, connection, sqlQueryObject, paginatedExpression,
 																			this.getStatisticaInfoFieldConverter(), StatisticaInfo.model(), objectIdClass, listaQuery);
-        return listObjects;
+		List<Object> newList = new ArrayList<Object>();
+		for (int i = 0; i < listObjects.size(); i++) {
+			newList.add(TipoIntervalloStatistico.toEnumConstant((String)listObjects.get(i)));
+		}
+		
+        return newList;
 		
 	}
 	
@@ -593,24 +509,9 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 	
 	public Object _findObjectId(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, JDBCExpression expression) throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException, Exception {
 		
-		sqlQueryObject.setSelectDistinct(true);
-		sqlQueryObject.setANDLogicOperator(true);
-		// TODO select field for identify ObjectId
-		//sqlQueryObject.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().NOME_FIELD,true);
-		// TODO set class type
-		Class<?> objectIdClass = Object.class; 
-		
-		// NOTE: if you have a object id with more columns
-		//		 use a list (List<Class<?>> objectIdClass) as parameter for method org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.find
-		//		 The method return a list.
-		
-		// Delete this line when you have implemented the join condition
-        int throwNotImplemented = 1;
-        if(throwNotImplemented==1){
-                throw new NotImplementedException("NotImplemented");
-        }
-        // Delete this line when you have implemented the join condition
-		
+		sqlQueryObject.addSelectField(this.getStatisticaInfoFieldConverter().toColumn(StatisticaInfo.model().TIPO_STATISTICA,true));
+		Class<?> objectIdClass = String.class; 
+				
 		List<Object> listaQuery = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.prepareFind(jdbcProperties, log, connection, sqlQueryObject, expression,
 												this.getStatisticaInfoFieldConverter(), StatisticaInfo.model());
 		
@@ -619,7 +520,7 @@ public class JDBCStatisticaInfoServiceSearchImpl implements IJDBCServiceSearchWi
 		Object res = org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities.find(jdbcProperties, log, connection, sqlQueryObject, expression,
 														this.getStatisticaInfoFieldConverter(), StatisticaInfo.model(), objectIdClass, listaQuery);
 		if(res!=null){
-			return res;
+			return TipoIntervalloStatistico.toEnumConstant((String)res);
 		}
 		else{
 			throw new NotFoundException("Not Found");
