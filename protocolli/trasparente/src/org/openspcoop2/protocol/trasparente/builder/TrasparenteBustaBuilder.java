@@ -48,7 +48,7 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 	private TrasparenteProperties trasparenteProperties;
 	public TrasparenteBustaBuilder(IProtocolFactory<?> factory,IState state) throws ProtocolException {
 		super(factory,state);
-		this.trasparenteProperties = TrasparenteProperties.getInstance(factory.getLogger());
+		this.trasparenteProperties = TrasparenteProperties.getInstance();
 	}
 
 	@Override

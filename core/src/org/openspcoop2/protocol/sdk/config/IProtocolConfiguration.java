@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.config;
 
 import java.util.List;
 
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -178,7 +179,7 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * 
 	 * @return True se la funzionalita' richiede che venga fornita l'informazione tramite i meccanismi di integrazione
 	 */
-	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
+	public boolean isIntegrationInfoRequired(TipoPdD tipoPdD, ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
 		
 	/**
 	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo

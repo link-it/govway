@@ -42,7 +42,7 @@ public class TrasparenteProtocolManager extends BasicManager {
 	public TrasparenteProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.logger = this.getProtocolFactory().getLogger();
-		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
+		this.trasparenteProperties = TrasparenteProperties.getInstance();
 	}
 	
 	

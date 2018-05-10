@@ -97,6 +97,7 @@
     		<interfaces>
     			<specification type="wsdl11" />
     		</interfaces>
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
@@ -192,6 +193,7 @@
     			<specification type="swagger2" />
     			<specification type="openApi3" />
     		</interfaces>
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
     	</rest>
     </binding>
 

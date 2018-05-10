@@ -136,7 +136,8 @@ public class AS4Properties {
 
 			generateIDasUUID();
 			
-			isRiferimentoIDRichiestaRequired();
+			isRiferimentoIDRichiesta_PD_Required();
+			isRiferimentoIDRichiesta_PA_Required();
 			
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
@@ -272,32 +273,60 @@ public class AS4Properties {
 	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
      * 
      */
-	private static Boolean isRiferimentoIDRichiestaRequired= null;
-	private static Boolean isRiferimentoIDRichiestaRequiredRead= null;
-    public Boolean isRiferimentoIDRichiestaRequired(){
-    	if(AS4Properties.isRiferimentoIDRichiestaRequiredRead==null){
+	private static Boolean isRiferimentoIDRichiesta_PD_Required= null;
+	private static Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
+    public Boolean isRiferimentoIDRichiesta_PD_Required(){
+    	if(AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead==null){
 	    	try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required"); 
 				
 				if (value != null){
 					value = value.trim();
-					AS4Properties.isRiferimentoIDRichiestaRequired = Boolean.parseBoolean(value);
+					AS4Properties.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
 				}else{
-					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
-					AS4Properties.isRiferimentoIDRichiestaRequired = true;
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
+					AS4Properties.isRiferimentoIDRichiesta_PD_Required = true;
 				}
 				
-				AS4Properties.isRiferimentoIDRichiestaRequiredRead = true;
+				AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 				
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
-				AS4Properties.isRiferimentoIDRichiestaRequired = true;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				AS4Properties.isRiferimentoIDRichiesta_PD_Required = true;
 				
-				AS4Properties.isRiferimentoIDRichiestaRequiredRead = true;
+				AS4Properties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
 			}
     	}
     	
-    	return AS4Properties.isRiferimentoIDRichiestaRequired;
+    	return AS4Properties.isRiferimentoIDRichiesta_PD_Required;
+	}
+	
+	private static Boolean isRiferimentoIDRichiesta_PA_Required= null;
+	private static Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
+    public Boolean isRiferimentoIDRichiesta_PA_Required(){
+    	if(AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
+					AS4Properties.isRiferimentoIDRichiesta_PA_Required = true;
+				}
+				
+				AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				AS4Properties.isRiferimentoIDRichiesta_PA_Required = true;
+				
+				AS4Properties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+			}
+    	}
+    	
+    	return AS4Properties.isRiferimentoIDRichiesta_PA_Required;
 	}
 	
 	

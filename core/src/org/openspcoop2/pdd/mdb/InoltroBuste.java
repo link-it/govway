@@ -2752,7 +2752,7 @@ public class InoltroBuste extends GenericLib{
 					/* *** ValidazioneSemantica (e applicazione sicurezza del messaggio) *** */
 					
 					msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
-					presenzaRispostaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(true, profiloGestione);
+					presenzaRispostaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),true, profiloGestione);
 					
 					if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 						
@@ -3404,7 +3404,7 @@ public class InoltroBuste extends GenericLib{
 					sbustamentoRisposteMSG.setErrors(erroriValidazione);
 					sbustamentoRisposteMSG.setMessaggioErroreProtocollo(isMessaggioErroreProtocollo);
 					sbustamentoRisposteMSG.setIsBustaDiServizio(bustaDiServizio);
-					sbustamentoRisposteMSG.setRuoloBustaRicevuta(validatore.getRuoloBustaRicevuta(true));
+					sbustamentoRisposteMSG.setRuoloBustaRicevuta(validatore.getRuoloBustaRicevuta(requestInfo.getProtocolServiceBinding(),true));
 					sbustamentoRisposteMSG.setSpedizioneMsgIngresso(ejbUtils.getSpedizioneMsgIngresso());
 					sbustamentoRisposteMSG.setRicezioneMsgRisposta(ejbUtils.getRicezioneMsgRisposta());
 					sbustamentoRisposteMSG.setOneWayVersione11(oneWayVersione11);

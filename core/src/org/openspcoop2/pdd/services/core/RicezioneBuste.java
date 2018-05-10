@@ -1356,8 +1356,10 @@ public class RicezioneBuste {
 								+ tipiIntegrazionePA[i]+ "], per la lettura dell'header di integrazione, non inizializzato",
 								"gestoriIntegrazionePASoap.get("+tipiIntegrazionePA[i]+")");
 					}
-					else if (gestore instanceof IGestoreIntegrazionePASoap) {
-						((IGestoreIntegrazionePASoap)gestore).readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
+					//else if (gestore instanceof IGestoreIntegrazionePASoap) {
+					//	((IGestoreIntegrazionePASoap)gestore).readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
+					else {
+						gestore.readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
 					}		
 				} catch (Exception e) {
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA[i]);
@@ -1636,6 +1638,20 @@ public class RicezioneBuste {
 			bustaURLMapping = new Busta(protocolFactory,infoServizio, soggettoFruitore, 
 					idServizio!=null ? idServizio.getSoggettoErogatore() : null, 
 					id, generazioneListaTrasmissioni);
+			if(infoServizio.getCollaborazione()) {
+				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
+				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
+						&& headerIntegrazioneRichiesta.getBusta().getIdCollaborazione()!=null) {
+					bustaURLMapping.setCollaborazione(headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+				}
+			}
+			if(infoServizio.getIdRiferimentoRichiesta()) {
+				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
+				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
+						&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
+					bustaURLMapping.setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
+				}
+			}
 			TipoOraRegistrazione tipoOraRegistrazione = propertiesReader.getTipoTempoBusta(null);
 			bustaURLMapping.setTipoOraRegistrazione(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
 			if(bustaURLMapping.sizeListaTrasmissioni()>0){
@@ -1903,7 +1919,7 @@ public class RicezioneBuste {
 		if(functionAsRouter==false){
 			msgDiag.mediumDebug("Lettura Ruolo Busta...");
 			try{
-				ruoloBustaRicevuta = validatore.getRuoloBustaRicevuta(false);
+				ruoloBustaRicevuta = validatore.getRuoloBustaRicevuta(requestInfo.getProtocolServiceBinding(),false);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false)");
 			}
@@ -3299,7 +3315,7 @@ public class RicezioneBuste {
 			/* ----------- Validazione Semantica (viene anche applicata la sicurezza) ------------ */
 			
 			msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
-			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(false, null);
+			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null);
 			
 			if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
 				
@@ -3474,6 +3490,63 @@ public class RicezioneBuste {
 			this.msgContext.getProtocol().setIdAccordo(validatore.getInfoServizio().getIdAccordo());
 			richiestaApplicativa.setIdAccordo(validatore.getInfoServizio().getIdAccordo());
 		}
+		
+		
+		
+		
+		
+		/* -------- Controlli Header di Integrazione ------------- */
+		
+		IProtocolConfiguration protocolConfig = protocolFactory.createProtocolConfiguration();
+		if(infoServizio.getIdRiferimentoRichiesta() &&
+				protocolConfig.isIntegrationInfoRequired(TipoPdD.APPLICATIVA, requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+			String riferimentoRichiesta = null;
+			if (headerIntegrazioneRichiesta!=null &&
+					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
+				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
+			}
+			if(riferimentoRichiesta==null) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(tipiIntegrazionePA[i]);
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito");
+				
+				// Tracciamento richiesta: non ancora registrata
+				if(this.msgContext.isTracciamentoAbilitato()){
+					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
+							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito"));
+					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
+							correlazioneApplicativa);
+				}
+				
+				if(this.msgContext.isGestioneRisposta()){
+					
+					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_442_RIFERIMENTO_ID_MESSAGGIO.getErroreIntegrazione();
+					
+					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+					parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
+					OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, null);
+
+					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+					sendRispostaBustaErrore(parametriInvioBustaErrore);
+				}
+				openspcoopstate.releaseResource();
+				return;
+
+				
+			}
+		}
+		
+		
+		
 		
 		
 		
@@ -3719,7 +3792,9 @@ public class RicezioneBuste {
 			// Riferimento messaggio con un profilo sincrono non può essere ricevuto in questo contesto.
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && 
 					bustaRichiesta.getRiferimentoMessaggio()!=null &&
-					!isMessaggioErroreProtocollo){ // aggiunto !isMessaggioErrore poiche' una busta di eccezione puo' contenenere in effetti il rifMsg
+					!isMessaggioErroreProtocollo &&// aggiunto !isMessaggioErrore poiche' una busta di eccezione puo' contenenere in effetti il rifMsg
+					(ruoloBustaRicevuta==null || !ruoloBustaRicevuta.equals(RuoloBusta.RICHIESTA)) // aggiunto questo controllo perchè i protocolli con id riferimento richiesta hanno il rif messaggio, ma il ruolo rimane RICHIESTA
+					){ 
 				Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(), protocolFactory);
 				erroriValidazione.add(ecc);
 			}

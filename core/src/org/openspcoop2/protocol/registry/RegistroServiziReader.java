@@ -79,6 +79,7 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
+import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
@@ -993,6 +994,7 @@ public class RegistroServiziReader {
 		}
 		infoServizio.setIdAccordo(idAccordo);
 		ServiceBinding serviceBinding = as.getServiceBinding();
+		infoServizio.setServiceBinding(RegistroServiziUtils.convertToMessage(serviceBinding));
 		
 		infoServizio.setIDServizio(idService);
 		

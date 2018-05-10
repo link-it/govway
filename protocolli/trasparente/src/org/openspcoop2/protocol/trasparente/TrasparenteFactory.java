@@ -60,7 +60,7 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 	public void init(Logger log,String protocol,ConfigurazionePdD configPdD,Openspcoop2 manifest) throws ProtocolException{
 		super.init(log,protocol,configPdD,manifest);
 		TrasparenteProperties.initialize(configPdD.getConfigurationDir(),log);
-		TrasparenteProperties properties = TrasparenteProperties.getInstance(log);
+		TrasparenteProperties properties = TrasparenteProperties.getInstance();
 		properties.validaConfigurazione(configPdD.getLoader());
 	}
 	
@@ -108,7 +108,7 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 	
 	@Override
 	public IConsoleDynamicConfiguration createDynamicConfigurationConsole() throws ProtocolException{
-		if(TrasparenteProperties.getInstance(getLogger()).isUtilizzaTestSuiteProtocolProperties())
+		if(TrasparenteProperties.getInstance().isUtilizzaTestSuiteProtocolProperties())
 			return new TrasparenteTestsuiteDynamicConfiguration(this);
 		else return super.createDynamicConfigurationConsole();
 	}

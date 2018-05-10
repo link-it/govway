@@ -1272,7 +1272,9 @@ public class Sbustamento extends GenericLib{
 
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono...");
 
-				if(bustaRichiesta.getRiferimentoMessaggio()!=null){
+				if(bustaRichiesta.getRiferimentoMessaggio()!=null &&
+						(ruoloBustaRicevuta==null || !ruoloBustaRicevuta.equals(RuoloBusta.RICHIESTA))
+						){
 					msgDiag.logPersonalizzato("ricezioneRispostaSincrona");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

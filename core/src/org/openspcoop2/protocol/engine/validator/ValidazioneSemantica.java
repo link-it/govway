@@ -22,13 +22,13 @@
 
 package org.openspcoop2.protocol.engine.validator;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -39,6 +39,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -47,6 +48,7 @@ import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare un controllo di registrazione dei soggetti di una busta nel registro dei servizi.
@@ -260,7 +262,8 @@ public class ValidazioneSemantica  {
 	}
 
 
-	public static RuoloBusta getTipoBustaDaValidare(Busta busta, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, boolean validazioneRispostaHttpReply, IState state, Logger log) throws ProtocolException{
+	public static RuoloBusta getTipoBustaDaValidare(ServiceBinding serviceBinding, Busta busta, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, 
+			boolean rispostaConnectionReply, IState state, Logger log) throws ProtocolException{
 
 		RuoloBusta tipo = RuoloBusta.BUSTA_DI_SERVIZIO;
 
@@ -271,19 +274,35 @@ public class ValidazioneSemantica  {
 		} 
 
 		// OneWay
-		// X Interoperabilita'
 		else if(busta.getProfiloDiCollaborazione().equals(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY) &&
-				busta.getRiferimentoMessaggio()!=null)
-			tipo = RuoloBusta.BUSTA_DI_SERVIZIO;
-		else if(busta.getProfiloDiCollaborazione().equals(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY))
+				busta.getRiferimentoMessaggio()!=null) {
+			// X Interoperabilita' spcoop
+			if(protocolFactory.createProtocolConfiguration().isSupportato(serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+				tipo = RuoloBusta.RICHIESTA;
+			}
+			else {
+				tipo = RuoloBusta.BUSTA_DI_SERVIZIO;
+			}
+		}else if(busta.getProfiloDiCollaborazione().equals(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY))
 			tipo = RuoloBusta.RICHIESTA;
 
 		// Sincrono
 		else if(busta.getProfiloDiCollaborazione().equals(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO)){
-			if(busta.getRiferimentoMessaggio() == null)
+			if(busta.getRiferimentoMessaggio() == null) {
 				tipo = RuoloBusta.RICHIESTA;
-			else
-				tipo = RuoloBusta.RISPOSTA;
+			}else {
+				if(rispostaConnectionReply) {
+					tipo = RuoloBusta.RISPOSTA;
+				}
+				else {
+					if(protocolFactory.createProtocolConfiguration().isSupportato(serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+						tipo = RuoloBusta.RICHIESTA;
+					}
+					else {
+						tipo = RuoloBusta.RISPOSTA;
+					}
+				}
+			}
 		}
 		
 		// Asincrono Simmetrico e Asimmetrico
@@ -300,7 +319,7 @@ public class ValidazioneSemantica  {
 					tipo = RuoloBusta.RICEVUTA_RICHIESTA;	
 				}else if(profilo.asincrono_isRicevutaRisposta(busta.getRiferimentoMessaggio())){
 					tipo = RuoloBusta.RICEVUTA_RISPOSTA;	
-				}else if( (validazioneRispostaHttpReply==false) && (profilo.asincrono_isRisposta(busta)) ){
+				}else if( (rispostaConnectionReply==false) && (profilo.asincrono_isRisposta(busta)) ){
 					tipo = RuoloBusta.RISPOSTA;
 				}else{
 					tipo = RuoloBusta.RICHIESTA;
@@ -379,8 +398,10 @@ public class ValidazioneSemantica  {
 
 			// Sincrono
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.busta.getProfiloDiCollaborazione())){
-				if(profiloDiCollaborazione.sincrono_validazioneRiferimentoMessaggio(this.busta.getRiferimentoMessaggio())==false){
-					error = true;
+				if( RuoloBusta.RISPOSTA.equals(tipoBusta.toString()) ){
+					if(profiloDiCollaborazione.sincrono_validazioneRiferimentoMessaggio(this.busta.getRiferimentoMessaggio())==false){
+						error = true;
+					}
 				}
 			}   
 
@@ -594,7 +615,9 @@ public class ValidazioneSemantica  {
 				new org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione(stateful, this.log, this.protocolFactory);
 			Eccezione ecc = null;
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.busta.getProfiloDiCollaborazione())){
-				ecc = profiloDiCollaborazione.sincrono_validazioneCorrelazione(this.busta, this.protocolFactory);
+				if( RuoloBusta.RISPOSTA.equals(tipoBusta.toString()) ){
+					ecc = profiloDiCollaborazione.sincrono_validazioneCorrelazione(this.busta, this.protocolFactory);
+				}
 			}
 			else if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.busta.getProfiloDiCollaborazione()) ){
 				if( RuoloBusta.RICEVUTA_RICHIESTA.equals(tipoBusta.toString()) ){

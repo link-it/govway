@@ -22,11 +22,10 @@ package org.openspcoop2.protocol.trasparente.config;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Classe che gestisce il file di properties 'trasparente.properties' del protocollo Trasparente
@@ -113,7 +112,7 @@ public class TrasparenteProperties {
 	 * @throws Exception 
 	 * 
 	 */
-	public static TrasparenteProperties getInstance(Logger log) throws ProtocolException{
+	public static TrasparenteProperties getInstance() throws ProtocolException{
 
 		if(TrasparenteProperties.trasparenteProperties==null)
 			throw new ProtocolException("TrasparenteProperties not initialized (use init method in factory)");
@@ -128,6 +127,9 @@ public class TrasparenteProperties {
 		try{  
 
 			generateIDasUUID();
+			
+			isRiferimentoIDRichiesta_PD_Required();
+			isRiferimentoIDRichiesta_PA_Required();
 			
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
@@ -183,6 +185,72 @@ public class TrasparenteProperties {
 		}
 
 		return TrasparenteProperties.generateIDasUUID;
+	}
+	
+	
+	
+	/* **** CONFIGURAZIONE **** */
+	
+    /**
+     * Restituisce l'indicazione se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
+	 * 
+	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
+     * 
+     */
+	private static Boolean isRiferimentoIDRichiesta_PD_Required= null;
+	private static Boolean isRiferimentoIDRichiesta_PD_RequiredRead= null;
+    public Boolean isRiferimentoIDRichiesta_PD_Required(){
+    	if(TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required"); 
+				
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
+					TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = true;
+				}
+				
+				TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pd.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required = true;
+				
+				TrasparenteProperties.isRiferimentoIDRichiesta_PD_RequiredRead = true;
+			}
+    	}
+    	
+    	return TrasparenteProperties.isRiferimentoIDRichiesta_PD_Required;
+	}
+	
+	private static Boolean isRiferimentoIDRichiesta_PA_Required= null;
+	private static Boolean isRiferimentoIDRichiesta_PA_RequiredRead= null;
+    public Boolean isRiferimentoIDRichiesta_PA_Required(){
+    	if(TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required"); 
+				
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
+					TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = true;
+				}
+				
+				TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasparente.pa.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required = true;
+				
+				TrasparenteProperties.isRiferimentoIDRichiesta_PA_RequiredRead = true;
+			}
+    	}
+    	
+    	return TrasparenteProperties.isRiferimentoIDRichiesta_PA_Required;
 	}
 	
 	

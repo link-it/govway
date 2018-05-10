@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.basic.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -404,7 +405,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
-	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+	public boolean isIntegrationInfoRequired(TipoPdD tipoPdD, ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
 		return false;
 	}
 	

@@ -2283,7 +2283,7 @@ public class RicezioneContenutiApplicativi {
 		/* -------- Controlli Header di Integrazione ------------- */
 		
 		if(infoServizio.getIdRiferimentoRichiesta() &&
-				protocolConfig.isIntegrationInfoRequired(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+				protocolConfig.isIntegrationInfoRequired(TipoPdD.DELEGATA, requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
 			String riferimentoRichiesta = null;
 			if (headerIntegrazioneRichiesta!=null &&
 					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {

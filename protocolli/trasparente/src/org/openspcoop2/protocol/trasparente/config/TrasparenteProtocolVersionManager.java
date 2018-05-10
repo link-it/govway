@@ -51,7 +51,7 @@ public class TrasparenteProtocolVersionManager extends TrasparenteProtocolManage
 		super(protocolFactory);
 		this.versione = versione;
 		this.logger = this.getProtocolFactory().getLogger();
-		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
+		this.trasparenteProperties = TrasparenteProperties.getInstance();
 		this.basicVersionManager = new InstanceVersioneManager(protocolFactory);
 	}
 	

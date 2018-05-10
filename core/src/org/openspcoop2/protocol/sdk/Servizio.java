@@ -27,6 +27,7 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 
@@ -53,6 +54,7 @@ public class Servizio implements java.io.Serializable {
 	private IDServizio idServizio;
 	/** IDAccordo del servizio */
 	private IDAccordo idAccordo;
+	private ServiceBinding serviceBinding;
 	/** Profilo di Collaborazione. */
 	private ProfiloDiCollaborazione profiloDiCollaborazione;
 	/** Utilizzo di un ID-Collaborazione. */
@@ -338,6 +340,14 @@ public class Servizio implements java.io.Serializable {
 	
 	public void setIdAccordo(IDAccordo idAccordo) {
 		this.idAccordo = idAccordo;
+	}
+	
+	public ServiceBinding getServiceBinding() {
+		return this.serviceBinding;
+	}
+
+	public void setServiceBinding(ServiceBinding serviceBinding) {
+		this.serviceBinding = serviceBinding;
 	}
 
 }

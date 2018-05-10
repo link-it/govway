@@ -316,7 +316,7 @@ public class Validatore  {
 	public boolean isRilevatiErroriDuranteValidazioneSemantica() {
 		return this.rilevatiErroriDuranteValidazioneSemantica;
 	}
-	public boolean validazioneSemantica_beforeMessageSecurity(boolean rispostaConnectionReply,String profiloGestione) {
+	public boolean validazioneSemantica_beforeMessageSecurity(ServiceBinding serviceBinding, boolean rispostaConnectionReply,String profiloGestione) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 			
@@ -327,7 +327,7 @@ public class Validatore  {
 		
 			// Tipo Busta (Servizio,Richiesta,Risposta,Ricevuta)
 			if(this.ruoloBustaRicevuta==null)
-				this.ruoloBustaRicevuta = ValidazioneSemantica.getTipoBustaDaValidare(this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
+				this.ruoloBustaRicevuta = ValidazioneSemantica.getTipoBustaDaValidare(serviceBinding, this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
 			//log.info("Validazione tipoBusta ["+tipoBusta+"]...");
 		
 			// Riconoscimento Profilo di Gestione per servizio erogato.
@@ -730,9 +730,9 @@ public class Validatore  {
 		this.versioneProtocollo = profiloGestione;
 	}
 
-	public RuoloBusta getRuoloBustaRicevuta(boolean rispostaConnectionReply) throws ProtocolException {
+	public RuoloBusta getRuoloBustaRicevuta(ServiceBinding serviceBinding, boolean rispostaConnectionReply) throws ProtocolException {
 		if(this.ruoloBustaRicevuta==null)
-			this.ruoloBustaRicevuta= ValidazioneSemantica.getTipoBustaDaValidare(this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
+			this.ruoloBustaRicevuta= ValidazioneSemantica.getTipoBustaDaValidare(serviceBinding, this.busta, this.protocolFactory, rispostaConnectionReply,this.state,this.log);
 		return this.ruoloBustaRicevuta;
 	}
 

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.as4.config;
 
+import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.config.BasicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -49,13 +50,18 @@ public class AS4ProtocolConfiguration extends BasicConfiguration {
 	}
 	
 	@Override
-	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+	public boolean isIntegrationInfoRequired(TipoPdD tipoPdD, ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
 		
 		if (FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA.equals(funzionalitaProtocollo)){
-			return this.properties.isRiferimentoIDRichiestaRequired();
+			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+				return this.properties.isRiferimentoIDRichiesta_PD_Required();
+			}
+			else {
+				return this.properties.isRiferimentoIDRichiesta_PA_Required();
+			}
 		}
 		else {
-			return super.isIntegrationInfoRequired(serviceBinding, funzionalitaProtocollo);
+			return super.isIntegrationInfoRequired(tipoPdD, serviceBinding, funzionalitaProtocollo);
 		}
 		
 	}
