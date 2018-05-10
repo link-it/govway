@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/statistiche"
+	targetNamespace="http://www.openspcoop2.org/core/statistiche"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+
+	<!-- ********* INFO-STATISTICA ************* -->
+
+	<xsd:element name="statistica-info">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo-statistica" type="tipo-intervallo-statistico" />
+				<xsd:element name="data-ultima-generazione" type="xsd:dateTime" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+	<!-- ********* STATISTICHE ORARIE ************* -->
+
+	<xsd:element name="statistica-oraria">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-oraria-contenuti" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-oraria-contenuti" type="statistica-contenuti" />
+		
+	
+
+
+	<!-- ********* STATISTICHE GIORNALIERE ************* -->
+
+	<xsd:element name="statistica-giornaliera">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-giornaliera-contenuti" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-giornaliera-contenuti" type="statistica-contenuti"/>
+
+
+
+
+
+	<!-- ********* STATISTICHE SETTIMANALI ************* -->
+
+	<xsd:element name="statistica-settimanale">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-settimanale-contenuti" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-settimanale-contenuti" type="statistica-contenuti" />
+		
+
+
+
+	<!-- ********* STATISTICHE MENSILI ************* -->
+
+	<xsd:element name="statistica-mensile">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-mensile-contenuti" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-mensile-contenuti" type="statistica-contenuti" />
+		
+
+
+
+
+
+
+	<!-- Tipi -->
+
+	<xsd:complexType name="statistica">
+		<xsd:sequence>
+			<xsd:element name="data" type="xsd:dateTime" />
+			<xsd:element name="id-porta" type="xsd:string" /> 
+			<xsd:element name="tipo-porta" type="tipo-porta" />	
+			<xsd:element name="tipo-mittente" type="xsd:string" />
+			<xsd:element name="mittente" type="xsd:string"/>
+			<xsd:element name="tipo-destinatario" type="xsd:string" />
+			<xsd:element name="destinatario" type="xsd:string" />
+			<xsd:element name="tipo-servizio" type="xsd:string" />
+			<xsd:element name="servizio" type="xsd:string" />
+			<xsd:element name="versione-servizio" type="xsd:int" />			
+			<xsd:element name="azione" type="xsd:string" />
+			<xsd:element name="servizio-applicativo" type="xsd:string" />
+			<xsd:element name="esito" type="xsd:integer" />
+			<xsd:element name="esito-contesto" type="xsd:string" />
+			
+			<!-- Informazioni -->
+			<xsd:element name="numero-transazioni" type="xsd:integer" />
+			<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="statistica-contenuti">
+		<xsd:sequence>
+			<xsd:element name="data" type="xsd:dateTime" />
+			<xsd:element name="risorsa-nome" type="xsd:string" />
+			<xsd:element name="risorsa-valore" type="string-max-4000" />
+
+			<xsd:element name="filtro-nome-1" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-1" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-2" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-2" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-3" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-3" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-4" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-4" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-5" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-5" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-6" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-6" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-7" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-7" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-8" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-8" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-9" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-9" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="filtro-nome-10" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="filtro-valore-10" type="string-max-4000" minOccurs="0" maxOccurs="1" />
+
+			<xsd:element name="numero-transazioni" type="xsd:integer" />
+			<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0" maxOccurs="1" />
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-intervallo-statistico">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="StatisticheOrarie"/>
+			<xsd:enumeration value="StatisticheGiornaliere"/>
+			<xsd:enumeration value="StatisticheSettimanali"/>
+			<xsd:enumeration value="StatisticheMensili"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="tipo-porta">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="router"/>
+			<xsd:enumeration value="integration_manager"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Vincoli per riuscire ad utilizzare funzioni di group by -->
+	<xsd:simpleType name="string-max-4000">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+
+</xsd:schema>

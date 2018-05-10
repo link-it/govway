@@ -1,0 +1,1243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/statistiche"
+	targetNamespace="http://www.openspcoop2.org/core/statistiche"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+	<!-- 
+		Spiegazione sugli indici generati:
+		
+		I dati delle statistiche  sono inizialmente scremati grazie alla data di ingresso.
+		Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
+		Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) 
+		è comunque molto più efficente che usare una tabella. per ulteriori dettagli sulla motivazione vedere
+		i commenti riportati in Transazioni.xsd per quanto riguarda gli indici sulle transazioni.
+		
+		Vengono forniti tre possibili indici 
+		(scegliere solamente uno delle tre possibilità a seconda di quanto il DBA o il DB stesso permette di avere lungo un indice)
+		- INDEX_STAT_<TIPOSTAT>_ENTRY: colonne minime che permettono di effettuare un buon livello di filtro rispetto ai record nelle tabelle
+		- INDEX_STAT_<TIPOSTAT>_FULL: contiene tutte le colonne su cui è possibile effettuare la ricerca (WHERE)
+		- INDEX_STAT_<TIPOSTAT>: indice progettato per possedere tutti i campi nell'indice stesso, anche quelli utilizzati nelle select field 
+		(compresi quelli su cui viene applicata una funzioni). 
+		Questa caratteristica permette alla query di essere eseguita tramite una 'full index scan'.
+		
+		Analisi dei tipi di database:
+		- postgresql: consente qualsiasi indice
+		- oracle: consente qualsiasi indice
+		- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) consente qualsiasi indice
+		- hsql: consente qualsiasi indice
+		- sqlserver: (verificato su sqlserver 2008)
+		non consente la creazione degli indici 'INDEX_STAT_<TIPOSTAT>'.
+		Errore: The maximum limit for index or statistics key column list is 16.
+		Mentre crea l'indice 'INDEX_STAT_<TIPOSTAT>_FULL' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
+		Warning! The maximum key length is 900 bytes. The index 'INDEX_STAT_<TIPOSTAT>_FULL' has maximum length of 1642 bytes. 
+		For some combination of large values, the insert/update operation will fail.
+	-->	
+
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="statistiche">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-table object-name="statistica-info"
+									object-type="statistica-info"/>
+								<linkit:sql-comment><![CDATA[STATISTICHE ORARIE]]></linkit:sql-comment>
+								<linkit:sql-table object-name="statistica-oraria"
+									object-type="statistica-oraria"/>
+								<linkit:sql-table object-name="statistica-oraria-contenuti"
+									object-type="statistica-contenuti"/>
+								<linkit:sql-comment><![CDATA[STATISTICHE GIORNALIERE]]></linkit:sql-comment>
+								<linkit:sql-table object-name="statistica-giornaliera"
+									object-type="statistica-giornaliera"/>
+								<linkit:sql-table object-name="statistica-giornaliera-contenuti"
+									object-type="statistica-contenuti"/>
+								<linkit:sql-comment><![CDATA[STATISTICHE SETTIMANALI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="statistica-settimanale"
+									object-type="statistica-settimanale"/>
+								<linkit:sql-table object-name="statistica-settimanale-contenuti"
+									object-type="statistica-contenuti"/>
+								<linkit:sql-comment><![CDATA[STATISTICHE MENSILI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="statistica-mensile"
+									object-type="statistica-mensile"/>
+								<linkit:sql-table object-name="statistica-mensile-contenuti"
+									object-type="statistica-contenuti"/>
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="true"
+							on-delete-cascade="false"/>
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+	<!-- ********* INFO-STATISTICA ************* -->
+
+	<xsd:element name="statistica-info">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+					<linkit:sql-table-mapping name="statistiche" comment="Contiene l'informazione temporale sull'ultimo aggiornamento delle statistiche">
+						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
+						<linkit:sql-table-unique create-index="false">
+							<linkit:sql-table-unique-field name="tipo-statistica"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo-statistica" type="tipo-intervallo-statistico">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo"/>
+								<linkit:sql-ddl-column-comment>Tipologia di statistica</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-ultima-generazione" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment>Informazione temporale sull'ultimo aggiornamento delle statistiche del tipo indicato nella colonna 'tipo'</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+	<!-- ********* STATISTICHE ORARIE ************* -->
+
+	<xsd:element name="statistica-oraria">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+					<linkit:sql-table-mapping name="statistiche_orarie" 
+						comment="Statistiche con intervallo orario"
+						on-delete-cascade="true" sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_orarie" index="idx_stat_orarie"/>
+						<linkit:sql-table-index name="INDEX_STAT_HOUR_ENTRY">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_HOUR_FULL">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_HOUR">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-oraria-contenuti" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_orarie(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-oraria-contenuti" type="statistica-contenuti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_orarie_contenuti" 
+						comment="Statistiche (sui contenuti) con intervallo orario"
+						sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_c_orarie"
+							index="idx_stat_c_orarie"/>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_stat"/>
+							<!-- <linkit:sql-table-index-column name="risorsa_nome"/> Non si può fare un indice su di una colonna CLOB -->
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* STATISTICHE GIORNALIERE ************* -->
+
+	<xsd:element name="statistica-giornaliera">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+					<linkit:sql-table-mapping name="statistiche_giornaliere"
+						comment="Statistiche con intervallo giornaliero"
+						on-delete-cascade="true" sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_giornaliere"
+							index="idx_stat_giornaliere"/>
+						<!-- 
+							L'ordinamento avviene solamente per l'andamento temporale ed è ASC
+							Le altre distribuzioni hanno un ordinamento DESC effettuato sui risultati della union
+						-->
+						<linkit:sql-table-index name="INDEX_STAT_DAY_ENTRY">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_DAY_FULL">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_DAY">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-giornaliera-contenuti" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_giornaliere(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-giornaliera-contenuti" type="statistica-contenuti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_giorni_contenuti" 
+						comment="Statistiche (sui contenuti) con intervallo giornaliero"
+						sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_c_giornaliere"
+							index="idx_stat_c_giornaliere"/>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_stat"/>
+							<!-- <linkit:sql-table-index-column name="risorsa_nome"/> Non si può fare un indice su di una colonna CLOB -->
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
+
+
+
+
+
+
+
+	<!-- ********* STATISTICHE SETTIMANALI ************* -->
+
+	<xsd:element name="statistica-settimanale">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+					<linkit:sql-table-mapping name="statistiche_settimanali"
+						comment="Statistiche con intervallo settimanale"
+						on-delete-cascade="true" sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_settimanali"
+							index="idx_stat_settimanali"/>
+						<linkit:sql-table-index name="INDEX_STAT_WEEK_ENTRY">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_WEEK_FULL">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_WEEK">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-settimanale-contenuti" minOccurs="0"
+					maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_settimanali(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-settimanale-contenuti" type="statistica-contenuti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_settimane_contenuti" 
+						comment="Statistiche (sui contenuti) con intervallo settimanale"
+						sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_c_settimanali"
+							index="idx_stat_c_settimanali"/>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_stat"/>
+							<!-- <linkit:sql-table-index-column name="risorsa_nome"/> Non si può fare un indice su di una colonna CLOB -->
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* STATISTICHE MENSILI ************* -->
+
+	<xsd:element name="statistica-mensile">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+					<linkit:sql-table-mapping name="statistiche_mensili"
+						comment="Statistiche con intervallo mensile"
+						on-delete-cascade="true" sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_mensili" index="idx_stat_mensili"/>
+						<linkit:sql-table-index name="INDEX_STAT_MONTH_ENTRY">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_MONTH_FULL">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+						</linkit:sql-table-index>
+						<linkit:sql-table-index name="INDEX_STAT_MONTH">
+							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="esito"/>
+							<linkit:sql-table-index-column name="esito_contesto"/>
+							<linkit:sql-table-index-column name="id_porta"/>
+							<linkit:sql-table-index-column name="tipo_porta"/>
+							<linkit:sql-table-index-column name="tipo_destinatario"/>
+							<linkit:sql-table-index-column name="destinatario"/>
+							<linkit:sql-table-index-column name="tipo_servizio"/>
+							<linkit:sql-table-index-column name="servizio"/>
+							<linkit:sql-table-index-column name="versione_servizio"/>
+							<linkit:sql-table-index-column name="azione"/>
+							<linkit:sql-table-index-column name="tipo_mittente"/>
+							<linkit:sql-table-index-column name="mittente"/>
+							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="richieste"/>
+							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
+							<linkit:sql-table-index-column name="bytes_banda_interna"/>
+							<linkit:sql-table-index-column name="bytes_banda_esterna"/>
+							<linkit:sql-table-index-column name="latenza_totale"/>
+							<linkit:sql-table-index-column name="latenza_porta"/>
+							<linkit:sql-table-index-column name="latenza_servizio"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="statistica-base" type="statistica"/>
+				<xsd:element ref="statistica-mensile-contenuti" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_stat" required="true"/>
+								<linkit:sql-ddl-column-comment>Identificativo della statistica (FK verso statistiche_mensili(id))</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="statistica-mensile-contenuti" type="statistica-contenuti">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="stat_mensili_contenuti" 
+						comment="Statistiche (sui contenuti) con intervallo mensile"
+						sequence-cycle="true">
+						<linkit:sql-table-constraint unique="uniq_stat_c_mensili"
+							index="idx_stat_c_mensili"/>
+						<linkit:sql-table-index>
+							<linkit:sql-table-index-column name="id_stat"/>
+							<!-- <linkit:sql-table-index-column name="risorsa_nome"/> Non si può fare un indice su di una colonna CLOB -->
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+
+
+	<!-- Tipi -->
+
+	<xsd:complexType name="statistica">
+		<xsd:sequence>
+			<xsd:element name="data" type="xsd:dateTime">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="data"/>
+							<linkit:sql-ddl-column-comment>Intervallo temporale a cui si riferiscono i dati statistici</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="id-porta" type="xsd:string"> <!-- varchar="110" -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="id_porta"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni porta di dominio]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo porta del soggetto che ha gestito le transazioni]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tipo-porta" type="tipo-porta">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="tipo_porta" varchar="20"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ruolo della porta durante la gestione delle transazioni]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tipo-mittente" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="tipo_mittente" varchar="20"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni protocollo]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Tipo del soggetto mittente]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="mittente" type="xsd:string"> <!-- varchar="80" -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="mittente"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Nome del soggetto mittente]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tipo-destinatario" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="tipo_destinatario" varchar="20"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Tipo del soggetto destinatario]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="destinatario" type="xsd:string"> <!-- varchar="80" -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="destinatario"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Nome del soggetto destinatario]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="tipo-servizio" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="tipo_servizio" varchar="20"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Tipo del servizio]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="servizio" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Nome del servizio]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="versione-servizio" type="xsd:int">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="versione_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Versione del servizio]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="azione" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="azione"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'operazione del servizio invocata]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="servizio-applicativo" type="xsd:string"> <!-- varchar="80" -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="servizio_applicativo"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni di integrazione]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="esito" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="esito"/>
+							<linkit:sql-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="esito-contesto" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="esito_contesto" varchar="20"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Contesto della Transazione]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			
+			<!-- Informazioni -->
+			<xsd:element name="numero-transazioni" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="richieste"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni statistiche]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Numero di Transazione raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_complessiva"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes) occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_interna"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes), relativamente alle comunicazioni verso il dominio interno, occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_esterna"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes), relativamente alle comunicazioni verso il dominio esterno, occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_totale"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms), sommando la latenza della porta e la latenza del servizio, impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_porta"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms) della porta impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms) del servizio impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="statistica-contenuti">
+		<xsd:sequence>
+			<xsd:element name="data" type="xsd:dateTime"> <!-- Utile per partizioni -->
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="data"/>
+							<linkit:sql-ddl-column-comment>Intervallo temporale a cui si riferiscono i dati statistici</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="risorsa-nome" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-comment><![CDATA[Risorsa Aggregata]]></linkit:sql-column-comment>
+							<linkit:sql-column-mapping text="true"/>
+							<linkit:sql-ddl-column-comment>Identificativo del contenuto a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="risorsa-valore" type="string-max-4000">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Contenuto a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-1" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-comment><![CDATA[Filtri]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 1 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-1" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 1 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-2" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 2 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-2" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 2 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-3" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 3 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-3" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 3 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-4" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 4 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-4" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 4 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-5" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 5 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-5" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 5 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-6" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 6 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-6" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 6 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-7" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 7 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-7" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 7 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-8" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 8 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-8" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 8 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-9" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 9 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-9" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 9 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="filtro-nome-10" type="xsd:string" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-ddl-column-comment>Identificativo del filtro numero 10 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="filtro-valore-10" type="string-max-4000" minOccurs="0" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<!--
+								con il CLOB non è possibile effettuare group-by sulla colonna ad es. in Oracle
+								<linkit:sql-column-mapping text="true"/>
+							-->
+							<linkit:sql-ddl-column-comment>Valore del filtro numero 10 a cui la statistica si riferisce</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+
+			<xsd:element name="numero-transazioni" type="xsd:integer">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="richieste"/>
+							<linkit:sql-column-comment><![CDATA[Informazioni statistiche]]></linkit:sql-column-comment>
+							<linkit:sql-ddl-column-comment><![CDATA[Numero di Transazione raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-complessiva" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_complessiva"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes) occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-interna" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_interna"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes), relativamente alle comunicazioni verso il dominio interno, occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dimensioni-bytes-banda-esterna" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="bytes_banda_esterna"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Ammontare della banda (bytes), relativamente alle comunicazioni verso il dominio esterno, occupata complessivamente dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-totale" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_totale"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms), sommando la latenza della porta e la latenza del servizio, impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-porta" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_porta"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms) della porta impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="latenza-servizio" type="xsd:unsignedLong" minOccurs="0"
+				maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="latenza_servizio"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Latenza media (ms) del servizio impiegata dalle transazioni raccolte nell'informazione statistica]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-intervallo-statistico">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="StatisticheOrarie"/>
+			<xsd:enumeration value="StatisticheGiornaliere"/>
+			<xsd:enumeration value="StatisticheSettimanali"/>
+			<xsd:enumeration value="StatisticheMensili"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="tipo-porta">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="delegata"/>
+			<xsd:enumeration value="applicativa"/>
+			<xsd:enumeration value="router"/>
+			<xsd:enumeration value="integration_manager"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Vincoli per riuscire ad utilizzare funzioni di group by -->
+	<xsd:simpleType name="string-max-4000">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+
+</xsd:schema>

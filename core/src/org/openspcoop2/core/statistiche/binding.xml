@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="statistica-info" class="org.openspcoop2.core.statistiche.StatisticaInfo">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <value name="tipo-statistica" field="tipoStatistica" usage="required" enum-value-method="toString"/>
+    <value name="data-ultima-generazione" field="dataUltimaGenerazione" usage="required"/>
+  </mapping>
+  <mapping name="statistica-oraria" class="org.openspcoop2.core.statistiche.StatisticaOraria">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <structure name="statistica-base" field="statisticaBase" usage="required" map-as="_Statistica_Type"/>
+    <collection field="statisticaOrariaContenuti" create-type="java.util.ArrayList">
+      <structure name="statistica-oraria-contenuti" map-as="_StatisticaContenuti_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="statistica-giornaliera" class="org.openspcoop2.core.statistiche.StatisticaGiornaliera">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <structure name="statistica-base" field="statisticaBase" usage="required" map-as="_Statistica_Type"/>
+    <collection field="statisticaGiornalieraContenuti" create-type="java.util.ArrayList">
+      <structure name="statistica-giornaliera-contenuti" map-as="_StatisticaContenuti_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="statistica-settimanale" class="org.openspcoop2.core.statistiche.StatisticaSettimanale">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <structure name="statistica-base" field="statisticaBase" usage="required" map-as="_Statistica_Type"/>
+    <collection field="statisticaSettimanaleContenuti" create-type="java.util.ArrayList">
+      <structure name="statistica-settimanale-contenuti" map-as="_StatisticaContenuti_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="statistica-mensile" class="org.openspcoop2.core.statistiche.StatisticaMensile">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <structure name="statistica-base" field="statisticaBase" usage="required" map-as="_Statistica_Type"/>
+    <collection field="statisticaMensileContenuti" create-type="java.util.ArrayList">
+      <structure name="statistica-mensile-contenuti" map-as="_StatisticaContenuti_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="statistica-base" class="org.openspcoop2.core.statistiche.Statistica" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <value name="data" field="data" usage="required"/>
+    <value name="id-porta" field="idPorta" usage="required"/>
+    <value name="tipo-porta" field="tipoPorta" usage="required" enum-value-method="toString"/>
+    <value name="tipo-mittente" field="tipoMittente" usage="required"/>
+    <value name="mittente" field="mittente" usage="required"/>
+    <value name="tipo-destinatario" field="tipoDestinatario" usage="required"/>
+    <value name="destinatario" field="destinatario" usage="required"/>
+    <value name="tipo-servizio" field="tipoServizio" usage="required"/>
+    <value name="servizio" field="servizio" usage="required"/>
+    <value name="versione-servizio" field="versioneServizio" usage="required"/>
+    <value name="azione" field="azione" usage="required"/>
+    <value name="servizio-applicativo" field="servizioApplicativo" usage="required"/>
+    <value name="esito" field="esito" usage="required"/>
+    <value name="esito-contesto" field="esitoContesto" usage="required"/>
+    <value name="numero-transazioni" field="numeroTransazioni" usage="required"/>
+    <value name="dimensioni-bytes-banda-complessiva" field="dimensioniBytesBandaComplessiva" usage="optional"/>
+    <value name="dimensioni-bytes-banda-interna" field="dimensioniBytesBandaInterna" usage="optional"/>
+    <value name="dimensioni-bytes-banda-esterna" field="dimensioniBytesBandaEsterna" usage="optional"/>
+    <value name="latenza-totale" field="latenzaTotale" usage="optional"/>
+    <value name="latenza-porta" field="latenzaPorta" usage="optional"/>
+    <value name="latenza-servizio" field="latenzaServizio" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_Statistica_Type" class="org.openspcoop2.core.statistiche.Statistica" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <value name="data" field="data" usage="required"/>
+    <value name="id-porta" field="idPorta" usage="required"/>
+    <value name="tipo-porta" field="tipoPorta" usage="required" enum-value-method="toString"/>
+    <value name="tipo-mittente" field="tipoMittente" usage="required"/>
+    <value name="mittente" field="mittente" usage="required"/>
+    <value name="tipo-destinatario" field="tipoDestinatario" usage="required"/>
+    <value name="destinatario" field="destinatario" usage="required"/>
+    <value name="tipo-servizio" field="tipoServizio" usage="required"/>
+    <value name="servizio" field="servizio" usage="required"/>
+    <value name="versione-servizio" field="versioneServizio" usage="required"/>
+    <value name="azione" field="azione" usage="required"/>
+    <value name="servizio-applicativo" field="servizioApplicativo" usage="required"/>
+    <value name="esito" field="esito" usage="required"/>
+    <value name="esito-contesto" field="esitoContesto" usage="required"/>
+    <value name="numero-transazioni" field="numeroTransazioni" usage="required"/>
+    <value name="dimensioni-bytes-banda-complessiva" field="dimensioniBytesBandaComplessiva" usage="optional"/>
+    <value name="dimensioni-bytes-banda-interna" field="dimensioniBytesBandaInterna" usage="optional"/>
+    <value name="dimensioni-bytes-banda-esterna" field="dimensioniBytesBandaEsterna" usage="optional"/>
+    <value name="latenza-totale" field="latenzaTotale" usage="optional"/>
+    <value name="latenza-porta" field="latenzaPorta" usage="optional"/>
+    <value name="latenza-servizio" field="latenzaServizio" usage="optional"/>
+  </mapping>
+  <mapping name="statistica-mensile-contenuti" class="org.openspcoop2.core.statistiche.StatisticaContenuti" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <value name="data" field="data" usage="required"/>
+    <value name="risorsa-nome" field="risorsaNome" usage="required"/>
+    <value name="risorsa-valore" field="risorsaValore" usage="required"/>
+    <value name="filtro-nome-1" field="filtroNome1" usage="optional"/>
+    <value name="filtro-valore-1" field="filtroValore1" usage="optional"/>
+    <value name="filtro-nome-2" field="filtroNome2" usage="optional"/>
+    <value name="filtro-valore-2" field="filtroValore2" usage="optional"/>
+    <value name="filtro-nome-3" field="filtroNome3" usage="optional"/>
+    <value name="filtro-valore-3" field="filtroValore3" usage="optional"/>
+    <value name="filtro-nome-4" field="filtroNome4" usage="optional"/>
+    <value name="filtro-valore-4" field="filtroValore4" usage="optional"/>
+    <value name="filtro-nome-5" field="filtroNome5" usage="optional"/>
+    <value name="filtro-valore-5" field="filtroValore5" usage="optional"/>
+    <value name="filtro-nome-6" field="filtroNome6" usage="optional"/>
+    <value name="filtro-valore-6" field="filtroValore6" usage="optional"/>
+    <value name="filtro-nome-7" field="filtroNome7" usage="optional"/>
+    <value name="filtro-valore-7" field="filtroValore7" usage="optional"/>
+    <value name="filtro-nome-8" field="filtroNome8" usage="optional"/>
+    <value name="filtro-valore-8" field="filtroValore8" usage="optional"/>
+    <value name="filtro-nome-9" field="filtroNome9" usage="optional"/>
+    <value name="filtro-valore-9" field="filtroValore9" usage="optional"/>
+    <value name="filtro-nome-10" field="filtroNome10" usage="optional"/>
+    <value name="filtro-valore-10" field="filtroValore10" usage="optional"/>
+    <value name="numero-transazioni" field="numeroTransazioni" usage="required"/>
+    <value name="dimensioni-bytes-banda-complessiva" field="dimensioniBytesBandaComplessiva" usage="optional"/>
+    <value name="dimensioni-bytes-banda-interna" field="dimensioniBytesBandaInterna" usage="optional"/>
+    <value name="dimensioni-bytes-banda-esterna" field="dimensioniBytesBandaEsterna" usage="optional"/>
+    <value name="latenza-totale" field="latenzaTotale" usage="optional"/>
+    <value name="latenza-porta" field="latenzaPorta" usage="optional"/>
+    <value name="latenza-servizio" field="latenzaServizio" usage="optional"/>
+  </mapping>
+
+  <mapping type-name="_StatisticaContenuti_Type" class="org.openspcoop2.core.statistiche.StatisticaContenuti" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/statistiche" default="elements"/>
+    <value name="data" field="data" usage="required"/>
+    <value name="risorsa-nome" field="risorsaNome" usage="required"/>
+    <value name="risorsa-valore" field="risorsaValore" usage="required"/>
+    <value name="filtro-nome-1" field="filtroNome1" usage="optional"/>
+    <value name="filtro-valore-1" field="filtroValore1" usage="optional"/>
+    <value name="filtro-nome-2" field="filtroNome2" usage="optional"/>
+    <value name="filtro-valore-2" field="filtroValore2" usage="optional"/>
+    <value name="filtro-nome-3" field="filtroNome3" usage="optional"/>
+    <value name="filtro-valore-3" field="filtroValore3" usage="optional"/>
+    <value name="filtro-nome-4" field="filtroNome4" usage="optional"/>
+    <value name="filtro-valore-4" field="filtroValore4" usage="optional"/>
+    <value name="filtro-nome-5" field="filtroNome5" usage="optional"/>
+    <value name="filtro-valore-5" field="filtroValore5" usage="optional"/>
+    <value name="filtro-nome-6" field="filtroNome6" usage="optional"/>
+    <value name="filtro-valore-6" field="filtroValore6" usage="optional"/>
+    <value name="filtro-nome-7" field="filtroNome7" usage="optional"/>
+    <value name="filtro-valore-7" field="filtroValore7" usage="optional"/>
+    <value name="filtro-nome-8" field="filtroNome8" usage="optional"/>
+    <value name="filtro-valore-8" field="filtroValore8" usage="optional"/>
+    <value name="filtro-nome-9" field="filtroNome9" usage="optional"/>
+    <value name="filtro-valore-9" field="filtroValore9" usage="optional"/>
+    <value name="filtro-nome-10" field="filtroNome10" usage="optional"/>
+    <value name="filtro-valore-10" field="filtroValore10" usage="optional"/>
+    <value name="numero-transazioni" field="numeroTransazioni" usage="required"/>
+    <value name="dimensioni-bytes-banda-complessiva" field="dimensioniBytesBandaComplessiva" usage="optional"/>
+    <value name="dimensioni-bytes-banda-interna" field="dimensioniBytesBandaInterna" usage="optional"/>
+    <value name="dimensioni-bytes-banda-esterna" field="dimensioniBytesBandaEsterna" usage="optional"/>
+    <value name="latenza-totale" field="latenzaTotale" usage="optional"/>
+    <value name="latenza-porta" field="latenzaPorta" usage="optional"/>
+    <value name="latenza-servizio" field="latenzaServizio" usage="optional"/>
+  </mapping>
+</binding>

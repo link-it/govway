@@ -1,0 +1,9 @@
+DELETE FROM stat_mensili_contenuti;
+DELETE FROM statistiche_mensili;
+DELETE FROM stat_settimane_contenuti;
+DELETE FROM statistiche_settimanali;
+DELETE FROM stat_giorni_contenuti;
+DELETE FROM statistiche_giornaliere;
+DELETE FROM stat_orarie_contenuti;
+DELETE FROM statistiche_orarie;
+DELETE FROM statistiche;

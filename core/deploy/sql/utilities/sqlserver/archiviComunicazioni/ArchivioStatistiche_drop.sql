@@ -1,0 +1,26 @@
+-- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX idx_stat_c_mensili_1 ON stat_mensili_contenuti ;
+-- DROP INDEX INDEX_STAT_MONTH ON statistiche_mensili ;
+-- DROP INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili ;
+-- DROP INDEX INDEX_STAT_MONTH_ENTRY ON statistiche_mensili ;
+-- DROP INDEX idx_stat_c_settimanali_1 ON stat_settimane_contenuti ;
+-- DROP INDEX INDEX_STAT_WEEK ON statistiche_settimanali ;
+-- DROP INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali ;
+-- DROP INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali ;
+-- DROP INDEX idx_stat_c_giornaliere_1 ON stat_giorni_contenuti ;
+-- DROP INDEX INDEX_STAT_DAY ON statistiche_giornaliere ;
+-- DROP INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere ;
+-- DROP INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere ;
+-- DROP INDEX idx_stat_c_orarie_1 ON stat_orarie_contenuti ;
+-- DROP INDEX INDEX_STAT_HOUR ON statistiche_orarie ;
+-- DROP INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie ;
+-- DROP INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie ;
+DROP TABLE stat_mensili_contenuti;
+DROP TABLE statistiche_mensili;
+DROP TABLE stat_settimane_contenuti;
+DROP TABLE statistiche_settimanali;
+DROP TABLE stat_giorni_contenuti;
+DROP TABLE statistiche_giornaliere;
+DROP TABLE stat_orarie_contenuti;
+DROP TABLE statistiche_orarie;
+DROP TABLE statistiche;
