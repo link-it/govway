@@ -6,6 +6,32 @@
     <soggetto tipo="as4" nome="Blue">
         
         <!-- Esempio SOAP -->
+        <porta-delegata nome="SoapExampleForResponse/1/testResponsePushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Red"/>
+            <servizio tipo="as4" nome="SoapExampleForResponse" versione="1"/>
+            <azione nome="testResponsePushAndPush"/>
+        </porta-delegata>
+
+        <!-- Esempio REST v1 -->
+        <porta-delegata nome="RestExampleForResponse/1/testResponsePushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Red"/>
+            <servizio tipo="as4" nome="RestExampleForResponse" versione="1"/>
+            <azione nome="testResponsePushAndPush"/>
+        </porta-delegata>
+
+        <!-- Esempio REST v2 -->
+        <porta-delegata nome="RestExampleForResponse/2/testResponsePushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Red"/>
+            <servizio tipo="as4" nome="RestExampleForResponse" versione="2"/>
+            <azione nome="testResponsePushAndPush"/>
+        </porta-delegata>
+
+
+
+        <!-- Esempio SOAP -->
         <porta-applicativa nome="SoapExample/1/test" stateless="abilitato">
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="test"/>
@@ -33,6 +59,14 @@
         <porta-applicativa nome="SoapExample/1/testRequiredProperties" stateless="abilitato">
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testRequiredProperties"/>
+            <servizio-applicativo nome="SoapExample/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="SoapExample/1/testRequestPushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testRequestPushAndPush"/>
             <servizio-applicativo nome="SoapExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
@@ -67,6 +101,14 @@
 	<porta-applicativa nome="RestExample/1/testJson" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="testJson"/>
+            <servizio-applicativo nome="RestExample/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="RestExample/1/testRequestPushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testRequestPushAndPush"/>
             <servizio-applicativo nome="RestExample/1"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>
@@ -109,6 +151,14 @@
 	<porta-applicativa nome="RestExample/2/testDemoPropertySet" stateless="abilitato">
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testDemoPropertySet"/>
+            <servizio-applicativo nome="RestExample/2"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Red"/>
+	    </soggetti>
+        </porta-applicativa>
+        <porta-applicativa nome="RestExample/2/testRequestPushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testRequestPushAndPush"/>
             <servizio-applicativo nome="RestExample/2"/>
 	    <soggetti>
 		<soggetto tipo="as4" nome="Red"/>

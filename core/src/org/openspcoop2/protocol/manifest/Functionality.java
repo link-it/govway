@@ -36,6 +36,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="duplicateFilter" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="acknowledgement" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="conversationIdentifier" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="referenceToRequestIdentifier" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="deliveryOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="expiration" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="manifestAttachments" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
@@ -93,6 +94,18 @@ public class Functionality extends org.openspcoop2.utils.beans.BaseBean implemen
     this.conversationIdentifier = conversationIdentifier;
   }
 
+  public boolean isReferenceToRequestIdentifier() {
+    return this.referenceToRequestIdentifier;
+  }
+
+  public boolean getReferenceToRequestIdentifier() {
+    return this.referenceToRequestIdentifier;
+  }
+
+  public void setReferenceToRequestIdentifier(boolean referenceToRequestIdentifier) {
+    this.referenceToRequestIdentifier = referenceToRequestIdentifier;
+  }
+
   public boolean isDeliveryOrder() {
     return this.deliveryOrder;
   }
@@ -144,6 +157,10 @@ public class Functionality extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="conversationIdentifier",required=false)
   protected boolean conversationIdentifier = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="referenceToRequestIdentifier",required=false)
+  protected boolean referenceToRequestIdentifier = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="deliveryOrder",required=false)

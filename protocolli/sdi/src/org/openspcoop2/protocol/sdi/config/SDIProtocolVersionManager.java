@@ -70,6 +70,11 @@ public class SDIProtocolVersionManager extends SDIProtocolManager implements IPr
 		return this.basicVersionManager.getCollaborazione(profiloCollaborazione);
 	}
 	
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+		return this.basicVersionManager.getIdRiferimentoRichiesta(profiloCollaborazione);
+	}
+	
 	
 	
 	

@@ -100,6 +100,7 @@
     <value name="filtro-duplicati" field="filtroDuplicati" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="conferma-ricezione" field="confermaRicezione" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="id-collaborazione" field="idCollaborazione" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
@@ -143,6 +144,7 @@
     <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
@@ -159,6 +161,7 @@
     <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="correlata" field="correlata" usage="optional" style="attribute"/>
@@ -179,6 +182,7 @@
     <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="correlata-servizio" field="correlataServizio" usage="optional" style="attribute"/>
@@ -218,6 +222,7 @@
     <collection field="protocolProperty" create-type="java.util.ArrayList">
       <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
     </collection>
+    <value name="prof-azione" field="profAzione" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
@@ -226,6 +231,12 @@
     <value name="message-type" field="messageType" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="request-message-type" field="requestMessageType" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="response-message-type" field="responseMessageType" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="request" class="org.openspcoop2.core.registry.ResourceRequest">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -416,6 +427,7 @@
     <value name="filtro-duplicati" field="filtroDuplicati" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="conferma-ricezione" field="confermaRicezione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="id-collaborazione" field="idCollaborazione" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="id-riferimento-richiesta" field="idRiferimentoRichiesta" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="consegna-in-ordine" field="consegnaInOrdine" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>

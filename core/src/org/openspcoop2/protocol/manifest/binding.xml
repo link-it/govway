@@ -185,6 +185,7 @@
     <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
     <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
     <value name="conversationIdentifier" field="conversationIdentifier" default="false" usage="optional" style="attribute"/>
+    <value name="referenceToRequestIdentifier" field="referenceToRequestIdentifier" default="false" usage="optional" style="attribute"/>
     <value name="deliveryOrder" field="deliveryOrder" default="false" usage="optional" style="attribute"/>
     <value name="expiration" field="expiration" default="false" usage="optional" style="attribute"/>
     <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>
@@ -195,6 +196,7 @@
     <value name="duplicateFilter" field="duplicateFilter" default="false" usage="optional" style="attribute"/>
     <value name="acknowledgement" field="acknowledgement" default="false" usage="optional" style="attribute"/>
     <value name="conversationIdentifier" field="conversationIdentifier" default="false" usage="optional" style="attribute"/>
+    <value name="referenceToRequestIdentifier" field="referenceToRequestIdentifier" default="false" usage="optional" style="attribute"/>
     <value name="deliveryOrder" field="deliveryOrder" default="false" usage="optional" style="attribute"/>
     <value name="expiration" field="expiration" default="false" usage="optional" style="attribute"/>
     <value name="manifestAttachments" field="manifestAttachments" default="false" usage="optional" style="attribute"/>

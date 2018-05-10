@@ -28,6 +28,8 @@ import org.openspcoop2.protocol.basic.config.BasicVersionManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -54,6 +56,16 @@ public class AS4ProtocolVersionManager extends BasicVersionManager {
 		this.logger = this.getProtocolFactory().getLogger();
 		this.as4Properties = AS4Properties.getInstance();
 		this.protocolManager = (AS4ProtocolManager) protocolFactory.createProtocolManager();
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	
 	@Override

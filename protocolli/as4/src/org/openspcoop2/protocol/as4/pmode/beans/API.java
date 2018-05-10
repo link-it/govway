@@ -39,6 +39,8 @@ public class API {
 	
 	private String id;
 	private Map<String, Azione> actions;
+	private Map<String, Map<String, Azione>> actionsByPortType;
+	protected final static String PORT_TYPE_NON_ESISTENTE = "@@ACCORDO_DIRETTO@@";
 	
 	public API(org.openspcoop2.core.registry.AccordoServizioParteComune base, String id, Index index, 
 			PayloadProfiles payloadProfiles, Properties properties) throws Exception {
@@ -47,19 +49,28 @@ public class API {
 		
 		this.actions = new HashMap<>();
 		if(ServiceBinding.SOAP.equals(base.getServiceBinding())) {
+			this.actionsByPortType = new HashMap<>();
 			if(base.sizeAzioneList()>0) {
+				Map<String, Azione> map = new HashMap<>();
 				for (org.openspcoop2.core.registry.Azione az : base.getAzioneList()) {
 					String idAzione = this.id+"_"+ "AzioneAccordo_" + index.getNextActionId(); // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
-					this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
+					Azione azione = new Azione(az, idAzione, payloadProfiles, properties);
+					this.actions.put(idAzione, azione);
+					map.put(idAzione, azione);
 				}
+				this.actionsByPortType.put(PORT_TYPE_NON_ESISTENTE, map);
 			}
 			if(base.sizePortTypeList()>0) {
 				for (org.openspcoop2.core.registry.PortType pt : base.getPortTypeList()) {
 					if(pt.sizeAzioneList()>0) {
+						Map<String, Azione> map = new HashMap<>();
 						for (org.openspcoop2.core.registry.Operation az : pt.getAzioneList()) {
 							String idAzione = this.id+"_"+"Azione_" + index.getNextActionId(); // serve anche prefisso servizio, poiche' diversi servizi possono avere stessa azione e si confonde
-							this.actions.put(idAzione, new Azione(az, idAzione, payloadProfiles, properties));
+							Azione azione = new Azione(az, idAzione, payloadProfiles, properties);
+							this.actions.put(idAzione, azione);
+							map.put(idAzione, azione);
 						}
+						this.actionsByPortType.put(pt.getNome(), map);
 					}
 				}
 			}
@@ -93,6 +104,19 @@ public class API {
 
 	public Map<String, Azione> getActions() {
 		return this.actions;
+	}
+	
+	public Map<String, Azione> getActionsWithoutPortType() {
+		if(this.actionsByPortType!=null) {
+			return this.actionsByPortType.get(PORT_TYPE_NON_ESISTENTE);
+		}
+		return null;
+	}
+	public Map<String, Azione> getActions(String portType) {
+		if(this.actionsByPortType!=null) {
+			return this.actionsByPortType.get(portType);
+		}
+		return null;
 	}
 
 	public void setActions(Map<String, Azione> actions) {

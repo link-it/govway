@@ -1373,6 +1373,23 @@ public class XMLDataConverter {
 				}
 			}
 		}
+		// Devono essere impostati i comportamenti per la ridefinizione delle azioni
+		for(int k=0; k<as.sizeResourceList();k++){
+			if( (as.getResource(k).getConfermaRicezione()!=null) || 
+				(as.getResource(k).getConsegnaInOrdine()!=null) ||
+				(as.getResource(k).getFiltroDuplicati()!=null) || 
+				(as.getResource(k).getIdCollaborazione()!=null) ||
+				//(as.getResource(k).getProfiloCollaborazione()!=null) ||
+				(as.getResource(k).getScadenza()!=null) ){
+					as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
+				}else{
+					as.getResource(k).setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
+				}
+			
+//			if(as.getResource(k).getProfiloCollaborazione()==null){
+//				as.getResource(k).setProfiloCollaborazione(profiloCollaborazione);
+//			}
+		}
 	}
 	
 	private void gestioneAccordoServizioParteComune(AccordoServizioParteComune as,boolean reset) throws Exception{

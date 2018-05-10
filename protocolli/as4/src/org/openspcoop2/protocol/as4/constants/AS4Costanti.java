@@ -42,6 +42,7 @@ public class AS4Costanti {
     public final static String AS4_PROPERTIES_LOCAL_PATH = "as4_local.properties";
     public final static String AS4_PROPERTIES = "AS4_PROPERTIES";
     
+    public final static String AS4_SUFFIX_ID_OPENSPCOOP2 = "@openspcoop.org";
     
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE = "ebmsUserMessagePartyId";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE_NAME = "ebmsUserMessagePartyIdTypeName";
@@ -52,6 +53,7 @@ public class AS4Costanti {
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION = "ebmsUserMessageCollaborationInfoAction";
+    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING = "ebmsUserMessageCollaborationInfoActionBinding";
     
     public final static String AS4_PROTOCOL_PROPERTIES_SECURITY_PROFILE = "ebmsSecurityProfile";
     

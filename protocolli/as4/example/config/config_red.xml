@@ -30,6 +30,12 @@
             <servizio tipo="as4" nome="SoapExample" versione="1"/>
             <azione nome="testRequiredProperties"/>
         </porta-delegata>
+	<porta-delegata nome="SoapExample/1/testRequestPushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="SoapExample" versione="1"/>
+            <azione nome="testRequestPushAndPush"/>
+        </porta-delegata>
 
         <!-- Esempio REST v1 -->
         <porta-delegata nome="RestExample/1/test" autenticazione="none" autorizzazione="none"
@@ -55,6 +61,12 @@
             <soggetto-erogatore tipo="as4" nome="Blue"/>
             <servizio tipo="as4" nome="RestExample" versione="1"/>
             <azione nome="testJson"/>
+        </porta-delegata>
+	<porta-delegata nome="RestExample/1/testRequestPushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="1"/>
+            <azione nome="testRequestPushAndPush"/>
         </porta-delegata>
 
 	<!-- Esempio REST v2 -->
@@ -88,6 +100,67 @@
             <servizio tipo="as4" nome="RestExample" versione="2"/>
             <azione nome="testDemoPropertySet"/>
         </porta-delegata>
+        <porta-delegata nome="RestExample/2/testRequestPushAndPush" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="as4" nome="Blue"/>
+            <servizio tipo="as4" nome="RestExample" versione="2"/>
+            <azione nome="testtestRequestPushAndPush"/>
+        </porta-delegata>
+
+
+	<!-- Esempio SOAP -->
+        <porta-applicativa nome="SoapExampleForResponse/1/testResponsePushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="SoapExampleForResponse" versione="1"/>
+            <azione nome="testResponsePushAndPush"/>
+            <servizio-applicativo nome="SoapExampleForResponse/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Blue"/>
+	    </soggetti>
+        </porta-applicativa>
+
+        <!-- Esempio REST v1 -->
+        <porta-applicativa nome="RestExampleForResponse/1/testResponsePushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExampleForResponse" versione="1"/>
+            <azione nome="testResponsePushAndPush"/>
+            <servizio-applicativo nome="RestExampleForResponse/1"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Blue"/>
+	    </soggetti>
+        </porta-applicativa>
+
+        <!-- Esempio REST v2 -->
+        <porta-applicativa nome="RestExampleForResponse/2/testResponsePushAndPush" stateless="abilitato">
+            <servizio tipo="as4" nome="RestExampleForResponse" versione="2"/>
+            <azione nome="testResponsePushAndPush"/>
+            <servizio-applicativo nome="RestExampleForResponse/2"/>
+	    <soggetti>
+		<soggetto tipo="as4" nome="Blue"/>
+	    </soggetti>
+        </porta-applicativa>
+
+
+
+ 	<servizio-applicativo nome="SoapExampleForResponse/1">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+	<servizio-applicativo nome="RestExampleForResponse/1">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
+	<servizio-applicativo nome="RestExampleForResponse/2">
+            <invocazione-servizio>
+                <connettore tipo="http" nome="connettore di test">
+                    <property nome="location" valore="http://localhost:8080/TestService/ping?saveMessageDir=/var/tmp/as4"/>
+                </connettore>
+            </invocazione-servizio>
+        </servizio-applicativo>
          
     </soggetto>
   

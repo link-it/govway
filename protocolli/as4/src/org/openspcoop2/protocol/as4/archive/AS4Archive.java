@@ -92,6 +92,7 @@ public class AS4Archive extends BasicArchive {
 					azione.setProfiloCollaborazione(ProfiloCollaborazione.ONEWAY);
 					
 					boolean found = false;
+					boolean foundBinding = false;
 					for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
 						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
 							if(pp.getValue()==null || "".equals(pp.getValue())) {
@@ -100,11 +101,24 @@ public class AS4Archive extends BasicArchive {
 							found = true;
 							break;
 						}
+						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID.equals(pp.getName())) {
+							if(pp.getValue()==null || "".equals(pp.getValue())) {
+								pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
+							}
+							foundBinding = true;
+							break;
+						}
 					}
 					if(!found) {
 						ProtocolProperty pp = new ProtocolProperty();
 						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
 						pp.setValue(azione.getNome());
+						azione.addProtocolProperty(pp);
+					}
+					if(!foundBinding) {
+						ProtocolProperty pp = new ProtocolProperty();
+						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID);
+						pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
 						azione.addProtocolProperty(pp);
 					}
 				}
@@ -119,6 +133,7 @@ public class AS4Archive extends BasicArchive {
 						azione.setProfiloCollaborazione(ProfiloCollaborazione.ONEWAY);
 						
 						boolean found = false;
+						boolean foundBinding = false;
 						for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
 							if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
 								if(pp.getValue()==null || "".equals(pp.getValue())) {
@@ -127,11 +142,24 @@ public class AS4Archive extends BasicArchive {
 								found = true;
 								break;
 							}
+							if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID.equals(pp.getName())) {
+								if(pp.getValue()==null || "".equals(pp.getValue())) {
+									pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
+								}
+								foundBinding = true;
+								break;
+							}
 						}
 						if(!found) {
 							ProtocolProperty pp = new ProtocolProperty();
 							pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
 							pp.setValue(azione.getNome());
+							azione.addProtocolProperty(pp);
+						}
+						if(!foundBinding) {
+							ProtocolProperty pp = new ProtocolProperty();
+							pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID);
+							pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
 							azione.addProtocolProperty(pp);
 						}
 					}
@@ -142,6 +170,7 @@ public class AS4Archive extends BasicArchive {
 			
 				for (Resource resource : accordoServizioParteComune.getResourceList()) {
 					boolean found = false;
+					boolean foundBinding = false;
 					for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
 						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID.equals(pp.getName())) {
 							if(pp.getValue()==null || "".equals(pp.getValue())) {
@@ -150,11 +179,24 @@ public class AS4Archive extends BasicArchive {
 							found = true;
 							break;
 						}
+						if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID.equals(pp.getName())) {
+							if(pp.getValue()==null || "".equals(pp.getValue())) {
+								pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
+							}
+							foundBinding = true;
+							break;
+						}
 					}
 					if(!found) {
 						ProtocolProperty pp = new ProtocolProperty();
 						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID);
 						pp.setValue(resource.getNome());
+						resource.addProtocolProperty(pp);
+					}
+					if(!foundBinding) {
+						ProtocolProperty pp = new ProtocolProperty();
+						pp.setName(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID);
+						pp.setValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
 						resource.addProtocolProperty(pp);
 					}
 				}

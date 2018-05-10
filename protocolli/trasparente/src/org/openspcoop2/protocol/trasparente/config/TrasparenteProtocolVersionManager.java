@@ -21,7 +21,6 @@
 
 package org.openspcoop2.protocol.trasparente.config;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.config.BasicVersionManager;
@@ -32,6 +31,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.slf4j.Logger;
 
 /**
  * Classe che implementa, in base al protocollo Trasparente, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolVersionManager} 
@@ -76,7 +76,12 @@ public class TrasparenteProtocolVersionManager extends TrasparenteProtocolManage
 	
 	@Override
 	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione){
-		return this.basicVersionManager.getCollaborazione(profiloCollaborazione);
+		return StatoFunzionalitaProtocollo.REGISTRO;
+	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+		return StatoFunzionalitaProtocollo.REGISTRO;
 	}
 	
 	

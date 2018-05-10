@@ -38,8 +38,10 @@ import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Resource;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
@@ -154,6 +156,32 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			}
 			String httpMethod = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_HTTP_METHOD); 
 			
+			String profProtocollo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
+			String filtrodupaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_FILTRO_DUPLICATI);
+			if ((filtrodupaz != null) && filtrodupaz.equals("null")) {
+				filtrodupaz = null;
+			}
+			String confricaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONFERMA_RICEZIONE);
+			if ((confricaz != null) && confricaz.equals("null")) {
+				confricaz = null;
+			}
+			String idcollaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_COLLABORAZIONE);
+			if ((idcollaz != null) && idcollaz.equals("null")) {
+				idcollaz = null;
+			}
+			String idRifRichiestaAz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_ID_RIFERIMENTO_RICHIESTA);
+			if ((idRifRichiestaAz != null) && idRifRichiestaAz.equals("null")) {
+				idRifRichiestaAz = null;
+			}
+			String consordaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONSEGNA_ORDINE);
+			if ((consordaz != null) && consordaz.equals("null")) {
+				consordaz = null;
+			}
+			String scadenzaaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_SCADENZA);
+			if (scadenzaaz == null) {
+				scadenzaaz = "";
+			}
+			
 			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
@@ -207,6 +235,19 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 						ServletUtils.getParameterAggiungi()
 						);
 
+				if (profProtocollo == null) {
+					profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT;
+				}
+
+				// Prende i default stabiliti nell'accordo relativo
+				filtrodupaz = filtrodupaz != null && !"".equals(filtrodupaz) ? filtrodupaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
+				confricaz = confricaz != null && !"".equals(confricaz) ? confricaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
+				idcollaz = idcollaz != null && !"".equals(idcollaz) ? idcollaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+				idRifRichiestaAz = idRifRichiestaAz != null && !"".equals(idRifRichiestaAz) ? idRifRichiestaAz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
+				consordaz = consordaz != null && !"".equals(consordaz) ? consordaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
+				scadenzaaz = scadenzaaz != null && !"".equals(scadenzaaz) ? scadenzaaz : as.getScadenza();
+				
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -216,7 +257,9 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 						this.registryReader, this.configRegistryReader, idRisorsa);
 
 				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr, path,httpMethod, messageType,  as.getStatoPackage(),tipoAccordo,protocollo, 
-						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
+						this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse,
+						profProtocollo, 
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -228,6 +271,10 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_RESOURCES, ForwardParams.ADD());
 			}
 
+			if (profProtocollo == null) {
+				profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT;
+			}
+			
 			boolean isOk = true;
 			
 			// controllo valori method e path
@@ -257,7 +304,8 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			
 			// Controlli sui campi immessi
 			if(isOk){
-				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null);
+				isOk = apcHelper.accordiResourceCheckData(tipoOp, id, nomeRisorsa, nomeRisorsaProposto, pathNormalizzato, httpMethod, messageType, null,null,null,null,
+						profProtocollo, filtrodupaz, confricaz, idcollaz, idRifRichiestaAz, consordaz, scadenzaaz);
 			}
 
 			// Validazione base dei parametri custom 
@@ -308,7 +356,9 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigResource(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, 
 						this.registryReader, this.configRegistryReader, idRisorsa);
 
-				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse);
+				dati = apcHelper.addAccordiResourceToDati(tipoOp, dati, id, null, nomeRisorsa, descr,path,httpMethod, messageType, as.getStatoPackage(),tipoAccordo,protocollo, this.protocolFactory,serviceBinding,messageTypeRequest,messageTypeResponse,
+						profProtocollo, 
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, idRifRichiestaAz, idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -330,6 +380,14 @@ public final class AccordiServizioParteComuneResourcesAdd extends Action {
 			newRes.setMessageType(apcCore.fromMessageMessageType(messageType));
 			newRes.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
 			newRes.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));
+			
+			newRes.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(filtrodupaz)));
+			newRes.setConfermaRicezione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(confricaz)));
+			newRes.setIdCollaborazione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(idcollaz)));
+			newRes.setIdRiferimentoRichiesta(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(idRifRichiestaAz)));
+			newRes.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(consordaz)));
+			newRes.setScadenza(scadenzaaz);
+			newRes.setProfAzione(profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT) ? profProtocollo : CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 		
 			as.addResource(newRes);
 			

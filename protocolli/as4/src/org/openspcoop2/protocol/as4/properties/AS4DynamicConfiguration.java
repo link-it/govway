@@ -557,30 +557,32 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
 		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
 		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
-		filtroAccordi.setNome(null);
-		filtroAccordi.setSoggetto(null);
-		filtroAccordi.setVersione(null);
-		try{
-			idAccordiAzioniList = registryReader.findIdAzioneAccordo(filtroAccordi);
-		}catch(RegistryNotFound notFound) {}
-		catch(Exception e) {
-			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
-		}
-		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
-			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
-					if(bfExc.length()>0) {
-						bfExc.append(",");
-					}
-					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
-				}
-			}
-			if(bfExc.length()>0) {
-				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
-						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
-			}
-		}
+//		filtroAccordi.setNome(null);
+//		filtroAccordi.setSoggetto(null);
+//		filtroAccordi.setVersione(null);
+//		try{
+//			idAccordiAzioniList = registryReader.findIdAzioneAccordo(filtroAccordi);
+//		}catch(RegistryNotFound notFound) {}
+//		catch(Exception e) {
+//			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+//		}
+//		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+//			StringBuffer bfExc = new StringBuffer();
+//			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
+//				if(id.equals(idAccordoAzione)==false) {
+//					if(bfExc.length()>0) {
+//						bfExc.append(",");
+//					}
+//					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
+//				}
+//			}
+//			if(bfExc.length()>0) {
+//				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+//						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
+//			}
+//		}
+		// FIX: il controllo deve essere globale su tutte le tipologie di accordi (rest/soap) e azioni (azioni,operations,resource)
+		_validateDynamicConfigResource(actionTypeItem, registryReader, id, null, null);
 	}
 	
 	@Override
@@ -631,32 +633,34 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
 		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
 		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
-		filtroAccordi.setNome(null);
-		filtroAccordi.setSoggetto(null);
-		filtroAccordi.setVersione(null);
-		filtroAccordi.setNomePortType(null);
-		try{
-			idAccordiAzioniList = registryReader.findIdAzionePortType(filtroAccordi);
-		}catch(RegistryNotFound notFound) {}
-		catch(Exception e) {
-			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
-		}
-		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
-			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
-					if(bfExc.length()>0) {
-						bfExc.append(",");
-					}
-					bfExc.append("api:"+idAccordoAzione.getIdPortType().getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdPortType().getIdAccordo().getVersione()+
-							" servizio:"+idAccordoAzione.getIdPortType().getNome()+" azione:"+ idAccordoAzione.getNome());
-				}
-			}
-			if(bfExc.length()>0) {
-				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
-						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
-			}
-		}
+//		filtroAccordi.setNome(null);
+//		filtroAccordi.setSoggetto(null);
+//		filtroAccordi.setVersione(null);
+//		filtroAccordi.setNomePortType(null);
+//		try{
+//			idAccordiAzioniList = registryReader.findIdAzionePortType(filtroAccordi);
+//		}catch(RegistryNotFound notFound) {}
+//		catch(Exception e) {
+//			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+//		}
+//		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+//			StringBuffer bfExc = new StringBuffer();
+//			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
+//				if(id.equals(idAccordoAzione)==false) {
+//					if(bfExc.length()>0) {
+//						bfExc.append(",");
+//					}
+//					bfExc.append("api:"+idAccordoAzione.getIdPortType().getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdPortType().getIdAccordo().getVersione()+
+//							" servizio:"+idAccordoAzione.getIdPortType().getNome()+" azione:"+ idAccordoAzione.getNome());
+//				}
+//			}
+//			if(bfExc.length()>0) {
+//				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+//						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
+//			}
+//		}
+		// FIX: il controllo deve essere globale su tutte le tipologie di accordi (rest/soap) e azioni (azioni,operations,resource)
+		_validateDynamicConfigResource(actionTypeItem, registryReader, null, id, null);
 		
 	}
 	
@@ -707,31 +711,33 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
 		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
 		// Nota: Lascio comunque il controllo sopra per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
-		filtroAccordi.setNome(null);
-		filtroAccordi.setSoggetto(null);
-		filtroAccordi.setVersione(null);
-		try{
-			idAccordiAzioniList = registryReader.findIdResourceAccordo(filtroAccordi);
-		}catch(RegistryNotFound notFound) {}
-		catch(Exception e) {
-			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
-		}
-		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
-			for (IDResource idAccordoAzione : idAccordiAzioniList) {
-				if(id.equals(idAccordoAzione)==false) {
-					if(bfExc.length()>0) {
-						bfExc.append(",");
-					}
-					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
-				}
-			}
-			if(bfExc.length()>0) {
-				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
-						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra risorsa: "+bfExc.toString()); // dovrebbe essere uno solo
-			}
-		}
+//		filtroAccordi.setNome(null);
+//		filtroAccordi.setSoggetto(null);
+//		filtroAccordi.setVersione(null);
+//		try{
+//			idAccordiAzioniList = registryReader.findIdResourceAccordo(filtroAccordi);
+//		}catch(RegistryNotFound notFound) {}
+//		catch(Exception e) {
+//			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
+//		}
+//		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+//			StringBuffer bfExc = new StringBuffer();
+//			for (IDResource idAccordoAzione : idAccordiAzioniList) {
+//				if(id.equals(idAccordoAzione)==false) {
+//					if(bfExc.length()>0) {
+//						bfExc.append(",");
+//					}
+//					bfExc.append("api:"+idAccordoAzione.getIdAccordo().getNome()+" versione:"+ idAccordoAzione.getIdAccordo().getVersione()+" azione:"+ idAccordoAzione.getNome());
+//				}
+//			}
+//			if(bfExc.length()>0) {
+//				throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+//						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra risorsa: "+bfExc.toString()); // dovrebbe essere uno solo
+//			}
+//		}
 		
+		// FIX: il controllo deve essere globale su tutte le tipologie di accordi (rest/soap) e azioni (azioni,operations,resource)
+		_validateDynamicConfigResource(actionTypeItem, registryReader, null, null, id);
 	}
 	
 	private ConsoleConfiguration _getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
@@ -766,6 +772,18 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 						AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID_LABEL);
 		actionTypeItem.setRequired(true);
 		configuration.addConsoleItem(actionTypeItem);
+		
+		StringConsoleItem actionBindingItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_ID, 
+				AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_LABEL);
+		actionBindingItem.addLabelValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_LABEL,
+				AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_VALUE);
+		actionBindingItem.addLabelValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_AND_PUSH_LABEL,
+				AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_AND_PUSH_VALUE);
+		actionBindingItem.setDefaultValue(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_DEFAULT_VALUE);
+		configuration.addConsoleItem(actionBindingItem);
 		
 		
 		
@@ -882,6 +900,90 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		return configuration;
 	}
 	
+
+	public void _validateDynamicConfigResource(StringProperty actionTypeItem,
+			IRegistryReader registryReader, 
+			IDAccordoAzione idAccordoAzione, IDPortTypeAzione idPTOperation, IDResource idResource) throws ProtocolException{
+		
+		
+		
+		// FIX: Domibus utilizza i nomi delle azioni globalmente, quindi non possono essere utilizzati due nomi uguali su due accordi differenti.
+		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
+		// Nota: Lascio comunque il controllo nel singolo tipo per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
+
+		StringBuffer bfExc = new StringBuffer();
+		
+		List<IDAccordoAzione> idAccordiAzioniList = null;
+		FiltroRicercaAccordoAzioni filtroAccordi = new FiltroRicercaAccordoAzioni();
+		filtroAccordi.setProtocolPropertiesAzione(new ProtocolProperties());
+		filtroAccordi.getProtocolPropertiesAzione().addProperty(actionTypeItem);
+		try{
+			idAccordiAzioniList = registryReader.findIdAzioneAccordo(filtroAccordi);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
+			for (IDAccordoAzione id : idAccordiAzioniList) {
+				if(idAccordoAzione == null || (idAccordoAzione.equals(id)==false)) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+id.getIdAccordo().getNome()+" versione:"+ id.getIdAccordo().getVersione()+" azione:"+ id.getNome());
+				}
+			}
+		}
+		
+		List<IDPortTypeAzione> idAccordiPTOperationsList = null;
+		FiltroRicercaPortTypeAzioni filtroOperations = new FiltroRicercaPortTypeAzioni();
+		filtroOperations.setProtocolPropertiesAzione(new ProtocolProperties());
+		filtroOperations.getProtocolPropertiesAzione().addProperty(actionTypeItem);
+		try{
+			idAccordiPTOperationsList = registryReader.findIdAzionePortType(filtroOperations);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiPTOperationsList!=null && idAccordiPTOperationsList.size()>0) {
+			for (IDPortTypeAzione id : idAccordiPTOperationsList) {
+				if(idPTOperation == null || (idPTOperation.equals(id)==false)) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+id.getIdPortType().getIdAccordo().getNome()+" versione:"+ id.getIdPortType().getIdAccordo().getVersione()+
+							" servizio:"+ id.getIdPortType().getNome()+
+							" azione:"+ id.getNome());
+				}
+			}
+		}
+		
+		
+		List<IDResource> idAccordiResourceList = null;
+		FiltroRicercaRisorse filtroResource = new FiltroRicercaRisorse();
+		filtroResource.setProtocolPropertiesRisorsa(new ProtocolProperties());
+		filtroResource.getProtocolPropertiesRisorsa().addProperty(actionTypeItem);
+		try{
+			idAccordiResourceList = registryReader.findIdResourceAccordo(filtroResource);
+		}catch(RegistryNotFound notFound) {}
+		catch(Exception e) {
+			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
+		}
+		if(idAccordiResourceList!=null && idAccordiResourceList.size()>0) {
+			for (IDResource id : idAccordiResourceList) {
+				if(idResource == null || (idResource.equals(id)==false)) {
+					if(bfExc.length()>0) {
+						bfExc.append(",");
+					}
+					bfExc.append("api:"+id.getIdAccordo().getNome()+" versione:"+ id.getIdAccordo().getVersione()+" risorsa:"+ id.getNome());
+				}
+			}
+		}
+		
+		if(bfExc.length()>0) {
+			throw new ProtocolException("'"+actionTypeItem.getValue()+"', indicato nel parametro '"+
+					AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_ID+"', già utilizzato in un'altra azione: "+bfExc.toString()); // dovrebbe essere uno solo
+		}
+	}
 	
 
 

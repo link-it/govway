@@ -334,6 +334,19 @@ public class Imbustamento extends GenericLib{
 				break;
 			}
 			
+			boolean idRiferimentoMessaggioRichiesta = false;
+			switch (protocolManager.getIdRiferimentoRichiesta(infoServizio.getProfiloDiCollaborazione())) {
+			case ABILITATA:
+				idRiferimentoMessaggioRichiesta = true;
+				break;
+			case DISABILITATA:
+				idRiferimentoMessaggioRichiesta = false;
+				break;
+			default:
+				idRiferimentoMessaggioRichiesta = this.propertiesReader.isGestioneElementoIdRiferimentoRichiesta(implementazionePdDDestinatario) && infoServizio.getIdRiferimentoRichiesta();
+				break;
+			}
+			
 			boolean consegnaInOrdine = false;
 			switch (protocolManager.getConsegnaInOrdine(infoServizio.getProfiloDiCollaborazione())) {
 			case ABILITATA:
@@ -392,6 +405,11 @@ public class Imbustamento extends GenericLib{
 				if(idCollaborazione){
 					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.COLLABORAZIONE)==false){
 						throw new Exception(FunzionalitaProtocollo.COLLABORAZIONE.getEngineValue());
+					}
+				}
+				if(idRiferimentoMessaggioRichiesta){
+					if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)==false){
+						throw new Exception(FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA.getEngineValue());
 					}
 				}
 				if(consegnaInOrdine){
@@ -533,6 +551,12 @@ public class Imbustamento extends GenericLib{
 					else
 						busta.setCollaborazione(idMessageRequest);
 				}
+				
+				// RiferimentoMessaggio
+				if( idRiferimentoMessaggioRichiesta ){
+					if(imbustamentoMsg.getIdRiferimentoMessaggio()!=null)
+						busta.setRiferimentoMessaggio(imbustamentoMsg.getIdRiferimentoMessaggio());
+				}
 
 				if(gestioneConsegnaInOrdineAbilitata && infoServizio.getOrdineConsegna()){
 					if(oneWayVersione11 || openspcoopstate instanceof OpenSPCoopStateful){
@@ -590,6 +614,12 @@ public class Imbustamento extends GenericLib{
 						busta.setCollaborazione(imbustamentoMsg.getIdCollaborazione());
 					else
 						busta.setCollaborazione(idMessageRequest);
+				}
+				
+				// RiferimentoMessaggio
+				if( idRiferimentoMessaggioRichiesta ){
+					if(imbustamentoMsg.getIdRiferimentoMessaggio()!=null)
+						busta.setRiferimentoMessaggio(imbustamentoMsg.getIdRiferimentoMessaggio());
 				}
 
 			}else if(infoServizio.getProfiloDiCollaborazione().equals(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)) {	

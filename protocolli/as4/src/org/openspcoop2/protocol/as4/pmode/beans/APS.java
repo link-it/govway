@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.as4.pmode.beans;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.as4.constants.AS4ConsoleCostanti;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 
 /**
@@ -48,8 +50,30 @@ public class APS {
 	private String ebmsSecurityProfile;
 	private Boolean ebmsReliabilityNonRepudiation;
 	private String ebmsReliabilityReplyPattern;
+	private String ebmsBinding; // viene inizializzato una volta raccolte le azioni con stesso binding
+	private String ebmsMep; // viene inizializzato una volta raccolte le azioni con stesso binding
 	private String id;
 	private List<String> cnFruitori = new ArrayList<String>();
+	
+	private APS() {} // per clone
+	@Override
+	public APS clone() {
+		APS aps = new APS();
+		aps.base = this.base;
+		aps.azioni = new HashMap<>();
+		Iterator<String> itAz = this.azioni.keySet().iterator();
+		while (itAz.hasNext()) {
+			String key = (String) itAz.next();
+			aps.azioni.put(key, this.azioni.get(key));
+		}
+		aps.api = this.api;
+		aps.ebmsSecurityProfile = this.ebmsSecurityProfile;
+		aps.ebmsReliabilityNonRepudiation = this.ebmsReliabilityNonRepudiation;
+		aps.ebmsReliabilityReplyPattern = this.ebmsReliabilityReplyPattern;
+		aps.id = this.id;
+		aps.cnFruitori = this.cnFruitori;
+		return aps;
+	}
 	
 	public APS(AccordoServizioParteSpecifica base, API api, Index index, String id) throws Exception {
 		this.base = base;
@@ -79,8 +103,20 @@ public class APS {
 		if(this.ebmsReliabilityReplyPattern == null)
 			throw new Exception("Property "+AS4Costanti.AS4_PROTOCOL_PROPERTIES_RELIABILITY_REPLY_PATTERN+" non definita per l'aps ["+base.getNome()+"] erogato dal soggetto ["+base.getNomeSoggettoErogatore()+"]");
 		
+		Map<String, Azione> azioniAPI = null;
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(api.getBase().getServiceBinding())){
+			azioniAPI = api.getActions();
+		}
+		else {
+			if(base.getPortType()==null) {
+				azioniAPI = api.getActionsWithoutPortType();
+			}
+			else {
+				azioniAPI = api.getActions(base.getPortType());
+			}
+		}
 		this.azioni = new HashMap<>();
-		for(Azione azione: api.getActions().values()) {
+		for(Azione azione: azioniAPI.values()) {
 			this.azioni.put("Leg_" + index.getNextLegId(), azione);
 		}
 	}
@@ -126,6 +162,27 @@ public class APS {
 	public void setId(String id) {
 		this.id = id;
 	}
+	public String getEbmsBinding() {
+		return this.ebmsBinding;
+	}
+	public void setEbmsBinding(String ebmsBinding) {
+		this.ebmsBinding = ebmsBinding;
+		if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_VALUE.equals(ebmsBinding)) {
+			this.ebmsMep = AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_VALUE_MEP; 
+		}
+		else if(AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_AND_PUSH_VALUE.equals(ebmsBinding)) {
+			this.ebmsMep = AS4ConsoleCostanti.AS4_AZIONE_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING_PUSH_AND_PUSH_VALUE_MEP; 
+		}
+		else {
+			throw new RuntimeException("Binding ["+ebmsBinding+"] unsupported");
+		}
+	}
+	public String getEbmsMep() {
+		return this.ebmsMep;
+	}
+	public void setEbmsMep(String ebmsMep) {
+		this.ebmsMep = ebmsMep;
+	}
 	
 	public List<String> getCnFruitori() {
 		return this.cnFruitori;
@@ -162,4 +219,5 @@ public class APS {
 			throw new Exception("Non sono stati definiti soggetto autorizzati a fruire del servizio "+IDServizioFactory.getInstance().getUriFromAccordo(this.base));
 		}
 	}
+	
 }

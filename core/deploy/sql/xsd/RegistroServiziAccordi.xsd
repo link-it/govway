@@ -406,6 +406,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="id_riferimento_richiesta" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_riferimento_richiesta"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'id riferimento richiesta', che si occupa di correlare tra di loro differenti transazioni oneway, è abilitata per default sul servizio (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="consegna_in_ordine" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -621,6 +632,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="id_riferimento_richiesta" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_riferimento_richiesta"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'id riferimento richiesta', che si occupa di correlare tra di loro differenti transazioni oneway, è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="consegna_in_ordine" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -771,6 +793,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_riferimento_richiesta" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_riferimento_richiesta"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'id riferimento richiesta', che si occupa di correlare tra di loro differenti transazioni oneway, è abilitata per il servizio, se la colonna 'profilo_pt' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -934,6 +967,17 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_collaborazione"/>
                                 <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_riferimento_richiesta" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_riferimento_richiesta"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'id riferimento richiesta', che si occupa di correlare tra di loro differenti transazioni oneway, è abilitata per l'azione del servizio, se la colonna 'profilo_pt_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1314,6 +1358,84 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
 - mimeMultipart: il messaggio viene processato secondo la specifica MIME
 - binary: il messaggio viene gestito come flusso binario senza entrare nel merito della struttura
 ]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="filtro_duplicati" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="filtro_duplicati"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Filtro dei Duplicati' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="conferma_ricezione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="conferma_ricezione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Conferma Ricezione (Riscontri)' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="identificativo_collaborazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="identificativo_collaborazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Collaborazione', che si occupa di correlare tra di loro differenti transazioni, è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_riferimento_richiesta" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_riferimento_richiesta"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'id riferimento richiesta', che si occupa di correlare tra di loro differenti transazioni oneway, è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="consegna_in_ordine" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="consegna_in_ordine"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Consegna in Ordine' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="scadenza" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scadenza"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la funzionalità 'Scadenza' è abilitata per l'azione, se la colonna 'profilo_azione' assume il valore 'ridefinito', ed in tal caso la colonna contiene il numero di minuti dopo il quale un messaggio risulta scaduto</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="profilo_azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="profilo_azione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se le funzionalità di protocollo (FiltroDuplicati,ConfermaRicezione,Collaborazione,ConsegnaOrdine,Scadenza) sono ereditate dall'impostazione attuate sull'accordo o vengono ridefinite (ridefinito/default)</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[ridefinito/default]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

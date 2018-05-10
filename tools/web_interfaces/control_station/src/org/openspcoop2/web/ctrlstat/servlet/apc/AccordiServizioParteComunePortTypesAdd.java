@@ -153,6 +153,10 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			if ((idcollpt != null) && idcollpt.equals("null")) {
 				idcollpt = null;
 			}
+			String idRifRichiestaPt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_ID_RIFERIMENTO_RICHIESTA);
+			if ((idRifRichiestaPt != null) && idRifRichiestaPt.equals("null")) {
+				idRifRichiestaPt = null;
+			}
 			String consordpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
 			if ((consordpt != null) && consordpt.equals("null")) {
 				consordpt = null;
@@ -222,6 +226,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 				filtroduppt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
 				confricpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
 				idcollpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+				idRifRichiestaPt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
 				consordpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 				scadenzapt = as.getScadenza();
 				profcollpt = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
@@ -235,7 +240,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 						this.registryReader, this.configRegistryReader, idPt);
 
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
-						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 
+						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, idRifRichiestaPt, idRifRichiestaPt, consordpt, consordpt, scadenzapt, scadenzapt, 
 						tipoOp, profcollpt, profcollpt, "", as.getStatoPackage(),tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()),
 						this.protocolFactory, messageType);
 
@@ -250,7 +255,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiPorttypeCheckData(tipoOp, id, nomept, profProtocollo, filtroduppt, confricpt, idcollpt, consordpt, scadenzapt);
+			boolean isOk = apcHelper.accordiPorttypeCheckData(tipoOp, id, nomept, profProtocollo, filtroduppt, confricpt, idcollpt, idRifRichiestaPt, consordpt, scadenzapt);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -301,7 +306,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 						this.registryReader, this.configRegistryReader, idPt);
 
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, 
-						profProtocollo, filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 
+						profProtocollo, filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, idRifRichiestaPt, idRifRichiestaPt, consordpt, consordpt, scadenzapt, scadenzapt, 
 						tipoOp, profcollpt, profcollpt, descr, as.getStatoPackage(),tipoAccordo,protocollo,servizioStyle,apcCore.toMessageServiceBinding(as.getServiceBinding()),
 						this.protocolFactory, messageType);
 
@@ -320,6 +325,7 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 			// filtroduppt = null;
 			// confricpt = null;
 			// idcollpt = null;
+			// idRifRichiestaPt = null;
 			// consordpt = null;
 			// scadenzapt = null;
 			// } else {
@@ -337,6 +343,11 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 				idcollpt = CostantiRegistroServizi.ABILITATO.toString();
 			} else {
 				idcollpt = CostantiRegistroServizi.DISABILITATO.toString();
+			}
+			if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt)){
+				idRifRichiestaPt = CostantiRegistroServizi.ABILITATO.toString();
+			} else {
+				idRifRichiestaPt = CostantiRegistroServizi.DISABILITATO.toString();
 			}
 			if(ServletUtils.isCheckBoxEnabled(consordpt)){
 				consordpt = CostantiRegistroServizi.ABILITATO.toString();
@@ -363,6 +374,11 @@ public final class AccordiServizioParteComunePortTypesAdd extends Action {
 				newPT.setIdCollaborazione(CostantiRegistroServizi.ABILITATO);
 			} else {
 				newPT.setIdCollaborazione(CostantiRegistroServizi.DISABILITATO);
+			}
+			if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt)){
+				newPT.setIdRiferimentoRichiesta(CostantiRegistroServizi.ABILITATO);
+			} else {
+				newPT.setIdRiferimentoRichiesta(CostantiRegistroServizi.DISABILITATO);
 			}
 			if(ServletUtils.isCheckBoxEnabled(consordpt)){
 				newPT.setConsegnaInOrdine(CostantiRegistroServizi.ABILITATO);

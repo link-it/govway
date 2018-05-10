@@ -23,6 +23,8 @@
 package org.openspcoop2.protocol.as4.pmode.beans;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -151,6 +153,10 @@ public class Soggetto  {
 	}
 	
 	public List<APS> getAps(String nomeSoggettoOperativo) {
+		return this.getAps(nomeSoggettoOperativo, false);
+	}
+	
+	public List<APS> getAps(String nomeSoggettoOperativo, boolean splitByBinding) {
 		// filtro su utilizzo del soggetto o come erogatore o come fruitore
 		List<APS> listFiltrato = new ArrayList<>();
 		for (APS apsCheck : this.aps) {
@@ -163,7 +169,37 @@ public class Soggetto  {
 				listFiltrato.add(apsCheck); // fruitore
 			}
 		}
-		return listFiltrato;
+		
+		if(splitByBinding) {
+			
+			List<APS> listFiltrato_byBinding = new ArrayList<>();
+			for (APS apsCheck : listFiltrato) {
+				HashMap<String, APS> mapByBinding = new HashMap<>();
+				Iterator<String> itAz = apsCheck.getAzioni().keySet().iterator();
+				while (itAz.hasNext()) {
+					String key = (String) itAz.next();
+					Azione azione = apsCheck.getAzioni().get(key);
+					String binding = azione.getEbmsUserMessageCollaborationInfoActionBinding();
+					APS aps = null; 
+					if(mapByBinding.containsKey(binding)) {
+						aps = mapByBinding.remove(binding);
+					}
+					else {
+						aps = apsCheck.clone();
+						aps.setId(aps.getId()+"_"+binding);
+						aps.setEbmsBinding(binding);
+						aps.getAzioni().clear();
+					}
+					aps.getAzioni().put(key, azione);
+					mapByBinding.put(binding, aps);
+				}
+				listFiltrato_byBinding.addAll(mapByBinding.values());
+			}
+			return listFiltrato_byBinding;
+		}
+		else {
+			return listFiltrato;
+		}
 	}
 
 	public void setAps(List<APS> aps) {

@@ -375,8 +375,7 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 		Functionality funzionalita = null;
 		if(ServiceBinding.REST.equals(serviceBinding)) {
 			if(this.bindingManifest.getRest()!=null) {
-				// non supportato ancora
-				//funzionalita = this.bindingManifest.getRest().getFunctionality();
+				funzionalita = this.bindingManifest.getRest().getFunctionality();
 			}
 		}
 		else {
@@ -391,6 +390,8 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 			return (funzionalita!=null ? funzionalita.isAcknowledgement() : false); 
 		case COLLABORAZIONE:		
 			return (funzionalita!=null ? funzionalita.isConversationIdentifier() : false); 
+		case RIFERIMENTO_ID_RICHIESTA:		
+			return (funzionalita!=null ? funzionalita.isReferenceToRequestIdentifier() : false); 
 		case CONSEGNA_IN_ORDINE:		
 			return (funzionalita!=null ? funzionalita.isDeliveryOrder() : false); 
 		case SCADENZA:		
@@ -400,6 +401,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 		default:
 			throw new ProtocolException("Param ["+funzionalitaProtocollo.getEngineValue()+"] not supported");
 		}
+	}
+	
+	@Override
+	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+		return false;
 	}
 	
 	@Override

@@ -43,6 +43,7 @@ public class FunctionalityModel extends AbstractModel<Functionality> {
 		this.DUPLICATE_FILTER = new Field("duplicateFilter",boolean.class,"Functionality",Functionality.class);
 		this.ACKNOWLEDGEMENT = new Field("acknowledgement",boolean.class,"Functionality",Functionality.class);
 		this.CONVERSATION_IDENTIFIER = new Field("conversationIdentifier",boolean.class,"Functionality",Functionality.class);
+		this.REFERENCE_TO_REQUEST_IDENTIFIER = new Field("referenceToRequestIdentifier",boolean.class,"Functionality",Functionality.class);
 		this.DELIVERY_ORDER = new Field("deliveryOrder",boolean.class,"Functionality",Functionality.class);
 		this.EXPIRATION = new Field("expiration",boolean.class,"Functionality",Functionality.class);
 		this.MANIFEST_ATTACHMENTS = new Field("manifestAttachments",boolean.class,"Functionality",Functionality.class);
@@ -56,6 +57,7 @@ public class FunctionalityModel extends AbstractModel<Functionality> {
 		this.DUPLICATE_FILTER = new ComplexField(father,"duplicateFilter",boolean.class,"Functionality",Functionality.class);
 		this.ACKNOWLEDGEMENT = new ComplexField(father,"acknowledgement",boolean.class,"Functionality",Functionality.class);
 		this.CONVERSATION_IDENTIFIER = new ComplexField(father,"conversationIdentifier",boolean.class,"Functionality",Functionality.class);
+		this.REFERENCE_TO_REQUEST_IDENTIFIER = new ComplexField(father,"referenceToRequestIdentifier",boolean.class,"Functionality",Functionality.class);
 		this.DELIVERY_ORDER = new ComplexField(father,"deliveryOrder",boolean.class,"Functionality",Functionality.class);
 		this.EXPIRATION = new ComplexField(father,"expiration",boolean.class,"Functionality",Functionality.class);
 		this.MANIFEST_ATTACHMENTS = new ComplexField(father,"manifestAttachments",boolean.class,"Functionality",Functionality.class);
@@ -69,6 +71,8 @@ public class FunctionalityModel extends AbstractModel<Functionality> {
 	public IField ACKNOWLEDGEMENT = null;
 	 
 	public IField CONVERSATION_IDENTIFIER = null;
+	 
+	public IField REFERENCE_TO_REQUEST_IDENTIFIER = null;
 	 
 	public IField DELIVERY_ORDER = null;
 	 

@@ -46,6 +46,7 @@ public class Azione {
 	
 	private String id;
 	private String ebmsUserMessageCollaborationInfoActionName;
+	private String ebmsUserMessageCollaborationInfoActionBinding;
 	private String ebmsActionPayloadProfile;
 	private Boolean ebmsActionCompressPayload;
 	private String ebmsActionPropertySet;
@@ -78,6 +79,9 @@ public class Azione {
 		for(ProtocolProperty prop: list) {
 			if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION)) {
 				this.ebmsUserMessageCollaborationInfoActionName = prop.getValue();
+			}
+			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING)) {
+				this.ebmsUserMessageCollaborationInfoActionBinding = prop.getValue();
 			}
 			else if(prop.getName().equals(AS4Costanti.AS4_PROTOCOL_PROPERTIES_ACTION_PAYLOAD_PROFILE)) {
 				
@@ -148,6 +152,10 @@ public class Azione {
 		if(this.ebmsUserMessageCollaborationInfoActionName == null)
 			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION+"] non definita per l'azione ["+nomeAzione+"]");
 		
+		if(this.ebmsUserMessageCollaborationInfoActionBinding == null) {
+			throw new Exception("Property ["+AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION_BINDING+"] non definita per l'azione ["+nomeAzione+"]");
+		}
+		
 		if(this.ebmsActionPayloadProfile == null) {
 			this.ebmsActionPayloadProfile = listPayloadProfileDefault.get(0).getName();
 		}
@@ -172,6 +180,12 @@ public class Azione {
 	}
 	public void setEbmsUserMessageCollaborationInfoActionName(String ebmsUserMessageCollaborationInfoActionName) {
 		this.ebmsUserMessageCollaborationInfoActionName = ebmsUserMessageCollaborationInfoActionName;
+	}
+	public String getEbmsUserMessageCollaborationInfoActionBinding() {
+		return this.ebmsUserMessageCollaborationInfoActionBinding;
+	}
+	public void setEbmsUserMessageCollaborationInfoActionBinding(String ebmsUserMessageCollaborationInfoActionBinding) {
+		this.ebmsUserMessageCollaborationInfoActionBinding = ebmsUserMessageCollaborationInfoActionBinding;
 	}
 	public Operation getBaseOperation() {
 		return this.baseOperation;

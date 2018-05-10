@@ -76,6 +76,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 
 	public AS4ValidazioneSintattica(IProtocolFactory<SOAPElement> factory, IState state) throws ProtocolException {
 		super(factory,state);
+		this.validazioneUtils = new AS4ValidazioneUtils(factory);
 	}
 	
 	/** ValidazioneUtils */
@@ -196,6 +197,12 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state);
 		
 		
+		// Inserisco proprieta' tutte subito per tracciamento
+		if(userMessage!=null) {
+			_fillBusta(userMessage, busta);
+		}
+		
+		
 		// mittente/destinatario
 		if(userMessage.getPartyInfo()==null) {
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.INTESTAZIONE_NON_CORRETTA, 
@@ -258,8 +265,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		IDSoggetto idMittente = list.get(0);
 		busta.setTipoMittente(idMittente.getTipo());
 		busta.setMittente(idMittente.getNome());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_BASE, from.getBase());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_TYPE, from.getType());
 		
 		
 		// destinatario
@@ -316,8 +321,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		IDSoggetto idDestinatario = list.get(0);
 		busta.setTipoDestinatario(idDestinatario.getTipo());
 		busta.setDestinatario(idDestinatario.getNome());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE, to.getBase());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_TYPE, to.getType());
 		
 		
 		// servizio/azione/conversationId
@@ -346,7 +349,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 //			return;
 		}
 		FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
-		filtroAccordi.setSoggetto(idDestinatario);
+		//filtroAccordi.setSoggetto(idDestinatario); // Non e' detto che il soggetto destinatario sia anche il referente!
 		filtroAccordi.setProtocolProperties(new ProtocolProperties());
 		filtroAccordi.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE,
 				userMessage.getCollaborationInfo().getService().getBase());
@@ -393,8 +396,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		IDServizio idServizio = listServizi.get(0);
 		busta.setTipoServizio(idServizio.getTipo());
 		busta.setServizio(idServizio.getNome());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE, userMessage.getCollaborationInfo().getService().getBase());
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE, userMessage.getCollaborationInfo().getService().getType());
 		
 		
 		// azione
@@ -453,7 +454,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					"CollaborationInfo/Action"));
 			return;
 		}
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION, as4Action);
 		
 		
 		// conversationId
@@ -464,7 +464,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			return;
 		}
 		busta.setCollaborazione(as4ConversationId);
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID, as4ConversationId);
 		
 		
 		// messageId/RefToMessageId
@@ -484,23 +483,14 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			return;
 		}
 		busta.setID(as4MessageId);
-		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, as4MessageId);
 		
 		// RefToMessageId
 		
 		String as4RefToMessageId = userMessage.getMessageInfo().getRefToMessageId();
 		if(as4RefToMessageId!=null) {
-			busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID, as4RefToMessageId);
+			busta.setRiferimentoMessaggio(as4RefToMessageId);
 		}
-		
-		
-		// Message Property
-		if(userMessage.getMessageProperties()!=null && userMessage.getMessageProperties().sizePropertyList()>0) {
-			for (Property p : userMessage.getMessageProperties().getPropertyList()) {
-				busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+p.getName(), p.getBase());
-			}
-		}
-		
+				
 		
 		// Payload
 		if(userMessage.getPayloadInfo()==null || userMessage.getPayloadInfo().sizePartInfoList()<=0) {
@@ -541,6 +531,42 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		}
 	}
 	
+	private void _fillBusta(UserMessage userMessage, Busta busta) {
+		// Inserisco proprieta' tutte subito per tracciamento
+		if(userMessage!=null) {
+			if(userMessage.getPartyInfo()!=null) {
+				if(userMessage.getPartyInfo().getFrom()!=null) {
+					PartyId from = userMessage.getPartyInfo().getFrom().getPartyId(0);
+					busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_BASE, from.getBase());
+					busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_TYPE, from.getType());
+				}
+				if(userMessage.getPartyInfo().getTo()!=null) {
+					PartyId to = userMessage.getPartyInfo().getTo().getPartyId(0);
+					busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE, to.getBase());
+					busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_TYPE, to.getType());
+				}
+			}
+			if(userMessage.getCollaborationInfo()!=null) {
+				if(userMessage.getCollaborationInfo().getService()!=null) {
+					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE, userMessage.getCollaborationInfo().getService().getBase());
+					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE, userMessage.getCollaborationInfo().getService().getType());
+				}
+				busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION, userMessage.getCollaborationInfo().getAction());
+				busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID, userMessage.getCollaborationInfo().getConversationId());
+			}
+			if(userMessage.getMessageInfo()!=null) {
+				busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, userMessage.getMessageInfo().getMessageId());
+				busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID, userMessage.getMessageInfo().getRefToMessageId());
+			}
+			// Message Property
+			if(userMessage.getMessageProperties()!=null && userMessage.getMessageProperties().sizePropertyList()>0) {
+				for (Property p : userMessage.getMessageProperties().getPropertyList()) {
+					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+p.getName(), p.getBase());
+				}
+			}
+		}
+	}
+	
 	@Override
 	public Busta getBusta_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
 		try{
@@ -563,6 +589,11 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			IDSoggetto idMittente = null;
 			IDSoggetto idDestinatario = null;
 			
+			// Inserisco proprieta' tutte subito per tracciamento
+			if(userMessage!=null) {
+				_fillBusta(userMessage, busta);
+			}
+			
 			// mittente/destinatario
 			if(userMessage.getPartyInfo()!=null) {
 				if(userMessage.getPartyInfo().getFrom()!=null) {
@@ -584,8 +615,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 								idMittente = list.get(0);
 								busta.setTipoMittente(idMittente.getTipo());
 								busta.setMittente(idMittente.getNome());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_BASE, from.getBase());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_MITTENTE_PARTY_ID_TYPE, from.getType());
 							}
 						}
 					}
@@ -609,8 +638,6 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 								idDestinatario = list.get(0);
 								busta.setTipoDestinatario(idDestinatario.getTipo());
 								busta.setDestinatario(idDestinatario.getNome());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_BASE, to.getBase());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_DESTINATARIO_PARTY_ID_TYPE, to.getType());
 							}
 						}
 					}
@@ -628,7 +655,7 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 				if(userMessage.getCollaborationInfo().getService()!=null) {
 					if(userMessage.getCollaborationInfo().getService().getBase()!=null ) {
 						FiltroRicercaAccordi filtroAccordi = new FiltroRicercaAccordi();
-						filtroAccordi.setSoggetto(idDestinatario);
+						//filtroAccordi.setSoggetto(idDestinatario); // Non e' detto che il soggetto destinatario sia anche il referente!
 						filtroAccordi.setProtocolProperties(new ProtocolProperties());
 						filtroAccordi.getProtocolProperties().addProperty(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE,
 								userMessage.getCollaborationInfo().getService().getBase());
@@ -661,32 +688,45 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 								busta.setTipoServizio(idServizio.getTipo());
 								busta.setServizio(idServizio.getNome());
 								busta.setVersioneServizio(idServizio.getVersione());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_BASE, userMessage.getCollaborationInfo().getService().getBase());
-								busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_SERVICE_TYPE, userMessage.getCollaborationInfo().getService().getType());
 							}
 						}
 					}
 				}
 				if(userMessage.getCollaborationInfo().getAction()!=null) {
 					String as4Action = userMessage.getCollaborationInfo().getAction();
-					if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-						for (Resource resource : aspc.getResourceList()) {
-							if(resource.sizeProtocolPropertyList()>0) {
-								for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
-									if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(pp.getName()) &&
-											as4Action.equals(pp.getValue())) {
-										busta.setAzione(resource.getNome());
-										break;
+					if(aspc!=null) {
+						if(ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+							for (Resource resource : aspc.getResourceList()) {
+								if(resource.sizeProtocolPropertyList()>0) {
+									for (ProtocolProperty pp : resource.getProtocolPropertyList()) {
+										if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(pp.getName()) &&
+												as4Action.equals(pp.getValue())) {
+											busta.setAzione(resource.getNome());
+											break;
+										}
 									}
 								}
 							}
 						}
-					}
-					else {
-						AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
-						if(asps.getPortType()!=null) {
-							for (PortType pt : aspc.getPortTypeList()) {
-								for (Operation azione : pt.getAzioneList()) {
+						else {
+							AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+							if(asps.getPortType()!=null) {
+								for (PortType pt : aspc.getPortTypeList()) {
+									for (Operation azione : pt.getAzioneList()) {
+										if(azione.sizeProtocolPropertyList()>0) {
+											for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
+												if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(pp.getName()) &&
+														as4Action.equals(pp.getValue())) {
+													busta.setAzione(azione.getNome());
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+							else {
+								for (Azione azione : aspc.getAzioneList()) {
 									if(azione.sizeProtocolPropertyList()>0) {
 										for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
 											if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(pp.getName()) &&
@@ -699,26 +739,11 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 								}
 							}
 						}
-						else {
-							for (Azione azione : aspc.getAzioneList()) {
-								if(azione.sizeProtocolPropertyList()>0) {
-									for (ProtocolProperty pp : azione.getProtocolPropertyList()) {
-										if(AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION.equals(pp.getName()) &&
-												as4Action.equals(pp.getValue())) {
-											busta.setAzione(azione.getNome());
-											break;
-										}
-									}
-								}
-							}
-						}
 					}
-					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION, as4Action);
 				}
 				if(userMessage.getCollaborationInfo().getConversationId()!=null) {
 					String as4ConversationId = userMessage.getCollaborationInfo().getConversationId();
 					busta.setCollaborazione(as4ConversationId);
-					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_CONVERSATION_ID, as4ConversationId);
 				}
 			}
 			
@@ -728,18 +753,10 @@ public class AS4ValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 				if(userMessage.getMessageInfo().getMessageId()!=null) {
 					String as4MessageId = userMessage.getMessageInfo().getMessageId();
 					busta.setID(as4MessageId);
-					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, as4MessageId);
 				}
 				if(userMessage.getMessageInfo().getRefToMessageId()!=null) {
 					String as4RefToMessageId = userMessage.getMessageInfo().getRefToMessageId();
-					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_REF_TO_MESSAGE_ID, as4RefToMessageId);
-				}
-			}
-			
-			// Message Property
-			if(userMessage.getMessageProperties()!=null && userMessage.getMessageProperties().sizePropertyList()>0) {
-				for (Property p : userMessage.getMessageProperties().getPropertyList()) {
-					busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_MESSAGE_PROPERTY_PREFIX+p.getName(), p.getBase());
+					busta.setRiferimentoMessaggio(as4RefToMessageId);
 				}
 			}
 

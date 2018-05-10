@@ -69,6 +69,14 @@ public interface IProtocolVersionManager extends IProtocolManager {
 	 */
 	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione);
 	
+	/**
+	 * Ritorna l'indicazione sulla modalità di gestione che la Porta di Dominio attua per gestire il riferimento di una precedente richiesta
+	 * 
+	 * @param profiloCollaborazione Profilo di Collaborazione (oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico)
+	 * @return Indicazione che la PdS deve intraprendere indicata tramite l'oggetto {link org.openspcoop.engine.modules.StatoFunzionalitaProtocollo}.
+	 */
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione);
+	
 	
 	
 	

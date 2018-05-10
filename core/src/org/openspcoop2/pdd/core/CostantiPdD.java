@@ -513,6 +513,7 @@ public class CostantiPdD {
     public final static String KEY_IDMESSAGGIO_OPERAZIONE_IM = "@ID_MESSAGGIO_OPERAZIONE_IM@";
     /** Costante che indica il tipo di header di integrazione */
     public final static String KEY_TIPO_HEADER_INTEGRAZIONE = "@TIPO_HEADER_INTEGRAZIONE@";
+    public final static String KEY_TIPI_INTEGRAZIONE = "@TIPI_INTEGRAZIONE@";
     /** Costante che indica il tipo di gestore credenziali */
     public final static String KEY_TIPO_GESTORE_CREDENZIALI = "@TIPO_GESTORE_CREDENZIALI@";
     /** Costante che indica le credenziali ottenute via gestore delle credenziali */

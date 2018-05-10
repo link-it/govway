@@ -251,6 +251,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_440_PARSING_EXCEPTION_RISPOSTA(440),
     /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabile,441 */
     CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE(441),
+    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,441 */
+    CODICE_442_RIFERIMENTO_ID_MESSAGGIO(442),
     
     // errori spediti in buste errore
     
@@ -345,6 +347,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 439: return CodiceErroreIntegrazione.CODICE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL;
 				case 440: return CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA;
 				case 441: return CodiceErroreIntegrazione.CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE;
+				case 442: return CodiceErroreIntegrazione.CODICE_442_RIFERIMENTO_ID_MESSAGGIO;
 				case 450: return CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE;
 				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;

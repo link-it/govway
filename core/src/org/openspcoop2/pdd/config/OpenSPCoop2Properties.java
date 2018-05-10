@@ -6310,6 +6310,44 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isGestioneElementoCollaborazione;
 	}
+	
+	private static Boolean isGestioneElementoIdRiferimentoRichiesta = null;
+	public boolean isGestioneElementoIdRiferimentoRichiesta(String implementazionePdDSoggetto){
+
+		// ovverriding per implementazione porta di dominio
+		if(this.pddReader!=null){
+			String tipo = this.pddReader.getBusta_IdRiferimentoRichiestaEnable(implementazionePdDSoggetto);
+			if(tipo!=null && ( 
+					CostantiConfigurazione.TRUE.equalsIgnoreCase(tipo) || 
+					CostantiConfigurazione.FALSE.equalsIgnoreCase(tipo)  ) 
+			){
+				if(CostantiConfigurazione.TRUE.equalsIgnoreCase(tipo))
+					return true;
+				else 
+					return false;
+			}
+		}
+
+		if(OpenSPCoop2Properties.isGestioneElementoIdRiferimentoRichiesta==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.idRiferimentoRichiesta.enable"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isGestioneElementoIdRiferimentoRichiesta = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isGestioneElementoIdRiferimentoRichiesta = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage());
+				OpenSPCoop2Properties.isGestioneElementoIdRiferimentoRichiesta = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isGestioneElementoIdRiferimentoRichiesta;
+	}
 
 	/**
 	 * Indicazione se la funzionalita' di consegna in ordine deve essere gestita

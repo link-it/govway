@@ -24,6 +24,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.config.BasicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
@@ -35,13 +36,28 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
  */
 public class AS4ProtocolConfiguration extends BasicConfiguration {
 
+	private AS4Properties properties = null;
+	
 	public AS4ProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
+		this.properties = AS4Properties.getInstance();
 	}
 	
 	@Override
 	public ServiceBinding getProtocolServiceBinding(ServiceBinding integrationServiceBinding, TransportRequestContext transportRequest) throws ProtocolException{
 		return ServiceBinding.SOAP; // protocol è forzatamente SOAP1.2
+	}
+	
+	@Override
+	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException{
+		
+		if (FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA.equals(funzionalitaProtocollo)){
+			return this.properties.isRiferimentoIDRichiestaRequired();
+		}
+		else {
+			return super.isIntegrationInfoRequired(serviceBinding, funzionalitaProtocollo);
+		}
+		
 	}
 	
 }

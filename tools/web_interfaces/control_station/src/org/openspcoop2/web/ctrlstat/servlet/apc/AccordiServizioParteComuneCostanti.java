@@ -298,6 +298,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_FILTRO_DUPLICATI = "filtrodup";
 	public final static String PARAMETRO_APC_CONFERMA_RICEZIONE = "confric";
 	public final static String PARAMETRO_APC_COLLABORAZIONE = "idcoll";
+	public final static String PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA = "idRifReq";
 	public final static String PARAMETRO_APC_CONSEGNA_ORDINE = "consord";
 	public final static String PARAMETRO_APC_SCADENZA = "scadenza";
 	public final static String PARAMETRO_APC_REFERENTE = "referente";
@@ -325,6 +326,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_AZIONI_FILTRO_DUPLICATI = "filtrodupaz";
 	public final static String PARAMETRO_APC_AZIONI_CONFERMA_RICEZIONE = "confricaz";
 	public final static String PARAMETRO_APC_AZIONI_COLLABORAZIONE = "idcollaz";
+	public final static String PARAMETRO_APC_AZIONI_ID_RIFERIMENTO_RICHIESTA = "idRifReqAz";
 	public final static String PARAMETRO_APC_AZIONI_CONSEGNA_ORDINE = "consordaz";
 	public final static String PARAMETRO_APC_AZIONI_SCADENZA = "scadenzaaz";
 
@@ -335,6 +337,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI = "filtroduppt";
 	public final static String PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE = "confricpt";
 	public final static String PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE = "idcollpt";
+	public final static String PARAMETRO_APC_PORT_TYPES_ID_RIFERIMENTO_RICHIESTA = "idRifReqPt";
 	public final static String PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE = "consordpt";
 	public final static String PARAMETRO_APC_PORT_TYPES_SCADENZA = "scadenzapt";
 	public final static String PARAMETRO_APC_PORT_TYPES_STYLE = "stylept";
@@ -348,6 +351,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_FILTRO_DUPLICATI = "filtrodupop";
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_CONFERMA_RICEZIONE = "confricop";
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_COLLABORAZIONE = "idcollop";
+	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_ID_RIFERIMENTO_RICHIESTA = "idRifReqOp";
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_CONSEGNA_ORDINE = "consordop";
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_SCADENZA = "scadenzaop";
 	public final static String PARAMETRO_APC_PORT_TYPE_OPERATION_USE = "useop";
@@ -446,6 +450,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_FILTRO_DUPLICATI = "Filtro duplicati";
 	public final static String LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE = "Conferma ricezione";
 	public final static String LABEL_PARAMETRO_APC_COLLABORAZIONE = "ID Collaborazione";
+	public final static String LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA = "Riferimento ID Richiesta";
 	public final static String LABEL_PARAMETRO_APC_CONSEGNA_ORDINE = "Consegna in ordine";
 	public final static String LABEL_PARAMETRO_APC_SCADENZA = "Scadenza";
 	public final static String LABEL_PARAMETRO_APC_RIPRISTINA_STATO_OPERATIVO = "Ripristina Stato Operativo";

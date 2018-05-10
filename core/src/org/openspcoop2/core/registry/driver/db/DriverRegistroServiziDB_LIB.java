@@ -3000,35 +3000,39 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("filtro_duplicati", "?");
 				sqlQueryObject.addInsertField("conferma_ricezione", "?");
 				sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
+				sqlQueryObject.addInsertField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addInsertField("consegna_in_ordine", "?");
 				sqlQueryObject.addInsertField("scadenza", "?");
 				sqlQueryObject.addInsertField("profilo_collaborazione", "?");
 				sqlQueryObject.addInsertField("correlata", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
-				updateStmt.setLong(1, idAccordo);
-				updateStmt.setString(2, azione.getNome());
-				updateStmt.setString(3, azione.getProfAzione());
+				int index = 1;
+				updateStmt.setLong(index++, idAccordo);
+				updateStmt.setString(index++, azione.getNome());
+				updateStmt.setString(index++, azione.getProfAzione());
 
 				DriverRegistroServiziDB_LIB.log.debug("Aggiungo azione ["+azione.getNome()+"] con profilo ["+azione.getProfAzione()+"]");
 
 				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(azione.getProfAzione())){
 					DriverRegistroServiziDB_LIB.log.debug("ridefinizione...");
-					updateStmt.setString(4, getValue(azione.getFiltroDuplicati()));
-					updateStmt.setString(5, getValue(azione.getConfermaRicezione()));
-					updateStmt.setString(6, getValue(azione.getIdCollaborazione()));
-					updateStmt.setString(7, getValue(azione.getConsegnaInOrdine()));
-					updateStmt.setString(8, azione.getScadenza());
-					updateStmt.setString(9, getValue(azione.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
+					updateStmt.setString(index++, azione.getScadenza());
+					updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 				}else{
-					updateStmt.setString(4, getValue(as.getFiltroDuplicati()));
-					updateStmt.setString(5, getValue(as.getConfermaRicezione()));
-					updateStmt.setString(6, getValue(as.getIdCollaborazione()));
-					updateStmt.setString(7, getValue(as.getConsegnaInOrdine()));
-					updateStmt.setString(8, as.getScadenza());
-					updateStmt.setString(9, getValue(as.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
+					updateStmt.setString(index++, as.getScadenza());
+					updateStmt.setString(index++, getValue(as.getProfiloCollaborazione()));
 				}
-				updateStmt.setString(10, azione.getCorrelata());
+				updateStmt.setString(index++, azione.getCorrelata());
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione CREATE :\n"+DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idAccordo,azione.getNome(),azione.getProfAzione()));
 				n = updateStmt.executeUpdate();
@@ -3056,6 +3060,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("filtro_duplicati", "?");
 				sqlQueryObject.addUpdateField("conferma_ricezione", "?");
 				sqlQueryObject.addUpdateField("identificativo_collaborazione", "?");
+				sqlQueryObject.addUpdateField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addUpdateField("consegna_in_ordine", "?");
 				sqlQueryObject.addUpdateField("scadenza", "?");
 				sqlQueryObject.addUpdateField("profilo_collaborazione", "?");
@@ -3065,29 +3070,31 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
+				index = 1;
 				updateStmt.setString(1, azione.getProfAzione());
 
-
 				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(azione.getProfAzione())){
-					updateStmt.setString(2, getValue(azione.getFiltroDuplicati()));
-					updateStmt.setString(3, getValue(azione.getConfermaRicezione()));
-					updateStmt.setString(4, getValue(azione.getIdCollaborazione()));
-					updateStmt.setString(5, getValue(azione.getConsegnaInOrdine()));
-					updateStmt.setString(6, azione.getScadenza());
-					updateStmt.setString(7, getValue(azione.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
+					updateStmt.setString(index++, azione.getScadenza());
+					updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 				}else{
-					updateStmt.setString(2, getValue(as.getFiltroDuplicati()));
-					updateStmt.setString(3, getValue(as.getConfermaRicezione()));
-					updateStmt.setString(4, getValue(as.getIdCollaborazione()));
-					updateStmt.setString(5, getValue(as.getConsegnaInOrdine()));
-					updateStmt.setString(6, as.getScadenza());
-					updateStmt.setString(7, getValue(as.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
+					updateStmt.setString(index++, as.getScadenza());
+					updateStmt.setString(index++, getValue(as.getProfiloCollaborazione()));
 				}
 
-				updateStmt.setString(8, azione.getCorrelata());
+				updateStmt.setString(index++, azione.getCorrelata());
 
-				updateStmt.setLong(9, idAccordo);
-				updateStmt.setString(10, azione.getNome());
+				updateStmt.setLong(index++, idAccordo);
+				updateStmt.setString(index++, azione.getNome());
 				n = updateStmt.executeUpdate();
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione type = " + type + " row affected =" + n);
@@ -3178,6 +3185,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("filtro_duplicati", "?");
 				sqlQueryObject.addInsertField("conferma_ricezione", "?");
 				sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
+				sqlQueryObject.addInsertField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addInsertField("consegna_in_ordine", "?");
 				sqlQueryObject.addInsertField("scadenza", "?");
 				sqlQueryObject.addInsertField("profilo_collaborazione", "?");
@@ -3198,6 +3206,7 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt.setString(index++, getValue(pt.getFiltroDuplicati()));
 					updateStmt.setString(index++, getValue(pt.getConfermaRicezione()));
 					updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
 					updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					updateStmt.setString(index++, pt.getScadenza());
 					updateStmt.setString(index++, getValue(pt.getProfiloCollaborazione()));
@@ -3214,6 +3223,10 @@ public class DriverRegistroServiziDB_LIB {
 						updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
 					else
 						updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					if(pt.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
+					else
+						updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
 					if(pt.getConsegnaInOrdine()!=null)
 						updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					else
@@ -3247,6 +3260,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("filtro_duplicati", "?");
 				sqlQueryObject.addUpdateField("conferma_ricezione", "?");
 				sqlQueryObject.addUpdateField("identificativo_collaborazione", "?");
+				sqlQueryObject.addUpdateField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addUpdateField("consegna_in_ordine", "?");
 				sqlQueryObject.addUpdateField("scadenza", "?");
 				sqlQueryObject.addUpdateField("profilo_collaborazione", "?");
@@ -3266,6 +3280,7 @@ public class DriverRegistroServiziDB_LIB {
 					updateStmt.setString(index++, getValue(pt.getFiltroDuplicati()));
 					updateStmt.setString(index++, getValue(pt.getConfermaRicezione()));
 					updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
 					updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					updateStmt.setString(index++, pt.getScadenza());
 					updateStmt.setString(index++, getValue(pt.getProfiloCollaborazione()));
@@ -3282,6 +3297,10 @@ public class DriverRegistroServiziDB_LIB {
 						updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
 					else
 						updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					if(pt.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
+					else
+						updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
 					if(pt.getConsegnaInOrdine()!=null)
 						updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					else
@@ -3428,6 +3447,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("filtro_duplicati", "?");
 				sqlQueryObject.addInsertField("conferma_ricezione", "?");
 				sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
+				sqlQueryObject.addInsertField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addInsertField("consegna_in_ordine", "?");
 				sqlQueryObject.addInsertField("scadenza", "?");
 				sqlQueryObject.addInsertField("profilo_collaborazione", "?");
@@ -3441,82 +3461,91 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("correlata", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
-				updateStmt.setLong(1, idPortType);
-				updateStmt.setString(2, azione.getNome());
-				updateStmt.setString(3, azione.getProfAzione());
+				int index = 1;
+				updateStmt.setLong(index++, idPortType);
+				updateStmt.setString(index++, azione.getNome());
+				updateStmt.setString(index++, azione.getProfAzione());
 
 				DriverRegistroServiziDB_LIB.log.debug("Aggiungo azione ["+azione.getNome()+"] pt ["+pt.getNome()+"] con profilo ["+azione.getProfAzione()+"]");
 
 				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(azione.getProfAzione())){
 					DriverRegistroServiziDB_LIB.log.debug("ridefinizione...");
-					updateStmt.setString(4, getValue(azione.getFiltroDuplicati()));
-					updateStmt.setString(5, getValue(azione.getConfermaRicezione()));
-					updateStmt.setString(6, getValue(azione.getIdCollaborazione()));
-					updateStmt.setString(7, getValue(azione.getConsegnaInOrdine()));
-					updateStmt.setString(8, azione.getScadenza());
-					updateStmt.setString(9, getValue(azione.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
+					updateStmt.setString(index++, azione.getScadenza());
+					updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 				}else{
 					if(azione.getFiltroDuplicati()!=null)
-						updateStmt.setString(4, getValue(azione.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
 					else if(pt.getFiltroDuplicati()!=null)
-						updateStmt.setString(4, getValue(pt.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(pt.getFiltroDuplicati()));
 					else
-						updateStmt.setString(4, getValue(as.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
 
 					if(azione.getConfermaRicezione()!=null)
-						updateStmt.setString(5, getValue(azione.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
 					else if(pt.getConfermaRicezione()!=null)
-						updateStmt.setString(5, getValue(pt.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(pt.getConfermaRicezione()));
 					else
-						updateStmt.setString(5, getValue(as.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
 
 					if(azione.getIdCollaborazione()!=null)
-						updateStmt.setString(6, getValue(azione.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
 					else if(pt.getIdCollaborazione()!=null)
-						updateStmt.setString(6, getValue(pt.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
 					else
-						updateStmt.setString(6, getValue(as.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					
+					if(azione.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					else if(pt.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
+					else
+						updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
 
 					if(azione.getConsegnaInOrdine()!=null)
-						updateStmt.setString(7, getValue(azione.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
 					else if(pt.getConsegnaInOrdine()!=null)
-						updateStmt.setString(7, getValue(pt.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					else
-						updateStmt.setString(7, getValue(as.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
 
 					if(azione.getScadenza()!=null)
-						updateStmt.setString(8, azione.getScadenza());
+						updateStmt.setString(index++, azione.getScadenza());
 					else if(pt.getScadenza()!=null)
-						updateStmt.setString(8, pt.getScadenza());
+						updateStmt.setString(index++, pt.getScadenza());
 					else
-						updateStmt.setString(8, as.getScadenza());
+						updateStmt.setString(index++, as.getScadenza());
 
 					if(azione.getProfiloCollaborazione()!=null)
-						updateStmt.setString(9, getValue(azione.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 					else if(pt.getProfiloCollaborazione()!=null)
-						updateStmt.setString(9, getValue(pt.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(pt.getProfiloCollaborazione()));
 					else
-						updateStmt.setString(9, getValue(as.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(as.getProfiloCollaborazione()));
 				}
-				updateStmt.setString(10, getValue(azione.getStyle()));
-				updateStmt.setString(11, azione.getSoapAction());
+				updateStmt.setString(index++, getValue(azione.getStyle()));
+				updateStmt.setString(index++, azione.getSoapAction());
 				if(azione.getMessageInput()!=null){
-					updateStmt.setString(12, getValue(azione.getMessageInput().getUse()));
-					updateStmt.setString(13, azione.getMessageInput().getSoapNamespace());
+					updateStmt.setString(index++, getValue(azione.getMessageInput().getUse()));
+					updateStmt.setString(index++, azione.getMessageInput().getSoapNamespace());
 				}else{
-					updateStmt.setString(12, null);
-					updateStmt.setString(13, null);
+					updateStmt.setString(index++, null);
+					updateStmt.setString(index++, null);
 				}
 				if(azione.getMessageOutput()!=null){
-					updateStmt.setString(14, getValue(azione.getMessageOutput().getUse()));
-					updateStmt.setString(15, azione.getMessageOutput().getSoapNamespace());
+					updateStmt.setString(index++, getValue(azione.getMessageOutput().getUse()));
+					updateStmt.setString(index++, azione.getMessageOutput().getSoapNamespace());
 				}else{
-					updateStmt.setString(14, null);
-					updateStmt.setString(15, null);
+					updateStmt.setString(index++, null);
+					updateStmt.setString(index++, null);
 				}
 
-				updateStmt.setString(16, azione.getCorrelataServizio());
-				updateStmt.setString(17, azione.getCorrelata());
+				updateStmt.setString(index++, azione.getCorrelataServizio());
+				updateStmt.setString(index++, azione.getCorrelata());
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDPortTypeAzione CREATE :\n"+updateQuery);
 				n = updateStmt.executeUpdate();
@@ -3544,6 +3573,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("filtro_duplicati", "?");
 				sqlQueryObject.addUpdateField("conferma_ricezione", "?");
 				sqlQueryObject.addUpdateField("identificativo_collaborazione", "?");
+				sqlQueryObject.addUpdateField("id_riferimento_richiesta", "?");
 				sqlQueryObject.addUpdateField("consegna_in_ordine", "?");
 				sqlQueryObject.addUpdateField("scadenza", "?");
 				sqlQueryObject.addUpdateField("profilo_collaborazione", "?");
@@ -3560,81 +3590,89 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.setANDLogicOperator(true);
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
+				index = 1;
 				updateStmt.setString(1, azione.getProfAzione());
 
-
 				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(azione.getProfAzione())){
-					updateStmt.setString(2, getValue(azione.getFiltroDuplicati()));
-					updateStmt.setString(3, getValue(azione.getConfermaRicezione()));
-					updateStmt.setString(4, getValue(azione.getIdCollaborazione()));
-					updateStmt.setString(5, getValue(azione.getConsegnaInOrdine()));
-					updateStmt.setString(6, azione.getScadenza());
-					updateStmt.setString(7, getValue(azione.getProfiloCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
+					updateStmt.setString(index++, azione.getScadenza());
+					updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 				}else{
 					if(azione.getFiltroDuplicati()!=null)
-						updateStmt.setString(2, getValue(azione.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(azione.getFiltroDuplicati()));
 					else if(pt.getFiltroDuplicati()!=null)
-						updateStmt.setString(2, getValue(pt.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(pt.getFiltroDuplicati()));
 					else
-						updateStmt.setString(2, getValue(as.getFiltroDuplicati()));
+						updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
 
 					if(azione.getConfermaRicezione()!=null)
-						updateStmt.setString(3, getValue(azione.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(azione.getConfermaRicezione()));
 					else if(pt.getConfermaRicezione()!=null)
-						updateStmt.setString(3, getValue(pt.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(pt.getConfermaRicezione()));
 					else
-						updateStmt.setString(3, getValue(as.getConfermaRicezione()));
+						updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
 
 					if(azione.getIdCollaborazione()!=null)
-						updateStmt.setString(4, getValue(azione.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(azione.getIdCollaborazione()));
 					else if(pt.getIdCollaborazione()!=null)
-						updateStmt.setString(4, getValue(pt.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(pt.getIdCollaborazione()));
 					else
-						updateStmt.setString(4, getValue(as.getIdCollaborazione()));
+						updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					
+					if(azione.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(azione.getIdRiferimentoRichiesta()));
+					else if(pt.getIdRiferimentoRichiesta()!=null)
+						updateStmt.setString(index++, getValue(pt.getIdRiferimentoRichiesta()));
+					else
+						updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
 
 					if(azione.getConsegnaInOrdine()!=null)
-						updateStmt.setString(5, getValue(azione.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(azione.getConsegnaInOrdine()));
 					else if(pt.getConsegnaInOrdine()!=null)
-						updateStmt.setString(5, getValue(pt.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(pt.getConsegnaInOrdine()));
 					else
-						updateStmt.setString(5, getValue(as.getConsegnaInOrdine()));
+						updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
 
 					if(azione.getScadenza()!=null)
-						updateStmt.setString(6, azione.getScadenza());
+						updateStmt.setString(index++, azione.getScadenza());
 					else if(pt.getScadenza()!=null)
-						updateStmt.setString(6, pt.getScadenza());
+						updateStmt.setString(index++, pt.getScadenza());
 					else
-						updateStmt.setString(6, as.getScadenza());
+						updateStmt.setString(index++, as.getScadenza());
 
 					if(azione.getProfiloCollaborazione()!=null)
-						updateStmt.setString(7, getValue(azione.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(azione.getProfiloCollaborazione()));
 					else if(pt.getProfiloCollaborazione()!=null)
-						updateStmt.setString(7, getValue(pt.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(pt.getProfiloCollaborazione()));
 					else
-						updateStmt.setString(7, getValue(as.getProfiloCollaborazione()));
+						updateStmt.setString(index++, getValue(as.getProfiloCollaborazione()));
 				}
-				updateStmt.setString(8, getValue(azione.getStyle()));
-				updateStmt.setString(9, azione.getSoapAction());
+				updateStmt.setString(index++, getValue(azione.getStyle()));
+				updateStmt.setString(index++, azione.getSoapAction());
 				if(azione.getMessageInput()!=null){
-					updateStmt.setString(10, getValue(azione.getMessageInput().getUse()));
-					updateStmt.setString(11, azione.getMessageInput().getSoapNamespace());
+					updateStmt.setString(index++, getValue(azione.getMessageInput().getUse()));
+					updateStmt.setString(index++, azione.getMessageInput().getSoapNamespace());
 				}else{
-					updateStmt.setString(10, null);
-					updateStmt.setString(11, null);
+					updateStmt.setString(index++, null);
+					updateStmt.setString(index++, null);
 				}
 				if(azione.getMessageOutput()!=null){
-					updateStmt.setString(12, getValue(azione.getMessageOutput().getUse()));
-					updateStmt.setString(13, azione.getMessageOutput().getSoapNamespace());
+					updateStmt.setString(index++, getValue(azione.getMessageOutput().getUse()));
+					updateStmt.setString(index++, azione.getMessageOutput().getSoapNamespace());
 				}else{
-					updateStmt.setString(12, null);
-					updateStmt.setString(13, null);
+					updateStmt.setString(index++, null);
+					updateStmt.setString(index++, null);
 				}
 
-				updateStmt.setString(14, azione.getCorrelataServizio());
-				updateStmt.setString(15, azione.getCorrelata());
+				updateStmt.setString(index++, azione.getCorrelataServizio());
+				updateStmt.setString(index++, azione.getCorrelata());
 
-				updateStmt.setLong(16, idPortType);
-				updateStmt.setString(17, azione.getNome());
+				updateStmt.setLong(index++, idPortType);
+				updateStmt.setString(index++, azione.getNome());
 				n = updateStmt.executeUpdate();
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAzionePortType type = " + type + " row affected =" + n);
@@ -3854,6 +3892,13 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("message_type", "?");
 				sqlQueryObject.addInsertField("message_type_request", "?");
 				sqlQueryObject.addInsertField("message_type_response", "?");
+				sqlQueryObject.addInsertField("profilo_azione", "?");
+				sqlQueryObject.addInsertField("filtro_duplicati", "?");
+				sqlQueryObject.addInsertField("conferma_ricezione", "?");
+				sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
+				sqlQueryObject.addInsertField("id_riferimento_richiesta", "?");
+				sqlQueryObject.addInsertField("consegna_in_ordine", "?");
+				sqlQueryObject.addInsertField("scadenza", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
 				int index = 1;
@@ -3871,7 +3916,26 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resource.getRequestMessageType()));
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resource.getResponseMessageType()));
 				
-				DriverRegistroServiziDB_LIB.log.debug("Aggiungo resource ["+resource.getNome()+"]");
+				DriverRegistroServiziDB_LIB.log.debug("Aggiungo resource ["+resource.getNome()+"] con profilo ["+resource.getProfAzione()+"]");
+
+				updateStmt.setString(index++, resource.getProfAzione());
+				
+				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(resource.getProfAzione())){
+					DriverRegistroServiziDB_LIB.log.debug("ridefinizione...");
+					updateStmt.setString(index++, getValue(resource.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(resource.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(resource.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(resource.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(resource.getConsegnaInOrdine()));
+					updateStmt.setString(index++, resource.getScadenza());
+				}else{
+					updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
+					updateStmt.setString(index++, as.getScadenza());
+				}
 
 				// log.debug("CRUDAzione CREATE :
 				// \n"+formatSQLString(updateQuery,idAccordo,idSoggettoFruitore,idConnettore,wsdlImplementativoErogatore,wsdlImplementativoFruitore));
@@ -3892,6 +3956,13 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("message_type", "?");
 				sqlQueryObject.addUpdateField("message_type_request", "?");
 				sqlQueryObject.addUpdateField("message_type_response", "?");
+				sqlQueryObject.addUpdateField("profilo_azione", "?");
+				sqlQueryObject.addUpdateField("filtro_duplicati", "?");
+				sqlQueryObject.addUpdateField("conferma_ricezione", "?");
+				sqlQueryObject.addUpdateField("identificativo_collaborazione", "?");
+				sqlQueryObject.addUpdateField("id_riferimento_richiesta", "?");
+				sqlQueryObject.addUpdateField("consegna_in_ordine", "?");
+				sqlQueryObject.addUpdateField("scadenza", "?");
 				sqlQueryObject.addWhereCondition("id_accordo=?");
 				sqlQueryObject.addWhereCondition("nome=?");
 				sqlQueryObject.setANDLogicOperator(true);
@@ -3909,6 +3980,25 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resource.getMessageType()));
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resource.getRequestMessageType()));
 				updateStmt.setString(index++, DriverRegistroServiziDB_LIB.getValue(resource.getResponseMessageType()));
+				
+				updateStmt.setString(index++, resource.getProfAzione());
+				
+				if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(resource.getProfAzione())){
+					updateStmt.setString(index++, getValue(resource.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(resource.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(resource.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(resource.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(resource.getConsegnaInOrdine()));
+					updateStmt.setString(index++, resource.getScadenza());
+				}else{
+					updateStmt.setString(index++, getValue(as.getFiltroDuplicati()));
+					updateStmt.setString(index++, getValue(as.getConfermaRicezione()));
+					updateStmt.setString(index++, getValue(as.getIdCollaborazione()));
+					updateStmt.setString(index++, getValue(as.getIdRiferimentoRichiesta()));
+					updateStmt.setString(index++, getValue(as.getConsegnaInOrdine()));
+					updateStmt.setString(index++, as.getScadenza());
+				}
+				
 				updateStmt.setLong(index++, idAccordo);
 				updateStmt.setString(index++, resource.getNome());
 				n = updateStmt.executeUpdate();

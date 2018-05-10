@@ -154,6 +154,10 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			if ((idcollaz != null) && idcollaz.equals("null")) {
 				idcollaz = null;
 			}
+			String idRifRichiestaAz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_ID_RIFERIMENTO_RICHIESTA);
+			if ((idRifRichiestaAz != null) && idRifRichiestaAz.equals("null")) {
+				idRifRichiestaAz = null;
+			}
 			String consordaz = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONSEGNA_ORDINE);
 			if ((consordaz != null) && consordaz.equals("null")) {
 				consordaz = null;
@@ -276,6 +280,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 				String deffiltrodupaz = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
 				String defconfricaz = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
 				String defidcollaz = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+				String defIdRifRichiestaAz = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
 				String defconsordaz = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 				String defscadenzaaz = as.getScadenza();
 
@@ -283,6 +288,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 					filtrodupaz = filtrodupaz != null && !"".equals(filtrodupaz) ? filtrodupaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(azioneOLD.getFiltroDuplicati());
 					confricaz = confricaz != null && !"".equals(confricaz) ? confricaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(azioneOLD.getConfermaRicezione());
 					idcollaz = idcollaz != null && !"".equals(idcollaz) ? idcollaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(azioneOLD.getIdCollaborazione());
+					idRifRichiestaAz = idRifRichiestaAz != null && !"".equals(idRifRichiestaAz) ? idRifRichiestaAz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(azioneOLD.getIdRiferimentoRichiesta());
 					consordaz = consordaz != null && !"".equals(consordaz) ? consordaz : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(azioneOLD.getConsegnaInOrdine());
 					scadenzaaz = scadenzaaz != null && !"".equals(scadenzaaz) ? scadenzaaz : azioneOLD.getScadenza();
 					profcoll = profcoll != null && !"".equals(profcoll) ? profcoll : AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(azioneOLD.getProfiloCollaborazione());
@@ -308,7 +314,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 						this.registryReader, this.configRegistryReader, idAzioneOld);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
-						filtrodupaz, deffiltrodupaz, confricaz, defconfricaz, idcollaz, defidcollaz, consordaz, defconsordaz, scadenzaaz, 
+						filtrodupaz, deffiltrodupaz, confricaz, defconfricaz, idcollaz, defidcollaz, idRifRichiestaAz, defIdRifRichiestaAz, consordaz, defconsordaz, scadenzaaz, 
 						defscadenzaaz, defprofcoll, profcoll, tipoOp, 
 						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				
@@ -327,7 +333,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiAzioniCheckData(tipoOp, id, nomeaz, profProtocollo, filtrodupaz, confricaz, idcollaz, consordaz, scadenzaaz);
+			boolean isOk = apcHelper.accordiAzioniCheckData(tipoOp, id, nomeaz, profProtocollo, filtrodupaz, confricaz, idcollaz, idRifRichiestaAz, consordaz, scadenzaaz);
 			
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -380,7 +386,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 						this.registryReader, this.configRegistryReader, idAzioneOld);
 
 				dati = apcHelper.addAccordiAzioniToDati(dati, id, nomeaz, profProtocollo, 
-						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
+						filtrodupaz, filtrodupaz, confricaz, confricaz, idcollaz, idcollaz,idRifRichiestaAz,idRifRichiestaAz, consordaz, consordaz, scadenzaaz, scadenzaaz, 
 						profcoll, profcoll, tipoOp, 
 						azicorr, azioniList, as.getStatoPackage(),tipoAccordo,protocollo,apcCore.toMessageServiceBinding(as.getServiceBinding()));
 				
@@ -401,6 +407,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 				filtrodupaz = null;
 				confricaz = null;
 				idcollaz = null;
+				idRifRichiestaAz = null;
 				consordaz = null;
 				scadenzaaz = null;
 			}
@@ -420,6 +427,7 @@ public final class AccordiServizioParteComuneAzioniChange extends Action {
 			newAz.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(filtrodupaz)));
 			newAz.setConfermaRicezione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(confricaz)));
 			newAz.setIdCollaborazione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(idcollaz)));
+			newAz.setIdRiferimentoRichiesta(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(idRifRichiestaAz)));
 			newAz.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(consordaz)));
 			newAz.setScadenza(scadenzaaz);
 			newAz.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(profcoll)));

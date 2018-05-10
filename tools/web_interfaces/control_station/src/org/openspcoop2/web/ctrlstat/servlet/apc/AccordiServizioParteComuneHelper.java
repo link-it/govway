@@ -819,7 +819,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	public boolean accordiPorttypeOperationCheckData(TipoOperazione tipoOperazione,String id, String nomept, String nomeop, String profProtocollo, String filtrodupop,
-			String confricop, String idcollop, String consordop, String scadenzaop, String servcorr, String azicorr, String profcollop, String styleOp,
+			String confricop, String idcollop, String idRifRichiestaOp, String consordop, String scadenzaop, String servcorr, String azicorr, String profcollop, String styleOp,
 			String soapActionOp, String useOp, String opTypeOp, String nsWSDLOp ) throws Exception {
 
 		try{
@@ -831,6 +831,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			if ((idcollop != null) && idcollop.equals("null")) {
 				idcollop = null;
+			}
+			if ((idRifRichiestaOp != null) && idRifRichiestaOp.equals("null")) {
+				idRifRichiestaOp = null;
 			}
 			if ((consordop != null) && consordop.equals("null")) {
 				consordop = null;
@@ -893,6 +896,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 				if ((idcollop != null) && !idcollop.equals(Costanti.CHECK_BOX_ENABLED) && !idcollop.equals(CostantiRegistroServizi.ABILITATO) && !idcollop.equals(Costanti.CHECK_BOX_DISABLED) && !idcollop.equals(CostantiRegistroServizi.DISABILITATO)) {
 					this.pd.setMessage("ID Collaborazione dev'essere selezionata o deselezionata");
+					return false;
+				}
+				if ((idRifRichiestaOp != null) && !idRifRichiestaOp.equals(Costanti.CHECK_BOX_ENABLED) && !idRifRichiestaOp.equals(CostantiRegistroServizi.ABILITATO) && !idRifRichiestaOp.equals(Costanti.CHECK_BOX_DISABLED) && !idRifRichiestaOp.equals(CostantiRegistroServizi.DISABILITATO)) {
+					this.pd.setMessage("Riferimento ID Richiesta dev'essere selezionata o deselezionata");
 					return false;
 				}
 				if ((consordop != null) && !consordop.equals(Costanti.CHECK_BOX_ENABLED) && !consordop.equals(CostantiRegistroServizi.ABILITATO) && !consordop.equals(Costanti.CHECK_BOX_DISABLED) && !consordop.equals(CostantiRegistroServizi.DISABILITATO)) {
@@ -995,7 +1002,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	public Vector<DataElement> addAccordiPorttypeOperationToDati(Vector<DataElement> dati, String id, String nomept, String nomeop, String profProtocollo, 
-			String filtrodupop, String deffiltrodupop, String confricop, String defconfricop, String idcollop, String defidcollop, String consordop, String defconsordop, 
+			String filtrodupop, String deffiltrodupop, String confricop, String defconfricop, String idcollop, String defidcollop, String idRifRichiestaOp, String defIdRifRichiestaOp, String consordop, String defconsordop, 
 			String scadenzaop, String defscadenzaop, TipoOperazione tipoOperazione, String defProfiloCollaborazioneOp, String profiloCollaborazioneOp, 
 			String opcorr, String[] opList, String stato,String tipoSICA, String[] servCorrList, String servcorr, String[] aziCorrList, String azicorr
 			,String protocollo,
@@ -1101,6 +1108,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 
+			boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
+			boolean confermaRicezioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE);
+			boolean collaborazioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE);
+			boolean idRiferimentoRichiestaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA);
+			boolean consegnaInOrdineSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE);
+			boolean scadenzaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA);
+			
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
@@ -1147,15 +1161,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(deffiltrodupop);
-			} else if (this.isModalitaStandard() && 
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} 
+			else if(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!filtroDuplicatiSupportato) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_ENABLED);
-			} else if (this.isModalitaAvanzata() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
-					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI)) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_ENABLED);
+				if(filtroDuplicatiSupportato) {
+					// se il protocollo lo supporta, lascio il filtro abilitato per default
+					de.setValue(Costanti.CHECK_BOX_ENABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}  else {
 				if(modificheAbilitate){
 					de.setType(DataElementType.CHECKBOX);
@@ -1179,15 +1195,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconfricop);
-			} else if (this.isModalitaStandard() && 
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!confermaRicezioneSupportato) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}else if (this.isModalitaAvanzata() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
-					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE)) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(confermaRicezioneSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}  else {
 				if(modificheAbilitate){
 					de.setType(DataElementType.CHECKBOX);
@@ -1211,15 +1228,16 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defidcollop);
-			} else if (this.isModalitaStandard() && 
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!collaborazioneSupportato) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			}else if (this.isModalitaAvanzata() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
-					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE)) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(collaborazioneSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			} else {
 				if(modificheAbilitate){
 					de.setType(DataElementType.CHECKBOX);
@@ -1237,21 +1255,55 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_COLLABORAZIONE);
 			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defIdRifRichiestaOp);
+			} else if (AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!idRiferimentoRichiestaSupportato) {
+				de.setType(DataElementType.HIDDEN);
+				if(idRiferimentoRichiestaSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+			} else {
+				if(modificheAbilitate){
+					de.setType(DataElementType.CHECKBOX);
+					if(ServletUtils.isCheckBoxEnabled(idRifRichiestaOp)){
+						de.setSelected(true);
+					}
+				}else{
+					de.setType(DataElementType.TEXT);
+					if(ServletUtils.isCheckBoxEnabled(idRifRichiestaOp)){
+						de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+					}else{
+						de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+					}
+				}	
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_ID_RIFERIMENTO_RICHIESTA);
+			dati.addElement(de);
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defconsordop);
-			} else if (this.isModalitaStandard() && 
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
+			} else if (AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!consegnaInOrdineSupportato) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
-			} else if (this.isModalitaAvanzata() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
-					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(consegnaInOrdineSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}else {
 				if(modificheAbilitate){
 					de.setType(DataElementType.CHECKBOX);
@@ -1276,13 +1328,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defscadenzaop);
-			}  else if (this.isModalitaStandard() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo)) {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(defscadenzaop);
-			}else if (this.isModalitaAvanzata() &&
-					AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
-					!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA)) {
+			}  else if (AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO.equals(profProtocollo) &&
+					!scadenzaSupportato) {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defscadenzaop);
 			} else {
@@ -1557,7 +1604,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	// Controlla i dati del porttype dell'accordo
 	public boolean accordiPorttypeCheckData(TipoOperazione tipoOperazione,String id,String nomept,String profProtocollo,String filtroduppt,
-			String confricpt,String idcollpt,String consordpt,String scadenzapt) throws Exception {
+			String confricpt,String idcollpt,String idRifRichiestaPt,String consordpt,String scadenzapt) throws Exception {
 
 		try{
 			// Campi obbligatori
@@ -1592,6 +1639,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE+" dev'essere selezionata o deselezionata");
 					return false;
 				}
+				if ((idRifRichiestaPt != null) && !idRifRichiestaPt.equals(Costanti.CHECK_BOX_ENABLED) && !idRifRichiestaPt.equals(CostantiRegistroServizi.ABILITATO) && !idRifRichiestaPt.equals(Costanti.CHECK_BOX_DISABLED) && !idRifRichiestaPt.equals(CostantiRegistroServizi.DISABILITATO)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA+" dev'essere selezionata o deselezionata");
+					return false;
+				}
 				if ((consordpt != null) && !consordpt.equals(Costanti.CHECK_BOX_ENABLED) && !consordpt.equals(CostantiRegistroServizi.ABILITATO) && !consordpt.equals(Costanti.CHECK_BOX_DISABLED) && !consordpt.equals(CostantiRegistroServizi.DISABILITATO)) {
 					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE+" dev'essere selezionata o deselezionata");
 					return false;
@@ -1620,7 +1671,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	public Vector<DataElement> addAccordiPorttypeToDati(Vector<DataElement> dati, String id, String nomept, String profProtocollo, 
-			String filtroduppt, String deffiltroduppt, String confricpt, String defconfricpt, String idcollpt, String defidcollpt, 
+			String filtroduppt, String deffiltroduppt, String confricpt, String defconfricpt, String idcollpt, String defidcollpt, String idRifRichiestaPt, String defIdRifRichiestaPt,
 			String consordpt, String defconsordpt, String scadenzapt, String defscadenzapt, 
 			TipoOperazione tipoOperazione, String defProfiloCollaborazionePT, String profiloCollaborazionePT, 
 			String descr, String stato, String tipoAccordo,String protocollo,String servizioStyle,ServiceBinding serviceBinding,
@@ -1684,8 +1735,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 
+			boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
+			boolean confermaRicezioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE);
+			boolean collaborazioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE);
+			boolean idRiferimentoRichiestaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA);
+			boolean consegnaInOrdineSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE);
+			boolean scadenzaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA);
 
-
+			/*
 			if (this.isModalitaStandard()) {
 
 				de = new DataElement();
@@ -1742,6 +1799,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
 				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+				de.setType(DataElementType.HIDDEN);
+				if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaPt)){
+					de.setValue(Costanti.CHECK_BOX_ENABLED);
+				}else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_ID_RIFERIMENTO_RICHIESTA);
+				dati.addElement(de);
 
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
@@ -1764,12 +1832,22 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				dati.addElement(de);
 
 			} else {
+			*/
 
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+			dati.addElement(de);
+
+			if (this.isModalitaStandard()) {
 				de = new DataElement();
-				de.setType(DataElementType.TITLE);
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
+				de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
 				dati.addElement(de);
-
+				profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO; // forzo
+			}
+			else {
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
 				de.setType(DataElementType.SELECT);
@@ -1789,161 +1867,223 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					}
 				}
 				dati.addElement(de);
+			}
 
-				// Parametro duplicato
+			// Parametro duplicato
 //				de = new DataElement();
 //				de.setType(DataElementType.HIDDEN);
 //				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
 //				de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
 //				dati.addElement(de);
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(defProfiloCollaborazionePT);
-				} else {
-					de.setType(DataElementType.SELECT);
-					de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocollo,serviceBinding));
-					// de.setLabels(tipoProfcollLabel);
-					de.setSelected(profiloCollaborazionePT);
-				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE);
-				dati.addElement(de);
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defProfiloCollaborazionePT);
+			} else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(protocollo,serviceBinding));
+				// de.setLabels(tipoProfcollLabel);
+				de.setSelected(profiloCollaborazionePT);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE);
+			dati.addElement(de);
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(deffiltroduppt);
+			} else {
+				if(!filtroDuplicatiSupportato){
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(deffiltroduppt);
-				} else {
-					if(!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI)){
-						de.setType(DataElementType.HIDDEN);
+					if(filtroDuplicatiSupportato) {
+						// se il protocollo lo supporta, lascio il filtro abilitato per default
 						de.setValue(Costanti.CHECK_BOX_ENABLED);
-					}else {
-						if(modificheAbilitate){
-							de.setType(DataElementType.CHECKBOX);
-							if(ServletUtils.isCheckBoxEnabled(filtroduppt) || CostantiRegistroServizi.ABILITATO.equals(filtroduppt)){
-								de.setSelected(true);
-							}
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if(ServletUtils.isCheckBoxEnabled(filtroduppt) || CostantiRegistroServizi.ABILITATO.equals(filtroduppt)){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if(ServletUtils.isCheckBoxEnabled(filtroduppt) || CostantiRegistroServizi.ABILITATO.equals(filtroduppt)){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 						}else{
-							de.setType(DataElementType.TEXT);
-							if(ServletUtils.isCheckBoxEnabled(filtroduppt) || CostantiRegistroServizi.ABILITATO.equals(filtroduppt)){
-								de.setValue(CostantiRegistroServizi.ABILITATO.toString());
-							}else{
-								de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-							}
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
 						}
 					}
 				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI);
-				dati.addElement(de);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI);
+			dati.addElement(de);
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defconfricpt);
+			} else {
+				if(!confermaRicezioneSupportato){
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(defconfricpt);
-				} else {
-					if(!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE)){
-						de.setType(DataElementType.HIDDEN);
+					if(confermaRicezioneSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
-					}else {
-						if(modificheAbilitate){
-							de.setType(DataElementType.CHECKBOX);
-							if(ServletUtils.isCheckBoxEnabled(confricpt) || CostantiRegistroServizi.ABILITATO.equals(confricpt)){
-								de.setSelected(true);
-							}
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if(ServletUtils.isCheckBoxEnabled(confricpt) || CostantiRegistroServizi.ABILITATO.equals(confricpt)){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if(ServletUtils.isCheckBoxEnabled(confricpt) || CostantiRegistroServizi.ABILITATO.equals(confricpt)){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 						}else{
-							de.setType(DataElementType.TEXT);
-							if(ServletUtils.isCheckBoxEnabled(confricpt) || CostantiRegistroServizi.ABILITATO.equals(confricpt)){
-								de.setValue(CostantiRegistroServizi.ABILITATO.toString());
-							}else{
-								de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-							}
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
 						}
 					}
 				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE);
-				dati.addElement(de);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE);
+			dati.addElement(de);
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defidcollpt);
+			} else {
+				if(!collaborazioneSupportato){
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(defidcollpt);
-				} else {
-					if(!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE)){
-						de.setType(DataElementType.HIDDEN);
+					if(collaborazioneSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
-					}else {
-						if(modificheAbilitate){
-							de.setType(DataElementType.CHECKBOX);
-							if(ServletUtils.isCheckBoxEnabled(idcollpt) || CostantiRegistroServizi.ABILITATO.equals(idcollpt)){
-								de.setSelected(true);
-							}
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if(ServletUtils.isCheckBoxEnabled(idcollpt) || CostantiRegistroServizi.ABILITATO.equals(idcollpt)){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if(ServletUtils.isCheckBoxEnabled(idcollpt) || CostantiRegistroServizi.ABILITATO.equals(idcollpt)){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 						}else{
-							de.setType(DataElementType.TEXT);
-							if(ServletUtils.isCheckBoxEnabled(idcollpt) || CostantiRegistroServizi.ABILITATO.equals(idcollpt)){
-								de.setValue(CostantiRegistroServizi.ABILITATO.toString());
-							}else{
-								de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-							}
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
 						}
 					}
 				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defIdRifRichiestaPt);
+			} else {
+				if(!idRiferimentoRichiestaSupportato){
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(defconsordpt);
-				} else {
-					if(!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)){
-						de.setType(DataElementType.HIDDEN);
+					if(idRiferimentoRichiestaSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
 						de.setValue(Costanti.CHECK_BOX_DISABLED);
-					}else {
-						if(modificheAbilitate){
-							de.setType(DataElementType.CHECKBOX);
-							if(ServletUtils.isCheckBoxEnabled(consordpt) || CostantiRegistroServizi.ABILITATO.equals(consordpt)){
-								de.setSelected(true);
-							}
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaPt)){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if(ServletUtils.isCheckBoxEnabled(idRifRichiestaPt) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaPt)){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
 						}else{
-							de.setType(DataElementType.TEXT);
-							if(ServletUtils.isCheckBoxEnabled(consordpt) || CostantiRegistroServizi.ABILITATO.equals(consordpt)){
-								de.setValue(CostantiRegistroServizi.ABILITATO.toString());
-							}else{
-								de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
-							}
-						}	
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
 					}
 				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
-				dati.addElement(de);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_ID_RIFERIMENTO_RICHIESTA);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defconsordpt);
+			} else {
+				if(!consegnaInOrdineSupportato){
+					de.setType(DataElementType.HIDDEN);
+					if(consegnaInOrdineSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if(ServletUtils.isCheckBoxEnabled(consordpt) || CostantiRegistroServizi.ABILITATO.equals(consordpt)){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if(ServletUtils.isCheckBoxEnabled(consordpt) || CostantiRegistroServizi.ABILITATO.equals(consordpt)){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}	
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
+			dati.addElement(de);
 
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
-				de.setValue(scadenzapt);
-				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+			de.setValue(scadenzapt);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defscadenzapt);
+			} else {
+				if(!scadenzaSupportato){
 					de.setType(DataElementType.HIDDEN);
 					de.setValue(defscadenzapt);
-				} else {
-					if(!this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA)){
-						de.setType(DataElementType.HIDDEN);
-						de.setValue(defscadenzapt);
-					}else {
-						de.setType(DataElementType.TEXT_EDIT);
-						de.setValue(scadenzapt);
-						if( !modificheAbilitate && (scadenzapt==null || "".equals(scadenzapt)) )
-							de.setValue(" ");
-					}
+				}else {
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setValue(scadenzapt);
+					if( !modificheAbilitate && (scadenzapt==null || "".equals(scadenzapt)) )
+						de.setValue(" ");
 				}
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_SCADENZA);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_SCADENZA);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			
+			if (!this.isModalitaStandard()) {
 
 				// Informazione WSDL
 				de = new DataElement();
@@ -2079,7 +2219,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati dell'azione dell'accordo
-	public boolean accordiAzioniCheckData(TipoOperazione tipoOperazione, String id, String nomeaz, String profProtocollo, String filtrodupaz, String confricaz, String idcollaz, 
+	public boolean accordiAzioniCheckData(TipoOperazione tipoOperazione, String id, String nomeaz, String profProtocollo, String filtrodupaz, String confricaz, String idcollaz, String idRifRichiestaAz,
 			String consordaz, String scadenzaaz) throws Exception {
 		try {
 			if ((filtrodupaz != null) && (filtrodupaz.equals("null") || filtrodupaz.equals(Costanti.CHECK_BOX_DISABLED))) {
@@ -2090,6 +2230,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			if ((idcollaz != null) && (idcollaz.equals("null") || idcollaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				idcollaz = null;
+			}
+			if ((idRifRichiestaAz != null) && (idRifRichiestaAz.equals("null") || idRifRichiestaAz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				idRifRichiestaAz = null;
 			}
 			if ((consordaz != null) && (consordaz.equals("null") || consordaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				consordaz = null;
@@ -2132,6 +2275,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE+" dev'essere selezionata o deselezionata");
 					return false;
 				}
+				if ((idRifRichiestaAz != null) && !idRifRichiestaAz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA+" dev'essere selezionata o deselezionata");
+					return false;
+				}
 				if ((consordaz != null) && !consordaz.equals(Costanti.CHECK_BOX_ENABLED)) {
 					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE+" dev'essere selezionata o deselezionata");
 					return false;
@@ -2164,7 +2311,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiAzioniToDati(Vector<DataElement> dati, String id, String nomeaz,  String profProtocollo, 
 			String filtrodupaz, String deffiltrodupaz, String confricaz, String defconfricaz, 
-			String idcollaz, String defidcollaz, String consordaz, String defconsordaz, String scadenzaaz, 
+			String idcollaz, String defidcollaz, String idRifRichiestaAz, String defIdRifRichiestaAz, String consordaz, String defconsordaz, String scadenzaaz, 
 			String defscadenzaaz, String defprofcoll, String profcoll, 
 			TipoOperazione tipoOperazione, String azicorr, String[] azioniList,String stato, String tipoSICA,String protocollo,ServiceBinding serviceBinding) throws Exception{
 
@@ -2207,6 +2354,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
+		
+		boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
+		boolean confermaRicezioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE);
+		boolean collaborazioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE);
+		boolean idRiferimentoRichiestaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA);
+		boolean consegnaInOrdineSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE);
+		boolean scadenzaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA);
+		
 		de = new DataElement();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
@@ -2279,9 +2434,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(deffiltrodupaz);
 		} else {
 			if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
-					&& !this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI)) ){
+					&& !filtroDuplicatiSupportato) ){
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_ENABLED);
+				if(filtroDuplicatiSupportato) {
+					// se il protocollo lo supporta, lascio il filtro abilitato per default
+					de.setValue(Costanti.CHECK_BOX_ENABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}
 			else
 			{
@@ -2311,9 +2472,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(defconfricaz);
 		} else {
 			if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
-					&& ! this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE))){
+					&& !confermaRicezioneSupportato)){
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(confermaRicezioneSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}else{
 
 				if(modificheAbilitate){
@@ -2342,9 +2509,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(defidcollaz);
 		} else {
 			if(profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
-					&& ! this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE)) {
+					&& !collaborazioneSupportato) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(collaborazioneSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}else {
 
 				if(modificheAbilitate){
@@ -2364,6 +2537,43 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_COLLABORAZIONE);
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+				) {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(defIdRifRichiestaAz);
+		} else {
+			if(profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+					&& !idRiferimentoRichiestaSupportato) {
+				de.setType(DataElementType.HIDDEN);
+				if(idRiferimentoRichiestaSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+			}else {
+
+				if(modificheAbilitate){
+					de.setType(DataElementType.CHECKBOX);
+					if( ServletUtils.isCheckBoxEnabled(idRifRichiestaAz) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaAz) ){
+						de.setSelected(true);
+					}
+				}else{
+					de.setType(DataElementType.TEXT);
+					if( ServletUtils.isCheckBoxEnabled(idRifRichiestaAz) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaAz) ){
+						de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+					}else{
+						de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+					}
+				}
+			}
+		}
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_ID_RIFERIMENTO_RICHIESTA);
+		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
@@ -2373,9 +2583,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(defconsordaz);
 		} else {
 			if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
-					&& ! this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)) ){
+					&& !consegnaInOrdineSupportato) ){
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(Costanti.CHECK_BOX_DISABLED);
+				if(consegnaInOrdineSupportato) {
+					// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				else {
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
 			}else {
 				if(modificheAbilitate){
 					de.setType(DataElementType.CHECKBOX);
@@ -2404,7 +2620,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setValue(defscadenzaaz);
 		} else {
 			if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
-					&& ! this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA))){
+					&& !scadenzaSupportato)){
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(defscadenzaaz);
 			}else {
@@ -2668,7 +2884,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	public Vector<DataElement> addAccordiToDati(Vector<DataElement> dati, 
 			String nome, String descr, String profcoll, BinaryParameter wsdldef, BinaryParameter wsdlconc, BinaryParameter wsdlserv, BinaryParameter wsdlservcorr,
 			BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,
-			String filtrodup, String confric, String idcoll, String consord, String scadenza, String id, 
+			String filtrodup, String confric, String idcoll, String idRifRichiesta, String consord, String scadenza, String id, 
 			TipoOperazione tipoOperazione, boolean showUtilizzoSenzaAzione, boolean utilizzoSenzaAzione,
 			String referente, String versione, 
 			String[] providersList, String[] providersListLabel,boolean privato,
@@ -3548,11 +3764,26 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		}
 
-		Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO) && !serviceBinding.equals(ServiceBinding.REST);
+		Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);
+				//&& !serviceBinding.equals(ServiceBinding.REST);
+		boolean isSoap = serviceBinding.equals(ServiceBinding.SOAP);
 
+		boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
+		boolean confermaRicezioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE);
+		boolean collaborazioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE);
+		boolean idRiferimentoRichiestaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA);
+		boolean consegnaInOrdineSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE);
+		boolean scadenzaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA);
+		boolean almostOneSupported = filtroDuplicatiSupportato || 
+				confermaRicezioneSupportato ||
+				collaborazioneSupportato ||
+				idRiferimentoRichiestaSupportato ||
+				consegnaInOrdineSupportato ||
+				scadenzaSupportato;	
+		
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
-		if (gestioneInfoProtocollo) {
+		if (gestioneInfoProtocollo && (almostOneSupported || isSoap)) { // se soap sicuramente c'è il protocollo di collaborazione
 			de.setType(DataElementType.TITLE);
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -3562,7 +3793,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
-		if (gestioneInfoProtocollo) {
+		if (gestioneInfoProtocollo && isSoap) {
 			de.setType(DataElementType.SELECT);
 			de.setValues(this.core.getProfiliDiCollaborazioneSupportatiDalProtocollo(tipoProtocollo,serviceBinding));
 			de.setSelected(profcoll);
@@ -3598,7 +3829,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
-		if (gestioneInfoProtocollo && this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI)) {
+		if (gestioneInfoProtocollo && filtroDuplicatiSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if ( ServletUtils.isCheckBoxEnabled(filtrodup) || CostantiRegistroServizi.ABILITATO.equals(filtrodup) ) {
@@ -3618,14 +3849,20 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}	
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(Costanti.CHECK_BOX_ENABLED);
+			if(filtroDuplicatiSupportato) {
+				// se il protocollo lo supporta, lascio il filtro abilitato per default
+				de.setValue(Costanti.CHECK_BOX_ENABLED);
+			}
+			else {
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
 		}
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
-		if (gestioneInfoProtocollo&& this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE)) {
+		if (gestioneInfoProtocollo&& confermaRicezioneSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(confric) || CostantiRegistroServizi.ABILITATO.equals(confric)) {
@@ -3641,14 +3878,20 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(Costanti.CHECK_BOX_DISABLED);
+			if(confermaRicezioneSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
+			else {
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
 		}
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
-		if (gestioneInfoProtocollo && this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE)) {
+		if (gestioneInfoProtocollo && collaborazioneSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(idcoll) || CostantiRegistroServizi.ABILITATO.equals(idcoll)) {
@@ -3664,14 +3907,49 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(Costanti.CHECK_BOX_DISABLED);
+			if(collaborazioneSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
+			else {
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
+		}
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		if (gestioneInfoProtocollo && idRiferimentoRichiestaSupportato) {
+			if(modificheAbilitate){
+				de.setType(DataElementType.CHECKBOX);
+				if (ServletUtils.isCheckBoxEnabled(idRifRichiesta) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiesta)) {
+					de.setSelected(true);
+				}
+			}else{
+				de.setType(DataElementType.TEXT);
+				if (ServletUtils.isCheckBoxEnabled(idRifRichiesta) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiesta)) {
+					de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+				}else{
+					de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+				}
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			if(idRiferimentoRichiestaSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
+			else {
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
 		}
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
 		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
-		if (gestioneInfoProtocollo && this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE)) {
+		if (gestioneInfoProtocollo && consegnaInOrdineSupportato) {
 			if(modificheAbilitate){
 				de.setType(DataElementType.CHECKBOX);
 				if (ServletUtils.isCheckBoxEnabled(consord) || CostantiRegistroServizi.ABILITATO.equals(consord)) {
@@ -3687,14 +3965,20 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(Costanti.CHECK_BOX_DISABLED);
+			if(consegnaInOrdineSupportato) {
+				// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
+			else {
+				de.setValue(Costanti.CHECK_BOX_DISABLED);
+			}
 		}
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
 		de.setValue(scadenza);
-		if (gestioneInfoProtocollo && this.core.isFunzionalitaProtocolloSupportataDalProtocollo(tipoProtocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA)) {
+		if (gestioneInfoProtocollo && scadenzaSupportato) {
 			de.setType(DataElementType.TEXT_EDIT);
 			if( !modificheAbilitate && (scadenza==null || "".equals(scadenza)) )
 				de.setValue(" ");
@@ -3726,7 +4010,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiToDatiAsHidden(Vector<DataElement> dati, 
 			String nome, String descr, String profcoll, String wsdldef, String wsdlconc, String wsdlserv, String wsdlservcorr, 
-			String filtrodup, String confric, String idcoll, String consord, String scadenza, String id, 
+			String filtrodup, String confric, String idcoll, String idRifRichiesta, String consord, String scadenza, String id, 
 			TipoOperazione tipoOperazione, boolean showUtilizzoSenzaAzione, boolean utilizzoSenzaAzione,
 			String referente, String versione, 
 			String[] providersList, String[] providersListLabel,boolean privato,
@@ -3935,6 +4219,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 		de.setType(DataElementType.HIDDEN);
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+		if (ServletUtils.isCheckBoxEnabled(idRifRichiesta) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiesta)) {
+			de.setValue(Costanti.CHECK_BOX_ENABLED);
+		}else 
+			de.setValue(Costanti.CHECK_BOX_DISABLED);
+
+		de.setType(DataElementType.HIDDEN);
+		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
@@ -4027,7 +4322,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	// Controlla i dati degli Accordi
 	boolean accordiCheckData(TipoOperazione tipoOperazione, String nome, String descr, String profcoll, 
 			BinaryParameter wsdldef, BinaryParameter wsdlconc, BinaryParameter wsdlserv, BinaryParameter wsdlservcorr, 
-			String filtrodup, String confric, String idcoll, String consord, String scadenza, String id,
+			String filtrodup, String confric, String idcoll, String idRifRichiesta, String consord, String scadenza, String id,
 			String referente,String versione,String accordoCooperazione, 
 			boolean visibilitaAccordoServizio,boolean visibilitaAccordoCooperazione,
 			IDAccordo idAccordoOLD, BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,boolean validazioneDocumenti,
@@ -4123,6 +4418,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 			if ((idcoll != null) && !idcoll.equals(Costanti.CHECK_BOX_ENABLED) && !idcoll.equals(CostantiRegistroServizi.ABILITATO) && !idcoll.equals(Costanti.CHECK_BOX_DISABLED) && !idcoll.equals(CostantiRegistroServizi.DISABILITATO)) {
 				this.pd.setMessage("ID Collaborazione dev'essere selezionata o deselezionata");
+				return false;
+			}
+			if ((idRifRichiesta != null) && !idRifRichiesta.equals(Costanti.CHECK_BOX_ENABLED) && !idRifRichiesta.equals(CostantiRegistroServizi.ABILITATO) && !idRifRichiesta.equals(Costanti.CHECK_BOX_DISABLED) && !idRifRichiesta.equals(CostantiRegistroServizi.DISABILITATO)) {
+				this.pd.setMessage("Riferimento ID Richiesta dev'essere selezionata o deselezionata");
 				return false;
 			}
 			if ((consord != null) && !consord.equals(Costanti.CHECK_BOX_ENABLED) && !consord.equals(CostantiRegistroServizi.ABILITATO) && !consord.equals(Costanti.CHECK_BOX_DISABLED) && !consord.equals(CostantiRegistroServizi.DISABILITATO)) {
@@ -4227,6 +4526,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			accordoServizioParteComune.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(filtrodup));
 			accordoServizioParteComune.setConfermaRicezione(StatoFunzionalita.toEnumConstant(confric));
 			accordoServizioParteComune.setIdCollaborazione(StatoFunzionalita.toEnumConstant(idcoll));
+			accordoServizioParteComune.setIdRiferimentoRichiesta(StatoFunzionalita.toEnumConstant(idRifRichiesta));
 			accordoServizioParteComune.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(consord));
 			accordoServizioParteComune.setScadenza(scadenza);
 			if(sRef!=null){
@@ -5540,7 +5840,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addAccordiResourceToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String idAccordo, Long idRisorsa,
 			String nomeRisorsa, String descrizione, String path, String httpMethod, MessageType messageType,
-			String stato, String tipoAccordo, String protocollo, IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding,MessageType messageTypeRichiesta, MessageType messageTypeRisposta) throws Exception {
+			String stato, String tipoAccordo, String protocollo, IProtocolFactory<?> protocolFactory,ServiceBinding serviceBinding,MessageType messageTypeRichiesta, MessageType messageTypeRisposta,
+			String profProtocollo, 
+			String filtrodupaz, String deffiltrodupaz, String confricaz, String defconfricaz, 
+			String idcollaz, String defidcollaz, String idRifRichiestaAz, String defIdRifRichiestaAz, String consordaz, String defconsordaz, String scadenzaaz, 
+			String defscadenzaaz) throws Exception {
 		try {
 			boolean modificheAbilitate = false;
 			if( tipoOperazione.equals(TipoOperazione.ADD) ){
@@ -5612,6 +5916,277 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(this.getMessageTypeDataElement(AccordiServizioParteComuneCostanti.PARAMETRO_APC_MESSAGE_TYPE,
 					protocolFactory, serviceBinding, messageType, hiddenMessageType));
 						
+			
+			boolean filtroDuplicatiSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.FILTRO_DUPLICATI);
+			boolean confermaRicezioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONFERMA_RICEZIONE);
+			boolean collaborazioneSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.COLLABORAZIONE);
+			boolean idRiferimentoRichiestaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA);
+			boolean consegnaInOrdineSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.CONSEGNA_IN_ORDINE);
+			boolean scadenzaSupportato = this.core.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.SCADENZA);
+			boolean almostOneSupported = filtroDuplicatiSupportato || 
+					confermaRicezioneSupportato ||
+					collaborazioneSupportato ||
+					idRiferimentoRichiestaSupportato ||
+					consegnaInOrdineSupportato ||
+					scadenzaSupportato;
+			
+			if(almostOneSupported) {
+				de = new DataElement();
+				de.setType(DataElementType.TITLE);
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI);
+				dati.addElement(de);
+			}
+			
+			
+			if (this.isModalitaStandard()) {
+				de = new DataElement();
+				de.setType(DataElementType.HIDDEN);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
+				de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
+				dati.addElement(de);
+				profProtocollo = AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO; // forzo
+			}
+			else {
+				de = new DataElement();
+				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PROFILO_PROTOCOLLO);
+				de.setType(DataElementType.SELECT);
+				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
+				if(modificheAbilitate && almostOneSupported){
+					de.setValues(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA);
+					de.setLabels(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_PROTOCOLLO_ACCORDO);
+					de.setSelected(profProtocollo);
+					//							de.setOnChange("CambiaProfPT('" + tipoOp + "')");
+					de.setPostBack(true);
+				}else{
+					if(almostOneSupported) {
+						de.setType(DataElementType.TEXT);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+					}
+					if(profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)){
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_PROTOCOLLO_DEFAULT_ACCORDO);
+					}else{
+						de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
+					}
+				}
+				dati.addElement(de);
+			}
+			
+
+			// Gli elementi qui sotto devono essere visualizzati solo in modalita' avanzata  && profilobusta = 'ridefinito' && se la corrispondente proprieta e' abilitata nel protocollo
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(deffiltrodupaz);
+			} else {
+				if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !filtroDuplicatiSupportato) ){
+					de.setType(DataElementType.HIDDEN);
+					if(filtroDuplicatiSupportato) {
+						// se il protocollo lo supporta, lascio il filtro abilitato per default
+						de.setValue(Costanti.CHECK_BOX_ENABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}
+				else
+				{
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(filtrodupaz) || CostantiRegistroServizi.ABILITATO.equals(filtrodupaz) ){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(filtrodupaz) || CostantiRegistroServizi.ABILITATO.equals(filtrodupaz) ){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_FILTRO_DUPLICATI);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defconfricaz);
+			} else {
+				if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !confermaRicezioneSupportato)){
+					de.setType(DataElementType.HIDDEN);
+					if(confermaRicezioneSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else{
+
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(confricaz) || CostantiRegistroServizi.ABILITATO.equals(confricaz) ){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(confricaz) || CostantiRegistroServizi.ABILITATO.equals(confricaz) ){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONFERMA_RICEZIONE);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defidcollaz);
+			} else {
+				if(profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !collaborazioneSupportato) {
+					de.setType(DataElementType.HIDDEN);
+					if(collaborazioneSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(idcollaz) || CostantiRegistroServizi.ABILITATO.equals(idcollaz) ){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(idcollaz) || CostantiRegistroServizi.ABILITATO.equals(idcollaz) ){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_COLLABORAZIONE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defIdRifRichiestaAz);
+			} else {
+				if(profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !idRiferimentoRichiestaSupportato) {
+					de.setType(DataElementType.HIDDEN);
+					if(idRiferimentoRichiestaSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(idRifRichiestaAz) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaAz) ){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(idRifRichiestaAz) || CostantiRegistroServizi.ABILITATO.equals(idRifRichiestaAz) ){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_ID_RIFERIMENTO_RICHIESTA);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defconsordaz);
+			} else {
+				if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !consegnaInOrdineSupportato) ){
+					de.setType(DataElementType.HIDDEN);
+					if(consegnaInOrdineSupportato) {
+						// anche se il protocollo lo supporta, lascio il filtro disabilitato per default
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					else {
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+				}else {
+					if(modificheAbilitate){
+						de.setType(DataElementType.CHECKBOX);
+						if( ServletUtils.isCheckBoxEnabled(consordaz) || CostantiRegistroServizi.ABILITATO.equals(consordaz) ){
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.TEXT);
+						if( ServletUtils.isCheckBoxEnabled(consordaz) || CostantiRegistroServizi.ABILITATO.equals(consordaz) ){
+							de.setValue(CostantiRegistroServizi.ABILITATO.toString());
+						}else{
+							de.setValue(CostantiRegistroServizi.DISABILITATO.toString());
+						}
+					}
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONSEGNA_ORDINE);
+			dati.addElement(de);
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA);
+			de.setValue(scadenzaaz);
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)
+					) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(defscadenzaaz);
+			} else {
+				if((profProtocollo.equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO) 
+						&& !scadenzaSupportato)){
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(defscadenzaaz);
+				}else {
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setValue(scadenzaaz);
+					if( !modificheAbilitate && (scadenzaaz==null || "".equals(scadenzaaz)) )
+						de.setValue(" ");
+				}
+			}
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_SCADENZA);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			
+			
+			
 			if( (TipoOperazione.CHANGE.equals(tipoOperazione) && !this.isModalitaStandard()) || !hiddenMessageType) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
@@ -5735,9 +6310,27 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 	public boolean accordiResourceCheckData(TipoOperazione tipoOp, String id, String nomeRisorsa, String nomeRisorsaProposto, String path,
-			String httpMethod, MessageType messageType, String oldNomeRisorsa, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod) throws Exception {
+			String httpMethod, MessageType messageType, String oldNomeRisorsa, String oldNomeRisorsaProposto, String oldPath, String oldHttpMethod,
+			String profProtocollo, String filtrodupaz, String confricaz, String idcollaz, String idRifRichiestaAz,
+			String consordaz, String scadenzaaz) throws Exception {
 
 		try{
+			if ((filtrodupaz != null) && (filtrodupaz.equals("null") || filtrodupaz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				filtrodupaz = null;
+			}
+			if ((confricaz != null) && (confricaz.equals("null") || confricaz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				confricaz = null;
+			}
+			if ((idcollaz != null) && (idcollaz.equals("null") || idcollaz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				idcollaz = null;
+			}
+			if ((idRifRichiestaAz != null) && (idRifRichiestaAz.equals("null") || idRifRichiestaAz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				idRifRichiestaAz = null;
+			}
+			if ((consordaz != null) && (consordaz.equals("null") || consordaz.equals(Costanti.CHECK_BOX_DISABLED))) {
+				consordaz = null;
+			}
+			
 			// Campi obbligatori
 			// path
 			if ((path==null || path.equals("")) && httpMethod!=null) {
@@ -5764,6 +6357,43 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 			}
 		
+			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
+			if (!profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && !profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO)) {
+				this.pd.setMessage("Il profilo  dev'essere \""+AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_PROTOCOLLO_ACCORDO[0]
+						+"\" o \""+AccordiServizioParteComuneCostanti.LABEL_INFORMAZIONI_PROTOCOLLO_ACCORDO[1]+"\"");
+				return false;
+			}
+
+			if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO)) {
+				// Controllo che i campi DataElementType.CHECKBOX abbiano uno dei valori
+				// ammessi
+				if ((filtrodupaz != null) && !filtrodupaz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_FILTRO_DUPLICATI+" dev'essere selezionato o deselezionato");
+					return false;
+				}
+				if ((confricaz != null) && !confricaz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONFERMA_RICEZIONE+" dev'essere selezionata o deselezionata");
+					return false;
+				}
+				if ((idcollaz != null) && !idcollaz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_COLLABORAZIONE+" dev'essere selezionata o deselezionata");
+					return false;
+				}
+				if ((idRifRichiestaAz != null) && !idRifRichiestaAz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA+" dev'essere selezionata o deselezionata");
+					return false;
+				}
+				if ((consordaz != null) && !consordaz.equals(Costanti.CHECK_BOX_ENABLED)) {
+					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_CONSEGNA_ORDINE+" dev'essere selezionata o deselezionata");
+					return false;
+				}
+
+				// scadenzaaz dev'essere numerico
+				if (!scadenzaaz.equals("") && !this.checkNumber(scadenzaaz, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA, false)) {
+					return false;
+				}
+			}
+			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));

@@ -172,6 +172,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * @return True se la funzionalita' fornita come parametro viene supportata dal protocollo
 	 */
 	public boolean isSupportato(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
+	
+	/**
+	 * Restituisce l'indicazione se la funzionalita' richiede che venga fornita l'informazione tramite i meccanismi di integrazione
+	 * 
+	 * @return True se la funzionalita' richiede che venga fornita l'informazione tramite i meccanismi di integrazione
+	 */
+	public boolean isIntegrationInfoRequired(ServiceBinding serviceBinding, FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
 		
 	/**
 	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo

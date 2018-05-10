@@ -218,6 +218,9 @@ public enum ErroriIntegrazione {
 	ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE("La porta utilizzata"+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI+" non è invocabile direttamente",
 			CodiceErroreIntegrazione.CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE),
+	
+	ERRORE_442_RIFERIMENTO_ID_MESSAGGIO("Tra le informazioni di integrazione non è stato rilevato il riferimento ad un identificativo di un messaggio precedente",
+			CodiceErroreIntegrazione.CODICE_442_RIFERIMENTO_ID_MESSAGGIO),
 
 	// errori spediti in buste errore
 	

@@ -157,6 +157,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
+import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
@@ -685,6 +686,7 @@ public class RicezioneContenutiApplicativi {
 		PdDContext pddContext = inRequestContext.getPddContext();
 		ITraduttore traduttore = protocolFactory.createTraduttore();
 		IProtocolManager protocolManager = protocolFactory.createProtocolManager();
+		IProtocolConfiguration protocolConfig = protocolFactory.createProtocolConfiguration();
 		
 		// ProprietaErroreApplicativo
 		ProprietaErroreApplicativo proprietaErroreAppl = propertiesReader
@@ -1085,8 +1087,7 @@ public class RicezioneContenutiApplicativi {
 			}
 		}
 
-		
-		
+	
 		
 		
 		
@@ -2059,41 +2060,45 @@ public class RicezioneContenutiApplicativi {
 
 		
 		// Gestisco riferimento asincrono
-		String riferimentoServizioCorrelato = null;
-		if (headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null)
-			riferimentoServizioCorrelato = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();		
-		if(riferimentoServizioCorrelato==null){
-			// FIX compatibilita integrazione asincroni con versioni precedente a 1.4
-			// L'integrazione era possibile anche tramite info integrazione 'Collaborazione'
-			if(propertiesReader.isIntegrazioneAsincroniConIdCollaborazioneEnabled()){
-				if (headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null){
-					// utilizzo l'informazione come integrazione asincrona SOLO se il servizio e' correlato.
-					Servizio infoServizioTmpVerificaCorrelato = null;
-					try{
-						infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch);
-					}catch(Exception e){
-						logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato, fallita: "+e.getMessage());
+		String riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato = null;
+		boolean supportoProfiliAsincroni = protocolConfig.isSupportato(requestInfo.getProtocolServiceBinding(),ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO)
+				|| protocolConfig.isSupportato(requestInfo.getProtocolServiceBinding(),ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO);
+		if(supportoProfiliAsincroni) {
+			if (headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null)
+				riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();		
+			if(riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato==null){
+				// FIX compatibilita integrazione asincroni con versioni precedente a 1.4
+				// L'integrazione era possibile anche tramite info integrazione 'Collaborazione'
+				if(propertiesReader.isIntegrazioneAsincroniConIdCollaborazioneEnabled()){
+					if (headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null){
+						// utilizzo l'informazione come integrazione asincrona SOLO se il servizio e' correlato.
+						Servizio infoServizioTmpVerificaCorrelato = null;
 						try{
-							infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch);
-						}catch(Exception eCorrelato){
-							logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato rispetto all'azione, fallita: "+e.getMessage());
+							infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioCorrelato(soggettoFruitore,idServizio, nomeRegistroForSearch);
+						}catch(Exception e){
+							logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato, fallita: "+e.getMessage());
+							try{
+								infoServizioTmpVerificaCorrelato = registroServiziReader.getInfoServizioAzioneCorrelata(soggettoFruitore, idServizio,nomeRegistroForSearch);
+							}catch(Exception eCorrelato){
+								logCore.debug("Verifica servizio ["+infoSearch+"] se e' correlato rispetto all'azione, fallita: "+e.getMessage());
+							}
 						}
-					}
-					if(infoServizioTmpVerificaCorrelato!=null){
-						// Il servizio e' correlato!
-						riferimentoServizioCorrelato = headerIntegrazioneRichiesta.getBusta().getIdCollaborazione();
-					}
-				}	
+						if(infoServizioTmpVerificaCorrelato!=null){
+							// Il servizio e' correlato!
+							riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato = headerIntegrazioneRichiesta.getBusta().getIdCollaborazione();
+						}
+					}	
+				}
 			}
 		}
-		if (riferimentoServizioCorrelato != null) {
+		if (riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato != null) {
 			infoSearch = "Servizio correlato " + infoSearch;
 		} else {
 			infoSearch = "Servizio " + infoSearch;
 		}
 		infoSearch = "Ricerca nel registro dei servizi di: " + infoSearch;
-		if (riferimentoServizioCorrelato != null)
-			infoSearch = infoSearch + " (idServizioCorrelato: "+ riferimentoServizioCorrelato + ")";
+		if (riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato != null)
+			infoSearch = infoSearch + " (idServizioCorrelato: "+ riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato + ")";
 		msgDiag.addKeyword(CostantiPdD.KEY_INFO_SERVIZIO_BUSTA,infoSearch );
 		msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO,"registroServizi.ricercaServizioInCorso");
 		
@@ -2109,7 +2114,7 @@ public class RicezioneContenutiApplicativi {
 		try {
 			// RiferimentoServizioCorrelato presente: cerco solo come servizio
 			// correlato.
-			if (riferimentoServizioCorrelato != null) {
+			if (riferimentoServizioCorrelato_ricercaSolamenteServizioCorrelato != null) {
 
 				String erroreRicerca = null;
 
@@ -2272,6 +2277,44 @@ public class RicezioneContenutiApplicativi {
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 		
 	
+		
+		
+		
+		/* -------- Controlli Header di Integrazione ------------- */
+		
+		if(infoServizio.getIdRiferimentoRichiesta() &&
+				protocolConfig.isIntegrationInfoRequired(requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA)) {
+			String riferimentoRichiesta = null;
+			if (headerIntegrazioneRichiesta!=null &&
+					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
+				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
+			}
+			if(riferimentoRichiesta==null) {
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < tipiIntegrazionePD.length; i++) {
+					if(i>0) {
+						bf.append(",");
+					}
+					bf.append(tipiIntegrazionePD[i]);
+				}
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
+				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"riferimentoIdRichiesta.nonFornito");
+				ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_442_RIFERIMENTO_ID_MESSAGGIO.getErroreIntegrazione();
+				IntegrationError integrationError = IntegrationError.BAD_REQUEST;
+				
+				openspcoopstate.releaseResource();
+				if (this.msgContext.isGestioneRisposta()) {
+					this.msgContext.setMessageResponse((this.generatoreErrore.build(integrationError,erroreIntegrazione,null,null)));
+				}
+				return;
+				
+			}
+		}
+		
+		
+		
+		
+		
 		/* -------- Profilo di Gestione ------------- */
 		try {
 			String profiloGestione = registroServiziReader.getProfiloGestioneFruizioneServizio(idServizio,nomeRegistroForSearch);
@@ -3506,7 +3549,7 @@ public class RicezioneContenutiApplicativi {
 				imbustamentoMSG.setOneWayVersione11(oneWayVersione11);
 				if (headerIntegrazioneRichiesta.getBusta() != null) {
 					// RiferimentoServizioCorrelato
-					riferimentoServizioCorrelato = moduleManager.getIdCorrelazioneAsincrona(
+					String riferimentoServizioCorrelato = moduleManager.getIdCorrelazioneAsincrona(
 							headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio(), headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
 					if (riferimentoServizioCorrelato != null) {
 						// Se presente riferimentoMessaggio utilizzo quello.
@@ -3515,6 +3558,9 @@ public class RicezioneContenutiApplicativi {
 					// Collaborazione
 					if (headerIntegrazioneRichiesta.getBusta().getIdCollaborazione() != null)
 						imbustamentoMSG.setIdCollaborazione(headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
+					// RiferimentoMessaggio
+					if (headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null)
+						imbustamentoMSG.setIdRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
 				}
 				// Implemnentazione della porta erogatrice
 				imbustamentoMSG.setImplementazionePdDSoggettoMittente(implementazionePdDMittente);

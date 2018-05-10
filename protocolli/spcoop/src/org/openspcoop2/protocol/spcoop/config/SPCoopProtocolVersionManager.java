@@ -114,6 +114,11 @@ public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implemen
 		}
 		
 	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione){
+		return StatoFunzionalitaProtocollo.DISABILITATA; // non supportato in spcoop la relazione tra piu invocazioni oneway
+	}
 
 	
 	

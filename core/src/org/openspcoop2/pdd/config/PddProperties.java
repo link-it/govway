@@ -187,6 +187,9 @@ public class PddProperties {
 	public String getBusta_CollaborazioneEnable(String nomePdd){
 		return this.get(nomePdd,".busta.collaborazione.enable");
 	}
+	public String getBusta_IdRiferimentoRichiestaEnable(String nomePdd){
+		return this.get(nomePdd,".busta.idRiferimentoRichiesta.enable");
+	}
 	public String getBusta_ConsegnaInOrdineEnable(String nomePdd){
 		return this.get(nomePdd,".busta.consegnaInOrdine.enable");
 	}

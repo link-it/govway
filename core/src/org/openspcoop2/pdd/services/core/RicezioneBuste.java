@@ -1567,8 +1567,19 @@ public class RicezioneBuste {
 			requestInfo.setFruitore(soggettoFruitore);
 			
 			// InfoServizio
+			boolean identitaSoggettoErogatoreValida = idServizio!=null &&
+					idServizio.getSoggettoErogatore()!=null && 
+					idServizio.getSoggettoErogatore().getTipo()!=null &&
+					idServizio.getSoggettoErogatore().getNome()!=null;
+			boolean identitaServizioValida = identitaSoggettoErogatoreValida && 
+					idServizio!=null && idServizio.getNome()!=null && idServizio.getTipo()!=null && idServizio.getVersione()!=null;
 			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
-				infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true);
+				if(identitaServizioValida) {
+					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true);
+				}
+				else {
+					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
+				}
 			}
 			else{
 				infoServizio = new Servizio();
@@ -1578,8 +1589,15 @@ public class RicezioneBuste {
 			id = null;
 			if(is.isStaticBasedIdentificationMode_IdProtocol()){
 				Imbustamento imbustamento = new Imbustamento(logCore, protocolFactory, openspcoopstate.getStatoRichiesta());
+				IDSoggetto idSoggetto = null;
+				if(identitaSoggettoErogatoreValida) {
+					idSoggetto = idServizio.getSoggettoErogatore();
+				}
+				else {
+					idSoggetto = propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol());
+				}
 				id = 
-					imbustamento.buildID(idServizio.getSoggettoErogatore(), 
+					imbustamento.buildID(idSoggetto, 
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),

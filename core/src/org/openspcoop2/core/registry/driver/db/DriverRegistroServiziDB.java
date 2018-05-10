@@ -1342,8 +1342,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				tmp = rs.getString("identificativo_collaborazione");
 				accordoServizio.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
+				tmp = rs.getString("id_riferimento_richiesta");
+				accordoServizio.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
 				tmp = rs.getString("consegna_in_ordine");
 				accordoServizio.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
 				tmp = rs.getString("scadenza");
 				accordoServizio.setScadenza(((tmp == null || tmp.equals("")) ? null : tmp));
 
@@ -1417,6 +1422,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 					tmp = rs.getString("identificativo_collaborazione");
 					azione.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 
+					tmp = rs.getString("id_riferimento_richiesta");
+					azione.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+					
 					tmp = rs.getString("nome");
 					azione.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
 
@@ -1613,6 +1621,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tmp = rs.getString("identificativo_collaborazione");
 				pt.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 
+				tmp = rs.getString("id_riferimento_richiesta");
+				pt.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
 				tmp = rs.getString("consegna_in_ordine");
 				pt.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 
@@ -1733,6 +1744,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tmp = rs.getString("identificativo_collaborazione");
 				azionePT.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 
+				tmp = rs.getString("id_riferimento_richiesta");
+				azionePT.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
 				tmp = rs.getString("nome");
 				azionePT.setNome(((tmp == null || tmp.equals("")) ? null : tmp));
 
@@ -2012,6 +2026,32 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				tmp = rs.getString("message_type_response");
 				resource.setResponseMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
+				
+				
+				tmp = rs.getString("conferma_ricezione");
+				resource.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = rs.getString("consegna_in_ordine");
+				resource.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = rs.getString("filtro_duplicati");
+				resource.setFiltroDuplicati(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = rs.getString("identificativo_collaborazione");
+				resource.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = rs.getString("id_riferimento_richiesta");
+				resource.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+
+				tmp = rs.getString("scadenza");
+				resource.setScadenza(((tmp == null || tmp.equals("")) ? null : tmp));
+
+				tmp = rs.getString("profilo_azione");
+				if (tmp == null || tmp.equals(""))
+					resource.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT);
+				else
+					resource.setProfAzione(tmp);
+							
 				
 				resource.setIdAccordo(as.getId());
 
@@ -2950,6 +2990,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String descrizione = accordoServizio.getDescrizione();
 		StatoFunzionalita filtroDuplicati = accordoServizio.getFiltroDuplicati();
 		StatoFunzionalita identificativoCollaborazione = accordoServizio.getIdCollaborazione();
+		StatoFunzionalita identificativoRiferimentoRichiesta = accordoServizio.getIdRiferimentoRichiesta();
 
 		ProfiloCollaborazione profiloCollaborazione = accordoServizio.getProfiloCollaborazione();
 		String scadenza = accordoServizio.getScadenza();
@@ -3002,6 +3043,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addInsertField("descrizione", "?");
 			sqlQueryObject.addInsertField("filtro_duplicati", "?");
 			sqlQueryObject.addInsertField("identificativo_collaborazione", "?");
+			sqlQueryObject.addInsertField("id_riferimento_richiesta", "?");
 			sqlQueryObject.addInsertField("nome", "?");
 			sqlQueryObject.addInsertField("profilo_collaborazione", "?");
 			sqlQueryObject.addInsertField("scadenza", "?");
@@ -3033,6 +3075,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, descrizione);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(filtroDuplicati));
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(identificativoCollaborazione));
+			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(identificativoRiferimentoRichiesta));
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
@@ -3074,7 +3117,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("inserisco accordoServizio : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, 
 					serviceBinding, messageType,
 					confermaRicezione, conegnaInOrdine, descrizione, 
-					filtroDuplicati, identificativoCollaborazione, nome, profiloCollaborazione, scadenza, 
+					filtroDuplicati, identificativoCollaborazione, identificativoRiferimentoRichiesta, nome, profiloCollaborazione, scadenza, 
 					wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 					conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
 					superUser, accordoServizio.getUtilizzoSenzaAzione(), (accordoServizio.getPrivato()!=null && accordoServizio.getPrivato())));
@@ -4126,6 +4169,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String descrizione = accordoServizio.getDescrizione();
 		StatoFunzionalita filtroDuplicati = accordoServizio.getFiltroDuplicati();
 		StatoFunzionalita identificativoCollaborazione = accordoServizio.getIdCollaborazione();
+		StatoFunzionalita identificativoRiferimentoRichiesta = accordoServizio.getIdRiferimentoRichiesta();
 
 		ProfiloCollaborazione profiloCollaborazione = accordoServizio.getProfiloCollaborazione();
 		String scadenza = accordoServizio.getScadenza();
@@ -4207,6 +4251,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addUpdateField("descrizione", "?");
 			sqlQueryObject.addUpdateField("filtro_duplicati", "?");
 			sqlQueryObject.addUpdateField("identificativo_collaborazione", "?");
+			sqlQueryObject.addUpdateField("id_riferimento_richiesta", "?");
 			sqlQueryObject.addUpdateField("nome", "?");
 			sqlQueryObject.addUpdateField("profilo_collaborazione", "?");
 			sqlQueryObject.addUpdateField("scadenza", "?");
@@ -4244,6 +4289,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(index++, descrizione);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(filtroDuplicati));
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(identificativoCollaborazione));
+			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(identificativoRiferimentoRichiesta));
 			stm.setString(index++, nome);
 			stm.setString(index++, DriverRegistroServiziDB_LIB.getValue(profiloCollaborazione));
 			stm.setString(index++, scadenza);
@@ -4285,7 +4331,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, 
 							serviceBinding, messageType,
 							confermaRicezione, conegnaInOrdine, descrizione, 
-							filtroDuplicati, identificativoCollaborazione, nome, profiloCollaborazione, scadenza, 
+							filtroDuplicati, identificativoCollaborazione, identificativoRiferimentoRichiesta, nome, profiloCollaborazione, scadenza, 
 							wsdlConcettuale, wsdlDefinitorio, wsdlLogicoErogatore, wsdlLogicoFruitore, 
 							conversazioneConcettuale, conversazioneErogatore, conversazioneFruitore,
 							superUser,utilizzioSenzaAzione, idAccordoLong));
@@ -10242,6 +10288,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// setIdCollaborazione
 				tmp = rs.getString("identificativo_collaborazione");
 				servizio.setIdCollaborazione((tmp != null && !(tmp.trim().equals(""))) ? tmp : CostantiRegistroServizi.DISABILITATO);
+				// setIdRiferimentoRichiesta
+				tmp = rs.getString("id_riferimento_richiesta");
+				servizio.setIdRiferimentoRichiesta((tmp != null && !(tmp.trim().equals(""))) ? tmp : CostantiRegistroServizi.DISABILITATO);
 				// setConsegnaInOrdine
 				tmp = rs.getString("consegna_in_ordine");
 				servizio.setConsegnaInOrdine((tmp != null && !(tmp.trim().equals(""))) ? tmp : CostantiRegistroServizi.DISABILITATO);
@@ -10402,6 +10451,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("consegna_in_ordine");
 				sqlQueryObject.addSelectField("filtro_duplicati");
 				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
 				sqlQueryObject.addSelectField("scadenza");
 				sqlQueryObject.addSelectField("profilo_collaborazione");
 				sqlQueryObject.addSelectField("profilo_azione");
@@ -10424,6 +10474,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("consegna_in_ordine");
 				sqlQueryObject.addSelectField("filtro_duplicati");
 				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
 				sqlQueryObject.addSelectField("scadenza");
 				sqlQueryObject.addSelectField("profilo_collaborazione");
 				sqlQueryObject.addSelectField("profilo_azione");
@@ -10454,6 +10505,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				az.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("consegna_in_ordine")));
 				az.setFiltroDuplicati(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("filtro_duplicati")));
 				az.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("identificativo_collaborazione")));
+				az.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("id_riferimento_richiesta")));
 				az.setScadenza(risultato.getString("scadenza"));
 				az.setProfiloCollaborazione(DriverRegistroServiziDB_LIB.getEnumProfiloCollaborazione(risultato.getString("profilo_collaborazione")));
 				az.setProfAzione(risultato.getString("profilo_azione"));
@@ -10591,6 +10643,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"consegna_in_ordine");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"filtro_duplicati");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"identificativo_collaborazione");
+			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"id_riferimento_richiesta");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"scadenza");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"profilo_collaborazione");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_AZIONI,"profilo_azione");
@@ -10637,6 +10690,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				az.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("consegna_in_ordine")));
 				az.setFiltroDuplicati(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("filtro_duplicati")));
 				az.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("identificativo_collaborazione")));
+				az.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("id_riferimento_richiesta")));
 				az.setScadenza(risultato.getString("scadenza"));
 				az.setProfiloCollaborazione(DriverRegistroServiziDB_LIB.getEnumProfiloCollaborazione(risultato.getString("profilo_collaborazione")));
 				az.setProfAzione(risultato.getString("profilo_azione"));
@@ -15535,6 +15589,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "filtro_duplicati");
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "conferma_ricezione");
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "identificativo_collaborazione");
+			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "id_riferimento_richiesta");
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "consegna_in_ordine");
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "scadenza");
 			sqlQueryObject.addSelectField(CostantiDB.PORT_TYPE, "profilo_pt");
@@ -15581,6 +15636,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				pt.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("identificativo_collaborazione");
 				pt.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				tmp = risultato.getString("id_riferimento_richiesta");
+				pt.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("consegna_in_ordine");
 				pt.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("scadenza");
@@ -16141,6 +16198,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"filtro_duplicati","filtro_duplicatiPTAz");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"conferma_ricezione","conferma_ricezionePTAz");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"identificativo_collaborazione","idCollPTAz");
+			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"id_riferimento_richiesta","idRifRichiestaPTAz");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"consegna_in_ordine","consegna_in_ordinePTAz");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"scadenza","scadenzaPTAz");
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"correlata","correlataPTAz");
@@ -16196,6 +16254,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				op.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("idCollPTAz");
 				op.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				tmp = risultato.getString("idRifRichiestaPTAz");
+				op.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("consegna_in_ordinePTAz");
 				op.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("scadenzaPTAz");
@@ -16311,6 +16371,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("filtro_duplicati");
 				sqlQueryObject.addSelectField("conferma_ricezione");
 				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
 				sqlQueryObject.addSelectField("consegna_in_ordine");
 				sqlQueryObject.addSelectField("scadenza");
 				sqlQueryObject.addSelectField("profilo_pt_azione");
@@ -16333,6 +16394,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("filtro_duplicati");
 				sqlQueryObject.addSelectField("conferma_ricezione");
 				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
 				sqlQueryObject.addSelectField("consegna_in_ordine");
 				sqlQueryObject.addSelectField("scadenza");
 				sqlQueryObject.addSelectField("profilo_pt_azione");
@@ -16362,6 +16424,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				op.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("identificativo_collaborazione");
 				op.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				tmp = risultato.getString("id_riferimento_richiesta");
+				op.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("consegna_in_ordine");
 				op.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("scadenza");
@@ -16663,6 +16727,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("http_method");
 				sqlQueryObject.addSelectField("path");
 				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("conferma_ricezione");
+				sqlQueryObject.addSelectField("consegna_in_ordine");
+				sqlQueryObject.addSelectField("filtro_duplicati");
+				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
+				sqlQueryObject.addSelectField("scadenza");
+				sqlQueryObject.addSelectField("profilo_azione");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				sqlQueryObject.addWhereCondition(false, 
@@ -16689,6 +16760,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addSelectField("http_method");
 				sqlQueryObject.addSelectField("path");
 				sqlQueryObject.addSelectField("message_type");
+				sqlQueryObject.addSelectField("conferma_ricezione");
+				sqlQueryObject.addSelectField("consegna_in_ordine");
+				sqlQueryObject.addSelectField("filtro_duplicati");
+				sqlQueryObject.addSelectField("identificativo_collaborazione");
+				sqlQueryObject.addSelectField("id_riferimento_richiesta");
+				sqlQueryObject.addSelectField("scadenza");
+				sqlQueryObject.addSelectField("profilo_azione");
 				sqlQueryObject.addSelectField("id");
 				sqlQueryObject.addWhereCondition("id_accordo = ?");
 				if(httpMethod!=null) {
@@ -16729,6 +16807,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 						resource.setPath(tmp);
 					}
 				}
+				
+				resource.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("conferma_ricezione")));
+				resource.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("consegna_in_ordine")));
+				resource.setFiltroDuplicati(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("filtro_duplicati")));
+				resource.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("identificativo_collaborazione")));
+				resource.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("id_riferimento_richiesta")));
+				resource.setScadenza(risultato.getString("scadenza"));
+				resource.setProfAzione(risultato.getString("profilo_azione"));
 				
 				tmp = risultato.getString("message_type");
 				resource.setMessageType(DriverRegistroServiziDB_LIB.getEnumMessageType((tmp == null || tmp.equals("")) ? null : tmp));
@@ -19037,6 +19123,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				tmp = rs.getString("identificativo_collaborazione");
 				pt.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				
+				tmp = rs.getString("id_riferimento_richiesta");
+				pt.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 
 				tmp = rs.getString("consegna_in_ordine");
 				pt.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
@@ -20408,6 +20497,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlquery.addSelectField("filtro_duplicati");
 				sqlquery.addSelectField("conferma_ricezione");
 				sqlquery.addSelectField("identificativo_collaborazione");
+				sqlquery.addSelectField("id_riferimento_richiesta");
 				sqlquery.addSelectField("consegna_in_ordine");
 				sqlquery.addSelectField("scadenza");
 				sqlquery.addSelectField("profilo_pt");
@@ -20430,6 +20520,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlquery.addSelectField("filtro_duplicati");
 				sqlquery.addSelectField("conferma_ricezione");
 				sqlquery.addSelectField("identificativo_collaborazione");
+				sqlquery.addSelectField("id_riferimento_richiesta");
 				sqlquery.addSelectField("consegna_in_ordine");
 				sqlquery.addSelectField("scadenza");
 				sqlquery.addSelectField("profilo_pt");
@@ -20462,6 +20553,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 				pt.setConfermaRicezione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("identificativo_collaborazione");
 				pt.setIdCollaborazione(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
+				tmp = risultato.getString("id_riferimento_richiesta");
+				pt.setIdRiferimentoRichiesta(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("consegna_in_ordine");
 				pt.setConsegnaInOrdine(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(((tmp == null || tmp.equals("")) ? null : tmp)));
 				tmp = risultato.getString("scadenza");

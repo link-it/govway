@@ -80,6 +80,7 @@ import java.util.List;
  * 		&lt;attribute name="filtro-duplicati" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="conferma-ricezione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="id-riferimento-richiesta" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
@@ -599,6 +600,26 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.idCollaborazione = idCollaborazione;
   }
 
+  public void set_value_idRiferimentoRichiesta(String value) {
+    this.idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_idRiferimentoRichiesta() {
+    if(this.idRiferimentoRichiesta == null){
+    	return null;
+    }else{
+    	return this.idRiferimentoRichiesta.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.StatoFunzionalita getIdRiferimentoRichiesta() {
+    return this.idRiferimentoRichiesta;
+  }
+
+  public void setIdRiferimentoRichiesta(org.openspcoop2.core.registry.constants.StatoFunzionalita idRiferimentoRichiesta) {
+    this.idRiferimentoRichiesta = idRiferimentoRichiesta;
+  }
+
   public void set_value_consegnaInOrdine(String value) {
     this.consegnaInOrdine = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -971,6 +992,12 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_idRiferimentoRichiesta;
+
+  @XmlAttribute(name="id-riferimento-richiesta",required=false)
+  protected StatoFunzionalita idRiferimentoRichiesta = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_consegnaInOrdine;

@@ -63,6 +63,11 @@ public abstract class BasicVersionManager extends BasicManager implements IProto
 	public StatoFunzionalitaProtocollo getCollaborazione(ProfiloDiCollaborazione profiloCollaborazione) {
 		return StatoFunzionalitaProtocollo.DISABILITATA;
 	}
+	
+	@Override
+	public StatoFunzionalitaProtocollo getIdRiferimentoRichiesta(ProfiloDiCollaborazione profiloCollaborazione) {
+		return StatoFunzionalitaProtocollo.DISABILITATA;
+	}
 
 	
 	

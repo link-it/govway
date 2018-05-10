@@ -106,7 +106,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 public final class AccordiServizioParteComuneChange extends Action {
 
 	private String editMode = null;
-	private String id, descr, profcoll, filtrodup, confric, idcoll, consord, scadenza, utilizzo, referente, versione,accordoCooperazioneId,statoPackage,
+	private String id, descr, profcoll, filtrodup, confric, idcoll, idRifRichiesta, consord, scadenza, utilizzo, referente, versione,accordoCooperazioneId,statoPackage,
 	tipoAccordo, tipoProtocollo, actionConfirm, backToStato;
 	boolean utilizzoSenzaAzione, showUtilizzoSenzaAzione = false,privato ,isServizioComposto,  validazioneDocumenti = true;
 	private ServiceBinding serviceBinding = null;
@@ -167,6 +167,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		this.filtrodup = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
 		this.confric = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
 		this.idcoll = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
+		this.idRifRichiesta = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID_RIFERIMENTO_RICHIESTA);
 		this.consord = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
 		this.scadenza = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
 		this.utilizzo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UTILIZZO_SENZA_AZIONE);
@@ -430,6 +431,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.confric = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
 				if(this.idcoll == null)
 					this.idcoll = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+				if(this.idRifRichiesta == null)
+					this.idRifRichiesta = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
 				if(this.consord == null)
 					this.consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 				if(this.scadenza == null)
@@ -546,7 +549,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,
 						this.wsblconc,this.wsblserv,this.wsblservcorr,
-						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
@@ -577,7 +580,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		// Controlli sui campi immessi
 		boolean isOk = apcHelper.accordiCheckData(tipoOp, nome, this.descr, this.profcoll, 
 				this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,  
-				this.filtrodup, this.confric, this.idcoll, this.consord, 
+				this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
 				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato,this.serviceBinding,this.messageType,this.interfaceType,
 				true);
@@ -635,7 +638,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 			dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
-					this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+					this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id, tipoOp, 
 					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
@@ -678,14 +681,14 @@ public final class AccordiServizioParteComuneChange extends Action {
 							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
-						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType);
 
 				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, null, null, null, null, 
-						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id,						
+						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id,						
 						tipoOp, this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione, this.referente,this.versione, providersList, providersListLabel,
 						this.privato,this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId, this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti, this.tipoProtocollo, 
@@ -752,6 +755,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		as.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.consord)));
 		as.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.filtrodup)));
 		as.setIdCollaborazione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.idcoll)));
+		as.setIdRiferimentoRichiesta(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.idRifRichiesta)));
 		as.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(this.profcoll)));
 		as.setScadenza(this.scadenza);
 		as.setUtilizzoSenzaAzione(as.sizeAzioneList() > 0 ? this.utilizzoSenzaAzione : true);
@@ -829,7 +833,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 							this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
-						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
@@ -936,7 +940,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 										this.registryReader, this.configRegistryReader, idAccordoOLD);
 
 							dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
-									this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+									this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id, tipoOp, 
 									this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,

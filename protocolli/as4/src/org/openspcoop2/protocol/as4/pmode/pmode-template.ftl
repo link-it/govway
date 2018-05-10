@@ -137,11 +137,11 @@ ${payloadProfiles.payloadProfileDefault}
 		</#list>
 		</legConfigurations>
 		<#list soggetti as soggetto>
-			<#list soggetto.getAps(soggettoOperativo) as aps>
+			<#list soggetto.getAps(soggettoOperativo,true) as aps>
 <process name="${aps.id}"
          agreement=""
-         mep="oneway"
-         binding="push"
+         mep="${aps.ebmsMep}"
+         binding="${aps.ebmsBinding}"
          initiatorRole="defaultInitiatorRole"
          responderRole="defaultResponderRole">
 	<initiatorParties>

@@ -51,6 +51,7 @@ CREATE TABLE accordi
 	filtro_duplicati VARCHAR(255),
 	conferma_ricezione VARCHAR(255),
 	identificativo_collaborazione VARCHAR(255),
+	id_riferimento_richiesta VARCHAR(255),
 	consegna_in_ordine VARCHAR(255),
 	scadenza VARCHAR(255),
 	superuser VARCHAR(255),
@@ -87,6 +88,7 @@ CREATE TABLE accordi_azioni
 	filtro_duplicati VARCHAR(255),
 	conferma_ricezione VARCHAR(255),
 	identificativo_collaborazione VARCHAR(255),
+	id_riferimento_richiesta VARCHAR(255),
 	consegna_in_ordine VARCHAR(255),
 	scadenza VARCHAR(255),
 	correlata VARCHAR(255),
@@ -115,6 +117,7 @@ CREATE TABLE port_type
 	filtro_duplicati VARCHAR(255),
 	conferma_ricezione VARCHAR(255),
 	identificativo_collaborazione VARCHAR(255),
+	id_riferimento_richiesta VARCHAR(255),
 	consegna_in_ordine VARCHAR(255),
 	scadenza VARCHAR(255),
 	-- ridefinito/default
@@ -144,6 +147,7 @@ CREATE TABLE port_type_azioni
 	filtro_duplicati VARCHAR(255),
 	conferma_ricezione VARCHAR(255),
 	identificativo_collaborazione VARCHAR(255),
+	id_riferimento_richiesta VARCHAR(255),
 	consegna_in_ordine VARCHAR(255),
 	scadenza VARCHAR(255),
 	correlata_servizio VARCHAR(255),
@@ -207,6 +211,14 @@ CREATE TABLE api_resources
 	message_type VARCHAR(255),
 	message_type_request VARCHAR(255),
 	message_type_response VARCHAR(255),
+	filtro_duplicati VARCHAR(255),
+	conferma_ricezione VARCHAR(255),
+	identificativo_collaborazione VARCHAR(255),
+	id_riferimento_richiesta VARCHAR(255),
+	consegna_in_ordine VARCHAR(255),
+	scadenza VARCHAR(255),
+	-- ridefinito/default
+	profilo_azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

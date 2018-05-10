@@ -188,6 +188,7 @@
               <xsd:attribute name="duplicateFilter" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="acknowledgement" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="conversationIdentifier" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="referenceToRequestIdentifier" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="deliveryOrder" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="expiration" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="manifestAttachments" type="xsd:boolean" use="optional" default="false"/>
@@ -269,7 +270,7 @@
                      <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
                      <xsd:element name="interfaces" type="InterfacesConfiguration" minOccurs="0"/>
                      <xsd:element name="profile" type="RestCollaborationProfile" minOccurs="0"/>
-                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/> <!-- Al momento inutilizzato -->
+                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/>
               </xsd:all>
               <xsd:attribute name="xml" type="xsd:boolean" use="required" />
               <xsd:attribute name="json" type="xsd:boolean" use="required" />

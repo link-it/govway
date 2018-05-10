@@ -68,6 +68,7 @@ CREATE TABLE accordi
 	filtro_duplicati VARCHAR2(255),
 	conferma_ricezione VARCHAR2(255),
 	identificativo_collaborazione VARCHAR2(255),
+	id_riferimento_richiesta VARCHAR2(255),
 	consegna_in_ordine VARCHAR2(255),
 	scadenza VARCHAR2(255),
 	superuser VARCHAR2(255),
@@ -123,6 +124,7 @@ CREATE TABLE accordi_azioni
 	filtro_duplicati VARCHAR2(255),
 	conferma_ricezione VARCHAR2(255),
 	identificativo_collaborazione VARCHAR2(255),
+	id_riferimento_richiesta VARCHAR2(255),
 	consegna_in_ordine VARCHAR2(255),
 	scadenza VARCHAR2(255),
 	correlata VARCHAR2(255),
@@ -162,6 +164,7 @@ CREATE TABLE port_type
 	filtro_duplicati VARCHAR2(255),
 	conferma_ricezione VARCHAR2(255),
 	identificativo_collaborazione VARCHAR2(255),
+	id_riferimento_richiesta VARCHAR2(255),
 	consegna_in_ordine VARCHAR2(255),
 	scadenza VARCHAR2(255),
 	-- ridefinito/default
@@ -202,6 +205,7 @@ CREATE TABLE port_type_azioni
 	filtro_duplicati VARCHAR2(255),
 	conferma_ricezione VARCHAR2(255),
 	identificativo_collaborazione VARCHAR2(255),
+	id_riferimento_richiesta VARCHAR2(255),
 	consegna_in_ordine VARCHAR2(255),
 	scadenza VARCHAR2(255),
 	correlata_servizio VARCHAR2(255),
@@ -292,6 +296,14 @@ CREATE TABLE api_resources
 	message_type VARCHAR2(255),
 	message_type_request VARCHAR2(255),
 	message_type_response VARCHAR2(255),
+	filtro_duplicati VARCHAR2(255),
+	conferma_ricezione VARCHAR2(255),
+	identificativo_collaborazione VARCHAR2(255),
+	id_riferimento_richiesta VARCHAR2(255),
+	consegna_in_ordine VARCHAR2(255),
+	scadenza VARCHAR2(255),
+	-- ridefinito/default
+	profilo_azione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

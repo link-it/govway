@@ -617,6 +617,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			String filtrodup = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
 			String confric = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
 			String idcoll = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+			String idRifRichiesta = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
 			String consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 			String scadenza = as.getScadenza();
 			boolean showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se
@@ -736,7 +737,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
-					filtrodup, confric, idcoll, consord, scadenza, this.id, TipoOperazione.CHANGE, 
+					filtrodup, confric, idcoll, idRifRichiesta, consord, scadenza, this.id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 

@@ -175,6 +175,9 @@
 		<xsd:attribute default="disabilitato" name="id-collaborazione" type="StatoFunzionalita">
 			
 		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="id-riferimento-richiesta" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute default="disabilitato" name="consegna-in-ordine" type="StatoFunzionalita">
 			
 		</xsd:attribute>
@@ -243,6 +246,7 @@
 		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
 		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
 		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-riferimento-richiesta" type="StatoFunzionalita"/>
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
 		<xsd:attribute name="scadenza" type="xsd:string"/>
 		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
@@ -267,6 +271,7 @@
 		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
 		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
 		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-riferimento-richiesta" type="StatoFunzionalita"/>
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
 		<xsd:attribute name="scadenza" type="xsd:string"/>
 		<xsd:attribute name="correlata" type="xsd:string"/>
@@ -295,6 +300,7 @@
 		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
 		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
 		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-riferimento-richiesta" type="StatoFunzionalita"/>
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
 		<xsd:attribute name="scadenza" type="xsd:string"/>
 		<xsd:attribute name="correlata-servizio" type="xsd:string"/>
@@ -329,6 +335,9 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
+		<xsd:attribute name="prof-azione" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
 		<xsd:attribute name="id-accordo" type="xsd:unsignedLong" use="optional">
 			
 		</xsd:attribute>
@@ -340,6 +349,12 @@
 		<xsd:attribute name="message-type" type="MessageType" use="optional"/>
 		<xsd:attribute name="request-message-type" type="MessageType" use="optional"/>
 		<xsd:attribute name="response-message-type" type="MessageType" use="optional"/>
+		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
+		<xsd:attribute name="conferma-ricezione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita"/>
+		<xsd:attribute name="id-riferimento-richiesta" type="StatoFunzionalita"/>
+		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita"/>
+		<xsd:attribute name="scadenza" type="xsd:string"/>
 	</xsd:complexType>
 	
 	<!-- Definizione di una richiesta per una risorsa REST -->
@@ -614,6 +629,9 @@
 			
 		</xsd:attribute>
 		<xsd:attribute name="id-collaborazione" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute name="id-riferimento-richiesta" type="StatoFunzionalita">
 			
 		</xsd:attribute>
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita">

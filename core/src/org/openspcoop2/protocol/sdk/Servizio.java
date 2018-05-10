@@ -57,6 +57,8 @@ public class Servizio implements java.io.Serializable {
 	private ProfiloDiCollaborazione profiloDiCollaborazione;
 	/** Utilizzo di un ID-Collaborazione. */
 	private boolean idCollaborazione;
+	/** Utilizzo di per riferimento alla richiesta */
+	private boolean idRiferimentoRichiesta;
 	/** Consegna in ordine. */
 	private boolean ordineConsegna;
 	/** Scadenza (null se non presente) */
@@ -155,6 +157,9 @@ public class Servizio implements java.io.Serializable {
 	 */
 	public void setCollaborazione(boolean c ){
 		this.idCollaborazione = c;
+	}
+	public void setIdRiferimentoRichiesta(boolean c ){
+		this.idRiferimentoRichiesta = c;
 	}
 	/**
 	 * Imposta l'utilizzo della funzionalita' di consegna in ordine nel servizio registrato nel Registro dei Servizi.
@@ -256,6 +261,9 @@ public class Servizio implements java.io.Serializable {
 	 */
 	public boolean getCollaborazione(){
 		return this.idCollaborazione;
+	}
+	public boolean getIdRiferimentoRichiesta(){
+		return this.idRiferimentoRichiesta;
 	}
 	/**
 	 * Ritorna l'indicazione sull'utilizzo o meno della consegna in ordine nel servizio registrato nel Registro dei Servizi.

@@ -86,6 +86,7 @@
     			<specification type="wsdl11" />
     		</interfaces>
     		<profile oneway="true" inputOutput="false" asyncInputOutput="false" polledInputOutput="false" />
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
     	</soap>
     	<rest xml="true" json="true" 
     		  binary="true" mimeMultipart="true">
@@ -179,6 +180,7 @@
     			<specification type="openApi3" />
     		</interfaces>
     		<profile oneway="true" />
+    		<functionality conversationIdentifier="true" referenceToRequestIdentifier="true"/>
     	</rest>
     </binding>
 

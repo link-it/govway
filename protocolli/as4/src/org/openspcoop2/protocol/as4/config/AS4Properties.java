@@ -136,6 +136,8 @@ public class AS4Properties {
 
 			generateIDasUUID();
 			
+			isRiferimentoIDRichiestaRequired();
+			
 			this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 			this.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 			
@@ -259,6 +261,44 @@ public class AS4Properties {
 		return AS4Properties.generateIDasUUID;
 	}
 	
+	
+	
+	
+	/* **** CONFIGURAZIONE **** */
+	
+    /**
+     * Restituisce l'indicazione se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
+	 * 
+	 * @return True se la funzionalita' 'Riferimento ID Richiesta' richiede che venga fornito obbligatoriamente l'informazione sull'identificativo della richiesta tramite i meccanismi di integrazione
+     * 
+     */
+	private static Boolean isRiferimentoIDRichiestaRequired= null;
+	private static Boolean isRiferimentoIDRichiestaRequiredRead= null;
+    public Boolean isRiferimentoIDRichiestaRequired(){
+    	if(AS4Properties.isRiferimentoIDRichiestaRequiredRead==null){
+	    	try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required"); 
+				
+				if (value != null){
+					value = value.trim();
+					AS4Properties.isRiferimentoIDRichiestaRequired = Boolean.parseBoolean(value);
+				}else{
+					this.log.debug("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true'");
+					AS4Properties.isRiferimentoIDRichiestaRequired = true;
+				}
+				
+				AS4Properties.isRiferimentoIDRichiestaRequiredRead = true;
+				
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.protocol.as4.riferimentoIdRichiesta.required' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				AS4Properties.isRiferimentoIDRichiestaRequired = true;
+				
+				AS4Properties.isRiferimentoIDRichiestaRequiredRead = true;
+			}
+    	}
+    	
+    	return AS4Properties.isRiferimentoIDRichiestaRequired;
+	}
 	
 	
 	

@@ -48,6 +48,7 @@ public class AzioneModel extends AbstractModel<Azione> {
 		this.FILTRO_DUPLICATI = new Field("filtro-duplicati",java.lang.String.class,"azione",Azione.class);
 		this.CONFERMA_RICEZIONE = new Field("conferma-ricezione",java.lang.String.class,"azione",Azione.class);
 		this.ID_COLLABORAZIONE = new Field("id-collaborazione",java.lang.String.class,"azione",Azione.class);
+		this.ID_RIFERIMENTO_RICHIESTA = new Field("id-riferimento-richiesta",java.lang.String.class,"azione",Azione.class);
 		this.CONSEGNA_IN_ORDINE = new Field("consegna-in-ordine",java.lang.String.class,"azione",Azione.class);
 		this.SCADENZA = new Field("scadenza",java.lang.String.class,"azione",Azione.class);
 		this.CORRELATA = new Field("correlata",java.lang.String.class,"azione",Azione.class);
@@ -66,6 +67,7 @@ public class AzioneModel extends AbstractModel<Azione> {
 		this.FILTRO_DUPLICATI = new ComplexField(father,"filtro-duplicati",java.lang.String.class,"azione",Azione.class);
 		this.CONFERMA_RICEZIONE = new ComplexField(father,"conferma-ricezione",java.lang.String.class,"azione",Azione.class);
 		this.ID_COLLABORAZIONE = new ComplexField(father,"id-collaborazione",java.lang.String.class,"azione",Azione.class);
+		this.ID_RIFERIMENTO_RICHIESTA = new ComplexField(father,"id-riferimento-richiesta",java.lang.String.class,"azione",Azione.class);
 		this.CONSEGNA_IN_ORDINE = new ComplexField(father,"consegna-in-ordine",java.lang.String.class,"azione",Azione.class);
 		this.SCADENZA = new ComplexField(father,"scadenza",java.lang.String.class,"azione",Azione.class);
 		this.CORRELATA = new ComplexField(father,"correlata",java.lang.String.class,"azione",Azione.class);
@@ -89,6 +91,8 @@ public class AzioneModel extends AbstractModel<Azione> {
 	public IField CONFERMA_RICEZIONE = null;
 	 
 	public IField ID_COLLABORAZIONE = null;
+	 
+	public IField ID_RIFERIMENTO_RICHIESTA = null;
 	 
 	public IField CONSEGNA_IN_ORDINE = null;
 	 

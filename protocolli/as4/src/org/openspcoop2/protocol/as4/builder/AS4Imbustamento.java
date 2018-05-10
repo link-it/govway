@@ -37,6 +37,7 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
+import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
@@ -324,6 +325,17 @@ public class AS4Imbustamento {
 		UserMessage userMessage = new UserMessage();
 		ebmsV3_0Messagging.addUserMessage(userMessage);
 		
+		// MessageInfo
+		
+		MessageInfo messageInfo = new MessageInfo();
+		messageInfo.setMessageId(busta.getID());
+		messageInfo.setTimestamp(busta.getOraRegistrazione());
+		if(busta.getRiferimentoMessaggio()!=null) {
+			messageInfo.setRefToMessageId(busta.getRiferimentoMessaggio());
+		}
+		userMessage.setMessageInfo(messageInfo);
+		
+		
 		// PartyInfo
 		
 		PartyInfo partyInfo = new PartyInfo();
@@ -387,6 +399,11 @@ public class AS4Imbustamento {
 			
 		collaborationInfo.setAction(actionProperty);
 		busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_COLLABORATION_INFO_ACTION, actionProperty);
+		
+		// CollaborationInfo (ConversationId)
+		if(busta.getCollaborazione()!=null) {
+			collaborationInfo.setConversationId(busta.getCollaborazione());
+		}
 				
 		return ebmsV3_0Messagging;
 	}

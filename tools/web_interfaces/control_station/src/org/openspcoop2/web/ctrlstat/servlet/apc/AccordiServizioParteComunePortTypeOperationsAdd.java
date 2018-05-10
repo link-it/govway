@@ -158,6 +158,10 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			if ((idcollop != null) && idcollop.equals("null")) {
 				idcollop = null;
 			}
+			String idRifRichiestaOp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_ID_RIFERIMENTO_RICHIESTA);
+			if ((idRifRichiestaOp != null) && idRifRichiestaOp.equals("null")) {
+				idRifRichiestaOp = null;
+			}
 			String consordop = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CONSEGNA_ORDINE);
 			if ((consordop != null) && consordop.equals("null")) {
 				consordop = null;
@@ -247,6 +251,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 					profcollop = null;
 					confricop = null;
 					idcollop= null; 
+					idRifRichiestaOp= null; 
 					filtrodupop= null;
 					scadenzaop= "";
 					consordop= null;
@@ -292,6 +297,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 				 * filtrodupop = as.getFiltroDuplicati(); confricop =
 				 * as.getConfermaRicezione(); idcollop =
 				 * as.getIdCollaborazione(); consordop =
+				 * as.getConfermaRicezione(); idRifRichiestaOp =
 				 * as.getConsegnaInOrdine(); scadenzaop = as.getScadenza();
 				 * profcollop = as.getProfiloCollaborazione();
 				 */
@@ -304,12 +310,14 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 						// filtrodupop = pt.getFiltroDuplicati();
 						// confricop = pt.getConfermaRicezione();
 						// idcollop = pt.getIdCollaborazione();
+						// idRifRichiestaOp = pt.getIdRiferimentoRichiesta();
 						// consordop = pt.getConsegnaInOrdine();
 						// scadenzaop = pt.getScadenza();
 						// profcollop = pt.getProfiloCollaborazione();
 						filtrodupop = filtrodupop != null && !"".equals(filtrodupop) ? filtrodupop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getFiltroDuplicati());
 						confricop = confricop != null && !"".equals(confricop) ? confricop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getConfermaRicezione());
 						idcollop = idcollop != null && !"".equals(idcollop) ? idcollop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getIdCollaborazione());
+						idRifRichiestaOp = idRifRichiestaOp != null && !"".equals(idRifRichiestaOp) ? idRifRichiestaOp : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getIdRiferimentoRichiesta());
 						consordop = consordop != null && !"".equals(consordop) ? consordop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getConsegnaInOrdine());
 						scadenzaop = scadenzaop != null && !"".equals(scadenzaop) ? scadenzaop : pt.getScadenza();
 						profcollop = profcollop != null && !"".equals(profcollop) ? profcollop : AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(pt.getProfiloCollaborazione());
@@ -318,6 +326,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 						filtrodupop = filtrodupop != null && !"".equals(filtrodupop) ? filtrodupop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
 						confricop = confricop != null && !"".equals(confricop) ? confricop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
 						idcollop = idcollop != null && !"".equals(idcollop) ? idcollop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+						idRifRichiestaOp = idRifRichiestaOp != null && !"".equals(idRifRichiestaOp) ? idRifRichiestaOp : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdRiferimentoRichiesta());
 						consordop = consordop != null && !"".equals(consordop) ? consordop : AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
 						scadenzaop = scadenzaop != null && !"".equals(scadenzaop) ? scadenzaop : as.getScadenza();
 						profcollop = profcollop != null && !"".equals(profcollop) ? profcollop : AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
@@ -385,7 +394,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
-						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, consordop, consordop, scadenzaop, scadenzaop, 
+						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, idRifRichiestaOp, idRifRichiestaOp, consordop, consordop, scadenzaop, scadenzaop, 
 						tipoOp, profcollop, profcollop, "", 
 						opCorrelateList != null ? opCorrelateList.toArray(new String[opCorrelateList.size()]) : null, as.getStatoPackage(),
 								tipoAccordo, servCorrList != null ? servCorrList.toArray(new String[servCorrList.size()]) : null, servcorr, 
@@ -404,7 +413,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiPorttypeOperationCheckData(tipoOp, id, nomept, nomeop, profProtocollo, filtrodupop, confricop, idcollop, consordop, scadenzaop, servcorr, azicorr, profcollop, styleOp, soapActionOp, useOp, opTypeOp, nsWSDLOp);
+			boolean isOk = apcHelper.accordiPorttypeOperationCheckData(tipoOp, id, nomept, nomeop, profProtocollo, filtrodupop, confricop, idcollop, idRifRichiestaOp, consordop, scadenzaop, servcorr, azicorr, profcollop, styleOp, soapActionOp, useOp, opTypeOp, nsWSDLOp);
 
 			// Validazione base dei parametri custom 
 			if(isOk){
@@ -506,7 +515,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 						this.registryReader, this.configRegistryReader, idAzione);
 
 				dati = apcHelper.addAccordiPorttypeOperationToDati(dati, id, nomept, nomeop, profProtocollo, 
-						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, consordop, consordop, scadenzaop, scadenzaop, 
+						filtrodupop, filtrodupop, confricop, confricop, idcollop, idcollop, idRifRichiestaOp, idRifRichiestaOp, consordop, consordop, scadenzaop, scadenzaop, 
 						tipoOp, profcollop, profcollop, opcorrelata, 
 						opCorrelateList != null ? opCorrelateList.toArray(new String[opCorrelateList.size()]) : null, as.getStatoPackage(),
 								tipoAccordo, servCorrList != null ? servCorrList.toArray(new String[servCorrList.size()]) : null, servcorr, 
@@ -529,6 +538,7 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 			// filtrodupop = null;
 			// confricop = null;
 			// idcollop = null;
+			// idRifRichiestaOp = null;
 			// consordop = null;
 			// scadenzaop = null;
 			// } else {
@@ -546,6 +556,11 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 				idcollop = CostantiRegistroServizi.ABILITATO.toString();
 			} else {
 				idcollop = CostantiRegistroServizi.DISABILITATO.toString();
+			}
+			if(ServletUtils.isCheckBoxEnabled(idRifRichiestaOp)){
+				idRifRichiestaOp = CostantiRegistroServizi.ABILITATO.toString();
+			} else {
+				idRifRichiestaOp = CostantiRegistroServizi.DISABILITATO.toString();
 			}
 			if(ServletUtils.isCheckBoxEnabled(consordop)){
 				consordop = CostantiRegistroServizi.ABILITATO.toString();
@@ -570,6 +585,11 @@ public final class AccordiServizioParteComunePortTypeOperationsAdd extends Actio
 				newOp.setIdCollaborazione(CostantiRegistroServizi.ABILITATO);
 			} else {
 				newOp.setIdCollaborazione(CostantiRegistroServizi.DISABILITATO);
+			}
+			if(ServletUtils.isCheckBoxEnabled(idRifRichiestaOp)){
+				newOp.setIdRiferimentoRichiesta(CostantiRegistroServizi.ABILITATO);
+			} else {
+				newOp.setIdRiferimentoRichiesta(CostantiRegistroServizi.DISABILITATO);
 			}
 			if(ServletUtils.isCheckBoxEnabled(consordop)){
 				newOp.setConsegnaInOrdine(CostantiRegistroServizi.ABILITATO);

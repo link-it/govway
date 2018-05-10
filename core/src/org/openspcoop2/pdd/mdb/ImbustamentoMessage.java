@@ -50,6 +50,8 @@ public class ImbustamentoMessage implements GenericMessage {
 	private RichiestaDelegata richiestaDelegata;
 	/** RiferimentoMessaggio utilizzato per eventuali risposte asincrone o invocazione di servizi correlati */
 	private String riferimentoServizioCorrelato;
+	/** IDRiferimentoMessaggio utilizzato per correlare una risposta ad una richiesta oneway */
+	private String idRiferimentoMessaggio;
 	/** IDCollaborazione utilizzato per eventuali collaborazioni */
 	private String idCollaborazione;
 	/** InfoServizio */
@@ -114,6 +116,10 @@ public class ImbustamentoMessage implements GenericMessage {
 	public void setIdCollaborazione(String idCollaborazione) {
 		this.idCollaborazione = idCollaborazione;
 	}
+	
+	public void setIdRiferimentoMessaggio(String idRiferimentoMessaggio) {
+		this.idRiferimentoMessaggio = idRiferimentoMessaggio;
+	}
 
 	/**
 	 * @param oneWayVersione11
@@ -152,6 +158,10 @@ public class ImbustamentoMessage implements GenericMessage {
 	 */
 	public String getIdCollaborazione() {
 		return this.idCollaborazione;
+	}
+	
+	public String getIdRiferimentoMessaggio() {
+		return this.idRiferimentoMessaggio;
 	}
 
 	public Servizio getInfoServizio() {

@@ -32,6 +32,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
+import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -83,7 +84,9 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 	
 	@Override
 	public String newID(IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
-		return super.newID(idSoggetto, idTransazione, ruoloMessaggio, this.as4Properties.generateIDasUUID());
+		String id = super.newID(idSoggetto, idTransazione, ruoloMessaggio, this.as4Properties.generateIDasUUID());
+		id = id + AS4Costanti.AS4_SUFFIX_ID_OPENSPCOOP2;
+		return id;
 	}
 	
 	

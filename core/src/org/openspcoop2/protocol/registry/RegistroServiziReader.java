@@ -1011,7 +1011,6 @@ public class RegistroServiziReader {
 	private Servizio _getInfoServizioREST(org.openspcoop2.core.registry.AccordoServizioParteComune as, String uriAccordo,
 			String azione, Servizio infoServizio) throws DriverRegistroServiziAzioneNotFound {
 		
-		@SuppressWarnings("unused")
 		org.openspcoop2.core.registry.Resource resource = null;
 		if(azione==null){
 			throw new DriverRegistroServiziAzioneNotFound("invocazione senza la definizione di una azione non permessa per l'accordo di servizio "+uriAccordo);
@@ -1031,6 +1030,19 @@ public class RegistroServiziReader {
 			}
 		}
 		
+		
+		infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+		infoServizio.setCollaborazione(false);
+		infoServizio.setConfermaRicezione(false);
+		infoServizio.setOrdineConsegna(false);
+		infoServizio.setCorrelato(false);
+		
+		
+
+		
+		// ----------- 1. Accordo di Servizio ------------------
+
+		// profilo di collaborazione (default: oneway)
 		if(as.getProfiloCollaborazione()!=null) {
 			if(org.openspcoop2.core.registry.constants.ProfiloCollaborazione.ONEWAY.equals(as.getProfiloCollaborazione())) {
 				infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.ONEWAY);
@@ -1041,11 +1053,147 @@ public class RegistroServiziReader {
 		}else {
 			infoServizio.setProfiloDiCollaborazione(ProfiloDiCollaborazione.SINCRONO);
 		}
-		infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
-		infoServizio.setCollaborazione(false);
-		infoServizio.setConfermaRicezione(false);
-		infoServizio.setOrdineConsegna(false);
-		infoServizio.setCorrelato(false);
+
+		// ID-Collaborazione (default: false)
+		if(as.getIdCollaborazione() == null)
+			infoServizio.setCollaborazione(false);
+		else if(as.getIdCollaborazione().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setCollaborazione(false);
+		else if(as.getIdCollaborazione().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setCollaborazione(true);
+		else
+			infoServizio.setCollaborazione(false);
+
+		// ID-RiferimentoRichiesta (default: false)
+		if(as.getIdRiferimentoRichiesta() == null)
+			infoServizio.setIdRiferimentoRichiesta(false);
+		else if(as.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setIdRiferimentoRichiesta(false);
+		else if(as.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setIdRiferimentoRichiesta(true);
+		else
+			infoServizio.setIdRiferimentoRichiesta(false);
+		
+		// Consegna in Ordine (default: false)
+		if(as.getConsegnaInOrdine() == null)
+			infoServizio.setOrdineConsegna(false);
+		else if(as.getConsegnaInOrdine().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setOrdineConsegna(false);
+		else if(as.getConsegnaInOrdine().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setOrdineConsegna(true);
+		else
+			infoServizio.setOrdineConsegna(false);
+
+		// ConfermaRicezione (default: false)
+		if(as.getConfermaRicezione() == null)
+			infoServizio.setConfermaRicezione(false);
+		else if(as.getConfermaRicezione().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setConfermaRicezione(false);
+		else if(as.getConfermaRicezione().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setConfermaRicezione(true);
+		else
+			infoServizio.setConfermaRicezione(false);
+
+		// Filtro Duplicati (default: false)
+		if(as.getFiltroDuplicati() == null)
+			infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+		else if(as.getFiltroDuplicati().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+		else if(as.getFiltroDuplicati().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setInoltro(Inoltro.SENZA_DUPLICATI);
+		else
+			infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+
+		// Costruzione scadenza
+		if(as.getScadenza() != null){
+			try{
+				long minuti = Long.parseLong(as.getScadenza());
+				Date nowDate = DateManager.getDate();
+				long now = nowDate.getTime();
+				now = now + (minuti*60*1000);
+				nowDate.setTime(now);
+				infoServizio.setScadenza(nowDate);
+				infoServizio.setScadenzaMinuti(minuti);
+			}catch(Exception e){}
+		}
+
+
+		
+	
+
+
+		// ---------- 2. overwrite con risorsa dell'accordo di servizio o del port-type (se definito) -----------------
+		if(resource!=null){
+
+			boolean ridefinisci = true;
+			if(CostantiRegistroServizi.PROFILO_AZIONE_DEFAULT.equals(resource.getProfAzione())){
+				ridefinisci = false;
+			}
+						
+			if(ridefinisci){
+	
+				// ID-Collaborazione (default: false)
+				StatoFunzionalita idCollaborazione = resource.getIdCollaborazione();
+				if(idCollaborazione != null){
+					if(idCollaborazione.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setCollaborazione(false);
+					else if(idCollaborazione.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setCollaborazione(true);
+				}
+				
+				// ID-RiferimentoRichiesta (default: false)
+				StatoFunzionalita idRiferimentoRichiesta = resource.getIdRiferimentoRichiesta();
+				if(idRiferimentoRichiesta != null){
+					if(idRiferimentoRichiesta.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(false);
+					else if(idRiferimentoRichiesta.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(true);
+				}
+	
+				// Consegna in Ordine (default: false)
+				StatoFunzionalita consegnaInOrdine = resource.getConsegnaInOrdine();
+				if(consegnaInOrdine != null){
+					if(consegnaInOrdine.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setOrdineConsegna(false);
+					else if(consegnaInOrdine.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setOrdineConsegna(true);
+				}
+	
+				// ConfermaRicezione (default: false)
+				StatoFunzionalita confermaRicezione = resource.getConfermaRicezione();
+				if(confermaRicezione != null){
+					if(confermaRicezione.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setConfermaRicezione(false);
+					else if(confermaRicezione.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setConfermaRicezione(true);
+				}
+	
+				// Filtro Duplicati (default: false)
+				StatoFunzionalita filtroDuplicati = resource.getFiltroDuplicati();
+				if(filtroDuplicati != null){
+					if(filtroDuplicati.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setInoltro(Inoltro.CON_DUPLICATI);
+					else if(filtroDuplicati.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setInoltro(Inoltro.SENZA_DUPLICATI);
+				}
+	
+				// Costruzione scadenza
+				String scadenza = resource.getScadenza();
+				if(scadenza != null){
+					try{
+						long minuti = Long.parseLong(scadenza);
+						Date nowDate = DateManager.getDate();
+						long now = nowDate.getTime();
+						now = now + (minuti*60*1000);
+						nowDate.setTime(now);
+						infoServizio.setScadenza(nowDate);
+						infoServizio.setScadenzaMinuti(minuti);
+					}catch(Exception e){}
+				}
+				
+			}
+		}
+
 			
 		return infoServizio;
 	}
@@ -1144,6 +1292,16 @@ public class RegistroServiziReader {
 		else
 			infoServizio.setCollaborazione(false);
 
+		// ID-RiferimentoRichiesta (default: false)
+		if(as.getIdRiferimentoRichiesta() == null)
+			infoServizio.setIdRiferimentoRichiesta(false);
+		else if(as.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.DISABILITATO))
+			infoServizio.setIdRiferimentoRichiesta(false);
+		else if(as.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.ABILITATO))
+			infoServizio.setIdRiferimentoRichiesta(true);
+		else
+			infoServizio.setIdRiferimentoRichiesta(false);
+		
 		// Consegna in Ordine (default: false)
 		if(as.getConsegnaInOrdine() == null)
 			infoServizio.setOrdineConsegna(false);
@@ -1218,6 +1376,14 @@ public class RegistroServiziReader {
 						infoServizio.setCollaborazione(false);
 					else if(pt.getIdCollaborazione().equals(CostantiRegistroServizi.ABILITATO))
 						infoServizio.setCollaborazione(true);
+				}
+				
+				// ID-RiferimentoRichiesta (default: false)
+				if(pt.getIdRiferimentoRichiesta() != null){
+					if(pt.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(false);
+					else if(pt.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(true);
 				}
 	
 				// Consegna in Ordine (default: false)
@@ -1310,6 +1476,19 @@ public class RegistroServiziReader {
 					else if(idCollaborazione.equals(CostantiRegistroServizi.ABILITATO))
 						infoServizio.setCollaborazione(true);
 				}
+				
+				// ID-RiferimentoRichiesta (default: false)
+				StatoFunzionalita idRiferimentoRichiesta = null;
+				if(az!=null)
+					idRiferimentoRichiesta = az.getIdRiferimentoRichiesta();
+				else
+					idRiferimentoRichiesta = ptAz.getIdRiferimentoRichiesta();
+				if(idRiferimentoRichiesta != null){
+					if(idRiferimentoRichiesta.equals(CostantiRegistroServizi.DISABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(false);
+					else if(idRiferimentoRichiesta.equals(CostantiRegistroServizi.ABILITATO))
+						infoServizio.setIdRiferimentoRichiesta(true);
+				}
 	
 				// Consegna in Ordine (default: false)
 				StatoFunzionalita consegnaInOrdine = null;
@@ -1383,6 +1562,13 @@ public class RegistroServiziReader {
 			else if(servizio.getIdCollaborazione().equals(CostantiRegistroServizi.ABILITATO))
 				infoServizio.setCollaborazione(true);
 		}	
+		// ID-RiferimentoRichiesta (default: false)
+		if(servizio.getIdRiferimentoRichiesta() != null){
+			if(servizio.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.DISABILITATO))
+				infoServizio.setIdRiferimentoRichiesta(false);
+			else if(servizio.getIdRiferimentoRichiesta().equals(CostantiRegistroServizi.ABILITATO))
+				infoServizio.setIdRiferimentoRichiesta(true);
+		}		
 		// Consegna in Ordine (default: false)
 		if(servizio.getConsegnaInOrdine() != null){
 			if(servizio.getConsegnaInOrdine().equals(CostantiRegistroServizi.DISABILITATO))

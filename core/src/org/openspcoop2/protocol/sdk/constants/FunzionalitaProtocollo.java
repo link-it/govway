@@ -33,6 +33,7 @@ public enum FunzionalitaProtocollo {
 	FILTRO_DUPLICATI("filtroDuplicati"), 
 	CONFERMA_RICEZIONE("confermaRicezione"), 
 	COLLABORAZIONE("collaborazione"), 
+	RIFERIMENTO_ID_RICHIESTA("riferimentoIdRichiesta"), 
 	CONSEGNA_IN_ORDINE("consegnaInOrdine"), 
 	SCADENZA("scadenza"),
 	MANIFEST_ATTACHMENTS("manifestAttachments");
