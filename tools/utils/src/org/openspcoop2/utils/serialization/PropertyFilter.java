@@ -21,9 +21,6 @@
 
 package org.openspcoop2.utils.serialization;
 
-import org.openspcoop2.utils.checksum.ChecksumAdler;
-import org.openspcoop2.utils.checksum.ChecksumCRC;
-
 /**	
  * Contiene classe per effettuare un filtro JSON
  *
@@ -34,18 +31,14 @@ import org.openspcoop2.utils.checksum.ChecksumCRC;
 
 public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 
-	private IDBuilder idBuilder = null;
-	private Filter filter = null;
-	private ISerializer serializer = null;
+	
+	private PropertyFilterCore core;
 	
 	public PropertyFilter(Filter filter,IDBuilder idBuilder,ISerializer serializer){
-		this.idBuilder = idBuilder;
-		this.filter = filter;
-		this.serializer = serializer;
+		this.core = new PropertyFilterCore(filter, idBuilder, serializer);
 	}
 	public PropertyFilter(Filter filter,ISerializer serializer){
-		this.filter = filter;
-		this.serializer = serializer;
+		this.core = new PropertyFilterCore(filter, serializer);
 	}
 	
 	@Override
@@ -53,10 +46,10 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 		
 		// Filtri per valore
 		if(value!=null){
-			for(int i=0; i<this.filter.sizeFiltersByValue(); i++){
-				Class<?> classFilter = this.filter.getFilterByValue(i);
+			for(int i=0; i<this.core.getFilter().sizeFiltersByValue(); i++){
+				Class<?> classFilter = this.core.getFilter().getFilterByValue(i);
 				if(value.getClass().getName().equals(classFilter.getName())){
-					applicaFiltro(source, name, value, classFilter);	
+					this.core.applicaFiltro(source, name, value, classFilter);	
 					return true; 
 				}
 			}
@@ -65,11 +58,11 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 		
 		// Filtri per nome field
 		String nomeField = source.getClass().getName()+"."+name;
-		for(int i=0; i<this.filter.sizeFiltersByName(); i++){
-			String filterName = this.filter.getFilterByName(i);
+		for(int i=0; i<this.core.getFilter().sizeFiltersByName(); i++){
+			String filterName = this.core.getFilter().getFilterByName(i);
 			if(nomeField.equals(filterName)){			
 				if(value!=null){
-					applicaFiltro(source, name, value, value.getClass());
+					this.core.applicaFiltro(source, name, value, value.getClass());
 					return true; 
 				}
 			}
@@ -77,51 +70,4 @@ public class PropertyFilter implements net.sf.json.util.PropertyFilter{
 		
 		return (value == null); // questa riga e' l'implementazione del NullPropertyFilter
 	}  
-	
-	
-	private void applicaFiltro(Object source, String name, Object value, Class<?> classFilter){
-		try{
-			//System.out.println("EXCLUDE["+name+"] ID["+this.idBuilder.toID(source,name)+"]");
-			FilteredObject oggettoFiltrato = new FilteredObject();
-			
-			// Identificatore unico risorsa
-			String id = null;
-			try{
-				id = this.idBuilder.toID(source,name);
-			}catch(Exception e){
-				// id non esistente per l'oggetto source
-				return;
-			}
-			if(this.filter.existsFilteredObject(id)){
-				// La libreria di serializzazione invoca piu' volte il solito oggetto
-				return;
-			}
-			if(this.idBuilder!=null)
-				oggettoFiltrato.setId(id);
-			
-			// Checksum risorsa filtrata
-			long checksum = -1;
-			byte[] byteOggetto = null;
-			if(value instanceof byte[]){
-				byteOggetto = (byte[])value;
-			}else{
-				// Uso serializzazione
-				 byteOggetto = this.serializer.getObject(value).getBytes();
-			}
-			if(FilterChecksumTypes.ADLER.toString().equals(this.filter.getFilterChecksumType().toString())){
-				checksum = ChecksumAdler.checksumAdler32(byteOggetto);
-			}else{
-				checksum = ChecksumCRC.checksumCRC32(byteOggetto);
-			}
-			oggettoFiltrato.setChecksum(checksum);
-			
-			// ClassType
-			oggettoFiltrato.setClassType(classFilter);
-			
-			this.filter.addFilteredObject(oggettoFiltrato);
-			
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-		}
-	}
 }
