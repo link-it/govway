@@ -77,7 +77,7 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
 		// TODO: il body attuale lo devo inserire come valore codificato in base 64 tramite la struttura Corretta
-		// Forse è utile in questo contesto generare gli elementi con jibx o jaxb.
+		// Forse è utile in questo contesto generare gli elementi con jaxb.
 		// Dopo configuro il packaging di MTOM
 		
 		// Check Destinatario

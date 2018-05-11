@@ -62,10 +62,6 @@
 			<lib dir="${openspcoop2}/core/dist">
 				<include name="openspcoop2_utils*.jar"/>
 			</lib>
-			<lib dir="${required_lib_openspcoop2Pools}/jibx">
-				<include name="xpp3-1.2.6.jar"/>
-				<include name="jibx-run-1.2.6.jar"/>
-			</lib>
 			<lib dir="${required_lib_openspcoop2Pools}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
 				<include name="log4j*.jar"/>

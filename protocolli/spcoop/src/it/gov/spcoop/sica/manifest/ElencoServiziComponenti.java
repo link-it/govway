@@ -19,57 +19,64 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class ElencoServiziComponenti.
+/** <p>Java class for ElencoServiziComponenti complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ElencoServiziComponenti">
+ * 		&lt;sequence>
+ * 			&lt;element name="servizioComponente" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ElencoServiziComponenti", 
+  propOrder = {
+  	"servizioComponente"
+  }
+)
+
+@XmlRootElement(name = "ElencoServiziComponenti")
 
 public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public ElencoServiziComponenti() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public void addServizioComponente(String servizioComponente) {
+  public void addServizioComponente(java.net.URI servizioComponente) {
     this.servizioComponente.add(servizioComponente);
   }
 
-  public String getServizioComponente(int index) {
+  public java.net.URI getServizioComponente(int index) {
     return this.servizioComponente.get( index );
   }
 
-  public String removeServizioComponente(int index) {
+  public java.net.URI removeServizioComponente(int index) {
     return this.servizioComponente.remove( index );
   }
 
-  public List<String> getServizioComponenteList() {
+  public List<java.net.URI> getServizioComponenteList() {
     return this.servizioComponente;
   }
 
-  public void setServizioComponenteList(List<String> servizioComponente) {
+  public void setServizioComponenteList(List<java.net.URI> servizioComponente) {
     this.servizioComponente=servizioComponente;
   }
 
@@ -79,37 +86,27 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  protected List<String> servizioComponente = new ArrayList<String>();
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="servizioComponente",required=true,nillable=false)
+  protected List<java.net.URI> servizioComponente = new ArrayList<java.net.URI>();
 
   /**
    * @deprecated Use method getServizioComponenteList
-   * @return List<String>
+   * @return List<java.net.URI>
   */
   @Deprecated
-  public List<String> getServizioComponente() {
+  public List<java.net.URI> getServizioComponente() {
   	return this.servizioComponente;
   }
 
   /**
    * @deprecated Use method setServizioComponenteList
-   * @param servizioComponente List<String>
+   * @param servizioComponente List<java.net.URI>
   */
   @Deprecated
-  public void setServizioComponente(List<String> servizioComponente) {
+  public void setServizioComponente(List<java.net.URI> servizioComponente) {
   	this.servizioComponente=servizioComponente;
   }
 
@@ -121,7 +118,5 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
   public int sizeServizioComponente() {
   	return this.servizioComponente.size();
   }
-
-  public static final String SERVIZIO_COMPONENTE = "servizioComponente";
 
 }

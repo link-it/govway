@@ -155,7 +155,7 @@ public class AS4BuilderUtils {
 				// aggiungo namespace per poter effettuare unmarshall
 				String profiles = new String(profilesBytes);
 				profiles = profiles.replace("<payloadProfiles>", "<payloadProfiles xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
-				eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+				eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 				pps = deserializer.readPayloadProfiles(profiles.getBytes());
 			}
 		}catch(Exception e) {
@@ -240,7 +240,7 @@ public class AS4BuilderUtils {
 				// aggiungo namespace per poter effettuare unmarshall
 				String profiles = new String(profilesBytes);
 				profiles = profiles.replace("<properties>", "<properties xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
-				eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+				eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 				pps = deserializer.readProperties(profiles.getBytes());
 			}
 		}catch(Exception e) {

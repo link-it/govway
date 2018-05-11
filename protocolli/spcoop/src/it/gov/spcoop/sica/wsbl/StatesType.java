@@ -19,42 +19,49 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class StatesType.
+/** <p>Java class for statesType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="statesType">
+ * 		&lt;sequence>
+ * 			&lt;element name="state-initial" type="{http://spcoop.gov.it/sica/wsbl}StateTypeInitial" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="state-final" type="{http://spcoop.gov.it/sica/wsbl}StateTypeFinal" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="state" type="{http://spcoop.gov.it/sica/wsbl}StateTypeNormal" minOccurs="1" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "statesType", 
+  propOrder = {
+  	"stateInitial",
+  	"stateFinal",
+  	"state"
+  }
+)
+
+@XmlRootElement(name = "statesType")
 
 public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected StateTypeInitial stateInitial;
-
-  protected StateTypeFinal stateFinal;
-
-
   public StatesType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
   }
 
   public StateTypeInitial getStateInitial() {
@@ -99,24 +106,15 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String STATE_INITIAL = "stateInitial";
 
-  public static final String STATE_FINAL = "stateFinal";
+  @XmlElement(name="state-initial",required=true,nillable=false)
+  protected StateTypeInitial stateInitial;
 
+  @XmlElement(name="state-final",required=true,nillable=false)
+  protected StateTypeFinal stateFinal;
+
+  @XmlElement(name="state",required=true,nillable=false)
   protected List<StateTypeNormal> state = new ArrayList<StateTypeNormal>();
 
   /**
@@ -145,7 +143,5 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
   public int sizeState() {
   	return this.state.size();
   }
-
-  public static final String STATE = "state";
 
 }

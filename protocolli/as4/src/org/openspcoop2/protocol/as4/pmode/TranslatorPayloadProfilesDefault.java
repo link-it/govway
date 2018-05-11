@@ -120,7 +120,7 @@ public class TranslatorPayloadProfilesDefault {
 								"<payload xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<payload ", 
 								"<payload xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
-						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						Payload p = deserializer.readPayload(sWithNamespace.getBytes());
 						list.add(p);
 					}
@@ -171,7 +171,7 @@ public class TranslatorPayloadProfilesDefault {
 								finalString.replace("<payloadProfile>", "<payloadProfile xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<payloadProfile ", 
 								"<payloadProfile xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
-						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						PayloadProfile p = deserializer.readPayloadProfile(sWithNamespace.getBytes());
 						list.add(p);
 					}

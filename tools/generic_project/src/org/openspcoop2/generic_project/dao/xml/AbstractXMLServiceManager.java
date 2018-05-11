@@ -22,19 +22,16 @@ package org.openspcoop2.generic_project.dao.xml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.slf4j.Logger;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.serializer.AbstractDeserializer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
+import org.slf4j.Logger;
 
 /**
  * AbstractXMLServiceManager
@@ -46,7 +43,8 @@ import org.openspcoop2.utils.xml.ValidatoreXSD;
 public abstract class AbstractXMLServiceManager<XML> {
 
 	/** Contesto di Unmarshall. */
-	private IUnmarshallingContext uctx;
+	private AbstractDeserializer deserializer;
+	private Class<XML> cXmlRoot;
 	/** XML Path */
 	protected String xmlPath;
 	/** 'Root' XML */
@@ -62,7 +60,6 @@ public abstract class AbstractXMLServiceManager<XML> {
 	
 	
 	/** ************* parsing XML ************** */
-	@SuppressWarnings("unchecked")
 	private void parsingXML() throws ServiceException{
 
 		/* --- XSD -- */
@@ -85,7 +82,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 		}
 
 		/* ---- InputStream ---- */
-		InputStreamReader iStream = null;
+		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
 		if(this.xmlPath.startsWith("http://") || this.xmlPath.startsWith("file://")){
 			try{ 
@@ -95,7 +92,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 				httpConn.setRequestMethod("GET");
 				httpConn.setDoOutput(true);
 				httpConn.setDoInput(true);
-				iStream = new InputStreamReader(httpConn.getInputStream());
+				iStream = httpConn.getInputStream();
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -108,7 +105,7 @@ public abstract class AbstractXMLServiceManager<XML> {
 			this.lastModified = System.currentTimeMillis();
 		}else{
 			try{  
-				iStream = new InputStreamReader(new FileInputStream(this.xmlPath));
+				iStream = new FileInputStream(this.xmlPath);
 			}catch(java.io.FileNotFoundException e) {
 				throw new ServiceException("Creating InputStream (FILE) failure"+e.getMessage(),e);
 			}
@@ -125,8 +122,8 @@ public abstract class AbstractXMLServiceManager<XML> {
 
 		/* ---- Unmarshall ---- */
 		try{  
-			this.rootXml = (XML) this.uctx.unmarshalDocument(iStream, null);
-		} catch(org.jibx.runtime.JiBXException e) {
+			this.rootXml = (XML) this.deserializer.xmlToObj(iStream, this.cXmlRoot);
+		} catch(Exception e) {
 			try{  
 				if(iStream!=null)
 					iStream.close();
@@ -151,16 +148,16 @@ public abstract class AbstractXMLServiceManager<XML> {
 
 
 	/* ********  COSTRUTTORI e METODI DI RELOAD  ******** */
-	public AbstractXMLServiceManager(Class<XML> cXmlRoot, String xsdPath, File xmlPath) throws ServiceException{
-		this(cXmlRoot, xsdPath, xmlPath,null);
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, File xmlPath) throws ServiceException{
+		this(cXmlRoot, deserializer, xsdPath, xmlPath,null);
 	}
-	public AbstractXMLServiceManager(Class<XML> cXmlRoot, String xsdPath, File xmlPath,Logger alog) throws ServiceException{
-		this(cXmlRoot,xsdPath,xmlPath.getAbsolutePath(),alog);
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, File xmlPath,Logger alog) throws ServiceException{
+		this(cXmlRoot,deserializer, xsdPath, xmlPath.getAbsolutePath(),alog);
 	}
-	public AbstractXMLServiceManager(Class<XML> cXmlRoot, String xsdPath, String xmlPath) throws ServiceException{
-		this(cXmlRoot, xsdPath, xmlPath,null);
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, String xmlPath) throws ServiceException{
+		this(cXmlRoot, deserializer, xsdPath,  xmlPath,null);
 	}
-	public AbstractXMLServiceManager(Class<XML> cXmlRoot, String xsdPath, String xmlPath,Logger alog) throws ServiceException{
+	protected AbstractXMLServiceManager(Class<XML> cXmlRoot, AbstractDeserializer deserializer, String xsdPath, String xmlPath,Logger alog) throws ServiceException{
 
 		if(alog==null){
 			this.log = LoggerWrapperFactory.getLogger(AbstractXMLServiceManager.class);
@@ -204,14 +201,9 @@ public abstract class AbstractXMLServiceManager<XML> {
 			}catch(Exception eClose){}
 		}
 
-		/* ---- Uunmarshall Context ---- */
-		try{
- 			IBindingFactory bfact = BindingDirectory.getFactory(cXmlRoot);
-			this.uctx = bfact.createUnmarshallingContext();
-		} catch(org.jibx.runtime.JiBXException e) {
-			this.log.error("Creating Unmarshall contest failure: "+e.getMessage(),e);
-			throw new ServiceException("Creating Unmarshall contest failure: "+e.getMessage(),e);
-		}
+		/* ---- Uunmarshall  ---- */
+		this.cXmlRoot = cXmlRoot;
+		this.deserializer = deserializer;
 
 		this.parsingXML();
 	}

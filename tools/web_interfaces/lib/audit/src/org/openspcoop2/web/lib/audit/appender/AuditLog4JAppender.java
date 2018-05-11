@@ -34,10 +34,11 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.web.lib.audit.AuditException;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Operation;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.utils.CleanerOpenSPCoop2Extensions;
 
 /**
  * Appender per registrare operazione di audit
@@ -171,8 +172,10 @@ public class AuditLog4JAppender implements IAuditAppender {
 	public Object registraOperazioneInFaseDiElaborazione(Operation operation) throws AuditException{
 		try{
 			if(this.xml){
+				CleanerOpenSPCoop2Extensions cleaner = new CleanerOpenSPCoop2Extensions();
+				cleaner.clean(operation, true); // clono poich' l'oggetto viene usato anche in altri appender
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				JiBXUtils.objToXml(bout, Operation.class, operation);
+				JaxbUtils.objToXml(bout, Operation.class, operation);
 				bout.flush();
 				bout.close();
 				this.logger.info(bout.toString());
@@ -194,14 +197,16 @@ public class AuditLog4JAppender implements IAuditAppender {
 			Operation operation = (Operation)idOperation;
 			
 			// Aggiorno stato
-			operation.setStato(StatoOperazione.completed.toString());
+			operation.setStato(Stato.COMPLETED);
 			
 			// Aggiorno tempo di esecuzione
 			operation.setTimeExecute(DateManager.getDate());
 		
 			if(this.xml){
+				CleanerOpenSPCoop2Extensions cleaner = new CleanerOpenSPCoop2Extensions();
+				cleaner.clean(operation, true); // clono poich' l'oggetto viene usato anche in altri appender
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				JiBXUtils.objToXml(bout, Operation.class, operation);
+				JaxbUtils.objToXml(bout, Operation.class, operation);
 				bout.flush();
 				bout.close();
 				this.logger.info(bout.toString());
@@ -223,15 +228,17 @@ public class AuditLog4JAppender implements IAuditAppender {
 			Operation operation = (Operation)idOperation;
 			
 			// Aggiorno stato
-			operation.setStato(StatoOperazione.error.toString());
+			operation.setStato(Stato.ERROR);
 			operation.setError(motivoErrore);
 			
 			// Aggiorno tempo di esecuzione
 			operation.setTimeExecute(DateManager.getDate());
 			
 			if(this.xml){
+				CleanerOpenSPCoop2Extensions cleaner = new CleanerOpenSPCoop2Extensions();
+				cleaner.clean(operation, true); // clono poich' l'oggetto viene usato anche in altri appender
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				JiBXUtils.objToXml(bout, Operation.class, operation);
+				JaxbUtils.objToXml(bout, Operation.class, operation);
 				bout.flush();
 				bout.close();
 				this.logger.info(bout.toString());

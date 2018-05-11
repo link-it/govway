@@ -19,67 +19,62 @@
  */
 package it.cnipa.collprofiles;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class EgovDecllElement.
+/** <p>Java class for egovDecllElement complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="egovDecllElement">
+ * 		&lt;sequence>
+ * 			&lt;element name="e-govVersion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="rifDefinizioneInterfaccia" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="operationList" type="{http://www.cnipa.it/collProfiles}operationListType" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "egovDecllElement", 
+  propOrder = {
+  	"eGovVersion",
+  	"rifDefinizioneInterfaccia",
+  	"operationList"
+  }
+)
+
+@XmlRootElement(name = "egovDecllElement")
 
 public class EgovDecllElement extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String eGovVersion;
-
-  protected String rifDefinizioneInterfaccia;
-
-  protected OperationListType operationList;
-
-
   public EgovDecllElement() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getEGovVersion() {
+    return this.eGovVersion;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getEGovVersion() {
-    if(this.eGovVersion!=null && ("".equals(this.eGovVersion)==false)){
-		return this.eGovVersion.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setEGovVersion(String eGovVersion) {
+  public void setEGovVersion(java.lang.String eGovVersion) {
     this.eGovVersion = eGovVersion;
   }
 
-  public String getRifDefinizioneInterfaccia() {
-    if(this.rifDefinizioneInterfaccia!=null && ("".equals(this.rifDefinizioneInterfaccia)==false)){
-		return this.rifDefinizioneInterfaccia.trim();
-	}else{
-		return null;
-	}
-
+  public java.net.URI getRifDefinizioneInterfaccia() {
+    return this.rifDefinizioneInterfaccia;
   }
 
-  public void setRifDefinizioneInterfaccia(String rifDefinizioneInterfaccia) {
+  public void setRifDefinizioneInterfaccia(java.net.URI rifDefinizioneInterfaccia) {
     this.rifDefinizioneInterfaccia = rifDefinizioneInterfaccia;
   }
 
@@ -93,24 +88,29 @@ public class EgovDecllElement extends org.openspcoop2.utils.beans.BaseBean imple
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  private static it.cnipa.collprofiles.model.EgovDecllElementModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(it.cnipa.collprofiles.EgovDecllElement.modelStaticInstance==null){
+  			it.cnipa.collprofiles.EgovDecllElement.modelStaticInstance = new it.cnipa.collprofiles.model.EgovDecllElementModel();
+	  }
+  }
+  public static it.cnipa.collprofiles.model.EgovDecllElementModel model(){
+	  if(it.cnipa.collprofiles.EgovDecllElement.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return it.cnipa.collprofiles.EgovDecllElement.modelStaticInstance;
+  }
 
-  public static final String E_GOV_VERSION = "eGovVersion";
 
-  public static final String RIF_DEFINIZIONE_INTERFACCIA = "rifDefinizioneInterfaccia";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="e-govVersion",required=true,nillable=false)
+  protected java.lang.String eGovVersion;
 
-  public static final String OPERATION_LIST = "operationList";
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="rifDefinizioneInterfaccia",required=true,nillable=false)
+  protected java.net.URI rifDefinizioneInterfaccia;
+
+  @XmlElement(name="operationList",required=true,nillable=false)
+  protected OperationListType operationList;
 
 }

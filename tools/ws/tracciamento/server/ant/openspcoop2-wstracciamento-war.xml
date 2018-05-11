@@ -145,12 +145,6 @@
 				<include name="json-lib-2.4-jdk15.jar"/>
 				<include name="soap.jar"/>
 			</lib>
-			<lib dir="${openspcoop2.lib}/jibx">
-				<include name="jibx-bind-1.2.6.jar"/>
-				<include name="jibx-run-1.2.6.jar"/>
-				<include name="xpp3-1.2.6.jar"/>
-				<include name="bcel-6.0.jar"/>
-			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-beanutils-1.9.2.jar"/>

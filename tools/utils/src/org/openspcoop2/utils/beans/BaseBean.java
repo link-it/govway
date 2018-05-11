@@ -36,7 +36,6 @@ import org.openspcoop2.utils.serialization.JSonSerializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.utils.serialization.XMLSerializer;
 import org.openspcoop2.utils.xml.JaxbUtils;
-import org.openspcoop2.utils.xml.JiBXUtils;
 
 /**
  * BaseBean
@@ -326,14 +325,11 @@ public abstract class BaseBean {
 	/* ********** WRITE TO ********* */
 	
 	public void writeTo(OutputStream out) throws UtilsException{
-		this.writeTo(out, WriteToSerializerType.JIBX);
+		this.writeTo(out, WriteToSerializerType.JAXB);
 	}
 	public void writeTo(OutputStream out,WriteToSerializerType type) throws UtilsException{
 		try{
 			switch (type) {
-				case JIBX:
-					JiBXUtils.objToXml(out, getClass(), this, true);
-					break;
 				case JAXB:
 					JaxbUtils.objToXml(out, getClass(), this, true);
 					break;
@@ -362,10 +358,7 @@ public abstract class BaseBean {
 	/* ********** serialize ********* */
 	
 	public String toXml() throws UtilsException{
-		return this.serialize(WriteToSerializerType.JIBX);
-	}
-	public String toXml_Jibx() throws UtilsException{
-		return this.serialize(WriteToSerializerType.JIBX);
+		return this.serialize(WriteToSerializerType.JAXB);
 	}
 	public String toXml_Jaxb() throws UtilsException{
 		return this.serialize(WriteToSerializerType.JAXB);

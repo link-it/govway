@@ -58,7 +58,6 @@
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
-			<include name="jibx/*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >
 			<include name="*.jar"/>
@@ -77,7 +76,6 @@
 			<include name="security/*.jar"/>
 			<include name="shared/*.jar"/>
 			<include name="httpcore/*.jar"/>
-			<include name="jibx/*.jar"/>
 			<include name="commons/*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >

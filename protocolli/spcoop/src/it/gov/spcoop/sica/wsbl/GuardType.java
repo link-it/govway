@@ -19,103 +19,87 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class GuardType.
+/** <p>Java class for guardType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="guardType">
+ * 		&lt;sequence>
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="rule" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "guardType", 
+  propOrder = {
+  	"description",
+  	"rule"
+  }
+)
+
+@XmlRootElement(name = "guardType")
 
 public class GuardType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String description;
-
-  protected String rule;
-
-  protected String name;
-
-
   public GuardType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getDescription() {
+    return this.description;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getDescription() {
-    if(this.description!=null && ("".equals(this.description)==false)){
-		return this.description.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setDescription(String description) {
+  public void setDescription(java.lang.String description) {
     this.description = description;
   }
 
-  public String getRule() {
-    if(this.rule!=null && ("".equals(this.rule)==false)){
-		return this.rule.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getRule() {
+    return this.rule;
   }
 
-  public void setRule(String rule) {
+  public void setRule(java.lang.String rule) {
     this.rule = rule;
   }
 
-  public String getName() {
-    if(this.name!=null && ("".equals(this.name)==false)){
-		return this.name.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getName() {
+    return this.name;
   }
 
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String DESCRIPTION = "description";
 
-  public static final String RULE = "rule";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="description",required=true,nillable=false)
+  protected java.lang.String description;
 
-  public static final String NAME = "name";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="rule",required=true,nillable=false)
+  protected java.lang.String rule;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="name",required=true)
+  protected java.lang.String name;
 
 }

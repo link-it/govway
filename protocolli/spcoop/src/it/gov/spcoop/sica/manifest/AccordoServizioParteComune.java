@@ -19,42 +19,47 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class AccordoServizioParteComune.
+/** <p>Java class for accordoServizioParteComune complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="accordoServizioParteComune">
+ * 		&lt;sequence>
+ * 			&lt;element name="specificaInterfaccia" type="{http://spcoop.gov.it/sica/manifest}SpecificaInterfaccia" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaConversazione" type="{http://spcoop.gov.it/sica/manifest}SpecificaConversazione" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="pubblicatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "accordoServizioParteComune", 
+  propOrder = {
+  	"specificaInterfaccia",
+  	"specificaConversazione"
+  }
+)
+
+@XmlRootElement(name = "accordoServizioParteComune")
 
 public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected SpecificaInterfaccia specificaInterfaccia;
-
-  protected SpecificaConversazione specificaConversazione;
-
-  protected String pubblicatore;
-
-
   public AccordoServizioParteComune() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
   }
 
   public SpecificaInterfaccia getSpecificaInterfaccia() {
@@ -73,39 +78,26 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.specificaConversazione = specificaConversazione;
   }
 
-  public String getPubblicatore() {
-    if(this.pubblicatore!=null && ("".equals(this.pubblicatore)==false)){
-		return this.pubblicatore.trim();
-	}else{
-		return null;
-	}
-
+  public java.net.URI getPubblicatore() {
+    return this.pubblicatore;
   }
 
-  public void setPubblicatore(String pubblicatore) {
+  public void setPubblicatore(java.net.URI pubblicatore) {
     this.pubblicatore = pubblicatore;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String SPECIFICA_INTERFACCIA = "specificaInterfaccia";
 
-  public static final String SPECIFICA_CONVERSAZIONE = "specificaConversazione";
+  @XmlElement(name="specificaInterfaccia",required=true,nillable=false)
+  protected SpecificaInterfaccia specificaInterfaccia;
 
-  public static final String PUBBLICATORE = "pubblicatore";
+  @XmlElement(name="specificaConversazione",required=false,nillable=false)
+  protected SpecificaConversazione specificaConversazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlAttribute(name="pubblicatore",required=false)
+  protected java.net.URI pubblicatore;
 
 }

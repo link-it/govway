@@ -32,8 +32,6 @@
 		<fileset dir="${required_lib_pddConsole}/${jboss_jars}" >
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement path="${required_lib_pddConsole}/jibx/jibx-run-1.2.6.jar" />
-		<pathelement path="${required_lib_pddConsole}/jibx/xpp3-1.2.6.jar" />
 		<fileset dir="${required_lib_pddConsole}/log" >
 			<include name="*.jar"/>
 		</fileset>

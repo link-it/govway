@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.lib.audit;
 
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -42,10 +41,10 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
-import org.openspcoop2.web.lib.audit.dao.Binary;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Binary;
+import org.openspcoop2.web.lib.audit.log.Operation;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 
 /**
  * Sono forniti metodi per la lettura dei dati di Users
@@ -101,12 +100,12 @@ public class DriverAuditDBAppender {
 			rs = stm.executeQuery();
 			if (rs.next()) {
 				operation = new Operation();
-				operation.setTipologia(TipoOperazione.parseString(rs.getString("tipo_operazione")).toString());
+				operation.setTipologia(Tipologia.toEnumConstant(rs.getString("tipo_operazione")));
 				operation.setTipoOggetto(rs.getString("tipo"));
 				operation.setObjectId(rs.getString("object_id"));
 				operation.setObjectOldId(rs.getString("object_old_id"));
 				operation.setUtente(rs.getString("utente"));
-				operation.setStato(StatoOperazione.parseString(rs.getString("stato")).toString());
+				operation.setStato(Stato.toEnumConstant(rs.getString("stato")));
 				operation.setObjectDetails(rs.getString("object_details"));
 				operation.setObjectClass(rs.getString("object_class"));
 				operation.setError(rs.getString("error"));
@@ -204,7 +203,7 @@ public class DriverAuditDBAppender {
 				binary = new Binary();
 				
 				binary.setBinaryId(rs.getString("binary_id"));
-				binary.setChecksum(BigInteger.valueOf(rs.getLong("checksum")));	
+				binary.setChecksum(rs.getLong("checksum"));	
 				binary.setIdOperation(rs.getLong("id_audit_operation"));
 				binary.setId(id);
 				
@@ -258,12 +257,12 @@ public class DriverAuditDBAppender {
 			CustomKeyGeneratorObject customKeyGeneratorObject = new CustomKeyGeneratorObject(Costanti.DB_AUDIT_OPERATIONS_TABLE, Costanti.DB_AUDIT_OPERATIONS_TABLE_ID, 
 					Costanti.DB_AUDIT_OPERATIONS_TABLE_SEQUENCE, Costanti.DB_AUDIT_OPERATIONS_TABLE_FOR_ID_SEQUENCE);
 			long idoperazione = InsertAndGeneratedKey.insertAndReturnGeneratedKey(this.connectionDB, tipo, customKeyGeneratorObject, 
-						new InsertAndGeneratedKeyObject("tipo_operazione", operation.getTipologia(), InsertAndGeneratedKeyJDBCType.STRING),
+						new InsertAndGeneratedKeyObject("tipo_operazione", operation.getTipologia()!=null ? operation.getTipologia().getValue() : null, InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("tipo", operation.getTipoOggetto(), InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("object_id", operation.getObjectId(), InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("object_old_id", operation.getObjectOldId(), InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("utente", operation.getUtente(), InsertAndGeneratedKeyJDBCType.STRING),
-						new InsertAndGeneratedKeyObject("stato", operation.getStato(), InsertAndGeneratedKeyJDBCType.STRING),
+						new InsertAndGeneratedKeyObject("stato", operation.getStato()!=null ? operation.getStato().getValue() : null, InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("object_details", operation.getObjectDetails(), InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("object_class", operation.getObjectClass(), InsertAndGeneratedKeyJDBCType.STRING),
 						new InsertAndGeneratedKeyObject("error", operation.getError(), InsertAndGeneratedKeyJDBCType.STRING),
@@ -326,10 +325,7 @@ public class DriverAuditDBAppender {
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			
 			stm.setString(1, binary.getBinaryId());
-			if(binary.getChecksum()!=null)
-				stm.setLong(2, binary.getChecksum().longValue());
-			else
-				stm.setLong(2, -1);
+			stm.setLong(2, binary.getChecksum());
 			stm.setLong(3, binary.getIdOperation());
 			stm.executeUpdate();
 			stm.close();
@@ -405,12 +401,12 @@ public class DriverAuditDBAppender {
 			sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			
-			stm.setString(1, operation.getTipologia());
+			stm.setString(1, operation.getTipologia()!=null ? operation.getTipologia().getValue() : null);
 			stm.setString(2, operation.getTipoOggetto());
 			stm.setString(3, operation.getObjectId());
 			stm.setString(4, operation.getObjectOldId());
 			stm.setString(5, operation.getUtente());
-			stm.setString(6, operation.getStato());
+			stm.setString(6, operation.getStato()!=null ? operation.getStato().getValue() : null);
 			stm.setString(7, operation.getObjectDetails());
 			stm.setString(8, operation.getObjectClass());
 			stm.setString(9, operation.getError());
@@ -480,10 +476,7 @@ public class DriverAuditDBAppender {
 			stm = this.connectionDB.prepareStatement(sqlQuery);
 			
 			stm.setString(1, binary.getBinaryId());
-			if(binary.getChecksum()!=null)
-				stm.setLong(2, binary.getChecksum().longValue());
-			else
-				stm.setLong(2, -1);
+			stm.setLong(2, binary.getChecksum());
 			stm.setLong(3, binary.getIdOperation());
 			stm.setLong(4, binary.getId());
 			stm.executeUpdate();

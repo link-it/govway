@@ -215,9 +215,9 @@ public class GestoreRisorseSistema {
 				dbInfo.setDriverClass(dataSourceConfigurazione.getDriverClass());
 				dbInfo.setUsername(dataSourceConfigurazione.getUsername());
 				dbInfo.setPassword(dataSourceConfigurazione.getPassword());
-				dbInfo.setPreparedStatementPool(dataSourceConfigurazione.getPreparedStatementPool());
-				dbInfo.setAutoCommit(dataSourceConfigurazione.getAutoCommit());
-				dbInfo.setReadOnly(dataSourceConfigurazione.getReadOnly());
+				dbInfo.setPreparedStatementPool(dataSourceConfigurazione.isPreparedStatementPool());
+				dbInfo.setAutoCommit(dataSourceConfigurazione.isAutoCommit());
+				dbInfo.setReadOnly(dataSourceConfigurazione.isReadOnly());
 				dbInfo.setTransactionIsolation(dataSourceConfigurazione.getTransactionIsolation());
 				if(dataSourceConfigurazione.getPoolSize()!=null){
 					if(dataSourceConfigurazione.getPoolSize().getInitial()!=null){
@@ -235,8 +235,8 @@ public class GestoreRisorseSistema {
 					if(dataSourceConfigurazione.getValidation().getOperation()!=null){
 						dbInfo.setValidation_operation(dataSourceConfigurazione.getValidation().getOperation());
 					}
-					dbInfo.setValidation_testOnGet(dataSourceConfigurazione.getValidation().getTestOnGet());
-					dbInfo.setValidation_testOnRelease(dataSourceConfigurazione.getValidation().getTestOnRelease());
+					dbInfo.setValidation_testOnGet(dataSourceConfigurazione.getValidation().isTestOnGet());
+					dbInfo.setValidation_testOnRelease(dataSourceConfigurazione.getValidation().isTestOnRelease());
 				}
 				if(dataSourceConfigurazione.getWhenExhausted()!=null){
 					if(dataSourceConfigurazione.getWhenExhausted().getAction()!=null){
@@ -269,7 +269,7 @@ public class GestoreRisorseSistema {
 							dbInfo.setIdle_idleObjectTimeout(value);
 						}catch(Exception e){}
 					}
-					dbInfo.setIdle_validateObject(dataSourceConfigurazione.getIdleObjectEviction().getValidateObject());
+					dbInfo.setIdle_validateObject(dataSourceConfigurazione.getIdleObjectEviction().isValidateObject());
 				}
 				
 				// Creazione CommonsPoolingDataSource
@@ -342,9 +342,9 @@ public class GestoreRisorseSistema {
 				}
 				
 				// readConfigurazione
-				boolean transactedSession = !qfConf.getAutoCommit();
+				boolean transactedSession = !qfConf.isAutoCommit();
 				String poolAck = "";
-				if(qfConf.getAutoCommit()){
+				if(qfConf.isAutoCommit()){
 					poolAck =  " acknowledge mode:";
 					if(Costanti.ACKNOWLEDGMENT_AUTO.equals(qfConf.getAcknowledgmentType()))
 						poolAck = poolAck +"AUTO_ACKNOWLEDGE";
@@ -353,7 +353,7 @@ public class GestoreRisorseSistema {
 					else if(Costanti.ACKNOWLEDGMENT_DUPS_OK.equals(qfConf.getAcknowledgmentType()))
 						poolAck = poolAck+"DUPS_OK_ACKNOWLEDGE";
 					else
-						poolAck = poolAck + "Valore non definito nello standard ("+qfConf.getAutoCommit()+")";
+						poolAck = poolAck + "Valore non definito nello standard ("+qfConf.isAutoCommit()+")";
 				}
 				
 				// CreazioneJMSInfo
@@ -363,13 +363,17 @@ public class GestoreRisorseSistema {
 				jmsInfo.setUsername(qfConf.getUsername());
 				jmsInfo.setPassword(qfConf.getPassword());
 				jmsInfo.setClientId(qfConf.getClientId());
-				jmsInfo.setAutoCommit(qfConf.getAutoCommit());
+				jmsInfo.setAutoCommit(qfConf.isAutoCommit());
 				jmsInfo.setAcknowledgmentType(qfConf.getAcknowledgmentType());
 				jmsInfo.setSingleConnectionWithSessionPool(qfConf.getSingleConnectionWithSessionPool());
-				for(int K=0; K<qfConf.sizeContextPropertyList(); K++){
+				int sizeCTX = 0;
+				if(qfConf.getContextProperty()!=null) {
+					sizeCTX = qfConf.getContextProperty().size();
+				}
+				for(int K=0; K<sizeCTX; K++){
 					JMSInfoContextProperty cp = new JMSInfoContextProperty();
-					cp.setName(qfConf.getContextProperty(K).getName());
-					cp.setValue(qfConf.getContextProperty(K).getValue());
+					cp.setName(qfConf.getContextProperty().get(K).getName());
+					cp.setValue(qfConf.getContextProperty().get(K).getValue());
 					jmsInfo.addContextProperty(cp);
 				}
 				if(qfConf.getPoolSize()!=null){
@@ -388,8 +392,8 @@ public class GestoreRisorseSistema {
 					if(qfConf.getValidation().getOperation()!=null){
 						jmsInfo.setValidation_operation(qfConf.getValidation().getOperation());
 					}
-					jmsInfo.setValidation_testOnGet(qfConf.getValidation().getTestOnGet());
-					jmsInfo.setValidation_testOnRelease(qfConf.getValidation().getTestOnRelease());
+					jmsInfo.setValidation_testOnGet(qfConf.getValidation().isTestOnGet());
+					jmsInfo.setValidation_testOnRelease(qfConf.getValidation().isTestOnRelease());
 				}
 				if(qfConf.getWhenExhausted()!=null){
 					if(qfConf.getWhenExhausted().getAction()!=null){
@@ -422,7 +426,7 @@ public class GestoreRisorseSistema {
 							jmsInfo.setIdle_idleObjectTimeout(value);
 						}catch(Exception e){}
 					}
-					jmsInfo.setIdle_validateObject(qfConf.getIdleObjectEviction().getValidateObject());
+					jmsInfo.setIdle_validateObject(qfConf.getIdleObjectEviction().isValidateObject());
 				}
 				
 				// Creazione ConnectionFactory

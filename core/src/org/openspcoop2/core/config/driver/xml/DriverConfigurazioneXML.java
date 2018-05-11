@@ -23,7 +23,7 @@ package org.openspcoop2.core.config.driver.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -33,9 +33,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -104,8 +101,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	/** Indicazione di una corretta creazione */
 	public boolean create = false;
 
-	/** Contesto di Unmarshall. */
-	private IUnmarshallingContext uctx;
 	/** Path dove si trova il file xml che realizza la configurazione di OpenSPCoop. */
 	private String configuration_path;
 	/** 'Root' del servizio della configurazione di OpenSPCoop. */
@@ -150,8 +145,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		}
 
 		/* ---- InputStream ---- */
-		InputStreamReader iStream = null;
-		FileInputStream fin = null;
+		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
 		if(this.configuration_path.startsWith("http://") || this.configuration_path.startsWith("file://")){
 			try{ 
@@ -161,7 +155,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				httpConn.setRequestMethod("GET");
 				httpConn.setDoOutput(true);
 				httpConn.setDoInput(true);
-				iStream = new InputStreamReader(httpConn.getInputStream());
+				iStream = httpConn.getInputStream();
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -174,8 +168,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			this.lastModified = DateManager.getTimeMillis();
 		}else{
 			try{  
-				fin = new FileInputStream(this.configuration_path);
-				iStream = new InputStreamReader(fin);
+				iStream = new FileInputStream(this.configuration_path);
 			}catch(java.io.FileNotFoundException e) {
 				throw new DriverConfigurazioneException("Riscontrato errore durante la creazione dell'inputStream della configurazione (FILE) : \n\n"+e.getMessage());
 			}
@@ -186,10 +179,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					if(iStream!=null)
 						iStream.close();
 				} catch(java.io.IOException ef) {}
-				try{  
-					if(fin!=null)
-						fin.close();
-				} catch(java.io.IOException ef) {}
 				throw new DriverConfigurazioneException("Riscontrato errore durante la lettura del file dove e' allocato la configurazione: "+e.getMessage());
 			}
 		}
@@ -197,15 +186,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 		/* ---- Unmarshall del file di configurazione ---- */
 		try{  
-			this.openspcoop = (org.openspcoop2.core.config.Openspcoop2) this.uctx.unmarshalDocument(iStream, null);
-		} catch(org.jibx.runtime.JiBXException e) {
+			org.openspcoop2.core.config.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+			this.openspcoop = deserializer.readOpenspcoop2(iStream);
+		} catch(Exception e) {
 			try{  
 				if(iStream!=null)
 					iStream.close();
-			} catch(Exception ef) {}
-			try{  
-				if(fin!=null)
-					fin.close();
 			} catch(Exception ef) {}
 			try{ 
 				if(httpConn !=null)
@@ -220,13 +206,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				iStream.close();
 		} catch(Exception e) {
 			throw new DriverConfigurazioneException("Riscontrato errore durante la chiusura dell'Input Stream: "+e.getMessage());
-		}
-		try{
-			// Chiusura dell FileInputStream
-			if(fin!=null)
-				fin.close();
-		} catch(Exception e) {
-			throw new DriverConfigurazioneException("Riscontrato errore durante la chiusura dell'Input Stream (file): "+e.getMessage());
 		}
 		try{
 			// Chiusura dell'eventuale connessione HTTP
@@ -267,16 +246,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			this.validatoreConfigurazione = new ValidatoreXSD(this.log,DriverConfigurazioneXML.class.getResourceAsStream("/config.xsd"));
 		}catch (Exception e) {
 			this.log.info("Riscontrato errore durante l'inizializzazione dello schema della configurazione di OpenSPCoop: "+e.getMessage(),e);
-			return;
-		}
-
-		/* ---- Inizializzazione del contesto di unmarshall ---- */
-		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.config.Openspcoop2.class);
-			this.uctx = bfact.createUnmarshallingContext();
-		} catch(org.jibx.runtime.JiBXException e) {
-			this.log.error("DriverConfigurazione: Riscontrato errore durante la creazione del contesto di unmarshall  : "+e.getMessage(),e);
-			this.create=false;
 			return;
 		}
 

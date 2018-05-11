@@ -203,7 +203,7 @@ public class XMLUtils  {
 			
 			// trasformazione in oggetto DettaglioRouting
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (DettaglioRouting) org.openspcoop2.utils.xml.JiBXUtils.xmlToObj(binTrasformazione, DettaglioRouting.class);
+			return (DettaglioRouting) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(binTrasformazione, DettaglioRouting.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -221,7 +221,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(out.getName(),XMLUtils.generateDettaglioRouting_engine(eccezione));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateDettaglioRouting_engine(eccezione));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -233,7 +233,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(fileName,XMLUtils.generateDettaglioRouting_engine(eccezione));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateDettaglioRouting_engine(eccezione));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -268,7 +268,7 @@ public class XMLUtils  {
 	private static byte[] generateDettaglioRouting_engine(DettaglioRouting eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, DettaglioRouting.class, eccezione);
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, DettaglioRouting.class, eccezione);
 			byte[] dichiarazione = bout.toByteArray();
 			return dichiarazione;
 		}catch(Exception e){

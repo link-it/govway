@@ -19,79 +19,72 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Date;
 
 
-/** <p>Java class ServizioComposto.
+/** <p>Java class for servizioComposto complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="servizioComposto">
+ * 		&lt;sequence>
+ * 			&lt;element name="descrizione" type="{http://spcoop.gov.it/sica/manifest}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaSemiformale" type="{http://spcoop.gov.it/sica/manifest}SpecificaSemiformale" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="allegati" type="{http://spcoop.gov.it/sica/manifest}ElencoAllegati" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="specificaInterfaccia" type="{http://spcoop.gov.it/sica/manifest}SpecificaInterfaccia" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaConversazione" type="{http://spcoop.gov.it/sica/manifest}SpecificaConversazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="riferimentoAccordoCooperazione" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="serviziComponenti" type="{http://spcoop.gov.it/sica/manifest}ElencoServiziComponenti" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaCoordinamento" type="{http://spcoop.gov.it/sica/manifest}SpecificaCoordinamento" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="nome" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/>
+ * 		&lt;attribute name="versione" type="{http://spcoop.gov.it/sica/manifest}string" use="optional"/>
+ * 		&lt;attribute name="dataCreazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/>
+ * 		&lt;attribute name="dataPubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
+ * 		&lt;attribute name="firmato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="riservato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
+ * 		&lt;attribute name="pubblicatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "servizioComposto", 
+  propOrder = {
+  	"descrizione",
+  	"specificaSemiformale",
+  	"allegati",
+  	"specificaInterfaccia",
+  	"specificaConversazione",
+  	"riferimentoAccordoCooperazione",
+  	"serviziComponenti",
+  	"specificaCoordinamento"
+  }
+)
+
+@XmlRootElement(name = "servizioComposto")
 
 public class ServizioComposto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String descrizione;
-
-  protected SpecificaSemiformale specificaSemiformale;
-
-  protected ElencoAllegati allegati;
-
-  protected SpecificaInterfaccia specificaInterfaccia;
-
-  protected SpecificaConversazione specificaConversazione;
-
-  protected String riferimentoAccordoCooperazione;
-
-  protected ElencoServiziComponenti serviziComponenti;
-
-  protected SpecificaCoordinamento specificaCoordinamento;
-
-  protected String nome;
-
-  protected String versione;
-
-  protected Date dataCreazione;
-
-  protected Date dataPubblicazione;
-
-  protected boolean firmato;
-
-  protected boolean riservato;
-
-  protected String pubblicatore;
-
-
   public ServizioComposto() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getDescrizione() {
-    if(this.descrizione!=null && ("".equals(this.descrizione)==false)){
-		return this.descrizione.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setDescrizione(String descrizione) {
+  public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
   }
 
@@ -127,16 +120,11 @@ public class ServizioComposto extends org.openspcoop2.utils.beans.BaseBean imple
     this.specificaConversazione = specificaConversazione;
   }
 
-  public String getRiferimentoAccordoCooperazione() {
-    if(this.riferimentoAccordoCooperazione!=null && ("".equals(this.riferimentoAccordoCooperazione)==false)){
-		return this.riferimentoAccordoCooperazione.trim();
-	}else{
-		return null;
-	}
-
+  public java.net.URI getRiferimentoAccordoCooperazione() {
+    return this.riferimentoAccordoCooperazione;
   }
 
-  public void setRiferimentoAccordoCooperazione(String riferimentoAccordoCooperazione) {
+  public void setRiferimentoAccordoCooperazione(java.net.URI riferimentoAccordoCooperazione) {
     this.riferimentoAccordoCooperazione = riferimentoAccordoCooperazione;
   }
 
@@ -156,45 +144,35 @@ public class ServizioComposto extends org.openspcoop2.utils.beans.BaseBean imple
     this.specificaCoordinamento = specificaCoordinamento;
   }
 
-  public String getNome() {
-    if(this.nome!=null && ("".equals(this.nome)==false)){
-		return this.nome.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getNome() {
+    return this.nome;
   }
 
-  public void setNome(String nome) {
+  public void setNome(java.lang.String nome) {
     this.nome = nome;
   }
 
-  public String getVersione() {
-    if(this.versione!=null && ("".equals(this.versione)==false)){
-		return this.versione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getVersione() {
+    return this.versione;
   }
 
-  public void setVersione(String versione) {
+  public void setVersione(java.lang.String versione) {
     this.versione = versione;
   }
 
-  public Date getDataCreazione() {
+  public java.util.Date getDataCreazione() {
     return this.dataCreazione;
   }
 
-  public void setDataCreazione(Date dataCreazione) {
+  public void setDataCreazione(java.util.Date dataCreazione) {
     this.dataCreazione = dataCreazione;
   }
 
-  public Date getDataPubblicazione() {
+  public java.util.Date getDataPubblicazione() {
     return this.dataPubblicazione;
   }
 
-  public void setDataPubblicazione(Date dataPubblicazione) {
+  public void setDataPubblicazione(java.util.Date dataPubblicazione) {
     this.dataPubblicazione = dataPubblicazione;
   }
 
@@ -222,63 +200,84 @@ public class ServizioComposto extends org.openspcoop2.utils.beans.BaseBean imple
     this.riservato = riservato;
   }
 
-  public String getPubblicatore() {
-    if(this.pubblicatore!=null && ("".equals(this.pubblicatore)==false)){
-		return this.pubblicatore.trim();
-	}else{
-		return null;
-	}
-
+  public java.net.URI getPubblicatore() {
+    return this.pubblicatore;
   }
 
-  public void setPubblicatore(String pubblicatore) {
+  public void setPubblicatore(java.net.URI pubblicatore) {
     this.pubblicatore = pubblicatore;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  private static it.gov.spcoop.sica.manifest.model.ServizioCompostoModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(it.gov.spcoop.sica.manifest.ServizioComposto.modelStaticInstance==null){
+  			it.gov.spcoop.sica.manifest.ServizioComposto.modelStaticInstance = new it.gov.spcoop.sica.manifest.model.ServizioCompostoModel();
+	  }
+  }
+  public static it.gov.spcoop.sica.manifest.model.ServizioCompostoModel model(){
+	  if(it.gov.spcoop.sica.manifest.ServizioComposto.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return it.gov.spcoop.sica.manifest.ServizioComposto.modelStaticInstance;
+  }
 
-  public static final String DESCRIZIONE = "descrizione";
 
-  public static final String SPECIFICA_SEMIFORMALE = "specificaSemiformale";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="descrizione",required=true,nillable=false)
+  protected java.lang.String descrizione;
 
-  public static final String ALLEGATI = "allegati";
+  @XmlElement(name="specificaSemiformale",required=false,nillable=false)
+  protected SpecificaSemiformale specificaSemiformale;
 
-  public static final String SPECIFICA_INTERFACCIA = "specificaInterfaccia";
+  @XmlElement(name="allegati",required=false,nillable=false)
+  protected ElencoAllegati allegati;
 
-  public static final String SPECIFICA_CONVERSAZIONE = "specificaConversazione";
+  @XmlElement(name="specificaInterfaccia",required=true,nillable=false)
+  protected SpecificaInterfaccia specificaInterfaccia;
 
-  public static final String RIFERIMENTO_ACCORDO_COOPERAZIONE = "riferimentoAccordoCooperazione";
+  @XmlElement(name="specificaConversazione",required=false,nillable=false)
+  protected SpecificaConversazione specificaConversazione;
 
-  public static final String SERVIZI_COMPONENTI = "serviziComponenti";
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="riferimentoAccordoCooperazione",required=true,nillable=false)
+  protected java.net.URI riferimentoAccordoCooperazione;
 
-  public static final String SPECIFICA_COORDINAMENTO = "specificaCoordinamento";
+  @XmlElement(name="serviziComponenti",required=true,nillable=false)
+  protected ElencoServiziComponenti serviziComponenti;
 
-  public static final String NOME = "nome";
+  @XmlElement(name="specificaCoordinamento",required=false,nillable=false)
+  protected SpecificaCoordinamento specificaCoordinamento;
 
-  public static final String VERSIONE = "versione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome",required=true)
+  protected java.lang.String nome;
 
-  public static final String DATA_CREAZIONE = "dataCreazione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="versione",required=false)
+  protected java.lang.String versione;
 
-  public static final String DATA_PUBBLICAZIONE = "dataPubblicazione";
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlAttribute(name="dataCreazione",required=true)
+  protected java.util.Date dataCreazione;
 
-  public static final String FIRMATO = "firmato";
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlAttribute(name="dataPubblicazione",required=false)
+  protected java.util.Date dataPubblicazione;
 
-  public static final String RISERVATO = "riservato";
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="firmato",required=false)
+  protected boolean firmato = false;
 
-  public static final String PUBBLICATORE = "pubblicatore";
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="riservato",required=false)
+  protected boolean riservato = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlAttribute(name="pubblicatore",required=false)
+  protected java.net.URI pubblicatore;
 
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+       targetNamespace="http://spcoop.gov.it/sica/wscp"
+       xmlns:tns="http://spcoop.gov.it/sica/wscp" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <annotation>
+        <appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="openspcoop2_spcoop_profiloCollaborazioneWSCP">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="true" ws="false"/>
+                <linkit:configuration>
+                    <linkit:field generateId="false" />
+                </linkit:configuration>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:xml root-element="profiloCollaborazioneEGOV" generate="true"/>
+                    <linkit:sql>
+                        <linkit:sql-script generate="false"/>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" />
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </appinfo>
+    </annotation>
+
+   <complexType name="operationType">
+       <attribute name="servizio" type="QName" use="required"></attribute>
+       <attribute name="operazione" type="QName" use="required"></attribute>
+       <attribute name="profiloDiCollaborazione" type="tns:profiloDiCollaborazioneType"
+        use="required"></attribute>
+       <attribute name="servizioCorrelato" type="QName" use="optional"></attribute>
+       <attribute name="operazioneCorrelata" type="QName" use="optional"></attribute>
+   </complexType>
+
+   <complexType name="operationListType">
+       <sequence>
+          <element name="collaborazione" type="tns:operationType" maxOccurs="unbounded"></element>
+       </sequence>
+   </complexType>
+
+   <element name="profiloCollaborazioneEGOV">
+       <annotation>
+           <appinfo>
+               <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                   <linkit:interface crud="false" />
+               </linkit:generator>
+           </appinfo>
+       </annotation>
+     <complexType>
+       <sequence>
+          <element name="versioneEGOV" type="string"/>
+          <element name="riferimentoDefinizioneInterfaccia" type="anyURI"/>
+          <element name="listaCollaborazioni" type="tns:operationListType"/>
+       </sequence>
+     </complexType>
+   </element>
+   <simpleType name="profiloDiCollaborazioneType">
+       <restriction base="string">
+          <enumeration value="EGOV_IT_MessaggioSingoloOneWay"></enumeration>
+          <enumeration value="EGOV_IT_ServizioSincrono"></enumeration>
+          <enumeration value="EGOV_IT_ServizioAsincronoSimmetrico"></enumeration>
+          <enumeration value="EGOV_IT_ServizioAsincronoAsimmetrico"></enumeration>
+       </restriction>
+   </simpleType>
+</schema>

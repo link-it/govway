@@ -24,13 +24,9 @@
 package org.openspcoop2.core.registry.driver.web;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
@@ -211,10 +207,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 
 		// Ottengo oggetto Soggetto
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLAccordoCooperazione);
@@ -233,24 +226,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getAccordoCooperazione] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeAccordoCooperazioneList()>0)
 				accRichiesto = rs.getAccordoCooperazione(0);
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -396,10 +384,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 
 		// Ottengo oggetto Soggetto
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLAccordoServizio);
@@ -418,24 +403,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[AccordoServizioParteComune] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeAccordoServizioParteComuneList()>0)
 				accRichiesto = rs.getAccordoServizioParteComune(0);
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -767,10 +747,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 
 		// Ottengo oggetto Soggetto
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLPortaDominio);
@@ -789,24 +766,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getPortaDominio] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizePortaDominioList()>0)
 				pddRichiesta = rs.getPortaDominio(0);
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -924,10 +896,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 
 		// Ottengo oggetto Soggetto
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLPortaDominio);
@@ -946,24 +915,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getRuolo] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeRuoloList()>0)
 				ruoloRichiesto = rs.getRuolo(0);
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -1114,10 +1078,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 
 		// Ottengo oggetto Soggetto
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLSoggetto);
@@ -1137,24 +1098,19 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getSoggetto] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// Parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeSoggettoList()>0)
 				soggRichiesto = rs.getSoggetto(0);
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -1459,10 +1415,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		CostantiRegistroServizi.URL_SEPARATOR + idServizioXML  + ".xml";
 
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLServizio);
@@ -1481,11 +1434,11 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// Parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeSoggettoList()>0){
 				if(rs.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 					servRichiesto = rs.getSoggetto(0).getAccordoServizioParteSpecifica(0);
@@ -1493,17 +1446,12 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 					servRichiesto.setTipoSoggettoErogatore(idService.getSoggettoErogatore().getTipo());
 				}
 			}
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();
@@ -1609,10 +1557,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 		}
 
 		ByteArrayInputStream bin = null;
-		InputStreamReader istr = null;
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			byte[] fileXML = null;
 			try{
 				fileXML = HttpUtilities.requestHTTPFile(urlXMLServizio);
@@ -1632,11 +1577,11 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica_ServizioCorrelato] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
 			}
 
-			// Parsing JIBX
+			// parsing
 			bin = new ByteArrayInputStream(fileXML);
-			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 			org.openspcoop2.core.registry.RegistroServizi rs = 
-				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
 			if(rs.sizeSoggettoList()>0){
 				if(rs.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 					servRichiesto = rs.getSoggetto(0).getAccordoServizioParteSpecifica(0);
@@ -1644,17 +1589,12 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 					servRichiesto.setTipoSoggettoErogatore(idSoggetto.getTipo());
 				}
 			}
-			istr.close();
 			bin.close();
 		}catch(DriverRegistroServiziNotFound e){
 			throw e;
 		}catch(DriverRegistroServiziException e){
 			throw e;
 		}catch(Exception e){
-			try{
-				if(istr!=null)
-					istr.close();
-			} catch(Exception eis) {}
 			try{
 				if(bin!=null)
 					bin.close();

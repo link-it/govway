@@ -21,28 +21,13 @@
 
 package org.openspcoop2.protocol.spcoop.sica;
 
-import it.gov.spcoop.sica.dao.Costanti;
-import it.gov.spcoop.sica.manifest.DocumentoCoordinamento;
-import it.gov.spcoop.sica.manifest.DocumentoLivelloServizio;
-import it.gov.spcoop.sica.manifest.DocumentoSemiformale;
-import it.gov.spcoop.sica.manifest.DocumentoSicurezza;
-import it.gov.spcoop.sica.manifest.ElencoPartecipanti;
-import it.gov.spcoop.sica.manifest.ElencoServiziComponenti;
-import it.gov.spcoop.sica.manifest.SpecificaCoordinamento;
-import it.gov.spcoop.sica.manifest.SpecificaLivelliServizio;
-import it.gov.spcoop.sica.manifest.SpecificaSicurezza;
-import it.gov.spcoop.sica.manifest.driver.TipiAdesione;
-import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
-import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
-import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
-
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -75,10 +60,28 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import it.gov.spcoop.sica.dao.Costanti;
+import it.gov.spcoop.sica.manifest.DocumentoCoordinamento;
+import it.gov.spcoop.sica.manifest.DocumentoLivelloServizio;
+import it.gov.spcoop.sica.manifest.DocumentoSemiformale;
+import it.gov.spcoop.sica.manifest.DocumentoSicurezza;
+import it.gov.spcoop.sica.manifest.ElencoPartecipanti;
+import it.gov.spcoop.sica.manifest.ElencoServiziComponenti;
+import it.gov.spcoop.sica.manifest.SpecificaCoordinamento;
+import it.gov.spcoop.sica.manifest.SpecificaLivelliServizio;
+import it.gov.spcoop.sica.manifest.SpecificaSicurezza;
+import it.gov.spcoop.sica.manifest.constants.TipoAdesione;
+import it.gov.spcoop.sica.manifest.constants.TipoDocumentoConversazione;
+import it.gov.spcoop.sica.manifest.constants.TipoDocumentoInterfaccia;
+import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
+import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
+import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
 
 
 /**
@@ -790,9 +793,9 @@ public class SICAtoOpenSPCoopUtilities {
 		if(manifest.getCoordinatore()!=null){
 			IdSoggetto soggettoReferente = 
 				new IdSoggetto(); 
-			IDSoggetto soggettoCoordinatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(manifest.getCoordinatore()));
+			IDSoggetto soggettoCoordinatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(manifest.getCoordinatore().toString()));
 			if(soggettoCoordinatore==null){
-				soggettoCoordinatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(manifest.getCoordinatore());
+				soggettoCoordinatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(manifest.getCoordinatore().toString());
 			}
 			soggettoReferente.setNome(soggettoCoordinatore.getNome());
 			soggettoReferente.setTipo(soggettoCoordinatore.getTipo());
@@ -849,7 +852,7 @@ public class SICAtoOpenSPCoopUtilities {
 				accCooperazioneOpenspcoop.setElencoPartecipanti(new AccordoCooperazionePartecipanti());
 			}
 			for(int i=0; i<elencoPartecipantiSICA.sizePartecipanteList(); i++){
-				String partecipante = elencoPartecipantiSICA.getPartecipante(i);
+				String partecipante = elencoPartecipantiSICA.getPartecipante(i).toString();
 				
 				IdSoggetto soggetto = 
 					new IdSoggetto(); 
@@ -867,7 +870,7 @@ public class SICAtoOpenSPCoopUtilities {
 		it.gov.spcoop.sica.manifest.ElencoServiziComposti serviziComposti = manifest.getServiziComposti();
 		if(serviziComposti!=null){
 			for(int i=0; i<serviziComposti.sizeServizioCompostoList(); i++){
-				String servizioComposto = serviziComposti.getServizioComposto(i);
+				String servizioComposto = serviziComposti.getServizioComposto(i).toString();
 				IDAccordo idAccordo = SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_sicaToOpenspcoop(registryReader,servizioComposto,sicaToOpenspcoopContext);
 				try{
 					accCooperazioneOpenspcoop.addUriServiziComposti(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
@@ -925,7 +928,11 @@ public class SICAtoOpenSPCoopUtilities {
 				uriCoordinatore = SICAtoOpenSPCoopUtilities.idSoggetto_openspcoopToSica(soggettoCoordinatore);
 			else
 				uriCoordinatore = SICAtoOpenSPCoopUtilities.appendURI_IDSoggettoSica(uriCoordinatore);
-			manifest.setCoordinatore(uriCoordinatore);
+			try {
+				manifest.setCoordinatore(new URI(uriCoordinatore));
+			}catch(Exception e) {
+				throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+			}
 			
 			// ServiziComposti
 			it.gov.spcoop.sica.manifest.ElencoServiziComposti sComposti = null;
@@ -935,7 +942,9 @@ public class SICAtoOpenSPCoopUtilities {
 				if(sComposti==null)
 					sComposti = new it.gov.spcoop.sica.manifest.ElencoServiziComposti();
 				try{
-					sComposti.addServizioComposto(SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_openspcoopToSica(registryReader,IDAccordoFactory.getInstance().getIDAccordoFromUri(uriServizioComposto),sicaToOpenspcoopContext));
+					sComposti.addServizioComposto(new URI(SICAtoOpenSPCoopUtilities.
+							idAccordoServizioComposto_openspcoopToSica(registryReader,
+									IDAccordoFactory.getInstance().getIDAccordoFromUri(uriServizioComposto),sicaToOpenspcoopContext)));
 				}catch(Exception e){
 					throw new SICAToOpenSPCoopUtilitiesException("Costruzione IDAccordo servizio composto ["+uriServizioComposto+"] non riuscito: "+e.getMessage(),e);
 				}
@@ -1002,7 +1011,11 @@ public class SICAtoOpenSPCoopUtilities {
 				}
 				else
 					codiceIPAPartecipante = SICAtoOpenSPCoopUtilities.appendURI_IDSoggettoSica(codiceIPAPartecipante);
-				partecipanti.addPartecipante(codiceIPAPartecipante);
+				try {
+					partecipanti.addPartecipante(new URI(codiceIPAPartecipante));
+				}catch(Exception e) {
+					throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+				}
 			}
 		}
 		if(partecipanti!=null)
@@ -1100,9 +1113,9 @@ public class SICAtoOpenSPCoopUtilities {
 		if(parteComune.getPubblicatore()!=null){
 			IdSoggetto soggettoReferente = 
 				new IdSoggetto(); 
-			IDSoggetto soggettoPubblicatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(parteComune.getPubblicatore()));
+			IDSoggetto soggettoPubblicatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(parteComune.getPubblicatore().toString()));
 			if(soggettoPubblicatore==null){
-				soggettoPubblicatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(parteComune.getPubblicatore());
+				soggettoPubblicatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(parteComune.getPubblicatore().toString());
 			}
 			soggettoReferente.setNome(soggettoPubblicatore.getNome());
 			soggettoReferente.setTipo(soggettoPubblicatore.getTipo());
@@ -1339,7 +1352,11 @@ public class SICAtoOpenSPCoopUtilities {
 			}
 			else
 				uriPubblicatore = SICAtoOpenSPCoopUtilities.appendURI_IDSoggettoSica(uriPubblicatore);
-			parteComune.setPubblicatore(uriPubblicatore);
+			try {
+				parteComune.setPubblicatore(new URI(uriPubblicatore));
+			}catch(Exception e) {
+				throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+			}
 		}
 		
 		
@@ -1351,7 +1368,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlConcettuale()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaConcettuale(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1368,7 +1385,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlLogicoErogatore()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaLogicaLatoErogatore(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1385,7 +1402,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlLogicoFruitore()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaLogicaLatoFruitore(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1414,7 +1431,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneConcettuale()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_CONCETTUALE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneConcettuale(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1426,7 +1443,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneErogatore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_LOGICA_LATO_EROGATORE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneLogicaLatoErogatore(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1438,7 +1455,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneFruitore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_LOGICA_LATO_FRUITORE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneLogicaLatoFruitore(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -1641,13 +1658,13 @@ public class SICAtoOpenSPCoopUtilities {
 		
 		// riferimentoParteComune
 		try{
-			String[] split =  parteSpecifica.getRiferimentoParteComune().split(":");
+			String[] split =  parteSpecifica.getRiferimentoParteComune().toString().split(":");
 			if(split.length<2)
 				throw new Exception("Riferimento parte comune non corretto (split non riuscito) ["+parteSpecifica.getRiferimentoParteComune()+"]");
 			if(split[1].equals(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO)){
-				aspsOpenSPCoop.setAccordoServizioParteComune(idAccordoFactory.getUriFromIDAccordo(SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_sicaToOpenspcoop(registryReader,parteSpecifica.getRiferimentoParteComune(),sicaToOpenspcoopContext)));
+				aspsOpenSPCoop.setAccordoServizioParteComune(idAccordoFactory.getUriFromIDAccordo(SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_sicaToOpenspcoop(registryReader,parteSpecifica.getRiferimentoParteComune().toString(),sicaToOpenspcoopContext)));
 			}else if(split[1].equals(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE)){
-				aspsOpenSPCoop.setAccordoServizioParteComune(idAccordoFactory.getUriFromIDAccordo(SICAtoOpenSPCoopUtilities.idAccordoServizioParteComune_sicaToOpenspcoop(registryReader,parteSpecifica.getRiferimentoParteComune(),sicaToOpenspcoopContext)));
+				aspsOpenSPCoop.setAccordoServizioParteComune(idAccordoFactory.getUriFromIDAccordo(SICAtoOpenSPCoopUtilities.idAccordoServizioParteComune_sicaToOpenspcoop(registryReader,parteSpecifica.getRiferimentoParteComune().toString(),sicaToOpenspcoopContext)));
 			}else{
 				throw new Exception("Tipo accordo ["+split[1]+"] non conosciuto");
 			}
@@ -1806,9 +1823,9 @@ public class SICAtoOpenSPCoopUtilities {
 		// Erogatore:
 		IDSoggetto soggettoErogatore = null;
 		if(parteSpecifica.getErogatore()!=null){
-			soggettoErogatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(parteSpecifica.getErogatore()));
+			soggettoErogatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(parteSpecifica.getErogatore().toString()));
 			if(soggettoErogatore==null){
-				soggettoErogatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(parteSpecifica.getErogatore());
+				soggettoErogatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(parteSpecifica.getErogatore().toString());
 			}
 			aspsOpenSPCoop.setTipoSoggettoErogatore(soggettoErogatore.getTipo());
 			aspsOpenSPCoop.setNomeSoggettoErogatore(soggettoErogatore.getNome());
@@ -2035,7 +2052,11 @@ public class SICAtoOpenSPCoopUtilities {
 			}
 			else
 				uriErogatore = SICAtoOpenSPCoopUtilities.appendURI_IDSoggettoSica(uriErogatore);
-			parteSpecifica.setErogatore(uriErogatore);
+			try {
+				parteSpecifica.setErogatore(new URI(uriErogatore));
+			}catch(Exception e) {
+				throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+			}
 			
 			//if(aspsOpenspcoop.getByteFirma()!=null){
 			//	manifest.setFirmato(true);
@@ -2046,9 +2067,9 @@ public class SICAtoOpenSPCoopUtilities {
 		// riferimentoParteComune
 		try{
 			if(implementazioneAccordoServizioComposto)
-				parteSpecifica.setRiferimentoParteComune(SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_openspcoopToSica(registryReader,idAccordoFactory.getIDAccordoFromUri(aspsOpenspcoop.getAccordoServizioParteComune()),sicaToOpenspcoopContext));
+				parteSpecifica.setRiferimentoParteComune(new URI(SICAtoOpenSPCoopUtilities.idAccordoServizioComposto_openspcoopToSica(registryReader,idAccordoFactory.getIDAccordoFromUri(aspsOpenspcoop.getAccordoServizioParteComune()),sicaToOpenspcoopContext)));
 			else
-				parteSpecifica.setRiferimentoParteComune(SICAtoOpenSPCoopUtilities.idAccordoServizioParteComune_openspcoopToSica(registryReader,idAccordoFactory.getIDAccordoFromUri(aspsOpenspcoop.getAccordoServizioParteComune()),sicaToOpenspcoopContext));
+				parteSpecifica.setRiferimentoParteComune(new URI(SICAtoOpenSPCoopUtilities.idAccordoServizioParteComune_openspcoopToSica(registryReader,idAccordoFactory.getIDAccordoFromUri(aspsOpenspcoop.getAccordoServizioParteComune()),sicaToOpenspcoopContext)));
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException("Trasformazione riferimento parte comune ["+aspsOpenspcoop.getAccordoServizioParteComune()+"] non riuscita: "+e.getMessage(),e);
 		}
@@ -2078,7 +2099,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || aspsOpenspcoop.getByteWsdlImplementativoErogatore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfacciaErogatore = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfacciaErogatore.setBase(Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL);
-			docInterfacciaErogatore.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfacciaErogatore.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaPortiAccesso.setPortiAccessoErogatore(docInterfacciaErogatore);
 			it.gov.spcoop.sica.dao.Documento docErogatore = new it.gov.spcoop.sica.dao.Documento();
 			docErogatore.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
@@ -2129,7 +2150,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || aspsOpenspcoop.getByteWsdlImplementativoFruitore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfacciaFruitore = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfacciaFruitore.setBase(Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL);
-			docInterfacciaFruitore.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfacciaFruitore.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaPortiAccesso.setPortiAccessoFruitore(docInterfacciaFruitore);
 			it.gov.spcoop.sica.dao.Documento docFruitore = new it.gov.spcoop.sica.dao.Documento();
 			docFruitore.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
@@ -2183,7 +2204,7 @@ public class SICAtoOpenSPCoopUtilities {
 			
 		// Adesione
 		//parteSpecifica.setAdesione(aspsOpenspcoop.getTipoAdesione());
-		parteSpecifica.setAdesione(TipiAdesione.AUTOMATICA.toString());
+		parteSpecifica.setAdesione(TipoAdesione.AUTOMATICA);
 		
 				
 		// Allegati
@@ -2380,9 +2401,9 @@ public class SICAtoOpenSPCoopUtilities {
 		if(manifest.getPubblicatore()!=null){
 			IdSoggetto soggettoReferente = 
 				new IdSoggetto(); 
-			IDSoggetto soggettoPubblicatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(manifest.getPubblicatore()));
+			IDSoggetto soggettoPubblicatore = sicaToOpenspcoopContext.getIDSoggetto(SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(manifest.getPubblicatore().toString()));
 			if(soggettoPubblicatore==null){
-				soggettoPubblicatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(manifest.getPubblicatore());
+				soggettoPubblicatore = SICAtoOpenSPCoopUtilities.idSoggetto_sicaToOpenspcoop(manifest.getPubblicatore().toString());
 			}
 			soggettoReferente.setNome(soggettoPubblicatore.getNome());
 			soggettoReferente.setTipo(soggettoPubblicatore.getTipo());
@@ -2393,7 +2414,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Riferimento accordo di cooperazione:
 		org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto servizioComposto = 
 			new org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto();
-		IDAccordoCooperazione idAccordo = SICAtoOpenSPCoopUtilities.idAccordoCooperazione_sicaToOpenspcoop(registryReader,manifest.getRiferimentoAccordoCooperazione());
+		IDAccordoCooperazione idAccordo = SICAtoOpenSPCoopUtilities.idAccordoCooperazione_sicaToOpenspcoop(registryReader,manifest.getRiferimentoAccordoCooperazione().toString());
 		try{
 			servizioComposto.setAccordoCooperazione(idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo));
 		}catch(Exception e){
@@ -2403,7 +2424,7 @@ public class SICAtoOpenSPCoopUtilities {
 		// Servizi componenti
 		if(manifest.getServiziComponenti()!=null){
 			for(int i=0; i<manifest.getServiziComponenti().sizeServizioComponenteList(); i++){
-				String servComponente = manifest.getServiziComponenti().getServizioComponente(i); 
+				String servComponente = manifest.getServiziComponenti().getServizioComponente(i).toString(); 
 				//IDServizio idServizioComponente = idAccordoServizioParteSpecifica_sicaToOpenspcoop(servComponente,sicaToOpenspcoopContext);
 				IDServizio idServizioComponente = sicaToOpenspcoopContext.getIDServizio(servComponente);
 				if(idServizioComponente==null){
@@ -2680,7 +2701,12 @@ public class SICAtoOpenSPCoopUtilities {
 			}
 			else
 				uriPubblicatore = SICAtoOpenSPCoopUtilities.appendURI_IDSoggettoSica(uriPubblicatore);
-			manifest.setPubblicatore(uriPubblicatore);
+			try {
+				manifest.setPubblicatore(new URI(uriPubblicatore));
+			}catch(Exception e) {
+				throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+			}
+			
 			
 			//if(accordoServizioOpenspcoop.getByteFirma()!=null){
 			//	manifest.setFirmato(true);
@@ -2696,7 +2722,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlConcettuale()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_CONCETTUALE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaConcettuale(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2713,7 +2739,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlLogicoErogatore()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_LOGICA_EROGATORE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaLogicaLatoErogatore(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2730,7 +2756,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(wsdlEmptySeNonDefiniti || (accordoServizioOpenspcoop.getByteWsdlLogicoFruitore()!=null)){
 			it.gov.spcoop.sica.manifest.DocumentoInterfaccia docInterfaccia = new it.gov.spcoop.sica.manifest.DocumentoInterfaccia();
 			docInterfaccia.setBase(Costanti.SPECIFICA_INTERFACCIA_LOGICA_FRUITORE_WSDL);
-			docInterfaccia.setTipo(TipiDocumentoInterfaccia.WSDL.toString());
+			docInterfaccia.setTipo(TipoDocumentoInterfaccia.WSDL);
 			specificaInterfaccia.setInterfacciaLogicaLatoFruitore(docInterfaccia);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2759,7 +2785,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneConcettuale()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_CONCETTUALE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneConcettuale(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2771,7 +2797,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneErogatore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_LOGICA_LATO_EROGATORE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneLogicaLatoErogatore(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2783,7 +2809,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(accordoServizioOpenspcoop.getByteSpecificaConversazioneFruitore()!=null){
 			it.gov.spcoop.sica.manifest.DocumentoConversazione docConversazione = new it.gov.spcoop.sica.manifest.DocumentoConversazione();
 			docConversazione.setBase(Costanti.SPECIFICA_CONVERSAZIONE_LOGICA_LATO_FRUITORE_WSBL);
-			docConversazione.setTipo(TipiDocumentoConversazione.WSBL.toString());
+			docConversazione.setTipo(TipoDocumentoConversazione.WSBL);
 			specificaConversazione.setConversazioneLogicaLatoFruitore(docConversazione);
 			
 			it.gov.spcoop.sica.dao.Documento doc = new it.gov.spcoop.sica.dao.Documento();
@@ -2809,7 +2835,11 @@ public class SICAtoOpenSPCoopUtilities {
 		}catch(Exception e){
 			throw new SICAToOpenSPCoopUtilitiesException("Trasformazione IDAccordo di cooperazione ["+accordoServizioOpenspcoop.getServizioComposto().getAccordoCooperazione()+"] non riuscito: "+e.getMessage(),e);
 		}
-		manifest.setRiferimentoAccordoCooperazione(uriAccordoCooperazione);
+		try {
+			manifest.setRiferimentoAccordoCooperazione(new URI(uriAccordoCooperazione));
+		}catch(Exception e) {
+			throw new SICAToOpenSPCoopUtilitiesException(e.getMessage(),e);
+		}
 		
 		
 		
@@ -2828,7 +2858,7 @@ public class SICAtoOpenSPCoopUtilities {
 				if(uriAPS==null){
 					throw new SICAToOpenSPCoopUtilitiesException("Trasformazione IDServizio ["+idServ+"] in uri accordo servizio parte specifica non riuscita");
 				}
-				servComponentiSICA.addServizioComponente(uriAPS);
+				servComponentiSICA.addServizioComponente(new URI(uriAPS));
 			}catch(Exception e){
 				IDServizio idServWithOutCheck = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(servComponente.getTipo(),servComponente.getNome(), 
 						servComponente.getTipoSoggetto(),servComponente.getNomeSoggetto(), 

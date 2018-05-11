@@ -47,7 +47,7 @@ public class AuditingCore extends ControlStationCore {
 	}
 
 	
-	public List<org.openspcoop2.web.lib.audit.dao.Operation> auditOperationList(ISearch ricerca,
+	public List<org.openspcoop2.web.lib.audit.log.Operation> auditOperationList(ISearch ricerca,
 			String datainizio, String datafine, String tipooperazione,
 			String tipooggetto, String id, String oldid, String utente,
 			String statooperazione, String contoggetto) throws AuditException {
@@ -72,7 +72,7 @@ public class AuditingCore extends ControlStationCore {
 		}
 	}
 
-	public org.openspcoop2.web.lib.audit.dao.Operation getAuditOperation(long idOp) throws AuditException {
+	public org.openspcoop2.web.lib.audit.log.Operation getAuditOperation(long idOp) throws AuditException {
 		Connection con = null;
 		String nomeMetodo = "getAuditOperation";
 		DriverAuditDBAppender driver = null;

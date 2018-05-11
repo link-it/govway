@@ -19,57 +19,64 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class ElencoAllegati.
+/** <p>Java class for ElencoAllegati complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ElencoAllegati">
+ * 		&lt;sequence>
+ * 			&lt;element name="genericoDocumento" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ElencoAllegati", 
+  propOrder = {
+  	"genericoDocumento"
+  }
+)
+
+@XmlRootElement(name = "ElencoAllegati")
 
 public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public ElencoAllegati() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public void addGenericoDocumento(String genericoDocumento) {
+  public void addGenericoDocumento(java.lang.String genericoDocumento) {
     this.genericoDocumento.add(genericoDocumento);
   }
 
-  public String getGenericoDocumento(int index) {
+  public java.lang.String getGenericoDocumento(int index) {
     return this.genericoDocumento.get( index );
   }
 
-  public String removeGenericoDocumento(int index) {
+  public java.lang.String removeGenericoDocumento(int index) {
     return this.genericoDocumento.remove( index );
   }
 
-  public List<String> getGenericoDocumentoList() {
+  public List<java.lang.String> getGenericoDocumentoList() {
     return this.genericoDocumento;
   }
 
-  public void setGenericoDocumentoList(List<String> genericoDocumento) {
+  public void setGenericoDocumentoList(List<java.lang.String> genericoDocumento) {
     this.genericoDocumento=genericoDocumento;
   }
 
@@ -79,37 +86,27 @@ public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean impleme
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  protected List<String> genericoDocumento = new ArrayList<String>();
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="genericoDocumento",required=true,nillable=false)
+  protected List<java.lang.String> genericoDocumento = new ArrayList<java.lang.String>();
 
   /**
    * @deprecated Use method getGenericoDocumentoList
-   * @return List<String>
+   * @return List<java.lang.String>
   */
   @Deprecated
-  public List<String> getGenericoDocumento() {
+  public List<java.lang.String> getGenericoDocumento() {
   	return this.genericoDocumento;
   }
 
   /**
    * @deprecated Use method setGenericoDocumentoList
-   * @param genericoDocumento List<String>
+   * @param genericoDocumento List<java.lang.String>
   */
   @Deprecated
-  public void setGenericoDocumento(List<String> genericoDocumento) {
+  public void setGenericoDocumento(List<java.lang.String> genericoDocumento) {
   	this.genericoDocumento=genericoDocumento;
   }
 
@@ -121,7 +118,5 @@ public class ElencoAllegati extends org.openspcoop2.utils.beans.BaseBean impleme
   public int sizeGenericoDocumento() {
   	return this.genericoDocumento.size();
   }
-
-  public static final String GENERICO_DOCUMENTO = "genericoDocumento";
 
 }

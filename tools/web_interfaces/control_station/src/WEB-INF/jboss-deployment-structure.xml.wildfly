@@ -13,6 +13,10 @@
 			<module name="org.jboss.as.webservices" />
 			<module name="org.jboss.ws" />
 			<module name="org.jboss.ws.*" />
+			<module name="com.fasterxml.jackson.core.jackson-core" />
+			<module name="com.fasterxml.jackson.core.jackson-databind" />
+			<module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" />
+			<module name="org.jboss.resteasy.resteasy-jackson2-provider" />
 		</exclusions>
 	</deployment>
 </jboss-deployment-structure>

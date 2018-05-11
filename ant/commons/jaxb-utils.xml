@@ -1,0 +1,22 @@
+
+<project name="jaxb_utils" basedir=".">
+	
+	<description>
+        	JAXB UTILS
+	</description>
+
+	<target name="-generatesrc_from_schema">
+		<basename property="schema.basename" file="${schema}"/>
+		<echo message="Generazione sorgenti a partire dallo schema ${schema.basename}..."/>
+                <exec executable="xjc">
+                        <arg value="-verbose" />
+                        <arg value="-npa" />
+                        <arg value="-target" />
+                        <arg value="2.0" />
+                        <arg value="-d" />
+                        <arg value="${outDir}" />
+                        <arg value="${schema}" />
+              </exec>
+	</target>
+	
+</project>

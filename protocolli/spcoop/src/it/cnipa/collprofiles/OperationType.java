@@ -19,137 +19,120 @@
  */
 package it.cnipa.collprofiles;
 
+import it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class OperationType.
+/** <p>Java class for operationType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="operationType">
+ * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/>
+ * 		&lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/>
+ * 		&lt;attribute name="profiloDiCollaborazione" type="{http://www.cnipa.it/collProfiles}profiloDiCollaborazioneType" use="required"/>
+ * 		&lt;attribute name="servizioCorrelato" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/>
+ * 		&lt;attribute name="operazioneCorrelata" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "operationType")
+
+@XmlRootElement(name = "operationType")
 
 public class OperationType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String servizio;
-
-  protected String operazione;
-
-  protected String profiloDiCollaborazione;
-
-  protected String servizioCorrelato;
-
-  protected String operazioneCorrelata;
-
-
   public OperationType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getServizio() {
+    return this.servizio;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getServizio() {
-    if(this.servizio!=null && ("".equals(this.servizio)==false)){
-		return this.servizio.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setServizio(String servizio) {
+  public void setServizio(java.lang.String servizio) {
     this.servizio = servizio;
   }
 
-  public String getOperazione() {
-    if(this.operazione!=null && ("".equals(this.operazione)==false)){
-		return this.operazione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getOperazione() {
+    return this.operazione;
   }
 
-  public void setOperazione(String operazione) {
+  public void setOperazione(java.lang.String operazione) {
     this.operazione = operazione;
   }
 
-  public String getProfiloDiCollaborazione() {
-    if(this.profiloDiCollaborazione!=null && ("".equals(this.profiloDiCollaborazione)==false)){
-		return this.profiloDiCollaborazione.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_profiloDiCollaborazione(String value) {
+    this.profiloDiCollaborazione = (ProfiloDiCollaborazioneType) ProfiloDiCollaborazioneType.toEnumConstantFromString(value);
   }
 
-  public void setProfiloDiCollaborazione(String profiloDiCollaborazione) {
+  public String get_value_profiloDiCollaborazione() {
+    if(this.profiloDiCollaborazione == null){
+    	return null;
+    }else{
+    	return this.profiloDiCollaborazione.toString();
+    }
+  }
+
+  public it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType getProfiloDiCollaborazione() {
+    return this.profiloDiCollaborazione;
+  }
+
+  public void setProfiloDiCollaborazione(it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType profiloDiCollaborazione) {
     this.profiloDiCollaborazione = profiloDiCollaborazione;
   }
 
-  public String getServizioCorrelato() {
-    if(this.servizioCorrelato!=null && ("".equals(this.servizioCorrelato)==false)){
-		return this.servizioCorrelato.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getServizioCorrelato() {
+    return this.servizioCorrelato;
   }
 
-  public void setServizioCorrelato(String servizioCorrelato) {
+  public void setServizioCorrelato(java.lang.String servizioCorrelato) {
     this.servizioCorrelato = servizioCorrelato;
   }
 
-  public String getOperazioneCorrelata() {
-    if(this.operazioneCorrelata!=null && ("".equals(this.operazioneCorrelata)==false)){
-		return this.operazioneCorrelata.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getOperazioneCorrelata() {
+    return this.operazioneCorrelata;
   }
 
-  public void setOperazioneCorrelata(String operazioneCorrelata) {
+  public void setOperazioneCorrelata(java.lang.String operazioneCorrelata) {
     this.operazioneCorrelata = operazioneCorrelata;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String SERVIZIO = "servizio";
 
-  public static final String OPERAZIONE = "operazione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @XmlAttribute(name="servizio",required=true)
+  protected java.lang.String servizio;
 
-  public static final String PROFILO_DI_COLLABORAZIONE = "profiloDiCollaborazione";
+  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @XmlAttribute(name="operazione",required=true)
+  protected java.lang.String operazione;
 
-  public static final String SERVIZIO_CORRELATO = "servizioCorrelato";
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_profiloDiCollaborazione;
 
-  public static final String OPERAZIONE_CORRELATA = "operazioneCorrelata";
+  @XmlAttribute(name="profiloDiCollaborazione",required=true)
+  protected ProfiloDiCollaborazioneType profiloDiCollaborazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @XmlAttribute(name="servizioCorrelato",required=false)
+  protected java.lang.String servizioCorrelato;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="QName")
+  @XmlAttribute(name="operazioneCorrelata",required=false)
+  protected java.lang.String operazioneCorrelata;
 
 }

@@ -186,15 +186,8 @@ public class XSDValidator {
 		try{
 			xml = object.toXml_Jaxb();
 		}catch(Exception e){
-			log.debug("XMLSerialization error with jaxb: "+e.getMessage(),e);
-			try{
-				xml = object.toXml_Jibx();
-			}catch(Exception eInternal){
-				log.error("XMLSerialization error with jibx: "+e.getMessage(),e);
-				// La serializzazione jibx ritorna anche il motivo della mancata serializzazione
-				// Es. quando un oggetto required is null
-				throw new ValidationException(eInternal.getMessage(),eInternal);
-			}
+			log.debug("XMLSerialization error: "+e.getMessage(),e);
+			throw new ValidationException(e.getMessage(),e);
 		}
 		
 		if(xmlUtils==null){

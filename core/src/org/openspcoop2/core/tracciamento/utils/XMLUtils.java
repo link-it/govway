@@ -407,7 +407,7 @@ public class XMLUtils  {
 			
 			// trasformazione in oggetto DettaglioEccezione
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (Traccia) org.openspcoop2.utils.xml.JiBXUtils.xmlToObj(binTrasformazione, Traccia.class);
+			return (Traccia) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(binTrasformazione, Traccia.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -433,7 +433,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(out.getName(),XMLUtils.generateTraccia_engine(traccia));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateTraccia_engine(traccia));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -445,7 +445,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(fileName,XMLUtils.generateTraccia_engine(traccia));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateTraccia_engine(traccia));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -492,7 +492,7 @@ public class XMLUtils  {
 	private static byte[] generateTraccia_engine(Traccia traccia) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, Traccia.class, traccia);
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, Traccia.class, traccia);
 			byte[] dichiarazione = bout.toByteArray();
 			return dichiarazione;
 		}catch(Exception e){

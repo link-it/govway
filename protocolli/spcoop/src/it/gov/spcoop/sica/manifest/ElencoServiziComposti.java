@@ -19,57 +19,64 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class ElencoServiziComposti.
+/** <p>Java class for ElencoServiziComposti complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ElencoServiziComposti">
+ * 		&lt;sequence>
+ * 			&lt;element name="servizioComposto" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ElencoServiziComposti", 
+  propOrder = {
+  	"servizioComposto"
+  }
+)
+
+@XmlRootElement(name = "ElencoServiziComposti")
 
 public class ElencoServiziComposti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public ElencoServiziComposti() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public void addServizioComposto(String servizioComposto) {
+  public void addServizioComposto(java.net.URI servizioComposto) {
     this.servizioComposto.add(servizioComposto);
   }
 
-  public String getServizioComposto(int index) {
+  public java.net.URI getServizioComposto(int index) {
     return this.servizioComposto.get( index );
   }
 
-  public String removeServizioComposto(int index) {
+  public java.net.URI removeServizioComposto(int index) {
     return this.servizioComposto.remove( index );
   }
 
-  public List<String> getServizioCompostoList() {
+  public List<java.net.URI> getServizioCompostoList() {
     return this.servizioComposto;
   }
 
-  public void setServizioCompostoList(List<String> servizioComposto) {
+  public void setServizioCompostoList(List<java.net.URI> servizioComposto) {
     this.servizioComposto=servizioComposto;
   }
 
@@ -79,37 +86,27 @@ public class ElencoServiziComposti extends org.openspcoop2.utils.beans.BaseBean 
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  protected List<String> servizioComposto = new ArrayList<String>();
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="servizioComposto",required=true,nillable=false)
+  protected List<java.net.URI> servizioComposto = new ArrayList<java.net.URI>();
 
   /**
    * @deprecated Use method getServizioCompostoList
-   * @return List<String>
+   * @return List<java.net.URI>
   */
   @Deprecated
-  public List<String> getServizioComposto() {
+  public List<java.net.URI> getServizioComposto() {
   	return this.servizioComposto;
   }
 
   /**
    * @deprecated Use method setServizioCompostoList
-   * @param servizioComposto List<String>
+   * @param servizioComposto List<java.net.URI>
   */
   @Deprecated
-  public void setServizioComposto(List<String> servizioComposto) {
+  public void setServizioComposto(List<java.net.URI> servizioComposto) {
   	this.servizioComposto=servizioComposto;
   }
 
@@ -121,7 +118,5 @@ public class ElencoServiziComposti extends org.openspcoop2.utils.beans.BaseBean 
   public int sizeServizioComposto() {
   	return this.servizioComposto.size();
   }
-
-  public static final String SERVIZIO_COMPOSTO = "servizioComposto";
 
 }

@@ -19,42 +19,47 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class SpecificaInterfaccia.
+/** <p>Java class for SpecificaInterfaccia complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="SpecificaInterfaccia">
+ * 		&lt;sequence>
+ * 			&lt;element name="interfacciaConcettuale" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="interfacciaLogicaLatoErogatore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="interfacciaLogicaLatoFruitore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "SpecificaInterfaccia", 
+  propOrder = {
+  	"interfacciaConcettuale",
+  	"interfacciaLogicaLatoErogatore",
+  	"interfacciaLogicaLatoFruitore"
+  }
+)
+
+@XmlRootElement(name = "SpecificaInterfaccia")
 
 public class SpecificaInterfaccia extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected DocumentoInterfaccia interfacciaConcettuale;
-
-  protected DocumentoInterfaccia interfacciaLogicaLatoErogatore;
-
-  protected DocumentoInterfaccia interfacciaLogicaLatoFruitore;
-
-
   public SpecificaInterfaccia() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
   }
 
   public DocumentoInterfaccia getInterfacciaConcettuale() {
@@ -83,24 +88,15 @@ public class SpecificaInterfaccia extends org.openspcoop2.utils.beans.BaseBean i
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String INTERFACCIA_CONCETTUALE = "interfacciaConcettuale";
 
-  public static final String INTERFACCIA_LOGICA_LATO_EROGATORE = "interfacciaLogicaLatoErogatore";
+  @XmlElement(name="interfacciaConcettuale",required=true,nillable=false)
+  protected DocumentoInterfaccia interfacciaConcettuale;
 
-  public static final String INTERFACCIA_LOGICA_LATO_FRUITORE = "interfacciaLogicaLatoFruitore";
+  @XmlElement(name="interfacciaLogicaLatoErogatore",required=true,nillable=false)
+  protected DocumentoInterfaccia interfacciaLogicaLatoErogatore;
+
+  @XmlElement(name="interfacciaLogicaLatoFruitore",required=false,nillable=false)
+  protected DocumentoInterfaccia interfacciaLogicaLatoFruitore;
 
 }

@@ -38,9 +38,9 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -142,7 +142,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 
 				// preparo i campi
 				Vector<DataElement> dati = ah.addFiltroToDati(
-						TipoOperazione.CHANGE, utente, tipooperazione, tipiOgg,
+						Tipologia.CHANGE, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, id);
 
@@ -178,7 +178,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 
 				// preparo i campi
 				Vector<DataElement> dati = ah.addFiltroToDati(
-						TipoOperazione.CHANGE, utente, tipooperazione, tipiOgg,
+						Tipologia.CHANGE, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, id);
 
@@ -199,7 +199,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			else
 				f.setUsername(null);
 			if (tipooperazione != null && !tipooperazione.equals("-"))
-				f.setTipoOperazione(TipoOperazione.parseString(tipooperazione));
+				f.setTipoOperazione(Tipologia.toEnumConstant(tipooperazione));
 			else
 				f.setTipoOperazione(null);
 			if (tipooggetto != null && !tipooggetto.equals("-"))
@@ -207,7 +207,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			else
 				f.setTipoOggettoInModifica(null);
 			if (statooperazione != null && !statooperazione.equals("-"))
-				f.setStatoOperazione(StatoOperazione.parseString(statooperazione));
+				f.setStatoOperazione(Stato.toEnumConstant(statooperazione));
 			else
 				f.setStatoOperazione(null);
 			if (stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {

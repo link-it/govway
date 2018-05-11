@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -39,9 +38,6 @@ import java.util.Properties;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -439,9 +435,7 @@ public class XMLDataConverter {
 		}
 		
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-			InputStreamReader iStream = null;
+			InputStream iStream = null;
 			HttpURLConnection httpConn = null;
 			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
 				try{ 
@@ -451,7 +445,7 @@ public class XMLDataConverter {
 					httpConn.setRequestMethod("GET");
 					httpConn.setDoOutput(true);
 					httpConn.setDoInput(true);
-					iStream = new InputStreamReader(httpConn.getInputStream());
+					iStream = httpConn.getInputStream();
 				}catch(Exception e) {
 					try{  
 						if(iStream!=null)
@@ -463,7 +457,7 @@ public class XMLDataConverter {
 				}
 			}else{
 				try{  
-					iStream = new InputStreamReader(new FileInputStream(sorgente));
+					iStream = new FileInputStream(sorgente);
 				}catch(java.io.FileNotFoundException e) {
 					throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStream del registro dei servizi (FILE) : \n\n"+e.getMessage());
 				}
@@ -473,8 +467,9 @@ public class XMLDataConverter {
 
 			/* ---- Unmarshall del file di configurazione ---- */
 			try{  
-				this.sorgenteRegistro = (org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(iStream, null);
-			} catch(org.jibx.runtime.JiBXException e) {
+				org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+				this.sorgenteRegistro = deserializer.readRegistroServizi(iStream);
+			} catch(Exception e) {
 				try{  
 					if(iStream!=null)
 						iStream.close();
@@ -520,11 +515,9 @@ public class XMLDataConverter {
 		}
 		
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-			InputStreamReader iStream = null;
+			InputStream iStream = null;
 			try{  
-				iStream = new InputStreamReader(new ByteArrayInputStream(sorgente));
+				iStream = new ByteArrayInputStream(sorgente);
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -536,8 +529,9 @@ public class XMLDataConverter {
 
 			/* ---- Unmarshall del file di configurazione ---- */
 			try{  
-				this.sorgenteRegistro = (org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(iStream, null);
-			} catch(org.jibx.runtime.JiBXException e) {
+				org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+				this.sorgenteRegistro = deserializer.readRegistroServizi(iStream);
+			} catch(Exception e) {
 				try{  
 					if(iStream!=null)
 						iStream.close();

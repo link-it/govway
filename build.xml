@@ -198,7 +198,6 @@
 			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
-			<include name="jibx/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>
 			<include name="log/*"/>

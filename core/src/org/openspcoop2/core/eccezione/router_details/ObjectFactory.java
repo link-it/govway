@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DettaglioRouting }
+     */
+    public DettaglioRouting createDettaglioRouting() {
+        return new DettaglioRouting();
+    }
+
+    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
@@ -63,13 +70,6 @@ public class ObjectFactory {
      */
     public Dominio createDominio() {
         return new Dominio();
-    }
-
-    /**
-     * Create an instance of {@link DettaglioRouting }
-     */
-    public DettaglioRouting createDettaglioRouting() {
-        return new DettaglioRouting();
     }
 
     /**

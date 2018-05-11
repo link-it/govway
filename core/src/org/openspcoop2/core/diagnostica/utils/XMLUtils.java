@@ -208,7 +208,7 @@ public class XMLUtils  {
 			
 			// trasformazione in oggetto DettaglioEccezione
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (MessaggioDiagnostico) org.openspcoop2.utils.xml.JiBXUtils.xmlToObj(binTrasformazione, MessaggioDiagnostico.class);
+			return (MessaggioDiagnostico) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(binTrasformazione, MessaggioDiagnostico.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -234,7 +234,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(out.getName(),XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -246,7 +246,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(fileName,XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateMessaggioDiagnostico_engine(messaggioDiagnostico));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -293,7 +293,7 @@ public class XMLUtils  {
 	private static byte[] generateMessaggioDiagnostico_engine(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, MessaggioDiagnostico.class, messaggioDiagnostico);
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, MessaggioDiagnostico.class, messaggioDiagnostico);
 			byte[] dichiarazione = bout.toByteArray();
 			return dichiarazione;
 		}catch(Exception e){

@@ -33,8 +33,8 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.DriverAuditDBAppender;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Operation;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
 
 /**
  * Appender per registrare operazione di audit
@@ -143,7 +143,7 @@ public class AuditDBAppender implements IAuditAppender {
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
 			
 			// Aggiorno stato
-			operation.setStato(StatoOperazione.completed.toString());
+			operation.setStato(Stato.COMPLETED);
 			
 			// Aggiorno tempo di esecuzione
 			operation.setTimeExecute(DateManager.getDate());
@@ -183,7 +183,7 @@ public class AuditDBAppender implements IAuditAppender {
 			Operation operation = driverDBAppender.getOperation((Long)idOperation);
 			
 			// Aggiorno stato
-			operation.setStato(StatoOperazione.error.toString());
+			operation.setStato(Stato.ERROR);
 			operation.setError(motivoErrore);
 			
 			// Aggiorno tempo di esecuzione

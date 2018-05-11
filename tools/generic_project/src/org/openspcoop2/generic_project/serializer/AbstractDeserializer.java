@@ -21,6 +21,8 @@ package org.openspcoop2.generic_project.serializer;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
@@ -35,15 +37,28 @@ import org.openspcoop2.generic_project.exception.DeserializerException;
 public abstract class AbstractDeserializer {
 
 	public <T> T xmlToObj(String fileName,Class<T> c) throws DeserializerException {
+		return this.xmlToObj(new File(fileName), c);
+	}
+	public <T> T xmlToObj(File file,Class<T> c) throws DeserializerException {
+		FileInputStream fin = null;
 		try{
-			return (T) this._xmlToObj(fileName, c);
+			fin = new FileInputStream(file);
+			return this.xmlToObj(fin, c);
 		}catch(Exception e){
 			throw new DeserializerException(e);
 		}
+		finally {
+			try{
+				if(fin!=null) {
+					fin.close();
+				}
+			}catch(Exception eClose){}
+		}
 	}
-	protected abstract <T> T _xmlToObj(String fileName,Class<T> c) throws Exception;
-	
-	
+	public <T> T xmlToObj(byte[] bytes,Class<T> c) throws DeserializerException {
+		ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+		return this.xmlToObj(bin, c);
+	}
 	public <T> T xmlToObj(InputStream is,Class<T> c) throws DeserializerException {
 		try{
 			return (T) this._xmlToObj(is, c);

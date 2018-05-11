@@ -65,7 +65,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.appender.AuditDisabilitatoException;
 import org.openspcoop2.web.lib.audit.appender.IDOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -375,7 +375,7 @@ public final class Monitor extends Action {
 					IDOperazione [] idOperazione = null;
 					boolean auditDisabiltato = false;
 					try{
-						idOperazione = core.performAuditRequest(new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+						idOperazione = core.performAuditRequest(new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 					}catch(AuditDisabilitatoException disabilitato){
 						auditDisabiltato = true;
 					}
@@ -387,11 +387,11 @@ public final class Monitor extends Action {
 							msgKO += " - " + idMessaggio + "<br>";
 						}
 						if(!auditDisabiltato){
-							core.performAuditComplete(idOperazione, new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+							core.performAuditComplete(idOperazione, new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 						}
 					}catch(Exception e){
 						if(!auditDisabiltato){
-							core.performAuditError(idOperazione, e.getMessage(), new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+							core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 						}
 						msgKO += " - " + idMessaggio + "<br>";
 						continue;
@@ -633,7 +633,7 @@ public final class Monitor extends Action {
 						IDOperazione [] idOperazione = null;
 						boolean auditDisabiltato = false;
 						try{
-							idOperazione = core.performAuditRequest(new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+							idOperazione = core.performAuditRequest(new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 						}catch(AuditDisabilitatoException disabilitato){
 							auditDisabiltato = true;
 						}
@@ -641,11 +641,11 @@ public final class Monitor extends Action {
 							long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
 							pd.setMessage("Eliminate " + n + " Richieste Pendenti.", Costanti.MESSAGE_TYPE_INFO);
 							if(!auditDisabiltato){
-								core.performAuditComplete(idOperazione, new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+								core.performAuditComplete(idOperazione, new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 							}
 						}catch(Exception e){
 							if(!auditDisabiltato){
-								core.performAuditError(idOperazione, e.getMessage(), new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
+								core.performAuditError(idOperazione, e.getMessage(), new Tipologia []{Tipologia.DEL}, userLogin, new Object[] {filter});
 							}
 							throw e;
 						}	

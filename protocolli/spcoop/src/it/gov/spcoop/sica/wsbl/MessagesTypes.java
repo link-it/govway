@@ -19,57 +19,64 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class MessagesTypes.
+/** <p>Java class for messagesTypes complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="messagesTypes">
+ * 		&lt;sequence>
+ * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}message" minOccurs="1" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "messagesTypes", 
+  propOrder = {
+  	"message"
+  }
+)
+
+@XmlRootElement(name = "messagesTypes")
 
 public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public MessagesTypes() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public void addMessage(MessagesTypesMessage message) {
+  public void addMessage(Message message) {
     this.message.add(message);
   }
 
-  public MessagesTypesMessage getMessage(int index) {
+  public Message getMessage(int index) {
     return this.message.get( index );
   }
 
-  public MessagesTypesMessage removeMessage(int index) {
+  public Message removeMessage(int index) {
     return this.message.remove( index );
   }
 
-  public List<MessagesTypesMessage> getMessageList() {
+  public List<Message> getMessageList() {
     return this.message;
   }
 
-  public void setMessageList(List<MessagesTypesMessage> message) {
+  public void setMessageList(List<Message> message) {
     this.message=message;
   }
 
@@ -79,37 +86,26 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  protected List<MessagesTypesMessage> message = new ArrayList<MessagesTypesMessage>();
+
+  @XmlElement(name="message",required=true,nillable=false)
+  protected List<Message> message = new ArrayList<Message>();
 
   /**
    * @deprecated Use method getMessageList
-   * @return List<MessagesTypesMessage>
+   * @return List<Message>
   */
   @Deprecated
-  public List<MessagesTypesMessage> getMessage() {
+  public List<Message> getMessage() {
   	return this.message;
   }
 
   /**
    * @deprecated Use method setMessageList
-   * @param message List<MessagesTypesMessage>
+   * @param message List<Message>
   */
   @Deprecated
-  public void setMessage(List<MessagesTypesMessage> message) {
+  public void setMessage(List<Message> message) {
   	this.message=message;
   }
 
@@ -121,7 +117,5 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
   public int sizeMessage() {
   	return this.message.size();
   }
-
-  public static final String MESSAGE = "message";
 
 }

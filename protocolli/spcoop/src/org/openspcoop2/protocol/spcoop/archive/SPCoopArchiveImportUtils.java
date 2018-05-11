@@ -53,7 +53,7 @@ public class SPCoopArchiveImportUtils {
 		// Imposto CodiceIPA memorizzato per Referente
 		if(aspc.getManifesto()!=null && aspc.getManifesto().getParteComune()!=null &&
 				aspc.getManifesto().getParteComune().getPubblicatore()!=null){
-			String codiceIPAReferente = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(aspc.getManifesto().getParteComune().getPubblicatore());
+			String codiceIPAReferente = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(aspc.getManifesto().getParteComune().getPubblicatore().toString());
 			IDSoggetto soggettoReferente =  null;
 			try{
 				soggettoReferente = registryReader.getIdSoggettoByCodiceIPA(codiceIPAReferente);
@@ -69,7 +69,7 @@ public class SPCoopArchiveImportUtils {
 		// Imposto CodiceIPA memorizzato per Referente
 		if(asc.getManifesto()!=null &&
 				asc.getManifesto().getPubblicatore()!=null){
-			String codiceIPAReferente = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(asc.getManifesto().getPubblicatore());
+			String codiceIPAReferente = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(asc.getManifesto().getPubblicatore().toString());
 			IDSoggetto soggettoReferente =  null;
 			try{
 				soggettoReferente = registryReader.getIdSoggettoByCodiceIPA(codiceIPAReferente);
@@ -82,7 +82,7 @@ public class SPCoopArchiveImportUtils {
 		if(asc.getManifesto()!=null && asc.getManifesto().getServiziComponenti()!=null ){
 			ElencoServiziComponenti sComponenti = asc.getManifesto().getServiziComponenti();
 			for(int i=0; i<sComponenti.sizeServizioComponenteList(); i++){
-				String servComponente = sComponenti.getServizioComponente(i);
+				String servComponente = sComponenti.getServizioComponente(i).toString();
 				String codiceIPASoggettoErogatoreServizioComponente = SICAtoOpenSPCoopUtilities.readDNSoggettoFromUriAccordo(servComponente);
 				IDSoggetto soggettoErogatoreServizioComponente = null;
 				try{
@@ -101,7 +101,7 @@ public class SPCoopArchiveImportUtils {
 		if(asc.getManifesto()!=null && asc.getManifesto().getServiziComponenti()!=null ){
 			ElencoServiziComponenti sComponenti = asc.getManifesto().getServiziComponenti();
 			for(int i=0; i<sComponenti.sizeServizioComponenteList(); i++){
-				String servComponente = sComponenti.getServizioComponente(i);
+				String servComponente = sComponenti.getServizioComponente(i).toString();
 				IDServizio idAccordoServizioParteSpecifica = SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_sicaToOpenspcoop(registryReader, servComponente, contextSICA);
 				contextSICA.addMappingServizioToUriAPS(registryReader, idAccordoServizioParteSpecifica);
 			}
@@ -111,7 +111,7 @@ public class SPCoopArchiveImportUtils {
 	public static void setIDSoggettoFromCodiceIPA(it.gov.spcoop.sica.dao.AccordoCooperazione ac,SICAtoOpenSPCoopContext contextSICA,IRegistryReader registryReader) throws Exception{
 		 // Imposto CodiceIPA memorizzato per Coordinatore
 		 if(ac.getManifesto()!=null && ac.getManifesto().getCoordinatore()!=null){
-			 String codiceIPACoordinatore = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(ac.getManifesto().getCoordinatore());
+			 String codiceIPACoordinatore = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(ac.getManifesto().getCoordinatore().toString());
 			 IDSoggetto soggettoCoordinatore =  null;
 			 try{
 				 soggettoCoordinatore = registryReader.getIdSoggettoByCodiceIPA(codiceIPACoordinatore);
@@ -124,7 +124,7 @@ public class SPCoopArchiveImportUtils {
 		 if(ac.getManifesto()!=null && ac.getManifesto().getElencoPartecipanti()!=null ){
 			 ElencoPartecipanti elencoPartecipanti = ac.getManifesto().getElencoPartecipanti();
 			 for(int i=0; i<elencoPartecipanti.sizePartecipanteList(); i++){
-				 String codiceIPASoggettoPartecipante = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(elencoPartecipanti.getPartecipante(i));
+				 String codiceIPASoggettoPartecipante = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(elencoPartecipanti.getPartecipante(i).toString());
 				 IDSoggetto soggettoPartecipante =  null;
 				 try{
 					 soggettoPartecipante = registryReader.getIdSoggettoByCodiceIPA(codiceIPASoggettoPartecipante);
@@ -138,7 +138,7 @@ public class SPCoopArchiveImportUtils {
 		 if(ac.getManifesto()!=null && ac.getManifesto().getServiziComposti()!=null ){
 			 ElencoServiziComposti sComposti = ac.getManifesto().getServiziComposti();
 			 for(int i=0; i<sComposti.sizeServizioCompostoList(); i++){
-				 String uriServizioComposto = sComposti.getServizioComposto(i);
+				 String uriServizioComposto = sComposti.getServizioComposto(i).toString();
 				 String codiceIPASoggettoErogatoreServizioComposto = SICAtoOpenSPCoopUtilities.readDNSoggettoFromUriAccordo(uriServizioComposto);
 				 IDSoggetto soggettoErogatoreServizioComposto = null;
 				 try{
@@ -155,7 +155,7 @@ public class SPCoopArchiveImportUtils {
 		// Imposto CodiceIPA memorizzato per Erogatore
 		if(asps.getManifesto()!=null && asps.getManifesto().getParteSpecifica()!=null &&
 				asps.getManifesto().getParteSpecifica().getErogatore()!=null){
-			 String codiceIPAErogatore = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(asps.getManifesto().getParteSpecifica().getErogatore());
+			 String codiceIPAErogatore = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(asps.getManifesto().getParteSpecifica().getErogatore().toString());
 			 IDSoggetto soggettoErogatore =  null;
 			 try{
 				 soggettoErogatore = registryReader.getIdSoggettoByCodiceIPA(codiceIPAErogatore);
@@ -167,7 +167,7 @@ public class SPCoopArchiveImportUtils {
 		// Imposto CodiceIPA memorizzato per referente Accordo di Servizio Parte Comune
 		if(asps.getManifesto()!=null && asps.getManifesto().getParteSpecifica()!=null &&
 				asps.getManifesto().getParteSpecifica().getRiferimentoParteComune()!=null){
-			 String uriRiferimentoParteComune = asps.getManifesto().getParteSpecifica().getRiferimentoParteComune();
+			 String uriRiferimentoParteComune = asps.getManifesto().getParteSpecifica().getRiferimentoParteComune().toString();
 			 String codiceIPASoggettoReferenteParteComune = SICAtoOpenSPCoopUtilities.readDNSoggettoFromUriAccordo(uriRiferimentoParteComune);
 			 IDSoggetto soggettoReferenteParteComune = null;
 			 try{

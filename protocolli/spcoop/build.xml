@@ -39,7 +39,6 @@
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
-			<include name="jibx/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
@@ -82,6 +81,10 @@
 		
 		<!-- it.gov.spcoop.sica.manifest -->
 		<var name="packagesCompiled" value="it.gov.spcoop.sica.manifest,it.gov.spcoop.sica.manifest.driver" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.manifest.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.manifest.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.manifest.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.manifest.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/manifest"/>
@@ -89,13 +92,15 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.manifest"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
 		</antcall>
 		
 		<!-- it.cnipa.collprofiles -->
 		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.cnipa.collprofiles.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/cnipa/collprofiles"/>
@@ -104,8 +109,6 @@
 			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/driver/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.cnipa.collprofiles"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
 		</antcall>
 		
@@ -121,13 +124,15 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.cnipa.schemas._2003.egovit.exception1_0"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
 		</antcall>
 		
 		<!-- it.gov.spcoop.sica.wscp -->
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wscp.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/wscp"/>
@@ -136,8 +141,6 @@
 			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/driver/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.wscp"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
 		</antcall>
 		
@@ -163,6 +166,10 @@
 						
 		<!-- it.gov.spcoop.sica.wsbl -->
 		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl,it.gov.spcoop.sica.wsbl.driver" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},it.gov.spcoop.sica.wsbl.utils.serializer" />
 		<antcall target="compile_src_openspcoop2">
 			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_spcoop}/it/gov/spcoop/sica/wsbl"/>
@@ -170,8 +177,6 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.spcoop.sica.wsbl"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="spcoop"/>
 		</antcall>
 							
@@ -291,7 +296,6 @@
                 		<path refid="classpath_run_openspcoop_dist" />
                 		<pathelement path="${openspcoop2}/core/deploy/properties"/>
                 		<fileset dir="${required_lib}" includes="log/*.jar"/>
-                		<fileset dir="${required_lib}" includes="jibx/*.jar"/>
                 		<fileset dir="${required_lib}" includes="shared/*.jar"/>
                 		<fileset dir="${required_lib}" includes="commons/*.jar"/>
                 		<fileset dir="${required_lib}" includes="cxf/*.jar"/>

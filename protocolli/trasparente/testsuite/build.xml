@@ -118,9 +118,6 @@
 		<fileset dir="${openspcoop2_lib}/log" >
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/jibx" >
-			<include name="*.jar"/>
-		</fileset>
 		<fileset dir="${openspcoop2_lib}/commons" >
 			<include name="*.jar"/>
 		</fileset>

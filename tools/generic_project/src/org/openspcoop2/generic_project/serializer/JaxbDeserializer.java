@@ -35,12 +35,6 @@ public class JaxbDeserializer extends AbstractDeserializer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T _xmlToObj(String fileName, Class<T> c) throws Exception {
-		return (T) JaxbUtils.xmlToObj(fileName, c);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
 	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {
 		return (T) JaxbUtils.xmlToObj(is, c);
 	}

@@ -154,11 +154,6 @@
 				<include name="commons-beanutils-1.9.2.jar"/> <!--jmx mini console -->
 				<include name="commons-lang3-3.4.jar"/>
 			</lib>
-			<lib dir="${required_lib}/jibx">
-				<include name="bcel-6.0.jar"/>
-				<include name="jibx-run-1.2.6.jar"/>
-				<include name="xpp3-1.2.6.jar"/>
-			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
 				<include name="log4j*.jar"/>

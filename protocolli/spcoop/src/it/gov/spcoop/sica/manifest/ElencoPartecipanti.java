@@ -19,57 +19,64 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class ElencoPartecipanti.
+/** <p>Java class for ElencoPartecipanti complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="ElencoPartecipanti">
+ * 		&lt;sequence>
+ * 			&lt;element name="partecipante" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="2" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ElencoPartecipanti", 
+  propOrder = {
+  	"partecipante"
+  }
+)
+
+@XmlRootElement(name = "ElencoPartecipanti")
 
 public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public ElencoPartecipanti() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public void addPartecipante(String partecipante) {
+  public void addPartecipante(java.net.URI partecipante) {
     this.partecipante.add(partecipante);
   }
 
-  public String getPartecipante(int index) {
+  public java.net.URI getPartecipante(int index) {
     return this.partecipante.get( index );
   }
 
-  public String removePartecipante(int index) {
+  public java.net.URI removePartecipante(int index) {
     return this.partecipante.remove( index );
   }
 
-  public List<String> getPartecipanteList() {
+  public List<java.net.URI> getPartecipanteList() {
     return this.partecipante;
   }
 
-  public void setPartecipanteList(List<String> partecipante) {
+  public void setPartecipanteList(List<java.net.URI> partecipante) {
     this.partecipante=partecipante;
   }
 
@@ -79,37 +86,27 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  protected List<String> partecipante = new ArrayList<String>();
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="partecipante",required=true,nillable=false)
+  protected List<java.net.URI> partecipante = new ArrayList<java.net.URI>();
 
   /**
    * @deprecated Use method getPartecipanteList
-   * @return List<String>
+   * @return List<java.net.URI>
   */
   @Deprecated
-  public List<String> getPartecipante() {
+  public List<java.net.URI> getPartecipante() {
   	return this.partecipante;
   }
 
   /**
    * @deprecated Use method setPartecipanteList
-   * @param partecipante List<String>
+   * @param partecipante List<java.net.URI>
   */
   @Deprecated
-  public void setPartecipante(List<String> partecipante) {
+  public void setPartecipante(List<java.net.URI> partecipante) {
   	this.partecipante=partecipante;
   }
 
@@ -121,7 +118,5 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
   public int sizePartecipante() {
   	return this.partecipante.size();
   }
-
-  public static final String PARTECIPANTE = "partecipante";
 
 }

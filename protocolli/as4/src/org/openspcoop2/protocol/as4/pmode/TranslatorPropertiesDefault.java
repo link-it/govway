@@ -145,7 +145,7 @@ public class TranslatorPropertiesDefault {
 								"<property xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<property ", 
 								"<property xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
-						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						Property p = deserializer.readProperty(sWithNamespace.getBytes());
 						list.add(p);
 					}
@@ -196,7 +196,7 @@ public class TranslatorPropertiesDefault {
 								finalString.replace("<propertySet>", "<propertySet xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\">");
 						sWithNamespace = sWithNamespace.replace("<propertySet ", 
 								"<propertySet xmlns=\""+eu.domibus.configuration.utils.ProjectInfo.getInstance().getProjectNamespace()+"\" ");
-						eu.domibus.configuration.utils.serializer.JibxDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JibxDeserializer();
+						eu.domibus.configuration.utils.serializer.JaxbDeserializer deserializer = new eu.domibus.configuration.utils.serializer.JaxbDeserializer();
 						PropertySet p = deserializer.readPropertySet(sWithNamespace.getBytes());
 						list.add(p);
 					}

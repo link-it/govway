@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.slf4j.Logger;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 
 import it.gov.spcoop.sica.manifest.AccordoCooperazione;
@@ -338,7 +338,7 @@ public class XMLUtils  {
 		if(includiInfoRegistroGenerale){
 			if(manifestoAC.getServiziComposti()!=null){
 				for(int i=0; i<manifestoAC.getServiziComposti().sizeServizioCompostoList(); i++){
-					String servComposti = manifestoAC.getServiziComposti().getServizioComposto(i);
+					java.net.URI servComposti = manifestoAC.getServiziComposti().getServizioComposto(i);
 					if(servComposti==null){
 						motivoErroreValidazione.append("ElencoServiziComposti["+i+"] senza il servizio composto \n");
 					}
@@ -479,7 +479,7 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("ElencoServiziComponenti non presente \n");
 		}else{
 			for(int i=0; i<manifestoSC.getServiziComponenti().sizeServizioComponenteList(); i++){
-				String servComponente = manifestoSC.getServiziComponenti().getServizioComponente(i);
+				java.net.URI servComponente = manifestoSC.getServiziComponenti().getServizioComponente(i);
 				if(servComponente==null){
 					motivoErroreValidazione.append("ElencoServiziComponenti["+i+"] senza il servizio componente \n");
 				}
@@ -599,7 +599,7 @@ public class XMLUtils  {
 			
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
 			
-			return (AccordoServizio) JiBXUtils.xmlToObj(binTrasformazione, AccordoServizio.class);
+			return (AccordoServizio) JaxbUtils.xmlToObj(binTrasformazione, AccordoServizio.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -618,7 +618,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out.getName(), AccordoServizio.class, manifest);
+			JaxbUtils.objToXml(out.getName(), AccordoServizio.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -631,7 +631,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(fileName, AccordoServizio.class, manifest);
+			JaxbUtils.objToXml(fileName, AccordoServizio.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -656,7 +656,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out, AccordoServizio.class, manifest);
+			JaxbUtils.objToXml(out, AccordoServizio.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -750,7 +750,7 @@ public class XMLUtils  {
 			
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
 			
-			return (AccordoCooperazione) JiBXUtils.xmlToObj(binTrasformazione, AccordoCooperazione.class);
+			return (AccordoCooperazione) JaxbUtils.xmlToObj(binTrasformazione, AccordoCooperazione.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -771,7 +771,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out.getName(), AccordoCooperazione.class, manifest);
+			JaxbUtils.objToXml(out.getName(), AccordoCooperazione.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -784,7 +784,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(fileName, AccordoCooperazione.class, manifest);
+			JaxbUtils.objToXml(fileName, AccordoCooperazione.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -809,7 +809,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out, AccordoCooperazione.class, manifest);
+			JaxbUtils.objToXml(out, AccordoCooperazione.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -905,7 +905,7 @@ public class XMLUtils  {
 			
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
 			
-			return (ServizioComposto) JiBXUtils.xmlToObj(binTrasformazione, ServizioComposto.class);
+			return (ServizioComposto) JaxbUtils.xmlToObj(binTrasformazione, ServizioComposto.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -924,7 +924,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out.getName(), ServizioComposto.class, manifest);
+			JaxbUtils.objToXml(out.getName(), ServizioComposto.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -937,7 +937,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(fileName, ServizioComposto.class, manifest);
+			JaxbUtils.objToXml(fileName, ServizioComposto.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -962,7 +962,7 @@ public class XMLUtils  {
 				throw new Exception(risultatoValidazione.toString());
 			}
 			
-			JiBXUtils.objToXml(out, ServizioComposto.class, manifest);
+			JaxbUtils.objToXml(out, ServizioComposto.class, manifest);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}

@@ -53,8 +53,6 @@
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.generic_project"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
-					<param name="compile_src_openspcoop2.JIBX_BINDING" value=""/>
-					<param name="compile_src_openspcoop2.JIBX_CHECK" value=""/>
 					<param name="dist" value="${dist_genericProject}"/>
 					<param name="build" value="${build_genericProject}"/>
 				</antcall>

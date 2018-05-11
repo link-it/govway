@@ -19,81 +19,74 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class DocumentoSemiformale.
+/** <p>Java class for DocumentoSemiformale complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="DocumentoSemiformale">
+ * 		<xsd:simpleContent>
+ * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
+ * 				&lt;attribute name="tipo" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/>
+ * 			</xsd:extension>
+ * 		</xsd:simpleContent>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "DocumentoSemiformale")
+
+@XmlRootElement(name = "DocumentoSemiformale")
 
 public class DocumentoSemiformale extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  public String base;
-
-  protected String tipo;
-
-
   public DocumentoSemiformale() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
   public String getBase() {
-    return this.base;
-  }
-
-  public void setBase(String base) {
-    this.base=base;
-  }
-
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
+    if(this.base!=null && ("".equals(this.base)==false)){
+		return this.base.trim();
 	}else{
 		return null;
 	}
 
   }
 
-  public void setTipo(String tipo) {
+  public void setBase(String base) {
+    this.base=base;
+  }
+
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String BASE = "base";
 
-  public static final String TIPO = "tipo";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlValue()
+  public String base;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="tipo",required=true)
+  protected java.lang.String tipo;
 
 }

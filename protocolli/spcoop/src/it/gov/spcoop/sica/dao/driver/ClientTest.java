@@ -21,6 +21,7 @@
 package it.gov.spcoop.sica.dao.driver;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +68,6 @@ import org.w3c.dom.Node;
 import it.cnipa.collprofiles.EgovDecllElement;
 import it.cnipa.collprofiles.OperationListType;
 import it.cnipa.collprofiles.OperationType;
-import it.cnipa.collprofiles.driver.TipiProfiliCollaborazione;
 import it.gov.spcoop.sica.dao.AccordoCooperazione;
 import it.gov.spcoop.sica.dao.AccordoServizioComposto;
 import it.gov.spcoop.sica.dao.AccordoServizioParteComune;
@@ -93,7 +93,8 @@ import it.gov.spcoop.sica.manifest.SpecificaLivelliServizio;
 import it.gov.spcoop.sica.manifest.SpecificaPortiAccesso;
 import it.gov.spcoop.sica.manifest.SpecificaSemiformale;
 import it.gov.spcoop.sica.manifest.SpecificaSicurezza;
-import it.gov.spcoop.sica.manifest.driver.TipiAdesione;
+import it.gov.spcoop.sica.manifest.constants.TipoDocumentoConversazione;
+import it.gov.spcoop.sica.manifest.constants.TipoDocumentoInterfaccia;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoCoordinamento;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
@@ -101,6 +102,7 @@ import it.gov.spcoop.sica.manifest.driver.TipiDocumentoLivelloServizio;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSemiformale;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
 import it.gov.spcoop.sica.wscp.ProfiloCollaborazioneEGOV;
+import it.gov.spcoop.sica.wscp.constants.ProfiloDiCollaborazioneType;
 
 
 /**
@@ -1734,34 +1736,34 @@ public class ClientTest {
 		
 		// Parte comune manifest
 		it.gov.spcoop.sica.manifest.AccordoServizioParteComune parteComune = new it.gov.spcoop.sica.manifest.AccordoServizioParteComune();
-		parteComune.setPubblicatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true));
+		parteComune.setPubblicatore(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true)));
 		// -- SpecificaConversazione
 		SpecificaConversazione conversazione = new SpecificaConversazione();
 		DocumentoConversazione doc = new DocumentoConversazione();
-		doc.setTipo("WSBL");
+		doc.setTipo(TipoDocumentoConversazione.WSBL);
 		doc.setBase("ConversazioneConcettuale.wsbl");
 		conversazione.setConversazioneConcettuale(doc);
 		DocumentoConversazione docErogatore = new DocumentoConversazione();
-		docErogatore.setTipo("WSBL");
+		docErogatore.setTipo(TipoDocumentoConversazione.WSBL);
 		docErogatore.setBase("ConversazioneLogicaLatoErogatore.wsbl");
 		conversazione.setConversazioneLogicaLatoErogatore(docErogatore);
 		DocumentoConversazione docFruitore = new DocumentoConversazione();
-		docFruitore.setTipo("WSBL");
+		docFruitore.setTipo(TipoDocumentoConversazione.WSBL);
 		docFruitore.setBase("ConversazioneLogicaLatoFruitore.wsbl");
 		conversazione.setConversazioneLogicaLatoFruitore(docFruitore);
 		parteComune.setSpecificaConversazione(conversazione);
 		// -- SpecificaInterfaccia
 		SpecificaInterfaccia interfaccia = new SpecificaInterfaccia();
 		DocumentoInterfaccia docI = new DocumentoInterfaccia();
-		docI.setTipo("WSDL");
+		docI.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docI.setBase("InterfacciaConcettuale.wsdl");
 		interfaccia.setInterfacciaConcettuale(docI);
 		DocumentoInterfaccia docIErogatore = new DocumentoInterfaccia();
-		docIErogatore.setTipo("WSDL");
+		docIErogatore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docIErogatore.setBase("InterfacciaLogicaErogatore.wsdl");
 		interfaccia.setInterfacciaLogicaLatoErogatore(docIErogatore);
 		DocumentoInterfaccia docIFruitore = new DocumentoInterfaccia();
-		docIFruitore.setTipo("WSDL");
+		docIFruitore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docIFruitore.setBase("InterfacciaLogicaFruitore.wsdl");
 		interfaccia.setInterfacciaLogicaLatoFruitore(docIFruitore);
 		parteComune.setSpecificaInterfaccia(interfaccia);
@@ -1829,18 +1831,18 @@ public class ClientTest {
 		
 		// Parte specifica manifest
 		it.gov.spcoop.sica.manifest.AccordoServizioParteSpecifica parteSpecifica = new it.gov.spcoop.sica.manifest.AccordoServizioParteSpecifica();
-		parteSpecifica.setRiferimentoParteComune(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteComune", 2));
-		parteSpecifica.setAdesione(TipiAdesione.AUTOMATICA.toString());
-		parteSpecifica.setErogatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true));
+		parteSpecifica.setRiferimentoParteComune(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteComune", 2)));
+		parteSpecifica.setAdesione(it.gov.spcoop.sica.manifest.constants.TipoAdesione.AUTOMATICA);
+		parteSpecifica.setErogatore(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true)));
 		// -- SpecificaPortiAccesso
 		SpecificaPortiAccesso portiAccesso = new SpecificaPortiAccesso();
 		DocumentoInterfaccia docErogatore = new DocumentoInterfaccia();
-		docErogatore.setTipo("WSDL");
+		docErogatore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docErogatore.setBase("PortiAccessoErogatore.wsdl");
 		portiAccesso.setPortiAccessoErogatore(docErogatore);
 		DocumentoInterfaccia docFruitore = new DocumentoInterfaccia();
-		docFruitore.setTipo("WSDL");
+		docFruitore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docFruitore.setBase("PortiAccessoFruitore.wsdl");
 		portiAccesso.setPortiAccessoFruitore(docFruitore);
 		parteSpecifica.setSpecificaPortiAccesso(portiAccesso);
@@ -1905,7 +1907,7 @@ public class ClientTest {
 		manifest.setRiservato(true);
 		manifest.setVersione("2");
 		
-		manifest.setCoordinatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempioCoordinatore", true));
+		manifest.setCoordinatore(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempioCoordinatore", true)));
 				
 		// Allegati
 		ElencoAllegati elenco = new ElencoAllegati();
@@ -1930,18 +1932,18 @@ public class ClientTest {
 		
 		// Elenco Partecipanti
 		ElencoPartecipanti ePartecipanti = new ElencoPartecipanti();
-		ePartecipanti.addPartecipante(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoPartecipante1", true));
-		ePartecipanti.addPartecipante(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoPartecipante2", true));
+		ePartecipanti.addPartecipante(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoPartecipante1", true)));
+		ePartecipanti.addPartecipante(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoPartecipante2", true)));
 		manifest.setElencoPartecipanti(ePartecipanti);
 		
 		// ServiziComposti
 		ElencoServiziComposti eSC = new ElencoServiziComposti();
-		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto1", false), "ASServizioComposto1", 2));
-		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto2", false), "ASServizioComposto2", 2));
-		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto3", false), "ASServizioComposto3", 2));
+		eSC.addServizioComposto(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto1", false), "ASServizioComposto1", 2)));
+		eSC.addServizioComposto(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto2", false), "ASServizioComposto2", 2)));
+		eSC.addServizioComposto(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto3", false), "ASServizioComposto3", 2)));
 		manifest.setServiziComposti(eSC);
 		
 		return manifest;
@@ -1960,21 +1962,21 @@ public class ClientTest {
 		manifest.setRiservato(true);
 		manifest.setVersione("2");
 		
-		manifest.setPubblicatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true));
-		manifest.setRiferimentoAccordoCooperazione(SICAtoOpenSPCoopUtilities.buildIDAccordoCooperazioneSica("AC", 2));
+		manifest.setPubblicatore(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true)));
+		manifest.setRiferimentoAccordoCooperazione(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoCooperazioneSica("AC", 2)));
 		
 		// -- SpecificaConversazione
 		SpecificaConversazione conversazione = new SpecificaConversazione();
 		DocumentoConversazione doc = new DocumentoConversazione();
-		doc.setTipo("WSBL");
+		doc.setTipo(TipoDocumentoConversazione.WSBL);
 		doc.setBase("ConversazioneConcettuale.wsbl");
 		conversazione.setConversazioneConcettuale(doc);
 		DocumentoConversazione docErogatore = new DocumentoConversazione();
-		docErogatore.setTipo("WSBL");
+		docErogatore.setTipo(TipoDocumentoConversazione.WSBL);
 		docErogatore.setBase("ConversazioneLogicaLatoErogatore.wsbl");
 		conversazione.setConversazioneLogicaLatoErogatore(docErogatore);
 		DocumentoConversazione docFruitore = new DocumentoConversazione();
-		docFruitore.setTipo("WSBL");
+		docFruitore.setTipo(TipoDocumentoConversazione.WSBL);
 		docFruitore.setBase("ConversazioneLogicaLatoFruitore.wsbl");
 		conversazione.setConversazioneLogicaLatoFruitore(docFruitore);
 		manifest.setSpecificaConversazione(conversazione);
@@ -1982,15 +1984,15 @@ public class ClientTest {
 		// -- SpecificaInterfaccia
 		SpecificaInterfaccia interfaccia = new SpecificaInterfaccia();
 		DocumentoInterfaccia docI = new DocumentoInterfaccia();
-		docI.setTipo("WSDL");
+		docI.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docI.setBase("InterfacciaConcettuale.wsdl");
 		interfaccia.setInterfacciaConcettuale(docI);
 		DocumentoInterfaccia docIErogatore = new DocumentoInterfaccia();
-		docIErogatore.setTipo("WSDL");
+		docIErogatore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docIErogatore.setBase("InterfacciaLogicaErogatore.wsdl");
 		interfaccia.setInterfacciaLogicaLatoErogatore(docIErogatore);
 		DocumentoInterfaccia docIFruitore = new DocumentoInterfaccia();
-		docIFruitore.setTipo("WSDL");
+		docIFruitore.setTipo(TipoDocumentoInterfaccia.WSDL);
 		docIFruitore.setBase("InterfacciaLogicaFruitore.wsdl");
 		interfaccia.setInterfacciaLogicaLatoFruitore(docIFruitore);
 		manifest.setSpecificaInterfaccia(interfaccia);
@@ -2009,10 +2011,10 @@ public class ClientTest {
 		
 		// Servizi Componente
 		ElencoServiziComponenti componenti = new ElencoServiziComponenti();
-		componenti.addServizioComponente(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica", 2));
-		componenti.addServizioComponente(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica2", 2));
+		componenti.addServizioComponente(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica", 2)));
+		componenti.addServizioComponente(new java.net.URI(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica2", 2)));
 		manifest.setServiziComponenti(componenti);
 		
 		// Allegati
@@ -2060,29 +2062,29 @@ public class ClientTest {
 	}
 	
 	
-	private static EgovDecllElement getDichiarazioneEGov(String nomeAccordo){
+	private static EgovDecllElement getDichiarazioneEGov(String nomeAccordo) throws URISyntaxException{
 		
 		EgovDecllElement egov = new EgovDecllElement();
 		egov.setEGovVersion(it.cnipa.collprofiles.driver.Costanti.VERSIONE_BUSTA);
-		egov.setRifDefinizioneInterfaccia(nomeAccordo);
+		egov.setRifDefinizioneInterfaccia(new java.net.URI(nomeAccordo));
 		
 		OperationListType operations = new OperationListType();
 		
 		OperationType tipoOneWay = new OperationType();
 		tipoOneWay.setOperazione("nomeOperationOneWay"); 
-		tipoOneWay.setProfiloDiCollaborazione(TipiProfiliCollaborazione.OneWay.name());
+		tipoOneWay.setProfiloDiCollaborazione(it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType.ONE_WAY);
 		tipoOneWay.setServizio("nomeServizioOneWay");
 		operations.addOperation(tipoOneWay);
 		
 		OperationType tipoSincrono = new OperationType();
 		tipoSincrono.setOperazione("nomeOperationSincrono"); 
-		tipoSincrono.setProfiloDiCollaborazione(TipiProfiliCollaborazione.Sincrono.name());
+		tipoSincrono.setProfiloDiCollaborazione(it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType.SINCRONO);
 		tipoSincrono.setServizio("nomeServizioSincrono");
 		operations.addOperation(tipoSincrono);
 		
 		OperationType tipoAsincronoSimmetrico = new OperationType();
 		tipoAsincronoSimmetrico.setOperazione("nomeOperationAsincronoSimmetricoRichiesta"); 
-		tipoAsincronoSimmetrico.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoSimmetrico.name());
+		tipoAsincronoSimmetrico.setProfiloDiCollaborazione(it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO);
 		tipoAsincronoSimmetrico.setServizio("nomeServizioAsincronoSimmetrico");
 		tipoAsincronoSimmetrico.setOperazioneCorrelata("nomeOperationAsincronoSimmetricoRisposta");
 		tipoAsincronoSimmetrico.setServizioCorrelato("nomeServizioCorrelatoAsincronoSimmetrico");
@@ -2090,7 +2092,7 @@ public class ClientTest {
 				
 		OperationType tipoAsincronoAsimmetrico = new OperationType();
 		tipoAsincronoAsimmetrico.setOperazione("nomeOperationAsincronoAsimmetricoRichiesta"); 
-		tipoAsincronoAsimmetrico.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoAsimmetrico.name());
+		tipoAsincronoAsimmetrico.setProfiloDiCollaborazione(it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO);
 		tipoAsincronoAsimmetrico.setServizio("nomeServizioAsincronoAsimmetrico");
 		tipoAsincronoAsimmetrico.setOperazioneCorrelata("nomeOperationAsincronoAsimmetricoRichiestaStato");
 		tipoAsincronoAsimmetrico.setServizioCorrelato("nomeServizioAsincronoAsimmetrico");
@@ -2101,29 +2103,29 @@ public class ClientTest {
 		return egov;
 	}
 	
-	private static ProfiloCollaborazioneEGOV getDichiarazioneEGovFormatoClientSICA(String nomeAccordo){
+	private static ProfiloCollaborazioneEGOV getDichiarazioneEGovFormatoClientSICA(String nomeAccordo) throws URISyntaxException{
 		
 		ProfiloCollaborazioneEGOV egov = new ProfiloCollaborazioneEGOV();
 		egov.setVersioneEGOV(it.gov.spcoop.sica.wscp.driver.Costanti.VERSIONE_BUSTA);
-		egov.setRiferimentoDefinizioneInterfaccia(nomeAccordo);
+		egov.setRiferimentoDefinizioneInterfaccia(new java.net.URI(nomeAccordo));
 		
 		it.gov.spcoop.sica.wscp.OperationListType operations = new it.gov.spcoop.sica.wscp.OperationListType();
 		
 		it.gov.spcoop.sica.wscp.OperationType tipoOneWay = new it.gov.spcoop.sica.wscp.OperationType();
 		tipoOneWay.setOperazione("nomeOperationOneWay"); 
-		tipoOneWay.setProfiloDiCollaborazione(it.gov.spcoop.sica.wscp.driver.TipiProfiliCollaborazione.EGOV_IT_MessaggioSingoloOneWay.name());
+		tipoOneWay.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.EGOV_IT_MESSAGGIO_SINGOLO_ONE_WAY);
 		tipoOneWay.setServizio("nomeServizioOneWay");
 		operations.addCollaborazione(tipoOneWay);
 		
 		it.gov.spcoop.sica.wscp.OperationType tipoSincrono = new it.gov.spcoop.sica.wscp.OperationType();
 		tipoSincrono.setOperazione("nomeOperationSincrono"); 
-		tipoSincrono.setProfiloDiCollaborazione(it.gov.spcoop.sica.wscp.driver.TipiProfiliCollaborazione.EGOV_IT_ServizioSincrono.name());
+		tipoSincrono.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_SINCRONO);
 		tipoSincrono.setServizio("nomeServizioSincrono");
 		operations.addCollaborazione(tipoSincrono);
 		
 		it.gov.spcoop.sica.wscp.OperationType tipoAsincronoSimmetrico = new it.gov.spcoop.sica.wscp.OperationType();
 		tipoAsincronoSimmetrico.setOperazione("nomeOperationAsincronoSimmetricoRichiesta"); 
-		tipoAsincronoSimmetrico.setProfiloDiCollaborazione(it.gov.spcoop.sica.wscp.driver.TipiProfiliCollaborazione.EGOV_IT_ServizioAsincronoSimmetrico.name());
+		tipoAsincronoSimmetrico.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_SIMMETRICO);
 		tipoAsincronoSimmetrico.setServizio("nomeServizioAsincronoSimmetrico");
 		tipoAsincronoSimmetrico.setOperazioneCorrelata("nomeOperationAsincronoSimmetricoRisposta");
 		tipoAsincronoSimmetrico.setServizioCorrelato("nomeServizioCorrelatoAsincronoSimmetrico");
@@ -2131,7 +2133,7 @@ public class ClientTest {
 				
 		it.gov.spcoop.sica.wscp.OperationType tipoAsincronoAsimmetrico = new it.gov.spcoop.sica.wscp.OperationType();
 		tipoAsincronoAsimmetrico.setOperazione("nomeOperationAsincronoAsimmetricoRichiesta"); 
-		tipoAsincronoAsimmetrico.setProfiloDiCollaborazione(it.gov.spcoop.sica.wscp.driver.TipiProfiliCollaborazione.EGOV_IT_ServizioAsincronoAsimmetrico.name());
+		tipoAsincronoAsimmetrico.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.EGOV_IT_SERVIZIO_ASINCRONO_ASIMMETRICO);
 		tipoAsincronoAsimmetrico.setServizio("nomeServizioAsincronoAsimmetrico");
 		tipoAsincronoAsimmetrico.setOperazioneCorrelata("nomeOperationAsincronoAsimmetricoRichiestaStato");
 		tipoAsincronoAsimmetrico.setServizioCorrelato("nomeServizioAsincronoAsimmetrico");

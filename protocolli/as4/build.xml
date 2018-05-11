@@ -40,7 +40,6 @@
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
-			<include name="jibx/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>
@@ -92,8 +91,6 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
 		</antcall>
 		
@@ -110,8 +107,6 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="backend.ecodex.org._1_1"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
 		</antcall>
 
@@ -128,8 +123,6 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="eu.domibus.configuration"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="as4"/>
 		</antcall>
 		

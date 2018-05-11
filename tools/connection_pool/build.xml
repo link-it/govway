@@ -10,6 +10,7 @@
 	<import file="./ant/openspcoop2-pools-war.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
 	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	<import file="${openspcoop2}/ant/commons/jaxb-utils.xml" />
 
 	<!-- directory root -->
 	<property name="svn_rootDir" location="${openspcoop2}" />
@@ -160,6 +161,13 @@
 	
 	
 	
+	<!-- Generazione Bean di Configurazione -->
+	<target name="codegen_from_schemaxsd">
+		<antcall target="-generatesrc_from_schema">
+	              <param name="schema" value="${src_openspcoop2Pools}/schemi/connectionPool.xsd"/>
+	              <param name="outDir" value="${src_openspcoop2Pools}"/>
+		</antcall>
+	</target>
 	
 	<!-- Compilazione della PddConsole-->
 	<target name="compile_openspcoop2Pools" depends="init_compile_openspcoop2Pools,compile_openspcoop2_pools_driver,compile_openspcoop2_pools" />

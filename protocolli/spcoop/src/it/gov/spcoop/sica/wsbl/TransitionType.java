@@ -19,64 +19,75 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import it.gov.spcoop.sica.wsbl.constants.ActivationType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class TransitionType.
+/** <p>Java class for transitionType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="transitionType">
+ * 		&lt;sequence>
+ * 			&lt;element name="activationMode" type="{http://spcoop.gov.it/sica/wsbl}activationType" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="completionMode" type="{http://spcoop.gov.it/sica/wsbl}completionModeType" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="guard" type="{http://spcoop.gov.it/sica/wsbl}guardType" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="events" type="{http://spcoop.gov.it/sica/wsbl}eventListType" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="temporalCondition" type="{http://spcoop.gov.it/sica/wsbl}temporalConditionType" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * 		&lt;attribute name="source" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * 		&lt;attribute name="target" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "transitionType", 
+  propOrder = {
+  	"activationMode",
+  	"completionMode",
+  	"guard",
+  	"events",
+  	"temporalCondition"
+  }
+)
+
+@XmlRootElement(name = "transitionType")
 
 public class TransitionType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String activationMode;
-
-  protected CompletionModeType completionMode;
-
-  protected GuardType guard;
-
-  protected EventListType events;
-
-  protected TemporalConditionType temporalCondition;
-
-  protected String name;
-
-  protected String source;
-
-  protected String target;
-
-
   public TransitionType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public void set_value_activationMode(String value) {
+    this.activationMode = (ActivationType) ActivationType.toEnumConstantFromString(value);
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+  public String get_value_activationMode() {
+    if(this.activationMode == null){
+    	return null;
+    }else{
+    	return this.activationMode.toString();
+    }
   }
 
-  public String getActivationMode() {
-    if(this.activationMode!=null && ("".equals(this.activationMode)==false)){
-		return this.activationMode.trim();
-	}else{
-		return null;
-	}
-
+  public it.gov.spcoop.sica.wsbl.constants.ActivationType getActivationMode() {
+    return this.activationMode;
   }
 
-  public void setActivationMode(String activationMode) {
+  public void setActivationMode(it.gov.spcoop.sica.wsbl.constants.ActivationType activationMode) {
     this.activationMode = activationMode;
   }
 
@@ -112,75 +123,62 @@ public class TransitionType extends org.openspcoop2.utils.beans.BaseBean impleme
     this.temporalCondition = temporalCondition;
   }
 
-  public String getName() {
-    if(this.name!=null && ("".equals(this.name)==false)){
-		return this.name.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getName() {
+    return this.name;
   }
 
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
-  public String getSource() {
-    if(this.source!=null && ("".equals(this.source)==false)){
-		return this.source.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getSource() {
+    return this.source;
   }
 
-  public void setSource(String source) {
+  public void setSource(java.lang.String source) {
     this.source = source;
   }
 
-  public String getTarget() {
-    if(this.target!=null && ("".equals(this.target)==false)){
-		return this.target.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getTarget() {
+    return this.target;
   }
 
-  public void setTarget(String target) {
+  public void setTarget(java.lang.String target) {
     this.target = target;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String ACTIVATION_MODE = "activationMode";
 
-  public static final String COMPLETION_MODE = "completionMode";
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_activationMode;
 
-  public static final String GUARD = "guard";
+  @XmlElement(name="activationMode",required=true,nillable=false)
+  protected ActivationType activationMode;
 
-  public static final String EVENTS = "events";
+  @XmlElement(name="completionMode",required=true,nillable=false)
+  protected CompletionModeType completionMode;
 
-  public static final String TEMPORAL_CONDITION = "temporalCondition";
+  @XmlElement(name="guard",required=false,nillable=false)
+  protected GuardType guard;
 
-  public static final String NAME = "name";
+  @XmlElement(name="events",required=false,nillable=false)
+  protected EventListType events;
 
-  public static final String SOURCE = "source";
+  @XmlElement(name="temporalCondition",required=false,nillable=false)
+  protected TemporalConditionType temporalCondition;
 
-  public static final String TARGET = "target";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="name",required=true)
+  protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="source",required=true)
+  protected java.lang.String source;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="target",required=true)
+  protected java.lang.String target;
 
 }

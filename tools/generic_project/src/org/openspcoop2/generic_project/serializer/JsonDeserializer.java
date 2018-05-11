@@ -20,8 +20,6 @@
 package org.openspcoop2.generic_project.serializer;
 
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.openspcoop2.utils.serialization.JSonDeserializer;
@@ -36,21 +34,6 @@ import org.openspcoop2.utils.serialization.JSonDeserializer;
  */
 public class JsonDeserializer extends AbstractDeserializer {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> T _xmlToObj(String fileName, Class<T> c) throws Exception {
-		JSonDeserializer jsonDeserializer = new JSonDeserializer();
-		FileInputStream fin = null;
-		try{
-			fin = new FileInputStream(new File(fileName));
-			return (T) jsonDeserializer.readObject(fin, c);
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {

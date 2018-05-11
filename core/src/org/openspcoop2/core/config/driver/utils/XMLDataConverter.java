@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,9 +39,6 @@ import java.util.HashMap;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -504,8 +500,6 @@ public class XMLDataConverter {
 		}
 		
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.config.Openspcoop2.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
 			InputStream iStream = null;
 			HttpURLConnection httpConn = null;
 			if(sorgente.startsWith("http://") || sorgente.startsWith("file://")){
@@ -537,8 +531,9 @@ public class XMLDataConverter {
 			
 			/* ---- Unmarshall del file di configurazione ---- */
 			try{  
-				this.sorgenteConfigurazione = (org.openspcoop2.core.config.Openspcoop2) uctx.unmarshalDocument(readBytes(iStream), null);
-			} catch(org.jibx.runtime.JiBXException e) {
+				org.openspcoop2.core.config.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+				this.sorgenteConfigurazione = deserializer.readOpenspcoop2(readBytes(iStream));
+			} catch(Exception e) {
 				try{  
 					if(iStream!=null)
 						iStream.close();
@@ -599,11 +594,9 @@ public class XMLDataConverter {
 		}
 		
 		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.config.Openspcoop2.class);
-			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-			InputStreamReader iStream = null;			
+			InputStream iStream = null;			
 			try{  
-				iStream = new InputStreamReader(new ByteArrayInputStream(sorgente));
+				iStream = new ByteArrayInputStream(sorgente);
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -617,8 +610,9 @@ public class XMLDataConverter {
 
 			/* ---- Unmarshall del file di configurazione ---- */
 			try{  
-				this.sorgenteConfigurazione = (org.openspcoop2.core.config.Openspcoop2) uctx.unmarshalDocument(iStream, null);
-			} catch(org.jibx.runtime.JiBXException e) {
+				org.openspcoop2.core.config.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+				this.sorgenteConfigurazione = deserializer.readOpenspcoop2(readBytes(iStream));
+			} catch(Exception e) {
 				try{  
 					if(iStream!=null)
 						iStream.close();

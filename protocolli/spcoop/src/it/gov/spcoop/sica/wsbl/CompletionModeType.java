@@ -19,52 +19,65 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import it.gov.spcoop.sica.wsbl.constants.Mode;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class CompletionModeType.
+/** <p>Java class for completionModeType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="completionModeType">
+ * 		&lt;sequence>
+ * 			&lt;element name="mode" type="{http://spcoop.gov.it/sica/wsbl}mode" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="compensateMessage" type="{http://spcoop.gov.it/sica/wsbl}completionModeTypeCompensateMessage" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "completionModeType", 
+  propOrder = {
+  	"mode",
+  	"compensateMessage"
+  }
+)
+
+@XmlRootElement(name = "completionModeType")
 
 public class CompletionModeType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String mode;
-
-  protected CompletionModeTypeCompensateMessage compensateMessage;
-
-
   public CompletionModeType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public void set_value_mode(String value) {
+    this.mode = (Mode) Mode.toEnumConstantFromString(value);
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
+  public String get_value_mode() {
+    if(this.mode == null){
+    	return null;
+    }else{
+    	return this.mode.toString();
+    }
   }
 
-  public String getMode() {
-    if(this.mode!=null && ("".equals(this.mode)==false)){
-		return this.mode.trim();
-	}else{
-		return null;
-	}
-
+  public it.gov.spcoop.sica.wsbl.constants.Mode getMode() {
+    return this.mode;
   }
 
-  public void setMode(String mode) {
+  public void setMode(it.gov.spcoop.sica.wsbl.constants.Mode mode) {
     this.mode = mode;
   }
 
@@ -78,22 +91,15 @@ public class CompletionModeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String MODE = "mode";
 
-  public static final String COMPENSATE_MESSAGE = "compensateMessage";
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_mode;
+
+  @XmlElement(name="mode",required=true,nillable=false)
+  protected Mode mode;
+
+  @XmlElement(name="compensateMessage",required=false,nillable=false)
+  protected CompletionModeTypeCompensateMessage compensateMessage;
 
 }

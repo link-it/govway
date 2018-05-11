@@ -48,7 +48,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 
 /**
  * Classe utilizzata per creare/modificare/eliminare entita XML di un registro dei servizi OpenSPCoop.
@@ -763,7 +763,7 @@ public class XMLLib{
 			// generazione XML
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			registroXML.addAccordoCooperazione(accordo);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -850,7 +850,7 @@ public class XMLLib{
 				for(int i=0,index=0; i<accordi.length;i++){
 					if(accordi[i].isFile()){
 						org.openspcoop2.core.registry.RegistroServizi r = 
-							(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(accordi[i].getAbsolutePath(),
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(accordi[i].getAbsolutePath(),
 									org.openspcoop2.core.registry.RegistroServizi.class);
 						accordiRegistrati[index] = r.getAccordoCooperazione(0);
 						index++;
@@ -1285,7 +1285,7 @@ public class XMLLib{
 			// generazione XML
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			registroXML.addAccordoServizioParteComune(accordo);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -1414,7 +1414,7 @@ public class XMLLib{
 				for(int i=0,index=0; i<accordi.length;i++){
 					if(accordi[i].isFile()){
 						org.openspcoop2.core.registry.RegistroServizi r = 
-							(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(accordi[i].getAbsolutePath(),
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(accordi[i].getAbsolutePath(),
 									org.openspcoop2.core.registry.RegistroServizi.class);
 						accordiRegistrati[index] = r.getAccordoServizioParteComune(0);
 						index++;
@@ -1498,7 +1498,7 @@ public class XMLLib{
 			// generazione XML
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(pdd);
 			registroXML.addPortaDominio(pdd);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -1557,7 +1557,7 @@ public class XMLLib{
 				for(int i=0,index=0; i<porteDiDominio.length;i++){
 					if(porteDiDominio[i].isFile()){
 						org.openspcoop2.core.registry.RegistroServizi r = 
-							(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(porteDiDominio[i].getAbsolutePath(),
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(porteDiDominio[i].getAbsolutePath(),
 									org.openspcoop2.core.registry.RegistroServizi.class);
 						pddRegistrate[index] = r.getPortaDominio(0);
 						index++;
@@ -1646,7 +1646,7 @@ public class XMLLib{
 			// generazione XML
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(ruolo);
 			registroXML.addRuolo(ruolo);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -1705,7 +1705,7 @@ public class XMLLib{
 				for(int i=0,index=0; i<ruoli.length;i++){
 					if(ruoli[i].isFile()){
 						org.openspcoop2.core.registry.RegistroServizi r = 
-							(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(ruoli[i].getAbsolutePath(),
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(ruoli[i].getAbsolutePath(),
 									org.openspcoop2.core.registry.RegistroServizi.class);
 						ruoliRegistrate[index] = r.getRuolo(0);
 						index++;
@@ -1832,7 +1832,7 @@ public class XMLLib{
 			// generazione XML
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(soggetto);
 			registroXML.addSoggetto(soggetto);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -1928,7 +1928,7 @@ public class XMLLib{
 						for(int j=0; j<fs.length;j++){
 							if(fs[j].isFile()){
 								org.openspcoop2.core.registry.RegistroServizi r = 
-									(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(fs[j].getAbsolutePath(),
+									(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(fs[j].getAbsolutePath(),
 											org.openspcoop2.core.registry.RegistroServizi.class);
 								soggettiRegistrati[index] = r.getSoggetto(0);
 								index++;
@@ -2398,7 +2398,7 @@ public class XMLLib{
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(asps); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
 			soggXML.addAccordoServizioParteSpecifica(asps);
 			registroXML.addSoggetto(soggXML);
-			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
 
 		}catch(DriverRegistroServiziException e){
 			throw e;
@@ -2568,7 +2568,7 @@ public class XMLLib{
 							for(int k=0; k<serviziSoggetto.length;k++){
 								if(serviziSoggetto[k].isFile() && (this.isIndexServizi(serviziSoggetto[k])==false) ){
 									org.openspcoop2.core.registry.RegistroServizi r = 
-										(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(serviziSoggetto[k].getAbsolutePath(),
+										(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(serviziSoggetto[k].getAbsolutePath(),
 												org.openspcoop2.core.registry.RegistroServizi.class);
 									if(r.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 										AccordoServizioParteSpecifica s = r.getSoggetto(0).getAccordoServizioParteSpecifica(0);

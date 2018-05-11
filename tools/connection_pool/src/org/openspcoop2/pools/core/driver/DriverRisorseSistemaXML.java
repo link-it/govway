@@ -20,24 +20,17 @@
 
 
 package org.openspcoop2.pools.core.driver;
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
 import java.io.File;
-
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
-import java.net.URL;
-
-import org.slf4j.Logger;
-
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
-
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Vector;
 
+import org.openspcoop2.generic_project.serializer.AbstractDeserializer;
 import org.openspcoop2.pools.core.ConnectionFactory;
 import org.openspcoop2.pools.core.Datasource;
 import org.openspcoop2.pools.core.IdleObjectEviction;
@@ -47,6 +40,7 @@ import org.openspcoop2.pools.core.Validation;
 import org.openspcoop2.pools.core.WhenExhausted;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -65,7 +59,8 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 	public boolean create = false;
 
 	/** Contesto di Unmarshall. */
-	private IUnmarshallingContext uctx;
+	private AbstractDeserializer deserializer;
+	private Class<org.openspcoop2.pools.core.Openspcoop2> cXmlRoot;
 	/** Path dove si trova il file xml che realizza la configurazione delle risorse esterne. */
 	private String openspcoop2_pools_path;
 	/** 'Root' della configurazione delle risorse esterne. */
@@ -90,8 +85,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 	private void parsingXMLOpenSPCoop2PoolsConfig() throws DriverRisorseSistemaException{
 
 		/* ---- InputStream ---- */
-		InputStreamReader iStream = null;
-		FileInputStream fin = null;
+		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
 		if(this.openspcoop2_pools_path.startsWith("http://") || this.openspcoop2_pools_path.startsWith("file://")){
 			try{ 
@@ -101,7 +95,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 				httpConn.setRequestMethod("GET");
 				httpConn.setDoOutput(true);
 				httpConn.setDoInput(true);
-				iStream = new InputStreamReader(httpConn.getInputStream());
+				iStream = httpConn.getInputStream();
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -114,8 +108,7 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 			this.lastModified = System.currentTimeMillis();
 		}else{
 			try{  
-				fin = new FileInputStream(this.openspcoop2_pools_path);
-				iStream = new InputStreamReader(fin);
+				iStream = new FileInputStream(this.openspcoop2_pools_path);
 			}catch(java.io.FileNotFoundException e) {
 				throw new DriverRisorseSistemaException("Riscontrato errore durante la creazione dell'inputStream della configurazione delle risorse esterne (FILE) : \n\n"+e.getMessage());
 			}
@@ -126,10 +119,6 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 					if(iStream!=null)
 						iStream.close();
 				} catch(java.io.IOException ef) {}
-				try{  
-					if(fin!=null)
-						fin.close();
-				} catch(java.io.IOException ef) {}
 				throw new DriverRisorseSistemaException("Riscontrato errore durante la lettura del file dove e' allocato la configurazione delle risorse esterne: "+e.getMessage());
 			}
 		}
@@ -138,15 +127,11 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 		/* ---- Unmarshall del file di configurazione ---- */
 		try{  
-			this.openspcoop2Pools = (org.openspcoop2.pools.core.Openspcoop2) this.uctx.unmarshalDocument(iStream, null);
-		} catch(org.jibx.runtime.JiBXException e) {
+			this.openspcoop2Pools = (org.openspcoop2.pools.core.Openspcoop2) this.deserializer.xmlToObj(iStream, this.cXmlRoot);
+		} catch(Exception e) {
 			try{  
 				if(iStream!=null)
 					iStream.close();
-			} catch(Exception ef) {}
-			try{  
-				if(fin!=null)
-					fin.close();
 			} catch(Exception ef) {}
 			try{ 
 				if(httpConn !=null)
@@ -161,13 +146,6 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 				iStream.close();
 		} catch(Exception e) {
 			throw new DriverRisorseSistemaException("Riscontrato errore durante la chiusura dell'Input Stream: "+e.getMessage());
-		}
-		try{
-			// Chiusura del FileInputStream
-			if(fin!=null)
-				fin.close();
-		} catch(Exception e) {
-			throw new DriverRisorseSistemaException("Riscontrato errore durante la chiusura dell'Input Stream (file): "+e.getMessage());
 		}
 		try{
 			// Chiusura dell'eventuale connessione HTTP
@@ -205,14 +183,8 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 
 		/* ---- Inizializzazione del contesto di unmarshall ---- */
-		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.pools.core.Openspcoop2.class);
-			this.uctx = bfact.createUnmarshallingContext();
-		} catch(org.jibx.runtime.JiBXException e) {
-			this.log.error("DriverRisorseSistema: Riscontrato errore durante la creazione del contesto di unmarshall  : \n\n"+e.getMessage());
-			this.create=false;
-			return;
-		}
+		this.cXmlRoot = org.openspcoop2.pools.core.Openspcoop2.class;
+		this.deserializer = new  org.openspcoop2.generic_project.serializer.JaxbDeserializer();
 
 		try{
 			this.parsingXMLOpenSPCoop2PoolsConfig();
@@ -295,9 +267,11 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 		java.util.Properties properties = new java.util.Properties();
 		Jndi jndi = this.openspcoop2Pools.getJndi();
-		for(int i=0; i<jndi.sizeContextPropertyList();i++){
-			properties.put(jndi.getContextProperty(i).getName(),
-					jndi.getContextProperty(i).getValue());
+		if(jndi.getContextProperty()!=null) {
+			for(int i=0; i<jndi.getContextProperty().size();i++){
+				properties.put(jndi.getContextProperty().get(i).getName(),
+						jndi.getContextProperty().get(i).getValue());
+			}
 		}
 
 		return properties;
@@ -323,7 +297,12 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		
 		refreshConfigurazioneXML();
 
-		return this.openspcoop2Pools.sizeDatasourceList();
+		if(this.openspcoop2Pools.getDatasource()!=null) {
+			return this.openspcoop2Pools.getDatasource().size();
+		}
+		else {
+			return 0;
+		}
 	}
 
 	/**
@@ -338,10 +317,15 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		
 		refreshConfigurazioneXML();
 		
-		if(index>=this.openspcoop2Pools.sizeDatasourceList())
+		int sizeDataSource = 0;
+		if(this.openspcoop2Pools.getDatasource()!=null) {
+			sizeDataSource = this.openspcoop2Pools.getDatasource().size();
+		}
+		
+		if(index>=sizeDataSource)
 			throw new DriverRisorseSistemaException("[getDataSource] Configurazione richiesta non esistente");
 
-		Datasource dsXML = this.openspcoop2Pools.getDatasource(index);	
+		Datasource dsXML = this.openspcoop2Pools.getDatasource().get(index);	
 	
 		// Default TransactionIsolation is READ_COMMITED
 		if(dsXML.getTransactionIsolation()!=null){
@@ -442,8 +426,13 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 		refreshConfigurazioneXML();
 		
+		int sizeDataSource = 0;
+		if(this.openspcoop2Pools.getDatasource()!=null) {
+			sizeDataSource = this.openspcoop2Pools.getDatasource().size();
+		}
+		
 		Vector<Datasource> v = new Vector<Datasource>();
-		for(int i=0; i<this.openspcoop2Pools.sizeDatasourceList();i++)
+		for(int i=0; i<sizeDataSource;i++)
 			v.add(getDataSource(i));
 		return v;
 	}
@@ -467,7 +456,13 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		
 		refreshConfigurazioneXML();
 		
-		return this.openspcoop2Pools.sizeConnectionFactoryList();
+		if(this.openspcoop2Pools.getConnectionFactory()!=null) {
+			return this.openspcoop2Pools.getConnectionFactory().size();
+		}
+		else {
+			return 0;
+		}
+
 	}
 
 	/**
@@ -483,10 +478,15 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 
 		refreshConfigurazioneXML();
 		
-		if(index>=this.openspcoop2Pools.sizeConnectionFactoryList())
+		int sizeCF = 0;
+		if(this.openspcoop2Pools.getConnectionFactory()!=null) {
+			sizeCF = this.openspcoop2Pools.getConnectionFactory().size();
+		}
+		
+		if(index>=sizeCF)
 			throw new DriverRisorseSistemaException("[getConnectionFactory] Configurazione richiesta non esistente");
 
-		ConnectionFactory qfXML = this.openspcoop2Pools.getConnectionFactory(index);	
+		ConnectionFactory qfXML = this.openspcoop2Pools.getConnectionFactory().get(index);	
 		// Acknowledgmente type: default is AUTO_ACKNOWLEDGE
 		if(qfXML.getAcknowledgmentType()==null){
 			qfXML.setAcknowledgmentType(Costanti.ACKNOWLEDGMENT_AUTO);
@@ -580,8 +580,13 @@ public class DriverRisorseSistemaXML implements IDriverRisorseSistemaGet {
 		
 		refreshConfigurazioneXML();
 		
+		int sizeCF = 0;
+		if(this.openspcoop2Pools.getConnectionFactory()!=null) {
+			sizeCF = this.openspcoop2Pools.getConnectionFactory().size();
+		}
+		
 		Vector<ConnectionFactory> v = new Vector<ConnectionFactory>();
-		for(int i=0; i<this.openspcoop2Pools.sizeConnectionFactoryList();i++)
+		for(int i=0; i<sizeCF;i++)
 			v.add(getConnectionFactory(i));
 		return v;
 	}

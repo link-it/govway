@@ -25,16 +25,13 @@ package org.openspcoop2.core.registry.driver.xml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jibx.runtime.BindingDirectory;
-import org.jibx.runtime.IBindingFactory;
-import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
@@ -109,8 +106,6 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	/** Indicazione di una corretta creazione */
 	public boolean create = false;
 
-	/** Contesto di Unmarshall. */
-	private IUnmarshallingContext uctx;
 	/** Path dove si trova il file xml che realizza il Registro dei servizi OpenSPCoop. */
 	private String registry_path;
 	/** 'Root' del servizio dei registri OpenSPCoop. */
@@ -162,8 +157,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 		}
 
 		/* ---- InputStream ---- */
-		InputStreamReader iStream = null;
-		FileInputStream fin = null;
+		InputStream iStream = null;
 		HttpURLConnection httpConn = null;
 		if(this.registry_path.startsWith("http://") || this.registry_path.startsWith("file://")){
 			try{ 
@@ -173,7 +167,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 				httpConn.setRequestMethod("GET");
 				httpConn.setDoOutput(true);
 				httpConn.setDoInput(true);
-				iStream = new InputStreamReader(httpConn.getInputStream());
+				iStream = httpConn.getInputStream();
 			}catch(Exception e) {
 				try{  
 					if(iStream!=null)
@@ -186,8 +180,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			this.lastModified = DateManager.getTimeMillis();
 		}else{
 			try{  
-				fin = new FileInputStream(this.registry_path);
-				iStream = new InputStreamReader(fin);
+				iStream = new FileInputStream(this.registry_path);
 			}catch(java.io.FileNotFoundException e) {
 				throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStream del registro dei servizi (FILE) : \n\n"+e.getMessage());
 			}
@@ -198,10 +191,6 @@ public class DriverRegistroServiziXML extends BeanUtilities
 					if(iStream!=null)
 						iStream.close();
 				} catch(java.io.IOException ef) {}
-				try{  
-					if(fin!=null)
-						fin.close();
-				} catch(java.io.IOException ef) {}
 				throw new DriverRegistroServiziException("Riscontrato errore durante la lettura del file dove e' allocato il registro dei servizi: "+e.getMessage());
 			}
 		}
@@ -210,15 +199,12 @@ public class DriverRegistroServiziXML extends BeanUtilities
 
 		/* ---- Unmarshall del file di configurazione ---- */
 		try{  
-			this.registro = (org.openspcoop2.core.registry.RegistroServizi) this.uctx.unmarshalDocument(iStream, null);
-		} catch(org.jibx.runtime.JiBXException e) {
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+			this.registro = deserializer.readRegistroServizi(iStream);
+		} catch(Exception e) {
 			try{  
 				if(iStream!=null)
 					iStream.close();
-			} catch(Exception ef) {}
-			try{  
-				if(fin!=null)
-					fin.close();
 			} catch(Exception ef) {}
 			try{ 
 				if(httpConn !=null)
@@ -233,13 +219,6 @@ public class DriverRegistroServiziXML extends BeanUtilities
 				iStream.close();
 		} catch(Exception e) {
 			throw new DriverRegistroServiziException("Riscontrato errore durante la chiusura dell'Input Stream: "+e.getMessage());
-		}
-		try{
-			// Chiusura dell FileInputStream
-			if(fin!=null)
-				fin.close();
-		} catch(Exception e) {
-			throw new DriverRegistroServiziException("Riscontrato errore durante la chiusura dell'Input Stream (file): "+e.getMessage());
 		}
 		try{
 			// Chiusura dell'eventuale connessione HTTP
@@ -280,16 +259,6 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			this.validatoreRegistro = new ValidatoreXSD(this.log,DriverRegistroServiziXML.class.getResourceAsStream("/registroServizi.xsd"));
 		}catch (Exception e) {
 			this.log.error("Riscontrato errore durante l'inizializzazione dello schema del Registro dei Servizi di OpenSPCoop: "+e.getMessage());
-			return;
-		}
-
-		/* ---- Inizializzazione del contesto di unmarshall ---- */
-		try{
-			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-			this.uctx = bfact.createUnmarshallingContext();
-		} catch(org.jibx.runtime.JiBXException e) {
-			this.log.error("DriverRegistroServizi: Riscontrato errore durante la creazione del contesto di unmarshall  : \n\n"+e.getMessage());
-			this.create=false;
 			return;
 		}
 

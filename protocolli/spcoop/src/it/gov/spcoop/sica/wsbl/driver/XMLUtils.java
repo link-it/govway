@@ -37,7 +37,7 @@ import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -172,7 +172,7 @@ public class XMLUtils  {
 			
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
 			
-			return (ConceptualBehavior) JiBXUtils.xmlToObj(binTrasformazione, ConceptualBehavior.class);
+			return (ConceptualBehavior) JaxbUtils.xmlToObj(binTrasformazione, ConceptualBehavior.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -236,7 +236,7 @@ public class XMLUtils  {
 		}
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		JiBXUtils.objToXml(bout, ConceptualBehavior.class, manifest);
+		JaxbUtils.objToXml(bout, ConceptualBehavior.class, manifest);
 		String xml = bout.toString();
 		xml = xml.replace("<ConceptualBehavior", "<wsbl:ConceptualBehavior");
 		//xml = xml.replace("xmlns", "xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns");
@@ -422,7 +422,7 @@ public class XMLUtils  {
 			
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
 			
-			return (MessageBehavior) JiBXUtils.xmlToObj(binTrasformazione, MessageBehavior.class);
+			return (MessageBehavior) JaxbUtils.xmlToObj(binTrasformazione, MessageBehavior.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -488,7 +488,7 @@ public class XMLUtils  {
 		}
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		JiBXUtils.objToXml(bout, MessageBehavior.class, manifest);
+		JaxbUtils.objToXml(bout, MessageBehavior.class, manifest);
 		String xml = bout.toString();
 		xml = xml.replace("<MessageBehavior", "<wsbl:MessageBehavior");
 		//xml = xml.replace("xmlns", "xmlns:wscp=\"http://spcoop.gov.it/sica/wscp\" xmlns");

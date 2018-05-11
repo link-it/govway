@@ -78,7 +78,10 @@ public class SPCoopArchiveImport {
 			}
 			
 			// soggetto referente
-			String soggettoReferente = aspcSICA.getManifesto().getParteComune().getPubblicatore();
+			String soggettoReferente = null;
+			if(aspcSICA.getManifesto().getParteComune().getPubblicatore()!=null) {
+				soggettoReferente = aspcSICA.getManifesto().getParteComune().getPubblicatore().toString();
+			}
 			if(soggettoReferente!=null){
 				String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(soggettoReferente);
 				if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
@@ -147,7 +150,10 @@ public class SPCoopArchiveImport {
 			}			
 			
 			// soggetto referente
-			String soggettoReferente = asCompostoSICA.getManifesto().getPubblicatore();
+			String soggettoReferente = null;
+			if(asCompostoSICA.getManifesto().getPubblicatore()!=null) {
+				soggettoReferente = asCompostoSICA.getManifesto().getPubblicatore().toString();
+			}
 			if(soggettoReferente!=null){
 				String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(soggettoReferente);
 				if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
@@ -218,7 +224,10 @@ public class SPCoopArchiveImport {
 			}
 			
 			// soggetto erogatore
-			String soggettoErogatore = aspsSICA.getManifesto().getParteSpecifica().getErogatore();
+			String soggettoErogatore = null;
+			if(aspsSICA.getManifesto().getParteSpecifica().getErogatore()!=null) {
+				soggettoErogatore = aspsSICA.getManifesto().getParteSpecifica().getErogatore().toString();
+			}
 			if(soggettoErogatore!=null){
 				String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(soggettoErogatore);
 				if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
@@ -287,7 +296,10 @@ public class SPCoopArchiveImport {
 			}
 			
 			// soggetto coordinatore
-			String soggettoCoordinatore = acSICA.getManifesto().getCoordinatore();
+			String soggettoCoordinatore = null;
+			if(acSICA.getManifesto().getCoordinatore()!=null) {
+				soggettoCoordinatore = acSICA.getManifesto().getCoordinatore().toString();
+			}
 			if(soggettoCoordinatore!=null){
 				String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(soggettoCoordinatore);
 				if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
@@ -298,7 +310,10 @@ public class SPCoopArchiveImport {
 			// soggetti partecipanti
 			if(acSICA.getManifesto()!=null && acSICA.getManifesto().getElencoPartecipanti()!=null){
 				for(int i=0;i<acSICA.getManifesto().getElencoPartecipanti().sizePartecipanteList();i++){
-					String partecipante = acSICA.getManifesto().getElencoPartecipanti().getPartecipante(i);
+					String partecipante = null;
+					if(acSICA.getManifesto().getElencoPartecipanti().getPartecipante(i)!=null) {
+						partecipante = acSICA.getManifesto().getElencoPartecipanti().getPartecipante(i).toString();
+					}
 					String codiceIPA = SICAtoOpenSPCoopUtilities.removeURI_IDSoggettoSica(partecipante);
 					if(registryReader.existsSoggettoByCodiceIPA(codiceIPA)==false){
 						throw new ProtocolException("Il soggetto partecipante con Codice IPA ["+codiceIPA+"] non esiste.");

@@ -29,7 +29,6 @@
 			<include name="**/shared/*"/>
             <include name="**/spring/*"/>
 			<include name="**/jax/*"/>
-			<include name="**/jibx/*"/>
 			<include name="**/log/*"/>
 		</fileset>
         <fileset dir="${openspcoop2_core_dist}" >

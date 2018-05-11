@@ -163,7 +163,7 @@ public class EsitoRichiestaXMLUtils  {
 			
 			// trasformazione in oggetto DettaglioEccezione
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (EsitoRichiesta) org.openspcoop2.utils.xml.JiBXUtils.xmlToObj(binTrasformazione, EsitoRichiesta.class);
+			return (EsitoRichiesta) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(binTrasformazione, EsitoRichiesta.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -181,7 +181,7 @@ public class EsitoRichiestaXMLUtils  {
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(out.getName(),EsitoRichiestaXMLUtils.generateEsitoRichiesta_engine(esitoRichiesta));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),EsitoRichiestaXMLUtils.generateEsitoRichiesta_engine(esitoRichiesta));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -193,7 +193,7 @@ public class EsitoRichiestaXMLUtils  {
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(fileName,EsitoRichiestaXMLUtils.generateEsitoRichiesta_engine(esitoRichiesta));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,EsitoRichiestaXMLUtils.generateEsitoRichiesta_engine(esitoRichiesta));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -240,7 +240,7 @@ public class EsitoRichiestaXMLUtils  {
 	private static byte[] generateEsitoRichiesta_engine(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, EsitoRichiesta.class, esitoRichiesta);
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, EsitoRichiesta.class, esitoRichiesta);
 			byte[] dichiarazione = bout.toByteArray();
 			return dichiarazione;
 		}catch(Exception e){

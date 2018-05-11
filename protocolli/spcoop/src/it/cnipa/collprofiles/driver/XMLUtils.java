@@ -25,6 +25,7 @@ package it.cnipa.collprofiles.driver;
 import it.cnipa.collprofiles.EgovDecllElement;
 import it.cnipa.collprofiles.OperationListType;
 import it.cnipa.collprofiles.OperationType;
+import it.cnipa.collprofiles.constants.ProfiloDiCollaborazioneType;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSemiformale;
 
 import java.io.ByteArrayInputStream;
@@ -48,7 +49,7 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -105,10 +106,10 @@ public class XMLUtils  {
 				if(op.getProfiloDiCollaborazione()==null){
 					motivoErroreValidazione.append("OperationList["+i+"] senza un profilo di collaborazione\n");
 				}
-				if(TipiProfiliCollaborazione.OneWay.toString().equals(op.getProfiloDiCollaborazione())==false && 
-						TipiProfiliCollaborazione.Sincrono.toString().equals(op.getProfiloDiCollaborazione())==false &&
-						TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(op.getProfiloDiCollaborazione())==false &&
-						TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(op.getProfiloDiCollaborazione())==false ){
+				if(ProfiloDiCollaborazioneType.ONE_WAY.equals(op.getProfiloDiCollaborazione())==false && 
+						ProfiloDiCollaborazioneType.SINCRONO.equals(op.getProfiloDiCollaborazione())==false &&
+								ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(op.getProfiloDiCollaborazione())==false &&
+										ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(op.getProfiloDiCollaborazione())==false ){
 					motivoErroreValidazione.append("OperationList["+i+"] con un profilo di collaborazione non conosciuto ("+op.getProfiloDiCollaborazione()+")\n");
 				}
 			}
@@ -224,7 +225,7 @@ public class XMLUtils  {
 			
 			// trasformazione in oggetto EgovDecllElement
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (EgovDecllElement) JiBXUtils.xmlToObj(binTrasformazione, EgovDecllElement.class);
+			return (EgovDecllElement) JaxbUtils.xmlToObj(binTrasformazione, EgovDecllElement.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -269,7 +270,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			JiBXUtils.objToXml(out.getName(),XMLUtils.generateDichiarazioneEGov_engine(manifest, namespaceCnipa));
+			JaxbUtils.objToXml(out.getName(),XMLUtils.generateDichiarazioneEGov_engine(manifest, namespaceCnipa));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -281,7 +282,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			JiBXUtils.objToXml(fileName,XMLUtils.generateDichiarazioneEGov_engine(manifest, namespaceCnipa));
+			JaxbUtils.objToXml(fileName,XMLUtils.generateDichiarazioneEGov_engine(manifest, namespaceCnipa));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -316,7 +317,7 @@ public class XMLUtils  {
 	private static byte[] generateDichiarazioneEGov_engine(EgovDecllElement manifest,boolean namespaceCnipa) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			JiBXUtils.objToXml(bout, EgovDecllElement.class, manifest);
+			JaxbUtils.objToXml(bout, EgovDecllElement.class, manifest);
 			byte[] dichiarazione = bout.toByteArray();
 			if(namespaceCnipa==false){
 				// Modifico namespace www.cnipa.it in spcoop.gov.it
@@ -437,7 +438,7 @@ public class XMLUtils  {
 			String nomeServizio = XMLUtils.readNomeSPCoop(operationType.getServizio(),mapPrefixNamespaces);
 			String nomeAzioneCorrelata = XMLUtils.readNomeSPCoop(operationType.getOperazioneCorrelata(),mapPrefixNamespaces);
 			String nomeServizioCorrelato = XMLUtils.readNomeSPCoop(operationType.getServizioCorrelato(),mapPrefixNamespaces);
-			String profiloCollaborazione = operationType.getProfiloDiCollaborazione();
+			ProfiloDiCollaborazioneType profiloCollaborazione = operationType.getProfiloDiCollaborazione();
 			
 			PortType pt = null;
 			if(servizi.containsKey(nomeServizio)){
@@ -446,13 +447,13 @@ public class XMLUtils  {
 				pt = new PortType();
 				pt.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 				pt.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
-				if(TipiProfiliCollaborazione.OneWay.toString().equals(profiloCollaborazione))
+				if(ProfiloDiCollaborazioneType.ONE_WAY.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
-				else if(TipiProfiliCollaborazione.Sincrono.toString().equals(profiloCollaborazione))
+				else if(ProfiloDiCollaborazioneType.SINCRONO.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
-				else if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
+				else if(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-				else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))
+				else if(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione))
 					pt.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 				else
 					throw new XMLUtilsException("Profilo di collaborazione non valido ["+profiloCollaborazione+"]");
@@ -462,21 +463,21 @@ public class XMLUtils  {
 			azione.setNome(nomeAzione);
 			azione.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 			azione.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
-			if(TipiProfiliCollaborazione.OneWay.toString().equals(profiloCollaborazione))
+			if(ProfiloDiCollaborazioneType.ONE_WAY.equals(profiloCollaborazione))
 				azione.setProfiloCollaborazione(CostantiRegistroServizi.ONEWAY);
-			else if(TipiProfiliCollaborazione.Sincrono.toString().equals(profiloCollaborazione))
+			else if(ProfiloDiCollaborazioneType.SINCRONO.equals(profiloCollaborazione))
 				azione.setProfiloCollaborazione(CostantiRegistroServizi.SINCRONO);
-			else if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
+			else if(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 				azione.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-			else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))
+			else if(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione))
 				azione.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 			else
 				throw new XMLUtilsException("Profilo di collaborazione non valido ["+profiloCollaborazione+"]");
 			pt.addAzione(azione);
 			servizi.put(nomeServizio, pt);
 			
-			if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione) || 
-					TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione) ){
+			if(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione) || 
+					ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione) ){
 				
 				if(nomeAzioneCorrelata==null){
 					continue;
@@ -493,9 +494,9 @@ public class XMLUtils  {
 					ptCorrelato = new PortType();
 					ptCorrelato.setProfiloPT(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 					ptCorrelato.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
-					if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
+					if(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 						ptCorrelato.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-					else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))
+					else if(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione))
 						ptCorrelato.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 					ptCorrelato.setNome(servizio);
 				}
@@ -503,9 +504,9 @@ public class XMLUtils  {
 				azioneCorrelata.setNome(nomeAzioneCorrelata);
 				azioneCorrelata.setProfAzione(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO);
 				azioneCorrelata.setFiltroDuplicati(StatoFunzionalita.ABILITATO); // secondo le ultime linee guida
-				if(TipiProfiliCollaborazione.AsincronoSimmetrico.toString().equals(profiloCollaborazione))
+				if(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO.equals(profiloCollaborazione))
 					azioneCorrelata.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_SIMMETRICO);
-				else if(TipiProfiliCollaborazione.AsincronoAsimmetrico.toString().equals(profiloCollaborazione))
+				else if(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO.equals(profiloCollaborazione))
 					azioneCorrelata.setProfiloCollaborazione(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO);
 				if(nomeServizio!=null)
 					azioneCorrelata.setCorrelataServizio(nomeServizio);
@@ -635,7 +636,12 @@ public class XMLUtils  {
 			EgovDecllElement egov = new EgovDecllElement();
 			
 			egov.setEGovVersion(it.cnipa.collprofiles.driver.Costanti.VERSIONE_BUSTA);
-			egov.setRifDefinizioneInterfaccia(as.getNome());
+			try {
+				java.net.URI uri = new java.net.URI(as.getNome());
+				egov.setRifDefinizioneInterfaccia(uri);
+			}catch(Exception e) {
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
 			
 			OperationListType operations = new OperationListType();
 			
@@ -681,9 +687,9 @@ public class XMLUtils  {
 							OperationType opSICA = new OperationType();
 							opSICA.setOperazione(nomeAzione); 
 							if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profilo))
-								opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoAsimmetrico.name());
+								opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO);
 							else if(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profilo))
-								opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoSimmetrico.name());
+								opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO);
 							opSICA.setServizio(nomeServizio);
 							operationsSICA_asincrone_nonAncoraInserite.add(opSICA);
 						}else{
@@ -694,9 +700,9 @@ public class XMLUtils  {
 							opSICA.setOperazione(nomeAzioneCorrelata);
 							opSICA.setOperazioneCorrelata(nomeAzione);
 							if(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.equals(profilo))
-								opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoAsimmetrico.name());
+								opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.ASINCRONO_ASIMMETRICO);
 							else if(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.equals(profilo))
-								opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.AsincronoSimmetrico.name());
+								opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.ASINCRONO_SIMMETRICO);
 							if(nomeServizioCorrelato!=null)
 								opSICA.setServizio(nomeServizioCorrelato);
 							else
@@ -708,9 +714,9 @@ public class XMLUtils  {
 						OperationType opSICA = new OperationType();
 						opSICA.setOperazione(nomeAzione); 
 						if(CostantiRegistroServizi.ONEWAY.equals(profilo))
-							opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.OneWay.name());
+							opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.ONE_WAY);
 						else if(CostantiRegistroServizi.SINCRONO.equals(profilo))
-							opSICA.setProfiloDiCollaborazione(TipiProfiliCollaborazione.Sincrono.name());
+							opSICA.setProfiloDiCollaborazione(ProfiloDiCollaborazioneType.SINCRONO);
 						opSICA.setServizio(nomeServizio);
 						operations.addOperation(opSICA);
 					}

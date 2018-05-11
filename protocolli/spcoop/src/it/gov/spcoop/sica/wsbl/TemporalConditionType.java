@@ -19,120 +19,101 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class TemporalConditionType.
+/** <p>Java class for temporalConditionType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="temporalConditionType">
+ * 		&lt;sequence>
+ * 			&lt;element name="predicate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="boolop" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="data" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "temporalConditionType", 
+  propOrder = {
+  	"predicate",
+  	"boolop",
+  	"data",
+  	"description"
+  }
+)
+
+@XmlRootElement(name = "temporalConditionType")
 
 public class TemporalConditionType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String predicate;
-
-  protected String boolop;
-
-  protected String data;
-
-  protected String description;
-
-
   public TemporalConditionType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getPredicate() {
+    return this.predicate;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getPredicate() {
-    if(this.predicate!=null && ("".equals(this.predicate)==false)){
-		return this.predicate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setPredicate(String predicate) {
+  public void setPredicate(java.lang.String predicate) {
     this.predicate = predicate;
   }
 
-  public String getBoolop() {
-    if(this.boolop!=null && ("".equals(this.boolop)==false)){
-		return this.boolop.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getBoolop() {
+    return this.boolop;
   }
 
-  public void setBoolop(String boolop) {
+  public void setBoolop(java.lang.String boolop) {
     this.boolop = boolop;
   }
 
-  public String getData() {
-    if(this.data!=null && ("".equals(this.data)==false)){
-		return this.data.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getData() {
+    return this.data;
   }
 
-  public void setData(String data) {
+  public void setData(java.lang.String data) {
     this.data = data;
   }
 
-  public String getDescription() {
-    if(this.description!=null && ("".equals(this.description)==false)){
-		return this.description.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDescription() {
+    return this.description;
   }
 
-  public void setDescription(String description) {
+  public void setDescription(java.lang.String description) {
     this.description = description;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String PREDICATE = "predicate";
 
-  public static final String BOOLOP = "boolop";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="predicate",required=true,nillable=false)
+  protected java.lang.String predicate;
 
-  public static final String DATA = "data";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="boolop",required=true,nillable=false)
+  protected java.lang.String boolop;
 
-  public static final String DESCRIPTION = "description";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="data",required=true,nillable=false)
+  protected java.lang.String data;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="description",required=false,nillable=false)
+  protected java.lang.String description;
 
 }

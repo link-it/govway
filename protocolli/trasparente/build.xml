@@ -39,7 +39,6 @@
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
-			<include name="jibx/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>
 			<include name="shared/*"/>

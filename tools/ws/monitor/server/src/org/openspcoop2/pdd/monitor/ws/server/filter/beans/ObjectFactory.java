@@ -35,19 +35,12 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.monitor
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.pdd.monitor
      * 
      */
     public ObjectFactory() {
     }
 
-    /**
-     * Create an instance of {@link BustaServizio }
-     */
-    public BustaServizio createBustaServizio() {
-        return new BustaServizio();
-    }
-    
     /**
      * Create an instance of {@link Busta }
      */
@@ -56,10 +49,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link Filtro }
+     * Create an instance of {@link BustaServizio }
      */
-    public Filtro createFiltro() {
-        return new Filtro();
+    public BustaServizio createBustaServizio() {
+        return new BustaServizio();
     }
     
     /**
@@ -67,6 +60,13 @@ public class ObjectFactory {
      */
     public BustaSoggetto createBustaSoggetto() {
         return new BustaSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link Filtro }
+     */
+    public Filtro createFiltro() {
+        return new Filtro();
     }
     
 

@@ -33,11 +33,11 @@ import javax.servlet.http.HttpSession;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
-import org.openspcoop2.web.lib.audit.dao.Binary;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Binary;
+import org.openspcoop2.web.lib.audit.log.Operation;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.GeneralLink;
@@ -135,7 +135,11 @@ public class AuditHelper {
 				{ Costanti.DUMP_JSON_FORMAT, Costanti.DUMP_XML_FORMAT };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_FORMATO_DUMP);
-			if (statoaudit != null && statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
+			boolean useXml = false; // deprecato
+			if(!useXml) {
+				formatodump = Costanti.DUMP_JSON_FORMAT;
+			}
+			if (useXml && statoaudit != null && statoaudit.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipiFormato);
 				if (formatodump != null)
@@ -298,7 +302,7 @@ public class AuditHelper {
 		}
 	}
 
-	public Vector<DataElement> addFiltroToDati(TipoOperazione tipoOp, String utente,
+	public Vector<DataElement> addFiltroToDati(Tipologia tipoOp, String utente,
 			String tipooperazione, String[] tipiOgg, String tipooggetto,
 			String statooperazione, String stato,
 			String tipofiltro, String dump, String statoazione,
@@ -312,7 +316,7 @@ public class AuditHelper {
 			DataElement de = new DataElement();
 
 
-			if (tipoOp.equals(TipoOperazione.CHANGE)) {
+			if (tipoOp.equals(Tipologia.CHANGE)) {
 				de = new DataElement();
 				de.setValue(id);
 				de.setType(DataElementType.HIDDEN);
@@ -333,9 +337,9 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			String[] tipiOp =
-				{ "-", TipoOperazione.ADD.toString(),
-					TipoOperazione.CHANGE.toString(),
-					TipoOperazione.DEL.toString() };
+				{ "-", Tipologia.ADD.toString(),
+					Tipologia.CHANGE.toString(),
+					Tipologia.DEL.toString() };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OPERAZIONE);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
@@ -355,9 +359,9 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			String[] tipiStatoOp =
-				{ "-", StatoOperazione.requesting.toString(),
-					StatoOperazione.error.toString(),
-					StatoOperazione.completed.toString() };
+				{ "-", Stato.REQUESTING.toString(),
+					Stato.ERROR.toString(),
+					Stato.COMPLETED.toString() };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO_OPERAZIONE);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
@@ -457,23 +461,23 @@ public class AuditHelper {
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipooperazione.equals("-") &&
-					!tipooperazione.equals(TipoOperazione.ADD.toString()) &&
-					!tipooperazione.equals(TipoOperazione.CHANGE.toString()) &&
-					!tipooperazione.equals(TipoOperazione.DEL.toString())) {
+					!tipooperazione.equals(Tipologia.ADD.toString()) &&
+					!tipooperazione.equals(Tipologia.CHANGE.toString()) &&
+					!tipooperazione.equals(Tipologia.DEL.toString())) {
 				String msg = "Tipo operazione dev'essere - o "+
-						TipoOperazione.ADD.toString()+
-						" o "+TipoOperazione.CHANGE.toString()+
-						" o "+TipoOperazione.DEL.toString();
+						Tipologia.ADD.toString()+
+						" o "+Tipologia.CHANGE.toString()+
+						" o "+Tipologia.DEL.toString();
 				return msg;
 			}
 			if (!statooperazione.equals("-") &&
-					!statooperazione.equals(StatoOperazione.requesting.toString()) &&
-					!statooperazione.equals(StatoOperazione.error.toString()) &&
-					!statooperazione.equals(StatoOperazione.completed.toString())) {
+					!statooperazione.equals(Stato.REQUESTING.toString()) &&
+					!statooperazione.equals(Stato.ERROR.toString()) &&
+					!statooperazione.equals(Stato.COMPLETED.toString())) {
 				String msg = "Stato operazione dev'essere - o "+
-						StatoOperazione.requesting.toString()+
-						" o "+StatoOperazione.error.toString()+
-						" o "+StatoOperazione.completed.toString();
+						Stato.REQUESTING.toString()+
+						" o "+Stato.ERROR.toString()+
+						" o "+Stato.COMPLETED.toString();
 				return msg;
 			}
 			if (!stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO) && !stato.equals(AuditCostanti.DEFAULT_VALUE_DISABILITATO)) {
@@ -582,11 +586,11 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			String[] tipiOp =
-				{ "-", TipoOperazione.ADD.toString(),
-					TipoOperazione.CHANGE.toString(),
-					TipoOperazione.DEL.toString(),
-					TipoOperazione.LOGIN.toString(),
-					TipoOperazione.LOGOUT.toString() };
+				{ "-", Tipologia.ADD.toString(),
+					Tipologia.CHANGE.toString(),
+					Tipologia.DEL.toString(),
+					Tipologia.LOGIN.toString(),
+					Tipologia.LOGOUT.toString() };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_TIPO_OPERAZIONE);
@@ -598,9 +602,9 @@ public class AuditHelper {
 			dati.addElement(de);
 
 			String[] tipiStatoOp =
-				{ "-", StatoOperazione.requesting.toString(),
-					StatoOperazione.error.toString(),
-					StatoOperazione.completed.toString() };
+				{ "-", Stato.REQUESTING.toString(),
+					Stato.ERROR.toString(),
+					Stato.COMPLETED.toString() };
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO_OPERAZIONE);
@@ -666,27 +670,27 @@ public class AuditHelper {
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!tipooperazione.equals("-") &&
-					!tipooperazione.equals(TipoOperazione.ADD.toString()) &&
-					!tipooperazione.equals(TipoOperazione.CHANGE.toString()) &&
-					!tipooperazione.equals(TipoOperazione.DEL.toString()) &&
-					!tipooperazione.equals(TipoOperazione.LOGIN.toString()) &&
-					!tipooperazione.equals(TipoOperazione.LOGOUT.toString())) {
+					!tipooperazione.equals(Tipologia.ADD.toString()) &&
+					!tipooperazione.equals(Tipologia.CHANGE.toString()) &&
+					!tipooperazione.equals(Tipologia.DEL.toString()) &&
+					!tipooperazione.equals(Tipologia.LOGIN.toString()) &&
+					!tipooperazione.equals(Tipologia.LOGOUT.toString())) {
 				String msg = "Tipo operazione dev'essere - o "+
-						TipoOperazione.ADD.toString()+
-						" o "+TipoOperazione.CHANGE.toString()+
-						" o "+TipoOperazione.DEL.toString()+
-						" o "+TipoOperazione.LOGIN.toString()+
-						" o "+TipoOperazione.LOGOUT.toString();
+						Tipologia.ADD.toString()+
+						" o "+Tipologia.CHANGE.toString()+
+						" o "+Tipologia.DEL.toString()+
+						" o "+Tipologia.LOGIN.toString()+
+						" o "+Tipologia.LOGOUT.toString();
 				return msg;
 			}
 			if (!statooperazione.equals("-") &&
-					!statooperazione.equals(StatoOperazione.requesting.toString()) &&
-					!statooperazione.equals(StatoOperazione.error.toString()) &&
-					!statooperazione.equals(StatoOperazione.completed.toString())) {
+					!statooperazione.equals(Stato.REQUESTING.toString()) &&
+					!statooperazione.equals(Stato.ERROR.toString()) &&
+					!statooperazione.equals(Stato.COMPLETED.toString())) {
 				String msg = "Stato operazione dev'essere - o "+
-						StatoOperazione.requesting.toString()+
-						" o "+StatoOperazione.error.toString()+
-						" o "+StatoOperazione.completed.toString();
+						Stato.REQUESTING.toString()+
+						" o "+Stato.ERROR.toString()+
+						" o "+Stato.COMPLETED.toString();
 				return msg;
 			}
 
@@ -912,11 +916,11 @@ public class AuditHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setValue(op.getTipologia());
+					de.setValue(op.getTipologia().getValue());
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setValue(op.getStato());
+					de.setValue(op.getStato().getValue());
 					e.addElement(de);
 
 					de = new DataElement();
@@ -978,7 +982,7 @@ public class AuditHelper {
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_TIPO_OPERAZIONE);
-			de.setValue(op.getTipologia());
+			de.setValue(op.getTipologia().getValue());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_OPERATION_TIPO_OPERAZIONE);
 			dati.addElement(de);
@@ -1015,7 +1019,7 @@ public class AuditHelper {
 
 			de = new DataElement();
 			de.setLabel(AuditCostanti.LABEL_PARAMETRO_AUDIT_STATO);
-			de.setValue(op.getStato());
+			de.setValue(op.getStato().getValue());
 			de.setType(DataElementType.TEXT);
 			de.setName(AuditCostanti.PARAMETRO_AUDIT_STATO);
 			dati.addElement(de);
@@ -1036,7 +1040,7 @@ public class AuditHelper {
 			}
 			}
 			
-			if (StatoOperazione.error.equals(op.getStato())) {
+			if (Stato.ERROR.equals(op.getStato())) {
 				de = new DataElement();
 				de.setLabel(AuditCostanti.LABEL_AUDIT_MOTIVO_ERRORE);
 				de.setUrl(

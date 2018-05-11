@@ -98,11 +98,6 @@
         <archive path="/op2_3.0.dev/lib/jax/jaxb-impl-2.2.11.jar"/>
         <archive path="/op2_3.0.dev/lib/jax/jaxb-api-2.2.11.jar"/>
 	<archive path="/op2_3.0.dev/lib/jax/jaxb-core-2.2.11.jar"/>
-	<!-- jibx -->
-        <archive path="/op2_3.0.dev/lib/jibx/xpp3-1.2.6.jar"/>
-        <archive path="/op2_3.0.dev/lib/jibx/jibx-run-1.2.6.jar"/>
-        <archive path="/op2_3.0.dev/lib/jibx/jibx-bind-1.2.6.jar"/>
-        <archive path="/op2_3.0.dev/lib/jibx/bcel-6.0.jar"/>
 	<!-- jminix -->
 	<archive path="/op2_3.0.dev/lib/jminix/jminix-1.2.0.jar"/>
 	<archive path="/op2_3.0.dev/lib/jminix/jminix-1.2.0-standalone.jar"/>

@@ -93,9 +93,9 @@ public class ZIPWriteUtils {
 	protected IRegistryReader registryReader;
 	protected IConfigIntegrationReader configIntegrationReader;
 
-	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jibxRegistrySerializer = null;
-	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jibxConfigSerializer = null;
-	private org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer jibxControlloCongestioneSerializer = null;
+	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jaxbRegistrySerializer = null;
+	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jaxbConfigSerializer = null;
+	private org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer jaxbControlloCongestioneSerializer = null;
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 	private org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsConfig = null;
 	private org.openspcoop2.core.controllo_congestione.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsControlloCongestione = null;
@@ -107,9 +107,9 @@ public class ZIPWriteUtils {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		this.jibxRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
-		this.jibxConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
-		this.jibxControlloCongestioneSerializer = new org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer();
+		this.jaxbRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
+		this.jaxbConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
+		this.jaxbControlloCongestioneSerializer = new org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer();
 		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsConfig = new org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsControlloCongestione = new org.openspcoop2.core.controllo_congestione.utils.CleanerOpenSPCoop2Extensions();
@@ -176,16 +176,16 @@ public class ZIPWriteUtils {
 			byte[]bytes = null;
 			switch (serializationType) {
 			case REGISTRY:
-				method = this.jibxRegistrySerializer.getClass().getMethod("toByteArray", object.getClass());
-				bytes = (byte[]) method.invoke(this.jibxRegistrySerializer, object);
+				method = this.jaxbRegistrySerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbRegistrySerializer, object);
 				break;
 			case CONFIG:
-				method = this.jibxConfigSerializer.getClass().getMethod("toByteArray", object.getClass());
-				bytes = (byte[]) method.invoke(this.jibxConfigSerializer, object);
+				method = this.jaxbConfigSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbConfigSerializer, object);
 				break;
 			case CONTROLLO_CONGESTIONE:
-				method = this.jibxControlloCongestioneSerializer.getClass().getMethod("toByteArray", object.getClass());
-				bytes = (byte[]) method.invoke(this.jibxControlloCongestioneSerializer, object);
+				method = this.jaxbControlloCongestioneSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbControlloCongestioneSerializer, object);
 				break;
 			}
 			
@@ -974,7 +974,7 @@ public class ZIPWriteUtils {
 			zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 			// write(zipOut, nomeDefinizione, idAccordo, true, accordo); viene effettuato il catch di tutto il metodo saveAccordo
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
-			zipOut.write(this.jibxRegistrySerializer.toByteArray(accordo));
+			zipOut.write(this.jaxbRegistrySerializer.toByteArray(accordo));
 			
 			// wsdl
 			if(wsdlInterfacciaDefinitoria!=null){
@@ -1247,7 +1247,7 @@ public class ZIPWriteUtils {
 			zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 			//write(zipOut, "accordoServizioParteSpecifica", idAccordo, true, accordo); viene effettuato il catch di tutto il metodo saveAccordo
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
-			zipOut.write(this.jibxRegistrySerializer.toByteArray(accordo));
+			zipOut.write(this.jaxbRegistrySerializer.toByteArray(accordo));
 			
 			// wsdl
 			if(wsdlInterfacciaImplementativaErogatore!=null){
@@ -1391,7 +1391,7 @@ public class ZIPWriteUtils {
 							ZIPUtils.convertNameToSistemaOperativoCompatible(fruitore.getNome())+".xml";
 					zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(fruitore);
-					zipOut.write(this.jibxRegistrySerializer.toByteArray(fruitore));
+					zipOut.write(this.jaxbRegistrySerializer.toByteArray(fruitore));
 				}
 			}
 			
@@ -1491,7 +1491,7 @@ public class ZIPWriteUtils {
 			zipOut.putNextEntry(new ZipEntry(rootDir+nomeFile));
 			//write(zipOut, "accordoCooperazione", idAccordo, true, accordo); viene effettuato il catch di tutto il metodo saveAccordo
 			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(accordo); // NOTA: vengono eliminati anche tutti i campi contenenti bytes. Comunque li ho letti prima
-			zipOut.write(this.jibxRegistrySerializer.toByteArray(accordo));
+			zipOut.write(this.jaxbRegistrySerializer.toByteArray(accordo));
 			
 			// Permit '.'
 			List<Character> listCharacterPermit = new ArrayList<Character>();

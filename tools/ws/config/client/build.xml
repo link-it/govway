@@ -48,7 +48,6 @@
             <include name="commons/*"/>
             <include name="shared/*"/>
             <include name="spring/*"/>
-			<include name="jibx/*"/>
 			<include name="log/*"/>
 		</fileset>
 	</path>

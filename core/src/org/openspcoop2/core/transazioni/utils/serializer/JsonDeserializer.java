@@ -30,10 +30,11 @@ import java.io.InputStream;
  */
 public class JsonDeserializer extends AbstractDeserializer {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Object _xmlToObj(InputStream is, Class<?> c) throws Exception {
+	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {
 		org.openspcoop2.utils.serialization.JSonDeserializer deserializer = new org.openspcoop2.utils.serialization.JSonDeserializer();
-		return deserializer.readObject(is, c);
+		return (T) deserializer.readObject(is, c);
 	}
 		
 }

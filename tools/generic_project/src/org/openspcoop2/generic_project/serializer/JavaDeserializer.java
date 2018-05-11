@@ -20,8 +20,6 @@
 package org.openspcoop2.generic_project.serializer;
 
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 
@@ -34,21 +32,6 @@ import java.io.InputStream;
  */
 public class JavaDeserializer extends AbstractDeserializer {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> T _xmlToObj(String fileName, Class<T> c) throws Exception {
-		org.openspcoop2.utils.serialization.JavaDeserializer javaDeserializer = new org.openspcoop2.utils.serialization.JavaDeserializer();
-		FileInputStream fin = null;
-		try{
-			fin = new FileInputStream(new File(fileName));
-			return (T) javaDeserializer.readObject(fin, c);
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {

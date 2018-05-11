@@ -19,54 +19,54 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class MessageBehavior.
+/** <p>Java class for MessageBehavior complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="MessageBehavior">
+ * 		&lt;sequence>
+ * 			&lt;element name="name" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="states" type="{http://spcoop.gov.it/sica/wsbl}statesType" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="messages" type="{http://spcoop.gov.it/sica/wsbl}messagesTypes" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "MessageBehavior", 
+  propOrder = {
+  	"name",
+  	"states",
+  	"messages"
+  }
+)
+
+@XmlRootElement(name = "MessageBehavior")
 
 public class MessageBehavior extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String name;
-
-  protected StatesType states;
-
-  protected MessagesTypes messages;
-
-
   public MessageBehavior() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getName() {
+    return this.name;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getName() {
-    if(this.name!=null && ("".equals(this.name)==false)){
-		return this.name.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
@@ -88,24 +88,28 @@ public class MessageBehavior extends org.openspcoop2.utils.beans.BaseBean implem
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  private static it.gov.spcoop.sica.wsbl.model.MessageBehaviorModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(it.gov.spcoop.sica.wsbl.MessageBehavior.modelStaticInstance==null){
+  			it.gov.spcoop.sica.wsbl.MessageBehavior.modelStaticInstance = new it.gov.spcoop.sica.wsbl.model.MessageBehaviorModel();
+	  }
+  }
+  public static it.gov.spcoop.sica.wsbl.model.MessageBehaviorModel model(){
+	  if(it.gov.spcoop.sica.wsbl.MessageBehavior.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return it.gov.spcoop.sica.wsbl.MessageBehavior.modelStaticInstance;
+  }
 
-  public static final String NAME = "name";
 
-  public static final String STATES = "states";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="name",required=true,nillable=false)
+  protected java.lang.String name;
 
-  public static final String MESSAGES = "messages";
+  @XmlElement(name="states",required=true,nillable=false)
+  protected StatesType states;
+
+  @XmlElement(name="messages",required=true,nillable=false)
+  protected MessagesTypes messages;
 
 }

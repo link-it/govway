@@ -19,60 +19,60 @@
  */
 package it.gov.spcoop.sica.manifest;
 
+import it.gov.spcoop.sica.manifest.constants.TipoAdesione;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class AccordoServizioParteSpecifica.
+/** <p>Java class for accordoServizioParteSpecifica complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="accordoServizioParteSpecifica">
+ * 		&lt;sequence>
+ * 			&lt;element name="riferimentoParteComune" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaPortiAccesso" type="{http://spcoop.gov.it/sica/manifest}SpecificaPortiAccesso" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="specificaSicurezza" type="{http://spcoop.gov.it/sica/manifest}SpecificaSicurezza" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="specificaLivelliServizio" type="{http://spcoop.gov.it/sica/manifest}SpecificaLivelliServizio" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="adesione" type="{http://spcoop.gov.it/sica/manifest}TipoAdesione" use="required"/>
+ * 		&lt;attribute name="erogatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "accordoServizioParteSpecifica", 
+  propOrder = {
+  	"riferimentoParteComune",
+  	"specificaPortiAccesso",
+  	"specificaSicurezza",
+  	"specificaLivelliServizio"
+  }
+)
+
+@XmlRootElement(name = "accordoServizioParteSpecifica")
 
 public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String riferimentoParteComune;
-
-  protected SpecificaPortiAccesso specificaPortiAccesso;
-
-  protected SpecificaSicurezza specificaSicurezza;
-
-  protected SpecificaLivelliServizio specificaLivelliServizio;
-
-  protected String adesione;
-
-  protected String erogatore;
-
-
   public AccordoServizioParteSpecifica() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.net.URI getRiferimentoParteComune() {
+    return this.riferimentoParteComune;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getRiferimentoParteComune() {
-    if(this.riferimentoParteComune!=null && ("".equals(this.riferimentoParteComune)==false)){
-		return this.riferimentoParteComune.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setRiferimentoParteComune(String riferimentoParteComune) {
+  public void setRiferimentoParteComune(java.net.URI riferimentoParteComune) {
     this.riferimentoParteComune = riferimentoParteComune;
   }
 
@@ -100,58 +100,59 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.specificaLivelliServizio = specificaLivelliServizio;
   }
 
-  public String getAdesione() {
-    if(this.adesione!=null && ("".equals(this.adesione)==false)){
-		return this.adesione.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_adesione(String value) {
+    this.adesione = (TipoAdesione) TipoAdesione.toEnumConstantFromString(value);
   }
 
-  public void setAdesione(String adesione) {
+  public String get_value_adesione() {
+    if(this.adesione == null){
+    	return null;
+    }else{
+    	return this.adesione.toString();
+    }
+  }
+
+  public it.gov.spcoop.sica.manifest.constants.TipoAdesione getAdesione() {
+    return this.adesione;
+  }
+
+  public void setAdesione(it.gov.spcoop.sica.manifest.constants.TipoAdesione adesione) {
     this.adesione = adesione;
   }
 
-  public String getErogatore() {
-    if(this.erogatore!=null && ("".equals(this.erogatore)==false)){
-		return this.erogatore.trim();
-	}else{
-		return null;
-	}
-
+  public java.net.URI getErogatore() {
+    return this.erogatore;
   }
 
-  public void setErogatore(String erogatore) {
+  public void setErogatore(java.net.URI erogatore) {
     this.erogatore = erogatore;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String RIFERIMENTO_PARTE_COMUNE = "riferimentoParteComune";
 
-  public static final String SPECIFICA_PORTI_ACCESSO = "specificaPortiAccesso";
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlElement(name="riferimentoParteComune",required=true,nillable=false)
+  protected java.net.URI riferimentoParteComune;
 
-  public static final String SPECIFICA_SICUREZZA = "specificaSicurezza";
+  @XmlElement(name="specificaPortiAccesso",required=true,nillable=false)
+  protected SpecificaPortiAccesso specificaPortiAccesso;
 
-  public static final String SPECIFICA_LIVELLI_SERVIZIO = "specificaLivelliServizio";
+  @XmlElement(name="specificaSicurezza",required=false,nillable=false)
+  protected SpecificaSicurezza specificaSicurezza;
 
-  public static final String ADESIONE = "adesione";
+  @XmlElement(name="specificaLivelliServizio",required=false,nillable=false)
+  protected SpecificaLivelliServizio specificaLivelliServizio;
 
-  public static final String EROGATORE = "erogatore";
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_adesione;
+
+  @XmlAttribute(name="adesione",required=true)
+  protected TipoAdesione adesione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="anyURI")
+  @XmlAttribute(name="erogatore",required=false)
+  protected java.net.URI erogatore;
 
 }

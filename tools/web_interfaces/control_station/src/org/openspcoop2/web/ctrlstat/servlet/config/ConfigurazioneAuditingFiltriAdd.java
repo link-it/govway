@@ -39,10 +39,10 @@ import org.openspcoop2.web.ctrlstat.driver.IDBuilder;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.audit.AuditingCore;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Configurazione;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -137,7 +137,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 							AuditCostanti.DEFAULT_VALUE_ABILITATO : AuditCostanti.DEFAULT_VALUE_DISABILITATO;
 				}
 				Vector<DataElement> dati = ah.addFiltroToDati(
-						TipoOperazione.ADD, utente, tipooperazione, tipiOgg,
+						Tipologia.ADD, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, "0");
 
@@ -173,7 +173,7 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 
 				// preparo i campi
 				Vector<DataElement> dati = ah.addFiltroToDati(
-						TipoOperazione.ADD, utente, tipooperazione, tipiOgg,
+						Tipologia.ADD, utente, tipooperazione, tipiOgg,
 						tipooggetto, statooperazione, stato, tipofiltro,
 						dump, statoazione, dumpazione, "0");
 
@@ -193,11 +193,11 @@ public final class ConfigurazioneAuditingFiltriAdd extends Action {
 			if (utente != null && !utente.equals(""))
 				f.setUsername(utente);
 			if (tipooperazione != null && !tipooperazione.equals("-"))
-				f.setTipoOperazione(TipoOperazione.parseString(tipooperazione));
+				f.setTipoOperazione(Tipologia.toEnumConstant(tipooperazione));
 			if (tipooggetto != null && !tipooggetto.equals("-"))
 				f.setTipoOggettoInModifica(tipooggetto);
 			if (statooperazione != null && !statooperazione.equals("-"))
-				f.setStatoOperazione(StatoOperazione.parseString(statooperazione));
+				f.setStatoOperazione(Stato.toEnumConstant(statooperazione));
 			if (stato.equals(AuditCostanti.DEFAULT_VALUE_ABILITATO)) {
 				if (tipofiltro.equals(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_TIPO_FILTRO_NORMALE))
 					f.setDumpExprRegular(false);

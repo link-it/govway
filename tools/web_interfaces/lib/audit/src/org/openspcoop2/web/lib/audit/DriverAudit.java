@@ -33,12 +33,12 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Appender;
 import org.openspcoop2.web.lib.audit.dao.AppenderProperty;
 import org.openspcoop2.web.lib.audit.dao.Configurazione;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 
 /**
  * Sono forniti metodi per la lettura dei dati di Users
@@ -301,9 +301,9 @@ public class DriverAudit {
 			if (rs.next()) {
 				filtro = new Filtro();
 				filtro.setUsername(rs.getString("username"));
-				filtro.setTipoOperazione(TipoOperazione.parseString(rs.getString("tipo_operazione")));
+				filtro.setTipoOperazione(Tipologia.toEnumConstant(rs.getString("tipo_operazione")));
 				filtro.setTipoOggettoInModifica(rs.getString("tipo"));
-				filtro.setStatoOperazione(StatoOperazione.parseString(rs.getString("stato")));
+				filtro.setStatoOperazione(Stato.toEnumConstant(rs.getString("stato")));
 				filtro.setDump(rs.getString("dump_search"));
 				if(rs.getInt("dump_expr")==1)
 					filtro.setDumpExprRegular(true);

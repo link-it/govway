@@ -19,38 +19,45 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class TransitionsType.
+/** <p>Java class for transitionsType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="transitionsType">
+ * 		&lt;sequence>
+ * 			&lt;element name="transition" type="{http://spcoop.gov.it/sica/wsbl}transitionType" minOccurs="2" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "transitionsType", 
+  propOrder = {
+  	"transition"
+  }
+)
+
+@XmlRootElement(name = "transitionsType")
 
 public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public TransitionsType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
   }
 
   public void addTransition(TransitionType transition) {
@@ -79,20 +86,9 @@ public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implem
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
+
+  @XmlElement(name="transition",required=true,nillable=false)
   protected List<TransitionType> transition = new ArrayList<TransitionType>();
 
   /**
@@ -121,7 +117,5 @@ public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implem
   public int sizeTransition() {
   	return this.transition.size();
   }
-
-  public static final String TRANSITION = "transition";
 
 }

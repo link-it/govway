@@ -31,8 +31,6 @@ import org.openspcoop2.core.eccezione.errore_applicativo.DominioSoggetto;
 import org.openspcoop2.core.eccezione.errore_applicativo.SoggettoIdentificativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.Soggetto;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.File;
 
@@ -44,55 +42,7 @@ import java.io.File;
  * @version $Rev$, $Date$
  */
 
-public abstract class AbstractDeserializer {
-
-
-
-	protected abstract Object _xmlToObj(InputStream is, Class<?> c) throws Exception;
-	
-	private Object xmlToObj(InputStream is,Class<?> c) throws DeserializerException{
-		try{
-			return this._xmlToObj(is, c);
-		}catch(Exception e){
-			throw new DeserializerException(e.getMessage(), e);
-		}
-	}
-	private Object xmlToObj(String fileName,Class<?> c) throws DeserializerException{
-		try{
-			return this.xmlToObj(new File(fileName), c);
-		}catch(Exception e){
-			throw new DeserializerException(e.getMessage(), e);
-		}
-	}
-	private Object xmlToObj(File file,Class<?> c) throws DeserializerException{
-		FileInputStream fin = null;
-		try{
-			fin = new FileInputStream(file);
-			return this._xmlToObj(fin, c);
-		}catch(Exception e){
-			throw new DeserializerException(e.getMessage(),e);
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-		}
-	}
-	private Object xmlToObj(byte[] file,Class<?> c) throws DeserializerException{
-		ByteArrayInputStream fin = null;
-		try{
-			fin = new ByteArrayInputStream(file);
-			return this._xmlToObj(fin, c);
-		}catch(Exception e){
-			throw new DeserializerException(e.getMessage(),e);
-		}finally{
-			try{
-				fin.close();
-			}catch(Exception e){}
-		}
-	}
-
-
-
+public abstract class AbstractDeserializer extends org.openspcoop2.generic_project.serializer.AbstractDeserializer {
 
 
 

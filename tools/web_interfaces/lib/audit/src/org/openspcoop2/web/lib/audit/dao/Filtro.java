@@ -23,8 +23,9 @@ package org.openspcoop2.web.lib.audit.dao;
 
 import java.io.Serializable;
 
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
+
 
 /**
  * Dao contenente i valori della Configurazione dell'audit (Filtri)
@@ -45,9 +46,9 @@ public class Filtro implements Serializable {
 	private static final long serialVersionUID = -5870944802330378174L;
 	
 	private String username;
-	private TipoOperazione tipoOperazione;
+	private Tipologia tipoOperazione;
 	private String tipoOggettoInModifica; // es. AccordoServizio etc...
-	private StatoOperazione statoOperazione;
+	private Stato statoOperazione;
 	private String dump;
 	private boolean dumpExprRegular;
 	
@@ -69,11 +70,11 @@ public class Filtro implements Serializable {
 		this.username = username;
 	}
 
-	public TipoOperazione getTipoOperazione() {
+	public Tipologia getTipoOperazione() {
 		return this.tipoOperazione;
 	}
 
-	public void setTipoOperazione(TipoOperazione tipoOperazione) {
+	public void setTipoOperazione(Tipologia tipoOperazione) {
 		this.tipoOperazione = tipoOperazione;
 	}
 
@@ -85,11 +86,11 @@ public class Filtro implements Serializable {
 		this.tipoOggettoInModifica = tipoOggettoInModifica;
 	}
 
-	public StatoOperazione getStatoOperazione() {
+	public Stato getStatoOperazione() {
 		return this.statoOperazione;
 	}
 
-	public void setStatoOperazione(StatoOperazione statoOperazione) {
+	public void setStatoOperazione(Stato statoOperazione) {
 		this.statoOperazione = statoOperazione;
 	}
 

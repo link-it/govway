@@ -59,7 +59,7 @@ import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Operation;
 import org.openspcoop2.web.lib.users.dao.User;
 
 
@@ -323,8 +323,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			
 			// Auditing: eliminazione record salvato
-			else if(o instanceof org.openspcoop2.web.lib.audit.dao.Operation){
-				org.openspcoop2.web.lib.audit.dao.Operation op = (org.openspcoop2.web.lib.audit.dao.Operation) o;
+			else if(o instanceof org.openspcoop2.web.lib.audit.log.Operation){
+				org.openspcoop2.web.lib.audit.log.Operation op = (org.openspcoop2.web.lib.audit.log.Operation) o;
 				if(this.prefix){
 					return "[OperazioneRegistrataTramiteAuditing] "+ op.getId();
 				}else{
@@ -636,7 +636,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			
 			// Auditing: eliminazione record salvato
-			else if(o instanceof org.openspcoop2.web.lib.audit.dao.Operation){
+			else if(o instanceof org.openspcoop2.web.lib.audit.log.Operation){
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			

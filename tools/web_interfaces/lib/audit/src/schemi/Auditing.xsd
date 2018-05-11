@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsd:schema xmlns="http://www.openspcoop2.org/web/lib/audit/dao"  
-targetNamespace="http://www.openspcoop2.org/web/lib/audit/dao" 
+<xsd:schema xmlns="http://www.openspcoop2.org/web/lib/audit/log"  
+        targetNamespace="http://www.openspcoop2.org/web/lib/audit/log" 
 xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" 
 elementFormDefault="qualified" attributeFormDefault="unqualified">
@@ -46,7 +46,7 @@ elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xsd:element name="binary">
                 <xsd:complexType>
 			<xsd:attribute name="binary-id" type="xsd:string" use="required"/>
-			<xsd:attribute name="checksum" type="xsd:integer" use="required"/>
+			<xsd:attribute name="checksum" type="xsd:long" use="required"/>
 		</xsd:complexType>
         </xsd:element>
 

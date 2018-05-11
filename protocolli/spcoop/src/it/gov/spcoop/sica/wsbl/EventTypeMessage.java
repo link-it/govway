@@ -19,86 +19,81 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import it.gov.spcoop.sica.wsbl.constants.MessageOrientationType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class EventTypeMessage.
+/** <p>Java class for eventTypeMessage complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="eventTypeMessage">
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * 		&lt;attribute name="type" type="{http://spcoop.gov.it/sica/wsbl}messageOrientationType" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "eventTypeMessage")
+
+@XmlRootElement(name = "eventTypeMessage")
 
 public class EventTypeMessage extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String name;
-
-  protected String type;
-
-
   public EventTypeMessage() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
+  public java.lang.String getName() {
+    return this.name;
   }
 
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
-  }
-
-  public String getName() {
-    if(this.name!=null && ("".equals(this.name)==false)){
-		return this.name.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
-  public String getType() {
-    if(this.type!=null && ("".equals(this.type)==false)){
-		return this.type.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_type(String value) {
+    this.type = (MessageOrientationType) MessageOrientationType.toEnumConstantFromString(value);
   }
 
-  public void setType(String type) {
+  public String get_value_type() {
+    if(this.type == null){
+    	return null;
+    }else{
+    	return this.type.toString();
+    }
+  }
+
+  public it.gov.spcoop.sica.wsbl.constants.MessageOrientationType getType() {
+    return this.type;
+  }
+
+  public void setType(it.gov.spcoop.sica.wsbl.constants.MessageOrientationType type) {
     this.type = type;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String NAME = "name";
 
-  public static final String TYPE = "type";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="name",required=true)
+  protected java.lang.String name;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_type;
+
+  @XmlAttribute(name="type",required=true)
+  protected MessageOrientationType type;
 
 }

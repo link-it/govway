@@ -138,11 +138,11 @@ import org.openspcoop2.web.lib.audit.appender.AuditAppender;
 import org.openspcoop2.web.lib.audit.appender.AuditDBAppender;
 import org.openspcoop2.web.lib.audit.appender.AuditDisabilitatoException;
 import org.openspcoop2.web.lib.audit.appender.IDOperazione;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Appender;
 import org.openspcoop2.web.lib.audit.dao.AppenderProperty;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.openspcoop2.web.lib.queue.costanti.Operazione;
@@ -3363,9 +3363,9 @@ public class ControlStationCore {
 					}
 
 					// Operation
-					if (oggetto instanceof org.openspcoop2.web.lib.audit.dao.Operation) {
-						org.openspcoop2.web.lib.audit.dao.Operation auditOp = 
-								(org.openspcoop2.web.lib.audit.dao.Operation) oggetto;
+					if (oggetto instanceof org.openspcoop2.web.lib.audit.log.Operation) {
+						org.openspcoop2.web.lib.audit.log.Operation auditOp = 
+								(org.openspcoop2.web.lib.audit.log.Operation) oggetto;
 						driver.getDriverAuditDBAppender().deleteOperation(auditOp);
 						doSetDati = false;
 					}
@@ -3560,14 +3560,14 @@ public class ControlStationCore {
 	public void performOperationMultiTypes(String superUser, boolean smista,int[] operationTypes,Object ... oggetti) throws DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverControlStationException, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		String nomeMetodo = "performOperationIbrido";
 		ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] performing operation on objects " + this.getClassNames(oggetti));
-		TipoOperazione[] tipoOperazione = new TipoOperazione[oggetti.length];
+		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
 			if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_CREATE)
-				tipoOperazione[i] = TipoOperazione.ADD;
+				tipoOperazione[i] = Tipologia.ADD;
 			else if(operationTypes[i]==CostantiControlStation.PERFORM_OPERATION_UPDATE)
-				tipoOperazione[i] = TipoOperazione.CHANGE;
+				tipoOperazione[i] = Tipologia.CHANGE;
 			else
-				tipoOperazione[i] = TipoOperazione.DEL;
+				tipoOperazione[i] = Tipologia.DEL;
 		}
 
 		IDOperazione [] idOperazione = null;
@@ -3604,9 +3604,9 @@ public class ControlStationCore {
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_CREATE;
 		}
-		TipoOperazione[] tipoOperazione = new TipoOperazione[oggetti.length];
+		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
-			tipoOperazione[i] = TipoOperazione.ADD;
+			tipoOperazione[i] = Tipologia.ADD;
 		}
 
 		IDOperazione [] idOperazione = null;
@@ -3644,9 +3644,9 @@ public class ControlStationCore {
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_UPDATE;
 		}
-		TipoOperazione[] tipoOperazione = new TipoOperazione[oggetti.length];
+		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
-			tipoOperazione[i] = TipoOperazione.CHANGE;
+			tipoOperazione[i] = Tipologia.CHANGE;
 		}
 
 		IDOperazione [] idOperazione = null;
@@ -3685,9 +3685,9 @@ public class ControlStationCore {
 		for (int i = 0; i < oggetti.length; i++) {
 			operationTypes[i] = CostantiControlStation.PERFORM_OPERATION_DELETE;
 		}
-		TipoOperazione[] tipoOperazione = new TipoOperazione[oggetti.length];
+		Tipologia[] tipoOperazione = new Tipologia[oggetti.length];
 		for (int i = 0; i < oggetti.length; i++) {
-			tipoOperazione[i] = TipoOperazione.DEL;
+			tipoOperazione[i] = Tipologia.DEL;
 		}
 
 		IDOperazione [] idOperazione = null;
@@ -3858,7 +3858,7 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(TipoOperazione.LOGIN, user,msg);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGIN, user,msg);
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
 			auditAbilitato = false;
@@ -3879,7 +3879,7 @@ public class ControlStationCore {
 		boolean auditAbilitato = true;
 		try{
 			AuditAppender auditManager = ControlStationCore.getAuditManagerInstance(this.tipoDB);
-			auditManager.registraOperazioneAccesso(TipoOperazione.LOGOUT, user,msg);
+			auditManager.registraOperazioneAccesso(Tipologia.LOGOUT, user,msg);
 
 		}catch(AuditDisabilitatoException disabilitato){
 			ControlStationCore.log.debug("Auditing dell'operazione ["+msg+"] non effettuato: "+disabilitato.getMessage());
@@ -3893,11 +3893,11 @@ public class ControlStationCore {
 			ControlStationCore.log.info(msg);
 	}
 
-	public IDOperazione[] performAuditRequest(TipoOperazione[] operationTypes, String user, Object ... obj) throws AuditDisabilitatoException{
+	public IDOperazione[] performAuditRequest(Tipologia[] operationTypes, String user, Object ... obj) throws AuditDisabilitatoException{
 
 		IDOperazione[] idOperazione = new IDOperazione[obj.length];
 		for (int i = 0; i < obj.length; i++) {
-			TipoOperazione tipoOperazione = operationTypes[i];
+			Tipologia tipoOperazione = operationTypes[i];
 			Object oggetto = obj[i];
 
 			if(oggetto instanceof WrapperExtendedBean){
@@ -3913,7 +3913,7 @@ public class ControlStationCore {
 			
 			String msg = null;
 			try{
-				msg = this.generaMsgAuditing(user, StatoOperazione.requesting, tipoOperazione, oggetto);
+				msg = this.generaMsgAuditing(user, Stato.REQUESTING, tipoOperazione, oggetto);
 			}catch(Exception e){
 				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
@@ -4055,16 +4055,16 @@ public class ControlStationCore {
 		}
 	}
 
-	public void performAuditComplete(IDOperazione[] idOperazione,TipoOperazione[] operationTypes,String user, Object ... obj){
+	public void performAuditComplete(IDOperazione[] idOperazione,Tipologia[] operationTypes,String user, Object ... obj){
 
 		for (int i = 0; i < obj.length; i++) {
-			TipoOperazione tipoOperazione = operationTypes[i];
+			Tipologia tipoOperazione = operationTypes[i];
 			Object oggetto = obj[i];
 
 			//loggo su file dell'interfaccia
 			String msg = null;
 			try{
-				msg = this.generaMsgAuditing(user, StatoOperazione.completed, tipoOperazione, oggetto);
+				msg = this.generaMsgAuditing(user, Stato.COMPLETED, tipoOperazione, oggetto);
 			}catch(Exception e){
 				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
@@ -4090,16 +4090,16 @@ public class ControlStationCore {
 	}
 
 	@SafeVarargs
-	public final <Type> void performAuditError(IDOperazione[] idOperazione,String motivoErrore,TipoOperazione[] operationTypes,String user, Type... obj){
+	public final <Type> void performAuditError(IDOperazione[] idOperazione,String motivoErrore,Tipologia[] operationTypes,String user, Type... obj){
 
 		for (int i = 0; i < obj.length; i++) {
-			TipoOperazione tipoOperazione = operationTypes[i];
+			Tipologia tipoOperazione = operationTypes[i];
 			Type oggetto = obj[i];
 
 			//loggo su file dell'interfaccia
 			String msg = null;
 			try{
-				msg = this.generaMsgAuditing(user, StatoOperazione.error, tipoOperazione, oggetto);
+				msg = this.generaMsgAuditing(user, Stato.ERROR, tipoOperazione, oggetto);
 			}catch(Exception e){
 				ControlStationCore.log.error("GenerazioneIDOperazione non riuscita: "+e.getMessage(),e);
 				msg = "GenerazioneIDOperazione non riuscita: "+e.getMessage();
@@ -4124,7 +4124,7 @@ public class ControlStationCore {
 		}
 	}
 
-	private String generaMsgAuditing(String user,StatoOperazione statoOperazione,TipoOperazione tipoOperazione,Object oggetto) throws Exception{
+	private String generaMsgAuditing(String user,Stato statoOperazione,Tipologia tipoOperazione,Object oggetto) throws Exception{
 		String msg = user+":"+statoOperazione.toString()+":"+tipoOperazione.toString();
 
 		// ControlStation
@@ -4159,7 +4159,7 @@ public class ControlStationCore {
 			SoggettoCtrlStat soggetto = (SoggettoCtrlStat) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+soggetto.getTipo()+"/"+soggetto.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldTipo = soggetto.getOldTipoForUpdate()!=null ? soggetto.getOldTipoForUpdate() : soggetto.getTipo(); 
 				String oldNome = soggetto.getOldNomeForUpdate()!=null ? soggetto.getOldNomeForUpdate() : soggetto.getNome();
 				if( (oldTipo.equals(soggetto.getTipo())==false) || (oldNome.equals(soggetto.getNome())==false) )
@@ -4173,7 +4173,7 @@ public class ControlStationCore {
 			Ruolo r = (Ruolo) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+r.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				if(r.getOldIDRuoloForUpdate()!=null && r.getNome().equals(r.getOldIDRuoloForUpdate().getNome())==false){
 					msg+=":OLD<"+r.getOldIDRuoloForUpdate().getNome()+">";
 				}
@@ -4185,7 +4185,7 @@ public class ControlStationCore {
 			AccordoCooperazione ac = (AccordoCooperazione) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+this.idAccordoCooperazioneFactory.getUriFromAccordo(ac)+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldnome = ac.getOldIDAccordoForUpdate()!=null ? this.idAccordoCooperazioneFactory.getUriFromIDAccordo(ac.getOldIDAccordoForUpdate()) : this.idAccordoCooperazioneFactory.getUriFromAccordo(ac);
 				if(oldnome.equals(this.idAccordoCooperazioneFactory.getUriFromAccordo(ac))==false)
 					msg+=":OLD<"+oldnome+">";
@@ -4197,7 +4197,7 @@ public class ControlStationCore {
 			AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+this.idAccordoFactory.getUriFromAccordo(as)+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldnome = as.getOldIDAccordoForUpdate()!=null ? this.idAccordoFactory.getUriFromIDAccordo(as.getOldIDAccordoForUpdate()) : this.idAccordoFactory.getUriFromAccordo(as);
 				if(oldnome.equals(this.idAccordoFactory.getUriFromAccordo(as))==false)
 					msg+=":OLD<"+oldnome+">";
@@ -4209,7 +4209,7 @@ public class ControlStationCore {
 			org.openspcoop2.core.registry.Soggetto soggetto = (org.openspcoop2.core.registry.Soggetto) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+soggetto.getTipo()+"/"+soggetto.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldTipo = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getTipo()!=null) ? 
 						soggetto.getOldIDSoggettoForUpdate().getTipo() : soggetto.getTipo(); 
 				String oldNome = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getNome()!=null) ? 
@@ -4224,7 +4224,7 @@ public class ControlStationCore {
 			AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+this.idServizioFactory.getUriFromAccordo(asps)+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldnome = asps.getOldIDServizioForUpdate()!=null ? this.idServizioFactory.getUriFromIDServizio(asps.getOldIDServizioForUpdate()) : this.idServizioFactory.getUriFromAccordo(asps);
 				if(oldnome.equals(this.idServizioFactory.getUriFromAccordo(asps))==false)
 					msg+=":OLD<"+oldnome+">";
@@ -4263,7 +4263,7 @@ public class ControlStationCore {
 			Soggetto soggetto = (Soggetto) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+soggetto.getTipo()+"/"+soggetto.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldTipo = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getTipo()!=null) ? 
 						soggetto.getOldIDSoggettoForUpdate().getTipo() : soggetto.getTipo(); 
 				String oldNome = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getNome()!=null) ? 
@@ -4278,7 +4278,7 @@ public class ControlStationCore {
 			ServizioApplicativo sa = (ServizioApplicativo) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"_"+sa.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldTipoProp = (sa.getOldIDServizioApplicativoForUpdate()!=null && sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null && 
 						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo()!=null) ? 
 						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo() : sa.getTipoSoggettoProprietario(); 
@@ -4297,7 +4297,7 @@ public class ControlStationCore {
 			PortaDelegata pd = (PortaDelegata) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+pd.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldNome = (pd.getOldIDPortaDelegataForUpdate()!=null && pd.getOldIDPortaDelegataForUpdate().getNome()!=null) ? 
 						pd.getOldIDPortaDelegataForUpdate().getNome() : pd.getNome(); 
 				if(  (oldNome.equals(pd.getNome())==false) )
@@ -4310,7 +4310,7 @@ public class ControlStationCore {
 			PortaApplicativa pa = (PortaApplicativa) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+pa.getNome()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				String oldNome = (pa.getOldIDPortaApplicativaForUpdate()!=null && pa.getOldIDPortaApplicativaForUpdate().getNome()!=null) ? 
 						pa.getOldIDPortaApplicativaForUpdate().getNome() : pa.getNome(); 
 				if(  (oldNome.equals(pa.getNome())==false) )

@@ -22,7 +22,7 @@ package org.openspcoop2.generic_project.dao.xml;
 
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.utils.xml.JiBXUtils;
+import org.openspcoop2.utils.xml.JaxbUtils;
 
 /**
  * AbstractXMLStoreManager
@@ -41,7 +41,7 @@ public class AbstractXMLStoreManager<XML> {
 	
 	public void store(Logger log,XML xml,Class<XML> c) throws ServiceException{
 		try{
-			JiBXUtils.objToXml(this.xmlPath, c, xml, false);
+			JaxbUtils.objToXml(this.xmlPath, c, xml, false);
 		}catch(Exception e){
 			log.error(e.getMessage(),e);
 			throw new ServiceException(e);

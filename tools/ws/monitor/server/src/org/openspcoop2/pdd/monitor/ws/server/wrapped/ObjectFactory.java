@@ -35,17 +35,17 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.core.monitor
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.openspcoop2.pdd.monitor
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link FindStatoPddResponse }
+     * Create an instance of {@link DeleteAllByFilterMessaggio }
      */
-    public FindStatoPddResponse createFindStatoPddResponse() {
-        return new FindStatoPddResponse();
+    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
+        return new DeleteAllByFilterMessaggio();
     }
     
     /**
@@ -56,20 +56,6 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindAllMessaggio }
-     */
-    public FindAllMessaggio createFindAllMessaggio() {
-        return new FindAllMessaggio();
-    }
-    
-    /**
-     * Create an instance of {@link DeleteAllByFilterMessaggio }
-     */
-    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
-        return new DeleteAllByFilterMessaggio();
-    }
-    
-    /**
      * Create an instance of {@link DeleteAllByFilterMessaggioResponse }
      */
     public DeleteAllByFilterMessaggioResponse createDeleteAllByFilterMessaggioResponse() {
@@ -77,10 +63,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link CountMessaggio }
+     * Create an instance of {@link FindAllMessaggioResponse }
      */
-    public CountMessaggio createCountMessaggio() {
-        return new CountMessaggio();
+    public FindAllMessaggioResponse createFindAllMessaggioResponse() {
+        return new FindAllMessaggioResponse();
     }
     
     /**
@@ -91,10 +77,24 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindAllMessaggioResponse }
+     * Create an instance of {@link FindAllMessaggio }
      */
-    public FindAllMessaggioResponse createFindAllMessaggioResponse() {
-        return new FindAllMessaggioResponse();
+    public FindAllMessaggio createFindAllMessaggio() {
+        return new FindAllMessaggio();
+    }
+    
+    /**
+     * Create an instance of {@link FindStatoPddResponse }
+     */
+    public FindStatoPddResponse createFindStatoPddResponse() {
+        return new FindStatoPddResponse();
+    }
+    
+    /**
+     * Create an instance of {@link CountMessaggio }
+     */
+    public CountMessaggio createCountMessaggio() {
+        return new CountMessaggio();
     }
     
 

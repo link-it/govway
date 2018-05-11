@@ -267,7 +267,7 @@ public class XMLUtils  {
 			
 			// trasformazione in oggetto ErroreApplicativo
 			ByteArrayInputStream binTrasformazione = new ByteArrayInputStream(xml);
-			return (ErroreApplicativo) org.openspcoop2.utils.xml.JiBXUtils.xmlToObj(binTrasformazione, ErroreApplicativo.class);
+			return (ErroreApplicativo) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(binTrasformazione, ErroreApplicativo.class);
 			
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -294,7 +294,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(out.getName(),XMLUtils.generateErroreApplicativo_engine(eccezione));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(out.getName(),XMLUtils.generateErroreApplicativo_engine(eccezione));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -306,7 +306,7 @@ public class XMLUtils  {
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(fileName,XMLUtils.generateErroreApplicativo_engine(eccezione));
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(fileName,XMLUtils.generateErroreApplicativo_engine(eccezione));
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -353,7 +353,7 @@ public class XMLUtils  {
 	private static byte[] generateErroreApplicativo_engine(ErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, ErroreApplicativo.class, eccezione);
+			org.openspcoop2.utils.xml.JaxbUtils.objToXml(bout, ErroreApplicativo.class, eccezione);
 			bout.flush();
 			bout.close();
 			return bout.toByteArray();

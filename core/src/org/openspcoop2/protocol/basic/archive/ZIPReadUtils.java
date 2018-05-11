@@ -120,10 +120,10 @@ public class ZIPReadUtils  {
 	protected IRegistryReader registryReader;
 	protected IConfigIntegrationReader configIntegrationReader;
 	
-	protected org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer jibxRegistryDeserializer = null;
-	protected org.openspcoop2.core.config.utils.serializer.JaxbDeserializer jibxConfigDeserializer = null;
-	protected org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbDeserializer jibxControlloCongestioneDeserializer = null;
-	protected org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer jibxInformationMissingDeserializer = null;
+	protected org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer jaxbRegistryDeserializer = null;
+	protected org.openspcoop2.core.config.utils.serializer.JaxbDeserializer jaxbConfigDeserializer = null;
+	protected org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbDeserializer jaxbControlloCongestioneDeserializer = null;
+	protected org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer jaxbInformationMissingDeserializer = null;
 	
 	private org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer jaxbAbstractionDeserializer = null;
 	private ErogazioneConverter _erogazioneConverter = null;
@@ -183,10 +183,10 @@ public class ZIPReadUtils  {
 		this.registryReader = registryReader;
 		this.configIntegrationReader = configIntegrationReader;
 		
-		this.jibxRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
-		this.jibxConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
-		this.jibxControlloCongestioneDeserializer = new org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbDeserializer();
-		this.jibxInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer();
+		this.jaxbRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+		this.jaxbConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
+		this.jaxbControlloCongestioneDeserializer = new org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbDeserializer();
+		this.jaxbInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer();
 		
 		// abstract
 		this.jaxbAbstractionDeserializer = new org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer();
@@ -1088,7 +1088,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			Configurazione configurazione = this.jibxConfigDeserializer.readConfigurazione(xml);
+			Configurazione configurazione = this.jaxbConfigDeserializer.readConfigurazione(xml);
 			if(archivio.getConfigurazionePdD()!=null){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione della pdd");
 			}
@@ -1121,7 +1121,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_congestione.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione = this.jibxControlloCongestioneDeserializer.readConfigurazioneGenerale(xml);
+			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione = this.jaxbControlloCongestioneDeserializer.readConfigurazioneGenerale(xml);
 			if(archivio.getControlloCongestione_configurazione()!=null){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione del controllo congestione");
 			}
@@ -1138,7 +1138,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_congestione.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy policy = this.jibxControlloCongestioneDeserializer.readConfigurazionePolicy(xml);
+			org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy policy = this.jaxbControlloCongestioneDeserializer.readConfigurazionePolicy(xml);
 			String key = ArchiveConfigurationPolicy.buildKey(policy.getIdPolicy());
 			if(archivio.getControlloCongestione_configurationPolicies().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione di policy con key ["+key+"]");
@@ -1156,7 +1156,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_congestione.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_congestione.AttivazionePolicy policy = this.jibxControlloCongestioneDeserializer.readAttivazionePolicy(xml);
+			org.openspcoop2.core.controllo_congestione.AttivazionePolicy policy = this.jaxbControlloCongestioneDeserializer.readAttivazionePolicy(xml);
 			String key = ArchiveActivePolicy.buildKey(policy.getIdActivePolicy());
 			if(archivio.getControlloCongestione_activePolicies().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un'attivazione di policy con key ["+key+"]");
@@ -1174,7 +1174,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			PortaDominio pdd = this.jibxRegistryDeserializer.readPortaDominio(xml);
+			PortaDominio pdd = this.jaxbRegistryDeserializer.readPortaDominio(xml);
 			String key = ArchivePdd.buildKey(pdd.getNome());
 			if(archivio.getPdd().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una pdd con key ["+key+"]");
@@ -1192,7 +1192,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			Ruolo ruolo = this.jibxRegistryDeserializer.readRuolo(xml);
+			Ruolo ruolo = this.jaxbRegistryDeserializer.readRuolo(xml);
 			String key = ArchiveRuolo.buildKey(ruolo.getNome());
 			if(archivio.getRuoli().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un ruolo con key ["+key+"]");
@@ -1221,7 +1221,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.protocol.information_missing.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			informationMissingOp2 = this.jibxInformationMissingDeserializer.readOpenspcoop2(xml);
+			informationMissingOp2 = this.jaxbInformationMissingDeserializer.readOpenspcoop2(xml);
 
 			// add
 			archivio.setInformationMissing(informationMissingOp2);
@@ -1273,7 +1273,7 @@ public class ZIPReadUtils  {
 				if(validationDocuments){
 					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
-				soggettoRegistroServizi = this.jibxRegistryDeserializer.readSoggetto(xml);
+				soggettoRegistroServizi = this.jaxbRegistryDeserializer.readSoggetto(xml);
 				if(tipoSoggetto.equals(soggettoRegistroServizi.getTipo())==false){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
 							soggettoRegistroServizi.getTipo()+"] differente da quello indicato ["+tipoSoggetto+"] nella directory che contiene la definizione");
@@ -1290,7 +1290,7 @@ public class ZIPReadUtils  {
 				if(validationDocuments){
 					org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
-				soggettoConfigurazione = this.jibxConfigDeserializer.readSoggetto(xml);
+				soggettoConfigurazione = this.jaxbConfigDeserializer.readSoggetto(xml);
 				if(tipoSoggetto.equals(soggettoConfigurazione.getTipo())==false){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml del soggetto ("+schema+") contiene un tipo ["+
 							soggettoConfigurazione.getTipo()+"] differente da quello indicato ["+tipoSoggetto+"] nella directory che contiene la definizione");
@@ -1328,7 +1328,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			ServizioApplicativo sa = this.jibxConfigDeserializer.readServizioApplicativo(xml);
+			ServizioApplicativo sa = this.jaxbConfigDeserializer.readServizioApplicativo(xml);
 			sa.setTipoSoggettoProprietario(tipoSoggetto);
 			sa.setNomeSoggettoProprietario(nomeSoggetto);
 			String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
@@ -1350,7 +1350,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			PortaDelegata pd = this.jibxConfigDeserializer.readPortaDelegata(xml);
+			PortaDelegata pd = this.jaxbConfigDeserializer.readPortaDelegata(xml);
 			
 			// backward compatibility
 			if("openspcoop".equals(pd.getAutorizzazione())){
@@ -1394,7 +1394,7 @@ public class ZIPReadUtils  {
 			if(validationDocuments){
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			PortaApplicativa pa = this.jibxConfigDeserializer.readPortaApplicativa(xml);
+			PortaApplicativa pa = this.jaxbConfigDeserializer.readPortaApplicativa(xml);
 			pa.setTipoSoggettoProprietario(tipoSoggetto);
 			pa.setNomeSoggettoProprietario(nomeSoggetto);
 			String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
@@ -1460,7 +1460,7 @@ public class ZIPReadUtils  {
 				if(validationDocuments){
 					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
-				AccordoServizioParteComune aspc = this.jibxRegistryDeserializer.readAccordoServizioParteComune(xml);
+				AccordoServizioParteComune aspc = this.jaxbRegistryDeserializer.readAccordoServizioParteComune(xml);
 				
 				// soggetto referente
 				if(aspc.getSoggettoReferente()==null){
@@ -1744,7 +1744,7 @@ public class ZIPReadUtils  {
 				if(validationDocuments){
 					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
-				AccordoServizioParteSpecifica asps = this.jibxRegistryDeserializer.readAccordoServizioParteSpecifica(xml);
+				AccordoServizioParteSpecifica asps = this.jaxbRegistryDeserializer.readAccordoServizioParteSpecifica(xml);
 				
 				// soggetto erogatore
 				asps.setTipoSoggettoErogatore(tipoSoggetto);
@@ -2011,7 +2011,7 @@ public class ZIPReadUtils  {
 					versioneServizioInt = versioneKey;
 				}
 				
-				Fruitore fruitore = this.jibxRegistryDeserializer.readFruitore(xml);
+				Fruitore fruitore = this.jaxbRegistryDeserializer.readFruitore(xml);
 				String keyFruitore = ArchiveFruitore.buildKey(fruitore.getTipo(), fruitore.getNome(), tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneServizioInt);
 				if(archivio.getAccordiFruitori().containsKey(keyFruitore)){
 					throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un fruitore con key ["+keyFruitore+"]");
@@ -2237,7 +2237,7 @@ public class ZIPReadUtils  {
 				if(validationDocuments){
 					org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 				}
-				AccordoCooperazione ac = this.jibxRegistryDeserializer.readAccordoCooperazione(xml);
+				AccordoCooperazione ac = this.jaxbRegistryDeserializer.readAccordoCooperazione(xml);
 				
 				// soggetto referente
 				if(ac.getSoggettoReferente()==null){

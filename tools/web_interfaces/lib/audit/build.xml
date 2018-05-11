@@ -77,6 +77,24 @@
 			<param name="dist" value="${dist_audit}"/>
 			<param name="build" value="${build_audit}"/>
 		</antcall>
+
+		<!-- it.gov.spcoop.sica.wscp -->
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.constants" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.model" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.utils" />
+		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.log.utils.serializer" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_audit}/org/openspcoop2/web/lib/audit/log"/>
+			<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-lib-audit-log"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.log"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
+			<param name="dist" value="${dist_audit}"/>
+			<param name="build" value="${build_audit}"/>
+		</antcall>
 		
 		<!-- org.openspcoop2.web.lib.audit.dao -->
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.lib.audit.dao" />	
@@ -87,8 +105,6 @@
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.lib.audit.dao"/>
-			<param name="compile_src_openspcoop2.JIBX_BINDING" value="true"/>
-			<param name="compile_src_openspcoop2.JIBX_CHECK" value="JiBX_bindingFactory.class"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="audit"/>
 			<param name="dist" value="${dist_audit}"/>
 			<param name="build" value="${build_audit}"/>

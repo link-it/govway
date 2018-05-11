@@ -55,10 +55,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ContattiTrasmittenteType }
+     * Create an instance of {@link CessionarioCommittenteType }
      */
-    public ContattiTrasmittenteType createContattiTrasmittenteType() {
-        return new ContattiTrasmittenteType();
+    public CessionarioCommittenteType createCessionarioCommittenteType() {
+        return new CessionarioCommittenteType();
+    }
+
+    /**
+     * Create an instance of {@link DatiGeneraliType }
+     */
+    public DatiGeneraliType createDatiGeneraliType() {
+        return new DatiGeneraliType();
+    }
+
+    /**
+     * Create an instance of {@link CedentePrestatoreType }
+     */
+    public CedentePrestatoreType createCedentePrestatoreType() {
+        return new CedentePrestatoreType();
     }
 
     /**
@@ -69,31 +83,38 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiTrasmissioneType }
+     * Create an instance of {@link DatiAnagraficiCessionarioType }
      */
-    public DatiTrasmissioneType createDatiTrasmissioneType() {
-        return new DatiTrasmissioneType();
+    public DatiAnagraficiCessionarioType createDatiAnagraficiCessionarioType() {
+        return new DatiAnagraficiCessionarioType();
     }
 
     /**
-     * Create an instance of {@link FatturaElettronicaBodyType }
+     * Create an instance of {@link FatturaElettronicaType }
      */
-    public FatturaElettronicaBodyType createFatturaElettronicaBodyType() {
-        return new FatturaElettronicaBodyType();
+    public FatturaElettronicaType createFatturaElettronicaType() {
+        return new FatturaElettronicaType();
     }
 
     /**
-     * Create an instance of {@link DettaglioLineeType }
+     * Create an instance of {@link DatiBolloType }
      */
-    public DettaglioLineeType createDettaglioLineeType() {
-        return new DettaglioLineeType();
+    public DatiBolloType createDatiBolloType() {
+        return new DatiBolloType();
     }
 
     /**
-     * Create an instance of {@link AllegatiType }
+     * Create an instance of {@link IscrizioneREAType }
      */
-    public AllegatiType createAllegatiType() {
-        return new AllegatiType();
+    public IscrizioneREAType createIscrizioneREAType() {
+        return new IscrizioneREAType();
+    }
+
+    /**
+     * Create an instance of {@link AnagraficaType }
+     */
+    public AnagraficaType createAnagraficaType() {
+        return new AnagraficaType();
     }
 
     /**
@@ -104,13 +125,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiDDTType }
-     */
-    public DatiDDTType createDatiDDTType() {
-        return new DatiDDTType();
-    }
-
-    /**
      * Create an instance of {@link DatiTrasportoType }
      */
     public DatiTrasportoType createDatiTrasportoType() {
@@ -118,24 +132,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiAnagraficiCessionarioType }
+     * Create an instance of {@link IdFiscaleType }
      */
-    public DatiAnagraficiCessionarioType createDatiAnagraficiCessionarioType() {
-        return new DatiAnagraficiCessionarioType();
+    public IdFiscaleType createIdFiscaleType() {
+        return new IdFiscaleType();
     }
 
     /**
-     * Create an instance of {@link DatiAnagraficiRappresentanteType }
+     * Create an instance of {@link DatiDDTType }
      */
-    public DatiAnagraficiRappresentanteType createDatiAnagraficiRappresentanteType() {
-        return new DatiAnagraficiRappresentanteType();
+    public DatiDDTType createDatiDDTType() {
+        return new DatiDDTType();
     }
 
     /**
-     * Create an instance of {@link CodiceArticoloType }
+     * Create an instance of {@link FatturaPrincipaleType }
      */
-    public CodiceArticoloType createCodiceArticoloType() {
-        return new CodiceArticoloType();
+    public FatturaPrincipaleType createFatturaPrincipaleType() {
+        return new FatturaPrincipaleType();
+    }
+
+    /**
+     * Create an instance of {@link DatiSALType }
+     */
+    public DatiSALType createDatiSALType() {
+        return new DatiSALType();
     }
 
     /**
@@ -153,10 +174,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IndirizzoType }
+     * Create an instance of {@link CodiceArticoloType }
      */
-    public IndirizzoType createIndirizzoType() {
-        return new IndirizzoType();
+    public CodiceArticoloType createCodiceArticoloType() {
+        return new CodiceArticoloType();
     }
 
     /**
@@ -167,80 +188,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FatturaElettronicaType }
+     * Create an instance of {@link DatiAnagraficiVettoreType }
      */
-    public FatturaElettronicaType createFatturaElettronicaType() {
-        return new FatturaElettronicaType();
+    public DatiAnagraficiVettoreType createDatiAnagraficiVettoreType() {
+        return new DatiAnagraficiVettoreType();
     }
 
     /**
-     * Create an instance of {@link IscrizioneREAType }
+     * Create an instance of {@link DettaglioLineeType }
      */
-    public IscrizioneREAType createIscrizioneREAType() {
-        return new IscrizioneREAType();
+    public DettaglioLineeType createDettaglioLineeType() {
+        return new DettaglioLineeType();
     }
 
     /**
-     * Create an instance of {@link CessionarioCommittenteType }
+     * Create an instance of {@link DatiTrasmissioneType }
      */
-    public CessionarioCommittenteType createCessionarioCommittenteType() {
-        return new CessionarioCommittenteType();
-    }
-
-    /**
-     * Create an instance of {@link TerzoIntermediarioSoggettoEmittenteType }
-     */
-    public TerzoIntermediarioSoggettoEmittenteType createTerzoIntermediarioSoggettoEmittenteType() {
-        return new TerzoIntermediarioSoggettoEmittenteType();
-    }
-
-    /**
-     * Create an instance of {@link DatiGeneraliType }
-     */
-    public DatiGeneraliType createDatiGeneraliType() {
-        return new DatiGeneraliType();
-    }
-
-    /**
-     * Create an instance of {@link ScontoMaggiorazioneType }
-     */
-    public ScontoMaggiorazioneType createScontoMaggiorazioneType() {
-        return new ScontoMaggiorazioneType();
-    }
-
-    /**
-     * Create an instance of {@link FatturaElettronicaHeaderType }
-     */
-    public FatturaElettronicaHeaderType createFatturaElettronicaHeaderType() {
-        return new FatturaElettronicaHeaderType();
-    }
-
-    /**
-     * Create an instance of {@link DatiAnagraficiTerzoIntermediarioType }
-     */
-    public DatiAnagraficiTerzoIntermediarioType createDatiAnagraficiTerzoIntermediarioType() {
-        return new DatiAnagraficiTerzoIntermediarioType();
-    }
-
-    /**
-     * Create an instance of {@link ContattiType }
-     */
-    public ContattiType createContattiType() {
-        return new ContattiType();
-    }
-
-    /**
-     * Create an instance of {@link AnagraficaType }
-     */
-    public AnagraficaType createAnagraficaType() {
-        return new AnagraficaType();
-    }
-
-    /**
-     * Create an instance of {@link CedentePrestatoreType }
-     */
-    public CedentePrestatoreType createCedentePrestatoreType() {
-        return new CedentePrestatoreType();
+    public DatiTrasmissioneType createDatiTrasmissioneType() {
+        return new DatiTrasmissioneType();
     }
 
     /**
@@ -251,24 +216,31 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DatiVeicoliType }
+     */
+    public DatiVeicoliType createDatiVeicoliType() {
+        return new DatiVeicoliType();
+    }
+
+    /**
+     * Create an instance of {@link ScontoMaggiorazioneType }
+     */
+    public ScontoMaggiorazioneType createScontoMaggiorazioneType() {
+        return new ScontoMaggiorazioneType();
+    }
+
+    /**
+     * Create an instance of {@link DatiAnagraficiTerzoIntermediarioType }
+     */
+    public DatiAnagraficiTerzoIntermediarioType createDatiAnagraficiTerzoIntermediarioType() {
+        return new DatiAnagraficiTerzoIntermediarioType();
+    }
+
+    /**
      * Create an instance of {@link DatiAnagraficiCedenteType }
      */
     public DatiAnagraficiCedenteType createDatiAnagraficiCedenteType() {
         return new DatiAnagraficiCedenteType();
-    }
-
-    /**
-     * Create an instance of {@link DatiBeniServiziType }
-     */
-    public DatiBeniServiziType createDatiBeniServiziType() {
-        return new DatiBeniServiziType();
-    }
-
-    /**
-     * Create an instance of {@link FatturaPrincipaleType }
-     */
-    public FatturaPrincipaleType createFatturaPrincipaleType() {
-        return new FatturaPrincipaleType();
     }
 
     /**
@@ -279,17 +251,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiSALType }
-     */
-    public DatiSALType createDatiSALType() {
-        return new DatiSALType();
-    }
-
-    /**
      * Create an instance of {@link DatiDocumentiCorrelatiType }
      */
     public DatiDocumentiCorrelatiType createDatiDocumentiCorrelatiType() {
         return new DatiDocumentiCorrelatiType();
+    }
+
+    /**
+     * Create an instance of {@link FatturaElettronicaHeaderType }
+     */
+    public FatturaElettronicaHeaderType createFatturaElettronicaHeaderType() {
+        return new FatturaElettronicaHeaderType();
+    }
+
+    /**
+     * Create an instance of {@link DatiBeniServiziType }
+     */
+    public DatiBeniServiziType createDatiBeniServiziType() {
+        return new DatiBeniServiziType();
     }
 
     /**
@@ -300,31 +279,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdFiscaleType }
+     * Create an instance of {@link IndirizzoType }
      */
-    public IdFiscaleType createIdFiscaleType() {
-        return new IdFiscaleType();
+    public IndirizzoType createIndirizzoType() {
+        return new IndirizzoType();
     }
 
     /**
-     * Create an instance of {@link DatiVeicoliType }
+     * Create an instance of {@link ContattiTrasmittenteType }
      */
-    public DatiVeicoliType createDatiVeicoliType() {
-        return new DatiVeicoliType();
+    public ContattiTrasmittenteType createContattiTrasmittenteType() {
+        return new ContattiTrasmittenteType();
     }
 
     /**
-     * Create an instance of {@link DatiBolloType }
+     * Create an instance of {@link DatiAnagraficiRappresentanteType }
      */
-    public DatiBolloType createDatiBolloType() {
-        return new DatiBolloType();
+    public DatiAnagraficiRappresentanteType createDatiAnagraficiRappresentanteType() {
+        return new DatiAnagraficiRappresentanteType();
     }
 
     /**
-     * Create an instance of {@link DatiAnagraficiVettoreType }
+     * Create an instance of {@link AllegatiType }
      */
-    public DatiAnagraficiVettoreType createDatiAnagraficiVettoreType() {
-        return new DatiAnagraficiVettoreType();
+    public AllegatiType createAllegatiType() {
+        return new AllegatiType();
+    }
+
+    /**
+     * Create an instance of {@link TerzoIntermediarioSoggettoEmittenteType }
+     */
+    public TerzoIntermediarioSoggettoEmittenteType createTerzoIntermediarioSoggettoEmittenteType() {
+        return new TerzoIntermediarioSoggettoEmittenteType();
+    }
+
+    /**
+     * Create an instance of {@link FatturaElettronicaBodyType }
+     */
+    public FatturaElettronicaBodyType createFatturaElettronicaBodyType() {
+        return new FatturaElettronicaBodyType();
+    }
+
+    /**
+     * Create an instance of {@link ContattiType }
+     */
+    public ContattiType createContattiType() {
+        return new ContattiType();
     }
 
     private final static QName _FatturaElettronica = new QName("http://www.fatturapa.gov.it/sdi/fatturapa/v1.1", "FatturaElettronica");

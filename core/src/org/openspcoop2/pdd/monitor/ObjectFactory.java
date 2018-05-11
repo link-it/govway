@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BustaServizio }
+     * Create an instance of {@link Proprieta }
      */
-    public BustaServizio createBustaServizio() {
-        return new BustaServizio();
-    }
-
-    /**
-     * Create an instance of {@link StatoPdd }
-     */
-    public StatoPdd createStatoPdd() {
-        return new StatoPdd();
+    public Proprieta createProprieta() {
+        return new Proprieta();
     }
 
     /**
@@ -73,38 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Messaggio }
+     * Create an instance of {@link BustaServizio }
      */
-    public Messaggio createMessaggio() {
-        return new Messaggio();
-    }
-
-    /**
-     * Create an instance of {@link Openspcoop2 }
-     */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
-    }
-
-    /**
-     * Create an instance of {@link Filtro }
-     */
-    public Filtro createFiltro() {
-        return new Filtro();
-    }
-
-    /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link ServizioApplicativoConsegna }
-     */
-    public ServizioApplicativoConsegna createServizioApplicativoConsegna() {
-        return new ServizioApplicativoConsegna();
+    public BustaServizio createBustaServizio() {
+        return new BustaServizio();
     }
 
     /**
@@ -115,10 +80,45 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ServizioApplicativoConsegna }
+     */
+    public ServizioApplicativoConsegna createServizioApplicativoConsegna() {
+        return new ServizioApplicativoConsegna();
+    }
+
+    /**
+     * Create an instance of {@link StatoPdd }
+     */
+    public StatoPdd createStatoPdd() {
+        return new StatoPdd();
+    }
+
+    /**
+     * Create an instance of {@link Messaggio }
+     */
+    public Messaggio createMessaggio() {
+        return new Messaggio();
+    }
+
+    /**
+     * Create an instance of {@link Filtro }
+     */
+    public Filtro createFiltro() {
+        return new Filtro();
+    }
+
+    /**
      * Create an instance of {@link Dettaglio }
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
+    }
+
+    /**
+     * Create an instance of {@link Openspcoop2 }
+     */
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
     }
 
 

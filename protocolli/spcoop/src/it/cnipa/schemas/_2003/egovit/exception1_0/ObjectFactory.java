@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MessaggioDiErroreApplicativo }
+     * Create an instance of {@link EccezioneProcessamento }
      */
-    public MessaggioDiErroreApplicativo createMessaggioDiErroreApplicativo() {
-        return new MessaggioDiErroreApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link Eccezione }
-     */
-    public Eccezione createEccezione() {
-        return new Eccezione();
+    public EccezioneProcessamento createEccezioneProcessamento() {
+        return new EccezioneProcessamento();
     }
 
     /**
@@ -73,10 +66,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EccezioneProcessamento }
+     * Create an instance of {@link Eccezione }
      */
-    public EccezioneProcessamento createEccezioneProcessamento() {
-        return new EccezioneProcessamento();
+    public Eccezione createEccezione() {
+        return new Eccezione();
+    }
+
+    /**
+     * Create an instance of {@link MessaggioDiErroreApplicativo }
+     */
+    public MessaggioDiErroreApplicativo createMessaggioDiErroreApplicativo() {
+        return new MessaggioDiErroreApplicativo();
     }
 
 

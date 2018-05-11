@@ -19,40 +19,45 @@
  */
 package it.gov.spcoop.sica.wsbl;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class EventType.
+/** <p>Java class for eventType complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="eventType">
+ * 		&lt;sequence>
+ * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}eventTypeMessage" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "eventType", 
+  propOrder = {
+  	"message"
+  }
+)
+
+@XmlRootElement(name = "eventType")
 
 public class EventType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected EventTypeMessage message;
-
-  protected String name;
-
-
   public EventType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return Long.valueOf(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=Long.valueOf(-1);
   }
 
   public EventTypeMessage getMessage() {
@@ -63,37 +68,23 @@ public class EventType extends org.openspcoop2.utils.beans.BaseBean implements S
     this.message = message;
   }
 
-  public String getName() {
-    if(this.name!=null && ("".equals(this.name)==false)){
-		return this.name.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getName() {
+    return this.name;
   }
 
-  public void setName(String name) {
+  public void setName(java.lang.String name) {
     this.name = name;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
 
-  public static final String MESSAGE = "message";
 
-  public static final String NAME = "name";
+  @XmlElement(name="message",required=false,nillable=false)
+  protected EventTypeMessage message;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="name",required=true)
+  protected java.lang.String name;
 
 }

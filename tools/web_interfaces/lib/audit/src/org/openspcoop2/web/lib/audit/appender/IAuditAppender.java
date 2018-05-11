@@ -24,7 +24,7 @@ package org.openspcoop2.web.lib.audit.appender;
 import java.util.Properties;
 
 import org.openspcoop2.web.lib.audit.AuditException;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Operation;
 
 /**
  * Appender per registrare operazione di audit

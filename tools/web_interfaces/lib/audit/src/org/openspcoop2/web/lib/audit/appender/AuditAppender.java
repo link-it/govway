@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.lib.audit.appender;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,13 +32,13 @@ import org.openspcoop2.utils.serialization.FilteredObject;
 import org.openspcoop2.utils.serialization.IDBuilder;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
-import org.openspcoop2.web.lib.audit.costanti.StatoOperazione;
-import org.openspcoop2.web.lib.audit.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.audit.dao.Appender;
-import org.openspcoop2.web.lib.audit.dao.Binary;
 import org.openspcoop2.web.lib.audit.dao.Configurazione;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
-import org.openspcoop2.web.lib.audit.dao.Operation;
+import org.openspcoop2.web.lib.audit.log.Binary;
+import org.openspcoop2.web.lib.audit.log.Operation;
+import org.openspcoop2.web.lib.audit.log.constants.Stato;
+import org.openspcoop2.web.lib.audit.log.constants.Tipologia;
 
 /**
  * Appender per registrare operazione di audit
@@ -125,7 +124,7 @@ public class AuditAppender {
 
 	
 	
-	public IDOperazione registraOperazioneInFaseDiElaborazione(TipoOperazione tipoOperazione,Object object,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
+	public IDOperazione registraOperazioneInFaseDiElaborazione(Tipologia tipoOperazione,Object object,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
 		
 		if(AuditAppender.configurazioneAuditing.isAuditEngineEnabled()==false){
 			throw new AuditDisabilitatoException("Audit engine disabilitato");
@@ -135,9 +134,9 @@ public class AuditAppender {
 			
 				
 			Operation operation = new Operation();
-			operation.setTipologia(tipoOperazione.toString());
+			operation.setTipologia(tipoOperazione);
 			operation.setUtente(user);
-			operation.setStato(StatoOperazione.requesting.toString());
+			operation.setStato(Stato.REQUESTING);
 			operation.setTimeRequest(DateManager.getDate());
 			operation.setTimeExecute(DateManager.getDate());
 			operation.setInterfaceMsg(interfaceMsg);
@@ -167,7 +166,7 @@ public class AuditAppender {
 					
 					Binary binary = new Binary();
 					binary.setBinaryId(filteredObject.getId());
-					binary.setChecksum(BigInteger.valueOf(filteredObject.getChecksum()));
+					binary.setChecksum(filteredObject.getChecksum());
 					operation.addBinary(binary);
 				}
 			}
@@ -202,7 +201,7 @@ public class AuditAppender {
 	
 	
 	
-	public void registraOperazioneAccesso(TipoOperazione tipoOperazione,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
+	public void registraOperazioneAccesso(Tipologia tipoOperazione,String user,String interfaceMsg) throws AuditException,AuditDisabilitatoException{
 		
 		if(AuditAppender.configurazioneAuditing.isAuditEngineEnabled()==false){
 			throw new AuditDisabilitatoException("Audit engine disabilitato");
@@ -212,9 +211,9 @@ public class AuditAppender {
 			
 				
 			Operation operation = new Operation();
-			operation.setTipologia(tipoOperazione.toString());
+			operation.setTipologia(tipoOperazione);
 			operation.setUtente(user);
-			operation.setStato(StatoOperazione.completed.toString());
+			operation.setStato(Stato.COMPLETED);
 			operation.setTimeRequest(DateManager.getDate());
 			operation.setTimeExecute(DateManager.getDate());
 			operation.setInterfaceMsg(interfaceMsg);
@@ -357,8 +356,11 @@ public class AuditAppender {
 	private String serializeJsonObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException{
 		try{
 			listFilter.addFilterByValue(byte[].class);
-			org.openspcoop2.utils.serialization.JSonSerializer serializer = 
-				new org.openspcoop2.utils.serialization.JSonSerializer(listFilter,AuditAppender.idBuilder);
+			// Deprecato
+//			org.openspcoop2.utils.serialization.JSonSerializer serializer = 
+//				new org.openspcoop2.utils.serialization.JSonSerializer(listFilter,AuditAppender.idBuilder);
+			org.openspcoop2.utils.serialization.JsonJacksonSerializer serializer = 
+				new org.openspcoop2.utils.serialization.JsonJacksonSerializer(listFilter,AuditAppender.idBuilder);
 			return  serializer.getObject(o);		
 		}catch(Exception e){
 			throw new AuditException("serializeJsonObject error: "+e.getMessage(),e);

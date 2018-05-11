@@ -52,13 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SoggettoIdentificativo }
-     */
-    public SoggettoIdentificativo createSoggettoIdentificativo() {
-        return new SoggettoIdentificativo();
-    }
-
-    /**
      * Create an instance of {@link CodiceEccezione }
      */
     public CodiceEccezione createCodiceEccezione() {
@@ -66,10 +59,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Eccezione }
+     * Create an instance of {@link ErroreApplicativo }
      */
-    public Eccezione createEccezione() {
-        return new Eccezione();
+    public ErroreApplicativo createErroreApplicativo() {
+        return new ErroreApplicativo();
     }
 
     /**
@@ -80,13 +73,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Servizio }
-     */
-    public Servizio createServizio() {
-        return new Servizio();
-    }
-
-    /**
      * Create an instance of {@link Dominio }
      */
     public Dominio createDominio() {
@@ -94,10 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiCooperazione }
+     * Create an instance of {@link Servizio }
      */
-    public DatiCooperazione createDatiCooperazione() {
-        return new DatiCooperazione();
+    public Servizio createServizio() {
+        return new Servizio();
     }
 
     /**
@@ -108,10 +94,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ErroreApplicativo }
+     * Create an instance of {@link SoggettoIdentificativo }
      */
-    public ErroreApplicativo createErroreApplicativo() {
-        return new ErroreApplicativo();
+    public SoggettoIdentificativo createSoggettoIdentificativo() {
+        return new SoggettoIdentificativo();
+    }
+
+    /**
+     * Create an instance of {@link Eccezione }
+     */
+    public Eccezione createEccezione() {
+        return new Eccezione();
+    }
+
+    /**
+     * Create an instance of {@link DatiCooperazione }
+     */
+    public DatiCooperazione createDatiCooperazione() {
+        return new DatiCooperazione();
     }
 
 

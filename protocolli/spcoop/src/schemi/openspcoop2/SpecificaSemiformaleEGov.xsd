@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+       targetNamespace="http://www.cnipa.it/collProfiles"
+       xmlns:tns="http://www.cnipa.it/collProfiles" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <annotation>
+        <appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="openspcoop2_spcoop_profiloCollaborazioneCNIPA">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="true" ws="false"/>
+                <linkit:configuration>
+                    <linkit:field generateId="false" />
+                </linkit:configuration>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:xml root-element="egovDecllElement" generate="true"/>
+                    <linkit:sql>
+                        <linkit:sql-script generate="false"/>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" />
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </appinfo>
+    </annotation>
+
+   <complexType name="operationType">
+       <attribute name="servizio" type="QName" use="required"></attribute>
+       <attribute name="operazione" type="QName" use="required"></attribute>
+       <attribute name="profiloDiCollaborazione" type="tns:profiloDiCollaborazioneType"
+        use="required"></attribute>
+       <attribute name="servizioCorrelato" type="QName" use="optional"></attribute>
+       <attribute name="operazioneCorrelata" type="QName" use="optional"></attribute>
+   </complexType>
+
+   <complexType name="operationListType">
+       <sequence>
+          <element name="operation" type="tns:operationType" maxOccurs="unbounded"></element>
+       </sequence>
+   </complexType>
+
+   <element name="egovDecllElement">
+       <annotation>
+           <appinfo>
+               <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                   <linkit:interface crud="false" />
+               </linkit:generator>
+           </appinfo>
+       </annotation>
+     <complexType>
+       <sequence>
+          <element name="e-govVersion" type="string"/>
+          <element name="rifDefinizioneInterfaccia" type="anyURI"/>
+          <element name="operationList" type="tns:operationListType"/>
+       </sequence>
+     </complexType>
+   </element>
+   <simpleType name="profiloDiCollaborazioneType">
+       <restriction base="string">
+          <enumeration value="OneWay"></enumeration>
+          <enumeration value="Sincrono"></enumeration>
+          <enumeration value="AsincronoSimmetrico"></enumeration>
+          <enumeration value="AsincronoAsimmetrico"></enumeration>
+       </restriction>
+   </simpleType>
+</schema>
