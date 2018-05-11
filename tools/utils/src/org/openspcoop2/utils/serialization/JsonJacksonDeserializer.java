@@ -23,7 +23,6 @@ package org.openspcoop2.utils.serialization;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +51,11 @@ public class JsonJacksonDeserializer implements IDeserializer{
 
         private List<String> ignorables;
 
-        public BeanDeserializerModifierForIgnorables(String... properties) {
-            this.ignorables = new ArrayList<>();
-            if(properties != null) {
-                for(String property : properties) {
-                    this.ignorables.add(property);
-                }
-            }
+        public BeanDeserializerModifierForIgnorables(List<String> properties) {
+        	if(properties!=null)
+        		this.ignorables = properties;
+        	else
+        		this.ignorables = new ArrayList<String>();
         }
 
         @Override
@@ -89,18 +86,17 @@ public class JsonJacksonDeserializer implements IDeserializer{
     }
 
 
-	ObjectMapper mapper;
+	private ObjectMapper mapper;
 
-	public JsonJacksonDeserializer(){
-		this(null);
+	public JsonJacksonDeserializer() {
+		this(new SerializationConfig());
 	}
-	
-	public JsonJacksonDeserializer(String [] excludes){		
-		BeanDeserializerModifier modifier = new BeanDeserializerModifierForIgnorables(excludes);
+	public JsonJacksonDeserializer(SerializationConfig config) {
+		BeanDeserializerModifier modifier = new BeanDeserializerModifierForIgnorables(config.getExcludes());
 		DeserializerFactory dFactory = BeanDeserializerFactory.instance.withDeserializerModifier(modifier);
 
 		this.mapper = new ObjectMapper(null, null, new DefaultDeserializationContext.Impl(dFactory));
-		this.mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));		
+		this.mapper.setDateFormat(config.getDf());
 
 	}
 

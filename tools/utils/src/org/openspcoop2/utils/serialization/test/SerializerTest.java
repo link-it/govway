@@ -3,11 +3,15 @@
  */
 package org.openspcoop2.utils.serialization.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+
 import org.openspcoop2.utils.serialization.Filter;
 import org.openspcoop2.utils.serialization.IDeserializer;
 import org.openspcoop2.utils.serialization.ISerializer;
 import org.openspcoop2.utils.serialization.JsonJacksonDeserializer;
 import org.openspcoop2.utils.serialization.JsonJacksonSerializer;
+import org.openspcoop2.utils.serialization.SerializationConfig;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
@@ -19,7 +23,7 @@ public class SerializerTest {
 
 	public static void main(String[] args) {
 		try {
-			ISerializer jsonJacksonSerializer = new JsonJacksonSerializer(null);
+			ISerializer jsonJacksonSerializer = new JsonJacksonSerializer();
 			IDeserializer jsonJacksonDeserializer = new JsonJacksonDeserializer();
 
 			System.out.println("Test serializzazione e rilettura...");
@@ -30,13 +34,19 @@ public class SerializerTest {
 			filter.addFilterByName("calendar");
 			filter.addFilterByValue(byte[].class);
 
-			ISerializer jsonJacksonSerializerWithFilter = new JsonJacksonSerializer(filter, null, new String[] {"date"});
+			SerializationConfig config = new SerializationConfig();
+			config.setDf(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+			config.setFilter(filter);
+			config.setExcludes(Arrays.asList("date"));
+			ISerializer jsonJacksonSerializerWithFilter = new JsonJacksonSerializer(config);
 
 			System.out.println("Test serializzazione con filtri...");
 			testSerializeConFiltro(jsonJacksonSerializerWithFilter);
 			System.out.println("Test serializzazione con filtri OK");
 
-			IDeserializer jsonJacksonDeserializerWithFilter = new JsonJacksonDeserializer(new String[] {"date", "calendar"});
+			SerializationConfig config2 = new SerializationConfig();
+			config2.setExcludes(Arrays.asList("date", "calendar"));
+			IDeserializer jsonJacksonDeserializerWithFilter = new JsonJacksonDeserializer(config2);
 			System.out.println("Test deserializzazione con filtri...");
 			testDeserializeConFiltro(jsonJacksonSerializer, jsonJacksonDeserializerWithFilter);
 			System.out.println("Test deserializzazione con filtri OK");

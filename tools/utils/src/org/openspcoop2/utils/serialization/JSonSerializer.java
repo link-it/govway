@@ -45,30 +45,28 @@ public class JSonSerializer implements ISerializer {
 
 	private JsonConfig jsonConfig;
 	
-	public JSonSerializer(Filter filter){
-		
-		this(filter,null,null);
+	public JSonSerializer() {
+		this(new SerializationConfig());
 	}
-	public JSonSerializer(Filter filter,IDBuilder idBuilder){
-		this(filter,idBuilder,null);
-	}
-	public JSonSerializer(Filter filter,String [] excludes){
-		this(filter,null,excludes);
-	}
-	public JSonSerializer(Filter filter,IDBuilder idBuilder, String [] excludes){
+	
+	public JSonSerializer(SerializationConfig config) {
 		
 		JSonSerializer filtroInternoOggettiFiltratiDiversiByteArray = null;
-		if(filter.sizeFiltersByValue()>0 || filter.sizeFiltersByName()>0)
-			filtroInternoOggettiFiltratiDiversiByteArray = new JSonSerializer(new Filter(),idBuilder,excludes);
+		if(config.getFilter().sizeFiltersByValue()>0 || config.getFilter().sizeFiltersByName()>0) {
+			SerializationConfig conf = new SerializationConfig();
+			conf.setFilter(new Filter());
+			conf.setIdBuilder(config.getIdBuilder());
+			conf.setExcludes(config.getExcludes());
+			filtroInternoOggettiFiltratiDiversiByteArray = new JSonSerializer(conf);
+		}
 		
 		JsonConfig jsonConfig = new JsonConfig();
-		jsonConfig.setJsonPropertyFilter(new PropertyFilter(filter,idBuilder,filtroInternoOggettiFiltratiDiversiByteArray));
-		if(excludes!=null){
-			jsonConfig.setExcludes(excludes);
+		jsonConfig.setJsonPropertyFilter(new PropertyFilter(config.getFilter(),config.getIdBuilder(),filtroInternoOggettiFiltratiDiversiByteArray));
+		if(config.getExcludes()!=null){
+			jsonConfig.setExcludes(config.getExcludes().toArray(new String[]{}));
 		}
 		this.jsonConfig = jsonConfig;
 	}
-	
 	
 	@Override
 	public String getObject(Object o) throws IOException{

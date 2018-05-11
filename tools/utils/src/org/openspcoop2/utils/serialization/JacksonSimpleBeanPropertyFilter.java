@@ -3,7 +3,7 @@
  */
 package org.openspcoop2.utils.serialization;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,24 +25,25 @@ public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {
 	private static final long serialVersionUID = 1L;
 	private PropertyFilterCore core;
 	private List<String> excludes;
+	private List<Class<?>> excludesByClass;
 	
-	public JacksonSimpleBeanPropertyFilter(Filter filter, String[] excludes, IDBuilder idBuilder,ISerializer serializer){
-		super(getHashSet(filter, excludes));
-		this.core = new PropertyFilterCore(filter, idBuilder, serializer);
-		if(excludes!=null)
-			this.excludes = Arrays.asList(excludes);
+	public JacksonSimpleBeanPropertyFilter(SerializationConfig config,ISerializer serializer){
+		super(getHashSet(config.getFilter(), config.getExcludes()));
+		this.core = new PropertyFilterCore(config.getFilter(), config.getIdBuilder(), serializer);
+		this.excludes = config.getExcludes();
+		if(config.getFilter()!=null && config.getFilter().getFilterByValue()!=null) {
+			this.excludesByClass = config.getFilter().getFilterByValue();
+		} else {
+			this.excludesByClass = new ArrayList<>();
+		}
 	}
 
-	public JacksonSimpleBeanPropertyFilter(Filter filter, String[] excludes, ISerializer serializer){
-		this(filter, excludes, null, serializer);
-	}
-
-	private static Set<String> getHashSet(Filter filter, String[] excludes) {
+	private static Set<String> getHashSet(Filter filter, List<String> excludes) {
 		Set<String> set = new HashSet<String>();
 		if(filter!= null && filter.sizeFiltersByName()>0)
 			set.addAll(filter.getFilterByName());
-		if(excludes !=null && excludes.length > 0) {
-			set.addAll(Arrays.asList(excludes));
+		if(excludes !=null && excludes.size() > 0) {
+			set.addAll(excludes);
 		}
 
 		return set;
@@ -52,12 +53,14 @@ public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {
     public void serializeAsField(Object pojo, JsonGenerator gen, SerializerProvider provider, PropertyWriter writer)
             throws Exception {
     	
-        if (include(writer)) {
+        if (include(writer) && !this.excludesByClass.contains(writer.getType().getRawClass())) {
             writer.serializeAsField(pojo, gen, provider);
-        } else if (!gen.canOmitFields()) { // since 2.3
-            writer.serializeAsOmittedField(pojo, gen, provider);
+        } else {
+        	if (gen.canOmitFields()) { // since 2.3
+        		writer.serializeAsOmittedField(pojo, gen, provider);
+        	}
             if(this.excludes == null || !this.excludes.contains(writer.getName()))
-            	this.core.applicaFiltro(pojo, writer.getName(), pojo, writer.getClass());
+            	this.core.applicaFiltro(pojo, writer.getName(), pojo, writer.getType().getRawClass());
         }
     }
 

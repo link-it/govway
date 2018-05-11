@@ -56,14 +56,14 @@ public class XMLDeserializer implements IDeserializer{
 	private boolean throwExceptionMorpherFailed = true;
 	
 	public XMLDeserializer(){
-		this(null);
+		this(new SerializationConfig());
 	}
-	public XMLDeserializer(String [] excludes){		
+	public XMLDeserializer(SerializationConfig config) {
 		this.xmlSerializer = new net.sf.json.xml.XMLSerializer();
 		JsonConfig jsonConfig = new JsonConfig();
-		if(excludes!=null){
+		if(config.getExcludes()!=null){
 			//jsonConfig.setExcludes(excludes); non funziona l'exclude durante la deserializzazione, uso un filtro
-			jsonConfig.setJavaPropertyFilter(new ExclusionPropertyFilter(excludes));
+			jsonConfig.setJavaPropertyFilter(new ExclusionPropertyFilter(config.getExcludes()));
 		} 
 		this.jsonConfig = jsonConfig;
 		this.addMorpherPackage("org.openspcoop2");

@@ -23,14 +23,14 @@ package org.openspcoop2.utils.serialization;
 
 import java.io.OutputStream;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
+import java.util.HashSet;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotationIntrospectorPair;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
@@ -48,28 +48,16 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 public class JsonJacksonSerializer implements ISerializer {
 
 
-	/**
-	 * 
-	 */
+////	@JsonIgnoreType
+//	public class MyMixInForIgnoreType {}
 	private static final String DEFAULT = "__default";
 	private ObjectWriter writer;
 
-	public JsonJacksonSerializer(Filter filter){
-
-		this(filter,null,null);
-	}
-	public JsonJacksonSerializer(Filter filter,IDBuilder idBuilder){
-		this(filter,idBuilder,null);
-	}
-	public JsonJacksonSerializer(Filter filter,String [] excludes){
-		this(filter,null,excludes);
-	}
 	
-	@JsonIgnoreType
-	private class MyMixInForIgnoreType {}
-
-	public JsonJacksonSerializer(Filter filter,IDBuilder idBuilder, String [] excludes){
-
+	public JsonJacksonSerializer() {
+		this(new SerializationConfig());
+	}
+	public JsonJacksonSerializer(SerializationConfig config) {
 		ObjectMapper mapper = new ObjectMapper().setAnnotationIntrospector(
 				new AnnotationIntrospectorPair(
 						new JacksonAnnotationIntrospector() {
@@ -85,18 +73,22 @@ public class JsonJacksonSerializer implements ISerializer {
 						)
 				);
 
-		mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));		
+		mapper.setDateFormat(config.getDf());		
 
 		SimpleFilterProvider filters = new SimpleFilterProvider();
-		if((filter != null && filter.sizeFiltersByName()>0) || excludes != null) {
-			filters = filters.addFilter(DEFAULT, new JacksonSimpleBeanPropertyFilter(filter, excludes, idBuilder, new JsonJacksonSerializer(new Filter())));
+		if((config.getFilter() != null && config.getFilter().sizeFiltersByName()>0) || config.getExcludes() != null) {
+			filters = filters.addFilter(DEFAULT, new JacksonSimpleBeanPropertyFilter(config, new JsonJacksonSerializer()));
+		} else if(config.getIncludes()!=null) {
+			HashSet<String> hashSet = new HashSet<String>();
+			hashSet.addAll(config.getIncludes());
+			filters = filters.addFilter(DEFAULT, SimpleBeanPropertyFilter.filterOutAllExcept(hashSet));
 		}
 
-		if(filter != null && filter.sizeFiltersByValue()>0) {
-			for(Class<?> value: filter.getFilterByValue()) {
-				mapper.addMixIn(value, MyMixInForIgnoreType.class);
-			}
-		}
+//		if(config.getFilter() != null && config.getFilter().sizeFiltersByValue()>0) {
+//			for(Class<?> value: config.getFilter().getFilterByValue()) {
+//				mapper.addMixIn(value, MyMixInForIgnoreType.class);
+//			}
+//		}
 
 		filters = filters.setFailOnUnknownId(false);
 

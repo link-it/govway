@@ -45,26 +45,26 @@ public class XMLSerializer implements ISerializer {
 
 	private JsonConfig jsonConfig;
 	private net.sf.json.xml.XMLSerializer xmlSerializer;
+
+	public XMLSerializer(){
+		this(new SerializationConfig());
+	}
 	
-	public XMLSerializer(Filter filter){
-		this(filter,null,null);
-	}
-	public XMLSerializer(Filter filter,IDBuilder idBuilder){
-		this(filter,idBuilder,null);
-	}
-	public XMLSerializer(Filter filter,String [] excludes){
-		this(filter,null,excludes);
-	}
-	public XMLSerializer(Filter filter,IDBuilder idBuilder, String [] excludes){
-		
+	public XMLSerializer(SerializationConfig config){
 		XMLSerializer filtroInternoOggettiFiltratiDiversiByteArray = null;
-		if(filter.sizeFiltersByValue()>0 || filter.sizeFiltersByName()>0)
-			filtroInternoOggettiFiltratiDiversiByteArray = new XMLSerializer(new Filter(),idBuilder);
+		if(config.getFilter().sizeFiltersByValue()>0 || config.getFilter().sizeFiltersByName()>0) {
+			
+			SerializationConfig conf = new SerializationConfig();
+			conf.setFilter(new Filter());
+			conf.setExcludes(config.getExcludes());
+			conf.setIdBuilder(config.getIdBuilder());
+			filtroInternoOggettiFiltratiDiversiByteArray = new XMLSerializer(conf);
+		}
 		
 		JsonConfig jsonConfig = new JsonConfig();
-		jsonConfig.setJsonPropertyFilter(new PropertyFilter(filter,idBuilder,filtroInternoOggettiFiltratiDiversiByteArray));
-		if(excludes!=null){
-			jsonConfig.setExcludes(excludes);
+		jsonConfig.setJsonPropertyFilter(new PropertyFilter(config.getFilter(),config.getIdBuilder(),filtroInternoOggettiFiltratiDiversiByteArray));
+		if(config.getExcludes()!=null){
+			jsonConfig.setExcludes(config.getExcludes().toArray(new String[]{}));
 		}
 		this.jsonConfig = jsonConfig;
 		this.xmlSerializer = new net.sf.json.xml.XMLSerializer();

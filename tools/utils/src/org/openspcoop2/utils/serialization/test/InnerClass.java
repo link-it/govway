@@ -3,6 +3,7 @@
  */
 package org.openspcoop2.utils.serialization.test;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Objects;
  * @version $ Rev: 12563 $, $Date: 08 mag 2018 $
  * 
  */
-public class InnerClass {
+public class InnerClass implements Serializable {
 
 	private String str;
 	private long lng;

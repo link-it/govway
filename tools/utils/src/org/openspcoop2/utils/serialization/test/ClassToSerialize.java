@@ -3,6 +3,7 @@
  */
 package org.openspcoop2.utils.serialization.test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,7 +20,7 @@ import org.bouncycastle.util.Arrays;
  * @version $ Rev: 12563 $, $Date: 08 mag 2018 $
  * 
  */
-public class ClassToSerialize {
+public class ClassToSerialize implements Serializable {
 	private String str;
 	public String getStr() {
 		return this.str;

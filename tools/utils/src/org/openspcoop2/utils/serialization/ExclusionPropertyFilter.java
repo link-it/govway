@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.serialization;
 
+import java.util.List;
 
 /**	
  * Contiene le informazioni sul filtro da effettuare durante la serializzazione
@@ -31,22 +32,17 @@ package org.openspcoop2.utils.serialization;
  */
 public class ExclusionPropertyFilter  implements net.sf.json.util.PropertyFilter {
 
-	private String[] exclusion = null;
+	private List<String> exclusion = null;
 	
-	public ExclusionPropertyFilter(String [] ex){
+	public ExclusionPropertyFilter(List<String> ex){
 		this.exclusion = ex;
 	}
 	
 	@Override
 	public boolean apply(Object source, String nomeField, Object value) {
 		
-		if(this.exclusion!=null){
-			//System.out.println("OBJECT ["+source.getClass().getName()+"] arg1["+nomeField+"]arg2 ["+value+"]");
-			for (int i = 0; i < this.exclusion.length; i++) {
-				if(this.exclusion[i].equals(nomeField)){
-					return true;
-				}
-			}
+		if(this.exclusion!=null && this.exclusion.contains(nomeField)){
+			return true;
 		}
 		
 		return false;

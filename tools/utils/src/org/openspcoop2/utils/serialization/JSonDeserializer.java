@@ -54,19 +54,23 @@ public class JSonDeserializer implements IDeserializer{
 	private List<String> morpherPackage = new ArrayList<String>();
 	private boolean throwExceptionMorpherFailed = true;
 	
-	public JSonDeserializer(){
-		this(null);
+	public JSonDeserializer() {
+		this(new SerializationConfig());
 	}
-	public JSonDeserializer(String [] excludes){		
+	
+	public JSonDeserializer(SerializationConfig config) {
 		JsonConfig jsonConfig = new JsonConfig();
-		if(excludes!=null){
+		if(config.getExcludes()!=null){
 			//jsonConfig.setExcludes(excludes); non funziona l'exclude durante la deserializzazione, uso un filtro
-			jsonConfig.setJavaPropertyFilter(new ExclusionPropertyFilter(excludes));
+			jsonConfig.setJavaPropertyFilter(new ExclusionPropertyFilter(config.getExcludes()));
 		} 
 		this.jsonConfig = jsonConfig;
 		this.addMorpherPackage("org.openspcoop2");
 	}
 	
+	/**
+	 * @param config
+	 */
 	public void addMorpherPackage(String p){
 		this.morpherPackage.add(p);
 	}
