@@ -22,7 +22,7 @@ public class CheckBoxParameter extends Parameter<Boolean> {
 	public void setValueAsString(String value) throws ParameterException{
 		if(value!=null){
 			try{
-				Class<?> c = Class.forName("org.openspcoop2.monitor.framework.ContentFormatter");
+				Class<?> c = Class.forName("org.openspcoop2.monitor.engine.ContentFormatter");
 				Method m = c.getMethod("toBoolean", String.class);
 				Boolean b = (Boolean) m.invoke(null, value);
 				this.setValue(b);
@@ -37,7 +37,7 @@ public class CheckBoxParameter extends Parameter<Boolean> {
 	public String getValueAsString() throws ParameterException{
 		if(this.getValue()!=null){
 			try{
-				Class<?> c = Class.forName("org.openspcoop2.monitor.framework.ContentFormatter");
+				Class<?> c = Class.forName("org.openspcoop2.monitor.engine.ContentFormatter");
 				Method m = c.getMethod("toString", Boolean.class);
 				String s = (String) m.invoke(null, this.getValue());
 				return s;

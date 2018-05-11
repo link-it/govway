@@ -16,6 +16,7 @@
 	<import file="./ant/openspcoop2-monitor-api-build.xml" />
 	<import file="./ant/openspcoop2-security-build.xml" />
 	<import file="./ant/openspcoop2-protocol-build.xml" />
+	<import file="./ant/openspcoop2-monitor-build.xml" />
 	<import file="./ant/openspcoop2-pdd-build.xml" />
 	<import file="./ant/openspcoop2-ear.xml" />
 	<import file="./ant/openspcoop2-war.xml" />
@@ -213,6 +214,15 @@
 			<param name="buildProtocolEngine" value="true"/>
 		</antcall>
 	</target>
+	<target name="build_openspcoop2_monitor_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_monitor_*.jar"/>
+			<fileset dir="${dist}" includes="monitor/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_monitor">
+			<param name="buildMonitorEngine" value="true"/>
+		</antcall>
+	</target>
 	<target name="build_openspcoop2_pdd_jar">
 		<delete>
 			<fileset dir="${dist}" includes="openspcoop2_pdd_*.jar"/>
@@ -223,7 +233,7 @@
 		</antcall>
 	</target>
 	<target name="build_openspcoop2_all" 
-		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,compile_openspcoop2_monitor-api,compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_pdd">
+		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,compile_openspcoop2_monitor-api,compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_monitor,compile_openspcoop2_pdd">
 	
 		<if>
 			<istrue value="${buildAPI}"/>
@@ -241,6 +251,8 @@
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.security.read}" />
 				<loadfile property="packagesCompiled.protocol.read" srcFile="${doc}/api/protocol/package-list.info"/>
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.protocol.read}" />
+				<loadfile property="packagesCompiled.monitor.read" srcFile="${doc}/api/monitor/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.monitor.read}" />
 				<loadfile property="packagesCompiled.pdd.read" srcFile="${doc}/api/pdd/package-list.info"/>
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.pdd.read}" />
 				
@@ -667,7 +679,28 @@
         </java>
 	</target>
 	
+		
 	
+	<!-- Esecuzione test -->
+	<target name="runTestConditions">
+                <if>
+                        <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+                        <then>
+                                <fail message="Parametro configDaoFactoryDir non fornito, la proprietà deve contenere una directory con il file daoFactory_local.properties ed il driver JDBC"/>
+                        </then>
+                </if>
+        <java classname="org.openspcoop2.monitor.engine.condition.TestConditions" fork="true">
+                <classpath>
+				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+                		<path refid="classpath_run_dist" />
+                		<fileset dir="${required_lib}" includes="log/*.jar"/>
+                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+                </classpath>
+        </java>
+	</target>
 	
 	
 </project>

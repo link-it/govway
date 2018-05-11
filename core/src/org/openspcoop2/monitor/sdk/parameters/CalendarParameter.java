@@ -23,7 +23,7 @@ public class CalendarParameter extends Parameter<Date> {
 	public void setValueAsString(String value) throws ParameterException{
 		if(value!=null){
 			try{
-				Class<?> c = Class.forName("org.openspcoop2.monitor.framework.ContentFormatter");
+				Class<?> c = Class.forName("org.openspcoop2.monitor.engine.ContentFormatter");
 				Method m = c.getMethod("toDate", String.class);
 				Date d = (Date) m.invoke(null, value);
 				this.setValue(d);
@@ -38,7 +38,7 @@ public class CalendarParameter extends Parameter<Date> {
 	public String getValueAsString() throws ParameterException{
 		if(this.getValue()!=null){
 			try{
-				Class<?> c = Class.forName("org.openspcoop2.monitor.framework.ContentFormatter");
+				Class<?> c = Class.forName("org.openspcoop2.monitor.engine.ContentFormatter");
 				Method m = c.getMethod("toString", Date.class);
 				String s = (String) m.invoke(null, this.getValue());
 				return s;

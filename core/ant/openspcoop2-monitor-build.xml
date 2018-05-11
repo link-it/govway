@@ -1,0 +1,65 @@
+<project name="openspcoop2-compile-monitor-engine">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.monitor.engine.*
+    </description>
+
+	<import file="${rootDir}/ant/commons/svn-build.xml" />
+	<import file="${rootDir}/ant/commons/compile-build.xml" />
+	<import file="${rootDir}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.monitor.*' -->
+	<target name="compile_openspcoop2_monitor" description="compila la libreria org.openspcoop.monitor.engine.*">
+
+		<if>
+			<istrue value="${buildMonitorEngine}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
+					
+				<!-- org.openspcoop.2.monitor.sdk -->
+				<var name="packagesCompiled" value="org.openspcoop2.monitor.engine" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.conditions" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.exceptions" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.engine.utils" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/monitor/engine"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.monitor.engine"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="monitor"/>
+				</antcall>
+				
+				<!-- Jar Complessivo API -->
+				<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="monitor"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="monitor"/>
+				</antcall>
+								
+				<!-- API -->
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="monitor"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc}/api"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+				</antcall>
+				
+			</then>
+		</if>
+			
+	</target>
+	
+</project>

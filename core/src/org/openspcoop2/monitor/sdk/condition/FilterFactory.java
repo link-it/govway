@@ -19,7 +19,7 @@ public class FilterFactory {
 	
 	public static IStatisticFilter newFilterStatisticRepository(TipiDatabase tipiDatabase,StatisticType statisticType) throws FilterFactoryException {
 		try {
-			Class<?> c = Class.forName("org.openspcoop2.monitor.framework.condition.FilterStatisticRepositoryImpl");
+			Class<?> c = Class.forName("org.openspcoop2.monitor.engine.condition.FilterStatisticRepositoryImpl");
 			Constructor<?> constructor = c.getConstructor(TipiDatabase.class,StatisticType.class);
 			return (IStatisticFilter) constructor.newInstance(tipiDatabase,statisticType);
 		} catch (Exception e) {
@@ -43,7 +43,7 @@ public class FilterFactory {
 	
 	public static IFilter newFilterTransactionRepository(TipiDatabase tipiDatabase) throws FilterFactoryException {
 		try {
-			Class<?> c = Class.forName("org.openspcoop2.monitor.framework.condition.FilterTransactionRepositoryImpl");
+			Class<?> c = Class.forName("org.openspcoop2.monitor.engine.condition.FilterTransactionRepositoryImpl");
 			Constructor<?> constructor = c.getConstructor(TipiDatabase.class);
 			return (IFilter) constructor.newInstance(tipiDatabase);
 		} catch (Exception e) {

@@ -241,19 +241,4 @@ public class DAOFactoryProperties {
 		return v;
 	}
 
-
-	// Retrocompatibilita con openspcoop1
-	private static final String PROP_BACKWARD_COMPATIBILITY_OPENSPCOOP1 = "backwardCompatibilityOpenspcoop1";
-	public boolean isBackwardCompatibilityOpenspcoop1(IProjectInfo tipoDAO) throws Exception{
-		return "true".equals(this.getBackwardCompatibilityOpenspcoop1(tipoDAO));
-	}
-
-	private String getBackwardCompatibilityOpenspcoop1(IProjectInfo tipoDAO) throws Exception {
-		String v = this.getProperty(PREFIX_FACTORY+tipoDAO.getProjectName()+"."+PROP_BACKWARD_COMPATIBILITY_OPENSPCOOP1, false, true);
-		if(v==null){
-			v = this.getProperty(PROP_BACKWARD_COMPATIBILITY_OPENSPCOOP1, true, true);
-		}
-
-		return v;
-	}
 }
