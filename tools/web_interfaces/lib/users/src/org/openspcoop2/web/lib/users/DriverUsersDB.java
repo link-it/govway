@@ -22,11 +22,15 @@
 package org.openspcoop2.web.lib.users;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import javax.sql.DataSource;
 
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
@@ -44,6 +48,10 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerProperties;
+import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -66,25 +74,217 @@ import org.slf4j.Logger;
 
 public class DriverUsersDB {
 
-	/** Connessione al Database */
-	private Connection connectionDB;
-
-	// Tipo database passato al momento della creazione dell'oggetto
-	private String tipoDB = null;
+	 private static final String LOG_DRIVER_DB_USER = "DRIVER_DB_USER";
 	
+	/** 
+	 * DataSource
+	 */
+	private DataSource datasource = null;
+	/** 
+	 * Connessione
+	 */
+	private Connection connection = null;
+	private boolean connectionOpenViaJDBCInCostructor = false;
+	/**
+	 * SQLQueryObject
+	 */
+	String tipoDatabase = null;
+	/** 
+	 * Logger
+	 */
 	private Logger log;
 
-	public DriverUsersDB(Connection con, String tipoDB, Logger log) throws DriverUsersDBException {
-		this.connectionDB = con;
-		if (con == null)
-			throw new DriverUsersDBException("Connessione al Database non definita");
-
-		this.tipoDB = tipoDB;
-		if (tipoDB == null)
-			throw new DriverUsersDBException("Il tipoDatabase non puo essere null.");
-		
-		this.log = log;
+	
+	public void close() throws DriverTracciamentoException {
+		try{
+			if(this.connectionOpenViaJDBCInCostructor){
+				if(this.connection!=null && this.connection.isClosed()==false){
+					this.connection.close();
+				}
+			}
+		}catch(Exception e){
+			throw new DriverTracciamentoException(e.getMessage(),e);
+		}
 	}
+	
+	
+	
+	public DriverUsersDB(String nomeDataSource, String tipoDatabase, Properties jndiContext) throws DriverUsersDBException {
+		this(nomeDataSource, tipoDatabase, jndiContext, null);
+	}
+	public DriverUsersDB(String nomeDataSource, String tipoDatabase, Properties jndiContext, Logger log) throws DriverUsersDBException {
+		
+		// Logger
+		try {
+			if(log==null)
+				this.log = LoggerWrapperFactory.getLogger(LOG_DRIVER_DB_USER);
+			else
+				this.log = log;
+		} catch (Exception e) {
+			throw new DriverUsersDBException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// Datasource
+		try {
+			this.log.info("Inizializzo DriverUsersDB...");
+			GestoreJNDI gestoreJNDI = new GestoreJNDI(jndiContext);
+			this.datasource = (DataSource) gestoreJNDI.lookup(nomeDataSource);
+			if (this.datasource == null)
+				throw new Exception ("datasource is null");
+
+			this.log.info("Inizializzo DriverUsersDB terminata.");
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del datasource...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del datasource...",e);
+		}
+
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+		
+	}
+	
+	public DriverUsersDB(DataSource dataSourceObject, String tipoDatabase) throws DriverUsersDBException {
+		this(dataSourceObject, tipoDatabase, null);
+	}
+	public DriverUsersDB(DataSource dataSourceObject, String tipoDatabase, Logger log) throws DriverUsersDBException {
+		
+		// Logger
+		try {
+			if(log==null)
+				this.log = LoggerWrapperFactory.getLogger(LOG_DRIVER_DB_USER);
+			else
+				this.log = log;
+		} catch (Exception e) {
+			throw new DriverUsersDBException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// Datasource
+		try {
+			this.datasource = dataSourceObject;
+			if (this.datasource == null)
+				throw new Exception ("datasource is null");
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del datasource...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del datasource...",e);
+		}
+
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+	}
+	
+	public DriverUsersDB(Connection connection, String tipoDatabase) throws DriverUsersDBException {
+		this(connection, tipoDatabase, null);
+	}
+	public DriverUsersDB(Connection connection, String tipoDatabase, Logger log) throws DriverUsersDBException {
+		
+		// Logger
+		try {
+			if(log==null)
+				this.log = LoggerWrapperFactory.getLogger(LOG_DRIVER_DB_USER);
+			else
+				this.log = log;
+		} catch (Exception e) {
+			throw new DriverUsersDBException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// connection
+		this.connection = connection;
+		
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+	}
+	
+	public DriverUsersDB(String urlJDBC,String driverJDBC,
+			String username,String password, 
+			String tipoDatabase) throws DriverUsersDBException {
+		this(urlJDBC, driverJDBC, username, password, tipoDatabase, null);
+	}
+	public DriverUsersDB(String urlJDBC,String driverJDBC,
+			String username,String password, 
+			String tipoDatabase, Logger log) throws DriverUsersDBException {
+		
+		// Logger
+		try {
+			if(log==null)
+				this.log = LoggerWrapperFactory.getLogger(LOG_DRIVER_DB_USER);
+			else
+				this.log = log;
+		} catch (Exception e) {
+			throw new DriverUsersDBException("Errore durante l'inizializzazione del logger...",e);
+		}
+
+		// connection
+		try {
+			Class.forName(driverJDBC);
+			
+			if(username!=null){
+				this.connection = DriverManager.getConnection(urlJDBC,username,password);
+			}else{
+				this.connection = DriverManager.getConnection(urlJDBC);
+			}
+			this.connectionOpenViaJDBCInCostructor = true;
+			
+		} catch (Exception e) {
+			this.log.error("Errore durante l'inizializzazione della connessione...",e);
+			throw new DriverUsersDBException("Errore durante l'inizializzazione della connessione...",e);
+		}
+		
+		// ISQLQueryObject
+		try {
+			this.log.info("Inizializzo ISQLQueryObject...");
+			if (TipiDatabase.isAMember(tipoDatabase)) {
+				this.tipoDatabase = tipoDatabase;				
+			} else {
+				throw new Exception("Tipo database non gestito");
+			}
+			this.log.info("Inizializzo ISQLQueryObject terminata.");
+
+		} catch (Exception e) {
+			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			throw new DriverUsersDBException("Errore durante la ricerca del SQLQueryObject...",e);
+		}
+		
+	}
+	
+	
+	
+
 
 	/**
 	 * Restituisce l'utente identificato da <var>login</var>
@@ -97,17 +297,27 @@ public class DriverUsersDB {
 		if (login == null)
 			throw new DriverUsersDBException("[getUser] Parametri Non Validi");
 
+		Connection connectionDB = null;
 		User user = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("login = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setString(1, login);
 			rs = stm.executeQuery();
 			if (rs.next()) {
@@ -155,13 +365,13 @@ public class DriverUsersDB {
 				throw new DriverUsersDBException("[DriverUsersDB::getUser] User [" + login + "] non esistente.");
 			
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
-			jdbcProperties.setDatabaseType(this.tipoDB);
+			jdbcProperties.setDatabaseType(this.tipoDatabase);
 			jdbcProperties.setShowSql(true);
-			JDBCServiceManager search = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
+			JDBCServiceManager search = new JDBCServiceManager(connectionDB, jdbcProperties, this.log);
 			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) search.getSoggettoServiceSearch();
 			IDBAccordoServizioParteSpecificaServiceSearch serviziSearch = (IDBAccordoServizioParteSpecificaServiceSearch) search.getAccordoServizioParteSpecificaServiceSearch();
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_STATI);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("id_utente = ?");
@@ -169,7 +379,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -183,7 +393,7 @@ public class DriverUsersDB {
 			rs.close();
 			stm.close();
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addSelectField(CostantiDB.USERS_SOGGETTI+".id_soggetto");
@@ -196,7 +406,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -208,7 +418,7 @@ public class DriverUsersDB {
 			rs.close();
 			stm.close();
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
@@ -229,7 +439,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setSortType(true);
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, user.getId());
 			rs = stm.executeQuery();
 			while (rs.next()) {
@@ -262,6 +472,10 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 
@@ -269,17 +483,27 @@ public class DriverUsersDB {
 		if (id == null || id<=0)
 			throw new DriverUsersDBException("[getUser] Parametri Non Validi");
 
+		Connection connectionDB = null;
 		User user = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("login");
 			sqlQueryObject.addWhereCondition("id = ?");
 			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, id);
 			rs = stm.executeQuery();
 			if (rs.next()) {
@@ -303,6 +527,10 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 	
@@ -310,6 +538,7 @@ public class DriverUsersDB {
 		return userList(ricerca,Liste.SU);
 	}
 	public List<User> userList(ISearch ricerca, int IDLISTA) throws DriverUsersDBException {
+		
 		String nomeMetodo = "userList";
 		int idLista = IDLISTA;
 		int offset;
@@ -321,25 +550,35 @@ public class DriverUsersDB {
 		offset = ricerca.getIndexIniziale(idLista);
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
+		Connection connectionDB = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<User> lista = new ArrayList<User>();
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
 			if (!search.equals("")) {
 				//query con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				sqlQueryObject.addWhereLikeCondition("login", search, true, true);
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectCountField("*", "cont");
 				queryString = sqlQueryObject.createSQLQuery();
 			}
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
 			if (risultato.next())
 				ricerca.setNumEntries(idLista, risultato.getInt(1));
@@ -350,7 +589,7 @@ public class DriverUsersDB {
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			if (!search.equals("")) { // con search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectField("login");
 				sqlQueryObject.addWhereLikeCondition("login", search, true, true);
@@ -361,7 +600,7 @@ public class DriverUsersDB {
 				queryString = sqlQueryObject.createSQLQuery();
 			} else {
 				// senza search
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObject.addFromTable(CostantiDB.USERS);
 				sqlQueryObject.addSelectField("login");
 				sqlQueryObject.addOrderBy("login");
@@ -370,7 +609,7 @@ public class DriverUsersDB {
 				sqlQueryObject.setOffset(offset);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			risultato = stmt.executeQuery();
 
 			User newU = null;
@@ -394,22 +633,37 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 
 	public boolean existsUser(String login) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+						
 			boolean esiste = false;
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("login = ?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setString(1, login);
 			rs = stm.executeQuery();
 			if (rs.next())
@@ -431,23 +685,39 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 
 	public List<String> getUsersByPermesso(String permesso) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
 			List<String> userWithType = new ArrayList<String>();
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereLikeCondition("permessi", permesso, true, true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			rs = stm.executeQuery();
 			while (rs.next())
 				userWithType.add(rs.getString("login"));
@@ -468,6 +738,11 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 	
@@ -476,13 +751,24 @@ public class DriverUsersDB {
 	}
 	
 	public List<String> getUsersByProtocolloSupportato(String protocollo, boolean esclusiUtentiConSoloPermessoUtente) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
 			List<String> userWithType = new ArrayList<String>();
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -496,7 +782,7 @@ public class DriverUsersDB {
 				sqlQueryObject.addWhereCondition("permessi <> ?");
 			
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			
 			if(esclusiUtentiConSoloPermessoUtente)
 				stm.setString(1, "U");
@@ -521,10 +807,17 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 
 	public void createUser(User user) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -537,7 +830,16 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::createUser] Parametro Login non valido.");
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addInsertTable(CostantiDB.USERS);
 			sqlQueryObject.addInsertField("login", "?");
 			sqlQueryObject.addInsertField("password", "?");
@@ -548,7 +850,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertField("protocollo", "?");
 			sqlQueryObject.addInsertField("multi_tenant", "?");
 			sqlQuery = sqlQueryObject.createSQLInsert();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
 			stm.setString(index++, login);
 			stm.setString(index++, user.getPassword());
@@ -564,9 +866,9 @@ public class DriverUsersDB {
 			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
 			
 				// recupero id
-				long idUser = this._getIdUser(login);
+				long idUser = this._getIdUser(connectionDB, login);
 				
-				_addListeUtente(user, idUser);
+				_addListeUtente(connectionDB, user, idUser);
 				
 			}
 			
@@ -587,10 +889,18 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null) {
+					connectionDB.close();
+				}
+			}catch(Exception eClose){}
 		}
 	}
 
 	public void updateUser(User user) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -603,7 +913,16 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::updateUser] Parametro Login non valido.");
 
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
 			sqlQueryObject.addUpdateField("password", "?");
 			sqlQueryObject.addUpdateField("tipo_interfaccia", "?");
@@ -614,7 +933,7 @@ public class DriverUsersDB {
 			sqlQueryObject.addUpdateField("multi_tenant", "?");
 			sqlQueryObject.addWhereCondition("login=?");
 			sqlQuery = sqlQueryObject.createSQLUpdate();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
 			stm.setString(index++, user.getPassword());
 			stm.setString(index++,user.getInterfaceType().toString());
@@ -627,12 +946,12 @@ public class DriverUsersDB {
 			stm.executeUpdate();
 			stm.close();
 			
-			long idUser = this._getIdUser(user);
+			long idUser = this._getIdUser(connectionDB, user);
 				
-			_deleteListeUtente(idUser);
+			_deleteListeUtente(connectionDB, idUser);
 			
 			if(user.getStati().size()>0 || user.getSoggetti().size()>0 || user.getServizi().size()>0) {
-				_addListeUtente(user, idUser);
+				_addListeUtente(connectionDB, user, idUser);
 			}
 			
 		} catch (Exception qe) {
@@ -652,10 +971,17 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 	
 	public void deleteUser(User user) throws DriverUsersDBException {
+		
+		Connection connectionDB = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -668,16 +994,24 @@ public class DriverUsersDB {
 			throw new DriverUsersDBException("[DriverUsersDB::deleteUser] Parametro Login non valido.");
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
 			
-			long idUser = this._getIdUser(user);
+			long idUser = this._getIdUser(connectionDB, user);
 			
-			_deleteListeUtente(idUser);
+			_deleteListeUtente(connectionDB, idUser);
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS);
 			sqlQueryObject.addWhereCondition("login = ?");
 			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setString(1, login);
 			stm.executeUpdate();
 			stm.close();
@@ -698,26 +1032,31 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 
 	
 	
-	private void _addListeUtente(User user, long idUser) throws Exception {
+	private void _addListeUtente(Connection connectionDB, User user, long idUser) throws Exception {
+		
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		try {
-		
 			if(user.getStati().size()>0) {
 				for (Stato stato : user.getStati()) {
 					
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 					sqlQueryObject.addInsertTable(CostantiDB.USERS_STATI);
 					sqlQueryObject.addInsertField("id_utente", "?");
 					sqlQueryObject.addInsertField("oggetto", "?");
 					sqlQueryObject.addInsertField("stato", "?");
 					String sqlQuery = sqlQueryObject.createSQLInsert();
-					stm = this.connectionDB.prepareStatement(sqlQuery);
+					stm = connectionDB.prepareStatement(sqlQuery);
 					int index = 1;
 					stm.setLong(index++, idUser);
 					stm.setString(index++, stato.getOggetto());
@@ -730,16 +1069,16 @@ public class DriverUsersDB {
 			if(user.getSoggetti().size()>0) {
 				for (IDSoggetto idSoggetto : user.getSoggetti()) {
 					
-					long idSoggettoLong = DBUtils.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo(), this.connectionDB, this.tipoDB);
+					long idSoggettoLong = DBUtils.getIdSoggetto(idSoggetto.getNome(), idSoggetto.getTipo(), connectionDB, this.tipoDatabase);
 					if(idSoggettoLong<=0) {
 						throw new Exception("Impossibile recuperare id soggetto ["+idSoggetto+"]");
 					}
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 					sqlQueryObject.addInsertTable(CostantiDB.USERS_SOGGETTI);
 					sqlQueryObject.addInsertField("id_utente", "?");
 					sqlQueryObject.addInsertField("id_soggetto", "?");
 					String sqlQuery = sqlQueryObject.createSQLInsert();
-					stm = this.connectionDB.prepareStatement(sqlQuery);
+					stm = connectionDB.prepareStatement(sqlQuery);
 					int index = 1;
 					stm.setLong(index++, idUser);
 					stm.setLong(index++, idSoggettoLong);
@@ -753,16 +1092,16 @@ public class DriverUsersDB {
 					
 					long idServizioLong = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
 							idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(), 
-							this.connectionDB, this.tipoDB);
+							connectionDB, this.tipoDatabase);
 					if(idServizioLong<=0) {
 						throw new Exception("Impossibile recuperare id soggetto ["+idServizio+"]");
 					}
-					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 					sqlQueryObject.addInsertTable(CostantiDB.USERS_SERVIZI);
 					sqlQueryObject.addInsertField("id_utente", "?");
 					sqlQueryObject.addInsertField("id_servizio", "?");
 					String sqlQuery = sqlQueryObject.createSQLInsert();
-					stm = this.connectionDB.prepareStatement(sqlQuery);
+					stm = connectionDB.prepareStatement(sqlQuery);
 					int index = 1;
 					stm.setLong(index++, idUser);
 					stm.setLong(index++, idServizioLong);
@@ -785,35 +1124,37 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
 		}
 	}
 	
-	private void _deleteListeUtente(long idUser) throws Exception {
+	private void _deleteListeUtente(Connection connectionDB, long idUser) throws Exception {
+		
 		PreparedStatement stm = null;
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS_STATI);
 			sqlQueryObject.addWhereCondition("id_utente = ?");
 			String sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, idUser);
 			stm.executeUpdate();
 			stm.close();
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS_SOGGETTI);
 			sqlQueryObject.addWhereCondition("id_utente = ?");
 			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, idUser);
 			stm.executeUpdate();
 			stm.close();
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addDeleteTable(CostantiDB.USERS_SERVIZI);
 			sqlQueryObject.addWhereCondition("id_utente = ?");
 			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setLong(1, idUser);
 			stm.executeUpdate();
 			stm.close();
@@ -829,7 +1170,7 @@ public class DriverUsersDB {
 		}
 	}
 	
-	private long _getIdUser(User user) throws Exception {
+	private long _getIdUser(Connection connectionDB, User user) throws Exception {
 		
 		if (user == null)
 			throw new DriverUsersDBException("[DriverUsersDB::_getIdUser] Parametro non valido.");
@@ -840,7 +1181,7 @@ public class DriverUsersDB {
 
 		long idUser = -1;
 		if(user.getId()==null || user.getId().longValue()<=0) {
-			idUser = this._getIdUser(login);
+			idUser = this._getIdUser(connectionDB, login);
 		}
 		else {
 			idUser = user.getId().longValue();
@@ -849,7 +1190,8 @@ public class DriverUsersDB {
 		return idUser;
 			
 	}
-	private long _getIdUser(String login) throws Exception {
+	private long _getIdUser(Connection connectionDB, String login) throws Exception {
+		
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -861,11 +1203,11 @@ public class DriverUsersDB {
 			
 			long idUser = -1;
 			// recupero id
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addWhereCondition("login = ?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = this.connectionDB.prepareStatement(sqlQuery);
+			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setString(1, login);
 			rs = stm.executeQuery();
 			if(rs.next()) {
@@ -929,15 +1271,24 @@ public class DriverUsersDB {
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterDominio : " + filterDominio);
 		
+		Connection connectionDB = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<IDServizio> lista = new ArrayList<IDServizio>();
 
 		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
 			
 			ISQLQueryObject sqlQueryObjectSoggetti = null;
 			if (!search.equals("")) {
-				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectSoggetti = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObjectSoggetti.addFromTable(CostantiDB.SOGGETTI);
 				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
 				sqlQueryObjectSoggetti.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
@@ -950,21 +1301,21 @@ public class DriverUsersDB {
 
 			ISQLQueryObject sqlQueryObjectPdd = null;
 			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
-				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
 				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
 				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
 				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
 				
-				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObjectPdd.setANDLogicOperator(false);
 				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
 			}
 			
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addSelectCountField("*", "cont");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SERVIZI);
@@ -1000,7 +1351,7 @@ public class DriverUsersDB {
 			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			int index = 1;
 			stmt.setString(index++, login);
 			if(pddTipologia!=null) {
@@ -1016,7 +1367,7 @@ public class DriverUsersDB {
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addSelectField(CostantiDB.USERS_SERVIZI+".id_servizio");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".tipo_servizio");
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI+".nome_servizio");
@@ -1065,7 +1416,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setOffset(offset);
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			index = 1;
 			stmt.setString(index++, login);
 			if(pddTipologia!=null) {
@@ -1074,9 +1425,9 @@ public class DriverUsersDB {
 			risultato = stmt.executeQuery();
 			
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
-			jdbcProperties.setDatabaseType(this.tipoDB);
+			jdbcProperties.setDatabaseType(this.tipoDatabase);
 			jdbcProperties.setShowSql(true);
-			JDBCServiceManager manager = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
+			JDBCServiceManager manager = new JDBCServiceManager(connectionDB, jdbcProperties, this.log);
 //			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) manager.getSoggettoServiceSearch();
 			IDBAccordoServizioParteSpecificaServiceSearch serviziSearch = (IDBAccordoServizioParteSpecificaServiceSearch) manager.getAccordoServizioParteSpecificaServiceSearch();
 			
@@ -1106,6 +1457,11 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 	
@@ -1142,29 +1498,39 @@ public class DriverUsersDB {
 		this.log.debug("filterProtocolli : " + filterProtocolli);
 		this.log.debug("filterDominio : " + filterDominio);
 		
+		Connection connectionDB = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<IDSoggetto> lista = new ArrayList<IDSoggetto>();
 
 		try {
 			
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
 			ISQLQueryObject sqlQueryObjectPdd = null;
 			if(pddTipologia!=null && PddTipologia.ESTERNO.equals(pddTipologia)) {
-				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				ISQLQueryObject sqlQueryObjectExistsPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObjectExistsPdd.addSelectField(CostantiDB.PDD+".nome");
 				sqlQueryObjectExistsPdd.addFromTable(CostantiDB.PDD);
 				sqlQueryObjectExistsPdd.setANDLogicOperator(true);
 				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".nome="+CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectExistsPdd.addWhereCondition(CostantiDB.PDD+".tipo=?");
 				
-				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObjectPdd = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 				sqlQueryObjectPdd.setANDLogicOperator(false);
 				sqlQueryObjectPdd.addWhereIsNullCondition(CostantiDB.SOGGETTI+".server");
 				sqlQueryObjectPdd.addWhereExistsCondition(false, sqlQueryObjectExistsPdd);
 			}
 			
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addSelectCountField("*", "cont");
 			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addFromTable(CostantiDB.USERS_SOGGETTI);
@@ -1193,7 +1559,7 @@ public class DriverUsersDB {
 			
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			int index = 1;
 			stmt.setString(index++, login);
 			if(pddTipologia!=null) {
@@ -1209,7 +1575,7 @@ public class DriverUsersDB {
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
 			
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addSelectField(CostantiDB.USERS_SOGGETTI+".id_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
@@ -1244,7 +1610,7 @@ public class DriverUsersDB {
 			sqlQueryObject.setOffset(offset);
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
-			stmt = this.connectionDB.prepareStatement(queryString);
+			stmt = connectionDB.prepareStatement(queryString);
 			index = 1;
 			stmt.setString(index++, login);
 			if(pddTipologia!=null) {
@@ -1253,9 +1619,9 @@ public class DriverUsersDB {
 			risultato = stmt.executeQuery();
 			
 			JDBCServiceManagerProperties jdbcProperties = new JDBCServiceManagerProperties();
-			jdbcProperties.setDatabaseType(this.tipoDB);
+			jdbcProperties.setDatabaseType(this.tipoDatabase);
 			jdbcProperties.setShowSql(true);
-			JDBCServiceManager manager = new JDBCServiceManager(this.connectionDB, jdbcProperties, this.log);
+			JDBCServiceManager manager = new JDBCServiceManager(connectionDB, jdbcProperties, this.log);
 			IDBSoggettoServiceSearch soggettiSearch = (IDBSoggettoServiceSearch) manager.getSoggettoServiceSearch();
 			
 			while (risultato.next()) {
@@ -1280,6 +1646,11 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				//ignore
 			}
+			
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
 		}
 	}
 }
