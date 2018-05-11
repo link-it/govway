@@ -125,27 +125,27 @@ public enum RuoloTransazione implements Serializable{
 		
 		//System.out.println("VALORE DA CONVERTIRE ["+val+"]");
 		
-		if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(val)){
+		if(org.openspcoop2.core.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.INVOCAZIONE_ONEWAY+"]");
 			return RuoloTransazione.INVOCAZIONE_ONEWAY;
 		}
-		else if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO.equals(val)){
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.INVOCAZIONE_SINCRONA+"]");
 			return RuoloTransazione.INVOCAZIONE_SINCRONA;
 		}
-		else if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO.equals(val)){
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.INVOCAZIONE_ASINCRONA_SIMMETRICA+"]");
 			return RuoloTransazione.INVOCAZIONE_ASINCRONA_SIMMETRICA;
 		}
-		else if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(val)){
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.RISPOSTA_ASINCRONA_SIMMETRICA+"]");
 			return RuoloTransazione.RISPOSTA_ASINCRONA_SIMMETRICA;
 		}
-		else if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO.equals(val)){
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.INVOCAZIONE_ASINCRONA_ASIMMETRICA+"]");
 			return RuoloTransazione.INVOCAZIONE_ASINCRONA_ASIMMETRICA;
 		}
-		else if(org.openspcoop2.protocol.engine.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(val)){
+		else if(org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(val)){
 			//System.out.println("RITORNO ["+RuoloTransazione.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA+"]");
 			return RuoloTransazione.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA;
 		}

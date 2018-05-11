@@ -130,19 +130,19 @@ public class Costanti {
     public final static int GESTIONE_SERIALIZABLE_CHECK_INTERVAL = 100; 
 	
     /** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO = "OneWay_InvocazioneServizio";
+	public final static String SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO = "Sincrono_InvocazioneServizio";
+	public final static String SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO = "AsincronoSimmetrico_InvocazioneServizio";
+	public final static String SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA = "AsincronoSimmetrico_ConsegnaRisposta";
+	public final static String SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO = "AsincronoAsimmetrico_InvocazioneServizio";
+	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = "AsincronoAsimmetrico_Polling";
+	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = org.openspcoop2.core.constants.Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING;
 	/** Variabile che indica un tipo di scenario gestito */
-	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = "ConsegnaContenutiApplicativi";
+	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = org.openspcoop2.core.constants.Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI;
 
     
     

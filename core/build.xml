@@ -13,6 +13,7 @@
 	<import file="./ant/openspcoop2-message-build.xml" />
 	<import file="./ant/openspcoop2-core-build.xml" />
 	<import file="./ant/openspcoop2-protocol-api-build.xml" />
+	<import file="./ant/openspcoop2-monitor-api-build.xml" />
 	<import file="./ant/openspcoop2-security-build.xml" />
 	<import file="./ant/openspcoop2-protocol-build.xml" />
 	<import file="./ant/openspcoop2-pdd-build.xml" />
@@ -185,6 +186,15 @@
 			<param name="buildProtocolAPI" value="true"/>
 		</antcall>
 	</target>
+	<target name="build_openspcoop2_monitor-api_jar">
+		<delete>
+			<fileset dir="${dist}" includes="openspcoop2_monitor-api_*.jar"/>
+			<fileset dir="${dist}" includes="monitor-api/*"/>
+		</delete>
+		<antcall target="compile_openspcoop2_monitor-api">
+			<param name="buildMonitorAPI" value="true"/>
+		</antcall>
+	</target>
 	<target name="build_openspcoop2_security_jar">
 		<delete>
 			<fileset dir="${dist}" includes="openspcoop2_security_*.jar"/>
@@ -213,8 +223,7 @@
 		</antcall>
 	</target>
 	<target name="build_openspcoop2_all" 
-		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,
-			     compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_pdd">
+		depends="init_compile,compile_openspcoop2_schemi,compile_openspcoop2_message,compile_openspcoop2_core,compile_openspcoop2_protocol-api,compile_openspcoop2_monitor-api,compile_openspcoop2_security,compile_openspcoop2_protocol,compile_openspcoop2_pdd">
 	
 		<if>
 			<istrue value="${buildAPI}"/>
@@ -226,6 +235,8 @@
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.core.read}" />
 				<loadfile property="packagesCompiled.protocol-api.read" srcFile="${doc}/api/protocol-api/package-list.info"/>
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.protocol-api.read}" />
+				<loadfile property="packagesCompiled.monitor-api.read" srcFile="${doc}/api/monitor-api/package-list.info"/>
+				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.monitor-api.read}" />
 				<loadfile property="packagesCompiled.security.read" srcFile="${doc}/api/security/package-list.info"/>
 				<var name="packagesCompiled" value="${packagesCompiled},${packagesCompiled.security.read}" />
 				<loadfile property="packagesCompiled.protocol.read" srcFile="${doc}/api/protocol/package-list.info"/>

@@ -103,4 +103,20 @@ public class Costanti {
 	
 	public static final String MAPPING_EROGAZIONE_PA_NOME_DEFAULT = "__qualsiasi__";
 	public static final String MAPPING_FRUIZIONE_PD_NOME_DEFAULT = "__qualsiasi__";
+	
+	
+    /** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO = "OneWay_InvocazioneServizio";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO = "Sincrono_InvocazioneServizio";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO = "AsincronoSimmetrico_InvocazioneServizio";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA = "AsincronoSimmetrico_ConsegnaRisposta";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO = "AsincronoAsimmetrico_InvocazioneServizio";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_ASINCRONO_ASIMMETRICO_POLLING = "AsincronoAsimmetrico_Polling";
+	/** Variabile che indica un tipo di scenario gestito */
+	public final static String SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI = "ConsegnaContenutiApplicativi";
 }
