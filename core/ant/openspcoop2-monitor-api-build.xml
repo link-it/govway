@@ -33,6 +33,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.exceptions" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.parameters" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.plugins" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.statistic" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.monitor.sdk.transaction" />
 				<antcall target="compile_src_openspcoop2">
