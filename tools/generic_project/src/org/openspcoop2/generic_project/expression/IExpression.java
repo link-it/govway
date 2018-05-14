@@ -87,7 +87,7 @@ public interface IExpression {
 
 	/**
 	 * Create an expression of inequality
-	 * Example:  (field <> value)
+	 * Example:  (field != value)
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -110,7 +110,7 @@ public interface IExpression {
 	/**
 	 * Create an expression of inequality to each resource in the collection of the keys of the Map
 	 * Use the conjunction "AND" for all expressions
-	 * Example:  ( field[0]<>values[0] AND field[1]<>values[1] ..... AND field[N]<>values[N] )
+	 * Example:  ( field[0]!=values[0] AND field[1]!=values[1] ..... AND field[N]!=values[N] )
 	 * 
 	 * @param propertyNameValues Map that contains identifiers and their values
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -133,7 +133,7 @@ public interface IExpression {
 	/**
 	 * Create an expression of inequality to each resource in the collection of the keys of the Map
 	 * Use the conjunction defined by <var>andConjunction</var> for all expressions
-	 * Example:  ( field[0]<>values[0] <var>andConjunction</var> field[1]<>values[1] ..... <var>andConjunction</var> field[N]<>values[N] )
+	 * Example:  ( field[0]!=values[0] <var>andConjunction</var> field[1]!=values[1] ..... <var>andConjunction</var> field[N]!=values[N] )
 	 * 
 	 * @param propertyNameValues Map that contains identifiers and their values
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -144,7 +144,7 @@ public interface IExpression {
 
 	/**
 	 * Create an expression "greaterThan"
-	 * Example:  (field > value)
+	 * Example:  (field &gt; value)
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -156,7 +156,7 @@ public interface IExpression {
 	
 	/**
 	 * Create an expression "greaterEquals"
-	 * Example:  (field >= value)
+	 * Example:  (field &gt;= value)
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -168,7 +168,7 @@ public interface IExpression {
 	
 	/**
 	 * Create an expression "lessThan"
-	 * Example:  (field < value)
+	 * Example:  (field &lt; value)
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -180,7 +180,7 @@ public interface IExpression {
 	
 	/**
 	 * Create an expression "lessEquals"
-	 * Example:  (field <= value)
+	 * Example:  (field &lt;= value)
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -227,7 +227,7 @@ public interface IExpression {
 	
 	/**
 	 * Create an expression "is not empty"
-	 * Example:  ( field <> '' )
+	 * Example:  ( field != '' )
 	 * 
 	 * @param field Resource identifier
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -272,10 +272,10 @@ public interface IExpression {
 	/**
 	 * Create an expression "like"
 	 * Example:  
-	 * 	 LikeMode.ANYWHERE -> ( field like '%value%' )
-	 *   LikeMode.EXACT -> ( field like 'value' )
-	 *   LikeMode.END -> ( field like '%value' )
-	 *   LikeMode.START -> ( field like 'value%' )
+	 * 	 LikeMode.ANYWHERE -&gt; ( field like '%value%' )
+	 *   LikeMode.EXACT -&gt; ( field like 'value' )
+	 *   LikeMode.END -&gt; ( field like '%value' )
+	 *   LikeMode.START -&gt; ( field like 'value%' )
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value
@@ -299,10 +299,10 @@ public interface IExpression {
 	/**
 	 * Create an expression "like" case-insensitive
 	 * Example:  
-	 *   LikeMode.ANYWHERE -> ( toLower(field) like '%toLower(value)%' )
-	 *   LikeMode.EXACT -> ( toLower(field) like 'toLower(value)' )
-	 *   LikeMode.END -> ( toLower(field) like '%toLower(value)' )
-	 *   LikeMode.START -> ( toLower(field) like 'toLower(value)%' )
+	 *   LikeMode.ANYWHERE -&gt; ( toLower(field) like '%toLower(value)%' )
+	 *   LikeMode.EXACT -&gt; ( toLower(field) like 'toLower(value)' )
+	 *   LikeMode.END -&gt; ( toLower(field) like '%toLower(value)' )
+	 *   LikeMode.START -&gt; ( toLower(field) like 'toLower(value)%' )
 	 * 
 	 * @param field Resource identifier
 	 * @param value Value

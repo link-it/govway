@@ -655,7 +655,7 @@ public final class PorteApplicativeAdd extends Action {
 				pa.setAzione(null);
 
 			pa.setStatoMessageSecurity(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO);
-			pa.setIdSoggetto(new Long(soggInt));
+			pa.setIdSoggetto(Long.valueOf(soggInt));
 
 			ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();
 			vx.setStato(StatoFunzionalitaConWarning.toEnumConstant(statoValidazione));

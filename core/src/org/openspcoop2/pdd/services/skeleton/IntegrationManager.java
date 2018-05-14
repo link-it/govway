@@ -1044,7 +1044,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 
 			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
-			imResponseContext.setDimensioneMessaggioBytes(new Long(msgReturn.getMessage().length));
+			imResponseContext.setDimensioneMessaggioBytes(Long.valueOf(msgReturn.getMessage().length));
 			
 			return msgReturn;
 

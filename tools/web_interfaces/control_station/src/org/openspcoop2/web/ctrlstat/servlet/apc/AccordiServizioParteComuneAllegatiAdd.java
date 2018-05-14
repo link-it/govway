@@ -106,7 +106,7 @@ public final class AccordiServizioParteComuneAllegatiAdd extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordoInt));
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			String[] ruoli = null;

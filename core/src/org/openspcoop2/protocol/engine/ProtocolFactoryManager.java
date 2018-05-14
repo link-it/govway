@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.slf4j.Logger;
 
@@ -1074,8 +1075,7 @@ public class ProtocolFactoryManager {
 		String factoryClass = null;
 		try{
 			factoryClass = openspcoop2Manifest.getProtocol().getFactory();
-			Class<?> c = Class.forName(factoryClass);
-			IProtocolFactory<?> p = (IProtocolFactory<?>) c.newInstance();
+			IProtocolFactory<?> p = (IProtocolFactory<?>) ClassLoaderUtilities.newInstance(factoryClass);
 			return  p;
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile caricare la factory indicata ["+factoryClass+"] " + e, e);

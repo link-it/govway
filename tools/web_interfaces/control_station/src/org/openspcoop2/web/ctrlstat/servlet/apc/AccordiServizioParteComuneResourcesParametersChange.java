@@ -127,7 +127,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
@@ -300,7 +300,7 @@ public final class AccordiServizioParteComuneResourcesParametersChange extends A
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei nuovi port-type
-			as = apcCore.getAccordoServizio(new Long(idInt));
+			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

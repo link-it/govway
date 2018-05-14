@@ -1560,7 +1560,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,pIdSogg,pIdPorta, pIdAsps);
 
 				if (contaListe) {
-					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES,new Long(numProprProt));
+					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES,Long.valueOf(numProprProt));
 				} else
 					ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 
@@ -1612,7 +1612,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			de.setType(DataElementType.LINK);
 			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_LIST,pIdSogg,pIdPorta,pNomePorta, pIdAsps);
 			if (contaListe) {
-				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA,new Long(numCorrelazioneReq));
+				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA,Long.valueOf(numCorrelazioneReq));
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 
@@ -1622,7 +1622,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			de.setType(DataElementType.LINK);
 			de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE_LIST,pIdSogg,pIdPorta,pNomePorta, pIdAsps);
 			if (contaListe) {
-				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA,new Long(numCorrelazioneRes));
+				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA,Long.valueOf(numCorrelazioneRes));
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
@@ -2026,7 +2026,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST, pIdSogg, pIdPorta, pIdAsps);
 					if (contaListe) {
 						int numSA = pa.sizeServizioApplicativoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSA));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -2124,7 +2124,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {
 							int numProp = pa.sizeProprietaList();
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numProp));
+							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numProp));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
@@ -2186,7 +2186,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 								);
 						if (contaListe) {
 							int numExtended = extendedServletList.sizeList(pa);
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);

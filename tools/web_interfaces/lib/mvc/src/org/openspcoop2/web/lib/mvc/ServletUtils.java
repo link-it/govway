@@ -20,6 +20,7 @@
 
 package org.openspcoop2.web.lib.mvc;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Vector;
 
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -339,10 +341,10 @@ public class ServletUtils {
 		return (PageData) session.getAttribute(Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
 
-	public static ISearch getSearchObjectFromSession(HttpSession session, Class<?> searchImpl) throws InstantiationException, IllegalAccessException{
+	public static ISearch getSearchObjectFromSession(HttpSession session, Class<?> searchImpl) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		ISearch ricerca = (ISearch) session.getAttribute(Costanti.SESSION_ATTRIBUTE_RICERCA);
 		if (ricerca == null) {
-			ricerca = (ISearch) searchImpl.newInstance();
+			ricerca = (ISearch) ClassLoaderUtilities.newInstance(searchImpl);
 		}
 		return ricerca;
 	}

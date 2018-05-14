@@ -93,7 +93,7 @@ public final class AccordiCooperazioneAllegatiView extends Action {
 			acHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(new Long(idAccordoInt));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(idAccordoInt));
 			String titleAS = acHelper.getLabelIdAccordoCooperazione(ac);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);

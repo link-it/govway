@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.serialization.FilteredObject;
 import org.openspcoop2.utils.serialization.IDBuilder;
 import org.openspcoop2.web.lib.audit.AuditException;
@@ -73,7 +74,7 @@ public class AuditAppender {
 				// Istanzio appender
 				Appender appenderConf = AuditAppender.configurazioneAuditing.getAppender(i);
 				Class<?> c = Class.forName(appenderConf.getClassName());
-				IAuditAppender appender = (IAuditAppender) c.newInstance();
+				IAuditAppender appender = (IAuditAppender) ClassLoaderUtilities.newInstance(c);
 				
 				// Inizializzo appender
 				Properties propertiesAppender = new Properties();
@@ -104,7 +105,7 @@ public class AuditAppender {
 					// Istanzio appender
 					Appender appenderConf = AuditAppender.configurazioneAuditing.getAppender(i);
 					Class<?> c = Class.forName(appenderConf.getClassName());
-					IAuditAppender appender = (IAuditAppender) c.newInstance();
+					IAuditAppender appender = (IAuditAppender) ClassLoaderUtilities.newInstance(c);
 					
 					// Inizializzo appender
 					Properties propertiesAppender = new Properties();

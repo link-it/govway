@@ -52,6 +52,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -162,7 +163,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		// Connection
 		try{
 			this.log.info("Inizializzo DriverMonitoraggioDB...");
-			Class.forName(driverJDBC).newInstance();
+			ClassLoaderUtilities.newInstance(driverJDBC);
 			if(username!=null){
 				this.globalConnection = DriverManager.getConnection(connectionUrl,username,password);
 			}else{

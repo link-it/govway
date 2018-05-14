@@ -2249,7 +2249,7 @@ public class ConsoleHelper {
 		de.setUrl(urlRichiesta);
 
 		if (contaListe) {
-			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA,new Long(numCorrelazioneReq));
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA,Long.valueOf(numCorrelazioneReq));
 		} else
 			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 
@@ -2267,7 +2267,7 @@ public class ConsoleHelper {
 		de.setUrl(urlRisposta);
 
 		if (contaListe) {
-			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA,new Long(numCorrelazioneRes));
+			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA,Long.valueOf(numCorrelazioneRes));
 		} else
 			ServletUtils.setDataElementCustomLabel(de,CostantiControlStation.LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
@@ -3138,13 +3138,13 @@ public class ConsoleHelper {
 							labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
 						}
 						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,new Long(numAutenticati));
+							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numAutenticati));
 						} else
 							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
 					}
 					else{
 						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,new Long(numAutenticati));
+							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,Long.valueOf(numAutenticati));
 						} else
 							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
 					}
@@ -3239,7 +3239,7 @@ public class ConsoleHelper {
 					de.setType(DataElementType.LINK);
 					de.setUrl(urlAutorizzazioneRuoli);
 					if (contaListe) {
-						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,new Long(numRuoli));
+						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
 					} else
 						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
 					dati.addElement(de);

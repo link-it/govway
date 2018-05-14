@@ -360,7 +360,7 @@ public class DataElement {
 	/**
 	 * Il tooltip da visualizzare quando si passa con il mouse
 	 * su di un link, se il tooltip non e' impostato e il valore del campo value
-	 * e' > size allora il link viene troncato e viene 
+	 * e' &gt; size allora il link viene troncato e viene 
 	 * impostato come tooltip il valore originale di value
 	 * @param toolTip
 	 */

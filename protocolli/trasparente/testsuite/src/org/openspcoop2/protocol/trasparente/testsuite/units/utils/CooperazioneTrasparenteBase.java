@@ -64,7 +64,7 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 				}
-				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] del servizio applicativo ( BasicUsername") ) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] in corso ( BasicUsername") ) {
 					Reporter.log("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 				}
@@ -105,7 +105,7 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 				}
-				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] del servizio applicativo ( BasicUsername") ) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] in corso ( BasicUsername") ) {
 					Reporter.log("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 				}

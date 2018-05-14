@@ -34,7 +34,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" minOccurs="0" maxOccurs="1" default="(RuoloContesto) RuoloContesto.toEnumConstantFromString("qualsiasi")" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
@@ -170,7 +170,7 @@ public class SearchFilterRuolo extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="orCondition",required=false,nillable=false,defaultValue="false")
-	private Boolean orCondition = new Boolean("false");
+	private Boolean orCondition = Boolean.valueOf("false");
 	
 	public void setOrCondition(Boolean orCondition){
 		this.orCondition = orCondition;

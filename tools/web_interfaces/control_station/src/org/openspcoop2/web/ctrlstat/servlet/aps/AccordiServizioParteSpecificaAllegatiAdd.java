@@ -107,7 +107,7 @@ public final class AccordiServizioParteSpecificaAllegatiAdd extends Action {
 			apsHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idServizioInt));
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idServizioInt));
 
 			String tmpTitle = apsHelper.getLabelIdServizio(asps);
 

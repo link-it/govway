@@ -159,10 +159,12 @@ public abstract class AbstractErrorGenerator {
 	}
 	
 	public OpenSPCoop2Message buildFault(Exception e){
+		//this.log.error(e.getMessage(),e);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
 		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, e);
 	}
 	public OpenSPCoop2Message buildFault(String errore){
+		//this.log.error(errore);
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
 		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, errore);
 	}

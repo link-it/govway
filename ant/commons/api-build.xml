@@ -67,9 +67,12 @@
 					<bottom>
 						<![CDATA[<i>Copyright 2005-2018 Link.it srl, http://link.it.</i>]]>
 					</bottom>
+<!--
+					Non funziona da java 9
 					<bootclasspath>
 						<path refid="classpath_jre" />
 					</bootclasspath>
+-->
 					<classpath>
 						<path refid="classpath_compile" />
 						<path refid="classpath_dist" />

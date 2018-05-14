@@ -72,6 +72,7 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -79,6 +80,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolver;
 import com.sun.xml.wss.core.SignatureHeaderBlock;
 
 
@@ -279,7 +281,12 @@ public class SignPartialMessageProcessor implements Processor {
         if(this.useXMLSec){
         	sigXMLSec.addResourceResolver(org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver.getInstance(this.message));
         }else{
-        	sigSUN.addResourceResolver(org.openspcoop2.security.message.signature.SunEnvelopeIdResolver.getInstance(this.message));
+        	try {
+        		// Uso la reflection poiche' da java 9 la classe usata in SunEnvelopeIdResolver non esiste piu' e quindi la classe non viene compilata tra quelle di openspcoop (esclusa nel build)
+        		sigSUN.addResourceResolver((ResourceResolver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver",this.message));
+        	}catch(Exception e) {
+        		throw new SecurityFailureException(e.getMessage(),e);
+        	}
         }
         signAttachments(this.signAttachments, signReq, sigSUN, sigXMLSec);
         

@@ -41,14 +41,14 @@ public class ClassLoaderUtilities {
 		return Loader.getInstance().newInstance(c);
 	}
 	
-	public Object newInstance(String className,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+	public static Object newInstance(String className,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
 		return Loader.getInstance().newInstance(className,params);
 	}
-	public Object newInstance(Class<?> c,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+	public static Object newInstance(Class<?> c,Object ... params) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SecurityException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
 		return Loader.getInstance().newInstance(c,params);
 	}
 	
-	public Class<?> forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+	public static Class<?> forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		return Loader.getInstance().forName(className);
 	}
 

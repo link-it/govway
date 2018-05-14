@@ -362,7 +362,7 @@ public final class AccordiServizioParteComuneAzioniAdd extends Action {
 				profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(profcoll);
 
 			Azione newAz = new Azione();
-			newAz.setIdAccordo(new Long(idAccordo));
+			newAz.setIdAccordo(Long.valueOf(idAccordo));
 			newAz.setNome(nomeaz);
 			if (!azicorr.equals("-"))
 				newAz.setCorrelata(azicorr);

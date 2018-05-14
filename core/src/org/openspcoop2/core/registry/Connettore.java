@@ -208,7 +208,7 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="custom",required=false)
-  protected Boolean custom = new Boolean("false");
+  protected Boolean custom = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=false)

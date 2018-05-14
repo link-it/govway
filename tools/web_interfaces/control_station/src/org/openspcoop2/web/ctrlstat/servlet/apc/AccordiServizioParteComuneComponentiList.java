@@ -79,7 +79,7 @@ public final class AccordiServizioParteComuneComponentiList extends Action {
 
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoServizio));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordoServizio));
 
 			// Preparo il menu
 			apcHelper.makeMenu();

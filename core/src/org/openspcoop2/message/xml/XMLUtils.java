@@ -52,7 +52,7 @@ public class XMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
 	@Override
 	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException {
 		try{
-			return (DocumentBuilderFactory) Loader.getInstance().forName(OpenSPCoop2MessageFactory.getMessageFactory().getDocumentBuilderFactoryClass()).newInstance();
+			return (DocumentBuilderFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.getMessageFactory().getDocumentBuilderFactoryClass());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

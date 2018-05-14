@@ -2327,7 +2327,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_EXTENDED_LIST, pIdPorta,pIdNome,pIdPorta, pIdSogg);
 					if (contaListe) {
 						int numExtended = extendedServletList.sizeList(paAssociata);
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -2610,7 +2610,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							);
 					if (contaListe) {
 						int numSA = pd.sizeServizioApplicativoList();
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSA));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 				}
@@ -2632,7 +2632,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(pd.getRuoli()!=null){
 							numSA= pd.getRuoli().sizeRuoloList();
 						}
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSA));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSA));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 				}
@@ -2696,7 +2696,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					int numCorrelazione = 0;
 					if (pd.getCorrelazioneApplicativa() != null)
 						numCorrelazione = pd.getCorrelazioneApplicativa().sizeElementoList();
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
+					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numCorrelazione));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 				e.addElement(de);
@@ -2711,7 +2711,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					int numCorrelazione = 0;
 					if (pd.getCorrelazioneApplicativaRisposta() != null)
 						numCorrelazione = pd.getCorrelazioneApplicativaRisposta().sizeElementoList();
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numCorrelazione));
+					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numCorrelazione));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 				e.addElement(de);
@@ -2725,7 +2725,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							);
 					if (contaListe) {
 						int numExtended = extendedServletList.sizeList(pd);
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);
@@ -3161,7 +3161,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_EXTENDED_LIST, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 					if (contaListe) {
 						int numExtended = extendedServletList.sizeList(pdAssociata);
-						ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+						ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);

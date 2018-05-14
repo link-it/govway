@@ -130,7 +130,7 @@ public class Allegato implements java.io.Serializable {
 
 		Allegato clone = new Allegato();
 
-		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
 		clone.setContentId(this.getContentId()!=null ? new String(this.getContentId()) : null);
 		clone.setContentLocation(this.getContentLocation()!=null ? new String(this.getContentLocation()) : null);
 		clone.setContentType(this.getContentType()!=null ? new String(this.getContentType()) : null);

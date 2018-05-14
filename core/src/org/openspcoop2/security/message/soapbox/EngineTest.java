@@ -53,6 +53,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.engine.MessageUtilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * EngineTest
@@ -194,7 +195,8 @@ public class EngineTest {
 			// MANTENERE QUESTA POSSIBILITA CON DOCUMENTAZIONE openspcoop2Message.getSOAPPart().getDomConfig().get
 			
 			// Signature
-			org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor signMsgProc = (SignPartialMessageProcessor) Class.forName(openspcoop2Message.getSignPartialMessageProcessorClass()).newInstance();
+			org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor signMsgProc = (SignPartialMessageProcessor) 
+					ClassLoaderUtilities.newInstance(openspcoop2Message.getSignPartialMessageProcessorClass());
 			signMsgProc.setActor(actorWSS);
 			signMsgProc.setMustUnderstand(mustUnderstand);
 			signMsgProc.setMessage(openspcoop2Message);
@@ -243,7 +245,8 @@ public class EngineTest {
 			
 			// ************* Creo Motori per la gestione PA *********************
 			
-			org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(openspcoop2Message.getProcessPartialEncryptedMessageClass()).newInstance();
+			org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage decryptMsgProc = (ProcessPartialEncryptedMessage) 
+					ClassLoaderUtilities.newInstance(openspcoop2Message.getProcessPartialEncryptedMessageClass());
 			decryptMsgProc.setActor(actorWSS);
 			decryptMsgProc.setMustUnderstand(mustUnderstand);
 			decryptMsgProc.setMessage(openspcoop2Message);

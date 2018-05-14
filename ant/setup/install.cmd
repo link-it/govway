@@ -43,12 +43,12 @@ REM # JGoodies Look And Feel
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jgoodies-edited-1_2_2.jar
 
 REM # minimal ANT classpath requirements
-set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-1.9.7.jar
-set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-launcher-1.9.7.jar
+set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-1.9.8.jar
+set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-launcher-1.9.8.jar
 set CLASSPATH=%CLASSPATH%;%ROOT_OPENSPCOOP%\ant\setup\deploy\resources
 
 REM # minimal regular expression env
-set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-apache-regexp-1.9.7.jar
+set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-apache-regexp-1.9.8.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jakarta-regexp-1.5.jar
 
 del ant.install.properties

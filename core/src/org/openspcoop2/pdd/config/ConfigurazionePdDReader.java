@@ -3541,7 +3541,7 @@ public class ConfigurazionePdDReader {
 			else{
 				Long longValue = null;
 				try{
-					longValue = new Long(configurazione.getInoltroBusteNonRiscontrate().getCadenza());
+					longValue = Long.valueOf(configurazione.getInoltroBusteNonRiscontrate().getCadenza());
 				}catch(Exception e){
 					//	Conversione fallita
 				}

@@ -40,6 +40,6 @@ public class CostantiThreads {
 	
 	public static final String CODA_TYPE = "array";
 	public static final int CODA_DEPTH = 25;
-	public static final Long ATTESA_PRODUCER = new Long(200);
+	public static final Long ATTESA_PRODUCER = 200l;
 	
 }

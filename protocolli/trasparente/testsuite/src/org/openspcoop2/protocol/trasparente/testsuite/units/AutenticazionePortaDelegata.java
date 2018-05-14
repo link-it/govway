@@ -124,7 +124,7 @@ public class AutenticazionePortaDelegata {
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/openspcoop2/keys/client2_trasparente.jks", "openspcoopjks", "openspcoop"), 
 							null, -1,true, 200}, // crendeziali corrette
 				{CredenzialiInvocazione.getAutenticazioneSsl("/etc/openspcoop2/keys/client3_trasparente.jks", "openspcoopjks", "openspcoop"), 
-					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(), true, 500} // credenziali errate (non registrate sul registro)
+								null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
 		};
 	}
 	@Test(groups={AutenticazionePortaDelegata.ID_GRUPPO,AutenticazionePortaDelegata.ID_GRUPPO+".SSL"},dataProvider="sslProvider")
@@ -171,7 +171,7 @@ public class AutenticazionePortaDelegata {
 				{CredenzialiInvocazione.getAutenticazioneBasic("esempioFruitoreTrasparentePrincipal1", "Op3nSPC@@p2"), 
 					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE,	CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(),true, 500},// nessuna credenziale (non si passa tramite il container e il principal non viene valorizzato)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("esempioFruitoreTrasparentePrincipal3", "Op3nSPC@@p2"), 
-					CostantiTestSuite.MESSAGGIO_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_CORRETTE,CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.getCodice(), true, 500}, // credenziali errate (non registrate sul registro)
+					null,-1, true, 200}, // credenziali corrette (anche se non registrate sul registro)
 				{CredenzialiInvocazione.getAutenticazionePrincipal("credenzialeErrata", "credenzialeErrata"), 
 						null, -1,true, 401} // credenziali errate (non registrate nel container)
 		};

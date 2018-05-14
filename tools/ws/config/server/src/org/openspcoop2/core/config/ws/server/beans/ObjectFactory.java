@@ -49,24 +49,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link IdEntity }
+     * Create an instance of {@link WrapperIdSoggetto }
      */
-    public IdEntity createIdEntity() {
-        return new IdEntity();
-    }
-    
-    /**
-     * Create an instance of {@link InUseCondition }
-     */
-    public InUseCondition createInUseCondition() {
-        return new InUseCondition();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdServizioApplicativo }
-     */
-    public WrapperIdServizioApplicativo createWrapperIdServizioApplicativo() {
-        return new WrapperIdServizioApplicativo();
+    public WrapperIdSoggetto createWrapperIdSoggetto() {
+        return new WrapperIdSoggetto();
     }
     
     /**
@@ -77,6 +63,20 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link IdEntity }
+     */
+    public IdEntity createIdEntity() {
+        return new IdEntity();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdServizioApplicativo }
+     */
+    public WrapperIdServizioApplicativo createWrapperIdServizioApplicativo() {
+        return new WrapperIdServizioApplicativo();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdPortaDelegata }
      */
     public WrapperIdPortaDelegata createWrapperIdPortaDelegata() {
@@ -84,10 +84,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdSoggetto }
+     * Create an instance of {@link InUseCondition }
      */
-    public WrapperIdSoggetto createWrapperIdSoggetto() {
-        return new WrapperIdSoggetto();
+    public InUseCondition createInUseCondition() {
+        return new InUseCondition();
     }
     
 

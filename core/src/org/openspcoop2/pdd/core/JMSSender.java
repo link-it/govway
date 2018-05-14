@@ -165,7 +165,7 @@ public class JMSSender {
 				}else{
 					Long testLong = null;
 					try{
-						testLong = new Long(value);
+						testLong = Long.valueOf(value);
 					}catch(Exception e){
 						testLong = null;
 					}

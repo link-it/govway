@@ -52,13 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DumpMultipartHeader }
-     */
-    public DumpMultipartHeader createDumpMultipartHeader() {
-        return new DumpMultipartHeader();
-    }
-
-    /**
      * Create an instance of {@link DumpContenuto }
      */
     public DumpContenuto createDumpContenuto() {
@@ -66,17 +59,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdDumpMessaggio }
+     * Create an instance of {@link Transazione }
      */
-    public IdDumpMessaggio createIdDumpMessaggio() {
-        return new IdDumpMessaggio();
+    public Transazione createTransazione() {
+        return new Transazione();
     }
 
     /**
-     * Create an instance of {@link DumpAllegato }
+     * Create an instance of {@link DumpMultipartHeader }
      */
-    public DumpAllegato createDumpAllegato() {
-        return new DumpAllegato();
+    public DumpMultipartHeader createDumpMultipartHeader() {
+        return new DumpMultipartHeader();
     }
 
     /**
@@ -87,10 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TransazioneExtendedInfo }
+     * Create an instance of {@link DumpAllegato }
      */
-    public TransazioneExtendedInfo createTransazioneExtendedInfo() {
-        return new TransazioneExtendedInfo();
+    public DumpAllegato createDumpAllegato() {
+        return new DumpAllegato();
     }
 
     /**
@@ -101,17 +94,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdDumpMessaggio }
+     */
+    public IdDumpMessaggio createIdDumpMessaggio() {
+        return new IdDumpMessaggio();
+    }
+
+    /**
+     * Create an instance of {@link TransazioneExtendedInfo }
+     */
+    public TransazioneExtendedInfo createTransazioneExtendedInfo() {
+        return new TransazioneExtendedInfo();
+    }
+
+    /**
      * Create an instance of {@link DumpHeaderAllegato }
      */
     public DumpHeaderAllegato createDumpHeaderAllegato() {
         return new DumpHeaderAllegato();
-    }
-
-    /**
-     * Create an instance of {@link Transazione }
-     */
-    public Transazione createTransazione() {
-        return new Transazione();
     }
 
 

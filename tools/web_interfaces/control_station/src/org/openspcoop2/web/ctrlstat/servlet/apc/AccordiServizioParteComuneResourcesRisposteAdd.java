@@ -112,7 +112,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
@@ -216,7 +216,7 @@ public final class AccordiServizioParteComuneResourcesRisposteAdd extends Action
 
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id delle risorse
-			as = apcCore.getAccordoServizio(new Long(idInt));
+			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {

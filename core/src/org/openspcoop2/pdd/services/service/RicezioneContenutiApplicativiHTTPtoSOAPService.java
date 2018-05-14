@@ -739,7 +739,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(risposta!=null){
 					lengthOutResponse = risposta.length;
 					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							req, res, new Long(risposta.length));
+							req, res, Long.valueOf(risposta.length));
 				}
 				
 				// httpstatus
@@ -876,7 +876,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				// transfer length
 				lengthOutResponse = rispostaErrore.length;
 				ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-						req, res, new Long(rispostaErrore.length));
+						req, res, Long.valueOf(rispostaErrore.length));
 				
 				// httpstatus
 				//statoServletResponse = 500; // Nella servlet con sbustamento non devo ritornare 500
@@ -1055,7 +1055,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				postOutResponseContext.setIdModulo(idModulo);
 				
 				if(inputBody!=null){
-					postOutResponseContext.setInputRequestMessageSize(new Long(inputBody.length));
+					postOutResponseContext.setInputRequestMessageSize(Long.valueOf(inputBody.length));
 				}
 				if(requestMessage!=null){
 					//postOutResponseContext.setInputRequestMessageSize(requestMessage.getIncomingMessageContentLength());

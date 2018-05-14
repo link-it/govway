@@ -30,10 +30,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindAllDumpMessaggioResponse }
+     * Create an instance of {@link FindDumpMessaggio }
      */
-    public FindAllDumpMessaggioResponse createFindAllDumpMessaggioResponse() {
-        return new FindAllDumpMessaggioResponse();
+    public FindDumpMessaggio createFindDumpMessaggio() {
+        return new FindDumpMessaggio();
     }
     
     /**
@@ -44,59 +44,17 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link GetDumpMessaggioResponse }
+     */
+    public GetDumpMessaggioResponse createGetDumpMessaggioResponse() {
+        return new GetDumpMessaggioResponse();
+    }
+    
+    /**
      * Create an instance of {@link ExistsDumpMessaggio }
      */
     public ExistsDumpMessaggio createExistsDumpMessaggio() {
         return new ExistsDumpMessaggio();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllTransazioneResponse }
-     */
-    public FindAllTransazioneResponse createFindAllTransazioneResponse() {
-        return new FindAllTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindTransazione }
-     */
-    public FindTransazione createFindTransazione() {
-        return new FindTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllIdsTransazione }
-     */
-    public FindAllIdsTransazione createFindAllIdsTransazione() {
-        return new FindAllIdsTransazione();
-    }
-    
-    /**
-     * Create an instance of {@link FindDumpMessaggio }
-     */
-    public FindDumpMessaggio createFindDumpMessaggio() {
-        return new FindDumpMessaggio();
-    }
-    
-    /**
-     * Create an instance of {@link FindTransazioneResponse }
-     */
-    public FindTransazioneResponse createFindTransazioneResponse() {
-        return new FindTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link ExistsTransazioneResponse }
-     */
-    public ExistsTransazioneResponse createExistsTransazioneResponse() {
-        return new ExistsTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllTransazione }
-     */
-    public FindAllTransazione createFindAllTransazione() {
-        return new FindAllTransazione();
     }
     
     /**
@@ -107,24 +65,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link CountDumpMessaggioResponse }
+     * Create an instance of {@link ExistsDumpMessaggioResponse }
      */
-    public CountDumpMessaggioResponse createCountDumpMessaggioResponse() {
-        return new CountDumpMessaggioResponse();
+    public ExistsDumpMessaggioResponse createExistsDumpMessaggioResponse() {
+        return new ExistsDumpMessaggioResponse();
     }
     
     /**
-     * Create an instance of {@link FindAllIdsDumpMessaggio }
+     * Create an instance of {@link ExistsTransazioneResponse }
      */
-    public FindAllIdsDumpMessaggio createFindAllIdsDumpMessaggio() {
-        return new FindAllIdsDumpMessaggio();
-    }
-    
-    /**
-     * Create an instance of {@link CountDumpMessaggio }
-     */
-    public CountDumpMessaggio createCountDumpMessaggio() {
-        return new CountDumpMessaggio();
+    public ExistsTransazioneResponse createExistsTransazioneResponse() {
+        return new ExistsTransazioneResponse();
     }
     
     /**
@@ -135,10 +86,87 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindAllIdsDumpMessaggioResponse }
+     */
+    public FindAllIdsDumpMessaggioResponse createFindAllIdsDumpMessaggioResponse() {
+        return new FindAllIdsDumpMessaggioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllDumpMessaggioResponse }
+     */
+    public FindAllDumpMessaggioResponse createFindAllDumpMessaggioResponse() {
+        return new FindAllDumpMessaggioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindTransazioneResponse }
+     */
+    public FindTransazioneResponse createFindTransazioneResponse() {
+        return new FindTransazioneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllDumpMessaggio }
+     */
+    public FindAllDumpMessaggio createFindAllDumpMessaggio() {
+        return new FindAllDumpMessaggio();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsTransazione }
+     */
+    public FindAllIdsTransazione createFindAllIdsTransazione() {
+        return new FindAllIdsTransazione();
+    }
+    
+    /**
+     * Create an instance of {@link CountDumpMessaggioResponse }
+     */
+    public CountDumpMessaggioResponse createCountDumpMessaggioResponse() {
+        return new CountDumpMessaggioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindTransazione }
+     */
+    public FindTransazione createFindTransazione() {
+        return new FindTransazione();
+    }
+    
+    /**
      * Create an instance of {@link ExistsTransazione }
      */
     public ExistsTransazione createExistsTransazione() {
         return new ExistsTransazione();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllTransazioneResponse }
+     */
+    public FindAllTransazioneResponse createFindAllTransazioneResponse() {
+        return new FindAllTransazioneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsDumpMessaggio }
+     */
+    public FindAllIdsDumpMessaggio createFindAllIdsDumpMessaggio() {
+        return new FindAllIdsDumpMessaggio();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllTransazione }
+     */
+    public FindAllTransazione createFindAllTransazione() {
+        return new FindAllTransazione();
+    }
+    
+    /**
+     * Create an instance of {@link GetTransazioneResponse }
+     */
+    public GetTransazioneResponse createGetTransazioneResponse() {
+        return new GetTransazioneResponse();
     }
     
     /**
@@ -156,38 +184,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link FindAllIdsDumpMessaggioResponse }
+     * Create an instance of {@link CountDumpMessaggio }
      */
-    public FindAllIdsDumpMessaggioResponse createFindAllIdsDumpMessaggioResponse() {
-        return new FindAllIdsDumpMessaggioResponse();
-    }
-    
-    /**
-     * Create an instance of {@link GetDumpMessaggioResponse }
-     */
-    public GetDumpMessaggioResponse createGetDumpMessaggioResponse() {
-        return new GetDumpMessaggioResponse();
-    }
-    
-    /**
-     * Create an instance of {@link GetTransazioneResponse }
-     */
-    public GetTransazioneResponse createGetTransazioneResponse() {
-        return new GetTransazioneResponse();
-    }
-    
-    /**
-     * Create an instance of {@link ExistsDumpMessaggioResponse }
-     */
-    public ExistsDumpMessaggioResponse createExistsDumpMessaggioResponse() {
-        return new ExistsDumpMessaggioResponse();
-    }
-    
-    /**
-     * Create an instance of {@link FindAllDumpMessaggio }
-     */
-    public FindAllDumpMessaggio createFindAllDumpMessaggio() {
-        return new FindAllDumpMessaggio();
+    public CountDumpMessaggio createCountDumpMessaggio() {
+        return new CountDumpMessaggio();
     }
     
 

@@ -110,7 +110,7 @@ public final class AccordiServizioParteComuneAllegatiChange extends Action {
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordoInt));
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);

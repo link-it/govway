@@ -144,7 +144,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			apcHelper.makeMenu();
 
 			// Prendo il nome
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 
 			String protocollo = null;
@@ -318,7 +318,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationAdd extends 
 			
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id delle risorse
-			as = apcCore.getAccordoServizio(new Long(idInt));
+			as = apcCore.getAccordoServizio(Long.valueOf(idInt));
 			
 			risorsa = null;
 			for (int j = 0; j < as.sizeResourceList(); j++) {

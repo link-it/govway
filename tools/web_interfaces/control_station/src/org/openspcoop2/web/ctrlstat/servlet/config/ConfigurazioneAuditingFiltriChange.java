@@ -108,7 +108,7 @@ public final class ConfigurazioneAuditingFiltriChange extends Action {
 			confHelper.makeMenu();
 
 			// Prendo il filtro
-			Filtro f = confCore.getFiltro((new Long(idFiltro)).longValue());
+			Filtro f = confCore.getFiltro((Long.valueOf(idFiltro)).longValue());
 
 			// Se idhid = null, devo visualizzare la pagina per la modifica
 			// dati

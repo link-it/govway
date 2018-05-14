@@ -42,24 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DeleteAllByFilterMessaggio }
+     * Create an instance of {@link CountMessaggioResponse }
      */
-    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
-        return new DeleteAllByFilterMessaggio();
-    }
-    
-    /**
-     * Create an instance of {@link FindStatoPdd }
-     */
-    public FindStatoPdd createFindStatoPdd() {
-        return new FindStatoPdd();
-    }
-    
-    /**
-     * Create an instance of {@link DeleteAllByFilterMessaggioResponse }
-     */
-    public DeleteAllByFilterMessaggioResponse createDeleteAllByFilterMessaggioResponse() {
-        return new DeleteAllByFilterMessaggioResponse();
+    public CountMessaggioResponse createCountMessaggioResponse() {
+        return new CountMessaggioResponse();
     }
     
     /**
@@ -70,17 +56,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link CountMessaggioResponse }
+     * Create an instance of {@link CountMessaggio }
      */
-    public CountMessaggioResponse createCountMessaggioResponse() {
-        return new CountMessaggioResponse();
+    public CountMessaggio createCountMessaggio() {
+        return new CountMessaggio();
     }
     
     /**
-     * Create an instance of {@link FindAllMessaggio }
+     * Create an instance of {@link DeleteAllByFilterMessaggio }
      */
-    public FindAllMessaggio createFindAllMessaggio() {
-        return new FindAllMessaggio();
+    public DeleteAllByFilterMessaggio createDeleteAllByFilterMessaggio() {
+        return new DeleteAllByFilterMessaggio();
     }
     
     /**
@@ -91,10 +77,24 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link CountMessaggio }
+     * Create an instance of {@link FindStatoPdd }
      */
-    public CountMessaggio createCountMessaggio() {
-        return new CountMessaggio();
+    public FindStatoPdd createFindStatoPdd() {
+        return new FindStatoPdd();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllMessaggio }
+     */
+    public FindAllMessaggio createFindAllMessaggio() {
+        return new FindAllMessaggio();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllByFilterMessaggioResponse }
+     */
+    public DeleteAllByFilterMessaggioResponse createDeleteAllByFilterMessaggioResponse() {
+        return new DeleteAllByFilterMessaggioResponse();
     }
     
 

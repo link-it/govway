@@ -916,12 +916,12 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					postOutResponseContext.setOutputRequestMessageSize(msgRequest.getOutgoingMessageContentLength());
 				}else{
 					if(msg!=null && msg.getMessage()!=null)
-						postOutResponseContext.setInputRequestMessageSize(new Long(msg.getMessage().length));
+						postOutResponseContext.setInputRequestMessageSize(Long.valueOf(msg.getMessage().length));
 				}
 				if(msgResponse!=null){
 					postOutResponseContext.setInputResponseMessageSize(msgResponse.getIncomingMessageContentLength());
 					if(msgReturn!=null && msgReturn.getMessage()!=null)
-						postOutResponseContext.setOutputResponseMessageSize(new Long(msgReturn.getMessage().length));
+						postOutResponseContext.setOutputResponseMessageSize(Long.valueOf(msgReturn.getMessage().length));
 				}
 				
 				if(errore!=null){

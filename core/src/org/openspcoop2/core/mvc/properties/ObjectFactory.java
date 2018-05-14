@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Property }
+     * Create an instance of {@link Equals }
      */
-    public Property createProperty() {
-        return new Property();
-    }
-
-    /**
-     * Create an instance of {@link Defined }
-     */
-    public Defined createDefined() {
-        return new Defined();
+    public Equals createEquals() {
+        return new Equals();
     }
 
     /**
@@ -73,24 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ItemValue }
+     * Create an instance of {@link Defined }
      */
-    public ItemValue createItemValue() {
-        return new ItemValue();
-    }
-
-    /**
-     * Create an instance of {@link Condition }
-     */
-    public Condition createCondition() {
-        return new Condition();
-    }
-
-    /**
-     * Create an instance of {@link Config }
-     */
-    public Config createConfig() {
-        return new Config();
+    public Defined createDefined() {
+        return new Defined();
     }
 
     /**
@@ -101,17 +80,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Selected }
+     * Create an instance of {@link Section }
      */
-    public Selected createSelected() {
-        return new Selected();
+    public Section createSection() {
+        return new Section();
     }
 
     /**
-     * Create an instance of {@link Collection }
+     * Create an instance of {@link Properties }
      */
-    public Collection createCollection() {
-        return new Collection();
+    public Properties createProperties() {
+        return new Properties();
     }
 
     /**
@@ -122,17 +101,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Section }
+     * Create an instance of {@link Collection }
      */
-    public Section createSection() {
-        return new Section();
+    public Collection createCollection() {
+        return new Collection();
     }
 
     /**
-     * Create an instance of {@link Equals }
+     * Create an instance of {@link Property }
      */
-    public Equals createEquals() {
-        return new Equals();
+    public Property createProperty() {
+        return new Property();
     }
 
     /**
@@ -143,10 +122,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Properties }
+     * Create an instance of {@link Selected }
      */
-    public Properties createProperties() {
-        return new Properties();
+    public Selected createSelected() {
+        return new Selected();
+    }
+
+    /**
+     * Create an instance of {@link Condition }
+     */
+    public Condition createCondition() {
+        return new Condition();
+    }
+
+    /**
+     * Create an instance of {@link ItemValue }
+     */
+    public ItemValue createItemValue() {
+        return new ItemValue();
+    }
+
+    /**
+     * Create an instance of {@link Config }
+     */
+    public Config createConfig() {
+        return new Config();
     }
 
 

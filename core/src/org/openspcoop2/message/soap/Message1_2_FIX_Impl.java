@@ -133,14 +133,16 @@ public class Message1_2_FIX_Impl extends Message1_2Impl {
 		else return super.getAttachment(element);
 	}
 	
+	@SuppressWarnings("rawtypes") // java 10 non accetta Iterator<?>
 	@Override
-	public Iterator<?> getAttachments() {
+	public Iterator getAttachments() {
 		if (this.msg!= null) return this.msg.getAttachments();
 		else return super.getAttachments();
 	}
 	
+	@SuppressWarnings("rawtypes") // java 10 non accetta Iterator<?>
 	@Override
-	public Iterator<?> getAttachments(MimeHeaders headers) {
+	public Iterator getAttachments(MimeHeaders headers) {
 		if (this.msg!= null) return this.msg.getAttachments(headers);
 		else return super.getAttachments(headers);
 	}

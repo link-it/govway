@@ -413,7 +413,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
 				int idErogatore = Integer.parseInt(idSoggettoErogatoreDelServizio);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(idErogatore));
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
 
 				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno

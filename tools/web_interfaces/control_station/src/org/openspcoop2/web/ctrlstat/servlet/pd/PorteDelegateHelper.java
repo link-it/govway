@@ -886,7 +886,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta));
 
 			if (contaListe) {
-				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RICHIESTA,new Long(numCorrelazioneReq));
+				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RICHIESTA,Long.valueOf(numCorrelazioneReq));
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RICHIESTA);
 
@@ -901,7 +901,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME,nomePorta));
 
 			if (contaListe) {
-				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA,new Long(numCorrelazioneRes));
+				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA,Long.valueOf(numCorrelazioneRes));
 			} else
 				ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
@@ -2007,7 +2007,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 								);
 						if (contaListe) {
 							int numExtended = extendedServletList.sizeList(pd);
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numExtended));
+							ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numExtended));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);

@@ -118,6 +118,6 @@ public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
 }

@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,6 +106,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -657,41 +659,41 @@ public class ControlStationCore {
 	private List<IExtendedConnettore> pluginConnettore;
 	private IExtendedListServlet pluginPortaDelegata;
 	private IExtendedListServlet pluginPortaApplicativa;
-	private List<IExtendedMenu> newIExtendedMenu(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private List<IExtendedMenu> newIExtendedMenu(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if(className!=null){
 			List<IExtendedMenu> list = new ArrayList<IExtendedMenu>();
 			for (int i = 0; i < className.length; i++) {
 				Class<?> c = Class.forName(className[i]);
-				list.add( (IExtendedMenu) c.newInstance() );
+				list.add( (IExtendedMenu) ClassLoaderUtilities.newInstance(c) );
 			}
 			return list;
 		}
 		return null;
 	}
-	private List<IExtendedFormServlet> newIExtendedFormServlet(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private List<IExtendedFormServlet> newIExtendedFormServlet(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if(className!=null){
 			List<IExtendedFormServlet> list = new ArrayList<IExtendedFormServlet>();
 			for (int i = 0; i < className.length; i++) {
 				Class<?> c = Class.forName(className[i]);
-				list.add( (IExtendedFormServlet) c.newInstance() );
+				list.add( (IExtendedFormServlet) ClassLoaderUtilities.newInstance(c) );
 			}
 			return list;
 		}
 		return null;
 	}
-	private IExtendedListServlet newIExtendedListServlet(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private IExtendedListServlet newIExtendedListServlet(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if(className!=null){
 			Class<?> c = Class.forName(className);
-			return (IExtendedListServlet) c.newInstance();
+			return (IExtendedListServlet) ClassLoaderUtilities.newInstance(c);
 		}
 		return null;
 	}
-	private List<IExtendedConnettore> newIExtendedConnettore(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private List<IExtendedConnettore> newIExtendedConnettore(String [] className) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if(className!=null){
 			List<IExtendedConnettore> list = new ArrayList<IExtendedConnettore>();
 			for (int i = 0; i < className.length; i++) {
 				Class<?> c = Class.forName(className[i]);
-				list.add( (IExtendedConnettore) c.newInstance() );
+				list.add( (IExtendedConnettore) ClassLoaderUtilities.newInstance(c) );
 			}
 			return list;
 		}

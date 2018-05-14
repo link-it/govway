@@ -167,7 +167,7 @@ public class UtilitiesGestioneMessaggiSoap {
 			array = header.split(":", 2);
 			if (header.startsWith("Content-Length")) {
 				String l = array[1].trim();
-				this.contentLength = new Integer(l).intValue();
+				this.contentLength = Integer.parseInt(l);
 			}
 			else if (header.startsWith("Transfer-Encoding")) {
 				String l = array[1].trim();

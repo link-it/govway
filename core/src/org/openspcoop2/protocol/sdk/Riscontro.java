@@ -237,7 +237,7 @@ public class Riscontro implements java.io.Serializable {
 		Riscontro clone = new Riscontro();
 
 		// id
-		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
 		
 		clone.setID(this.getID()!=null ? new String(this.getID()) : null);
 

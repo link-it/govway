@@ -55,13 +55,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FileSdIType }
-     */
-    public FileSdIType createFileSdIType() {
-        return new FileSdIType();
-    }
-
-    /**
      * Create an instance of {@link FileSdIBaseType }
      */
     public FileSdIBaseType createFileSdIBaseType() {
@@ -73,6 +66,13 @@ public class ObjectFactory {
      */
     public RispostaSdIRiceviFileType createRispostaSdIRiceviFileType() {
         return new RispostaSdIRiceviFileType();
+    }
+
+    /**
+     * Create an instance of {@link FileSdIType }
+     */
+    public FileSdIType createFileSdIType() {
+        return new FileSdIType();
     }
 
     private final static QName _NotificaMancataConsegna = new QName("http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types", "notificaMancataConsegna");

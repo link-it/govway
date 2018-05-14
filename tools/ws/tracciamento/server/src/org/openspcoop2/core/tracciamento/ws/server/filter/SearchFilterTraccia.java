@@ -39,7 +39,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter;
  *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoTraccia" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -241,7 +241,7 @@ public class SearchFilterTraccia extends org.openspcoop2.utils.beans.BaseBean im
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="descOrder",required=false,nillable=false,defaultValue="false")
-	private Boolean descOrder = new Boolean("false");
+	private Boolean descOrder = Boolean.valueOf("false");
 	
 	public void setDescOrder(Boolean descOrder){
 		this.descOrder = descOrder;

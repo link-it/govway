@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /**
  * Verifica le tracce
@@ -874,7 +875,7 @@ public class VerificatoreMessaggi {
 			// REPOSITORY
 			boolean findRepositoryBusteMalformato = false;
 			Class<?> c = Class.forName(tipoRepositoryBuste);
-			IGestoreRepository repositoryBuste = (IGestoreRepository) c.newInstance();
+			IGestoreRepository repositoryBuste = (IGestoreRepository) ClassLoaderUtilities.newInstance(c);
 			pstmt = this.con
 					.prepareStatement("select * from "+Costanti.REPOSITORY+" where "+repositoryBuste.createSQLCondition_PdD(true) 
 							+" OR "+repositoryBuste.createSQLCondition_ProfiloCollaborazione(true));

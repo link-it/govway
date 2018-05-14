@@ -26,6 +26,8 @@ import java.util.List;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 
 import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaServiceException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotFoundException_Exception;
+import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaMultipleResultException_Exception;
 import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotImplementedException_Exception;
 import org.openspcoop2.core.diagnostica.ws.server.exception.DiagnosticaNotAuthorizedException_Exception;
 

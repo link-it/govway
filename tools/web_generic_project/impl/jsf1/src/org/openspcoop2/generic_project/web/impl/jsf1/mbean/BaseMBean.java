@@ -58,7 +58,7 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
  * BaseMBean classe generica che fornisce il supporto alle informazioni che vengono visualizzate in una pagina.
  * 
  * service: interfaccia con il livello service per l'accesso ai dati.
- * selectedElement: in caso di visualizzazione di tipo Elenco -> Dettaglio, 
+ * selectedElement: in caso di visualizzazione di tipo Elenco -&gt; Dettaglio, 
  * fornisce il supporto per la gestione della selezione di un elemento da parte dell'utente.
  * selectedIds: se i dati sono presentati all'interno di un widget che fornisce il supporto alla selezione multipla,
  * tiene traccia della selezione effettuata.

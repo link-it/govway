@@ -7969,11 +7969,11 @@ public class DriverConfigurazioneDB_LIB {
 					trasporto.setCadenzaRispedizione(rs1.getString("cadenza_rispedizione"));
 					if(rs1.getLong("valore_massimo")>0){
 						String maxVal = ""+rs1.getLong("valore_massimo");
-						trasporto.setValoreMassimo(!maxVal.equals("") ? new Integer(maxVal) : null);
+						trasporto.setValoreMassimo(!maxVal.equals("") ? Integer.valueOf(maxVal) : null);
 					}
 					if(rs1.getLong("valore_minimo")>0){
 						String minVal = ""+rs1.getLong("valore_minimo");
-						trasporto.setValoreMinimo(!minVal.equals("") ? new Integer(minVal) : null);
+						trasporto.setValoreMinimo(!minVal.equals("") ? Integer.valueOf(minVal) : null);
 					}
 					gestioneErrore.addCodiceTrasporto(trasporto);
 				}

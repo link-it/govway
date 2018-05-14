@@ -232,7 +232,7 @@ public void setProperties(Map<String,String> newmap){
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="custom",required=false)
-  protected Boolean custom = new Boolean("false");
+  protected Boolean custom = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=false)

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class ProtocolFactoryReflectionUtils
 			if(protocolFactoryManager==null){
 			
 				Class<?> cConfigurazionePdD = Class.forName("org.openspcoop2.protocol.sdk.ConfigurazionePdD");
-				Object configurazionePdD = cConfigurazionePdD.newInstance();
+				Object configurazionePdD = ClassLoaderUtilities.newInstance(cConfigurazionePdD);
 				String confDir = null;
 				cConfigurazionePdD.getMethod("setConfigurationDir", String.class).invoke(configurazionePdD, confDir);
 				cConfigurazionePdD.getMethod("setAttesaAttivaJDBC", long.class).invoke(configurazionePdD, 60);

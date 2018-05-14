@@ -51,6 +51,7 @@ import org.openspcoop2.security.message.utils.ProcessingPart;
 import org.openspcoop2.security.message.utils.ProcessingPartUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 /**
@@ -214,7 +215,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			
 			SignPartialMessageProcessor signMsgProc = null;
 			if(signature){
-				signMsgProc = (SignPartialMessageProcessor) Class.forName(message.getSignPartialMessageProcessorClass()).newInstance();
+				signMsgProc = (SignPartialMessageProcessor) ClassLoaderUtilities.newInstance(message.getSignPartialMessageProcessorClass());
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);

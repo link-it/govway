@@ -43,6 +43,7 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.slf4j.Logger;
 
 /**
@@ -303,20 +304,20 @@ public abstract class MessageSecurityContext{
     			}
     		}
     		if(SecurityConstants.SECURITY_ENGINE_WSS4J.equals(this.securityEngine)){
-    			this.messageSecurityContext = (IMessageSecurityContext) Class.forName("org.openspcoop2.security.message.wss4j.MessageSecurityContext_wss4j").newInstance();
-    			this.messageSecuritySender = (IMessageSecuritySender) Class.forName("org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j").newInstance();
-    			this.messageSecurityReceiver = (IMessageSecurityReceiver) Class.forName("org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j").newInstance();
-    			this.messageSecurityDigest = (IMessageSecurityDigest) Class.forName("org.openspcoop2.security.message.wss4j.MessageSecurityDigest_wss4j").newInstance();
+    			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecurityContext_wss4j");
+    			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j");
+    			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j");
+    			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.wss4j.MessageSecurityDigest_wss4j");
     		}else if(SecurityConstants.SECURITY_ENGINE_SOAPBOX.equals(this.securityEngine)){
-    			this.messageSecurityContext = (IMessageSecurityContext) Class.forName("org.openspcoop2.security.message.soapbox.MessageSecurityContext_soapbox").newInstance();
-    			this.messageSecuritySender = (IMessageSecuritySender) Class.forName("org.openspcoop2.security.message.soapbox.MessageSecuritySender_soapbox").newInstance();
-    			this.messageSecurityReceiver = (IMessageSecurityReceiver) Class.forName("org.openspcoop2.security.message.soapbox.MessageSecurityReceiver_soapbox").newInstance();
-    			this.messageSecurityDigest = (IMessageSecurityDigest) Class.forName("org.openspcoop2.security.message.soapbox.MessageSecurityDigest_soapbox").newInstance();
+    			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityContext_soapbox");
+    			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecuritySender_soapbox");
+    			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityReceiver_soapbox");
+    			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityDigest_soapbox");
 //    		} else if(SecurityConstants.SECURITY_ENGINE_DSS.equals(this.securityEngine)){
-//			this.messageSecurityContext = (IMessageSecurityContext) Class.forName("org.openspcoop2.security.message.dss.MessageSecurityContext_dss").newInstance();
-//			this.messageSecuritySender = (IMessageSecuritySender) Class.forName("org.openspcoop2.security.message.dss.MessageSecuritySender_dss").newInstance();
-//			this.messageSecurityReceiver = (IMessageSecurityReceiver) Class.forName("org.openspcoop2.security.message.dss.MessageSecurityReceiver_dss").newInstance();
-//			this.messageSecurityDigest = (IMessageSecurityDigest) Class.forName("org.openspcoop2.security.message.dss.MessageSecurityDigest_dss").newInstance();
+//			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityContext_dss");
+//			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecuritySender_dss");
+//			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityReceiver_dss");
+//			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityDigest_dss");
 		}
     		this.messageSecurityContext.init(this);
     		

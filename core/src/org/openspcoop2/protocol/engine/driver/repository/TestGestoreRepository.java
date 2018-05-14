@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
@@ -175,8 +176,8 @@ public class TestGestoreRepository {
 			}
 		}
 
-		
-		Class.forName(driver).newInstance();
+
+		ClassLoaderUtilities.newInstance(driver);
 		
 		Connection con = null;
 		try{

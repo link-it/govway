@@ -16,7 +16,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -159,7 +159,7 @@ public class SearchFilterDumpMessaggio extends org.openspcoop2.utils.beans.BaseB
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="descOrder",required=false,nillable=false,defaultValue="false")
-	private Boolean descOrder = new Boolean("false");
+	private Boolean descOrder = Boolean.valueOf("false");
 	
 	public void setDescOrder(Boolean descOrder){
 		this.descOrder = descOrder;

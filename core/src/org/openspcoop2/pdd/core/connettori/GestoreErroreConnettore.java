@@ -84,8 +84,8 @@ public class GestoreErroreConnettore {
 			// si accetta il codice di trasporto 200
 			GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 			codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-			codiceTrasporto.setValoreMinimo(new Integer("200"));
-			codiceTrasporto.setValoreMassimo(new Integer("299"));
+			codiceTrasporto.setValoreMinimo(200);
+			codiceTrasporto.setValoreMassimo(299);
 			gestione.addCodiceTrasporto(codiceTrasporto);
 
 
@@ -111,8 +111,8 @@ public class GestoreErroreConnettore {
 			// si accetta il codice di trasporto 200-299
 			GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 			codiceTrasporto.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-			codiceTrasporto.setValoreMinimo(new Integer("200"));
-			codiceTrasporto.setValoreMassimo(new Integer("299"));
+			codiceTrasporto.setValoreMinimo(200);
+			codiceTrasporto.setValoreMassimo(299);
 			gestione.addCodiceTrasporto(codiceTrasporto);
 
 

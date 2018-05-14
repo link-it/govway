@@ -733,7 +733,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 						}catch(Exception e){
 							throw new Exception("Codice di trasporto minimo non correttaemnte definito la gestione errore ("+tipo+"), trasporto "+gestioneErroreCodiciTrasporto[i]);
 						}
-						ct.setValoreMinimo(new Integer(codiceTrasportoMinimo));
+						ct.setValoreMinimo(Integer.valueOf(codiceTrasportoMinimo));
 					}
 					
 					String codiceTrasportoMassimo = this.getValue("gestioneErrore."+tipo+".codiceTrasporto."+gestioneErroreCodiciTrasporto[i]+".valoreMassimo");
@@ -744,7 +744,7 @@ public class ConfigLocalProperties extends InstanceProperties {
 						}catch(Exception e){
 							throw new Exception("Codice di trasporto massimo non correttaemnte definito la gestione errore ("+tipo+"), trasporto "+gestioneErroreCodiciTrasporto[i]);
 						}
-						ct.setValoreMassimo(new Integer(codiceTrasportoMassimo));
+						ct.setValoreMassimo(Integer.valueOf(codiceTrasportoMassimo));
 					}
 					
 					if(codiceTrasportoMinimo==null && codiceTrasportoMassimo==null){

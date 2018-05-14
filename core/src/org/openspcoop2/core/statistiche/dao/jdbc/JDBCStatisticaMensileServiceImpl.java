@@ -189,7 +189,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaMensileContenutiList().get(i).getLatenzaTotale(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_TOTALE.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaMensileContenutiList().get(i).getLatenzaPorta(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_PORTA.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaMensileContenutiList().get(i).getLatenzaServizio(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_SERVIZIO.getFieldType()),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			statisticaMensile.getStatisticaMensileContenutiList().get(i).setId(id_statisticaMensileContenuti);
 		} // fine for 
@@ -353,7 +353,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile_statisticaMensileContenuti.getLatenzaTotale(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_TOTALE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile_statisticaMensileContenuti.getLatenzaPorta(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_PORTA.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile_statisticaMensileContenuti.getLatenzaServizio(),StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_SERVIZIO.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				statisticaMensile_statisticaMensileContenuti.setId(id_statisticaMensileContenuti);
 
@@ -429,7 +429,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 				lstObjects_statisticaMensileContenuti.add(new JDBCObject(statisticaMensile_statisticaMensileContenuti.getLatenzaServizio(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI.LATENZA_SERVIZIO.getFieldType()));
 				sqlQueryObjectUpdate_statisticaMensileContenuti.addWhereCondition("id=?");
 				ids_statisticaMensileContenuti_da_non_eliminare.add(statisticaMensile_statisticaMensileContenuti.getId());
-				lstObjects_statisticaMensileContenuti.add(new JDBCObject(new Long(statisticaMensile_statisticaMensileContenuti.getId()),Long.class));
+				lstObjects_statisticaMensileContenuti.add(new JDBCObject(Long.valueOf(statisticaMensile_statisticaMensileContenuti.getId()),Long.class));
 
 				if(isUpdate_statisticaMensileContenuti) {
 					// Update statisticaMensile_statisticaMensileContenuti
@@ -587,7 +587,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addFromTable(this.getStatisticaMensileFieldConverter().toTable(StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI));
 		sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.addWhereCondition("id_stat=?");
 		java.util.List<Object> statisticaMensile_statisticaMensileContenuti_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_statisticaMensileContenuti_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), StatisticaMensile.model().STATISTICA_MENSILE_CONTENUTI, this.getStatisticaMensileFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for statisticaMensile_statisticaMensileContenuti
 		for (Object statisticaMensile_statisticaMensileContenuti_object : statisticaMensile_statisticaMensileContenuti_toDelete_list) {
@@ -602,7 +602,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 			// Delete statisticaMensile_statisticaMensileContenuti
 			if(statisticaMensile_statisticaMensileContenuti != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_statisticaMensileContenuti.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(statisticaMensile_statisticaMensileContenuti.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(statisticaMensile_statisticaMensileContenuti.getId()),Long.class));
 			}
 		} // fine for statisticaMensile_statisticaMensileContenuti
 

@@ -26,6 +26,8 @@ import java.util.List;
 import org.openspcoop2.pdd.monitor.Messaggio;
 
 import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorServiceException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotFoundException_Exception;
+import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorMultipleResultException_Exception;
 import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotImplementedException_Exception;
 import org.openspcoop2.pdd.monitor.ws.server.exception.MonitorNotAuthorizedException_Exception;
 

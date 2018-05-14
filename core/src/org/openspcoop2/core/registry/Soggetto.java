@@ -351,7 +351,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected Boolean privato = new Boolean("false");
+  protected Boolean privato = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=true)

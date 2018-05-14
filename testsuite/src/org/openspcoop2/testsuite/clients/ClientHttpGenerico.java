@@ -62,6 +62,7 @@ import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.SSLHostNameVerifierDisabled;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -351,7 +352,7 @@ public class ClientHttpGenerico extends ClientCore{
 					if(this.sslContextProperties.getClassNameHostnameVerifier()!=null){
 						this.log.debug("HostNamve verifier enabled ["+this.sslContextProperties.getClassNameHostnameVerifier()+"]");
 						Class<?> c = Class.forName(this.sslContextProperties.getClassNameHostnameVerifier());
-						HostnameVerifier verifica = (HostnameVerifier) c.newInstance();
+						HostnameVerifier verifica = (HostnameVerifier) ClassLoaderUtilities.newInstance(c);
 						httpsConn.setHostnameVerifier(verifica);
 					}else{
 						this.log.debug("HostNamve verifier enabled");
@@ -477,13 +478,13 @@ public class ClientHttpGenerico extends ClientCore{
 		
 		// spedizione messaggio di richiesta se presente
 		if(this.sentMessage!=null){
-			this.conn.setRequestProperty("Content-Length",new Long(this.sentMessage.getContentLength()).toString());
+			this.conn.setRequestProperty("Content-Length",Long.valueOf(this.sentMessage.getContentLength()).toString());
 			OutputStream out=this.conn.getOutputStream();
 			this.sentMessage.writeTo(out);
 			out.close();
 		}else{
 			if(this.messaggioXMLRichiesta!=null){
-				this.conn.setRequestProperty("Content-Length",new Long(this.messaggioXMLRichiesta.length).toString());
+				this.conn.setRequestProperty("Content-Length",Long.valueOf(this.messaggioXMLRichiesta.length).toString());
 				OutputStream out=this.conn.getOutputStream();
 				out.write(this.messaggioXMLRichiesta);
 				out.close();

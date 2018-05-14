@@ -1140,7 +1140,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			
 			fruitore.setConfigurazioneAzioneList(servFru.getConfigurazioneAzioneList());
 			
-			fruitore.setId(new Long(idSoggettoFruitore));
+			fruitore.setId(Long.valueOf(idSoggettoFruitore));
 			if(configurazioneServizioAzione!=null) {
 				configurazioneServizioAzione.setConnettore(connettoreNew);
 				fruitore.setConnettore(servFru.getConnettore());

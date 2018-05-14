@@ -1039,7 +1039,7 @@ public class Busta implements java.io.Serializable {
 			if(this.busta.getProfiloTrasmissione()==null){
 				this.busta.setProfiloTrasmissione(new ProfiloTrasmissione());
 			}
-			this.busta.getProfiloTrasmissione().setSequenza(new Long(value).intValue());
+			this.busta.getProfiloTrasmissione().setSequenza(Long.valueOf(value).intValue());
 		}
 		else{
 			if(this.busta.getProfiloTrasmissione()!=null){
@@ -1520,7 +1520,7 @@ public class Busta implements java.io.Serializable {
 		}
 
 		// id 
-		clone.setId(this.getId()!=null ? new Long(this.getId()) : null);
+		clone.setId(this.getId()!=null ? Long.valueOf(this.getId()) : null);
 		
 		// mittente
 		clone.setTipoMittente(this.getTipoMittente()!=null ? new String(this.getTipoMittente()) : null);
@@ -1546,12 +1546,12 @@ public class Busta implements java.io.Serializable {
 		// servizio
 		clone.setServizio(this.getServizio()!=null ? new String(this.getServizio()) : null);
 		clone.setTipoServizio(this.getTipoServizio()!=null ? new String(this.getTipoServizio()) : null);
-		clone.setVersioneServizio(new Integer(this.getVersioneServizio()));
+		clone.setVersioneServizio(Integer.valueOf(this.getVersioneServizio()));
 		
 		// servizio [info-richiedente]
 		clone.setServizioRichiedenteBustaDiServizio(this.servizioRichiedenteBustaDiServizio!=null ? new String(this.servizioRichiedenteBustaDiServizio) : null);
 		clone.setTipoServizioRichiedenteBustaDiServizio(this.tipoServizioRichiedenteBustaDiServizio!=null ? new String(this.tipoServizioRichiedenteBustaDiServizio) : null);
-		clone.setVersioneServizioRichiedenteBustaDiServizio(this.versioneServizioRichiedenteBustaDiServizio!=null ? new Integer(this.versioneServizioRichiedenteBustaDiServizio.intValue()) : null);
+		clone.setVersioneServizioRichiedenteBustaDiServizio(this.versioneServizioRichiedenteBustaDiServizio!=null ? Integer.valueOf(this.versioneServizioRichiedenteBustaDiServizio.intValue()) : null);
 		
 		// azione
 		clone.setAzione(this.getAzione()!=null ? new String(this.getAzione()) : null);
@@ -1577,10 +1577,10 @@ public class Busta implements java.io.Serializable {
 		clone.setInoltro(this.getInoltro(),
 				this.getInoltroValue()!=null ? new String(this.getInoltroValue()) : null);
 		clone.setInoltroValue(this.getInoltroValue()!=null ? new String(this.getInoltroValue()) : null);
-		clone.setConfermaRicezione(new Boolean(this.isConfermaRicezione()));
+		clone.setConfermaRicezione(Boolean.valueOf(this.isConfermaRicezione()));
 		
 		// sequenza
-		clone.setSequenza(new Long(this.getSequenza()));
+		clone.setSequenza(Long.valueOf(this.getSequenza()));
 		
 		// servizi applicativi
 		clone.setServizioApplicativoFruitore(this.getServizioApplicativoFruitore()!=null ? new String(this.getServizioApplicativoFruitore()) : null);

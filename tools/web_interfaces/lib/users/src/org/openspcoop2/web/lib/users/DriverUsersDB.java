@@ -322,7 +322,7 @@ public class DriverUsersDB {
 			rs = stm.executeQuery();
 			if (rs.next()) {
 				user = new User();
-				user.setId(new Long(rs.getInt("id")));
+				user.setId(Long.valueOf(rs.getInt("id")));
 				user.setLogin(login);
 				user.setPassword(rs.getString("password"));
 				

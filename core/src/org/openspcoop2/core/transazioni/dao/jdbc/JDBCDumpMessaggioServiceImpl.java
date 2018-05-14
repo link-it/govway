@@ -129,7 +129,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getContentLocation(),DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getAllegato(),DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			dumpMessaggio.getAllegatoList().get(i).setId(id_allegato);
 
@@ -159,7 +159,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getHeaderList().get(i_allegato).getNome(),DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getHeaderList().get(i_allegato).getValore(),DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getHeaderList().get(i_allegato).getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id_allegato),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id_allegato),Long.class)
 				);
 				dumpMessaggio.getAllegatoList().get(i).getHeaderList().get(i_allegato).setId(id_allegato_header);
 			} // fine for _allegato
@@ -185,7 +185,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getContenutoList().get(i).getValore(),DumpMessaggio.model().CONTENUTO.VALORE.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getContenutoList().get(i).getValoreAsBytes(),DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getContenutoList().get(i).getDumpTimestamp(),DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType()),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			dumpMessaggio.getContenutoList().get(i).setId(id_contenuto);
 		} // fine for 
@@ -216,7 +216,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getHeaderTrasportoList().get(i).getNome(),DumpMessaggio.model().HEADER_TRASPORTO.NOME.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getHeaderTrasportoList().get(i).getValore(),DumpMessaggio.model().HEADER_TRASPORTO.VALORE.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getHeaderTrasportoList().get(i).getDumpTimestamp(),DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType()),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			dumpMessaggio.getHeaderTrasportoList().get(i).setId(id_headerTrasporto);
 		} // fine for 
@@ -247,7 +247,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartHeaderList().get(i).getNome(),DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartHeaderList().get(i).getValore(),DumpMessaggio.model().MULTIPART_HEADER.VALORE.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartHeaderList().get(i).getDumpTimestamp(),DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType()),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			dumpMessaggio.getMultipartHeaderList().get(i).setId(id_multipartHeader);
 		} // fine for 
@@ -360,7 +360,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_multipartHeader.getNome(),DumpMessaggio.model().MULTIPART_HEADER.NOME.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_multipartHeader.getValore(),DumpMessaggio.model().MULTIPART_HEADER.VALORE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_multipartHeader.getDumpTimestamp(),DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				dumpMessaggio_multipartHeader.setId(id_dumpMessaggio_multipartHeader);
 
@@ -382,7 +382,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				lstObjects_dumpMessaggio_multipartHeader.add(new JDBCObject(dumpMessaggio_multipartHeader.getDumpTimestamp(), DumpMessaggio.model().MULTIPART_HEADER.DUMP_TIMESTAMP.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_multipartHeader.addWhereCondition("id=?");
 				ids_dumpMessaggio_multipartHeader_da_non_eliminare.add(dumpMessaggio_multipartHeader.getId());
-				lstObjects_dumpMessaggio_multipartHeader.add(new JDBCObject(new Long(dumpMessaggio_multipartHeader.getId()),Long.class));
+				lstObjects_dumpMessaggio_multipartHeader.add(new JDBCObject(Long.valueOf(dumpMessaggio_multipartHeader.getId()),Long.class));
 
 				if(isUpdate_dumpMessaggio_multipartHeader) {
 					// Update dumpMessaggio_multipartHeader
@@ -449,7 +449,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_headerTrasporto.getNome(),DumpMessaggio.model().HEADER_TRASPORTO.NOME.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_headerTrasporto.getValore(),DumpMessaggio.model().HEADER_TRASPORTO.VALORE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_headerTrasporto.getDumpTimestamp(),DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				dumpMessaggio_headerTrasporto.setId(id_dumpMessaggio_headerTrasporto);
 
@@ -471,7 +471,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				lstObjects_dumpMessaggio_headerTrasporto.add(new JDBCObject(dumpMessaggio_headerTrasporto.getDumpTimestamp(), DumpMessaggio.model().HEADER_TRASPORTO.DUMP_TIMESTAMP.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_headerTrasporto.addWhereCondition("id=?");
 				ids_dumpMessaggio_headerTrasporto_da_non_eliminare.add(dumpMessaggio_headerTrasporto.getId());
-				lstObjects_dumpMessaggio_headerTrasporto.add(new JDBCObject(new Long(dumpMessaggio_headerTrasporto.getId()),Long.class));
+				lstObjects_dumpMessaggio_headerTrasporto.add(new JDBCObject(Long.valueOf(dumpMessaggio_headerTrasporto.getId()),Long.class));
 
 				if(isUpdate_dumpMessaggio_headerTrasporto) {
 					// Update dumpMessaggio_headerTrasporto
@@ -533,7 +533,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getContentLocation(),DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getAllegato(),DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				dumpMessaggio_allegato.setId(id_dumpMessaggio_allegato);
 
@@ -562,7 +562,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 						new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getHeaderList().get(i_dumpMessaggio_allegato).getNome(),DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType()),
 						new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getHeaderList().get(i_dumpMessaggio_allegato).getValore(),DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType()),
 						new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getHeaderList().get(i_dumpMessaggio_allegato).getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType()),
-						new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id_dumpMessaggio_allegato),Long.class)
+						new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id_dumpMessaggio_allegato),Long.class)
 					);
 					dumpMessaggio_allegato.getHeaderList().get(i_dumpMessaggio_allegato).setId(id_dumpMessaggio_allegato_header);
 				} // fine for _dumpMessaggio_allegato
@@ -589,7 +589,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(dumpMessaggio_allegato.getDumpTimestamp(), DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addWhereCondition("id=?");
 				ids_dumpMessaggio_allegato_da_non_eliminare.add(dumpMessaggio_allegato.getId());
-				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(new Long(dumpMessaggio_allegato.getId()),Long.class));
+				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(Long.valueOf(dumpMessaggio_allegato.getId()),Long.class));
 
 				if(isUpdate_dumpMessaggio_allegato) {
 					// Update dumpMessaggio_allegato
@@ -619,7 +619,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 							new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato_header.getNome(),DumpMessaggio.model().ALLEGATO.HEADER.NOME.getFieldType()),
 							new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato_header.getValore(),DumpMessaggio.model().ALLEGATO.HEADER.VALORE.getFieldType()),
 							new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato_header.getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType()),
-							new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id_dumpMessaggio_allegato),Long.class)
+							new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id_dumpMessaggio_allegato),Long.class)
 						);
 						dumpMessaggio_allegato_header.setId(id_dumpMessaggio_allegato_header);
 
@@ -641,7 +641,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 						lstObjects_dumpMessaggio_allegato_header.add(new JDBCObject(dumpMessaggio_allegato_header.getDumpTimestamp(), DumpMessaggio.model().ALLEGATO.HEADER.DUMP_TIMESTAMP.getFieldType()));
 						sqlQueryObjectUpdate_dumpMessaggio_allegato_header.addWhereCondition("id=?");
 						ids_dumpMessaggio_allegato_header_da_non_eliminare.add(dumpMessaggio_allegato_header.getId());
-						lstObjects_dumpMessaggio_allegato_header.add(new JDBCObject(new Long(dumpMessaggio_allegato_header.getId()),Long.class));
+						lstObjects_dumpMessaggio_allegato_header.add(new JDBCObject(Long.valueOf(dumpMessaggio_allegato_header.getId()),Long.class));
 
 						if(isUpdate_dumpMessaggio_allegato_header) {
 							// Update dumpMessaggio_allegato_header
@@ -729,7 +729,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_contenuto.getValore(),DumpMessaggio.model().CONTENUTO.VALORE.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_contenuto.getValoreAsBytes(),DumpMessaggio.model().CONTENUTO.VALORE_AS_BYTES.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_contenuto.getDumpTimestamp(),DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType()),
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class)
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				dumpMessaggio_contenuto.setId(id_dumpMessaggio_contenuto);
 
@@ -753,7 +753,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				lstObjects_dumpMessaggio_contenuto.add(new JDBCObject(dumpMessaggio_contenuto.getDumpTimestamp(), DumpMessaggio.model().CONTENUTO.DUMP_TIMESTAMP.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_contenuto.addWhereCondition("id=?");
 				ids_dumpMessaggio_contenuto_da_non_eliminare.add(dumpMessaggio_contenuto.getId());
-				lstObjects_dumpMessaggio_contenuto.add(new JDBCObject(new Long(dumpMessaggio_contenuto.getId()),Long.class));
+				lstObjects_dumpMessaggio_contenuto.add(new JDBCObject(Long.valueOf(dumpMessaggio_contenuto.getId()),Long.class));
 
 				if(isUpdate_dumpMessaggio_contenuto) {
 					// Update dumpMessaggio_contenuto
@@ -913,7 +913,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().MULTIPART_HEADER));
 		sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.addWhereCondition("id_messaggio=?");
 		java.util.List<Object> dumpMessaggio_multipartHeader_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_multipartHeader_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().MULTIPART_HEADER, this.getDumpMessaggioFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_multipartHeader
 		for (Object dumpMessaggio_multipartHeader_object : dumpMessaggio_multipartHeader_toDelete_list) {
@@ -928,7 +928,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			// Delete dumpMessaggio_multipartHeader
 			if(dumpMessaggio_multipartHeader != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_dumpMessaggio_multipartHeader.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_multipartHeader.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_multipartHeader.getId()),Long.class));
 			}
 		} // fine for dumpMessaggio_multipartHeader
 
@@ -938,7 +938,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().HEADER_TRASPORTO));
 		sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.addWhereCondition("id_messaggio=?");
 		java.util.List<Object> dumpMessaggio_headerTrasporto_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_headerTrasporto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().HEADER_TRASPORTO, this.getDumpMessaggioFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_headerTrasporto
 		for (Object dumpMessaggio_headerTrasporto_object : dumpMessaggio_headerTrasporto_toDelete_list) {
@@ -953,7 +953,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			// Delete dumpMessaggio_headerTrasporto
 			if(dumpMessaggio_headerTrasporto != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_dumpMessaggio_headerTrasporto.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_headerTrasporto.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_headerTrasporto.getId()),Long.class));
 			}
 		} // fine for dumpMessaggio_headerTrasporto
 
@@ -963,7 +963,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO));
 		sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.addWhereCondition("id_messaggio=?");
 		java.util.List<Object> dumpMessaggio_allegato_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO, this.getDumpMessaggioFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_allegato
 		for (Object dumpMessaggio_allegato_object : dumpMessaggio_allegato_toDelete_list) {
@@ -975,7 +975,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().ALLEGATO.HEADER));
 			sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.addWhereCondition("id_allegato=?");
 			java.util.List<Object> dumpMessaggio_allegato_header_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_allegato_dumpMessaggio_allegato_header_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().ALLEGATO.HEADER, this.getDumpMessaggioFetch(),
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_allegato.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_allegato.getId()),Long.class));
 
 			// for dumpMessaggio_allegato_header
 			for (Object dumpMessaggio_allegato_header_object : dumpMessaggio_allegato_header_toDelete_list) {
@@ -990,7 +990,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				// Delete dumpMessaggio_allegato_header
 				if(dumpMessaggio_allegato_header != null){
 					jdbcUtilities.execute(sqlQueryObjectDelete_dumpMessaggio_allegato_header.createSQLDelete(), jdbcProperties.isShowSql(), 
-					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_allegato_header.getId()),Long.class));
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_allegato_header.getId()),Long.class));
 				}
 			} // fine for dumpMessaggio_allegato_header
 
@@ -1003,7 +1003,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			// Delete dumpMessaggio_allegato
 			if(dumpMessaggio_allegato != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_dumpMessaggio_allegato.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_allegato.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_allegato.getId()),Long.class));
 			}
 		} // fine for dumpMessaggio_allegato
 
@@ -1013,7 +1013,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model().CONTENUTO));
 		sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.addWhereCondition("id_messaggio=?");
 		java.util.List<Object> dumpMessaggio_contenuto_toDelete_list = (java.util.List<Object>) jdbcUtilities.executeQuery(sqlQueryObjectDelete_dumpMessaggio_contenuto_getToDelete.createSQLQuery(), jdbcProperties.isShowSql(), DumpMessaggio.model().CONTENUTO, this.getDumpMessaggioFetch(),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(id),Long.class));
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class));
 
 		// for dumpMessaggio_contenuto
 		for (Object dumpMessaggio_contenuto_object : dumpMessaggio_contenuto_toDelete_list) {
@@ -1028,7 +1028,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			// Delete dumpMessaggio_contenuto
 			if(dumpMessaggio_contenuto != null){
 				jdbcUtilities.execute(sqlQueryObjectDelete_dumpMessaggio_contenuto.createSQLDelete(), jdbcProperties.isShowSql(), 
-				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(new Long(dumpMessaggio_contenuto.getId()),Long.class));
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(dumpMessaggio_contenuto.getId()),Long.class));
 			}
 		} // fine for dumpMessaggio_contenuto
 

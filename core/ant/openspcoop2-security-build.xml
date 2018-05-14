@@ -47,6 +47,24 @@
 				<var name="engine" value="engine/*.java" />
 				<var name="soapBox" value="soapbox/*.java" />
 				<var name="wss4j" value="wss4j/*.java" />
+				<!-- Da java 9 in poi non esiste più la classe 'com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverContext' -->
+				<var name="classeResourceResolverContext" value=""/>				
+				<if>
+					<not>
+						<or>
+							<equals arg1="${ant.java.version}" arg2="1.3" />
+							<equals arg1="${ant.java.version}" arg2="1.4" />
+					     		<equals arg1="${ant.java.version}" arg2="1.5" />
+							<equals arg1="${ant.java.version}" arg2="1.6" />
+							<equals arg1="${ant.java.version}" arg2="1.7" />
+							<equals arg1="${ant.java.version}" arg2="1.8" />
+						</or>
+					</not>
+					<then>
+						<var name="classeResourceResolverContext" value="signature/SunEnvelopeIdResolver.java"/>
+						<echo message="Warning: Java>8 (${ant.java.version}) Exclude 'signature/SunEnvelopeIdResolver.java'" />	
+					</then>
+				</if>
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.authorization" />
@@ -61,6 +79,7 @@
 					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${engine}"/>
 					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_2" value="${wss4j}"/>
 					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_3" value="${soapBox}"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES_4" value="${classeResourceResolverContext}"/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/security/message"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.security.message"/>
 					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="security"/>

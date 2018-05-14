@@ -193,7 +193,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
 			boolean enableAutoMapping_estraiXsdSchemiFromWsdlTypes = apcCore.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAcc));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAcc));
 			boolean asWithAllegati = (as.sizeAllegatoList()>0 || as.sizeSpecificaSemiformaleList()>0 || as.getByteWsdlDefinitorio()!=null);
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
 			String labelASTitle = apcHelper.getLabelIdAccordo(as); 

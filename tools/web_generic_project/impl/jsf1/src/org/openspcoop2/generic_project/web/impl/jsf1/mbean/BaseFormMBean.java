@@ -55,7 +55,7 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
  * BaseFormMBean classe generica che fornisce il supporto ad una form.
  * 
  * service: interfaccia con il livello service per l'accesso ai dati.
- * selectedElement: in caso di visualizzazione di tipo Elenco -> Dettaglio, 
+ * selectedElement: in caso di visualizzazione di tipo Elenco -&gt; Dettaglio, 
  * fornisce il supporto per la gestione della selezione di un elemento da parte dell'utente.
  * form: Bean del form.
  * 

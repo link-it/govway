@@ -268,7 +268,7 @@ public class JMSReceiver {
 			try{
 				// ContenutoRispostaPresente
 				boolean contenutoRisposta = receivedMsg.getBooleanProperty("ContenutoRispostaPresente");
-				this.propertiesReceived.put("ContenutoRispostaPresente",new Boolean(contenutoRisposta));
+				this.propertiesReceived.put("ContenutoRispostaPresente",Boolean.valueOf(contenutoRisposta));
 			}	catch(javax.jms.JMSException e){}
 			// ......
 			

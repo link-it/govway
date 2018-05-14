@@ -428,7 +428,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected Boolean privato = new Boolean("false");
+  protected Boolean privato = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
@@ -440,7 +440,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

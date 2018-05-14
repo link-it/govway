@@ -504,7 +504,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				this.soggettiCore.soggettiRuoliList(Long.parseLong(id),searchForCount);
 				//int numRuoli = lista1.size();
 				int numRuoli = searchForCount.getNumEntries(Liste.SOGGETTI_RUOLI);
-				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,new Long(numRuoli));
+				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
 			} else{
 				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
 			}

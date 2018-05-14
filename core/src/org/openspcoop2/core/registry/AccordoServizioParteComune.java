@@ -881,7 +881,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected Boolean privato = new Boolean("false");
+  protected Boolean privato = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-wsdl-definitorio",required=false)
@@ -1016,6 +1016,6 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
 }

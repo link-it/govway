@@ -34,9 +34,9 @@ import org.openspcoop2.utils.UtilsException;
 /**
 * ConsoleProperties
 *
-* @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+* @author Andrea Poli (apoli@link.it)
+* @author $Author$
+* @version $Rev$, $Date$
 */
 
 

@@ -176,6 +176,6 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
 }

@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdActivePolicy }
+     * Create an instance of {@link Cache }
      */
-    public IdActivePolicy createIdActivePolicy() {
-        return new IdActivePolicy();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazionePolicy }
-     */
-    public ConfigurazionePolicy createConfigurazionePolicy() {
-        return new ConfigurazionePolicy();
+    public Cache createCache() {
+        return new Cache();
     }
 
     /**
@@ -73,27 +66,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ElencoIdPolicy }
-     */
-    public ElencoIdPolicy createElencoIdPolicy() {
-        return new ElencoIdPolicy();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneRateLimiting }
-     */
-    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
-        return new ConfigurazioneRateLimiting();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneGenerale }
-     */
-    public ConfigurazioneGenerale createConfigurazioneGenerale() {
-        return new ConfigurazioneGenerale();
-    }
-
-    /**
      * Create an instance of {@link ElencoPolicyAttive }
      */
     public ElencoPolicyAttive createElencoPolicyAttive() {
@@ -101,10 +73,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Cache }
+     * Create an instance of {@link AttivazionePolicyFiltro }
      */
-    public Cache createCache() {
-        return new Cache();
+    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
+        return new AttivazionePolicyFiltro();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazionePolicy }
+     */
+    public ConfigurazionePolicy createConfigurazionePolicy() {
+        return new ConfigurazionePolicy();
     }
 
     /**
@@ -112,27 +91,6 @@ public class ObjectFactory {
      */
     public ElencoPolicy createElencoPolicy() {
         return new ElencoPolicy();
-    }
-
-    /**
-     * Create an instance of {@link TempiRispostaFruizione }
-     */
-    public TempiRispostaFruizione createTempiRispostaFruizione() {
-        return new TempiRispostaFruizione();
-    }
-
-    /**
-     * Create an instance of {@link IdPolicy }
-     */
-    public IdPolicy createIdPolicy() {
-        return new IdPolicy();
-    }
-
-    /**
-     * Create an instance of {@link AttivazionePolicyRaggruppamento }
-     */
-    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
-        return new AttivazionePolicyRaggruppamento();
     }
 
     /**
@@ -150,10 +108,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AttivazionePolicyFiltro }
+     * Create an instance of {@link ConfigurazioneGenerale }
      */
-    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
-        return new AttivazionePolicyFiltro();
+    public ConfigurazioneGenerale createConfigurazioneGenerale() {
+        return new ConfigurazioneGenerale();
+    }
+
+    /**
+     * Create an instance of {@link IdActivePolicy }
+     */
+    public IdActivePolicy createIdActivePolicy() {
+        return new IdActivePolicy();
+    }
+
+    /**
+     * Create an instance of {@link TempiRispostaFruizione }
+     */
+    public TempiRispostaFruizione createTempiRispostaFruizione() {
+        return new TempiRispostaFruizione();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneRateLimiting }
+     */
+    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
+        return new ConfigurazioneRateLimiting();
+    }
+
+    /**
+     * Create an instance of {@link ElencoIdPolicy }
+     */
+    public ElencoIdPolicy createElencoIdPolicy() {
+        return new ElencoIdPolicy();
+    }
+
+    /**
+     * Create an instance of {@link AttivazionePolicyRaggruppamento }
+     */
+    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
+        return new AttivazionePolicyRaggruppamento();
+    }
+
+    /**
+     * Create an instance of {@link IdPolicy }
+     */
+    public IdPolicy createIdPolicy() {
+        return new IdPolicy();
     }
 
     /**

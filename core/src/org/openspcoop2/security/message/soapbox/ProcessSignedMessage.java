@@ -60,11 +60,13 @@ import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityFailureException;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.security.message.signature.SunEnvelopeIdResolver;
 import org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
+
+import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolver;
 
 /**
  * ProcessSignedMessage
@@ -164,7 +166,12 @@ public class ProcessSignedMessage implements Processor {
         	sigXMLSec.addResourceResolver(XMLSecEnvelopeIdResolver.getInstance(this.message));
         }
         else{
-        	sigSUN.addResourceResolver(SunEnvelopeIdResolver.getInstance(this.message));
+        	try {
+        		// Uso la reflection poiche' da java 9 la classe usata in SunEnvelopeIdResolver non esiste piu' e quindi la classe non viene compilata tra quelle di openspcoop (esclusa nel build)
+        		sigSUN.addResourceResolver((ResourceResolver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver",this.message));
+        	}catch(Exception e) {
+        		throw new SecurityFailureException(e.getMessage(),e);
+        	}
         }
         
         

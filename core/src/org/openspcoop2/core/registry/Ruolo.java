@@ -44,7 +44,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" use="optional" default="qualsiasi"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-id-ruolo-for-update" type="{http://www.openspcoop2.org/core/id}id-ruolo" use="optional"/>
+ * 		&lt;attribute name="old-id-ruolo-for-update" type="{http://www.openspcoop2.org/core/registry}id-ruolo" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 

@@ -24,12 +24,19 @@
 			<matches string="${ant.version}" pattern=".*1\.5\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.6\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.7\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.8\.0.*"/>
-			<matches string="${ant.version}" pattern=".*1\.8\.1.*"/>
+			<matches string="${ant.version}" pattern=".*1\.8\..*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.0.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.1.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.2.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.3.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.4.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.5.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.6.*"/>
+			<matches string="${ant.version}" pattern=".*1\.9\.7.*"/>
 		</or>
 		<then>
 			<echo message="Ant version: ${ant.version}"/>
-			<fail message="E' richiesta una versione di apache-ant 1.8.2 o superiore"/>
+			<fail message="E' richiesta una versione di apache-ant 1.9.8 o superiore"/>
 		</then>
 	</if>
 	<if>
@@ -57,11 +64,10 @@
 	<var name="classTargetVersion" value="1.8"/>
 	
 	<path id="classpath_jre" >
-		<fileset dir="${java_home}/jre/lib" >
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="${java_home}/lib" >
-			<include name="*.jar"/>
+		<fileset dir="${java_home}" >
+			<include name="lib/modules"/> <!-- presente da java 9 -->
+			<include name="jre/lib/*.jar"/> <!-- non presente da java 9 -->
+			<include name="lib/*.jar"/>
 		</fileset>
 	</path>
 	

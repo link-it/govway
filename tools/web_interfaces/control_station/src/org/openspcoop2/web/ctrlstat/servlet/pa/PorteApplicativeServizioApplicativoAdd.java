@@ -521,7 +521,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			}
 		}
 
-		List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(soggInt));
+		List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(soggInt));
 
 		// rif bug #45
 		// I servizi applicativi da visualizzare sono quelli che hanno

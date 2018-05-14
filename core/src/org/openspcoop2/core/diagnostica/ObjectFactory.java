@@ -52,17 +52,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DominioSoggetto }
+     */
+    public DominioSoggetto createDominioSoggetto() {
+        return new DominioSoggetto();
+    }
+
+    /**
      * Create an instance of {@link Proprieta }
      */
     public Proprieta createProprieta() {
         return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link MessaggioDiagnostico }
-     */
-    public MessaggioDiagnostico createMessaggioDiagnostico() {
-        return new MessaggioDiagnostico();
     }
 
     /**
@@ -73,10 +73,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DominioSoggetto }
+     * Create an instance of {@link MessaggioDiagnostico }
      */
-    public DominioSoggetto createDominioSoggetto() {
-        return new DominioSoggetto();
+    public MessaggioDiagnostico createMessaggioDiagnostico() {
+        return new MessaggioDiagnostico();
     }
 
     /**

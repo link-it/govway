@@ -28,7 +28,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter;
  * &lt;complexType name="search-filter-messaggio">
  *     &lt;sequence>
  *         &lt;element name="filtro" type="{http://www.openspcoop2.org/pdd/monitor/management}filtro" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
@@ -77,7 +77,7 @@ public class SearchFilterMessaggio extends org.openspcoop2.utils.beans.BaseBean 
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="orCondition",required=false,nillable=false,defaultValue="false")
-	private Boolean orCondition = new Boolean("false");
+	private Boolean orCondition = Boolean.valueOf("false");
 	
 	public void setOrCondition(Boolean orCondition){
 		this.orCondition = orCondition;

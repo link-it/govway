@@ -156,7 +156,7 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponente extend
   protected java.lang.String nome;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="azione",required=false)

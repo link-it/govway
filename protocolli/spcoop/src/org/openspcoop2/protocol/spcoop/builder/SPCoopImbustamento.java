@@ -209,7 +209,7 @@ public class SPCoopImbustamento {
 			serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
 			serialGeneratorParameter.setSerializableNextIntervalTimeMs(config.getCheckIntervalJDBC());
 			serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
-			serialGeneratorParameter.setMaxValue(new Long(SPCoopImbustamento.maxSeriale));
+			serialGeneratorParameter.setMaxValue(Long.valueOf(SPCoopImbustamento.maxSeriale));
 			serialGeneratorParameter.setWrap(true);
 		}
 		

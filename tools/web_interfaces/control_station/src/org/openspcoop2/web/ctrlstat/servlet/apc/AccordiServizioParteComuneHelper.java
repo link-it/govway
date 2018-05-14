@@ -390,7 +390,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 						if (contaListe) {
 							int numEr = asps.sizeFruitoreList();
-							ServletUtils.setDataElementVisualizzaLabel(de, new Long(numEr));
+							ServletUtils.setDataElementVisualizzaLabel(de, Long.valueOf(numEr));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
@@ -1574,7 +1574,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						this.apcCore.accordiPorttypeOperationList(idPortType, searchForCount);
 						//int num = tmpLista.size();
 						int num = searchForCount.getNumEntries(Liste.ACCORDI_PORTTYPE_AZIONI);
-						ServletUtils.setDataElementVisualizzaLabel(de, new Long(num));
+						ServletUtils.setDataElementVisualizzaLabel(de, Long.valueOf(num));
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
 					e.addElement(de);

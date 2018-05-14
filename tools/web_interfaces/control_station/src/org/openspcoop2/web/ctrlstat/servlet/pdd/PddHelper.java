@@ -573,7 +573,7 @@ public class PddHelper extends ConsoleHelper {
 //					if (lista1 != null)
 //						numSog = lista1.size();
 					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSog));
+					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 				e.addElement(de);
@@ -698,7 +698,7 @@ public class PddHelper extends ConsoleHelper {
 //					if (lista1 != null)
 //						numSog = lista1.size();
 					numSog = searchForCount.getNumEntries(Liste.PDD_SOGGETTI);
-					ServletUtils.setDataElementVisualizzaLabel(de,new Long(numSog));
+					ServletUtils.setDataElementVisualizzaLabel(de,Long.valueOf(numSog));
 				} else
 					ServletUtils.setDataElementVisualizzaLabel(de);
 				e.addElement(de);				

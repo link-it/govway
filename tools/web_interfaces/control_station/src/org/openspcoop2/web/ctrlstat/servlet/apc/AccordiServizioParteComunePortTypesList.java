@@ -80,7 +80,7 @@ public final class AccordiServizioParteComunePortTypesList extends Action {
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
 
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(id));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(id));
 			
 			// Preparo il menu
 			apcHelper.makeMenu();

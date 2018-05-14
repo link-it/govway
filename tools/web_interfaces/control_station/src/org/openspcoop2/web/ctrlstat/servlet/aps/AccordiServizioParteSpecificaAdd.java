@@ -840,7 +840,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if ((this.provider != null) && !this.provider.equals("")) {
 				int idErogatore = Integer.parseInt(this.provider);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(new Long(idErogatore));
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
 
 				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno

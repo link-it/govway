@@ -79,7 +79,7 @@ public final class AccordiCooperazioneAllegatiList extends Action {
 			
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(new Long(id));
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.valueOf(id));
 
 			// Preparo il menu
 			acHelper.makeMenu();

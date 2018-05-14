@@ -76,7 +76,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE),
 	
-	ERRORE_402_AUTENTICAZIONE_FALLITA("Identificazione fallita, "+
+	ERRORE_402_AUTENTICAZIONE_FALLITA("Autenticazione fallita, "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
 			

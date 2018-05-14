@@ -1423,7 +1423,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}else{
 							hrefFind = SoapUtils.getAttributeNode(sequenza, "numeroProgressivo");
 						}
-						Long test = new Long(hrefFind.getNodeValue());
+						Long test = Long.valueOf(hrefFind.getNodeValue());
 						errore.setSequenza(test.longValue());
 					}catch(Exception e){}
 				}
@@ -2563,7 +2563,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		}
 
 		try{
-			Long test = new Long(seq);
+			Long test = Long.valueOf(seq);
 			this.busta.setSequenza(test.longValue());
 		} catch(Exception e) {
 			Eccezione ecc = new Eccezione();
@@ -4216,7 +4216,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(date[0].length() != 4)
 				return null;
 			try{
-				Integer test = new Integer(date[0]);
+				Integer test = Integer.valueOf(date[0]);
 				if(test.intValue()>2100)
 					return null;
 			} catch(Exception e){
@@ -4227,10 +4227,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(date[2].length() != 2)
 				return null;
 			try{
-				Integer mese = new Integer(date[1]);
+				Integer mese = Integer.valueOf(date[1]);
 				if(mese.intValue()>12 || mese.intValue() < 0)
 					return null;
-				Integer giorno = new Integer(date[2]);
+				Integer giorno = Integer.valueOf(date[2]);
 				if(giorno.intValue() < 0)
 					return null;
 				if(giorno.intValue()>29 && mese.intValue() == 2)
@@ -4258,7 +4258,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(ora[0].length() != 2)
 				return null;
 			try{
-				Integer test = new Integer(ora[0]);
+				Integer test = Integer.valueOf(ora[0]);
 				if(test.intValue() > 23 || test.intValue() < 0)
 					return null;
 			} catch(Exception e){
@@ -4268,7 +4268,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(ora[1].length() != 2)
 				return null;
 			try{
-				Integer test = new Integer(ora[1]);
+				Integer test = Integer.valueOf(ora[1]);
 				if(test.intValue() > 59 || test.intValue() < 0)
 					return null;
 			} catch(Exception e){
@@ -4282,7 +4282,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				return null;
 			try{
 				secondi = "" + ora[2].charAt(0) + ora[2].charAt(1);
-				Integer test = new Integer(secondi);
+				Integer test = Integer.valueOf(secondi);
 				if(test.intValue() > 59 || test.intValue() < 0)
 					return null;
 			} catch(Exception e){
@@ -4292,12 +4292,12 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			GregorianCalendar calendar = null;
 			try{
 				calendar = 
-					new GregorianCalendar( (new Integer(date[0])).intValue(),
-							((new Integer(date[1])).intValue()-1), // il mese is 0-Based
-							(new Integer(date[2])).intValue(),
-							(new Integer(ora[0])).intValue(),
-							(new Integer(ora[1])).intValue(),
-							(new Integer(secondi)).intValue());
+					new GregorianCalendar( (Integer.valueOf(date[0])).intValue(),
+							((Integer.valueOf(date[1])).intValue()-1), // il mese is 0-Based
+							(Integer.valueOf(date[2])).intValue(),
+							(Integer.valueOf(ora[0])).intValue(),
+							(Integer.valueOf(ora[1])).intValue(),
+							(Integer.valueOf(secondi)).intValue());
 			} catch(Exception e){
 				return null;
 			} 
@@ -4335,18 +4335,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			return false;
 
 		try{
-			Integer testNowAnno = new Integer(splitNow[0]);
-			Integer testScadenzaAnno = new Integer(splitScadenza[0]);
-			Integer testNowMese = new Integer(splitNow[1]);
-			Integer testScadenzaMese = new Integer(splitScadenza[1]);
-			Integer testNowGiorno = new Integer(splitNow[2]);
-			Integer testScadenzaGiorno = new Integer(splitScadenza[2]);
-			Integer testNowOra = new Integer(splitNow[3]);
-			Integer testScadenzaOra = new Integer(splitScadenza[3]);
-			Integer testNowMinuti = new Integer(splitNow[4]);
-			Integer testScadenzaMinuti = new Integer(splitScadenza[4]);
-			Integer testNowSecondi = new Integer(splitNow[5]);
-			Integer testScadenzaSecondi = new Integer(splitScadenza[5].charAt(0) + splitScadenza[5].charAt(1));
+			Integer testNowAnno = Integer.valueOf(splitNow[0]);
+			Integer testScadenzaAnno = Integer.valueOf(splitScadenza[0]);
+			Integer testNowMese = Integer.valueOf(splitNow[1]);
+			Integer testScadenzaMese = Integer.valueOf(splitScadenza[1]);
+			Integer testNowGiorno = Integer.valueOf(splitNow[2]);
+			Integer testScadenzaGiorno = Integer.valueOf(splitScadenza[2]);
+			Integer testNowOra = Integer.valueOf(splitNow[3]);
+			Integer testScadenzaOra = Integer.valueOf(splitScadenza[3]);
+			Integer testNowMinuti = Integer.valueOf(splitNow[4]);
+			Integer testScadenzaMinuti = Integer.valueOf(splitScadenza[4]);
+			Integer testNowSecondi = Integer.valueOf(splitNow[5]);
+			Integer testScadenzaSecondi = Integer.valueOf(splitScadenza[5].charAt(0) + splitScadenza[5].charAt(1));
 			if(testNowAnno.intValue() > testScadenzaAnno.intValue())
 				return true;
 			else if ( (testNowAnno.intValue() == testScadenzaAnno.intValue()) &&

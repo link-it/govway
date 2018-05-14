@@ -283,7 +283,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		}
 		
 		// threads
-		dati.activeRequestCounter = new Long(this.activeRequestCounter);
+		dati.activeRequestCounter = Long.valueOf(this.activeRequestCounter);
 		
 		// data di creazione
 		dati.creationDate = new Date(this.creationDate.getTime());
@@ -293,16 +293,16 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			dati.policyDateTypeInterval = UnitaTemporale.toEnumConstant(this.policyDateTypeInterval.getValue());
 		}
 		if(this.policyDateInterval!=null){
-			dati.policyDateInterval = new Integer(this.policyDateInterval);
+			dati.policyDateInterval = Integer.valueOf(this.policyDateInterval);
 		}
 		if(this.policyDateCurrentInterval!=null){
-			dati.policyDateCurrentInterval = new Boolean(this.policyDateCurrentInterval);
+			dati.policyDateCurrentInterval = Boolean.valueOf(this.policyDateCurrentInterval);
 		}
 		if(this.policyDateWindowInterval!=null){
 			dati.policyDateWindowInterval = TipoFinestra.toEnumConstant(this.policyDateWindowInterval.getValue());
 		}
 		if(this.policyRealtime!=null){
-			dati.policyRealtime = new Boolean(this.policyRealtime);
+			dati.policyRealtime = Boolean.valueOf(this.policyRealtime);
 		}
 		
 		// dati dinamici	
@@ -310,22 +310,22 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			dati.policyDate = new Date(this.policyDate.getTime());
 		}	
 		if(this.policyRequestCounter!=null){
-			dati.policyRequestCounter = new Long(this.policyRequestCounter);
+			dati.policyRequestCounter = Long.valueOf(this.policyRequestCounter);
 		}
 		if(this.policyCounter!=null){
-			dati.policyCounter = new Long(this.policyCounter);
+			dati.policyCounter = Long.valueOf(this.policyCounter);
 		}
 		if(this.policyDenyRequestCounter!=null){
-			dati.policyDenyRequestCounter = new Long(this.policyDenyRequestCounter);
+			dati.policyDenyRequestCounter = Long.valueOf(this.policyDenyRequestCounter);
 		}
 		if(this.oldPolicyDate!=null){
 			dati.oldPolicyDate = new Date(this.oldPolicyDate.getTime());
 		}	
 		if(this.oldPolicyRequestCounter!=null){
-			dati.oldPolicyRequestCounter = new Long(this.oldPolicyRequestCounter);
+			dati.oldPolicyRequestCounter = Long.valueOf(this.oldPolicyRequestCounter);
 		}
 		if(this.oldPolicyCounter!=null){
-			dati.oldPolicyCounter = new Long(this.oldPolicyCounter);
+			dati.oldPolicyCounter = Long.valueOf(this.oldPolicyCounter);
 		}
 		
 		// dati iniziali degrado prestazionale
@@ -333,16 +333,16 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			dati.policyDegradoPrestazionaleDateTypeInterval = UnitaTemporale.toEnumConstant(this.policyDegradoPrestazionaleDateTypeInterval.getValue());
 		}
 		if(this.policyDegradoPrestazionaleDateInterval!=null){
-			dati.policyDegradoPrestazionaleDateInterval = new Integer(this.policyDegradoPrestazionaleDateInterval);
+			dati.policyDegradoPrestazionaleDateInterval = Integer.valueOf(this.policyDegradoPrestazionaleDateInterval);
 		}
 		if(this.policyDegradoPrestazionaleDateCurrentInterval!=null){
-			dati.policyDegradoPrestazionaleDateCurrentInterval = new Boolean(this.policyDegradoPrestazionaleDateCurrentInterval);
+			dati.policyDegradoPrestazionaleDateCurrentInterval = Boolean.valueOf(this.policyDegradoPrestazionaleDateCurrentInterval);
 		}
 		if(this.policyDegradoPrestazionaleDateWindowInterval!=null){
 			dati.policyDegradoPrestazionaleDateWindowInterval = TipoFinestra.toEnumConstant(this.policyDegradoPrestazionaleDateWindowInterval.getValue());
 		}
 		if(this.policyDegradoPrestazionaleRealtime!=null){
-			dati.policyDegradoPrestazionaleRealtime = new Boolean(this.policyDegradoPrestazionaleRealtime);
+			dati.policyDegradoPrestazionaleRealtime = Boolean.valueOf(this.policyDegradoPrestazionaleRealtime);
 		}
 		
 		// dati dinamici degrado prestazionale
@@ -350,19 +350,19 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			dati.policyDegradoPrestazionaleDate = new Date(this.policyDegradoPrestazionaleDate.getTime());
 		}	
 		if(this.policyDegradoPrestazionaleRequestCounter!=null){
-			dati.policyDegradoPrestazionaleRequestCounter = new Long(this.policyDegradoPrestazionaleRequestCounter);
+			dati.policyDegradoPrestazionaleRequestCounter = Long.valueOf(this.policyDegradoPrestazionaleRequestCounter);
 		}
 		if(this.policyDegradoPrestazionaleCounter!=null){
-			dati.policyDegradoPrestazionaleCounter = new Long(this.policyDegradoPrestazionaleCounter);
+			dati.policyDegradoPrestazionaleCounter = Long.valueOf(this.policyDegradoPrestazionaleCounter);
 		}
 		if(this.oldPolicyDegradoPrestazionaleDate!=null){
 			dati.oldPolicyDegradoPrestazionaleDate = new Date(this.oldPolicyDegradoPrestazionaleDate.getTime());
 		}	
 		if(this.oldPolicyDegradoPrestazionaleRequestCounter!=null){
-			dati.oldPolicyDegradoPrestazionaleRequestCounter = new Long(this.oldPolicyDegradoPrestazionaleRequestCounter);
+			dati.oldPolicyDegradoPrestazionaleRequestCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleRequestCounter);
 		}
 		if(this.oldPolicyDegradoPrestazionaleCounter!=null){
-			dati.oldPolicyDegradoPrestazionaleCounter = new Long(this.oldPolicyDegradoPrestazionaleCounter);
+			dati.oldPolicyDegradoPrestazionaleCounter = Long.valueOf(this.oldPolicyDegradoPrestazionaleCounter);
 		}
 		
 		

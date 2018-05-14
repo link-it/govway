@@ -248,7 +248,7 @@ public class ClassQueue {
 	}
 	/**
 	 * Aggiorna le informazioni relative ad un'operazione
-	 * L'operation passata come parametro deve avere id>0 e stato impostato altrimenti verra generata un'eccezione.
+	 * L'operation passata come parametro deve avere id&gt;0 e stato impostato altrimenti verra generata un'eccezione.
 	 * @param operation L'operation da aggiornare
 	 * @return righe modificate
 	 * @throws Exception

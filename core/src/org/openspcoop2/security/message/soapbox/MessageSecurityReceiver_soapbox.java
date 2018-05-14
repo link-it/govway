@@ -56,6 +56,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 
 
@@ -182,7 +183,7 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 
 			ProcessPartialEncryptedMessage decryptMsgProc = null;
 			if(decrypt){
-				decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(message.getProcessPartialEncryptedMessageClass()).newInstance();
+				decryptMsgProc = (ProcessPartialEncryptedMessage) ClassLoaderUtilities.newInstance(message.getProcessPartialEncryptedMessageClass());
 				decryptMsgProc.setMessage(message);
 				decryptMsgProc.setActor(messageSecurityContext.getActor());
 				decryptMsgProc.setMustUnderstand(mustUnderstand);

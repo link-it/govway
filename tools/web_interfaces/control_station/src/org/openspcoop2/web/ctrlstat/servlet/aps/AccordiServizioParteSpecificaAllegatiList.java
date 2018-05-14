@@ -83,7 +83,7 @@ public final class AccordiServizioParteSpecificaAllegatiList extends Action {
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
-			AccordoServizioParteSpecifica ss = apsCore.getAccordoServizioParteSpecifica(new Long(id));
+			AccordoServizioParteSpecifica ss = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(id));
 			List<Documento> lista = apsCore.serviziAllegatiList(Integer.parseInt(id), ricerca);
 
 			apsHelper.prepareServiziAllegatiList(ss, ricerca, lista);

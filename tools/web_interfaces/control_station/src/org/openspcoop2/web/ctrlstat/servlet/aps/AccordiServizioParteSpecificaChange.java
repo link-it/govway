@@ -1723,7 +1723,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				// recupero le porte delegate per tipo e nome servizio
 				// aggiorno il tipo e il nome servizio
-				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(new Long(0),
+				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(Long.valueOf(0),
 						asps.getOldIDServizioForUpdate().getTipo(), asps.getOldIDServizioForUpdate().getNome(), asps.getOldIDServizioForUpdate().getVersione(), 
 						soggettoErogatore.getId(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 				for (PortaDelegata tmpPorta : tmpListPD) {

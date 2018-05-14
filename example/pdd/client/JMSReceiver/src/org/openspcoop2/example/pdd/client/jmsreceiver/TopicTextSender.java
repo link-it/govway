@@ -47,7 +47,8 @@ public class TopicTextSender {
 		else if("wildfly8".equals(args[0]) ||
 				"wildfly9".equals(args[0]) ||
 				"wildfly10".equals(args[0]) ||
-				"wildfly11".equals(args[0])){
+				"wildfly11".equals(args[0]) ||
+				"wildfly12".equals(args[0])){
 			properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
 			properties.put(Context.PROVIDER_URL, "http-remoting://127.0.0.1:8080");
 		}
@@ -78,7 +79,8 @@ public class TopicTextSender {
 		else if("wildfly8".equals(args[0]) ||
 				"wildfly9".equals(args[0]) ||
 				"wildfly10".equals(args[0]) ||
-				"wildfly11".equals(args[0])){
+				"wildfly11".equals(args[0]) ||
+				"wildfly12".equals(args[0])){
 			qcf = (TopicConnectionFactory) ctx.lookup("jms/RemoteConnectionFactory");
 		}
 		else{

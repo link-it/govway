@@ -798,7 +798,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			if(split[2].length() != 7)
 				return false;
 			try{
-				Integer test = new Integer(split[2]);
+				Integer test = Integer.valueOf(split[2]);
 				test.intValue();
 			} catch(Exception e){
 				return false;
@@ -813,7 +813,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			if(date[0].length() != 4)
 				return false;
 			try{
-				Integer test = new Integer(date[0]);
+				Integer test = Integer.valueOf(date[0]);
 				if(test.intValue()>2100)
 					return false;
 			} catch(Exception e){
@@ -824,10 +824,10 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			if(date[2].length() != 2)
 				return false;
 			try{
-				Integer mese = new Integer(date[1]);
+				Integer mese = Integer.valueOf(date[1]);
 				if(mese.intValue()>12 || mese.intValue() < 0)
 					return false;
-				Integer giorno = new Integer(date[2]);
+				Integer giorno = Integer.valueOf(date[2]);
 				if(giorno.intValue() < 0)
 					return false;
 				if(giorno.intValue()>29 && mese.intValue() == 2)
@@ -854,7 +854,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			if(ora[0].length() != 2)
 				return false;
 			try{
-				Integer test = new Integer(ora[0]);
+				Integer test = Integer.valueOf(ora[0]);
 				if(test.intValue() > 23 || test.intValue() < 0)
 					return false;
 			} catch(Exception e){
@@ -863,7 +863,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 			if(ora[1].length() != 2)
 				return false;
 			try{
-				Integer test = new Integer(ora[1]);
+				Integer test = Integer.valueOf(ora[1]);
 				if(test.intValue() > 59 || test.intValue() < 0)
 					return false;
 			} catch(Exception e){

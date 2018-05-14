@@ -102,7 +102,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
-			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordo));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(Long.valueOf(idAccordo));
 			//String nomeacc = as.getNome();
 			int totAz = as.sizeAzioneList();
 			String nomeaz = "";
@@ -122,7 +122,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 
 				
 				// Controllo che l'azione non sia stata correlata da un'altra azione
-				if (apcCore.isAzioneCorrelata(new Long(as.getId()).intValue(), nomeaz, nomeaz)) {
+				if (apcCore.isAzioneCorrelata(Long.valueOf(as.getId()).intValue(), nomeaz, nomeaz)) {
 					// non rimuovo in quanto correlata
 					ArrayList<String> tmp = new ArrayList<String>();
 					// cerco le azioni che contengono quella che

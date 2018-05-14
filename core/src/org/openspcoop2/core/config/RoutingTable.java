@@ -161,6 +161,6 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBean implement
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="abilitata",required=false)
-  protected Boolean abilitata = new Boolean("false");
+  protected Boolean abilitata = Boolean.valueOf("false");
 
 }

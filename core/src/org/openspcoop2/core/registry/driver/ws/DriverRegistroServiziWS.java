@@ -613,7 +613,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoCooperazione filter = new SearchFilterAccordoCooperazione();
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getVersione()!=null){
-					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
 				}
 				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordocooperazione.search.IdSoggetto());
@@ -707,7 +707,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteComune filter = new SearchFilterAccordoServizioParteComune();
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getVersione()!=null){
-					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
 				}
 				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.IdSoggetto());
@@ -831,7 +831,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteComune filter = new SearchFilterAccordoServizioParteComune();
 			if(filtroRicercaBase!=null){
 				if(filtroRicercaBase.getVersione()!=null){
-					filter.setVersione(new Long(filtroRicercaBase.getVersione()));
+					filter.setVersione(Long.valueOf(filtroRicercaBase.getVersione()));
 				}
 				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.IdSoggetto());
@@ -1002,7 +1002,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
 			filter.setTipo(idServizio.getTipo());
 			filter.setNome(idServizio.getNome());
-			filter.setVersione(new Long(idServizio.getVersione()));
+			filter.setVersione(Long.valueOf(idServizio.getVersione()));
 			if(idServizio.getSoggettoErogatore()!=null){
 				filter.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
 				filter.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
@@ -1051,7 +1051,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 						filtroRicerca.getTipologia()!=null){
 					filter.setTipo(filtroRicerca.getTipo());
 					filter.setNome(filtroRicerca.getNome());
-					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
 					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
 					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
 					if(filtroRicerca.getTipologia()!=null){
@@ -1134,7 +1134,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 						filtroRicerca.getTipologia()!=null){
 					filter.setTipo(filtroRicerca.getTipo());
 					filter.setNome(filtroRicerca.getNome());
-					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setVersione(Long.valueOf(filtroRicerca.getVersione()));
 					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
 					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
 					if(filtroRicerca.getTipologia()!=null){

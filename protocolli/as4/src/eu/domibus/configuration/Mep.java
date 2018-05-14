@@ -92,6 +92,6 @@ public class Mep extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="legs",required=false)
-  protected java.lang.Integer legs = new java.lang.Integer("1");
+  protected java.lang.Integer legs = java.lang.Integer.valueOf("1");
 
 }

@@ -793,7 +793,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="privato",required=false)
-  protected Boolean privato = new Boolean("false");
+  protected Boolean privato = Boolean.valueOf("false");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Long idAccordo;
@@ -827,7 +827,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.Integer versione = new java.lang.Integer("1");
+  protected java.lang.Integer versione = java.lang.Integer.valueOf("1");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="accordo-servizio-parte-comune",required=true)

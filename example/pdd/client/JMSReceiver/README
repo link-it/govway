@@ -1,5 +1,5 @@
 Per avviare il client usare il comando:
 	ant send/receive -Das=AS_VERSION -DtipoTest=[QueueText/QueueBytes/TopicText/TopicBytes] -Dusername=USERNAME -Dpassword=PASSWORD
 esempio:
-	ant send/receive -Das=jboss7 -DtipoTest=QueueBytes -Dusername=openspcoop2 -Dpassword=123456
+	ant send/receive -Das=jboss7 -DtipoTest=QueueBytes -Dusername=openspcoop2 -Dpassword=op3n.spc00p
 

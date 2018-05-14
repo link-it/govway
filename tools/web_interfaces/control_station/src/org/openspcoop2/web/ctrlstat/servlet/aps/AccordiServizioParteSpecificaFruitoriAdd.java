@@ -365,7 +365,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			// Prendo nome e tipo dal db
 
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idInt));
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.valueOf(idInt));
 			String nomeservizio = asps.getNome();
 			String tiposervizio = asps.getTipo();
 			Integer versioneservizio = asps.getVersione();
@@ -856,7 +856,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			Fruitore fruitore = new Fruitore();
-			fruitore.setId(new Long(idProv));
+			fruitore.setId(Long.valueOf(idProv));
 			fruitore.setTipo(tipoFruitore);
 			fruitore.setNome(nomeFruitore);
 			fruitore.setConnettore(connettore);

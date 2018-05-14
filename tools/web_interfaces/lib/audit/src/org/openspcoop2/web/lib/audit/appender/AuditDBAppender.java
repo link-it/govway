@@ -108,7 +108,7 @@ public class AuditDBAppender implements IAuditAppender {
 			
 			DriverAuditDBAppender driverDBAppender = new DriverAuditDBAppender(con,this.tipoDatabase);
 			driverDBAppender.createOperation(operation);
-			return new Long(operation.getId());
+			return Long.valueOf(operation.getId());
 			
 		}catch(Exception e){
 			throw new AuditException("Appender["+this.nomeAppender+"] Errore durante la registrazione dell'operazione: "+e.getMessage(),e);

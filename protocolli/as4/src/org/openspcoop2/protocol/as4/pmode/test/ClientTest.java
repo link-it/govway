@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -66,7 +67,7 @@ public class ClientTest {
 		String nomeSoggetto = "Red";
 		//String nomeSoggetto = "Blue";
 		
-		Class.forName(driver).newInstance();
+		ClassLoaderUtilities.newInstance(driver);
 		Connection con = null;
 		try{
 			con = DriverManager.getConnection(url, userName, password);
