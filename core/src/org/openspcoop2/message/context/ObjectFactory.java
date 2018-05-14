@@ -52,31 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MessageContext }
+     * Create an instance of {@link ContentLength }
      */
-    public MessageContext createMessageContext() {
-        return new MessageContext();
-    }
-
-    /**
-     * Create an instance of {@link TransportRequestContext }
-     */
-    public TransportRequestContext createTransportRequestContext() {
-        return new TransportRequestContext();
-    }
-
-    /**
-     * Create an instance of {@link ForcedResponseMessage }
-     */
-    public ForcedResponseMessage createForcedResponseMessage() {
-        return new ForcedResponseMessage();
-    }
-
-    /**
-     * Create an instance of {@link StringParameter }
-     */
-    public StringParameter createStringParameter() {
-        return new StringParameter();
+    public ContentLength createContentLength() {
+        return new ContentLength();
     }
 
     /**
@@ -87,10 +66,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ContentLength }
+     * Create an instance of {@link Soap }
      */
-    public ContentLength createContentLength() {
-        return new ContentLength();
+    public Soap createSoap() {
+        return new Soap();
+    }
+
+    /**
+     * Create an instance of {@link TransportRequestContext }
+     */
+    public TransportRequestContext createTransportRequestContext() {
+        return new TransportRequestContext();
+    }
+
+    /**
+     * Create an instance of {@link MessageContext }
+     */
+    public MessageContext createMessageContext() {
+        return new MessageContext();
+    }
+
+    /**
+     * Create an instance of {@link ForcedResponseMessage }
+     */
+    public ForcedResponseMessage createForcedResponseMessage() {
+        return new ForcedResponseMessage();
     }
 
     /**
@@ -105,27 +105,6 @@ public class ObjectFactory {
      */
     public HeaderParameters createHeaderParameters() {
         return new HeaderParameters();
-    }
-
-    /**
-     * Create an instance of {@link Credentials }
-     */
-    public Credentials createCredentials() {
-        return new Credentials();
-    }
-
-    /**
-     * Create an instance of {@link UrlParameters }
-     */
-    public UrlParameters createUrlParameters() {
-        return new UrlParameters();
-    }
-
-    /**
-     * Create an instance of {@link Soap }
-     */
-    public Soap createSoap() {
-        return new Soap();
     }
 
     /**
@@ -147,6 +126,27 @@ public class ObjectFactory {
      */
     public ForcedResponse createForcedResponse() {
         return new ForcedResponse();
+    }
+
+    /**
+     * Create an instance of {@link StringParameter }
+     */
+    public StringParameter createStringParameter() {
+        return new StringParameter();
+    }
+
+    /**
+     * Create an instance of {@link Credentials }
+     */
+    public Credentials createCredentials() {
+        return new Credentials();
+    }
+
+    /**
+     * Create an instance of {@link UrlParameters }
+     */
+    public UrlParameters createUrlParameters() {
+        return new UrlParameters();
     }
 
 

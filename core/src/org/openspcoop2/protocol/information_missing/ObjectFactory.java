@@ -55,6 +55,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Proprieta }
+     */
+    public Proprieta createProprieta() {
+        return new Proprieta();
+    }
+
+    /**
      * Create an instance of {@link AccordoCooperazione }
      */
     public AccordoCooperazione createAccordoCooperazione() {
@@ -62,17 +69,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ReplaceMatchType }
+     * Create an instance of {@link RequisitoProtocollo }
      */
-    public ReplaceMatchType createReplaceMatchType() {
-        return new ReplaceMatchType();
+    public RequisitoProtocollo createRequisitoProtocollo() {
+        return new RequisitoProtocollo();
     }
 
     /**
-     * Create an instance of {@link ServizioApplicativo }
+     * Create an instance of {@link Wizard }
      */
-    public ServizioApplicativo createServizioApplicativo() {
-        return new ServizioApplicativo();
+    public Wizard createWizard() {
+        return new Wizard();
     }
 
     /**
@@ -83,31 +90,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Openspcoop2 }
+     * Create an instance of {@link ServizioApplicativo }
      */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
+    public ServizioApplicativo createServizioApplicativo() {
+        return new ServizioApplicativo();
     }
 
     /**
-     * Create an instance of {@link Proprieta }
+     * Create an instance of {@link Fruitore }
      */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link RequisitoProtocollo }
-     */
-    public RequisitoProtocollo createRequisitoProtocollo() {
-        return new RequisitoProtocollo();
+    public Fruitore createFruitore() {
+        return new Fruitore();
     }
 
     /**
@@ -125,6 +118,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
      * Create an instance of {@link Input }
      */
     public Input createInput() {
@@ -139,17 +139,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Fruitore }
+     * Create an instance of {@link ReplaceMatchType }
      */
-    public Fruitore createFruitore() {
-        return new Fruitore();
+    public ReplaceMatchType createReplaceMatchType() {
+        return new ReplaceMatchType();
     }
 
     /**
-     * Create an instance of {@link Wizard }
+     * Create an instance of {@link Openspcoop2 }
      */
-    public Wizard createWizard() {
-        return new Wizard();
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
     }
 
     private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");

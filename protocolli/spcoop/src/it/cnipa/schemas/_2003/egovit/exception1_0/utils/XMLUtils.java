@@ -47,7 +47,7 @@ import it.cnipa.schemas._2003.egovit.exception1_0.Eccezione;
 import it.cnipa.schemas._2003.egovit.exception1_0.EccezioneBusta;
 import it.cnipa.schemas._2003.egovit.exception1_0.EccezioneProcessamento;
 import it.cnipa.schemas._2003.egovit.exception1_0.MessaggioDiErroreApplicativo;
-import it.cnipa.schemas._2003.egovit.exception1_0.utils.serializer.JsonDeserializer;
+import it.cnipa.schemas._2003.egovit.exception1_0.utils.serializer.JsonJacksonDeserializer;
 
 
 /**
@@ -232,7 +232,7 @@ public class XMLUtils  {
 	
 	public static MessaggioDiErroreApplicativo getErroreApplicativoFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
-			JsonDeserializer deserializer = new JsonDeserializer();
+			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readMessaggioDiErroreApplicativo(is);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -321,7 +321,7 @@ public class XMLUtils  {
 	private static String generateErroreApplicativoAsJson_engine(MessaggioDiErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			eccezione.writeTo(bout, WriteToSerializerType.JSON);
+			eccezione.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
 			bout.flush();
 			bout.close();
 			return bout.toString();

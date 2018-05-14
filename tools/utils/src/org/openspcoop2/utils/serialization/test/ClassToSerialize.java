@@ -21,6 +21,11 @@ import org.bouncycastle.util.Arrays;
  * 
  */
 public class ClassToSerialize implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String str;
 	public String getStr() {
 		return this.str;
@@ -246,7 +251,7 @@ public class ClassToSerialize implements Serializable {
 	}
 
 	public MyEnum getMyEnum() {
-		return myEnum;
+		return this.myEnum;
 	}
 
 	public void setMyEnum(MyEnum myEnum) {

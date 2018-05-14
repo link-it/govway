@@ -52,17 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Equals }
+     * Create an instance of {@link Property }
      */
-    public Equals createEquals() {
-        return new Equals();
-    }
-
-    /**
-     * Create an instance of {@link Conditions }
-     */
-    public Conditions createConditions() {
-        return new Conditions();
+    public Property createProperty() {
+        return new Property();
     }
 
     /**
@@ -73,66 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Subsection }
+     * Create an instance of {@link Conditions }
      */
-    public Subsection createSubsection() {
-        return new Subsection();
-    }
-
-    /**
-     * Create an instance of {@link Section }
-     */
-    public Section createSection() {
-        return new Section();
-    }
-
-    /**
-     * Create an instance of {@link Properties }
-     */
-    public Properties createProperties() {
-        return new Properties();
-    }
-
-    /**
-     * Create an instance of {@link Item }
-     */
-    public Item createItem() {
-        return new Item();
-    }
-
-    /**
-     * Create an instance of {@link Collection }
-     */
-    public Collection createCollection() {
-        return new Collection();
-    }
-
-    /**
-     * Create an instance of {@link Property }
-     */
-    public Property createProperty() {
-        return new Property();
-    }
-
-    /**
-     * Create an instance of {@link ItemValues }
-     */
-    public ItemValues createItemValues() {
-        return new ItemValues();
-    }
-
-    /**
-     * Create an instance of {@link Selected }
-     */
-    public Selected createSelected() {
-        return new Selected();
-    }
-
-    /**
-     * Create an instance of {@link Condition }
-     */
-    public Condition createCondition() {
-        return new Condition();
+    public Conditions createConditions() {
+        return new Conditions();
     }
 
     /**
@@ -143,10 +80,73 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Condition }
+     */
+    public Condition createCondition() {
+        return new Condition();
+    }
+
+    /**
      * Create an instance of {@link Config }
      */
     public Config createConfig() {
         return new Config();
+    }
+
+    /**
+     * Create an instance of {@link Subsection }
+     */
+    public Subsection createSubsection() {
+        return new Subsection();
+    }
+
+    /**
+     * Create an instance of {@link Selected }
+     */
+    public Selected createSelected() {
+        return new Selected();
+    }
+
+    /**
+     * Create an instance of {@link Collection }
+     */
+    public Collection createCollection() {
+        return new Collection();
+    }
+
+    /**
+     * Create an instance of {@link Item }
+     */
+    public Item createItem() {
+        return new Item();
+    }
+
+    /**
+     * Create an instance of {@link Section }
+     */
+    public Section createSection() {
+        return new Section();
+    }
+
+    /**
+     * Create an instance of {@link Equals }
+     */
+    public Equals createEquals() {
+        return new Equals();
+    }
+
+    /**
+     * Create an instance of {@link ItemValues }
+     */
+    public ItemValues createItemValues() {
+        return new ItemValues();
+    }
+
+    /**
+     * Create an instance of {@link Properties }
+     */
+    public Properties createProperties() {
+        return new Properties();
     }
 
 

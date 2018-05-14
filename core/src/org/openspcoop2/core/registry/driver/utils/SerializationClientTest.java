@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.openspcoop2.utils.serialization.JSonDeserializer;
 import org.openspcoop2.utils.serialization.JSonSerializer;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
+import org.openspcoop2.utils.serialization.SerializationConfig;
 import org.openspcoop2.utils.serialization.XMLDeserializer;
 import org.openspcoop2.utils.serialization.XMLSerializer;
 import org.slf4j.Logger;
@@ -153,9 +155,20 @@ public class SerializationClientTest {
 		s7.setNome("SoggettoTest7");
 		
 		// Excludes per Json
-		String [] excludesJson_Soggetto = new String [] {"servizio","servizioCorrelato","property"};
-		String [] excludesJson_AccordiServizio = new String [] {"specificaSemiformale","allegato","azione","portType"};
-		String [] excludesJson_date = new String [] {"day","timezoneOffset"};
+		List<String> excludesJson_Soggetto = new ArrayList<String> ();
+		excludesJson_Soggetto.add("servizio");
+		excludesJson_Soggetto.add("servizioCorrelato");
+		excludesJson_Soggetto.add("property");
+
+		List<String> excludesJson_AccordiServizio = new ArrayList<String> ();
+		excludesJson_AccordiServizio.add("specificaSemiformale");
+		excludesJson_AccordiServizio.add("allegato");
+		excludesJson_AccordiServizio.add("azione");
+		excludesJson_AccordiServizio.add("portType");
+				
+		List<String> excludesJson_date = new ArrayList<String> ();
+		excludesJson_date.add("day");
+		excludesJson_date.add("timezoneOffset");
 		
 		// LISTE
 		
@@ -463,7 +476,10 @@ public class SerializationClientTest {
 		
 		log.info("- Serializzazione (Stream in/out): ");
 		Filter filter = new Filter();
-		JSonSerializer jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
+		SerializationConfig config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
+		JSonSerializer jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(soggettoTest, foutJson);
 		dataFine = DateManager.getTimeMillis();
@@ -475,7 +491,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Stream in/out): ");
-		JSonDeserializer jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		JSonDeserializer jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		Object oJsonRead = jsonDeserializer.readObject(finJson, soggettoTest.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -492,7 +510,10 @@ public class SerializationClientTest {
 		FileReader freaderJson = new FileReader(jsonFileReader);
 		
 		log.info("- Serializzazione (Reader/Writer): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(as, fwriterJson);
 		dataFine = DateManager.getTimeMillis();
@@ -504,7 +525,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Reader/Writer): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(freaderJson, as.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -517,7 +540,10 @@ public class SerializationClientTest {
 		// Serializzazione tramite get e read in Object
 		
 		log.info("- Serializzazione (Object): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		String jsonSerializationObject = jsonSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
@@ -527,7 +553,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Object): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.getObject(jsonSerializationObject, as.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -540,7 +568,9 @@ public class SerializationClientTest {
 		// Serializzazione Enumerations
 		
 		log.info("- Serializzazione (Enumerations): ");
-		jsonSerializer = new JSonSerializer(filter);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializationObject = jsonSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
@@ -575,7 +605,10 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (Array)(Accordi): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		AccordoServizioParteComune [] arrayJsonTestAccordi = testSerializzazioneListaAccordi.toArray(new AccordoServizioParteComune[1]);
 		jsonSerializer.writeObject(arrayJsonTestAccordi, foutJson);
@@ -588,7 +621,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Array)(Accordi): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(finJson, AccordoServizioParteComune[].class);
 		dataFine = DateManager.getTimeMillis();
@@ -609,7 +644,10 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (Array)(Soggetti): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		Soggetto [] arrayJsonTestSoggetti = testSerializzazioneListaSoggetti.toArray(new Soggetto[testSerializzazioneListaSoggetti.size()]);
 		jsonSerializer.writeObject(arrayJsonTestSoggetti, foutJson);
@@ -622,7 +660,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Array)(Soggetti): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readObject(finJson, Soggetto[].class);
 		dataFine = DateManager.getTimeMillis();
@@ -645,7 +685,10 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (List)(Accordi): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneListaAccordi, foutJson);
 		dataFine = DateManager.getTimeMillis();
@@ -657,7 +700,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (List)(Accordi): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readListObject(finJson, testSerializzazioneListaAccordi.getClass(), AccordoServizioParteComune.class);
 		dataFine = DateManager.getTimeMillis();
@@ -676,7 +721,9 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (List)(Soggetti): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneListaSoggetti, foutJson);
 		dataFine = DateManager.getTimeMillis();
@@ -688,7 +735,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (List)(Soggetti): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readListObject(finJson, testSerializzazioneListaSoggetti.getClass(), Soggetto.class);
 		dataFine = DateManager.getTimeMillis();
@@ -708,7 +757,10 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonSerializer = new JSonSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneSetAccordi, foutJson); // NOTA: e' normale che stampa un errore, e' l'equals degli oggetti Openspcoop che non e' perfetto.
 		dataFine = DateManager.getTimeMillis();
@@ -720,7 +772,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Set)(Accordi): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readSetObject(finJson, testSerializzazioneSetAccordi.getClass(), AccordoServizioParteComune.class);
 		dataFine = DateManager.getTimeMillis();
@@ -739,7 +793,9 @@ public class SerializationClientTest {
 		finJson = new FileInputStream(jsonFileStream);
 		
 		log.info("- Serializzazione (Set)(Soggetti): ");
-		jsonSerializer = new JSonSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
 		dataInizio = DateManager.getTimeMillis();
 		jsonSerializer.writeObject(testSerializzazioneSetSoggetti, foutJson);
 		dataFine = DateManager.getTimeMillis();
@@ -751,7 +807,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Set)(Soggetti): ");
-		jsonDeserializer = new JSonDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonDeserializer = new JSonDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonRead = jsonDeserializer.readSetObject(finJson, testSerializzazioneSetSoggetti.getClass(), Soggetto.class);
 		dataFine = DateManager.getTimeMillis();
@@ -791,7 +849,10 @@ public class SerializationClientTest {
 		FileInputStream finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (Stream in/out): ");
-		XMLSerializer jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
+		XMLSerializer jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(soggettoTest, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
@@ -803,7 +864,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Stream in/out): ");
-		XMLDeserializer jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		XMLDeserializer jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		Object oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, soggettoTest.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -820,7 +883,10 @@ public class SerializationClientTest {
 		FileReader freaderJsonXML = new FileReader(jsonXMLFileReader);
 		
 		log.info("- Serializzazione (Reader/Writer): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(as, fwriterJsonXML);
 		dataFine = DateManager.getTimeMillis();
@@ -832,7 +898,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Reader/Writer): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(freaderJsonXML, as.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -845,7 +913,10 @@ public class SerializationClientTest {
 		// Serializzazione tramite get e read in Object
 		
 		log.info("- Serializzazione (Object): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		String jsonXMLSerializationObject = jsonXMLSerializer.getObject(as);
 		dataFine = DateManager.getTimeMillis();
@@ -855,7 +926,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Object): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.getObject(jsonXMLSerializationObject, as.getClass());
 		dataFine = DateManager.getTimeMillis();
@@ -868,7 +941,9 @@ public class SerializationClientTest {
 		// Serializzazione Enumerations
 		
 		log.info("- Serializzazione (Enumerations): ");
-		jsonXMLSerializer = new XMLSerializer(filter);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializationObject = jsonXMLSerializer.getObject(TestEnumerations.VALORE1);
 		dataFine = DateManager.getTimeMillis();
@@ -903,7 +978,10 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (Array)(Accordi): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		AccordoServizioParteComune [] arrayJsonXMLTestAccordi = testSerializzazioneListaAccordi.toArray(new AccordoServizioParteComune[1]);
 		jsonXMLSerializer.writeObject(arrayJsonXMLTestAccordi, foutJsonXML);
@@ -916,7 +994,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Array)(Accordi): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, AccordoServizioParteComune[].class);
 		dataFine = DateManager.getTimeMillis();
@@ -937,7 +1017,9 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (Array)(Soggetti): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_Soggetto);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		Soggetto [] arrayJsonXMLTestSoggetti = testSerializzazioneListaSoggetti.toArray(new Soggetto[testSerializzazioneListaSoggetti.size()]);
 		jsonXMLSerializer.writeObject(arrayJsonXMLTestSoggetti, foutJsonXML);
@@ -950,7 +1032,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Array)(Soggetti): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readObject(finJsonXML, Soggetto[].class);
 		dataFine = DateManager.getTimeMillis();
@@ -973,7 +1057,10 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (List)(Accordi): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneListaAccordi, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
@@ -985,7 +1072,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (List)(Accordi): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readListObject(finJsonXML, testSerializzazioneListaAccordi.getClass(), AccordoServizioParteComune.class);
 		dataFine = DateManager.getTimeMillis();
@@ -1004,7 +1093,9 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (List)(Soggetti): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_Soggetto);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneListaSoggetti, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
@@ -1016,7 +1107,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (List)(Soggetti): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readListObject(finJsonXML, testSerializzazioneListaSoggetti.getClass(), Soggetto.class);
 		dataFine = DateManager.getTimeMillis();
@@ -1036,7 +1129,10 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (Set)(Accordi) (E' normale uno stackatrace: IllegalArgumentException): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_AccordiServizio);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_AccordiServizio);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneSetAccordi, foutJsonXML); // NOTA: e' normale che stampa un errore, e' l'equals degli oggetti Openspcoop che non e' perfetto.
 		dataFine = DateManager.getTimeMillis();
@@ -1048,7 +1144,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Set)(Accordi): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readSetObject(finJsonXML, testSerializzazioneSetAccordi.getClass(), AccordoServizioParteComune.class);
 		dataFine = DateManager.getTimeMillis();
@@ -1067,7 +1165,10 @@ public class SerializationClientTest {
 		finJsonXML = new FileInputStream(jsonXMLFileStream);
 		
 		log.info("- Serializzazione (Set)(Soggetti): ");
-		jsonXMLSerializer = new XMLSerializer(filter,excludesJson_Soggetto);
+		config = new SerializationConfig();
+		config.setFilter(filter);
+		config.setExcludes(excludesJson_Soggetto);
+		jsonXMLSerializer = new XMLSerializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		jsonXMLSerializer.writeObject(testSerializzazioneSetSoggetti, foutJsonXML);
 		dataFine = DateManager.getTimeMillis();
@@ -1079,7 +1180,9 @@ public class SerializationClientTest {
 		log.info("\n");
 		
 		log.info("- Deserializzazione (Set)(Soggetti): ");
-		jsonXMLDeserializer = new XMLDeserializer(excludesJson_date);
+		config = new SerializationConfig();
+		config.setExcludes(excludesJson_date);
+		jsonXMLDeserializer = new XMLDeserializer(config);
 		dataInizio = DateManager.getTimeMillis();
 		oJsonXMLRead = jsonXMLDeserializer.readSetObject(finJsonXML, testSerializzazioneSetSoggetti.getClass(), Soggetto.class);
 		dataFine = DateManager.getTimeMillis();

@@ -31,10 +31,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.serialization.Filter;
-import org.openspcoop2.utils.serialization.JSonSerializer;
+import org.openspcoop2.utils.serialization.ISerializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
-import org.openspcoop2.utils.serialization.XMLSerializer;
+import org.openspcoop2.utils.serialization.SerializationConfig;
+import org.openspcoop2.utils.serialization.SerializationFactory;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 import org.openspcoop2.utils.xml.JaxbUtils;
 
 /**
@@ -325,21 +326,17 @@ public abstract class BaseBean {
 	/* ********** WRITE TO ********* */
 	
 	public void writeTo(OutputStream out) throws UtilsException{
-		this.writeTo(out, WriteToSerializerType.JAXB);
+		this.writeTo(out, WriteToSerializerType.XML_JAXB);
 	}
 	public void writeTo(OutputStream out,WriteToSerializerType type) throws UtilsException{
 		try{
 			switch (type) {
-				case JAXB:
+				case XML_JAXB:
 					JaxbUtils.objToXml(out, getClass(), this, true);
 					break;
-				case JSON:
-					JSonSerializer jsonSerializer = new JSonSerializer(new Filter());
-					jsonSerializer.writeObject(this, out);
-					break;
-				case XML_JSON:
-					XMLSerializer xmlSerializer = new XMLSerializer(new Filter());
-					xmlSerializer.writeObject(this, out);
+				case JSON_JACKSON:
+					ISerializer jsonJacksonSerializer = SerializationFactory.getSerializer(SERIALIZATION_TYPE.JSON_JACKSON, new SerializationConfig());
+					jsonJacksonSerializer.writeObject(this, out);
 					break;
 				case JAVA:
 					JavaSerializer javaSerializer = new JavaSerializer();
@@ -358,16 +355,10 @@ public abstract class BaseBean {
 	/* ********** serialize ********* */
 	
 	public String toXml() throws UtilsException{
-		return this.serialize(WriteToSerializerType.JAXB);
-	}
-	public String toXml_Jaxb() throws UtilsException{
-		return this.serialize(WriteToSerializerType.JAXB);
+		return this.serialize(WriteToSerializerType.XML_JAXB);
 	}
 	public String toJson() throws UtilsException{
-		return this.serialize(WriteToSerializerType.JSON);
-	}
-	public String toXml_Json() throws UtilsException{
-		return this.serialize(WriteToSerializerType.XML_JSON);
+		return this.serialize(WriteToSerializerType.JSON_JACKSON);
 	}
 	// Non è utile. Al massimo si usa sopra come writeTo
 //	public String toJava() throws UtilsException{

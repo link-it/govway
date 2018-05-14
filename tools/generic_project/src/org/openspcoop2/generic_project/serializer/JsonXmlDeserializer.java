@@ -20,9 +20,7 @@
 package org.openspcoop2.generic_project.serializer;
 
 
-import java.io.InputStream;
-
-import org.openspcoop2.utils.serialization.XMLDeserializer;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 
 
 /**
@@ -32,16 +30,11 @@ import org.openspcoop2.utils.serialization.XMLDeserializer;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JsonXmlDeserializer extends AbstractDeserializer {
+public class JsonXmlDeserializer extends AbstractDeserializerWithFactory {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {
-		XMLDeserializer jsonDeserializer = new XMLDeserializer();
-		try{
-			return (T) jsonDeserializer.readObject(is, c);
-		}finally{
-		}
+	protected SERIALIZATION_TYPE getSERIALIZATION_TYPE() {
+		return SERIALIZATION_TYPE.XML_JSON_LIB;
 	}
 	
 }

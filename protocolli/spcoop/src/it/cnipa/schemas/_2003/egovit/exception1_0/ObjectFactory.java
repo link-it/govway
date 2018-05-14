@@ -52,6 +52,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link EccezioneProcessamento }
+     */
+    public EccezioneProcessamento createEccezioneProcessamento() {
+        return new EccezioneProcessamento();
+    }
+
+    /**
+     * Create an instance of {@link EccezioneBusta }
+     */
+    public EccezioneBusta createEccezioneBusta() {
+        return new EccezioneBusta();
+    }
+
+    /**
      * Create an instance of {@link Eccezione }
      */
     public Eccezione createEccezione() {
@@ -63,20 +77,6 @@ public class ObjectFactory {
      */
     public MessaggioDiErroreApplicativo createMessaggioDiErroreApplicativo() {
         return new MessaggioDiErroreApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link EccezioneBusta }
-     */
-    public EccezioneBusta createEccezioneBusta() {
-        return new EccezioneBusta();
-    }
-
-    /**
-     * Create an instance of {@link EccezioneProcessamento }
-     */
-    public EccezioneProcessamento createEccezioneProcessamento() {
-        return new EccezioneProcessamento();
     }
 
 

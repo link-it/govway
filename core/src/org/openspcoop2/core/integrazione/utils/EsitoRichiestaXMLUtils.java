@@ -251,7 +251,7 @@ public class EsitoRichiestaXMLUtils  {
 	private static String generateEsitoRichiestaAsJson_engine(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			esitoRichiesta.writeTo(bout, WriteToSerializerType.JSON);
+			esitoRichiesta.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
 			bout.flush();
 			bout.close();
 			return bout.toString();

@@ -52,13 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ProfiloCollaborazioneEGOV }
-     */
-    public ProfiloCollaborazioneEGOV createProfiloCollaborazioneEGOV() {
-        return new ProfiloCollaborazioneEGOV();
-    }
-
-    /**
      * Create an instance of {@link OperationListType }
      */
     public OperationListType createOperationListType() {
@@ -70,6 +63,13 @@ public class ObjectFactory {
      */
     public OperationType createOperationType() {
         return new OperationType();
+    }
+
+    /**
+     * Create an instance of {@link ProfiloCollaborazioneEGOV }
+     */
+    public ProfiloCollaborazioneEGOV createProfiloCollaborazioneEGOV() {
+        return new ProfiloCollaborazioneEGOV();
     }
 
 

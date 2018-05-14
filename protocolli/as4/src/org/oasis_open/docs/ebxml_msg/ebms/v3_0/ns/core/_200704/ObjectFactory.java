@@ -52,38 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PartyInfo }
+     * Create an instance of {@link Messaging }
      */
-    public PartyInfo createPartyInfo() {
-        return new PartyInfo();
-    }
-
-    /**
-     * Create an instance of {@link PartyId }
-     */
-    public PartyId createPartyId() {
-        return new PartyId();
-    }
-
-    /**
-     * Create an instance of {@link PartInfo }
-     */
-    public PartInfo createPartInfo() {
-        return new PartInfo();
-    }
-
-    /**
-     * Create an instance of {@link AgreementRef }
-     */
-    public AgreementRef createAgreementRef() {
-        return new AgreementRef();
-    }
-
-    /**
-     * Create an instance of {@link SignalMessage }
-     */
-    public SignalMessage createSignalMessage() {
-        return new SignalMessage();
+    public Messaging createMessaging() {
+        return new Messaging();
     }
 
     /**
@@ -94,45 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UserMessage }
+     * Create an instance of {@link SignalMessage }
      */
-    public UserMessage createUserMessage() {
-        return new UserMessage();
-    }
-
-    /**
-     * Create an instance of {@link Description }
-     */
-    public Description createDescription() {
-        return new Description();
-    }
-
-    /**
-     * Create an instance of {@link MessageInfo }
-     */
-    public MessageInfo createMessageInfo() {
-        return new MessageInfo();
-    }
-
-    /**
-     * Create an instance of {@link To }
-     */
-    public To createTo() {
-        return new To();
-    }
-
-    /**
-     * Create an instance of {@link From }
-     */
-    public From createFrom() {
-        return new From();
-    }
-
-    /**
-     * Create an instance of {@link Schema }
-     */
-    public Schema createSchema() {
-        return new Schema();
+    public SignalMessage createSignalMessage() {
+        return new SignalMessage();
     }
 
     /**
@@ -150,24 +87,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Messaging }
+     * Create an instance of {@link Schema }
      */
-    public Messaging createMessaging() {
-        return new Messaging();
+    public Schema createSchema() {
+        return new Schema();
     }
 
     /**
-     * Create an instance of {@link PayloadInfo }
+     * Create an instance of {@link Description }
      */
-    public PayloadInfo createPayloadInfo() {
-        return new PayloadInfo();
+    public Description createDescription() {
+        return new Description();
     }
 
     /**
-     * Create an instance of {@link MessageProperties }
+     * Create an instance of {@link UserMessage }
      */
-    public MessageProperties createMessageProperties() {
-        return new MessageProperties();
+    public UserMessage createUserMessage() {
+        return new UserMessage();
+    }
+
+    /**
+     * Create an instance of {@link MessageInfo }
+     */
+    public MessageInfo createMessageInfo() {
+        return new MessageInfo();
+    }
+
+    /**
+     * Create an instance of {@link AgreementRef }
+     */
+    public AgreementRef createAgreementRef() {
+        return new AgreementRef();
+    }
+
+    /**
+     * Create an instance of {@link Service }
+     */
+    public Service createService() {
+        return new Service();
+    }
+
+    /**
+     * Create an instance of {@link From }
+     */
+    public From createFrom() {
+        return new From();
     }
 
     /**
@@ -178,10 +143,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Service }
+     * Create an instance of {@link PartyId }
      */
-    public Service createService() {
-        return new Service();
+    public PartyId createPartyId() {
+        return new PartyId();
+    }
+
+    /**
+     * Create an instance of {@link PartyInfo }
+     */
+    public PartyInfo createPartyInfo() {
+        return new PartyInfo();
+    }
+
+    /**
+     * Create an instance of {@link MessageProperties }
+     */
+    public MessageProperties createMessageProperties() {
+        return new MessageProperties();
+    }
+
+    /**
+     * Create an instance of {@link PartInfo }
+     */
+    public PartInfo createPartInfo() {
+        return new PartInfo();
+    }
+
+    /**
+     * Create an instance of {@link PayloadInfo }
+     */
+    public PayloadInfo createPayloadInfo() {
+        return new PayloadInfo();
+    }
+
+    /**
+     * Create an instance of {@link To }
+     */
+    public To createTo() {
+        return new To();
     }
 
 

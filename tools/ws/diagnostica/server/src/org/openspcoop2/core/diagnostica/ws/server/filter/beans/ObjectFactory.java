@@ -42,17 +42,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DominioSoggetto }
-     */
-    public DominioSoggetto createDominioSoggetto() {
-        return new DominioSoggetto();
-    }
-    
-    /**
      * Create an instance of {@link DominioDiagnostico }
      */
     public DominioDiagnostico createDominioDiagnostico() {
         return new DominioDiagnostico();
+    }
+    
+    /**
+     * Create an instance of {@link DominioSoggetto }
+     */
+    public DominioSoggetto createDominioSoggetto() {
+        return new DominioSoggetto();
     }
     
     /**

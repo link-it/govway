@@ -28,6 +28,8 @@ package org.openspcoop2.utils.beans;
  */
 public enum WriteToSerializerType {
 	
-	JAXB,JSON,XML_JSON,JAVA;
+	XML_JAXB, 
+	JSON_JACKSON,
+	JAVA;
 	
 }

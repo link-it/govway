@@ -62,17 +62,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaGiornaliera }
+     * Create an instance of {@link Statistica }
      */
-    public StatisticaGiornaliera createStatisticaGiornaliera() {
-        return new StatisticaGiornaliera();
-    }
-
-    /**
-     * Create an instance of {@link StatisticaOraria }
-     */
-    public StatisticaOraria createStatisticaOraria() {
-        return new StatisticaOraria();
+    public Statistica createStatistica() {
+        return new Statistica();
     }
 
     /**
@@ -97,10 +90,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Statistica }
+     * Create an instance of {@link StatisticaOraria }
      */
-    public Statistica createStatistica() {
-        return new Statistica();
+    public StatisticaOraria createStatisticaOraria() {
+        return new StatisticaOraria();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaGiornaliera }
+     */
+    public StatisticaGiornaliera createStatisticaGiornaliera() {
+        return new StatisticaGiornaliera();
     }
 
     private final static QName _StatisticaOrariaContenuti = new QName("http://www.openspcoop2.org/core/statistiche", "statistica-oraria-contenuti");

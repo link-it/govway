@@ -20,9 +20,7 @@
 package org.openspcoop2.generic_project.serializer;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 
 /**
  * JavaSerializer
@@ -31,39 +29,11 @@ import java.io.OutputStream;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JavaSerializer extends AbstractSerializer {
-
-	
-	@Override
-	protected <T> void _objToXml(String fileName, Class<T> c, T object,
-			boolean pretty) throws Exception {
-		org.openspcoop2.utils.serialization.JavaSerializer javaSerializer = new org.openspcoop2.utils.serialization.JavaSerializer();
-		FileOutputStream fout = null;
-		try{
-			fout = new FileOutputStream(new File(fileName));
-			javaSerializer.writeObject(object, fout);
-		}finally{
-			try{
-				fout.flush();
-			}catch(Exception e){}
-			try{
-				fout.close();
-			}catch(Exception e){}
-		}
-	}
+public class JavaSerializer extends AbstractSerializerWithFactory {
 
 	@Override
-	protected <T> void _objToXml(OutputStream out, Class<T> c, T object,
-			boolean pretty) throws Exception {
-		org.openspcoop2.utils.serialization.JavaSerializer javaSerializer = new org.openspcoop2.utils.serialization.JavaSerializer();
-		try{
-			javaSerializer.writeObject(object, out);
-		}finally{
-			try{
-				out.flush();
-			}catch(Exception e){}
-		}
+	protected SERIALIZATION_TYPE getSERIALIZATION_TYPE() {
+		return SERIALIZATION_TYPE.JAVA;
 	}
-
 
 }

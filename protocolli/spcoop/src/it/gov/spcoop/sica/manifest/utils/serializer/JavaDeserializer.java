@@ -19,7 +19,7 @@
  */
 package it.gov.spcoop.sica.manifest.utils.serializer;
 
-import java.io.InputStream;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 
 /**     
  * Deserializer of beans with java
@@ -28,13 +28,11 @@ import java.io.InputStream;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JavaDeserializer extends AbstractDeserializer {
+public class JavaDeserializer extends AbstractDeserializerWithFactory {
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T _xmlToObj(InputStream is, Class<T> c) throws Exception {
-		org.openspcoop2.utils.serialization.JavaDeserializer deserializer = new org.openspcoop2.utils.serialization.JavaDeserializer();
-		return (T) deserializer.readObject(is, c);
+	protected SERIALIZATION_TYPE getSERIALIZATION_TYPE() {
+		return SERIALIZATION_TYPE.JAVA;
 	}
 		
 }

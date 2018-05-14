@@ -49,7 +49,7 @@ import org.openspcoop2.core.tracciamento.Traccia;
 import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.Trasmissioni;
 import org.openspcoop2.core.tracciamento.constants.CostantiTracciamento;
-import org.openspcoop2.core.tracciamento.utils.serializer.JsonDeserializer;
+import org.openspcoop2.core.tracciamento.utils.serializer.JsonJacksonDeserializer;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.w3c.dom.Document;
@@ -417,7 +417,7 @@ public class XMLUtils  {
 
 	public static Traccia getTracciaFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
-			JsonDeserializer deserializer = new JsonDeserializer();
+			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readTraccia(is);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -503,7 +503,7 @@ public class XMLUtils  {
 	private static String generateTracciaAsJson_engine(Traccia traccia) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			traccia.writeTo(bout, WriteToSerializerType.JSON);
+			traccia.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
 			bout.flush();
 			bout.close();
 			return bout.toString();

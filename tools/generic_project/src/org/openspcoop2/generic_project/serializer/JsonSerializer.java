@@ -20,13 +20,7 @@
 package org.openspcoop2.generic_project.serializer;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-
-import org.openspcoop2.utils.serialization.Filter;
-
-import org.openspcoop2.utils.serialization.JSonSerializer;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 
 /**
  * JsonSerializer
@@ -35,38 +29,11 @@ import org.openspcoop2.utils.serialization.JSonSerializer;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class JsonSerializer extends AbstractSerializer {
-
-	
-	@Override
-	protected <T> void _objToXml(String fileName, Class<T> c, T object,
-			boolean pretty) throws Exception {
-		JSonSerializer jsonSerializer = new JSonSerializer(new Filter());
-		FileOutputStream fout = null;
-		try{
-			fout = new FileOutputStream(new File(fileName));
-			jsonSerializer.writeObject(object, fout);
-		}finally{
-			try{
-				fout.flush();
-			}catch(Exception e){}
-			try{
-				fout.close();
-			}catch(Exception e){}
-		}
-	}
+public class JsonSerializer extends AbstractSerializerWithFactory {
 
 	@Override
-	protected <T> void _objToXml(OutputStream out, Class<T> c, T object,
-			boolean pretty) throws Exception {
-		JSonSerializer jsonSerializer = new JSonSerializer(new Filter());
-		try{
-			jsonSerializer.writeObject(object, out);
-		}finally{
-			try{
-				out.flush();
-			}catch(Exception e){}
-		}
+	protected SERIALIZATION_TYPE getSERIALIZATION_TYPE() {
+		return SERIALIZATION_TYPE.JSON_LIB;
 	}
 
 

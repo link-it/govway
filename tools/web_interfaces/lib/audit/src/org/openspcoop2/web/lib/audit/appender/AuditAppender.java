@@ -31,6 +31,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.serialization.FilteredObject;
 import org.openspcoop2.utils.serialization.IDBuilder;
+import org.openspcoop2.utils.serialization.SerializationConfig;
 import org.openspcoop2.web.lib.audit.AuditException;
 import org.openspcoop2.web.lib.audit.costanti.Costanti;
 import org.openspcoop2.web.lib.audit.dao.Appender;
@@ -357,11 +358,14 @@ public class AuditAppender {
 	private String serializeJsonObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException{
 		try{
 			listFilter.addFilterByValue(byte[].class);
+			SerializationConfig config = new SerializationConfig();
+			config.setFilter(listFilter);
+			config.setIdBuilder(AuditAppender.idBuilder);
 			// Deprecato
 //			org.openspcoop2.utils.serialization.JSonSerializer serializer = 
-//				new org.openspcoop2.utils.serialization.JSonSerializer(listFilter,AuditAppender.idBuilder);
+//				new org.openspcoop2.utils.serialization.JSonSerializer(config);
 			org.openspcoop2.utils.serialization.JsonJacksonSerializer serializer = 
-				new org.openspcoop2.utils.serialization.JsonJacksonSerializer(listFilter,AuditAppender.idBuilder);
+				new org.openspcoop2.utils.serialization.JsonJacksonSerializer(config);
 			return  serializer.getObject(o);		
 		}catch(Exception e){
 			throw new AuditException("serializeJsonObject error: "+e.getMessage(),e);
@@ -371,8 +375,11 @@ public class AuditAppender {
 	private String serializeXMLObject(Object o,org.openspcoop2.utils.serialization.Filter listFilter) throws AuditException{
 		try{
 			listFilter.addFilterByValue(byte[].class);
+			SerializationConfig config = new SerializationConfig();
+			config.setFilter(listFilter);
+			config.setIdBuilder(AuditAppender.idBuilder);
 			org.openspcoop2.utils.serialization.XMLSerializer serializer = 
-				new org.openspcoop2.utils.serialization.XMLSerializer(listFilter,AuditAppender.idBuilder);
+				new org.openspcoop2.utils.serialization.XMLSerializer(config);
 			return  serializer.getObject(o);		
 		}catch(Exception e){
 			throw new AuditException("serializeXMLObject error: "+e.getMessage(),e);

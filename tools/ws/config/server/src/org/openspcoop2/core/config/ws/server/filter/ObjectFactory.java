@@ -42,20 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchFilterPortaApplicativa }
-     */
-    public SearchFilterPortaApplicativa createSearchFilterPortaApplicativa() {
-        return new SearchFilterPortaApplicativa();
-    }
-    
-    /**
-     * Create an instance of {@link SearchFilterServizioApplicativo }
-     */
-    public SearchFilterServizioApplicativo createSearchFilterServizioApplicativo() {
-        return new SearchFilterServizioApplicativo();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterPortaDelegata }
      */
     public SearchFilterPortaDelegata createSearchFilterPortaDelegata() {
@@ -67,6 +53,20 @@ public class ObjectFactory {
      */
     public SearchFilterSoggetto createSearchFilterSoggetto() {
         return new SearchFilterSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterPortaApplicativa }
+     */
+    public SearchFilterPortaApplicativa createSearchFilterPortaApplicativa() {
+        return new SearchFilterPortaApplicativa();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterServizioApplicativo }
+     */
+    public SearchFilterServizioApplicativo createSearchFilterServizioApplicativo() {
+        return new SearchFilterServizioApplicativo();
     }
     
 

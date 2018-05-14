@@ -59,17 +59,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EgovDecllElement }
-     */
-    public EgovDecllElement createEgovDecllElement() {
-        return new EgovDecllElement();
-    }
-
-    /**
      * Create an instance of {@link OperationType }
      */
     public OperationType createOperationType() {
         return new OperationType();
+    }
+
+    /**
+     * Create an instance of {@link EgovDecllElement }
+     */
+    public EgovDecllElement createEgovDecllElement() {
+        return new EgovDecllElement();
     }
 
 

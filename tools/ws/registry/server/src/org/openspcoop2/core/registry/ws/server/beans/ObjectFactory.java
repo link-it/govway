@@ -42,31 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
-     */
-    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
-        return new WrapperIdAccordoServizioParteComune();
-    }
-    
-    /**
      * Create an instance of {@link WrapperIdPortaDominio }
      */
     public WrapperIdPortaDominio createWrapperIdPortaDominio() {
         return new WrapperIdPortaDominio();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdSoggetto }
-     */
-    public WrapperIdSoggetto createWrapperIdSoggetto() {
-        return new WrapperIdSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link UseInfo }
-     */
-    public UseInfo createUseInfo() {
-        return new UseInfo();
     }
     
     /**
@@ -77,10 +56,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdRuolo }
+     * Create an instance of {@link InUseCondition }
      */
-    public WrapperIdRuolo createWrapperIdRuolo() {
-        return new WrapperIdRuolo();
+    public InUseCondition createInUseCondition() {
+        return new InUseCondition();
     }
     
     /**
@@ -91,6 +70,27 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UseInfo }
+     */
+    public UseInfo createUseInfo() {
+        return new UseInfo();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdRuolo }
+     */
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdSoggetto }
+     */
+    public WrapperIdSoggetto createWrapperIdSoggetto() {
+        return new WrapperIdSoggetto();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdAccordoCooperazione }
      */
     public WrapperIdAccordoCooperazione createWrapperIdAccordoCooperazione() {
@@ -98,10 +98,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link InUseCondition }
+     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
      */
-    public InUseCondition createInUseCondition() {
-        return new InUseCondition();
+    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
+        return new WrapperIdAccordoServizioParteComune();
     }
     
 

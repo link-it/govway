@@ -68,9 +68,6 @@ public class JSonDeserializer implements IDeserializer{
 		this.addMorpherPackage("org.openspcoop2");
 	}
 	
-	/**
-	 * @param config
-	 */
 	public void addMorpherPackage(String p){
 		this.morpherPackage.add(p);
 	}

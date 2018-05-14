@@ -184,7 +184,7 @@ public class XSDValidator {
 		
 		String xml = null;
 		try{
-			xml = object.toXml_Jaxb();
+			xml = object.toXml();
 		}catch(Exception e){
 			log.debug("XMLSerialization error: "+e.getMessage(),e);
 			throw new ValidationException(e.getMessage(),e);

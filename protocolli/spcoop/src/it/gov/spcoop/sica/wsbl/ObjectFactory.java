@@ -52,101 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CompletionModeType }
-     */
-    public CompletionModeType createCompletionModeType() {
-        return new CompletionModeType();
-    }
-
-    /**
-     * Create an instance of {@link EventType }
-     */
-    public EventType createEventType() {
-        return new EventType();
-    }
-
-    /**
-     * Create an instance of {@link StateTypeInitial }
-     */
-    public StateTypeInitial createStateTypeInitial() {
-        return new StateTypeInitial();
-    }
-
-    /**
-     * Create an instance of {@link StatesType }
-     */
-    public StatesType createStatesType() {
-        return new StatesType();
-    }
-
-    /**
-     * Create an instance of {@link MessageBehavior }
-     */
-    public MessageBehavior createMessageBehavior() {
-        return new MessageBehavior();
-    }
-
-    /**
-     * Create an instance of {@link StateTypeNormal }
-     */
-    public StateTypeNormal createStateTypeNormal() {
-        return new StateTypeNormal();
-    }
-
-    /**
-     * Create an instance of {@link EventTypeMessage }
-     */
-    public EventTypeMessage createEventTypeMessage() {
-        return new EventTypeMessage();
-    }
-
-    /**
-     * Create an instance of {@link StateTypeFinal }
-     */
-    public StateTypeFinal createStateTypeFinal() {
-        return new StateTypeFinal();
-    }
-
-    /**
      * Create an instance of {@link TemporalConditionType }
      */
     public TemporalConditionType createTemporalConditionType() {
         return new TemporalConditionType();
-    }
-
-    /**
-     * Create an instance of {@link GuardType }
-     */
-    public GuardType createGuardType() {
-        return new GuardType();
-    }
-
-    /**
-     * Create an instance of {@link ConceptualBehavior }
-     */
-    public ConceptualBehavior createConceptualBehavior() {
-        return new ConceptualBehavior();
-    }
-
-    /**
-     * Create an instance of {@link EventListType }
-     */
-    public EventListType createEventListType() {
-        return new EventListType();
-    }
-
-    /**
-     * Create an instance of {@link CompletionModeTypeCompensateMessage }
-     */
-    public CompletionModeTypeCompensateMessage createCompletionModeTypeCompensateMessage() {
-        return new CompletionModeTypeCompensateMessage();
-    }
-
-    /**
-     * Create an instance of {@link Message }
-     */
-    public Message createMessage() {
-        return new Message();
     }
 
     /**
@@ -157,10 +66,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TransitionType }
+     * Create an instance of {@link EventListType }
      */
-    public TransitionType createTransitionType() {
-        return new TransitionType();
+    public EventListType createEventListType() {
+        return new EventListType();
+    }
+
+    /**
+     * Create an instance of {@link EventTypeMessage }
+     */
+    public EventTypeMessage createEventTypeMessage() {
+        return new EventTypeMessage();
+    }
+
+    /**
+     * Create an instance of {@link CompletionModeTypeCompensateMessage }
+     */
+    public CompletionModeTypeCompensateMessage createCompletionModeTypeCompensateMessage() {
+        return new CompletionModeTypeCompensateMessage();
+    }
+
+    /**
+     * Create an instance of {@link StatesType }
+     */
+    public StatesType createStatesType() {
+        return new StatesType();
+    }
+
+    /**
+     * Create an instance of {@link ConceptualBehavior }
+     */
+    public ConceptualBehavior createConceptualBehavior() {
+        return new ConceptualBehavior();
+    }
+
+    /**
+     * Create an instance of {@link StateTypeNormal }
+     */
+    public StateTypeNormal createStateTypeNormal() {
+        return new StateTypeNormal();
     }
 
     /**
@@ -168,6 +112,62 @@ public class ObjectFactory {
      */
     public TransitionsType createTransitionsType() {
         return new TransitionsType();
+    }
+
+    /**
+     * Create an instance of {@link MessageBehavior }
+     */
+    public MessageBehavior createMessageBehavior() {
+        return new MessageBehavior();
+    }
+
+    /**
+     * Create an instance of {@link StateTypeInitial }
+     */
+    public StateTypeInitial createStateTypeInitial() {
+        return new StateTypeInitial();
+    }
+
+    /**
+     * Create an instance of {@link EventType }
+     */
+    public EventType createEventType() {
+        return new EventType();
+    }
+
+    /**
+     * Create an instance of {@link StateTypeFinal }
+     */
+    public StateTypeFinal createStateTypeFinal() {
+        return new StateTypeFinal();
+    }
+
+    /**
+     * Create an instance of {@link CompletionModeType }
+     */
+    public CompletionModeType createCompletionModeType() {
+        return new CompletionModeType();
+    }
+
+    /**
+     * Create an instance of {@link Message }
+     */
+    public Message createMessage() {
+        return new Message();
+    }
+
+    /**
+     * Create an instance of {@link GuardType }
+     */
+    public GuardType createGuardType() {
+        return new GuardType();
+    }
+
+    /**
+     * Create an instance of {@link TransitionType }
+     */
+    public TransitionType createTransitionType() {
+        return new TransitionType();
     }
 
 

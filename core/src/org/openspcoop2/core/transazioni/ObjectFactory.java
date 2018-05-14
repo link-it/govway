@@ -52,20 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DumpContenuto }
-     */
-    public DumpContenuto createDumpContenuto() {
-        return new DumpContenuto();
-    }
-
-    /**
-     * Create an instance of {@link Transazione }
-     */
-    public Transazione createTransazione() {
-        return new Transazione();
-    }
-
-    /**
      * Create an instance of {@link DumpMultipartHeader }
      */
     public DumpMultipartHeader createDumpMultipartHeader() {
@@ -73,24 +59,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DumpMessaggio }
+     * Create an instance of {@link DumpContenuto }
      */
-    public DumpMessaggio createDumpMessaggio() {
-        return new DumpMessaggio();
-    }
-
-    /**
-     * Create an instance of {@link DumpAllegato }
-     */
-    public DumpAllegato createDumpAllegato() {
-        return new DumpAllegato();
-    }
-
-    /**
-     * Create an instance of {@link DumpHeaderTrasporto }
-     */
-    public DumpHeaderTrasporto createDumpHeaderTrasporto() {
-        return new DumpHeaderTrasporto();
+    public DumpContenuto createDumpContenuto() {
+        return new DumpContenuto();
     }
 
     /**
@@ -101,6 +73,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DumpAllegato }
+     */
+    public DumpAllegato createDumpAllegato() {
+        return new DumpAllegato();
+    }
+
+    /**
+     * Create an instance of {@link DumpMessaggio }
+     */
+    public DumpMessaggio createDumpMessaggio() {
+        return new DumpMessaggio();
+    }
+
+    /**
      * Create an instance of {@link TransazioneExtendedInfo }
      */
     public TransazioneExtendedInfo createTransazioneExtendedInfo() {
@@ -108,10 +94,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DumpHeaderTrasporto }
+     */
+    public DumpHeaderTrasporto createDumpHeaderTrasporto() {
+        return new DumpHeaderTrasporto();
+    }
+
+    /**
      * Create an instance of {@link DumpHeaderAllegato }
      */
     public DumpHeaderAllegato createDumpHeaderAllegato() {
         return new DumpHeaderAllegato();
+    }
+
+    /**
+     * Create an instance of {@link Transazione }
+     */
+    public Transazione createTransazione() {
+        return new Transazione();
     }
 
 

@@ -41,7 +41,7 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.Dominio;
 import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.constants.Costanti;
-import org.openspcoop2.core.eccezione.details.utils.serializer.JsonDeserializer;
+import org.openspcoop2.core.eccezione.details.utils.serializer.JsonJacksonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -251,7 +251,7 @@ public class XMLUtils  {
 
 	public static DettaglioEccezione getDettaglioEccezioneFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
-			JsonDeserializer deserializer = new JsonDeserializer();
+			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readDettaglioEccezione(is);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -338,7 +338,7 @@ public class XMLUtils  {
 	private static String generateDettaglioEccezioneAsJson_engine(DettaglioEccezione eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			eccezione.writeTo(bout, WriteToSerializerType.JSON);
+			eccezione.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
 			bout.flush();
 			bout.close();
 			return bout.toString();

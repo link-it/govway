@@ -364,7 +364,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	public void serializeResourcesTo(OutputStream os) throws MessageException{
 		try {
 			MessageContext messageContext = this.serializeResourcesTo();
-			messageContext.writeTo(os, WriteToSerializerType.JAXB);
+			messageContext.writeTo(os, WriteToSerializerType.XML_JAXB);
 		}catch(Exception e) {
 			throw new MessageException(e.getMessage(),e);
 		}	

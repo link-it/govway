@@ -184,7 +184,7 @@ public class DomibusClient {
 				}
 				
 				UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
-				System.out.println("Header: \n"+msg.toXml_Jaxb());
+				System.out.println("Header: \n"+msg.toXml());
 				System.out.println("\n\n");
 				if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
 					System.out.println("Nessun payload associato al messaggio");
@@ -228,7 +228,7 @@ public class DomibusClient {
 				}
 				
 				UserMessage msg = AS4StubUtils.convertTo(headerResponse.value);
-				System.out.println("Header: \n"+msg.toXml_Jaxb());
+				System.out.println("Header: \n"+msg.toXml());
 				System.out.println("\n\n");
 				if(msgRespone.value.getPayload()==null || msgRespone.value.getPayload().size()<=0){
 					System.out.println("Nessun payload associato al messaggio");

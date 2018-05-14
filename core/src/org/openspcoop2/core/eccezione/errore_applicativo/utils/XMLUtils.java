@@ -42,7 +42,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.Servizio;
 import org.openspcoop2.core.eccezione.errore_applicativo.Soggetto;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti;
-import org.openspcoop2.core.eccezione.errore_applicativo.utils.serializer.JsonDeserializer;
+import org.openspcoop2.core.eccezione.errore_applicativo.utils.serializer.JsonJacksonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
@@ -276,7 +276,7 @@ public class XMLUtils  {
 	
 	public static ErroreApplicativo getErroreApplicativoFromJson(Logger log,InputStream is) throws XMLUtilsException{
 		try{			
-			JsonDeserializer deserializer = new JsonDeserializer();
+			JsonJacksonDeserializer deserializer = new JsonJacksonDeserializer();
 			return deserializer.readErroreApplicativo(is);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
@@ -365,7 +365,7 @@ public class XMLUtils  {
 	private static String generateErroreApplicativoAsJson_engine(ErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			eccezione.writeTo(bout, WriteToSerializerType.JSON);
+			eccezione.writeTo(bout, WriteToSerializerType.JSON_JACKSON);
 			bout.flush();
 			bout.close();
 			return bout.toString();

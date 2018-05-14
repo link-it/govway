@@ -265,7 +265,7 @@ public abstract class BaseImpl {
 					org.openspcoop2.utils.beans.BaseBean bb = (org.openspcoop2.utils.beans.BaseBean) parameter[i];
 					try{
 						if(this.isLogAsXml){
-							LoggerProperties.getLoggerWS().info("["+methodName+"][param"+i+"] = "+bb.toXml_Jaxb());
+							LoggerProperties.getLoggerWS().info("["+methodName+"][param"+i+"] = "+bb.toXml());
 						}
 						else{
 							LoggerProperties.getLoggerWS().info("["+methodName+"][param"+i+"] = "+bb.toJson());
@@ -293,7 +293,7 @@ public abstract class BaseImpl {
 			if(this.isLogResponse){
 				try{
 					if(this.isLogAsXml){
-						LoggerProperties.getLoggerWS().info("["+methodName+"][response] = "+bb.toXml_Jaxb());
+						LoggerProperties.getLoggerWS().info("["+methodName+"][response] = "+bb.toXml());
 					}
 					else{
 						LoggerProperties.getLoggerWS().info("["+methodName+"][response] = "+bb.toJson());
@@ -320,7 +320,7 @@ public abstract class BaseImpl {
 					org.openspcoop2.utils.beans.BaseBean bb = (org.openspcoop2.utils.beans.BaseBean) response.get(i);
 					try{
 						if(this.isLogAsXml){
-							LoggerProperties.getLoggerWS().info("["+methodName+"][response"+i+"] = "+bb.toXml_Jaxb());
+							LoggerProperties.getLoggerWS().info("["+methodName+"][response"+i+"] = "+bb.toXml());
 						}
 						else{
 							LoggerProperties.getLoggerWS().info("["+methodName+"][response"+i+"] = "+bb.toJson());

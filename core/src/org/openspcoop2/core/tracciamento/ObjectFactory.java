@@ -52,48 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Inoltro }
-     */
-    public Inoltro createInoltro() {
-        return new Inoltro();
-    }
-
-    /**
-     * Create an instance of {@link DominioSoggetto }
-     */
-    public DominioSoggetto createDominioSoggetto() {
-        return new DominioSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link Servizio }
-     */
-    public Servizio createServizio() {
-        return new Servizio();
-    }
-
-    /**
-     * Create an instance of {@link ProfiloTrasmissione }
-     */
-    public ProfiloTrasmissione createProfiloTrasmissione() {
-        return new ProfiloTrasmissione();
-    }
-
-    /**
-     * Create an instance of {@link Dominio }
-     */
-    public Dominio createDominio() {
-        return new Dominio();
-    }
-
-    /**
-     * Create an instance of {@link Eccezione }
-     */
-    public Eccezione createEccezione() {
-        return new Eccezione();
-    }
-
-    /**
      * Create an instance of {@link Data }
      */
     public Data createData() {
@@ -101,24 +59,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdTraccia }
+     * Create an instance of {@link Allegato }
      */
-    public IdTraccia createIdTraccia() {
-        return new IdTraccia();
-    }
-
-    /**
-     * Create an instance of {@link DominioIdTracciaSoggetto }
-     */
-    public DominioIdTracciaSoggetto createDominioIdTracciaSoggetto() {
-        return new DominioIdTracciaSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link CodiceEccezione }
-     */
-    public CodiceEccezione createCodiceEccezione() {
-        return new CodiceEccezione();
+    public Allegato createAllegato() {
+        return new Allegato();
     }
 
     /**
@@ -129,52 +73,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SoggettoIdentificativo }
+     * Create an instance of {@link CodiceEccezione }
      */
-    public SoggettoIdentificativo createSoggettoIdentificativo() {
-        return new SoggettoIdentificativo();
+    public CodiceEccezione createCodiceEccezione() {
+        return new CodiceEccezione();
     }
 
     /**
-     * Create an instance of {@link Soggetto }
+     * Create an instance of {@link ProfiloTrasmissione }
      */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
+    public ProfiloTrasmissione createProfiloTrasmissione() {
+        return new ProfiloTrasmissione();
     }
 
     /**
-     * Create an instance of {@link ContestoCodificaEccezione }
+     * Create an instance of {@link Trasmissioni }
      */
-    public ContestoCodificaEccezione createContestoCodificaEccezione() {
-        return new ContestoCodificaEccezione();
-    }
-
-    /**
-     * Create an instance of {@link TipoData }
-     */
-    public TipoData createTipoData() {
-        return new TipoData();
-    }
-
-    /**
-     * Create an instance of {@link Busta }
-     */
-    public Busta createBusta() {
-        return new Busta();
-    }
-
-    /**
-     * Create an instance of {@link TracciaEsitoElaborazione }
-     */
-    public TracciaEsitoElaborazione createTracciaEsitoElaborazione() {
-        return new TracciaEsitoElaborazione();
-    }
-
-    /**
-     * Create an instance of {@link RilevanzaEccezione }
-     */
-    public RilevanzaEccezione createRilevanzaEccezione() {
-        return new RilevanzaEccezione();
+    public Trasmissioni createTrasmissioni() {
+        return new Trasmissioni();
     }
 
     /**
@@ -185,10 +101,136 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Busta }
+     */
+    public Busta createBusta() {
+        return new Busta();
+    }
+
+    /**
+     * Create an instance of {@link DominioIdTracciaSoggetto }
+     */
+    public DominioIdTracciaSoggetto createDominioIdTracciaSoggetto() {
+        return new DominioIdTracciaSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link Riscontro }
+     */
+    public Riscontro createRiscontro() {
+        return new Riscontro();
+    }
+
+    /**
+     * Create an instance of {@link RilevanzaEccezione }
+     */
+    public RilevanzaEccezione createRilevanzaEccezione() {
+        return new RilevanzaEccezione();
+    }
+
+    /**
+     * Create an instance of {@link TracciaEsitoElaborazione }
+     */
+    public TracciaEsitoElaborazione createTracciaEsitoElaborazione() {
+        return new TracciaEsitoElaborazione();
+    }
+
+    /**
+     * Create an instance of {@link DominioSoggetto }
+     */
+    public DominioSoggetto createDominioSoggetto() {
+        return new DominioSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link Protocollo }
+     */
+    public Protocollo createProtocollo() {
+        return new Protocollo();
+    }
+
+    /**
+     * Create an instance of {@link ContestoCodificaEccezione }
+     */
+    public ContestoCodificaEccezione createContestoCodificaEccezione() {
+        return new ContestoCodificaEccezione();
+    }
+
+    /**
      * Create an instance of {@link Eccezioni }
      */
     public Eccezioni createEccezioni() {
         return new Eccezioni();
+    }
+
+    /**
+     * Create an instance of {@link Dominio }
+     */
+    public Dominio createDominio() {
+        return new Dominio();
+    }
+
+    /**
+     * Create an instance of {@link Servizio }
+     */
+    public Servizio createServizio() {
+        return new Servizio();
+    }
+
+    /**
+     * Create an instance of {@link Allegati }
+     */
+    public Allegati createAllegati() {
+        return new Allegati();
+    }
+
+    /**
+     * Create an instance of {@link IdTraccia }
+     */
+    public IdTraccia createIdTraccia() {
+        return new IdTraccia();
+    }
+
+    /**
+     * Create an instance of {@link TipoData }
+     */
+    public TipoData createTipoData() {
+        return new TipoData();
+    }
+
+    /**
+     * Create an instance of {@link Inoltro }
+     */
+    public Inoltro createInoltro() {
+        return new Inoltro();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link SoggettoIdentificativo }
+     */
+    public SoggettoIdentificativo createSoggettoIdentificativo() {
+        return new SoggettoIdentificativo();
+    }
+
+    /**
+     * Create an instance of {@link Trasmissione }
+     */
+    public Trasmissione createTrasmissione() {
+        return new Trasmissione();
+    }
+
+    /**
+     * Create an instance of {@link Eccezione }
+     */
+    public Eccezione createEccezione() {
+        return new Eccezione();
     }
 
     /**
@@ -206,52 +248,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Trasmissioni }
-     */
-    public Trasmissioni createTrasmissioni() {
-        return new Trasmissioni();
-    }
-
-    /**
-     * Create an instance of {@link Trasmissione }
-     */
-    public Trasmissione createTrasmissione() {
-        return new Trasmissione();
-    }
-
-    /**
-     * Create an instance of {@link Riscontro }
-     */
-    public Riscontro createRiscontro() {
-        return new Riscontro();
-    }
-
-    /**
-     * Create an instance of {@link Allegato }
-     */
-    public Allegato createAllegato() {
-        return new Allegato();
-    }
-
-    /**
      * Create an instance of {@link Traccia }
      */
     public Traccia createTraccia() {
         return new Traccia();
-    }
-
-    /**
-     * Create an instance of {@link Protocollo }
-     */
-    public Protocollo createProtocollo() {
-        return new Protocollo();
-    }
-
-    /**
-     * Create an instance of {@link Allegati }
-     */
-    public Allegati createAllegati() {
-        return new Allegati();
     }
 
 

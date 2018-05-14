@@ -14,16 +14,21 @@ import java.util.Objects;
  */
 public class InnerClass implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String str;
 	private long lng;
 	public String getStr() {
-		return str;
+		return this.str;
 	}
 	public void setStr(String str) {
 		this.str = str;
 	}
 	public long getLng() {
-		return lng;
+		return this.lng;
 	}
 	public void setLng(long lng) {
 		this.lng = lng;
@@ -32,8 +37,8 @@ public class InnerClass implements Serializable {
 	 * 
 	 */
 	public void init() {
-		str = Math.random() + "";
-		lng = Math.round(Math.random());
+		this.str = Math.random() + "";
+		this.lng = Math.round(Math.random());
 	}
 
 	/* (non-Javadoc)

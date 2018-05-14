@@ -52,6 +52,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ElencoServiziComponenti }
+     */
+    public ElencoServiziComponenti createElencoServiziComponenti() {
+        return new ElencoServiziComponenti();
+    }
+
+    /**
      * Create an instance of {@link AccordoCooperazione }
      */
     public AccordoCooperazione createAccordoCooperazione() {
@@ -59,17 +66,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DocumentoConversazione }
+     * Create an instance of {@link DocumentoSemiformale }
      */
-    public DocumentoConversazione createDocumentoConversazione() {
-        return new DocumentoConversazione();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoInterfaccia }
-     */
-    public DocumentoInterfaccia createDocumentoInterfaccia() {
-        return new DocumentoInterfaccia();
+    public DocumentoSemiformale createDocumentoSemiformale() {
+        return new DocumentoSemiformale();
     }
 
     /**
@@ -80,31 +80,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SpecificaLivelliServizio }
+     * Create an instance of {@link SpecificaSemiformale }
      */
-    public SpecificaLivelliServizio createSpecificaLivelliServizio() {
-        return new SpecificaLivelliServizio();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteSpecifica }
-     */
-    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
-        return new AccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link ElencoPartecipanti }
-     */
-    public ElencoPartecipanti createElencoPartecipanti() {
-        return new ElencoPartecipanti();
-    }
-
-    /**
-     * Create an instance of {@link DocumentoSicurezza }
-     */
-    public DocumentoSicurezza createDocumentoSicurezza() {
-        return new DocumentoSicurezza();
+    public SpecificaSemiformale createSpecificaSemiformale() {
+        return new SpecificaSemiformale();
     }
 
     /**
@@ -115,10 +94,80 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DocumentoInterfaccia }
+     */
+    public DocumentoInterfaccia createDocumentoInterfaccia() {
+        return new DocumentoInterfaccia();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoConversazione }
+     */
+    public DocumentoConversazione createDocumentoConversazione() {
+        return new DocumentoConversazione();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteSpecifica }
+     */
+    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
+        return new AccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link ElencoServiziComposti }
+     */
+    public ElencoServiziComposti createElencoServiziComposti() {
+        return new ElencoServiziComposti();
+    }
+
+    /**
+     * Create an instance of {@link ElencoAllegati }
+     */
+    public ElencoAllegati createElencoAllegati() {
+        return new ElencoAllegati();
+    }
+
+    /**
      * Create an instance of {@link SpecificaPortiAccesso }
      */
     public SpecificaPortiAccesso createSpecificaPortiAccesso() {
         return new SpecificaPortiAccesso();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoLivelloServizio }
+     */
+    public DocumentoLivelloServizio createDocumentoLivelloServizio() {
+        return new DocumentoLivelloServizio();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaInterfaccia }
+     */
+    public SpecificaInterfaccia createSpecificaInterfaccia() {
+        return new SpecificaInterfaccia();
+    }
+
+    /**
+     * Create an instance of {@link DocumentoSicurezza }
+     */
+    public DocumentoSicurezza createDocumentoSicurezza() {
+        return new DocumentoSicurezza();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaLivelliServizio }
+     */
+    public SpecificaLivelliServizio createSpecificaLivelliServizio() {
+        return new SpecificaLivelliServizio();
+    }
+
+    /**
+     * Create an instance of {@link SpecificaConversazione }
+     */
+    public SpecificaConversazione createSpecificaConversazione() {
+        return new SpecificaConversazione();
     }
 
     /**
@@ -136,34 +185,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ElencoServiziComponenti }
-     */
-    public ElencoServiziComponenti createElencoServiziComponenti() {
-        return new ElencoServiziComponenti();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaConversazione }
-     */
-    public SpecificaConversazione createSpecificaConversazione() {
-        return new SpecificaConversazione();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaSicurezza }
-     */
-    public SpecificaSicurezza createSpecificaSicurezza() {
-        return new SpecificaSicurezza();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaInterfaccia }
-     */
-    public SpecificaInterfaccia createSpecificaInterfaccia() {
-        return new SpecificaInterfaccia();
-    }
-
-    /**
      * Create an instance of {@link AccordoServizio }
      */
     public AccordoServizio createAccordoServizio() {
@@ -171,38 +192,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DocumentoSemiformale }
+     * Create an instance of {@link ElencoPartecipanti }
      */
-    public DocumentoSemiformale createDocumentoSemiformale() {
-        return new DocumentoSemiformale();
+    public ElencoPartecipanti createElencoPartecipanti() {
+        return new ElencoPartecipanti();
     }
 
     /**
-     * Create an instance of {@link DocumentoLivelloServizio }
+     * Create an instance of {@link SpecificaSicurezza }
      */
-    public DocumentoLivelloServizio createDocumentoLivelloServizio() {
-        return new DocumentoLivelloServizio();
-    }
-
-    /**
-     * Create an instance of {@link ElencoAllegati }
-     */
-    public ElencoAllegati createElencoAllegati() {
-        return new ElencoAllegati();
-    }
-
-    /**
-     * Create an instance of {@link ElencoServiziComposti }
-     */
-    public ElencoServiziComposti createElencoServiziComposti() {
-        return new ElencoServiziComposti();
-    }
-
-    /**
-     * Create an instance of {@link SpecificaSemiformale }
-     */
-    public SpecificaSemiformale createSpecificaSemiformale() {
-        return new SpecificaSemiformale();
+    public SpecificaSicurezza createSpecificaSicurezza() {
+        return new SpecificaSicurezza();
     }
 
 

@@ -1123,7 +1123,7 @@ public class ZIPWriteUtils {
 		}catch(Exception e){
 			String xml = null;
 			try{
-				xml = accordo.toXml_Jaxb();
+				xml = accordo.toXml();
 			}catch(Exception eDebug){
 				this.log.error("Errore durante il recupero della struttura xml: "+eDebug,eDebug);
 				throw new ProtocolException("["+nomeAccordo+"]["+idAccordo+"]: "+e.getMessage(),e);
@@ -1414,7 +1414,7 @@ public class ZIPWriteUtils {
 		}catch(Exception e){
 			String xml = null;
 			try{
-				xml = accordo.toXml_Jaxb();
+				xml = accordo.toXml();
 			}catch(Exception eDebug){
 				this.log.error("Errore durante il recupero della struttura xml: "+eDebug,eDebug);
 				throw new ProtocolException("[AccordoServizioParteSpecifica]["+idServizio+"]: "+e.getMessage(),e);
@@ -1569,7 +1569,7 @@ public class ZIPWriteUtils {
 		}catch(Exception e){
 			String xml = null;
 			try{
-				xml = accordo.toXml_Jaxb();
+				xml = accordo.toXml();
 			}catch(Exception eDebug){
 				this.log.error("Errore durante il recupero della struttura xml: "+eDebug,eDebug);
 				throw new ProtocolException("[AccordoCooperazione]["+idAccordo+"]: "+e.getMessage(),e);

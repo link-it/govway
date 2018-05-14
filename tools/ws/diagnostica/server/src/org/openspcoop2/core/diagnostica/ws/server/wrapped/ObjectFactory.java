@@ -42,13 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link FindAllMessaggioDiagnostico }
-     */
-    public FindAllMessaggioDiagnostico createFindAllMessaggioDiagnostico() {
-        return new FindAllMessaggioDiagnostico();
-    }
-    
-    /**
      * Create an instance of {@link CountMessaggioDiagnosticoResponse }
      */
     public CountMessaggioDiagnosticoResponse createCountMessaggioDiagnosticoResponse() {
@@ -56,10 +49,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link CountMessaggioDiagnostico }
+     * Create an instance of {@link FindAllMessaggioDiagnostico }
      */
-    public CountMessaggioDiagnostico createCountMessaggioDiagnostico() {
-        return new CountMessaggioDiagnostico();
+    public FindAllMessaggioDiagnostico createFindAllMessaggioDiagnostico() {
+        return new FindAllMessaggioDiagnostico();
     }
     
     /**
@@ -67,6 +60,13 @@ public class ObjectFactory {
      */
     public FindAllMessaggioDiagnosticoResponse createFindAllMessaggioDiagnosticoResponse() {
         return new FindAllMessaggioDiagnosticoResponse();
+    }
+    
+    /**
+     * Create an instance of {@link CountMessaggioDiagnostico }
+     */
+    public CountMessaggioDiagnostico createCountMessaggioDiagnostico() {
+        return new CountMessaggioDiagnostico();
     }
     
 

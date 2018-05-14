@@ -52,157 +52,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ResourceResponse }
-     */
-    public ResourceResponse createResourceResponse() {
-        return new ResourceResponse();
-    }
-
-    /**
      * Create an instance of {@link AccordoCooperazione }
      */
     public AccordoCooperazione createAccordoCooperazione() {
         return new AccordoCooperazione();
-    }
-
-    /**
-     * Create an instance of {@link IdAccordoServizioParteSpecifica }
-     */
-    public IdAccordoServizioParteSpecifica createIdAccordoServizioParteSpecifica() {
-        return new IdAccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link Ruolo }
-     */
-    public Ruolo createRuolo() {
-        return new Ruolo();
-    }
-
-    /**
-     * Create an instance of {@link ResourceParameter }
-     */
-    public ResourceParameter createResourceParameter() {
-        return new ResourceParameter();
-    }
-
-    /**
-     * Create an instance of {@link Operation }
-     */
-    public Operation createOperation() {
-        return new Operation();
-    }
-
-    /**
-     * Create an instance of {@link AccordoCooperazionePartecipanti }
-     */
-    public AccordoCooperazionePartecipanti createAccordoCooperazionePartecipanti() {
-        return new AccordoCooperazionePartecipanti();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteSpecifica }
-     */
-    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
-        return new AccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteComuneServizioCompostoServizioComponente }
-     */
-    public AccordoServizioParteComuneServizioCompostoServizioComponente createAccordoServizioParteComuneServizioCompostoServizioComponente() {
-        return new AccordoServizioParteComuneServizioCompostoServizioComponente();
-    }
-
-    /**
-     * Create an instance of {@link Azione }
-     */
-    public Azione createAzione() {
-        return new Azione();
-    }
-
-    /**
-     * Create an instance of {@link ProtocolProperty }
-     */
-    public ProtocolProperty createProtocolProperty() {
-        return new ProtocolProperty();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link IdAccordoServizioParteComune }
-     */
-    public IdAccordoServizioParteComune createIdAccordoServizioParteComune() {
-        return new IdAccordoServizioParteComune();
-    }
-
-    /**
-     * Create an instance of {@link IdRuolo }
-     */
-    public IdRuolo createIdRuolo() {
-        return new IdRuolo();
-    }
-
-    /**
-     * Create an instance of {@link ResourceRequest }
-     */
-    public ResourceRequest createResourceRequest() {
-        return new ResourceRequest();
-    }
-
-    /**
-     * Create an instance of {@link MessagePart }
-     */
-    public MessagePart createMessagePart() {
-        return new MessagePart();
-    }
-
-    /**
-     * Create an instance of {@link Documento }
-     */
-    public Documento createDocumento() {
-        return new Documento();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteComuneServizioComposto }
-     */
-    public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
-        return new AccordoServizioParteComuneServizioComposto();
-    }
-
-    /**
-     * Create an instance of {@link AccordoServizioParteComune }
-     */
-    public AccordoServizioParteComune createAccordoServizioParteComune() {
-        return new AccordoServizioParteComune();
-    }
-
-    /**
-     * Create an instance of {@link IdPortaDominio }
-     */
-    public IdPortaDominio createIdPortaDominio() {
-        return new IdPortaDominio();
-    }
-
-    /**
-     * Create an instance of {@link ConfigurazioneServizio }
-     */
-    public ConfigurazioneServizio createConfigurazioneServizio() {
-        return new ConfigurazioneServizio();
-    }
-
-    /**
-     * Create an instance of {@link RuoloSoggetto }
-     */
-    public RuoloSoggetto createRuoloSoggetto() {
-        return new RuoloSoggetto();
     }
 
     /**
@@ -213,10 +66,38 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RegistroServizi }
+     * Create an instance of {@link IdAccordoServizioParteSpecifica }
      */
-    public RegistroServizi createRegistroServizi() {
-        return new RegistroServizi();
+    public IdAccordoServizioParteSpecifica createIdAccordoServizioParteSpecifica() {
+        return new IdAccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link RuoloSoggetto }
+     */
+    public RuoloSoggetto createRuoloSoggetto() {
+        return new RuoloSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteComuneServizioCompostoServizioComponente }
+     */
+    public AccordoServizioParteComuneServizioCompostoServizioComponente createAccordoServizioParteComuneServizioCompostoServizioComponente() {
+        return new AccordoServizioParteComuneServizioCompostoServizioComponente();
+    }
+
+    /**
+     * Create an instance of {@link AccordoCooperazionePartecipanti }
+     */
+    public AccordoCooperazionePartecipanti createAccordoCooperazionePartecipanti() {
+        return new AccordoCooperazionePartecipanti();
+    }
+
+    /**
+     * Create an instance of {@link CredenzialiSoggetto }
+     */
+    public CredenzialiSoggetto createCredenzialiSoggetto() {
+        return new CredenzialiSoggetto();
     }
 
     /**
@@ -227,24 +108,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Resource }
-     */
-    public Resource createResource() {
-        return new Resource();
-    }
-
-    /**
      * Create an instance of {@link Connettore }
      */
     public Connettore createConnettore() {
         return new Connettore();
-    }
-
-    /**
-     * Create an instance of {@link IdAccordoCooperazione }
-     */
-    public IdAccordoCooperazione createIdAccordoCooperazione() {
-        return new IdAccordoCooperazione();
     }
 
     /**
@@ -255,31 +122,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PortType }
-     */
-    public PortType createPortType() {
-        return new PortType();
-    }
-
-    /**
      * Create an instance of {@link ConfigurazioneServizioAzione }
      */
     public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
         return new ConfigurazioneServizioAzione();
-    }
-
-    /**
-     * Create an instance of {@link Message }
-     */
-    public Message createMessage() {
-        return new Message();
-    }
-
-    /**
-     * Create an instance of {@link ResourceRepresentationXml }
-     */
-    public ResourceRepresentationXml createResourceRepresentationXml() {
-        return new ResourceRepresentationXml();
     }
 
     /**
@@ -290,17 +136,73 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PortaDominio }
+     * Create an instance of {@link ResourceResponse }
      */
-    public PortaDominio createPortaDominio() {
-        return new PortaDominio();
+    public ResourceResponse createResourceResponse() {
+        return new ResourceResponse();
     }
 
     /**
-     * Create an instance of {@link ResourceRepresentationJson }
+     * Create an instance of {@link Azione }
      */
-    public ResourceRepresentationJson createResourceRepresentationJson() {
-        return new ResourceRepresentationJson();
+    public Azione createAzione() {
+        return new Azione();
+    }
+
+    /**
+     * Create an instance of {@link IdPortaDominio }
+     */
+    public IdPortaDominio createIdPortaDominio() {
+        return new IdPortaDominio();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteSpecifica }
+     */
+    public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
+        return new AccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link ResourceRequest }
+     */
+    public ResourceRequest createResourceRequest() {
+        return new ResourceRequest();
+    }
+
+    /**
+     * Create an instance of {@link ProtocolProperty }
+     */
+    public ProtocolProperty createProtocolProperty() {
+        return new ProtocolProperty();
+    }
+
+    /**
+     * Create an instance of {@link IdAccordoCooperazione }
+     */
+    public IdAccordoCooperazione createIdAccordoCooperazione() {
+        return new IdAccordoCooperazione();
+    }
+
+    /**
+     * Create an instance of {@link Ruolo }
+     */
+    public Ruolo createRuolo() {
+        return new Ruolo();
+    }
+
+    /**
+     * Create an instance of {@link MessagePart }
+     */
+    public MessagePart createMessagePart() {
+        return new MessagePart();
+    }
+
+    /**
+     * Create an instance of {@link ResourceRepresentationXml }
+     */
+    public ResourceRepresentationXml createResourceRepresentationXml() {
+        return new ResourceRepresentationXml();
     }
 
     /**
@@ -311,10 +213,108 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CredenzialiSoggetto }
+     * Create an instance of {@link AccordoServizioParteComuneServizioComposto }
      */
-    public CredenzialiSoggetto createCredenzialiSoggetto() {
-        return new CredenzialiSoggetto();
+    public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
+        return new AccordoServizioParteComuneServizioComposto();
+    }
+
+    /**
+     * Create an instance of {@link IdRuolo }
+     */
+    public IdRuolo createIdRuolo() {
+        return new IdRuolo();
+    }
+
+    /**
+     * Create an instance of {@link ResourceParameter }
+     */
+    public ResourceParameter createResourceParameter() {
+        return new ResourceParameter();
+    }
+
+    /**
+     * Create an instance of {@link PortType }
+     */
+    public PortType createPortType() {
+        return new PortType();
+    }
+
+    /**
+     * Create an instance of {@link AccordoServizioParteComune }
+     */
+    public AccordoServizioParteComune createAccordoServizioParteComune() {
+        return new AccordoServizioParteComune();
+    }
+
+    /**
+     * Create an instance of {@link IdAccordoServizioParteComune }
+     */
+    public IdAccordoServizioParteComune createIdAccordoServizioParteComune() {
+        return new IdAccordoServizioParteComune();
+    }
+
+    /**
+     * Create an instance of {@link RegistroServizi }
+     */
+    public RegistroServizi createRegistroServizi() {
+        return new RegistroServizi();
+    }
+
+    /**
+     * Create an instance of {@link PortaDominio }
+     */
+    public PortaDominio createPortaDominio() {
+        return new PortaDominio();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneServizio }
+     */
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
+    }
+
+    /**
+     * Create an instance of {@link Message }
+     */
+    public Message createMessage() {
+        return new Message();
+    }
+
+    /**
+     * Create an instance of {@link Documento }
+     */
+    public Documento createDocumento() {
+        return new Documento();
+    }
+
+    /**
+     * Create an instance of {@link Resource }
+     */
+    public Resource createResource() {
+        return new Resource();
+    }
+
+    /**
+     * Create an instance of {@link Operation }
+     */
+    public Operation createOperation() {
+        return new Operation();
+    }
+
+    /**
+     * Create an instance of {@link ResourceRepresentationJson }
+     */
+    public ResourceRepresentationJson createResourceRepresentationJson() {
+        return new ResourceRepresentationJson();
     }
 
 
