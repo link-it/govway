@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/manifest_allegato"
+    targetNamespace="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/manifest_allegato">
+    
+    <!-- ********* MANIFEST ALLEGATO ************* -->
+    
+    <xsd:element name="transazione" type="transazione_type"> </xsd:element>
+    
+    <xsd:complexType name="transazione_type">
+        <xsd:sequence>
+            <xsd:element name="attach-id" minOccurs="0"
+                maxOccurs="1" type="xsd:long"/>
+            <xsd:element name="location" minOccurs="0"
+                maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="mime-type" minOccurs="0"
+                maxOccurs="1" type="xsd:string"/>            
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>

@@ -1,0 +1,13 @@
+
+	<servlet-mapping>
+		<servlet-name>configurazioniexporter</servlet-name>
+		<url-pattern>/configurazioniexporter</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>statreportexporter</servlet-name>
+		<url-pattern>/report/statistica</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>configreportexporter</servlet-name>
+		<url-pattern>/report/configurazione</url-pattern>
+	</servlet-mapping>

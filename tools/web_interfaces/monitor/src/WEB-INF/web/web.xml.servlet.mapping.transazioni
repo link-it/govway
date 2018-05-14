@@ -1,0 +1,16 @@
+	<servlet-mapping>
+		<servlet-name>diagnosticiexporter</servlet-name>
+		<url-pattern>/diagnosticiexporter</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>tracceexporter</servlet-name>
+		<url-pattern>/tracceexporter</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>transazioniexporter</servlet-name>
+		<url-pattern>/transazioniexporter</url-pattern>
+	</servlet-mapping>
+		<servlet-mapping>
+		<servlet-name>transazionicsvexporter</servlet-name>
+		<url-pattern>/transazionicsvexporter</url-pattern>
+	</servlet-mapping>

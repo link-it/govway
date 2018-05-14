@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<!-- Andamento Temporale Search Form -->
+	<bean id="andamentoTemporaleSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="periodoDefault" value="Ultima settimana"/>
+		<property name="_value_tipoStatistica" value="andamentoTemporale"/>
+		<property name="action" value="andamentoTemporaleGrafico"/>
+	</bean>
+	
+	<!-- Distribuzione Soggetto Search Form -->
+	<bean id="distribuzioneSoggettoSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneSoggetto"/>
+		<property name="action" value="distribSoggettoGrafico"/>
+	</bean>
+	
+	<!-- Distribuzione Servizio Search Form -->
+	<bean id="distribuzioneServizioSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneServizio"/>
+		<property name="action" value="distribServizioGrafico"/>
+	</bean>
+	
+	<!-- Distribuzione Azione Search Form -->
+	<bean id="distribuzioneAzioneSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneAzione"/>
+		<property name="action" value="distribAzioneGrafico"/>
+	</bean>	
+
+	<!-- Distribuzione SA Search Form -->
+	<bean id="distribuzioneSASearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="distribuzioneSA"/>
+		<property name="action" value="distribSAGrafico"/>
+	</bean>
+	
+	<!-- Search Form Statistiche Personalizzate -->
+	<bean id="statistichePersonalizzateSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm" scope="session">
+		<property name="_value_tipoStatistica" value="statisticaPersonalizzata"/>
+		<property name="action" value="statsPersonalizzateGrafico"/>
+	</bean>
+	
+	<!-- Service Statistiche -->
+	<bean id="statisticheGiornaliereService" class="org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService" scope="request">
+		<property name="andamentoTemporaleSearch" ref="andamentoTemporaleSearchForm" />
+		<property name="distribSoggettoSearch" ref="distribuzioneSoggettoSearchForm" />
+		<property name="distribServizioSearch" ref="distribuzioneServizioSearchForm" />
+		<property name="distribAzioneSearch" ref="distribuzioneAzioneSearchForm" />
+		<property name="distribSaSearch" ref="distribuzioneSASearchForm" />
+		<property name="statistichePersonalizzateSearch" ref="statistichePersonalizzateSearchForm"/>
+	</bean>
+	
+	<!-- Configurazioni Generali -->
+	<bean id="configurazioniGeneraliService" class="org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService" scope="request">
+		<property name="search" ref="configurazioniGeneraliSearchForm" />
+	</bean>
+	
+	<bean id="configurazioniGeneraliSearchForm"  class="org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm" scope="session"/>
+	
+	<bean id="configurazioniGeneraliBean" class="org.openspcoop2.web.monitor.statistiche.mbean.ConfigurazioniGeneraliBean" scope="request">
+		<property name="service" ref="configurazioniGeneraliService"/>
+		<property name="search" ref="configurazioniGeneraliSearchForm"/>
+	</bean>
+	
+	<!-- Report Esiti -->
+	<bean id="statisticaReportManager" class="org.openspcoop2.web.monitor.statistiche.report.StatisticaReportManager" scope="request"/>
+	
+</beans>

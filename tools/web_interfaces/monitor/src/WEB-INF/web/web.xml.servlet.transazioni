@@ -1,0 +1,16 @@
+	<servlet>
+		<servlet-name>diagnosticiexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.transazioni.servlet.DiagnosticiExporter</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>tracceexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.transazioni.servlet.TracceExporter</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>transazioniexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.transazioni.servlet.TransazioniExporter</servlet-class>
+	</servlet>
+		<servlet>
+		<servlet-name>transazionicsvexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.transazioni.servlet.TransazioniCsvExporter</servlet-class>
+	</servlet>

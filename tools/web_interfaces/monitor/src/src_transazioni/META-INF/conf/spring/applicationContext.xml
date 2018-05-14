@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<bean id="searchFormTransazioni" class="org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm" scope="session">
+		<property name="periodoDefault" value="Ultima settimana"/>
+	</bean>
+	<bean id="searchFormDiagnostici" class="org.openspcoop2.web.monitor.core.bean.BaseSearchForm" scope="session"/>
+
+	<bean id="transazioniService" class="org.openspcoop2.web.monitor.transazioni.dao.TransazioniService" scope="request">
+		<property name="search" ref="searchFormTransazioni" />
+		<property name="liveMaxResults" value="25"/>
+<!-- 		<property name="service" ref="transazioniServiceManager"/> -->
+	</bean>
+	
+	<bean id="transazioniReportManager" class="org.openspcoop2.web.monitor.transazioni.report.TransazioniReportManager" scope="request"/>
+	
+</beans>
+

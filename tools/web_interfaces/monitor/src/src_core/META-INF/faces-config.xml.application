@@ -1,0 +1,21 @@
+<application>
+	<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+		<locale-config>
+			<default-locale>it</default-locale>
+			<supported-locale>it</supported-locale>
+		</locale-config>
+	<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+		<message-bundle>messages_it</message-bundle>
+		<!-- message-bundle>properties/messages_it</message-bundle -->
+		<resource-bundle>
+			<base-name>application</base-name>
+			<var>msgbundle</var>
+		</resource-bundle>
+	</application>
+	<factory>
+		<application-factory>org.richfaces.ui.application.StateApplicationFactory</application-factory>
+	</factory>
+	<lifecycle>
+		<phase-listener id="loginPhaseListener">org.openspcoop2.web.monitor.core.listener.LoginPhaseListener</phase-listener>
+		<phase-listener id="viewExpiredListener">org.openspcoop2.web.monitor.core.listener.ViewExpiredListener</phase-listener>
+	</lifecycle>

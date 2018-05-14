@@ -1,0 +1,22 @@
+
+	<servlet>
+		<servlet-name>configurazioniexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.statistiche.servlet.ConfigurazioniExporter</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>statreportexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.statistiche.servlet.ReportExporter</servlet-class>
+		<init-param>
+			<param-name>resource</param-name>
+			<param-value>stat</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>configreportexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.statistiche.servlet.ReportExporter</servlet-class>
+		<init-param>
+			<param-name>resource</param-name>
+			<param-value>config</param-value>
+		</init-param>
+	</servlet>
+	

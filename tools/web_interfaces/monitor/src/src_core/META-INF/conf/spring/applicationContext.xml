@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd"> 
+
+	<!-- AspectJ -->
+    <aop:config>
+    	<aop:aspect id="userAspect" ref="userAspectBean">
+    		<aop:pointcut expression="execution(* org.openspcoop2.web.monitor.core.dao.UserService.store(..)) and args(user)" id="storeUser"/>
+    		<aop:pointcut expression="execution(* org.openspcoop2.web.monitor.core.dao.UserService.delete(..)) and args(user)" id="deleteUser"/>
+    		<aop:around method="around" pointcut-ref="storeUser"/>
+    		<aop:around method="around" pointcut-ref="deleteUser"/>
+    	</aop:aspect>
+    </aop:config>
+    
+	<bean id="loggingAspectBean" class="org.openspcoop2.web.monitor.core.aspect.LoggingAspect"/>
+	<bean id="userAspectBean" class="org.openspcoop2.web.monitor.core.aspect.UserAspect"/>
+	
+
+	<!-- Utility -->
+	<bean id="loginBean" class="org.openspcoop2.web.monitor.core.bean.LoginBean" scope="session">
+		<property name="loginDao" ref="loginDAO"/>
+		<aop:scoped-proxy/>
+	</bean>
+	
+	<!-- Object Mapping -->
+	<bean id="loginDAO" class="org.openspcoop2.web.monitor.core.dao.DBLoginDAO" scope="request"/>
+	
+	<bean id="searchFormUtenti" class="org.openspcoop2.web.monitor.core.bean.UtentiSearchForm" scope="session"/>
+	
+	<bean id="userService" class="org.openspcoop2.web.monitor.core.dao.UserService" scope="request">
+		<property name="search" ref="searchFormUtenti"/>
+	</bean>
+	
+	<bean id="auditingService" class="org.openspcoop2.web.monitor.core.dao.AuditingService"/>
+		
+	<bean id="genericService" class="org.openspcoop2.web.monitor.core.dao.GenericService" scope="request">
+	</bean>
+	
+	<bean id="licenseService" class="org.openspcoop2.web.monitor.core.dao.LicenseService" scope="request"/>
+	
+</beans>
+

@@ -1,0 +1,120 @@
+	 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:META-INF/conf/spring/applicationContext*.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.RECREATE_VALUE_EXPRESSION_ON_BUILD_BEFORE_RESTORE</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>facelets.REFRESH_PERIOD</param-name>
+		<param-value>2</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value>/WEB-INF/faces-config.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.ajax4jsf.COMPRESS_STYLE</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>com.sun.faces.validateXml</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>com.sun.faces.verifyObjects</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.CONTROL_SKINNING</param-name>
+		<param-value>enable</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.LoadScriptStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.LoadStyleStrategy</param-name>
+		<param-value>ALL</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>link</param-value>
+	</context-param>
+	
+	<context-param>
+      <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
+      <param-value>Mojarra-1.2</param-value>
+ </context-param>
+	<context-param>
+		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+<context-param>
+    <param-name>org.richfaces.resourceOptimization.enabled</param-name>
+    <param-value>true</param-value>
+</context-param>
+	
+	
+
+<!-- Application properties -->
+		<context-param>
+			<param-name>applicationProperties</param-name>
+			<param-value>/monitor.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localApplicationProperties</param-name>
+			<param-value>/monitor_local.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localApplicationPropertyName</param-name>
+			<param-value>MONITOR_PROPERTIES</param-value>
+		</context-param>
+		<!-- Logger properties -->
+		<context-param>
+			<param-name>logProperties</param-name>
+			<param-value>/monitor.log4j2.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localLogProperties</param-name>
+			<param-value>/monitor_local.log4j2.properties</param-value>
+		</context-param>
+		<context-param>
+			<param-name>localLogPropertyName</param-name>
+			<param-value>MONITOR_LOG_PROPERTIES</param-value>
+		</context-param>
+ 
+
+
+
+
+ 
+
+
+
+ 
+ 
+	
+	

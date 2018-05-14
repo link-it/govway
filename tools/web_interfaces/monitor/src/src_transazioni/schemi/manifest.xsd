@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/manifest"
+    targetNamespace="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/manifest">
+    
+    <!-- ********* MANIFEST ************* -->
+    
+    <xsd:element name="transazione" type="transazione_type"> </xsd:element>
+    
+    <xsd:complexType name="transazione_type">
+        <xsd:sequence>
+            
+            <!-- Stato di una transazione (marca la transazione con uno stato tramite la configurazione plugin) -->
+            <xsd:element name="stato" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            
+            <!-- Ruolo della Transazione -->          
+            <xsd:element name="ruolo" minOccurs="0" maxOccurs="1" type="ruolo_type"/>
+            
+            <!-- Esito di una transazione -->
+            <xsd:element name="esito" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="codice" type="xsd:integer" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Contesto di una transazione -->
+            <xsd:element name="contesto" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="codice" type="xsd:string" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- 
+                Protocollo della transazione
+                - nome del protocollo
+                - soggetto fruitore
+                - soggetto erogatore
+                - servizio
+                - azione
+                - identificativi messaggi
+                - altre informazioni di protocollo
+                - identificativi asincroni
+                - digest
+                - duplicati
+            -->
+            <xsd:element name="protocollo" minOccurs="0" maxOccurs="1"
+                type="protocollo_type"/>
+            
+            <!-- Tempi di latenza -->
+            <xsd:element name="tempi-attraversamento" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta-accettazione" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="richiesta-ingresso" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="richiesta-uscita" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="risposta-accettazione" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="risposta-ingresso" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="risposta-uscita" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="latenza-totale" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="latenza-porta" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="latenza-servizio" type="xsd:long" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Dimensione messaggi gestiti -->
+            <xsd:element name="dimensione-messaggi" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta-ingresso" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="richiesta-uscita" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="risposta-ingresso" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="risposta-uscita" type="xsd:long" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Dati PdD (anche cluster id) -->
+            <xsd:element name="dominio" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="soggetto" minOccurs="0" maxOccurs="1"
+                            type="soggetto_type"/>
+                        <xsd:element name="ruolo" minOccurs="0" maxOccurs="1"
+                            type="tipo_porta_type"/>
+                        <xsd:element name="cluster-id" minOccurs="0" maxOccurs="1"
+                            type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- informazioni di diagnostica -->
+            <xsd:element name="diagnostica" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="messaggi-errore-serializzazione" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="messaggi-info-serializzazione" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="traccia-richiesta-errore-serializzazione" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="traccia-risposta-errore-serializzazione" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="messaggi" type="diagnostica_serialization_type" use="optional"/>                 
+                    <xsd:attribute name="traccia-richiesta" type="diagnostica_serialization_type" use="optional"/>
+                    <xsd:attribute name="traccia-risposta" type="diagnostica_serialization_type" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- informazioni di integrazione -->
+            
+            <xsd:element name="correlazione-applicativa" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="id-richiesta" minOccurs="0"
+                            maxOccurs="1" type="xsd:string"/>
+                        <xsd:element name="id-risposta" minOccurs="0"
+                            maxOccurs="1" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="servizio-applicativo-fruitore" minOccurs="0"
+                maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="servizio-applicativo-erogatore" minOccurs="0"
+                maxOccurs="1" type="xsd:string"/>
+            
+            <xsd:element name="integration-manager" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="operazione" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="dati-integrazione" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="indirizzo-richiesta" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="indirizzo-risposta" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="nome-porta" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="credenziali" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="connettore" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="url-invocazione" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="indirizzo-client" type="xsd:string" use="optional"/>                  
+                    <xsd:attribute name="x-forwarded-for" type="xsd:string" use="optional"/>
+                    
+                </xsd:complexType>
+            </xsd:element> 
+            
+            <xsd:element name="eventi-gestione" minOccurs="0"
+                maxOccurs="1" type="xsd:string"/>
+
+        </xsd:sequence>
+        <xsd:attribute name="uuid" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="diagnostica_serialization_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Standard"/>
+            <xsd:enumeration value="Optimized"/>
+            <xsd:enumeration value="OptimizedError"/>
+            <xsd:enumeration value="OptimizedNotFound"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+        
+    <xsd:simpleType name="ruolo_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="sconosciuto"/>
+            <xsd:enumeration value="invocazioneOneway"/>
+            <xsd:enumeration value="invocazioneSincrona"/>
+            <xsd:enumeration value="invocazioneAsincronaSimmetrica"/>
+            <xsd:enumeration value="rispostaAsincronaSimmetrica"/>
+            <xsd:enumeration value="invocazioneAsincronaAsimmetrica"/>
+            <xsd:enumeration value="richiestaStatoAsincronaAsimmetrica"/>
+            <xsd:enumeration value="integrationManager"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="tipo_porta_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="delegata"/>
+            <xsd:enumeration value="applicativa"/>
+            <xsd:enumeration value="router"/>
+            <xsd:enumeration value="integrationManager"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="protocollo_type">
+        <xsd:sequence>
+            
+            <!-- Soggetto Fruitore -->
+            <xsd:element name="fruitore" type="soggetto_type" minOccurs="0" maxOccurs="1"/>
+            
+            <!-- Soggetto Erogatore -->
+            <xsd:element name="erogatore" type="soggetto_type" minOccurs="0" maxOccurs="1"/>
+            
+            <!-- Servizio -->
+            <xsd:element name="servizio" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                            <xsd:attribute name="versione" type="xsd:string" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="azione" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            
+            <!-- Identificativi Messaggi -->
+            <xsd:element name="id-messaggio-richiesta" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="id-messaggio-risposta" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="data-id-msg-richiesta" type="xsd:dateTime" minOccurs="0"/>
+            <xsd:element name="data-id-msg-risposta" type="xsd:dateTime" minOccurs="0"/>
+            
+            <!-- altre informazioni -->
+            <xsd:element name="profilo" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="codice" type="xsd:string" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="id-collaborazione" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="uri-accordo-servizio" type="xsd:string" minOccurs="0"/>
+            
+            <!-- Identificativo asincrono se utilizzato come riferimento messaggio nella richiesta (2 fase asincrona) -->
+            <xsd:element name="profilo-asincrono" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="servizio-correlato" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:simpleContent>
+                                    <xsd:extension base="xsd:string">
+                                        <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                                    </xsd:extension>
+                                </xsd:simpleContent>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="id-correlazione" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Digest -->
+            <xsd:element name="digest" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="risposta" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Duplicati -->
+            <xsd:element name="duplicati" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta" type="xsd:int" use="optional"/>
+                    <xsd:attribute name="risposta" type="xsd:int" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="soggetto_type">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                <xsd:attribute name="indirizzo" use="optional" type="xsd:string"/>
+                <xsd:attribute name="identificativo-porta" use="optional" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+</xsd:schema>

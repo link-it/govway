@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/search"
+    targetNamespace="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/search"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <!-- ********* SEARCH FILTER ************* -->
+
+
+    <xsd:element name="transazione" type="transazione_type"> </xsd:element>
+
+    <xsd:complexType name="transazione_type">
+        <xsd:sequence>
+            <xsd:element name="tipologia-transazioni" nillable="false" minOccurs="1" maxOccurs="1"
+                type="tipologia-transazioni_type"> </xsd:element>
+            <xsd:element name="tipologia-ricerca-transazioni" nillable="false" minOccurs="1"
+                maxOccurs="1" type="tipologia-ricerca-transazioni_type"/>
+            <xsd:element name="periodo" nillable="false" minOccurs="1" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="data_inizio" type="xsd:dateTime" use="required"/>
+                            <xsd:attribute name="data_fine" type="xsd:dateTime" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="protocollo" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="soggetto-locale" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="soggetto-remoto" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="soggetto-mittente" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="soggetto-destinatario" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="servizio-applicativo" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="servizio" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="azione" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="esito" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="codice" type="xsd:integer" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="contesto" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="codice" type="xsd:string" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="evento" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="id-messaggio" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
+            <xsd:element name="id-applicativo" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="modalita" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="filtro-contenuti" type="filtro-contenuti" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="transazioni-identificate" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="totale" type="xsd:int" use="required"/>
+                            <xsd:attribute name="selezionate" type="xsd:int" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+
+    <xsd:simpleType name="tipologia-transazioni_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ProxyTrasparente/IntegrationManager"/>
+            <xsd:enumeration value="ProxyTrasparente"/>
+            <xsd:enumeration value="IntegrationManager"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="tipologia-ricerca-transazioni_type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Erogazione/Fruizione"/>
+            <xsd:enumeration value="Erogazione"/>
+            <xsd:enumeration value="Fruizione"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:complexType name="filtro-contenuti">
+        <xsd:sequence>
+            <xsd:element name="stato" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            <xsd:element name="risorsa" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="nome" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ricerca-personalizzata" minOccurs="0" maxOccurs="1" type="ricerca-personalizzata"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="ricerca-personalizzata">
+        <xsd:sequence>
+            <xsd:element name="parameter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="nome" type="xsd:string" use="required"/>
+                            <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="tipo" type="xsd:string" use="required"/>
+        <xsd:attribute name="label" type="xsd:string" use="required"/>
+        <xsd:attribute name="class-name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+
+</xsd:schema>

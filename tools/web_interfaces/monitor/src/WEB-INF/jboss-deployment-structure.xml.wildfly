@@ -1,0 +1,43 @@
+<jboss-deployment-structure>
+        <deployment>
+                <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+                <exclude-subsystems>
+                        <subsystem name="webservices" />
+                         <subsystem name="weld" />
+                </exclude-subsystems>   
+                <exclusions>
+                	<module name="com.sun.jsf-impl"/>
+                	<module name="javax.faces.api"/>
+                        <module name="org.apache.cxf" />
+                        <module name="org.springframework.spring" />
+			<module name="org.slf4j" />
+                        <module name="org.apache.log4j" />
+			<module name="org.apache.commons.logging"/>
+                        <module name="org.jboss.as.webservices" />
+                        <module name="org.jboss.ws" />
+                        <module name="org.jboss.ws.*" />
+			<!-- Start SenzaModulo JSF -->
+			<module name="org.jboss.as.jsf-injection"/>
+			<module name="org.jboss.as.jsf-injection" slot="mojarra-1.2_15"/>
+			<!-- End SenzaModulo JSF -->
+                </exclusions>
+                <dependencies>
+			<!-- Start SenzaModulo JSF -->
+                        <module name="org.jboss.as.web-common" />
+                        <module name="org.jboss.weld.core" />
+			<!-- End SenzaModulo JSF -->
+			<!-- Start Modulo JSF
+			<module name="com.sun.jsf-impl" slot="mojarra-1.2_15" />
+			<module name="javax.faces.api" slot="mojarra-1.2_15" />
+			End Modulo JSF -->
+			<!-- 
+				In wildfly deve essere utilizzato il jar xerces a bordo dell'a.s.
+				altrimenti non funziona il re-deploy dell'applicazione.
+				Si ottiene un errore simile al seguente: 
+				com.sun.faces.config.ConfigurationException: CONFIGURATION FAILED! DTD factory class 
+					com.sun.org.apache.xerces.internal.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory.
+			--> 
+			<module name="org.apache.xerces" />
+		</dependencies>
+        </deployment>
+</jboss-deployment-structure>
