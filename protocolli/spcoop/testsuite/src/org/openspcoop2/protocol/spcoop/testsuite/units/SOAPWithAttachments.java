@@ -1233,7 +1233,7 @@ public class SOAPWithAttachments {
 		try{
 			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null , checkServizioApplicativo,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, new Integer(3),null);
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, Integer.valueOf(3),null);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1290,7 +1290,7 @@ public class SOAPWithAttachments {
 		try{
 			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null , checkServizioApplicativo,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, new Integer(2),null);
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, Integer.valueOf(2),null);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -1344,7 +1344,7 @@ public class SOAPWithAttachments {
 		try{
 			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null , checkServizioApplicativo,null, 
-					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, new Integer(2),null);
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, Integer.valueOf(2),null);
 		}catch(Exception e){
 			throw e;
 		}finally{

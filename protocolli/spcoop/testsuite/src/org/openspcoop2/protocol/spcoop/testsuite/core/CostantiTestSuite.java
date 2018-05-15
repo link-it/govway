@@ -853,7 +853,7 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_PORTA_DOMINIO="SPCoopIT";
 	
 	/** ENTITA SPCOOP: Tipo Soggetto Fruitore */
-	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
 	public static final String SPCOOP_NOME_SOGGETTO_FRUITORE="MinisteroFruitore";
 	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
@@ -863,7 +863,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE);
 		
 	/** ENTITA SPCOOP: Tipo Soggetto Erogatore */
-	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
 	public static final String SPCOOP_NOME_SOGGETTO_EROGATORE="MinisteroErogatore";
 	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
@@ -873,7 +873,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE);
 		
 	/** ENTITA SPCOOP: Tipo Soggetto Fruitore */
-	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_LINEE_GUIDA_11="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_LINEE_GUIDA_11="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
 	public static final String SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11="MinisteroFruitoreLineeGuida";
 	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
@@ -883,7 +883,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_LINEE_GUIDA_11, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE_LINEE_GUIDA_11);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto Erogatore */
-	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_LINEE_GUIDA_11="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_LINEE_GUIDA_11="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
 	public static final String SPCOOP_NOME_SOGGETTO_EROGATORE_LINEE_GUIDA_11="MinisteroErogatoreLineeGuida";
 	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
@@ -893,7 +893,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_LINEE_GUIDA_11, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_LINEE_GUIDA_11);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto Fruitore */
-	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_SOAPBOX="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_FRUITORE_SOAPBOX="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
 	public static final String SPCOOP_NOME_SOGGETTO_FRUITORE_SOAPBOX="SoggettoEsempioSoapBoxFruitore";
 	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
@@ -903,7 +903,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE_SOAPBOX, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE_SOAPBOX);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto Erogatore */
-	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_SOAPBOX="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_EROGATORE_SOAPBOX="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
 	public static final String SPCOOP_NOME_SOGGETTO_EROGATORE_SOAPBOX="SoggettoEsempioSoapBoxErogatore";
 	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
@@ -913,7 +913,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE_SOAPBOX, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_EROGATORE_SOAPBOX);
 
 	/** ENTITA SPCOOP: Tipo Soggetto TMP */
-	public static final String SPCOOP_TIPO_SOGGETTO_TMP="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TMP="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TMP */
 	public static final String SPCOOP_NOME_SOGGETTO_TMP="MinisteroTmp";
 	/** ENTITA SPCOOP: IdPorta Soggetto TMP */
@@ -923,7 +923,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TMP, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TMP);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto Connettore Errato */
-	public static final String SPCOOP_TIPO_SOGGETTO_CONNETTORE_ERRATO="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_CONNETTORE_ERRATO="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Connettore Errato */
 	public static final String SPCOOP_NOME_SOGGETTO_CONNETTORE_ERRATO="SoggettoConnettoreErrato";
 	/** ENTITA SPCOOP: IdPorta Soggetto Connettore Errato */
@@ -933,7 +933,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_CONNETTORE_ERRATO, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_CONNETTORE_ERRATO);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto PdD SoapFault  */
-	public static final String SPCOOP_TIPO_SOGGETTO_SOAP_FAULT_PDD_DEST="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_SOAP_FAULT_PDD_DEST="spc";
 	/** ENTITA SPCOOP: Nome Soggetto PdD SoapFault */
 	public static final String SPCOOP_NOME_SOGGETTO_SOAP_FAULT_PDD_DEST="SoggettoConnettoreSOAPFaultServer";
 	/** ENTITA SPCOOP: IdPorta Soggetto PdD SoapFault */
@@ -943,7 +943,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_SOAP_FAULT_PDD_DEST, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_SOAP_FAULT_PDD_DEST);
 
 	/** ENTITA SPCOOP: Tipo Soggetto Errore Processamento  */
-	public static final String SPCOOP_TIPO_SOGGETTO_ERRORE_PROCESSAMENTO="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_ERRORE_PROCESSAMENTO="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Errore Processamento */
 	public static final String SPCOOP_NOME_SOGGETTO_ERRORE_PROCESSAMENTO="SoggettoConfigurazionePdDErrata";
 	/** ENTITA SPCOOP: IdPorta Soggetto Errore Processamento */
@@ -953,7 +953,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_ERRORE_PROCESSAMENTO, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_ERRORE_PROCESSAMENTO);
 
 	/** ENTITA SPCOOP: Tipo Soggetto test consegna in ordine  */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_CONSEGNA_IN_ORDINE="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_CONSEGNA_IN_ORDINE="spc";
 	/** ENTITA SPCOOP: Nome Soggetto test consegna in ordine */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_CONSEGNA_IN_ORDINE="SoggettoTestConsegnaInOrdine";
 	/** ENTITA SPCOOP: IdPorta Soggetto test consegna in ordine */
@@ -963,7 +963,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_CONSEGNA_IN_ORDINE, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_CONSEGNA_IN_ORDINE);
 
 	/** ENTITA SPCOOP: Tipo Soggetto 1 */
-	public static final String SPCOOP_TIPO_SOGGETTO_1="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_1="spc";
 	/** ENTITA SPCOOP: Nome Soggetto 1 */
 	public static final String SPCOOP_NOME_SOGGETTO_1="Soggetto1";
 	/** ENTITA SPCOOP: IdPorta Soggetto 1 */
@@ -973,7 +973,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_1);
 
 	/** ENTITA SPCOOP: Tipo Soggetto 2 */
-	public static final String SPCOOP_TIPO_SOGGETTO_2="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_2="spc";
 	/** ENTITA SPCOOP: Nome Soggetto 2 */
 	public static final String SPCOOP_NOME_SOGGETTO_2="Soggetto2";
 	/** ENTITA SPCOOP: IdPorta Soggetto 2 */
@@ -983,7 +983,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_2);
 
 	/** ENTITA SPCOOP: Tipo Soggetto Non autenticato */
-	public static final String SPCOOP_TIPO_SOGGETTO_NON_AUTENTICATO="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_NON_AUTENTICATO="spc";
 	/** ENTITA SPCOOP: Nome Soggetto Non autenticato */
 	public static final String SPCOOP_NOME_SOGGETTO_NON_AUTENTICATO="SoggettoNonAutenticato";
 	/** ENTITA SPCOOP: IdPorta Soggetto Non autenticato */
@@ -993,7 +993,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_NON_AUTENTICATO, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_NON_AUTENTICATO);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter1 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_1="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_1="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter1 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_1="TestUrlPrefixRewriter1";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter1 */
@@ -1003,7 +1003,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_1, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_1);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter2 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_2="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_2="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter2 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_2="TestUrlPrefixRewriter2";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter2 */
@@ -1013,7 +1013,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_2, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_2);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter3 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_3="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_3="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter3 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_3="TestUrlPrefixRewriter3";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter3 */
@@ -1023,7 +1023,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_3, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_3);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter4 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_4="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_4="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter4 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_4="TestUrlPrefixRewriter4";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter4 */
@@ -1033,7 +1033,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_4, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_4);
 		
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter5 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_5="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_5="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter5 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_5="TestUrlPrefixRewriter5";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter5 */
@@ -1043,7 +1043,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_5, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_5);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter6 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_6="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_6="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter6 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_6="TestUrlPrefixRewriter6";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter6 */
@@ -1053,7 +1053,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_6, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_6);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter7 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_7="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_7="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter7 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_7="TestUrlPrefixRewriter7";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter7 */
@@ -1063,7 +1063,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_7, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_7);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter8 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_8="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_8="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter8 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_8="TestUrlPrefixRewriter8";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter8 */
@@ -1073,7 +1073,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_8, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_8);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter9 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_9="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_9="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter9 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_9="TestUrlPrefixRewriter9";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter9 */
@@ -1083,7 +1083,7 @@ public class CostantiTestSuite {
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_9, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_9);
 	
 	/** ENTITA SPCOOP: Tipo Soggetto TestUrlPrefixRewriter10 */
-	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_10="SPC";
+	public static final String SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_10="spc";
 	/** ENTITA SPCOOP: Nome Soggetto TestUrlPrefixRewriter10 */
 	public static final String SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_10="TestUrlPrefixRewriter10";
 	/** ENTITA SPCOOP: IdPorta Soggetto TestUrlPrefixRewriter10 */
@@ -1098,7 +1098,7 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: Tipo Servizio OneWay */
-	public static final String SPCOOP_TIPO_SERVIZIO_ONEWAY="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ONEWAY="spc";
 	/** ENTITA SPCOOP: Nome Servizio OneWay */
 	public static final String SPCOOP_NOME_SERVIZIO_ONEWAY="ComunicazioneVariazione";
 	/** ENTITA SPCOOP: Nome Azione Affidabile del Servizio OneWay con Consegna Affidabile */
@@ -1191,7 +1191,7 @@ public class CostantiTestSuite {
 
 		
 	/** ENTITA SPCOOP: Tipo Servizio Sincrono */
-	public static final String SPCOOP_TIPO_SERVIZIO_SINCRONO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_SINCRONO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Sincrono */
 	public static final String SPCOOP_NOME_SERVIZIO_SINCRONO="RichiestaStatoAvanzamento";
     /** ENTITA SPCOOP: Nome Azione Collaborazione del Servizio RichiestaStatoAvanzamento */
@@ -1463,11 +1463,11 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA_SENZA_PREFIX="soapFaultSASenzaPrefix";
 	
 	/** ENTITA SPCOOP: Tipo Servizio Asincrono Simmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Asincrono Simmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO="RichiestaStatoAvanzamentoAsincronoSimmetrico";
 	/** ENTITA SPCOOP: Tipo Servizio Correlato Asincrono Simmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Correlato Asincrono Simmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato";
 	/** ENTITA SPCOOP: Nome Azione Richiesta Asincrona del Servizio Asincrono Simmetrico modalita Asincrona */
@@ -1507,11 +1507,11 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: Tipo Servizio Asincrono Asimmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO="RichiestaStatoAvanzamentoAsincronoAsimmetrico";
 	/** ENTITA SPCOOP: Tipo Servizio Correlato Asincrono Asimmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Correlato Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato";
 	/** ENTITA SPCOOP: Nome Azione richiesta Asincrona del Servizio Asincrono Asimmetrico modalita Asincrona */
@@ -1560,7 +1560,7 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: PortType Tipo Servizio OneWay */
-	public static final String SPCOOP_TIPO_SERVIZIO_ONEWAY_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ONEWAY_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio OneWay */
 	public static final String SPCOOP_NOME_SERVIZIO_ONEWAY_PORT_TYPE="PortTypeOneWay";
 	/** ENTITA SPCOOP: PortType Servizio OneWay, azione di test */
@@ -1568,18 +1568,18 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: PortType Tipo Servizio Sincrono */
-	public static final String SPCOOP_TIPO_SERVIZIO_SINCRONO_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_SINCRONO_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio Sincrono */
 	public static final String SPCOOP_NOME_SERVIZIO_SINCRONO_PORT_TYPE="PortTypeSincrono";
 	/** ENTITA SPCOOP: PortType Servizio Sincrono, azione di test */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_PORT_TYPE_AZIONE_TEST="testSincrono";
 	
 	/** ENTITA SPCOOP: PortType Tipo Servizio Asincrono Simmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio Asincrono Simmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_ASINCRONO_SIMMETRICO_PORT_TYPE="PortTypeAsincronoSimmetricoRichiesta";
 	/** ENTITA SPCOOP: PortType Tipo Servizio Correlato Asincrono Simmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio Correlato Asincrono Simmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_SIMMETRICO_PORT_TYPE="PortTypeAsincronoSimmetricoRisposta";
 	/** ENTITA SPCOOP: Nome Azione Richiesta Asincrona PortType del Servizio Asincrono Simmetrico modalita Asincrona */
@@ -1593,11 +1593,11 @@ public class CostantiTestSuite {
 
 
 	/** ENTITA SPCOOP: PortType Tipo Servizio Asincrono Asimmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE="PortTypeAsincronoAsimmetricoRichiesta";
 	/** ENTITA SPCOOP: PortType Tipo Servizio Correlato Asincrono Asimmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO_PORT_TYPE="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO_PORT_TYPE="spc";
 	/** ENTITA SPCOOP: PortType Nome Servizio Correlato Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_CORRELATO_ASINCRONO_ASIMMETRICO_PORT_TYPE="PortTypeAsincronoAsimmetricoRichiestaStato";
 	/** ENTITA SPCOOP: Nome Azione richiesta Asincrona PortType del Servizio Asincrono Asimmetrico modalita Asincrona */
@@ -1610,7 +1610,7 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_AZIONE_RICHIESTA_STATO_MODALITA_SINCRONA_PORT_TYPE="testAsincronoAsimmetrico_richiestaStatoSincrona";
 	
 	/** ENTITA SPCOOP: PortType e operation Correlata Tipo Servizio Asincrono Asimmetrico */
-	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE_OPERATION_CORRELATA="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE_OPERATION_CORRELATA="spc";
 	/** ENTITA SPCOOP: PortType e operation Correlata Nome Servizio Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_ASINCRONO_ASIMMETRICO_PORT_TYPE_OPERATION_CORRELATA="PortTypeAsincronoAsimmetrico";
 	/** ENTITA SPCOOP: Nome Azione richiesta Asincrona PortType e operation Correlata del Servizio Asincrono Asimmetrico modalita Asincrona */
@@ -1623,7 +1623,7 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ASINCRONO_ASIMMETRICO_AZIONE_RICHIESTA_STATO_MODALITA_SINCRONA_PORT_TYPE_OPERATION_CORRELATA="testAsincronoAsimmetrico_richiestaStatoSincrona";
 
 	/** ENTITA SPCOOP: Tipo Servizio Asincrono Asimmetrico per test profilo */
-	public static final String SPCOOP_TIPO_SERVIZIO_TEST_PROFILO="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_TEST_PROFILO="spc";
 	/** ENTITA SPCOOP: Nome Servizio Asincrono Asimmetrico */
 	public static final String SPCOOP_NOME_SERVIZIO_TEST_PROFILO="TestProfiloLineeGuida";
 	/** ENTITA SPCOOP: Servizio Asincrono Asimmetrico, richiesta */
@@ -1633,7 +1633,7 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: Tipo Servizio OneWay Message BOX */
-	public static final String SPCOOP_TIPO_SERVIZIO_MESSAGE_BOX="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_MESSAGE_BOX="spc";
 	/** ENTITA SPCOOP: Nome Servizio OneWay Message BOX */
 	public static final String SPCOOP_NOME_SERVIZIO_MESSAGE_BOX="MessageBox";
 	/** ENTITA SPCOOP: Nome Azione GetMessage del Servizio OneWay MessageBox con IntegrationManager */
@@ -1643,7 +1643,7 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: Tipo Servizio  */
-	public static final String SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP="spc";
 	
 	/** ENTITA SPCOOP: Nome Servizio  EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral per Validazione WSDL*/
 	public static final String SPCOOP_NOME_SERVIZIO_VAL_WSDL_ESITO_AGGIORNAMENTO_ASINCRONO_SIMMETRICO_WDL="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral";
@@ -1726,7 +1726,7 @@ public class CostantiTestSuite {
 	
 	
 	/** ENTITA SPCOOP: Tipo Servizio per tunnel SOAP*/
-	public static final String SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_TUNNEL_SOAP="spc";
 	/** ENTITA SPCOOP: Nome Servizio per tunnel SOAP */
 	public static final String SPCOOP_NOME_SERVIZIO_TUNNEL_SOAP="RichiestaBando";
     /** ENTITA SPCOOP: Nome Azione del Servizio per tunnel SOAP */
@@ -1749,7 +1749,7 @@ public class CostantiTestSuite {
     
     
     /** ENTITA SPCOOP: Tipo Servizio per Versionamento Accordi  */
-	public static final String SPCOOP_TIPO_SERVIZIO_VERSIONAMENTO_ACCORDI="SPC";
+	public static final String SPCOOP_TIPO_SERVIZIO_VERSIONAMENTO_ACCORDI="spc";
 	/** ENTITA SPCOOP: Nome Servizio per Versionamento Accordi SPC/MinisteroFruitore:ASComunicazioneVariazione:1.0 */
 	public static final String SPCOOP_NOME_SERVIZIO_VERSIONAMENTO_ACCORDI_SOGGREFERENTE_NOME_VERSIONE="SoggettoReferente_Nome_Versione";
 	/** ENTITA SPCOOP: Nome Azione per Versionamento Accordi SPC/MinisteroFruitore:ASComunicazioneVariazione:1.0 */

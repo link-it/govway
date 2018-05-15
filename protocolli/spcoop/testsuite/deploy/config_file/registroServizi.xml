@@ -731,7 +731,7 @@
 
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione" versione="1"
         profilo-collaborazione="sincrono" utilizzo-senza-azione="false" service-binding="soap">
-        <soggetto-referente tipo="SPC" nome="MinisteroFruitore"/>
+        <soggetto-referente tipo="spc" nome="MinisteroFruitore"/>
         <azione nome="soggettoReferente_nome_versione"/>
 	<!-- Vecchi test versionamento accordi: non esiste piu' la possibilita di non avere una versione -->
         <azione nome="soggettoReferente_nome"/>
@@ -772,17 +772,17 @@
 
     <!-- Soggetti SPCoop in  supporto per l'autorizzazione anti-spoofing -->
 
-    <soggetto tipo="SPC" nome="Soggetto1" porta-dominio="PdDSoggetto1">
+    <soggetto tipo="spc" nome="Soggetto1" porta-dominio="PdDSoggetto1">
         <connettore tipo="http" nome="PdDSoggetto1">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
     </soggetto>
-    <soggetto tipo="SPC" nome="Soggetto2" porta-dominio="PdDSoggetto2">
+    <soggetto tipo="spc" nome="Soggetto2" porta-dominio="PdDSoggetto2">
         <connettore tipo="http" nome="PdDSoggetto2">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
     </soggetto>
-    <soggetto tipo="SPC" nome="SoggettoNonAutenticato" porta-dominio="PdDSoggettoNonAutenticato">
+    <soggetto tipo="spc" nome="SoggettoNonAutenticato" porta-dominio="PdDSoggettoNonAutenticato">
         <connettore tipo="http" nome="PdDSoggettoNonAutenticato">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
@@ -793,19 +793,19 @@
 
     <!-- Soggetto per esempio SoapBox -->
 
-    <soggetto tipo="SPC" nome="SoggettoEsempioSoapBoxFruitore" porta-dominio="PdDEsempioSoapBoxFruitore">
+    <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore" porta-dominio="PdDEsempioSoapBoxFruitore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
     </soggetto>
 
-    <soggetto tipo="SPC" nome="SoggettoEsempioSoapBoxErogatore" porta-dominio="PdDEsempioSoapBoxErogatore">
+    <soggetto tipo="spc" nome="SoggettoEsempioSoapBoxErogatore" porta-dominio="PdDEsempioSoapBoxErogatore">
         <connettore tipo="http" nome="PdDEsempioSoapbox">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="SoggettoEsempioSoapBoxFruitore"/> -->
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento" accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
+            <!-- <fruitore tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -815,81 +815,81 @@
     <!-- Soggetti SPCoop -->
 
     <!-- Soggetto Mittente degli esempi -->
-    <soggetto tipo="SPC" nome="MinisteroFruitore" codice-ipa="o=MinisteroFruitore,c=it">
+    <soggetto tipo="spc" nome="MinisteroFruitore" codice-ipa="o=MinisteroFruitore,c=it">
         <connettore tipo="http" nome="PdDMinisteroFruitore">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay, per esempio di Loopback -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione" accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-             <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione" accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
+             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeOneWay"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeOneWay"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1" port-type="PortTypeOneWay">
-             <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+             <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!--  <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
+            <!--  <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato" tipologia-servizio="correlato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato" tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
-             <!-- <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
+             <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: risposta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeAsincronoSimmetricoRisposta"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeAsincronoSimmetricoRisposta"
 	    tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1"
             port-type="PortTypeAsincronoSimmetricoRisposta">
-             <!-- <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
+             <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Servizi per esempi di costruzione WSDL secondo specifica SPCoop -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"
+            tipo="spc" nome="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Servizi per esempi di mapping wsdl nell'Accordo di Servizio  -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+            tipo="spc" nome="EsitoAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
-             <!-- <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
+             <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
 
 
     <!-- Soggetto Destinatario degli esempi -->
-    <soggetto tipo="SPC" nome="MinisteroErogatore" codice-ipa="o=MinisteroErogatore,c=it">
+    <soggetto tipo="spc" nome="MinisteroErogatore" codice-ipa="o=MinisteroErogatore,c=it">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!--  <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!--  <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!--  <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!--  <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
 
-            <!-- <fruitore tipo="SPC" nome="Soggetto2" client-auth="disabilitato"> -->
-	    <fruitore tipo="SPC" nome="Soggetto2">
+            <!-- <fruitore tipo="spc" nome="Soggetto2" client-auth="disabilitato"> -->
+	    <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
                     <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
@@ -902,10 +902,10 @@
                 </connettore>
             </fruitore>
             <!-- 
-		<fruitore tipo="SPC" nome="SoggettoNonAutenticato" client-auth="abilitato"> 
+		<fruitore tipo="spc" nome="SoggettoNonAutenticato" client-auth="abilitato"> 
 		TODO: tramite funzionalità di credenziali sul soggetto
 		-->
-	    <fruitore tipo="SPC" nome="SoggettoNonAutenticato">
+	    <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore rilevato, poiche' client-auth=abilitato sul fruitore -->
                 <connettore tipo="https" nome="soggetto1">
                     <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
@@ -921,26 +921,28 @@
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
 	    <configurazione-servizio>
-                <configurazione-azione nome="WSSEncryptError">
+                <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
                         />
                     </connettore>
+		    <azione>WSSEncryptError</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="WSSSignatureError">
+                <configurazione-azione>
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/alterazioneMsgWSS?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
                         />
                     </connettore>
+		    <azione>WSSSignatureError</azione>
                 </configurazione-azione>
 
                 <!-- TEST HTTPS -->
-                <configurazione-azione nome="https_with_client_auth">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
                         <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -952,8 +954,9 @@
                         <property nome="keyPassword" valore="openspcoop"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
+		    <azione>https_with_client_auth</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="https_with_client_auth_identita2">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth">
                         <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -965,8 +968,9 @@
                         <property nome="keyPassword" valore="openspcoop"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
+		    <azione>https_with_client_auth_identita2</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="https_with_client_auth_error">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_with_client_auth_error">
                         <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -974,8 +978,9 @@
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
+		    <azione>https_with_client_auth_error</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="https_without_client_auth">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_without_client_auth">
                         <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -983,8 +988,9 @@
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
+		    <azione>https_without_client_auth</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="https_ca_non_presente">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_ca_non_presente">
                         <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -992,8 +998,9 @@
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="false"/>
                     </connettore>
+		    <azione>https_ca_non_presente</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="https_hostname_verify">
+                <configurazione-azione>
                     <connettore tipo="https" nome="https_hostname_verify">
                         <property nome="location" valore="https://127.0.0.1:8445/openspcoop2/spcoop/PA"/>
                         <property nome="trustStoreLocation"
@@ -1001,69 +1008,77 @@
                         <property nome="trustStorePassword" valore="openspcoopjks"/>
                         <property nome="hostnameVerifier" valore="true"/>
                     </connettore>
+		    <azione>https_hostname_verify</azione>
                 </configurazione-azione>
 
                 <!-- Test Tunnel SOAP -->
-                <configurazione-azione nome="allegaBody">
+                <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_allega_body">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaFunzionalitaAllegaBody?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
                         />
                     </connettore>
+		    <azione>allegaBody</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="scartaBody">
+                <configurazione-azione>
                     <connettore tipo="http" nome="http_verifica_scarta_body">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaFunzionalitaScartaBody?forward=http://127.0.0.1:8080/openspcoop2/spcoop/PA"
                         />
                     </connettore>
+		    <azione>scartaBody</azione>
                 </configurazione-azione>
 
                 <!-- Malformazione XML -->
-                <configurazione-azione nome="malformazioneXMLHeaderEGov">
+                <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneXMLHeaderEGov">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?headerEGov=true"
                         />
                     </connettore>
+		    <azione>malformazioneXMLHeaderEGov</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="malformazioneXMLBody">
+                <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneXMLBody">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?body=body"
                         />
                     </connettore>
+		    <azione>malformazioneXMLBody</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="malformazioneContentTypeRisposta">
+                <configurazione-azione>
                     <connettore tipo="http" nome="malformazioneContentTypeRisposta">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/verificaXMLMalformati?contentTypeRisposta=true"
                         />
                     </connettore>
+		    <azione>malformazioneContentTypeRisposta</azione>
                 </configurazione-azione>
 
 		<!-- FaultErrati -->
-		<configurazione-azione nome="soapFaultPdDConPrefixErrato">
+		<configurazione-azione>
                     <connettore tipo="http" nome="soapFaultPdDConPrefixErrato">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultPrefixErrato.xml"
                         />
                     </connettore>
+		    <azione>soapFaultPdDConPrefixErrato</azione>
                 </configurazione-azione>
-                <configurazione-azione nome="soapFaultPdDSenzaPrefix">
+                <configurazione-azione>
                     <connettore tipo="http" nome="soapFaultPdDSenzaPrefix">
                         <property nome="location"
                             valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultSenzaPrefix.xml"
                         />
                     </connettore>
+		    <azione>soapFaultPdDSenzaPrefix</azione>
                 </configurazione-azione>
 
             </configurazione-servizio>
 
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
 
-            <fruitore tipo="SPC" nome="Soggetto1">
+            <fruitore tipo="spc" nome="Soggetto1">
                 <!-- Viene utilizzato come identita il soggetto1: corretto -->
                 <connettore tipo="https" nome="soggetto1">
                     <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
@@ -1075,7 +1090,7 @@
                     <property nome="hostnameVerifier" valore="false"/>
                 </connettore>
             </fruitore>
-            <fruitore tipo="SPC" nome="Soggetto2">
+            <fruitore tipo="spc" nome="Soggetto2">
                 <!-- Viene utilizzato come identita il soggetto1: scorretto -->
                 <connettore tipo="https" nome="soggetto1">
                     <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
@@ -1087,7 +1102,7 @@
                     <property nome="hostnameVerifier" valore="false"/>
                 </connettore>
             </fruitore>
-            <fruitore tipo="SPC" nome="SoggettoNonAutenticato">
+            <fruitore tipo="spc" nome="SoggettoNonAutenticato">
                 <!-- Viene utilizzato come identita il soggetto1: errore non rilevato, poiche' client-auth=disabilitato -->
                 <connettore tipo="https" nome="soggetto1">
                     <property nome="location" valore="https://127.0.0.1:8444/openspcoop2/spcoop/PA"/>
@@ -1102,16 +1117,16 @@
 
             <!-- Fruitori per test PdUrlPrefixRewriter -->
 	    <!-- 
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter1"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter2"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter3"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter4"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter5"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter6"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter7"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter8"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter9"/>
-            <fruitore tipo="SPC" nome="TestUrlPrefixRewriter10"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter1"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter2"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter3"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter4"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter5"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter6"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter7"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter8"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter9"/>
+            <fruitore tipo="spc" nome="TestUrlPrefixRewriter10"/>
 	    -->
 
 	    <specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/xacmlPolicy/SAMLPolicy.xml"/>
@@ -1119,264 +1134,264 @@
         </accordo-servizio-parte-specifica>
 
         <!-- Gestione tunnel SOAP -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaBando"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaBando"
             accordo-servizio-parte-comune="ASRichiestaBando:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione OneWay: PT -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeOneWay"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeOneWay"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1" port-type="PortTypeOneWay">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono: PT -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeSincrono"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeSincrono"
             accordo-servizio-parte-comune="ASTestMultiPortTypes" port-type="PortTypeSincrono">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta PT -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeAsincronoSimmetricoRichiesta"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeAsincronoSimmetricoRichiesta"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1"
             port-type="PortTypeAsincronoSimmetricoRichiesta">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta PT -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeAsincronoAsimmetricoRichiesta"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeAsincronoAsimmetricoRichiesta"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1"
             port-type="PortTypeAsincronoAsimmetricoRichiesta">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: operation correlata PT -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="PortTypeAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="PortTypeAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1"
             port-type="PortTypeAsincronoAsimmetrico">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: test per profilo -->
         <!-- Erogazione come busteeGov 1.1 -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="TestProfiloLineeGuida"
+        <accordo-servizio-parte-specifica tipo="spc" nome="TestProfiloLineeGuida"
             accordo-servizio-parte-comune="ASTestProfiloLineeGuida:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
             <!-- profilo per la fruizione: BustaEGov1.1  -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
             <!-- profilo per la fruizione: LineeGuida1.1 - BustaEGov1.1  -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroTmp" versione-protocollo="eGov1.1-lineeGuida1.1"/> 
+            <!-- <fruitore tipo="spc" nome="MinisteroTmp" versione-protocollo="eGov1.1-lineeGuida1.1"/> 
 		NON PIU' SUPPORTATO
 	    -->
-	    <!-- <fruitore tipo="SPC" nome="MinisteroTmp" /> -->
+	    <!-- <fruitore tipo="spc" nome="MinisteroTmp" /> -->
             <!-- profilo per la fruizione: LineeGuida1.1 - BustaEGov1.1  -->
         </accordo-servizio-parte-specifica>
 
 
         <!-- Message Box test -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="MessageBox"
+        <accordo-servizio-parte-specifica tipo="spc" nome="MessageBox"
             accordo-servizio-parte-comune="ASMessageBox:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
 
         <!-- Servizi per esempi di costruzione WSDL secondo specifica SPCoop -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral"
+        <accordo-servizio-parte-specifica tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoUtentiWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"
+            tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral"
+            tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiDocumentLiteral"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiDocumentLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiRPCLiteral"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiRPCLiteral"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiRPCLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiRPCEncoded"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiRPCEncoded"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiRPCEncoded"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiOverloadedOperations"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiOverloadedOperations"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiOverloadedOperations"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="GestioneUtentiStileIbrido"
+        <accordo-servizio-parte-specifica tipo="spc" nome="GestioneUtentiStileIbrido"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="GestioneUtentiStileIbrido"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Servizi per esempi di mapping wsdl nell'Accordo di Servizio  -->
         <accordo-servizio-parte-specifica
-           tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+           tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+            tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoUtentiWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+            tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+            tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="AggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
-	    tipo="SPC" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop"
+	    tipo="spc" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
-	    tipo="SPC" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop"
+	    tipo="spc" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiRPCLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
-	    tipo="SPC" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop"
+	    tipo="spc" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiRPCEncoded"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop"
+            tipo="spc" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiOverloadedOperations"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
         <accordo-servizio-parte-specifica 
-	    tipo="SPC" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop"
+	    tipo="spc" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="GestioneUtentiStileIbrido"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Versionamento accordo -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="SoggettoReferente_Nome_Versione"
-            accordo-servizio-parte-comune="SPC/MinisteroFruitore:ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+        <accordo-servizio-parte-specifica tipo="spc" nome="SoggettoReferente_Nome_Versione"
+            accordo-servizio-parte-comune="spc/MinisteroFruitore:ASComunicazioneVariazione:1">
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="SoggettoReferente_Nome"
-            accordo-servizio-parte-comune="SPC/MinisteroFruitore:ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+        <accordo-servizio-parte-specifica tipo="spc" nome="SoggettoReferente_Nome"
+            accordo-servizio-parte-comune="spc/MinisteroFruitore:ASComunicazioneVariazione:1">
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="Nome_Versione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="Nome_Versione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- test richieste applicative errate -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="TestValidazioneApplicativaErrata"
+        <accordo-servizio-parte-specifica tipo="spc" nome="TestValidazioneApplicativaErrata"
             accordo-servizio-parte-comune="TestValidazioneApplicativaErrata:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta-stato -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta-stato PT -->
         <accordo-servizio-parte-specifica 
-	    tipo="SPC" nome="PortTypeAsincronoAsimmetricoRichiestaStato"
+	    tipo="spc" nome="PortTypeAsincronoAsimmetricoRichiestaStato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASTestMultiPortTypes:1"
             port-type="PortTypeAsincronoAsimmetricoRichiestaStato">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
 
         <!-- Servizi per esempi di costruzione WSDL secondo specifica SPCoop -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral"
+            tipo="spc" nome="EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneWSDL:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Servizi per esempi di mapping wsdl nell'Accordo di Servizio  -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
+            tipo="spc" nome="EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASMultiPortTypeValidazioneOpenSPCoop:1"
             port-type="EsitoAggiornamentoAsincronoWrappedDocumentLiteral"
             wsdl-implementativo-erogatore="/etc/openspcoop2/implementazioneFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
 
@@ -1384,67 +1399,67 @@
     </soggetto>
 
     <!-- Soggetto che possiede un connettore 'null' -->
-    <soggetto tipo="SPC" nome="SoggettoConnettoreNULL">
+    <soggetto tipo="spc" nome="SoggettoConnettoreNULL">
 
         <connettore tipo="null" nome="PdDMinisteroErogatore"/>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
             <configurazione-servizio>
                 <connettore tipo="nullEcho" nome="PdDMinisteroErogatore"/>
             </configurazione-servizio>
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
             <configurazione-servizio>
                 <connettore tipo="nullEcho" nome="PdDMinisteroErogatore"/>
             </configurazione-servizio>
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
             <configurazione-servizio>
                 <connettore tipo="nullEcho" nome="PdDMinisteroErogatore"/>
             </configurazione-servizio>
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta-stato -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
             <configurazione-servizio>
                 <connettore tipo="nullEcho" nome="PdDMinisteroErogatore"/>
             </configurazione-servizio>
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
 
     <!-- Soggetto che possiede un connettore 'nullEcho', per il profilo asincrono simmetrico -->
-    <soggetto tipo="SPC" nome="SoggettoFruitoreConnettoreNULL">
+    <soggetto tipo="spc" nome="SoggettoFruitoreConnettoreNULL">
 
         <connettore tipo="nullEcho" nome="PdDMinisteroErogatore"/>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
@@ -1453,49 +1468,49 @@
     </soggetto>
 
     <!-- Soggetto che possiede un connettore con una configurazione errata -->
-    <soggetto tipo="SPC" nome="SoggettoConnettoreErrato">
+    <soggetto tipo="spc" nome="SoggettoConnettoreErrato">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location" valore="http://localhost:82/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
 
 
     <!-- Soggetto che possiede un connettore che provoca un ReadTimeout-->
-    <soggetto tipo="SPC" nome="SoggettoConnettoreErratoReadTimeout">
+    <soggetto tipo="spc" nome="SoggettoConnettoreErratoReadTimeout">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location"
@@ -1503,15 +1518,15 @@
         </connettore>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
 
     <!-- Soggetto che possiede un connettore che provoca un ConnectTimedOut-->
-    <soggetto tipo="SPC" nome="SoggettoConnettoreErratoConnectTimedOut">
+    <soggetto tipo="spc" nome="SoggettoConnettoreErratoConnectTimedOut">
 
         <connettore tipo="http" nome="PdDMinisteroErogatore">
             <property nome="location"
@@ -1519,51 +1534,51 @@
         </connettore>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
 
 
     <!-- Soggetto che possiede un connettore con una configurazione errata che provoca un SOAPFaultServer -->
-    <soggetto tipo="SPC" nome="SoggettoConnettoreSOAPFaultServer">
+    <soggetto tipo="spc" nome="SoggettoConnettoreSOAPFaultServer">
 
         <connettore tipo="http" nome="PdDSOAPFaultServer">
             <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/soapfault"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1572,42 +1587,42 @@
 
 
     <!-- Soggetto che possiede una configurazione della Porta errata -->
-    <soggetto tipo="SPC" nome="SoggettoConfigurazionePdDErrata">
+    <soggetto tipo="spc" nome="SoggettoConfigurazionePdDErrata">
 
         <connettore tipo="http" nome="PdDConfigurazioneErrata">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1616,29 +1631,29 @@
 
 
     <!-- Soggetto Mittente con profilo di LineeGuida1.1 -->
-    <soggetto tipo="SPC" nome="MinisteroFruitoreLineeGuida"
+    <soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroFruitoreLineeGuida">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
-        <accordo-servizio-parte-specifica tipo="TEST" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="test" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASTMP:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: risposta -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroErogatoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroErogatoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1646,52 +1661,52 @@
 
 
     <!-- Soggetto Erogatore con profilo di LineeGuida1.1 -->
-    <soggetto tipo="SPC" nome="MinisteroErogatoreLineeGuida"
+    <soggetto tipo="spc" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione Sincrono -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: test per profilo -->
         <!-- Erogazione come lineeGuida - busteeGov 1.1 -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="TestProfiloLineeGuida"
+        <accordo-servizio-parte-specifica tipo="spc" nome="TestProfiloLineeGuida"
             accordo-servizio-parte-comune="ASTestProfiloLineeGuida:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: richiesta-stato -->
         <accordo-servizio-parte-specifica
-            tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
+            tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetricoCorrelato"
             tipologia-servizio="correlato"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-fruitore="http://repository/implementativoFruitore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1700,37 +1715,37 @@
 
 
     <!-- Soggetto Mittente con profilo di LineeGuida1.1 -->
-    <soggetto tipo="TEST" nome="MinisteroFruitoreLineeGuida"
+    <soggetto tipo="test" nome="MinisteroFruitoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1"/>
 
 
     <!-- Soggetto Erogatore con profilo di LineeGuida1.1 -->
-    <soggetto tipo="TEST" nome="MinisteroErogatoreLineeGuida"
+    <soggetto tipo="test" nome="MinisteroErogatoreLineeGuida"
         versione-protocollo="eGov1.1-lineeGuida1.1">
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
 
         <!-- Profilo di collaborazione OneWay -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: serve a provocare un errore 408: servizio correlato non trovato -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoSimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
         <!-- Profilo di collaborazione AsincronoAsimmetrico: serve a provocare un errore 408: servizio correlato non trovato -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamentoAsincronoAsimmetrico:1"
             wsdl-implementativo-erogatore="http://repository/implementativoErogatore.wsdl">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1738,7 +1753,7 @@
 
 
     <!-- Soggetto per test profilo -->
-    <soggetto tipo="SPC" nome="MinisteroTmp">
+    <soggetto tipo="spc" nome="MinisteroTmp">
 
         <connettore tipo="http" nome="PdDMinisteroErogatoreLineeGuida">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
@@ -1746,13 +1761,13 @@
 
         <!-- Profilo di collaborazione AsincronoSimmetrico: test per profilo -->
         <!-- Erogazione come lineeGuida - busteeGov 1.1 -->
-        <accordo-servizio-parte-specifica tipo="SPC" nome="TestProfiloLineeGuida"
+        <accordo-servizio-parte-specifica tipo="spc" nome="TestProfiloLineeGuida"
             accordo-servizio-parte-comune="ASTestProfiloLineeGuida:1"
             versione-protocollo="eGov1.1-lineeGuida1.1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitoreLineeGuida"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroErogatore"/> -->
-            <!-- <fruitore tipo="SPC" nome="MinisteroErogatoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitoreLineeGuida"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroErogatore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroErogatoreLineeGuida"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1761,7 +1776,7 @@
 
 
     <!-- Soggetto per test congelamento -->
-    <soggetto tipo="SPC" nome="SoggettoTestConsegnaInOrdine">
+    <soggetto tipo="spc" nome="SoggettoTestConsegnaInOrdine">
 
         <connettore tipo="http" nome="PdDSoggettoTestConsegnaInOrdine">
             <property nome="location"
@@ -1769,9 +1784,9 @@
             />
         </connettore>
 
-        <accordo-servizio-parte-specifica tipo="SPC" nome="ComunicazioneVariazione"
+        <accordo-servizio-parte-specifica tipo="spc" nome="ComunicazioneVariazione"
             accordo-servizio-parte-comune="ASComunicazioneVariazione:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
 
     </soggetto>
@@ -1779,7 +1794,7 @@
 
 
     <!-- Test Richieste Applicative scorrette -->
-    <soggetto tipo="SPC" nome="TestRichiesteScorrette">
+    <soggetto tipo="spc" nome="TestRichiesteScorrette">
 
         <connettore tipo="http" nome="PdDTestRichiesteScorrette">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
@@ -1789,117 +1804,117 @@
 
 
     <!-- SOAP Fault generato da un vero servizio ws -->
-    <soggetto tipo="SPC" nome="SOAPFaultIM">
+    <soggetto tipo="spc" nome="SOAPFaultIM">
         <connettore tipo="http" nome="PdDSOAPFaultIM">
             <property nome="location" valore="http://localhost:8080/openspcoop2/IntegrationManager/PD"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="SOAPFaultSenzaDetails">
+    <soggetto tipo="spc" nome="SOAPFaultSenzaDetails">
         <connettore tipo="http" nome="PdDSOAPFaultSenzaDetails">
             <property nome="location"
                 valore="http://localhost:8080/OpenSPCoop2TestSuite/soapfault?details=false"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
 
 
 
     <!-- Test UrlPrefixRewriter -->
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter1">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter1">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter2">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter2">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter3">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter3">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter4">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter4">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter5">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter5">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter6">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter6">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter7">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter7">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter8">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter8">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter9">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter9">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
-    <soggetto tipo="SPC" nome="TestUrlPrefixRewriter10">
+    <soggetto tipo="spc" nome="TestUrlPrefixRewriter10">
         <connettore tipo="http" nome="PdDTestUrlPrefixRewriter">
             <property nome="location" valore="http://localhost:8080/openspcoop2/spcoop/PA"/>
         </connettore>
-        <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
+        <accordo-servizio-parte-specifica tipo="spc" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento:1">
-            <!-- <fruitore tipo="SPC" nome="MinisteroFruitore"/> -->
+            <!-- <fruitore tipo="spc" nome="MinisteroFruitore"/> -->
         </accordo-servizio-parte-specifica>
     </soggetto>
 
