@@ -23,52 +23,6 @@
 	</jaxws:endpoint>
 	
 	<jaxws:endpoint 
-		id="TransazioneInfo_PortSoap11"
-		serviceName="TransazioneInfoSoap11Service"
-		implementor="org.openspcoop2.core.transazioni.ws.server.impl.TransazioneInfo@IMPLEMENTOR@Impl_PortSoap11"
-		address="/TransazioneInfo/Soap11" 
-		xmlns="http://www.openspcoop2.org/core/transazioni/management"
-		wsdlLocation="/WEB-INF/classes/TransazioneInfo@IMPLEMENTOR@_PortSoap11.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	<jaxws:endpoint 
-		id="TransazioneInfo_PortSoap12"
-		serviceName="TransazioneInfoSoap12Service"
-		implementor="org.openspcoop2.core.transazioni.ws.server.impl.TransazioneInfo@IMPLEMENTOR@Impl_PortSoap12"
-		address="/TransazioneInfo/Soap12" 
-		xmlns="http://www.openspcoop2.org/core/transazioni/management"
-		wsdlLocation="/WEB-INF/classes/TransazioneInfo@IMPLEMENTOR@_PortSoap12.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	
-	<jaxws:endpoint 
-		id="TransazioneExport_PortSoap11"
-		serviceName="TransazioneExportSoap11Service"
-		implementor="org.openspcoop2.core.transazioni.ws.server.impl.TransazioneExport@IMPLEMENTOR@Impl_PortSoap11"
-		address="/TransazioneExport/Soap11" 
-		xmlns="http://www.openspcoop2.org/core/transazioni/management"
-		wsdlLocation="/WEB-INF/classes/TransazioneExport@IMPLEMENTOR@_PortSoap11.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	<jaxws:endpoint 
-		id="TransazioneExport_PortSoap12"
-		serviceName="TransazioneExportSoap12Service"
-		implementor="org.openspcoop2.core.transazioni.ws.server.impl.TransazioneExport@IMPLEMENTOR@Impl_PortSoap12"
-		address="/TransazioneExport/Soap12" 
-		xmlns="http://www.openspcoop2.org/core/transazioni/management"
-		wsdlLocation="/WEB-INF/classes/TransazioneExport@IMPLEMENTOR@_PortSoap12.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	
-	<jaxws:endpoint 
 		id="DumpMessaggio_PortSoap11"
 		serviceName="DumpMessaggioSoap11Service"
 		implementor="org.openspcoop2.core.transazioni.ws.server.impl.DumpMessaggio@IMPLEMENTOR@Impl_PortSoap11"

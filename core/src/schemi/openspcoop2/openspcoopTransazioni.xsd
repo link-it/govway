@@ -1208,7 +1208,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true">
-						<linkit:ws-interface crud="false"/>
+						<linkit:ws-interface generate="false" crud="false"/>
 					</linkit:interface>
 				    <linkit:sql-table-mapping name="transazioni_info" sequence-cycle="true"
 				    	comment="Contiene informazioni generiche (come date di elaborazioni di batch) sulle transazioni">
@@ -1253,7 +1253,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true">
-						<linkit:ws-interface crud="false"/>
+						<linkit:ws-interface generate="false" crud="false"/>
 					</linkit:interface>
 				    <linkit:sql-table-mapping name="transazioni_export" sequence-cycle="true"
 				    	comment="Contiene informazioni su operazioni di esportazione delle transazioni">
