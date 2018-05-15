@@ -20,10 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.utils.credential.IPrincipalReader;
-import org.openspcoop2.utils.credential.PrincipalReaderException;
-import org.openspcoop2.utils.credential.PrincipalReaderFactory;
-import org.openspcoop2.utils.credential.PrincipalReaderType;
+import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.slf4j.Logger;
 
 import org.openspcoop2.web.monitor.core.listener.LoginPhaseListener;
@@ -147,7 +147,7 @@ public class PrincipalFilter implements Filter {
 					//					this.log.debug("Richiesta risorsa privata ["+httpServletRequest.getRequestURI()+"]"); 
 					// Ho richiesto una risorsa protetta cerco il login bean
 					// Cerco il login bean nella sessione, se non c'e' provo a cercarlo nella sessione di JSF
-					LoginBean lb = (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+					LoginBean lb = (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 
 					this.log.debug("LoginBean trovato in sessione ["+(lb!= null)+"]"); 
 
@@ -159,7 +159,7 @@ public class PrincipalFilter implements Filter {
 								ExternalContext ec = currentInstance.getExternalContext();
 								this.log.debug("ExternalContext not null ["+(ec!= null)+"]");
 								if(ec != null){
-									lb = (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+									lb = (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 									this.log.debug("LoginBean trovato in nella SessionMap JSF ["+(lb!= null)+"]"); 
 								}
 							}
@@ -256,7 +256,7 @@ public class PrincipalFilter implements Filter {
 								return;
 							}else{
 								this.log.debug("Utente autorizzato");
-								sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);
+								sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);
 								String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
 								httpServletResponse.sendRedirect(redirPageUrl);
 								return;
@@ -264,7 +264,7 @@ public class PrincipalFilter implements Filter {
 						}else{
 
 							// ERRORE
-							sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
+							sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
 							String redirPageUrl =
 									StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? 
 									this.loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/" + "pages/welcome.jsf";

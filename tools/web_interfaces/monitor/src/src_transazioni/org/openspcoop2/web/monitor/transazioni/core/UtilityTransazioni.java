@@ -1,12 +1,7 @@
 package org.openspcoop2.web.monitor.transazioni.core;
 
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.Transazione;
 import it.link.pdd.core.transazioni.constants.RuoloProtocolloTransazione;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
 import org.openspcoop2.web.monitor.core.converter.EsitoConverter;
@@ -62,7 +57,12 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
+import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
 public class UtilityTransazioni {
@@ -1362,8 +1362,7 @@ public class UtilityTransazioni {
 
 	}
 
-	public static void writeManifestAllegatoXml(DumpAllegato allegato,
-			OutputStream out) throws Exception {
+	public static void writeManifestAllegatoXml(DumpAllegato allegato,	OutputStream out) throws Exception {
 
 		JAXBContext jc = JAXBContext
 				.newInstance("org.openspcoop2.web.monitor.transazioni.core.manifest_allegato");

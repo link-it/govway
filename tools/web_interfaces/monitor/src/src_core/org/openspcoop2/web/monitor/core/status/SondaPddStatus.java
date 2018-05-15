@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpUtilsException;
 import org.slf4j.Logger;
-import org.openspcoop2.utils.resources.HttpUtilsException;
 
 public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 

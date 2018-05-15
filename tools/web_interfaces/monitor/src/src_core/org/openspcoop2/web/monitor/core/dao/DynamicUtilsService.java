@@ -7,38 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.generic_project.beans.AliasField;
-import org.openspcoop2.generic_project.beans.CustomField;
-import org.openspcoop2.generic_project.beans.Function;
-import org.openspcoop2.generic_project.beans.FunctionField;
-import org.openspcoop2.generic_project.beans.IField;
-import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.NullConstantField;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.UnionExpression;
-import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
-import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
-import org.openspcoop2.generic_project.exception.ExpressionException;
-import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.generic_project.expression.IPaginatedExpression;
-import org.openspcoop2.generic_project.expression.LikeMode;
-import org.openspcoop2.generic_project.expression.SortOrder;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAO;
+ 
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.utenti.dao.IUtenteServiceSearch;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
@@ -71,8 +41,38 @@ import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.utils.ProjectInfo;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.generic_project.beans.AliasField;
+import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.Function;
+import org.openspcoop2.generic_project.beans.FunctionField;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.NullConstantField;
+import org.openspcoop2.generic_project.beans.Union;
+import org.openspcoop2.generic_project.beans.UnionExpression;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.LikeMode;
+import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.slf4j.Logger;
 
 
 /***
@@ -109,15 +109,12 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
 
-	private it.link.pdd.core.utenti.dao.IServiceManager utentiServiceManager;
-	private IUtenteServiceSearch utentiSearchDAO;
-
 	public static final int LIMIT_SEARCH = 10000;
 	
 	public DynamicUtilsService(){
 		try{
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
-					.getInstance( log).getServiceManager(DAO.UTILS, DynamicUtilsService.log);
+					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
 			this.soggettoDAO = this.utilsServiceManager
 					.getSoggettoServiceSearch();
 
@@ -137,11 +134,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
-			this.utentiServiceManager =  (it.link.pdd.core.utenti.dao.IServiceManager) DAOFactory
-					.getInstance( log).getServiceManager(DAO.UTENTI, DynamicUtilsService.log);
-
-			this.utentiSearchDAO = this.utentiServiceManager.getUtenteServiceSearch();
-
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -152,7 +144,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(protocollo != null){
 			IExpression expr = dao.newExpression();
 
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
 			List<String> tipiSoggetti = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 
@@ -166,10 +158,13 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(protocollo != null){
 			IExpression expr = dao.newExpression();
 
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
-			List<String> tipiServizi = protocolFactory.createProtocolConfiguration().getTipiServizi();
-
+			List<String> tipiServizi = new ArrayList<String>();
+			
+			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP));
+			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.REST));
+			
 			return expr.in(field, tipiServizi);
 		}
 
@@ -180,7 +175,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(protocollo != null){
 			IExpression expr = dao.newExpression();
 
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
 			List<String> tipiSoggetti = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 
@@ -194,31 +189,17 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		if(protocollo != null){
 			IExpression expr = dao.newExpression();
 
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 
-			List<String> tipiServizi = protocolFactory.createProtocolConfiguration().getTipiServizi();
+			List<String> tipiServizi = new ArrayList<String>();
+			
+			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP));
+			tipiServizi.addAll(protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.REST));
 
 			return expr.in(field, tipiServizi);
 		}
 
 		return null;
-	}
-
-	@Override
-	public int countUtenti() {
-		try {
-			IExpression expr = this.utentiSearchDAO.newExpression();
-			NonNegativeNumber nnn = this.utentiSearchDAO.count(expr);
-
-			if(nnn != null)
-				return (int) nnn.longValue();
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} 
-
-		return 0;
 	}
 
 	@Override

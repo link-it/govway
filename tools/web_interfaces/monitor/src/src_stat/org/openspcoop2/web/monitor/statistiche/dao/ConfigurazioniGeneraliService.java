@@ -187,25 +187,6 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		return configurazione;
 	}
 
-	public ConfigurazioneGenerale getUtenti(){
-		ConfigurazioneGenerale configurazione = new ConfigurazioneGenerale(); 
-		configurazione.setLabel(CostantiConfigurazioni.CONF_UTENTI_LABEL);
-
-		ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_UTENTI_LABEL); 
-		int count = 0;
-		try { 
-			count =   this.dynamicService.countUtenti();
-
-		}catch(Exception e){
-			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle pdd: " + e.getMessage(),e);
-		}
-		ConfigurazioniGeneraliService.log.debug("Trovate " + (count) + " " + CostantiConfigurazioni.CONF_UTENTI_LABEL);
-		configurazione.setValue("" + count); 
-
-		return configurazione;
-	}
-
-
 	public ConfigurazioneGenerale getSoggettiOperativi() throws Exception{
 		ConfigurazioneGenerale configurazione = new ConfigurazioneGenerale(); 
 		configurazione.setLabel(CostantiConfigurazioni.CONF_SOGGETTI_OPERATIVI_LABEL);

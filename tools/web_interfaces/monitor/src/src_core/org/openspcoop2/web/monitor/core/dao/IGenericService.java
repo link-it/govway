@@ -3,9 +3,9 @@ package org.openspcoop2.web.monitor.core.dao;
 import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import it.link.pdd.core.utenti.StatoTabella;
-import it.link.pdd.core.utenti.Utente;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.web.lib.users.dao.Stato;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.costants.NomiTabelle;
 
 import java.util.List;
@@ -38,8 +38,8 @@ public interface IGenericService {
 	public List<ConfigurazioneTransazioneRisorsaContenuto> getRisorseByValues(IDAccordo idAccordoSelezionato, String nomeServizioSelezionato,
 			String nomeAzioneSelezionata, String nomeStatoSelezionato);
 	
-	public StatoTabella getTableState(Utente user, NomiTabelle nomeTabella);
-	public void saveTableState(Utente user,StatoTabella stato);
+	public Stato getTableState(User user, NomiTabelle nomeTabella);
+	public void saveTableState(User user,Stato stato);
 	
 	public List<Soggetto> soggettiAutoComplete(String input);
 }

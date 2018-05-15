@@ -4,16 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.generic_project.expression.SortOrder;
 
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.monitor.sdk.condition.Context;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;

@@ -1,12 +1,9 @@
 package org.openspcoop2.web.monitor.transazioni.bean;
 
-
-
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.Transazione;
-
 import java.util.List;
 
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
  

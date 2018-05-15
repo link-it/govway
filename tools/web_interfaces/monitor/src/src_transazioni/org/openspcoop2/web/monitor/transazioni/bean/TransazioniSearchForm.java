@@ -24,7 +24,6 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.richfaces.model.Ordering;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
@@ -228,7 +227,7 @@ Context, Cloneable {
 			AccordoServizioParteSpecifica aspsFromValues = DynamicPdDBeanUtils.getInstance( log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
-			String ver = idAccordoServizioParteComune.getVersione();
+			Integer ver = idAccordoServizioParteComune.getVersione();
 			String nomeSoggettoReferente = null;
 			String tipoSoggettoReferente = null;
 
@@ -750,6 +749,11 @@ Context, Cloneable {
 	public String getServizio() {
 		return this.estraiNomeServizioDalServizio();
 	}
+	
+	@Override
+	public Integer getVersioneServizio() {
+		return null;
+	}
 
 	@Override
 	public String getTipoSoggettoDestinatario() {
@@ -864,7 +868,7 @@ Context, Cloneable {
 
 	@Override
 	public TipiDatabase getDatabaseType() {
-		return _getTipoDatabase(DAO.TRANSAZIONI);
+		return _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 	}
 
 	@Override

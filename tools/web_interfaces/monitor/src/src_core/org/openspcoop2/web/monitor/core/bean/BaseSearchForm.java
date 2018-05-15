@@ -23,15 +23,14 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.MapReader;
 import org.richfaces.model.Ordering;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.UtenteSoggetto;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
@@ -99,7 +98,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private String intervalloRefresh = null;
 	private int tempoMassimoRefreshLive = 0;
 
-	private Utente user;
+	private User user;
 
 	private SortOrder sortOrder = SortOrder.DESC;
 	private String sortField = null;
@@ -113,14 +112,14 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 
 	public TipiDatabase getDatabaseType() {
-		return _getTipoDatabase(DAO.TRANSAZIONI);
+		return _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 	}
 
-	public TipiDatabase _getTipoDatabase(DAO nomeDAO) {
+	public TipiDatabase _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo pfInfo) {
 		if(this.tipoDatabase == null){
 			try {
 				PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
-				this.tipoDatabase = pddMonitorProperties.tipoDatabase(nomeDAO);
+				this.tipoDatabase = pddMonitorProperties.tipoDatabase(pfInfo);
 			} catch (Exception e) {
 				log.error("Errore la get Tipo Database: " + e.getMessage(),e);
 			}
@@ -350,7 +349,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	 * 
 	 * @return
 	 */
-	public Utente getUser() {
+	public User getUser() {
 
 		if (this.user != null) {
 			// e' stato impostato manualmente l'utente
@@ -360,7 +359,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return Utility.getLoggedUtente();
 	}
 
-	public void setUser(Utente user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
@@ -533,7 +532,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException {
 
-		Utente u = getUser();
+		User u = getUser();
 		UserDetailsBean user = new UserDetailsBean();
 		user.setUtente(u);
 
@@ -565,10 +564,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public String getTipoSoggettoLocale() {
-		Utente u = getUser();
-		if (u.getUtenteSoggettoList().size() == 1) {
-			it.link.pdd.core.utenti.IdSoggetto s = u.getUtenteSoggetto(0)
-					.getSoggetto();
+		User u = getUser();
+		if (u.getSoggetti().size() == 1) {
+			IDSoggetto s = u.getSoggetti().get(0);
 			this.tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
 		}
 
@@ -582,10 +580,9 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	 */
 	public String getSoggettoLocale() {
 
-		Utente u = getUser();
-		if (u.getUtenteSoggettoList().size() == 1) {
-			it.link.pdd.core.utenti.IdSoggetto s = u.getUtenteSoggetto(0)
-					.getSoggetto();
+		User u = getUser();
+		if (u.getSoggetti().size() == 1) {
+			IDSoggetto s = u.getSoggetti().get(0);
 			this.tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
 		}
 
@@ -606,7 +603,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<Soggetto> getSoggettiGestione() {
 		ArrayList<Soggetto> soggetti = new ArrayList<Soggetto>();
 
-		Utente u = getUser();
+		User u = getUser();
 
 		// se il soggetto locale e' specificato allora ritorno solo quello
 		if (StringUtils.isNotEmpty(this.tipoNomeSoggettoLocale)) {
@@ -617,12 +614,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			String nome = Utility
 					.parseNomeSoggetto(this.tipoNomeSoggettoLocale);
 
-			for (UtenteSoggetto us : u.getUtenteSoggettoList()) {
-				it.link.pdd.core.utenti.IdSoggetto idSog = us.getSoggetto();
+			for (IDSoggetto idSog : u.getSoggetti()) {
 				if (idSog.getTipo().equals(tipo)
 						&& idSog.getNome().equals(nome)) {
 					IdSoggetto idsog2 = new IdSoggetto();
-					idsog2.setId(idSog.getId());
+//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 					Soggetto soggetto = Utility.getSoggetto(idsog2);
@@ -634,13 +630,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			return soggetti;
 		} else {
 			List<String> checkUnique = new ArrayList<String>();
-			for (UtenteSoggetto us : u.getUtenteSoggettoList()) {
-				it.link.pdd.core.utenti.IdSoggetto idSog = us.getSoggetto();
+			for (IDSoggetto idSog : u.getSoggetti()) {
 
 				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
 				if(checkUnique.contains(tipoNome)==false){
 					IdSoggetto idsog2 = new IdSoggetto();
-					idsog2.setId(idSog.getId());
+//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 
@@ -1204,7 +1199,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try {
 			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
 			List<String> listaNomiProtocolli = new  ArrayList<String>();
 
@@ -1218,7 +1213,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				}
 
 				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolBySubjectType(tipo);
+					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
 					if(!listaNomiProtocolli.contains(protocolBySubjectType))
 						listaNomiProtocolli.add(protocolBySubjectType);
 				}
@@ -1234,7 +1229,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			}
 
 			for (String protocolKey : listaNomiProtocolli) {
-				IProtocolFactory protocollo = protocolFactories.get(protocolKey);
+				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
 				this.protocolli.add(new SelectItem(protocollo.getProtocol()));
 			}
 
@@ -1249,7 +1244,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public boolean isShowListaProtocolli(){
 		try {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 			int numeroProtocolli = protocolFactories.size();
 
 			// se c'e' installato un solo protocollo non visualizzo la select List.
@@ -1269,7 +1264,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				}
 
 				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolBySubjectType(tipo);
+					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
 					if(!listaNomiProtocolli.contains(protocolBySubjectType))
 						listaNomiProtocolli.add(protocolBySubjectType);
 				}

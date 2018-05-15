@@ -3,8 +3,8 @@ package org.openspcoop2.web.monitor.transazioni.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.link.pdd.core.transazioni.DumpContenuto;
-import org.openspcoop2.monitor.engine.transaction.TransactionContentUtils;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.BlackListElement;
 

@@ -78,8 +78,6 @@ public class ApplicationBean implements Serializable {
 	private Map<String, Boolean> funzionalita = new HashMap<String, Boolean>();
 	private Map<String, Boolean> roles = null;
 
-	private Boolean backwardCompatibilityOpenspcoop1 = false;
-
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private synchronized void initializeFunzionalita(PddMonitorProperties pddMonitorProperties) throws Exception{
 		if(funzionalitaStaticInstance==null){
@@ -137,24 +135,16 @@ public class ApplicationBean implements Serializable {
 		// inizializzazione
 		try {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(ApplicationBean.log);
-
-			this.backwardCompatibilityOpenspcoop1 = pddMonitorProperties.isBackwardCompatibilityOpenspcoop1();
-
 			initializeFunzionalita(pddMonitorProperties);
 			this.funzionalita.putAll(funzionalitaStaticInstance);
-			
-
 		} catch (Exception e) {
-			ApplicationBean.log
-			.error("Errore durante l'inizializzazione del ApplicationBean.",
-					e);
+			ApplicationBean.log.error("Errore durante l'inizializzazione del ApplicationBean.",e);
 		}
 	}
 
 	private void initRoles() {
 		try {
-			if (this.loginBean != null
-					&& this.loginBean.getLoggedUser() != null) {
+			if (this.loginBean != null && this.loginBean.getLoggedUser() != null) {
 				UserDetailsBean u = this.loginBean.getLoggedUser();
 				this.roles = getRuoliUtente(u);
 			}
@@ -188,8 +178,7 @@ public class ApplicationBean implements Serializable {
 
 			Iterator<RuoloBean> itAuths = auths.iterator();
 			while (itAuths.hasNext()) {
-				RuoloBean grantedAuthority = 
-						itAuths.next();
+				RuoloBean grantedAuthority = itAuths.next();
 				String a = grantedAuthority.getAuthority();
 				if (UserDetailsBean.RUOLO_AMMINISTRATORE.equals(a))
 					ruoli.put(ApplicationBean.RUOLO_AMMINISTRATORE, true);
@@ -859,10 +848,6 @@ public class ApplicationBean implements Serializable {
 			return true;
 
 		return false;
-	}
-
-	public boolean getBackwardCompatibilityOpenspcoop1(){
-		return this.backwardCompatibilityOpenspcoop1;
 	}
 
 	public BrowserInfo getBrowserInfo(){

@@ -1,16 +1,5 @@
 package org.openspcoop2.web.monitor.core.mbean;
 
-import it.link.pdd.core.utenti.UtenteSoggetto;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.commons.search.constants.TipoPdD;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
-import org.openspcoop2.web.monitor.core.dao.IService;
-import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
-
 //import java.awt.Canvas;
 //import java.awt.Font;
 //import java.awt.FontMetrics;
@@ -20,9 +9,18 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dao.IService;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
+import org.slf4j.Logger;
 
 @SuppressWarnings("rawtypes")
 public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBean<T, K, ServiceType>{
@@ -50,8 +48,6 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	protected transient BaseSearchForm search;
 
-	private Boolean backwardCompatibility = false;
-
 	protected Integer maxSelectItemsWidth = 700;
 
 	protected Integer defaultSelectItemsWidth = 412;
@@ -77,14 +73,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	public DynamicPdDBean(){
 		super();
 		try {
-
 			this.dynamicUtils = new DynamicPdDBeanUtils(log);
-
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DynamicPdDBean.log);
-
-			this.setBackwardCompatibility(pddMonitorProperties.isBackwardCompatibilityOpenspcoop1());
-
-
 		} catch (Exception e) {
 			DynamicPdDBean.log.warn("lettura delle properties fallita.....",
 					e);
@@ -98,15 +87,6 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	public BaseSearchForm getSearch() {
 		return this.search;
 	}
-
-	public Boolean getBackwardCompatibility() {
-		return this.backwardCompatibility;
-	}
-
-	public void setBackwardCompatibility(Boolean backwardCompatibility) {
-		this.backwardCompatibility = backwardCompatibility;
-	}
-
 
 	public List<SelectItem> getAzioni() {
 		return _getAzioni(this.showAccordoOnServizioLabel,this.showTipoServizioOnServizioLabel, this.showErogatoreOnServizioLabel);
@@ -295,16 +275,16 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				return loggedUser.getTipiNomiSoggettiAssociati();
 
 			// se ho selezionato un protocollo devo filtrare per protocollo
-			List<UtenteSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
+			List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
 			List<String> lst = new ArrayList<String>();
 
 			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
-				for (UtenteSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-					if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getSoggetto().getTipo(), tipoProtocollo)){
-						String tipoNome = utenteSoggetto.getSoggetto().getTipo() + "/" + utenteSoggetto.getSoggetto().getNome();
+				for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
+					if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
+						String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
 						boolean add = true;
 						if(soloOperativi) {
-							String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getSoggetto().getTipo(), utenteSoggetto.getSoggetto().getNome());
+							String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
 							add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 						}
 						if(lst.contains(tipoNome)==false && add){
@@ -338,7 +318,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		UserDetailsBean loggedUser = Utility.getLoggedUser();
 		//se non e' admin allora devo controllare i tipi dei soggetti associati
 		if(!loggedUser.isAdmin()){
-			List<UtenteSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
+			List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
 			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0){
 				List<Soggetto> listaFiltrata = new ArrayList<Soggetto>();
 				List<String> listaTipi = new ArrayList<String>();
@@ -352,9 +332,9 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				} else {
 				
 				// prelevo il tipo dei soggetti compatibili
-				for (UtenteSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-					if(!listaTipi.contains(utenteSoggetto.getSoggetto().getTipo()))
-						listaTipi.add(utenteSoggetto.getSoggetto().getTipo());
+				for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
+					if(!listaTipi.contains(utenteSoggetto.getTipo()))
+						listaTipi.add(utenteSoggetto.getTipo());
 				}
 
 				}

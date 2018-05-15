@@ -3,10 +3,10 @@ package org.openspcoop2.web.monitor.transazioni.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
-import it.link.pdd.core.transazioni.Transazione;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;

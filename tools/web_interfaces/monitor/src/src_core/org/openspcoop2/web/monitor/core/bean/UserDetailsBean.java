@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
-
-import it.link.pdd.core.utenti.Ruolo;
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.UtenteSoggetto;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.web.lib.users.dao.PermessiUtente;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 
 public class UserDetailsBean implements Serializable {
@@ -26,30 +25,46 @@ public class UserDetailsBean implements Serializable {
 	private String username;
 	private String password;
 	private List<RuoloBean> authorities;
-	private List<UtenteSoggetto> utenteSoggettoList;
+	private List<IDSoggetto> utenteSoggettoList;
+	private List<IDServizio> utenteServizioList;
 
-	private Utente utente;
+	private User utente;
 	
 	public UserDetailsBean() {
 		this.authorities = new ArrayList<RuoloBean>();
 		this.authorities.add(new RuoloBean( UserDetailsBean.RUOLO_USER));
 	}
 
-	public void setUtente(Utente u) {
+	public void setUtente(User u) {
 		this.username = u.getLogin();
 		this.password = u.getPassword();
 		
-		this.utenteSoggettoList = u.getUtenteSoggettoList();
+		this.utenteSoggettoList = u.getSoggetti();
+		this.utenteServizioList = u.getServizi();
 		
-		if(u.getRuoloList() != null){
-			for (Ruolo r : u.getRuoloList()) {
-				this.authorities.add(new RuoloBean(r.getRuolo()));
-			}
+		int foundSoggetti = this.utenteSoggettoList != null ? this.utenteSoggettoList.size() : 0;
+		int foundServizi = this.utenteServizioList !=  null ? this.utenteServizioList.size() : 0;
+		
+		boolean admin = (foundServizi + foundSoggetti) == 0;
+		boolean operatore = (foundServizi + foundSoggetti) > 0;
+		
+		PermessiUtente permessi = u.getPermessi();
+		
+		if(permessi.isDiagnostica()) {
+			if(admin)
+				this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_AMMINISTRATORE));
+			
+			if(operatore)
+				this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_OPERATORE));
+		}
+		
+		if(permessi.isSistema()) {
+			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_CONFIGURATORE));
 		}
 		
 		this.utente = u;
 	}
-	public Utente getUtente(){
+	public User getUtente(){
 		return this.utente;
 	}
 	
@@ -72,35 +87,61 @@ public class UserDetailsBean implements Serializable {
 		return false;
 	}
 	
-	public List<UtenteSoggetto> getUtenteSoggettoList(){
+	public List<IDSoggetto> getUtenteSoggettoList(){
 		return this.utenteSoggettoList;
 	}
+	
 	
 	public int getSizeSoggetti(){
 		return this.utenteSoggettoList!=null ? this.utenteSoggettoList.size() : 0;
 	}
 	
+	public List<IDServizio> getUtenteServizioList(){
+		return this.utenteServizioList;
+	}
+	
+	
+	public int getSizeServizio(){
+		return this.utenteServizioList!=null ? this.utenteServizioList.size() : 0;
+	}
+	
 	public String getLabelUnicoSoggettoServizioAssociato(){
-		if(this.utenteSoggettoList.get(0).getServizio()==null){
+		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
+		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
+		
+		if(foundSoggetti){
 			return "Soggetto Locale: ";
 		}
-		else{
+		else if(foundServizi){
 			return "Servizio: ";
 		}
-	}
-	public String getValueUnicoSoggettoServizioAssociato(){
-		IDServizio idServizio = new IDServizio(this.utenteSoggettoList.get(0).getSoggetto().getTipo(), this.utenteSoggettoList.get(0).getSoggetto().getNome());
-		if(this.utenteSoggettoList.get(0).getServizio()!=null){
-			idServizio.setTipoServizio(this.utenteSoggettoList.get(0).getServizio().getTipo());
-			idServizio.setServizio(this.utenteSoggettoList.get(0).getServizio().getNome());
+		else{
+			return null;
 		}
-		return ParseUtility.convertToSoggettoServizio(idServizio);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public String getValueUnicoSoggettoServizioAssociato(){
+		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
+		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
+		
+		if(foundSoggetti){
+			IDServizio idServizio = new IDServizio();
+			idServizio.setSoggettoErogatore(new IDSoggetto(this.utenteServizioList.get(0).getTipo(), this.utenteSoggettoList.get(0).getNome())); 
+			return ParseUtility.convertToSoggettoServizio(idServizio);
+		}
+		else if(foundServizi){
+			return ParseUtility.convertToSoggettoServizio(this.utenteServizioList.get(0));
+		}
+		else{
+			return null;
+		}
 	}
 
 	public List<String> getTipiNomiSoggettiAssociati(){
 		List<String> lst = new ArrayList<String>();
-		for (UtenteSoggetto utenteSoggetto : this.utenteSoggettoList) {
-			String tipoNome = utenteSoggetto.getSoggetto().getTipo() + "/" + utenteSoggetto.getSoggetto().getNome();
+		for (IDSoggetto utenteSoggetto : this.utenteSoggettoList) {
+			String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
 			if(lst.contains(tipoNome)==false){
 				lst.add(tipoNome);
 			}
@@ -109,16 +150,9 @@ public class UserDetailsBean implements Serializable {
 	}
 	
 	public String getLabelTipiNomiSoggettiServiziAssociati(){
-		boolean foundSoggetti = false;
-		boolean foundServizi = false;
-		for (UtenteSoggetto utenteSoggetto : this.utenteSoggettoList) {
-			if(utenteSoggetto.getServizio()==null){
-				foundSoggetti = true;
-			}
-			else{
-				foundServizi = true;
-			}
-		}
+		boolean foundSoggetti = this.utenteSoggettoList != null && this.utenteSoggettoList.size() > 0;
+		boolean foundServizi = this.utenteServizioList !=  null && this.utenteServizioList.size() > 0;
+
 		if(foundSoggetti && foundServizi){
 			return "Soggetto Locale / Servizio";
 		}
@@ -130,14 +164,15 @@ public class UserDetailsBean implements Serializable {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public List<String> getTipiNomiSoggettiServiziAssociati(){
 		List<String> lst = new ArrayList<String>();
-		for (UtenteSoggetto utenteSoggetto : this.utenteSoggettoList) {
-			IDServizio idServizio = new IDServizio(utenteSoggetto.getSoggetto().getTipo(), utenteSoggetto.getSoggetto().getNome());
-			if(utenteSoggetto.getServizio()!=null){
-				idServizio.setTipoServizio(utenteSoggetto.getServizio().getTipo());
-				idServizio.setServizio(utenteSoggetto.getServizio().getNome());
-			}
+		for (IDSoggetto utenteSoggetto : this.utenteSoggettoList) {
+			IDServizio idServizio = new IDServizio();
+			idServizio.setSoggettoErogatore(new IDSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome())); 
+			lst.add(ParseUtility.convertToSoggettoServizio(idServizio));
+		}
+		for (IDServizio idServizio : this.utenteServizioList) {
 			lst.add(ParseUtility.convertToSoggettoServizio(idServizio));
 		}
 		return lst;

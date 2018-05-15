@@ -1,6 +1,6 @@
 package org.openspcoop2.web.monitor.transazioni.dao;
 
-import it.link.pdd.core.transazioni.TransazioneExport;
+import org.openspcoop2.core.transazioni.TransazioneExport;
 import org.openspcoop2.web.monitor.core.dao.IService;
 
 import java.util.Date;

@@ -15,18 +15,16 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.id.IDServizio;
-
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.utenti.Utente;
 import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
-import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.slf4j.Logger;
 
 public class Utility {
 
@@ -58,7 +56,7 @@ public class Utility {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		if(fc!= null){
 			ExternalContext ec = fc.getExternalContext();
-			LoginBean lb = (LoginBean)ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			LoginBean lb = (LoginBean)ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 
 			return lb;
 		}
@@ -68,7 +66,7 @@ public class Utility {
 	
 	public static LoginBean getLoginBeanFromSession(HttpSession sessione) {
 		if(sessione!= null){
-			LoginBean lb = (LoginBean)sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			LoginBean lb = (LoginBean)sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 			return lb;
 		}
 		return null;
@@ -275,7 +273,7 @@ public class Utility {
 		return null;
 	}
 
-	public static Utente getLoggedUtente() {
+	public static User getLoggedUtente() {
 		LoginBean lb = getLoginBean();
 
 		if(lb!= null && lb.isLoggedIn()){
@@ -406,7 +404,10 @@ public class Utility {
 		String idPorta = null;
 		try {	
 			Logger log =  LoggerManager.getPddMonitorSqlLogger();
-			org.openspcoop2.core.commons.search.dao.IServiceManager sm = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).getServiceManager(DAO.UTILS,log);
+			// [TODO] controllare se il tipo di project info e' corretto
+			org.openspcoop2.core.commons.search.utils.ProjectInfo prInfo = org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance();
+			org.openspcoop2.core.commons.search.dao.IServiceManager sm =
+					(org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).getServiceManager(prInfo,log);
 			IdSoggetto idSog = new IdSoggetto();
 			idSog.setTipo(tipoSoggetto);
 			idSog.setNome(nomeSoggetto);

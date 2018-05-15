@@ -14,9 +14,9 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -380,32 +380,22 @@ public class PddMonitorProperties {
 	
 	public ITracciaDriver getDriverTracciamento() throws Exception{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
-		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(DAO.TRACCE,log);
+		return (ITracciaDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance(),log);
 		
 	}
 	public IDiagnosticDriver getDriverMsgDiagnostici() throws Exception{
 		Logger log =  LoggerManager.getPddMonitorSqlLogger();
-		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(DAO.MESSAGGI_DIAGNOSTICI,log);
-	}
-
-	public boolean isBackwardCompatibilityOpenspcoop1() throws Exception{
-		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
-		return daoFactoryProperties.isBackwardCompatibilityOpenspcoop1(DAO.TRANSAZIONI);
-	}
-	
-	public boolean isBackwardCompatibilityOpenspcoop1(DAO tipoDAO) throws Exception{
-		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
-		return daoFactoryProperties.isBackwardCompatibilityOpenspcoop1(tipoDAO);
+		return (IDiagnosticDriver) DAOFactory.getInstance(log).getServiceManager(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance(),log);
 	}
 
 	public TipiDatabase  tipoDatabase() throws Exception{
 		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
-		return daoFactoryProperties.getTipoDatabaseEnum(DAO.TRANSAZIONI);
+		return daoFactoryProperties.getTipoDatabaseEnum(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 	}
 	
-	public TipiDatabase  tipoDatabase(DAO tipoDAO) throws Exception{
+	public TipiDatabase  tipoDatabase(IProjectInfo projectInfo) throws Exception{
 		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
-		return daoFactoryProperties.getTipoDatabaseEnum(tipoDAO);
+		return daoFactoryProperties.getTipoDatabaseEnum(projectInfo);
 	}
 	// configurazioni jmx
 	

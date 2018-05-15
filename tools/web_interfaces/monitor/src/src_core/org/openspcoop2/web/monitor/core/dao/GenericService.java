@@ -1,49 +1,41 @@
 package org.openspcoop2.web.monitor.core.dao;
 
-import org.openspcoop2.core.commons.dao.DAO;
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
-import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
-import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
-import it.link.pdd.core.utenti.IdUtente;
-import it.link.pdd.core.utenti.StatoTabella;
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.dao.IUtenteService;
-import it.link.pdd.core.utenti.dao.IUtenteServiceSearch;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
-import org.openspcoop2.web.monitor.core.costants.NomiTabelle;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
+import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
+import org.openspcoop2.web.lib.users.dao.Stato;
+import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.costants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.slf4j.Logger;
 
 public class GenericService implements IGenericService {
 
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
 
-	private IUtenteServiceSearch utenteSearchDAO;
-	private IUtenteService utenteDAO;
-
-	private it.link.pdd.core.utenti.dao.IServiceManager utentiServiceManager;
+	private org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
 
 	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
@@ -59,15 +51,12 @@ public class GenericService implements IGenericService {
 		try {
 
 			// init Service Manager utenti
-			this.utentiServiceManager = (it.link.pdd.core.utenti.dao.IServiceManager) DAOFactory
-					.getInstance(GenericService.log).getServiceManager(DAO.UTENTI,GenericService.log);
-			this.utenteSearchDAO = this.utentiServiceManager
-					.getUtenteServiceSearch();
-			this.utenteDAO = this.utentiServiceManager.getUtenteService();
+			this.utenteDAO = (org.openspcoop2.web.lib.users.DriverUsersDB) DAOFactory.getInstance(GenericService.log).getServiceManager(org.openspcoop2.web.lib.users.ProjectInfo.getInstance());
+						
 
 			// init Service Manager BASE
 			this.basePluginsServiceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory
-					.getInstance(GenericService.log).getServiceManager(DAO.PLUGINS_BASE,GenericService.log);
+					.getInstance(GenericService.log).getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),GenericService.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 			this.confSerSearchDAO = this.basePluginsServiceManager
@@ -75,12 +64,12 @@ public class GenericService implements IGenericService {
 			
 			// init Service Manager RICERCHE (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) DAOFactory
-					.getInstance(GenericService.log).getServiceManager(DAO.PLUGINS_TRANSAZIONI,GenericService.log);
+					.getInstance(GenericService.log).getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),GenericService.log);
 			this.transazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
-					.getInstance(GenericService.log).getServiceManager(DAO.UTILS,GenericService.log);
+					.getInstance(GenericService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),GenericService.log);
 			// dao utils
 			this.soggettoDAO = this.utilsServiceManager
 					.getSoggettoServiceSearch();
@@ -671,83 +660,32 @@ public class GenericService implements IGenericService {
 	}
 
 	@Override
-	public StatoTabella getTableState(Utente utente, NomiTabelle nomeTabella) {
-		StatoTabella state = null;
+	public Stato getTableState(User utente, NomiTabelle nomeTabella) {
+		Stato state = null;
 
 		try {
-			Utente u = this.utenteSearchDAO.find(this.utenteSearchDAO
-					.newExpression()
-					.equals(Utente.model().LOGIN, utente.getLogin())
-					.and()
-					.equals(Utente.model().STATO_TABELLA.TABELLA,
-							nomeTabella.toString()));
-
-			state = u.getStatoTabella(0);
-
-			return state;
-		} catch (ServiceException e) {
-			GenericService.log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			state = new StatoTabella();
-			state.setTabella(nomeTabella.toString());
-			state.setStato(null);
-
-			return state;
-		} catch (MultipleResultException e) {
-			GenericService.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			GenericService.log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			GenericService.log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
+			state = this.utenteDAO.getStato(utente.getLogin(), nomeTabella.toString());
+			if(state == null) {
+				state = new Stato();
+				state.setOggetto(nomeTabella.toString());
+				state.setStato(null);
+			}
+			return state;			
+			
+		} catch (DriverUsersDBException e) {
 			GenericService.log.error(e.getMessage(), e);
 		}
 
 		return null;
-
-		// try{
-		//
-		//
-		// state =
-		// (StatoTabella)this.em.createQuery("select s from TableState s where s.utente.id=:idUtente and s.tabella=:tabella")
-		// .setParameter("idUtente", utente.getId())
-		// .setParameter("tabella", nomeTabella)
-		// .getSingleResult();
-		// }catch(NoResultException nr){
-		// //inizializzo lo stato
-		// state = new StatoTabella();
-		// state.setUtente(utente);
-		// state.setTabella(nomeTabella);
-		// state.setStato(null);
-		// }catch(Exception e){
-		// GenericService.log.error(e,e);
-		// }
-		// return state;
 	}
 
 	@Override
-	public void saveTableState(Utente user, StatoTabella stato) {
-
-		user.addStatoTabella(stato);
-
-		IdUtente idUtente = new IdUtente();
-		idUtente.setLogin(user.getLogin());
-
+	public void saveTableState(User user, Stato stato) {
 		try {
-			this.utenteDAO.update(idUtente, user);
-		} catch (ServiceException e) {
-			GenericService.log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			GenericService.log.debug(e.getMessage(), e);
-		} catch (NotImplementedException e) {
+			this.utenteDAO.saveStato(user.getLogin(), stato.getOggetto(), stato.getStato());
+		} catch (DriverUsersDBException e) {
 			GenericService.log.error(e.getMessage(), e);
 		}
-		// try{
-		// this.em.persist(this.em.merge(stato));
-		// this.em.flush();
-		// }catch(Exception e){
-		// GenericService.log.error(e,e);
-		// }
 	}
 
 	@Override

@@ -12,6 +12,15 @@ import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
@@ -30,7 +39,6 @@ import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.slf4j.Logger;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
 import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
@@ -39,14 +47,6 @@ import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazio
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.Transazione;
-import it.link.pdd.core.transazioni.constants.PddRuolo;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
-import it.link.pdd.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.config.BasicServiceLibrary;
@@ -94,11 +94,11 @@ public class TransazioniService implements ITransazioniService {
 	private org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager ricerchePluginsServiceManager;
 	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
 
-	private it.link.pdd.core.transazioni.dao.IServiceManager transazioniServiceManager;
-	private it.link.pdd.core.transazioni.dao.ITransazioneService transazioniDAO;
-	private it.link.pdd.core.transazioni.dao.ITransazioneServiceSearch transazioniSearchDAO;
+	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch transazioniSearchDAO;
 
-	private it.link.pdd.core.transazioni.dao.IDumpMessaggioServiceSearch dumpMessaggioSearchDAO;
+	private org.openspcoop2.core.transazioni.dao.IDumpMessaggioServiceSearch dumpMessaggioSearchDAO;
 	
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
 
@@ -209,22 +209,22 @@ public class TransazioniService implements ITransazioniService {
 			
 			// init Service Manager (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,this.log);
+					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),this.log);
 			this.confTransazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			// init Service Manager (ricerche.plugins)
 			this.ricerchePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,this.log);
+					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.ricerche.utils.ProjectInfo.getInstance(),this.log);
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,this.log);
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
 			this.transazioniServiceManager = 
-					(it.link.pdd.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.TRANSAZIONI,this.log);
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),this.log);
 
 			this.transazioniSearchDAO = this.transazioniServiceManager
 					.getTransazioneServiceSearch();
@@ -237,7 +237,7 @@ public class TransazioniService implements ITransazioniService {
 			this.transazioniFieldConverter = ((IDBServiceUtilities<?>)this.transazioniSearchDAO).getFieldConverter(); 
 
 			this.utilsServiceManager = 
-					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.UTILS,this.log);
+					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(),this.log);
 				
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(this.log);
 			
@@ -277,22 +277,22 @@ public class TransazioniService implements ITransazioniService {
 			
 			// init Service Manager (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
 			this.confTransazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			// init Service Manager (ricerche.plugins)
 			this.ricerchePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.ricerche.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
 			this.transazioniServiceManager = 
-					(it.link.pdd.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.TRANSAZIONI,con,autoCommit,this.log);
+					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
 
 			this.transazioniSearchDAO = this.transazioniServiceManager
 					.getTransazioneServiceSearch();
@@ -305,7 +305,7 @@ public class TransazioniService implements ITransazioniService {
 			this.transazioniFieldConverter = ((IDBServiceUtilities<?>)this.transazioniSearchDAO).getFieldConverter(); 
 
 			this.utilsServiceManager = 
-					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.UTILS, con,autoCommit,this.log);
+					(org.openspcoop2.core.commons.search.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,autoCommit,this.log);
 			
 			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(this.log);
 			
@@ -494,10 +494,6 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			NonNegativeNumber res = this.transazioniSearchDAO.count(expr);
-
-			// service.count(expr,
-			// (FilterImpl) this.searchForm.getFiltro());
-
 			return (int) res.longValue();
 
 		} catch (Exception e) {
@@ -557,8 +553,7 @@ public class TransazioniService implements ITransazioniService {
 			SortOrder sortOrder = this.searchForm.getSortOrder();
 			String sortField = this.searchForm.getSortField();
 			setOrderField(expr, sortOrder,sortField,true);
-			IPaginatedExpression pagExpr = this.transazioniSearchDAO
-					.toPaginatedExpression(expr);
+			IPaginatedExpression pagExpr = this.transazioniSearchDAO.toPaginatedExpression(expr);
 
 			List<Index> forceIndexFindAll = this.getIndexFindAll();
 			if(forceIndexFindAll!=null && forceIndexFindAll.size()>0){
@@ -601,9 +596,6 @@ public class TransazioniService implements ITransazioniService {
 	public List<TransazioneBean> findAllLive() {
 
 		this.log.debug("Find All Live");
-		// return this.createQuery(false, true)
-		// .setMaxResults(this.liveMaxResults)
-		// .getResultList();
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
 			IExpression expr = this.transazioniSearchDAO.newExpression();
@@ -647,12 +639,6 @@ public class TransazioniService implements ITransazioniService {
 
 		this.log.debug("Get Esiti Info Live[idPorta: " + permessiUtente+ "], [ LastDatePick: " + lastDatePick + "]");
 
-		// StringBuffer pezzoIdPorta = new StringBuffer();
-		//
-		// if (idPorta != null && idPorta.size() > 0) {
-		// pezzoIdPorta
-		// .append(" AND (t.identificativoPorta IN (:idPorta) OR t.identificativoPorta is null)");
-		// }
 		try {
 			
 			
@@ -694,16 +680,6 @@ public class TransazioniService implements ITransazioniService {
 				exprKo.and(permessi);
 			}
 
-			// String esitiOK =
-			// "(select count(t.esito) from Transazione t where t.dataIngressoRichiesta>:lastPick AND t.esito in (0,8) "
-			// + (idPorta != null ? pezzoIdPorta : "") + ") as esitiOK";
-			// String esitiKO =
-			// "(select count(t.esito) from Transazione t where t.dataIngressoRichiesta>:lastPick AND t.esito>0 and t.esito <> 8"
-			// + (idPorta != null ? pezzoIdPorta : "") + ") as esitiKO";
-			//
-			// String res = "select " + esitiOK + ", " + esitiKO
-			// + ", CURRENT_TIMESTAMP FROM Transazione t";
-
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
 			Properties repositoryExternal = pddMonitorProperties.getExternalForceIndexRepository();
@@ -723,39 +699,6 @@ public class TransazioniService implements ITransazioniService {
 			if (nnnKo != null && nnnOk != null) {
 				return new ResLive(nnnOk.longValue(), nnnFaultApplicativo.longValue(), nnnKo.longValue(), new Date());
 			}
-
-			// String pezzoIdPorta =
-			// " AND (t.identificativoPorta=:idPorta OR t.identificativoPorta is null)";
-			//
-			// String esitiOK =
-			// "(select count(t) from Transazioni t where t.dataIngressoRichiesta>:lastPick AND t.esito in (0,8) "+(idPorta!=null
-			// ? pezzoIdPorta : "");;
-			// String esitiKO =
-			// "(select count(t) from Transazioni t where t.dataIngressoRichiesta>:lastPick AND t.esito>0 and esito <> 8"+(idPorta!=null
-			// ? pezzoIdPorta : "");
-
-			// Query q =  createQuery(res);
-			// q.setMaxResults(1);
-			// q.setParameter("lastPick", lastDatePick);
-
-			// Query qOk = this.em.createQuery(esitiOK);
-			// Query qKo = this.em.createQuery(esitiKO);
-			//
-			// qOk.setParameter("lastPick", lastDatePick);
-			// qKo.setParameter("lastPick", lastDatePick);
-
-			// if (idPorta != null && idPorta.size() > 0) {
-			// q.setParameter("idPorta", idPorta);
-			// }
-
-			// try {
-			// Object[] esiti = (Object[]) q.getSingleResult();
-			//
-			// return new ResLive((Long) esiti[0], (Long) esiti[1],
-			// (Date) esiti[2]);
-			// } catch (NoResultException e) {
-			//
-			// }
 
 		} catch (ServiceException e) {
 			this.log.error(e.getMessage(), e);
@@ -778,17 +721,6 @@ public class TransazioniService implements ITransazioniService {
 		try {
 
 			this.log.debug("Find By Id Transazione: "+ idTransazione);
-
-			// return (DumpMessaggio)
-			// this.em.createQuery("select d from DumpMessaggio d where d.idTransazione=:id_transazione and d.tipoMessaggio=:tipo")
-			// .setParameter("id_transazione", idTransazione)
-			// .setParameter("tipo", tipoMessaggio)
-			// .getSingleResult();
-
-			// IdDumpMessaggio id = new IdDumpMessaggio();
-			// id.setIdTransazione(idTransazione);
-			// id.setTipoMessaggio(TipoMessaggio.toEnumConstant(tipoMessaggio
-			// .toString()));
 
 			IExpression expr = this.transazioniSearchDAO.newExpression();
 			expr.equals(Transazione.model().ID_TRANSAZIONE, idTransazione);
@@ -817,19 +749,20 @@ public class TransazioniService implements ITransazioniService {
 		DumpMessaggio msg = new DumpMessaggio();
 		msg.setTipoMessaggio(tipoMessaggio);
 		msg.setIdTransazione(idTransazione);
-		if(TipoMessaggio.RICHIESTA.equals(tipoMessaggio)){
+		if(TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) || TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)){
 			msg.setId(virtualIdRequest); // id virtuale
 		}
 		else{
 			msg.setId(virtualIdResponse); // id virtuale
 		}
 		this.updateMessageWithSdk(msg);
-		if(msg.getEnvelope() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0 || msg.sizeHeaderTrasportoList() > 0){
+		if(msg.getBody() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0 || msg.sizeHeaderTrasportoList() > 0){
 			return msg;
 		}
 		return null;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void updateMessageWithSdk(DumpMessaggio mes) throws Exception{
 		if(this.transactionServiceLibraryReader!=null && mes!=null){
 			
@@ -854,7 +787,10 @@ public class TransazioniService implements ITransazioniService {
 					String azione = this.readObjectInMap(Transazione.model().AZIONE, map);
 					statoTransazione = this.readObjectInMap(Transazione.model().STATO, map);
 					if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null){
-						idServizio = new IDServizio(tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio);
+						idServizio = new IDServizio();
+						idServizio.setTipo(tipoServizio);
+						idServizio.setNome(nomeServizio);
+						idServizio.setSoggettoErogatore(new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore));
 						idServizio.setAzione(azione);
 					}
 				}
@@ -894,22 +830,9 @@ public class TransazioniService implements ITransazioniService {
 					+ idTransazione + "],[ tipomessaggio: "
 					+ tipoMessaggio.toString() + "]");
 
-			// return (DumpMessaggio)
-			// this.em.createQuery("select d from DumpMessaggio d where d.idTransazione=:id_transazione and d.tipoMessaggio=:tipo")
-			// .setParameter("id_transazione", idTransazione)
-			// .setParameter("tipo", tipoMessaggio)
-			// .getSingleResult();
-
-			// IdDumpMessaggio id = new IdDumpMessaggio();
-			// id.setIdTransazione(idTransazione);
-			// id.setTipoMessaggio(TipoMessaggio.toEnumConstant(tipoMessaggio
-			// .toString()));
-
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
-			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO,
-					TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
-			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE,
-					idTransazione);
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
 
 			DumpMessaggio mes = this.dumpMessaggioSearchDAO.find(expr);
 			this.updateMessageWithSdk(mes);
@@ -1095,7 +1018,7 @@ public class TransazioniService implements ITransazioniService {
 			this.updateMessageWithSdk(msg);
 			
 			if(msg != null){
-				return msg.getEnvelope() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0;
+				return msg.getBody() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0;
 			}
 
 			//			NonNegativeNumber nnn = this.dumpMessaggioSearchDAO.count(expr);
@@ -1123,7 +1046,7 @@ public class TransazioniService implements ITransazioniService {
 				// provo a vedere se esiste virtualmente grazie all'SDK
 				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
 				if(mes!=null){
-					return mes.getEnvelope() != null || mes.sizeAllegatoList() > 0 || mes.sizeContenutoList() > 0;
+					return mes.getBody() != null || mes.sizeAllegatoList() > 0 || mes.sizeContenutoList() > 0;
 				}
 			}catch (Exception eVirtual) {
 				this.log.error(
@@ -2245,8 +2168,8 @@ public class TransazioniService implements ITransazioniService {
 				filter.and().
 					equals(Transazione.model().TIPO_SOGGETTO_EROGATORE,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(Transazione.model().NOME_SOGGETTO_EROGATORE,	idServizio.getSoggettoErogatore().getNome()).
-					equals(Transazione.model().TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(Transazione.model().NOME_SERVIZIO,	idServizio.getServizio());
+					equals(Transazione.model().TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(Transazione.model().NOME_SERVIZIO,	idServizio.getNome());
 
 				// criteri ricerca personalizzati in caso di servizio impostato
 				// if(filtro!=null){

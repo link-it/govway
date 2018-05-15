@@ -79,31 +79,6 @@
 			<property-class>org.openspcoop2.web.monitor.core.dao.IUserService</property-class>
 			<value>#{userService}</value>
 		</managed-property>
-		<managed-property>
-			<property-name>search</property-name>
-			<property-class>org.openspcoop2.web.monitor.core.bean.UtentiSearchForm</property-class>
-			<value>#{searchFormUtenti}</value>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>utentiDM</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.core.datamodel.UtentiDM</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>dataProvider</property-name>
-			<property-class>org.openspcoop2.web.monitor.core.dao.IService</property-class>
-			<value>#{userService}</value>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>auditingBean</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.core.mbean.AuditingBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>service</property-name>
-			<property-class>org.openspcoop2.web.monitor.core.dao.IAuditingService</property-class>
-			<value>#{auditingService}</value>
-		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>applicationBean</managed-bean-name>
@@ -152,14 +127,6 @@
 			<to-view-id>/public/login.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>user</from-outcome>
-			<to-view-id>/pages/list/user.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>auditing</from-outcome>
-			<to-view-id>/pages/form/auditing.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>editUser</from-outcome>
 			<to-view-id>/pages/form/user.xhtml</to-view-id>
 		</navigation-case>
@@ -182,13 +149,6 @@
 			<from-outcome>loginSuccess</from-outcome>
 			<to-view-id>/pages/welcome.jsf?usaSVG=true</to-view-id>
 			<redirect />
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<from-view-id>/pages/list/user.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>editUser</from-outcome>
-			<to-view-id>/pages/form/user.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<validator>

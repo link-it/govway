@@ -28,7 +28,6 @@ import org.openspcoop2.core.id.IDSoggetto;
 public interface IDynamicUtilsService {
 	
 	
-	public int countUtenti();
 	public int countPdD(String protocollo);
 
 	/***

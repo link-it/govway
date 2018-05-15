@@ -13,12 +13,12 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.UtenteSoggetto;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
@@ -137,9 +137,9 @@ public class LoginBean extends AbstractLoginBean {
 	public String logout() {
 		try{
 			FacesContext fc = FacesContext.getCurrentInstance();
-			fc.getExternalContext().getSessionMap().put(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
+			fc.getExternalContext().getSessionMap().put(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
 			HttpSession session = (HttpSession)fc.getExternalContext().getSession(false);
-			session.setAttribute(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null); 
+			session.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null); 
 			session.invalidate();
 		}catch(Exception e){}
 
@@ -171,13 +171,13 @@ public class LoginBean extends AbstractLoginBean {
 		return this.getMapSoggetti().get(key);
 	}
 	
-	public List<String> getIdentificativiPorta(Utente user){
+	public List<String> getIdentificativiPorta(User user){
 		List<String> lst = new ArrayList<String>();
 
-		for (UtenteSoggetto us : user.getUtenteSoggettoList()) {
+		for (IDSoggetto idSog : user.getSoggetti()) {
 			IdSoggetto idsoggetto = new IdSoggetto();
-			idsoggetto.setNome(us.getSoggetto().getNome());
-			idsoggetto.setTipo(us.getSoggetto().getTipo());
+			idsoggetto.setNome(idSog.getNome());
+			idsoggetto.setTipo(idSog.getTipo());
 			Soggetto s = this.getSoggetto(idsoggetto);
 			
 			lst.add(s.getIdentificativoPorta());
@@ -186,7 +186,7 @@ public class LoginBean extends AbstractLoginBean {
 		return lst;
 	}
 	
-	public Utente getUtente(){
+	public User getUtente(){
 		return this.getDettaglioUtente();
 	}
 	

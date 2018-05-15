@@ -1,14 +1,6 @@
 package org.openspcoop2.web.monitor.transazioni.dao;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.transazioni.TransazioneExport;
-import it.link.pdd.core.transazioni.constants.DeleteState;
-import it.link.pdd.core.transazioni.constants.ExportState;
-import it.link.pdd.core.transazioni.dao.IDBTransazioneExportServiceSearch;
-import it.link.pdd.core.transazioni.dao.IServiceManager;
-import it.link.pdd.core.transazioni.dao.ITransazioneExportService;
-import it.link.pdd.core.transazioni.dao.ITransazioneExportServiceSearch;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
 import java.sql.Connection;
@@ -31,10 +23,10 @@ public class TransazioniExportService implements ITransazioniExportService {
 
 	private transient Logger log = null;
 
-	private ITransazioneExportServiceSearch transazioneExportSearchDAO;
-	private ITransazioneExportService transazioneExportDAO;
-	private IServiceManager transazioniServiceManager;
-
+	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch transazioniSearchDAO;
+	
 	public TransazioniExportService() {
 		this.log =  LoggerManager.getPddMonitorSqlLogger();
 		try {

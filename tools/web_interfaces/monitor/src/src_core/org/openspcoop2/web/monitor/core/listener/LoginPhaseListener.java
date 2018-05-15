@@ -2,6 +2,7 @@ package org.openspcoop2.web.monitor.core.listener;
 
 
 
+import org.openspcoop2.web.monitor.core.bean.AbstractLoginBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 
 import javax.faces.application.FacesMessage;
@@ -35,7 +36,7 @@ public class LoginPhaseListener implements PhaseListener {
 			FacesContext fc = event.getFacesContext();
 			
 			ExternalContext ec = fc.getExternalContext();
-			LoginBean lb = (LoginBean)ec.getSessionMap().get(LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			LoginBean lb = (LoginBean)ec.getSessionMap().get(AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 	        //controllo se sono nella pagina di login
 			boolean isLogged = lb == null ? false : lb.isLoggedIn();
 			

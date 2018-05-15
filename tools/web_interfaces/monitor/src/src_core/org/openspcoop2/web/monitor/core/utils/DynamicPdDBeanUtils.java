@@ -15,27 +15,27 @@ import java.util.Map;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.slf4j.Logger;
-
-import it.link.pdd.core.utenti.UtenteSoggetto;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.PortaDelegata;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
+import org.slf4j.Logger;
 
 public class DynamicPdDBeanUtils implements Serializable {
 
@@ -54,7 +54,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	public static Integer defaultSelectItemsWidth = 412;
 
-//	private transient FontMetrics fm = null;
+	//	private transient FontMetrics fm = null;
 	private transient AffineTransform affineTransform = null;
 	private transient FontRenderContext fontRenderContext = null;
 
@@ -96,12 +96,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 		List<String> tipiDisponibili2 = new ArrayList<String>();
 
 		if(!tipo1.equals("*") ){
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(tipo1);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipo1);
 			tipiDisponibili1.add(protocolFactory.getProtocol());
 		}
 
 		if(!tipo2.equals("*")){
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(tipo2);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipo2);
 			tipiDisponibili2.add(protocolFactory.getProtocol());
 		}
 
@@ -136,7 +136,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			return true;
 
 		if(!tipoSoggetto.equals("*") ){
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(tipoSoggetto);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipoSoggetto);
 
 			if(protocolFactory == null || !protocolFactory.getProtocol().equals(tipoProtocollo))
 				return false;
@@ -144,7 +144,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 		return true;
 	}
-	
+
 	public boolean isTipoServizioCompatibileConProtocollo(String tipoServizio, String tipoProtocollo)  throws Exception{
 
 		// se uno dei due non e' impostato allora sono compatibili
@@ -152,7 +152,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			return true;
 
 		if(!tipoServizio.equals("*") ){
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(tipoServizio);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByServiceType(tipoServizio);
 
 			if(protocolFactory == null || !protocolFactory.getProtocol().equals(tipoProtocollo))
 				return false;
@@ -177,7 +177,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 				for (AccordoServizioParteSpecifica accordoServizioParteSpecifica : servizi2) {
 					String tipo = accordoServizioParteSpecifica.getIdErogatore() != null ? accordoServizioParteSpecifica.getIdErogatore().getTipo() : null;
 					if(tipo != null){
-						IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(tipo);
+						IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(tipo);
 
 						if(!tipiDisponibili1 .contains(protocolFactory.getProtocol()))
 							tipiDisponibili1.add(protocolFactory.getProtocol());
@@ -279,7 +279,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 		return idPorta;
 	}
-	
+
 	public boolean checkTipoPdd(String nome,TipoPdD tipoPdD) {
 		return this.dynamicUtilsService.checkTipoPdd(nome, tipoPdD);
 	}
@@ -471,7 +471,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 						if(aspc != null){
 							String nomeAspc = aspc.getNome();
 
-							String versioneAspc = aspc.getVersione();
+							Integer versioneAspc = aspc.getVersione();
 
 							String nomeReferenteAspc = (aspc.getIdReferente() != null) ? aspc.getIdReferente().getNome() : null;
 
@@ -538,7 +538,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 					if(aspc != null){
 						String nomeAspc = aspc.getNome();
 
-						String versioneAspc = aspc.getVersione();
+						Integer versioneAspc = aspc.getVersione();
 
 						String nomeReferenteAspc = (aspc.getIdReferente() != null) ? aspc.getIdReferente().getNome() : null;
 
@@ -591,9 +591,9 @@ public class DynamicPdDBeanUtils implements Serializable {
 		try{
 
 			UserDetailsBean user = Utility.getLoggedUser();
-			
+
 			List<AccordoServizioParteSpecifica> servizi2 = this.dynamicUtilsService.getServizi(tipoProtocollo,uriAccordoServizio, tipoSoggetto, nomeSoggetto);
-	
+
 			if(servizi2 != null && servizi2.size() > 0){
 				for (AccordoServizioParteSpecifica res : servizi2) {
 					boolean add= true;
@@ -621,49 +621,45 @@ public class DynamicPdDBeanUtils implements Serializable {
 						String nomePddFromSoggetto = this.getServerFromSoggetto(res.getIdErogatore().getTipo(), res.getIdErogatore().getNome());
 						add = this.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
 					}
-					
+
 					if(add && !user.isAdmin()){
-						
+
 						// controllo sul soggetto
 						boolean existsPermessoSoggetto = false;
 						if(user.getSizeSoggetti()>0){
-							for (UtenteSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-								if(utenteSoggetto.getServizio()==null){
-									if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggetto().getTipo()) &&
-											res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggetto().getNome())){
-										existsPermessoSoggetto = true;
+							for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+								if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getTipo()) &&
+										res.getIdErogatore().getNome().equals(utenteSoggetto.getNome())){
+									existsPermessoSoggetto = true;
+									break;
+								}
+							}
+						}
+
+						boolean existsPermessoServizio = false;
+						if(!existsPermessoSoggetto){
+							if(user.getSizeSoggetti()>0){
+								for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+									if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggettoErogatore().getTipo()) &&
+											res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggettoErogatore().getNome()) &&
+											res.getTipo().equals(utenteSoggetto.getTipo()) &&
+											res.getNome().equals(utenteSoggetto.getNome())){
+										existsPermessoServizio = true;
 										break;
 									}
 								}
 							}
 						}
-						
-						boolean existsPermessoServizio = false;
-						if(!existsPermessoSoggetto){
-							if(user.getSizeSoggetti()>0){
-								for (UtenteSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-									if(utenteSoggetto.getServizio()!=null){
-										if(res.getIdErogatore().getTipo().equals(utenteSoggetto.getSoggetto().getTipo()) &&
-												res.getIdErogatore().getNome().equals(utenteSoggetto.getSoggetto().getNome()) &&
-												res.getTipo().equals(utenteSoggetto.getServizio().getTipo()) &&
-												res.getNome().equals(utenteSoggetto.getServizio().getNome())){
-											existsPermessoServizio = true;
-											break;
-										}
-									}
-								}
-							}
-						}
-						
+
 						add = (existsPermessoSoggetto || existsPermessoServizio);
 					}
-					
+
 					if(add)
 						servizi.add(new SelectItem(label));
 				}
 			}
 
-				
+
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante la ricerca dei servizi per l'accordo ["+uriAccordoServizio+"] erogati dal Soggetto [" + tipoSoggetto + "/" + nomeSoggetto+ "]");
 		}
@@ -734,17 +730,17 @@ public class DynamicPdDBeanUtils implements Serializable {
 		Rectangle2D rectangle2d = fontToCheck.getStringBounds(text, this.fontRenderContext);
 		return (int) rectangle2d.getWidth(); 
 	}	
-//	public Integer getFontWidthWithFontMetrics(String text, String fontName, int fontStyle, int fontSize) throws Throwable{
-//		Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
-//		return this.getFontWidthWithFontMetrics(text,fontToCheck);
-//	} 
-//	public Integer getFontWidthWithFontMetrics(String text, Font fontTocheck ) throws Throwable{
-//		if(this.fm == null){
-//			Canvas c = new Canvas();
-//			this.fm = c.getFontMetrics(fontTocheck);
-//		}
-//		return this.fm.stringWidth(text);
-//	}
+	//	public Integer getFontWidthWithFontMetrics(String text, String fontName, int fontStyle, int fontSize) throws Throwable{
+	//		Font fontToCheck = new Font(fontName,  fontStyle , fontSize);
+	//		return this.getFontWidthWithFontMetrics(text,fontToCheck);
+	//	} 
+	//	public Integer getFontWidthWithFontMetrics(String text, Font fontTocheck ) throws Throwable{
+	//		if(this.fm == null){
+	//			Canvas c = new Canvas();
+	//			this.fm = c.getFontMetrics(fontTocheck);
+	//		}
+	//		return this.fm.stringWidth(text);
+	//	}
 
 	/***
 	 * utilizzo Lucida sans come font di dafault poiche' e' generalmente presente nella jdk
@@ -761,11 +757,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 		this.defaultFont = defaultFont;
 	}
 
-	
+
 	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore){
 		return this.dynamicUtilsService.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
 	}
-	
+
 	/***
 	 * 
 	 * Restituisce l'elenco delle porte delegate associate al soggetto fruitore passato come parametro
@@ -789,9 +785,9 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 		return list;
 	}
-	
+
 	public List<SelectItem> getListaSelectItemsPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
-		
+
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
@@ -807,28 +803,28 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 		return servizi;
 	}
-	
-	
+
+
 	public List<Soggetto> getListaSoggetti(String tipoProtocollo,TipoPdD tipoPdD){
 		return this.dynamicUtilsService.findElencoSoggettiFromTipoPdD(tipoProtocollo, tipoPdD);
 	}
-	
+
 	public List<Soggetto> getSoggettiErogatoreAutoComplete(String tipoProtocollo,String uriAccordoServizio, String input, boolean soloOperativi){
 		List<Soggetto> list = this.dynamicUtilsService.getSoggettiErogatoreAutoComplete(tipoProtocollo, uriAccordoServizio, input);
-		
+
 		if(soloOperativi && list != null && list.size() >0) {
 			List<Soggetto> lstOperativi = new ArrayList<Soggetto>();
-			
+
 			for (Soggetto soggetto : list) {
 				if(this.checkTipoPdd(soggetto.getServer(), TipoPdD.OPERATIVO))
 					lstOperativi.add(soggetto);
 			}
-			
+
 			return lstOperativi;
 		}
-		
-		
+
+
 		return new ArrayList<Soggetto>();
 	}
-	
+
 }

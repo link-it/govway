@@ -16,10 +16,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.resources.MapReader;
 
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.UtenteSoggetto;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -50,7 +50,7 @@ public class BaseForm implements Serializable {
 	
 	private String protocollo;
 	private List<SelectItem> protocolli= null;
-	private Utente user;
+	private User user;
 	
 	public BaseForm(){
 		
@@ -104,7 +104,7 @@ public class BaseForm implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Utente getUser() {
+	public User getUser() {
 
 		if (this.user != null) {
 			// e' stato impostato manualmente l'utente
@@ -114,7 +114,7 @@ public class BaseForm implements Serializable {
 		return Utility.getLoggedUtente();
 	}
 
-	public void setUser(Utente user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 	
@@ -134,8 +134,7 @@ public class BaseForm implements Serializable {
 	public void setTipoNomeMittente(String tipoNomeMittente) {
 		this.tipoNomeMittente = tipoNomeMittente;
 
-		if (StringUtils.isEmpty(this.tipoNomeMittente)
-				|| "--".equals(this.tipoNomeMittente))
+		if (StringUtils.isEmpty(this.tipoNomeMittente) || "--".equals(this.tipoNomeMittente))
 			this.tipoNomeMittente = null;
 	}
 
@@ -172,15 +171,14 @@ public class BaseForm implements Serializable {
 	public void setTipoNomeDestinatario(String nomeDestinatario) {
 		this.tipoNomeDestinatario = nomeDestinatario;
 
-		if (StringUtils.isEmpty(nomeDestinatario)
-				|| "--".equals(nomeDestinatario))
+		if (StringUtils.isEmpty(nomeDestinatario) || "--".equals(nomeDestinatario))
 			this.tipoNomeDestinatario = null;
 
 	}
 	
 	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException {
 
-		Utente u = getUser();
+		User u = getUser();
 		UserDetailsBean user = new UserDetailsBean();
 		user.setUtente(u);
 
@@ -206,16 +204,14 @@ public class BaseForm implements Serializable {
 
 	public void setTipoNomeTrafficoPerSoggetto(String trafficoPerSoggetto) {
 		this.tipoNomeTrafficoPerSoggetto = trafficoPerSoggetto;
-		if (StringUtils.isEmpty(trafficoPerSoggetto)
-				|| "--".equals(trafficoPerSoggetto))
+		if (StringUtils.isEmpty(trafficoPerSoggetto) || "--".equals(trafficoPerSoggetto))
 			this.tipoNomeTrafficoPerSoggetto = null;
 	}
 
 	public String getTipoSoggettoLocale() {
-		Utente u = getUser();
-		if (u.getUtenteSoggettoList().size() == 1) {
-			it.link.pdd.core.utenti.IdSoggetto s = u.getUtenteSoggetto(0)
-					.getSoggetto();
+		User u = getUser();
+		if (u.getSoggetti().size() == 1) {
+			IDSoggetto s = u.getSoggetti().get(0);
 			this.tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
 		}
 
@@ -228,11 +224,9 @@ public class BaseForm implements Serializable {
 	 * @return
 	 */
 	public String getSoggettoLocale() {
-
-		Utente u = getUser();
-		if (u.getUtenteSoggettoList().size() == 1) {
-			it.link.pdd.core.utenti.IdSoggetto s = u.getUtenteSoggetto(0)
-					.getSoggetto();
+		User u = getUser();
+		if (u.getSoggetti().size() == 1) {
+			IDSoggetto s = u.getSoggetti().get(0);
 			this.tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
 		}
 
@@ -253,23 +247,19 @@ public class BaseForm implements Serializable {
 	public List<Soggetto> getSoggettiGestione() {
 		ArrayList<Soggetto> soggetti = new ArrayList<Soggetto>();
 
-		Utente u = getUser();
+		User u = getUser();
 
 		// se il soggetto locale e' specificato allora ritorno solo quello
 		if (StringUtils.isNotEmpty(this.tipoNomeSoggettoLocale)) {
 
 			// nomi.add(this.soggettoLocale);
-			String tipo = Utility
-					.parseTipoSoggetto(this.tipoNomeSoggettoLocale);
-			String nome = Utility
-					.parseNomeSoggetto(this.tipoNomeSoggettoLocale);
+			String tipo = Utility.parseTipoSoggetto(this.tipoNomeSoggettoLocale);
+			String nome = Utility.parseNomeSoggetto(this.tipoNomeSoggettoLocale);
 
-			for (UtenteSoggetto us : u.getUtenteSoggettoList()) {
-				it.link.pdd.core.utenti.IdSoggetto idSog = us.getSoggetto();
-				if (idSog.getTipo().equals(tipo)
-						&& idSog.getNome().equals(nome)) {
+			for (IDSoggetto idSog : u.getSoggetti()) {
+				if (idSog.getTipo().equals(tipo) && idSog.getNome().equals(nome)) {
 					IdSoggetto idsog2 = new IdSoggetto();
-					idsog2.setId(idSog.getId());
+					//idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 					Soggetto soggetto = Utility.getSoggetto(idsog2);
@@ -280,10 +270,9 @@ public class BaseForm implements Serializable {
 
 			return soggetti;
 		} else {
-			for (UtenteSoggetto us : u.getUtenteSoggettoList()) {
-				it.link.pdd.core.utenti.IdSoggetto idSog = us.getSoggetto();
+			for (IDSoggetto idSog : u.getSoggetti()) {
 				IdSoggetto idsog2 = new IdSoggetto();
-				idsog2.setId(idSog.getId());
+				//idsog2.setId(idSog.getId());
 				idsog2.setNome(idSog.getNome());
 				idsog2.setTipo(idSog.getTipo());
 
@@ -316,8 +305,7 @@ public class BaseForm implements Serializable {
 	public void setServizioApplicativo(String servizioApplicativo) {
 		this.servizioApplicativo = servizioApplicativo;
 
-		if (StringUtils.isEmpty(servizioApplicativo)
-				|| "--".equals(servizioApplicativo))
+		if (StringUtils.isEmpty(servizioApplicativo) || "--".equals(servizioApplicativo))
 			this.servizioApplicativo = null;
 	}
 	
@@ -353,15 +341,12 @@ public class BaseForm implements Serializable {
 	public List<SelectItem> getProtocolli() {
 		//		if(this.protocolli == null)
 		this.protocolli = new ArrayList<SelectItem>();
-
 		this.protocolli.add(new SelectItem("*"));
-
-
 
 		try {
 			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
 			List<String> listaNomiProtocolli = new  ArrayList<String>();
 
@@ -375,7 +360,7 @@ public class BaseForm implements Serializable {
 				}
 
 				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolBySubjectType(tipo);
+					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
 					if(!listaNomiProtocolli.contains(protocolBySubjectType))
 						listaNomiProtocolli.add(protocolBySubjectType);
 				}
@@ -391,7 +376,7 @@ public class BaseForm implements Serializable {
 			}
 
 			for (String protocolKey : listaNomiProtocolli) {
-				IProtocolFactory protocollo = protocolFactories.get(protocolKey);
+				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
 				this.protocolli.add(new SelectItem(protocollo.getProtocol()));
 			}
 
@@ -406,7 +391,7 @@ public class BaseForm implements Serializable {
 	public boolean isShowListaProtocolli(){
 		try {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 			int numeroProtocolli = protocolFactories.size();
 
 			// se c'e' installato un solo protocollo non visualizzo la select List.
@@ -426,7 +411,7 @@ public class BaseForm implements Serializable {
 				}
 
 				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolBySubjectType(tipo);
+					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
 					if(!listaNomiProtocolli.contains(protocolBySubjectType))
 						listaNomiProtocolli.add(protocolBySubjectType);
 				}

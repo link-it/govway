@@ -13,7 +13,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.openspcoop2.utils.SortedMap;
-import org.openspcoop2.utils.resources.IFilter;
+import org.openspcoop2.utils.transport.IFilter;
 import org.slf4j.Logger;
 
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
