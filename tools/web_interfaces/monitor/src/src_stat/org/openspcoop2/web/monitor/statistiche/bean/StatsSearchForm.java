@@ -10,15 +10,14 @@ import java.util.Map;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoStatistica;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.TipiDatabase;
 
-import org.openspcoop2.core.commons.dao.DAO;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoStatistica;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
@@ -144,7 +143,7 @@ public class StatsSearchForm extends BaseSearchForm{
 
 	@Override
 	public TipiDatabase getDatabaseType() {
-		return _getTipoDatabase(DAO.TRANSAZIONI_STATISTICHE);
+		return _getTipoDatabase(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
 	}
 
 	@Override

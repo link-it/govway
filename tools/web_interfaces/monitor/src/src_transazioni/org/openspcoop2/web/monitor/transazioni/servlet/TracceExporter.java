@@ -1,6 +1,5 @@
 package org.openspcoop2.web.monitor.transazioni.servlet;
 
-import it.link.pdd.core.transazioni.Transazione;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -27,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;

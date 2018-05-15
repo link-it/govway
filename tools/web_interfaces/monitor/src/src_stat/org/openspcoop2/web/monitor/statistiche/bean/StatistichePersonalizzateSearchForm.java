@@ -21,15 +21,14 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
@@ -72,7 +71,7 @@ implements StatisticsContext{
 
 	@Override
 	public TipiDatabase getDatabaseType() {
-		return _getTipoDatabase(DAO.TRANSAZIONI_STATISTICHE);
+		return _getTipoDatabase(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
 	}
 
 	public void setService(IStatisticaPersonalizzataService service) {
@@ -738,7 +737,7 @@ implements StatisticsContext{
 	private IDAccordo getIDAccordoFromAsps(AccordoServizioParteSpecifica aspsFromValues)
 			throws DriverRegistroServiziException {
 		IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
-		String ver = idAccordoServizioParteComune.getVersione();
+		Integer ver = idAccordoServizioParteComune.getVersione();
 		String nomeSoggettoReferente = null;
 		String tipoSoggettoReferente = null;
 

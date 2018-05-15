@@ -186,7 +186,7 @@ public class MultiFileExporter implements IExporter{
 
 							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
 							ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
-							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.XML);
+							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 
 							in = new ByteArrayInputStream((newLine + traccia).getBytes());
 

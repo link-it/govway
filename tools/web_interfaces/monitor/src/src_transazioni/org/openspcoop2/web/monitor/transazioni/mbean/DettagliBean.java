@@ -276,7 +276,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 					ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
 
 					try {
-						String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.XML);
+						String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 
 						in = new ByteArrayInputStream(
 								(newLine + traccia).getBytes());
@@ -553,9 +553,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 		if (tr != null && this.protocolFactory == null) {
 			try {
-				this.protocolFactory = ProtocolFactoryManager.getInstance()
-						.getProtocolFactoryByName(
-								this.getTraccia().getProtocollo());
+				this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.getTraccia().getProtocollo());
 			} catch (ProtocolException e) {
 				DettagliBean.log.error("Errore durante la creazione della Factory", e);
 			}

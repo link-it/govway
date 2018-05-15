@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;

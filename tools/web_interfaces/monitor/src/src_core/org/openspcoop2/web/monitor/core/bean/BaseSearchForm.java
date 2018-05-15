@@ -115,7 +115,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 	}
 
-	public TipiDatabase _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo pfInfo) {
+	public TipiDatabase _getTipoDatabase(org.openspcoop2.generic_project.beans.IProjectInfo pfInfo) {
 		if(this.tipoDatabase == null){
 			try {
 				PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);

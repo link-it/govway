@@ -31,7 +31,7 @@ public class TracciaBean extends Traccia {
 
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
-	private transient IProtocolFactory protocolFactory;
+	private transient IProtocolFactory<?> protocolFactory;
 	
 	private BustaBean bustaBean;
 
@@ -59,11 +59,11 @@ public class TracciaBean extends Traccia {
 
 	}
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 	

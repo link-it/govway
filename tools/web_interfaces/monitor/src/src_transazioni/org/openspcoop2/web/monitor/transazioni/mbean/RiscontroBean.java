@@ -25,10 +25,10 @@ public class RiscontroBean extends Riscontro {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient IProtocolFactory protocolFactory;
+	private transient IProtocolFactory<?> protocolFactory;
 	private transient ITraduttore traduttore;
 
-	public RiscontroBean(Riscontro riscontro, IProtocolFactory protocolFactory) {
+	public RiscontroBean(Riscontro riscontro, IProtocolFactory<?> protocolFactory) {
 
 		this.protocolFactory = protocolFactory;
 

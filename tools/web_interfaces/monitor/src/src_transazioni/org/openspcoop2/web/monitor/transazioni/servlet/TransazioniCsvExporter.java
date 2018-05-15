@@ -11,15 +11,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.protocol.sdk.diagnostica.IDriverMsgDiagnostici;
-import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
-import org.openspcoop2.utils.resources.HttpUtilities;
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.mime.MimeTypes;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import it.link.pdd.core.utenti.Utente;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -38,8 +38,8 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 	private static Boolean enableHeaderInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
-	private transient IDriverTracciamento tracciamentoService = null;
-	private transient IDriverMsgDiagnostici diagnosticiService = null; 
+	private transient ITracciaDriver tracciamentoService = null;
+	private transient IDiagnosticDriver diagnosticiService = null; 
 
 	@Override
 	public void init() throws ServletException {
@@ -79,8 +79,8 @@ public class TransazioniCsvExporter extends HttpServlet{
 			TransazioniSearchForm searchForm = (TransazioniSearchForm)sfInSession.clone();
 
 			// prelevo le informazioni sull'utente loggato
-			Utente utente =null;
-			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			User utente =null;
+			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 			if(lbInSession != null && lbInSession.isLoggedIn()) {
 				utente = lbInSession.getUtente();
 			}

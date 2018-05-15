@@ -17,19 +17,19 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.constants.Colors;
-import it.link.pdd.core.utenti.StatoTabella;
-import it.link.pdd.core.utenti.Utente;
-import it.link.pdd.core.utenti.UtenteSoggetto;
+import org.openspcoop2.core.transazioni.constants.Colors;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.lib.users.dao.Stato;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -536,17 +536,21 @@ public class SummaryBean implements Serializable{
 	}
 
 
+	@SuppressWarnings("deprecation")
 	private PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException{
+		UserDetailsBean loggedUser = Utility.getLoggedUser();
+		User u =  Utility.getLoggedUtente();
 		
-		UserDetailsBean loggedUser = Utility.getLoggedUser();// (UserDetailsBean) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	
-		Utente u =  Utility.getLoggedUtente();
-		if (u.getUtenteSoggettoList().size() == 1) {
-			UtenteSoggetto utenteSoggetto = u.getUtenteSoggetto(0);
-			IDServizio idServizio = new IDServizio(utenteSoggetto.getSoggetto().getTipo(), utenteSoggetto.getSoggetto().getNome());
-			if(utenteSoggetto.getServizio()!=null){
-				idServizio.setTipoServizio(utenteSoggetto.getServizio().getTipo());
-				idServizio.setServizio(utenteSoggetto.getServizio().getNome());
+		int foundSoggetti = u.getSoggetti() != null ? u.getSoggetti().size() : 0;
+		int foundServizi = u.getServizi() != null ? u.getServizi().size() : 0;
+		
+		if((foundServizi + foundSoggetti) == 1) {
+			IDServizio idServizio =  null;
+			if(foundServizi == 1) {
+				idServizio = u.getServizi().get(0);
+			} else {
+				idServizio = new IDServizio();
+				idServizio.setSoggettoErogatore(u.getSoggetti().get(0));
 			}
 			this.soggettoLocale = Utility.convertToSoggettoServizio(idServizio);
 		}
@@ -559,8 +563,8 @@ public class SummaryBean implements Serializable{
 			IDServizio idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
 			tipoSoggettoLocale = idServizio.getSoggettoErogatore().getTipo();
 			nomeSoggettoLocale = idServizio.getSoggettoErogatore().getNome();
-			tipoServizio = idServizio.getTipoServizio(); // possono essere null
-			nomeServizio = idServizio.getServizio(); // possono essere null
+			tipoServizio = idServizio.getTipo(); // possono essere null
+			nomeServizio = idServizio.getNome(); // possono essere null
 		}
 		
 		return PermessiUtenteOperatore.getPermessiUtenteOperatore(loggedUser, 
@@ -853,6 +857,7 @@ public class SummaryBean implements Serializable{
 
 	}
 	
+	@SuppressWarnings("deprecation")
 	public List<String> soggettiServiziAutoComplete(Object val){
 
 		List<String> list = new ArrayList<String>();
@@ -866,7 +871,8 @@ public class SummaryBean implements Serializable{
 			List<Soggetto> listSoggetti = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
 			if(listSoggetti!=null && listSoggetti.size()>0){
 				for (Soggetto soggetto : listSoggetti) {
-					IDServizio idServizio = new IDServizio(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+					IDServizio idServizio = new IDServizio();
+					idServizio.setSoggettoErogatore(new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()));
 					listInternal.add(ParseUtility.convertToSoggettoServizio(idServizio));
 				}
 			}
@@ -874,8 +880,10 @@ public class SummaryBean implements Serializable{
 			List<AccordoServizioParteSpecifica> listServizi = this.dynamicUtilsService.getServizi(tipoProtocollo, null, null, null,(String)val,false);
 			if(listServizi!=null && listServizi.size()>0){
 				for (AccordoServizioParteSpecifica asps : listServizi) {
-					IDServizio idServizio = new IDServizio(asps.getIdErogatore().getTipo(), asps.getIdErogatore().getNome(),
-							asps.getTipo(),asps.getNome());
+					IDServizio idServizio = new IDServizio();
+					idServizio.setSoggettoErogatore(new IDSoggetto(asps.getIdErogatore().getTipo(), asps.getIdErogatore().getNome()));
+					idServizio.setTipo(asps.getTipo());
+					idServizio.setNome(asps.getNome());
 					listInternal.add(ParseUtility.convertToSoggettoServizio(idServizio));
 				}
 			}
@@ -910,14 +918,14 @@ public class SummaryBean implements Serializable{
 				p = "{" + p + "}"; // trasformo in json
 			}
 
-			StatoTabella state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
+			Stato state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
 			state.setStato(p);
 			this.userService.saveTableState(STATO_PERIODO,Utility.getLoggedUtente(), state);
 		}
 	}
 
 	public String leggiStatoPeriodo(){
-		StatoTabella state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
+		Stato state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
 		String statoPeriodo = state.getStato();
 		if(statoPeriodo!=null){
 			if(statoPeriodo.startsWith("{")){

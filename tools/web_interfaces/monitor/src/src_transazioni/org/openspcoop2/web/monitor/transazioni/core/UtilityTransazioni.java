@@ -1,6 +1,5 @@
 package org.openspcoop2.web.monitor.transazioni.core;
 
-import it.link.pdd.core.transazioni.constants.RuoloProtocolloTransazione;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
@@ -61,6 +60,7 @@ import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
 import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -239,7 +239,7 @@ public class UtilityTransazioni {
 			sb.append("\n");
 		}
 		if (t.getRuoloTransazione() >= 0) {
-			RuoloProtocolloTransazione ruolo = RuoloProtocolloTransazione.toEnumConstant(t.getRuoloTransazione());
+			RuoloTransazione ruolo = RuoloTransazione.toEnumConstant(t.getRuoloTransazione());
 			if(ruolo!=null){
 				sb.append("Profilo: ");
 				sb.append(ruolo.name());
@@ -1377,12 +1377,12 @@ public class UtilityTransazioni {
 			transazione.setAttachId(allegato.getId());
 		}
 
-		if (StringUtils.isNotEmpty(allegato.getLocation())) {
-			transazione.setLocation(allegato.getLocation());
+		if (StringUtils.isNotEmpty(allegato.getContentLocation())) {
+			transazione.setLocation(allegato.getContentLocation());
 		}
 
-		if (StringUtils.isNotEmpty(allegato.getMimetype())) {
-			transazione.setMimeType(allegato.getMimetype());
+		if (StringUtils.isNotEmpty(allegato.getContentType())) {
+			transazione.setMimeType(allegato.getContentType());
 		}
 
 		marshaller.marshal(objFactory.createTransazione(transazione), out);

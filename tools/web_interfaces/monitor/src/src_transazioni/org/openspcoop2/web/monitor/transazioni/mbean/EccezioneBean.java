@@ -27,10 +27,10 @@ public class EccezioneBean extends Eccezione {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient IProtocolFactory protocolFactory;
+	private transient IProtocolFactory<?> protocolFactory;
 	private transient ITraduttore traduttore;
 
-	public EccezioneBean(Eccezione eccezione, IProtocolFactory protocolFactory) {
+	public EccezioneBean(Eccezione eccezione, IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 
 		try {

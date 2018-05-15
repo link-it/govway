@@ -21,10 +21,10 @@ import org.slf4j.Logger;
 
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import it.link.pdd.core.utenti.StatoTabella;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -130,7 +130,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
-			String ver = idAccordoServizioParteComune.getVersione();
+			Integer ver = idAccordoServizioParteComune.getVersione();
 			String nomeSoggettoReferente = null;
 			String tipoSoggettoReferente = null;
 
@@ -188,7 +188,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
-			String ver = idAccordoServizioParteComune.getVersione();
+			Integer ver = idAccordoServizioParteComune.getVersione();
 			String nomeSoggettoReferente = null;
 			String tipoSoggettoReferente = null;
 
@@ -611,13 +611,6 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 				return false;
 		}
 		
-		// colonna protocollo  e versione controllata da properties
-		if(key.equals(CostantiExport.KEY_COL_PROTOCOLLO) || key.equals(CostantiExport.KEY_COL_VERSIONE_SERVIZIO)){
-			Boolean bc = this.getBackwardCompatibility() != null ? this.getBackwardCompatibility() : false;
-			if(bc)
-				return false;
-		}
-		
 		// colonna pdd Codice controllata da numero soggetti associati all'utente
 		if(key.equals(CostantiExport.KEY_COL_PDD_CODICE)){
 			if(Utility.getLoggedUser().getSizeSoggetti() == 1)
@@ -673,7 +666,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 		if (StringUtils.isNotEmpty(this.tableState))
 			return this.tableState;
 
-		StatoTabella state = this.userService.getTableState(NomiTabelle.TRANSAZIONI.toString(),Utility.getLoggedUtente());
+		Stato state = this.userService.getTableState(NomiTabelle.TRANSAZIONI.toString(),Utility.getLoggedUtente());
 
 		this.tableState = state.getStato();
 
@@ -683,7 +676,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 	public void setTableState(String tableState) {
 
 		this.tableState = tableState;
-		StatoTabella state = this.userService.getTableState(NomiTabelle.TRANSAZIONI.toString(),Utility.getLoggedUtente());
+		Stato state = this.userService.getTableState(NomiTabelle.TRANSAZIONI.toString(),Utility.getLoggedUtente());
 		state.setStato(this.tableState);
 		this.userService.saveTableState(NomiTabelle.TRANSAZIONI.toString(),Utility.getLoggedUtente(), state);
 

@@ -23,17 +23,18 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.IDriverMsgDiagnostici;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
-import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.slf4j.Logger;
 
@@ -72,8 +73,8 @@ public class SingleCsvFileExporter implements IExporter{
 	private List<String> colonneSelezionate = null;
 
 	private ITransazioniService transazioniService;
-	private IDriverTracciamento tracciamentoService;
-	private IDriverMsgDiagnostici diagnosticiService;
+	private ITracciaDriver tracciamentoService;
+	private IDiagnosticDriver diagnosticiService;
 	private ITransazioniExportService transazioniExporterService;
 
 	private String fileName=null;
@@ -81,7 +82,7 @@ public class SingleCsvFileExporter implements IExporter{
 	private SimpleDateFormat sdfDataTransazioni = new SimpleDateFormat(CostantiExport.PATTERN_DATA_TRANSAZIONI);
 	private EsitoUtils esitoUtils;
 
-	private SingleCsvFileExporter(ExporterCsvProperties properties, ITransazioniService transazioniService, IDriverTracciamento tracciamentoService,IDriverMsgDiagnostici diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+	private SingleCsvFileExporter(ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		this.enableHeaderInfo = properties.isEnableHeaderInfo();
 
 		this.exportTracce = properties.isExportTracce();
@@ -110,19 +111,19 @@ public class SingleCsvFileExporter implements IExporter{
 		SingleCsvFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
 
-	public SingleCsvFileExporter(OutputStream outStream,ExporterCsvProperties properties, ITransazioniService transazioniService, IDriverTracciamento tracciamentoService,IDriverMsgDiagnostici diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+	public SingleCsvFileExporter(OutputStream outStream,ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		this(properties, transazioniService, tracciamentoService, diagnosticiService,transazioniExport);
 		this.outStream = outStream;
 	}
 
-	public SingleCsvFileExporter(File destFile,ExporterCsvProperties properties, ITransazioniService transazioniService, IDriverTracciamento tracciamentoService,IDriverMsgDiagnostici diagnosticiService,ITransazioniExportService transazioniExport) throws Exception{
+	public SingleCsvFileExporter(File destFile,ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService,ITransazioniExportService transazioniExport) throws Exception{
 		this(properties,transazioniService,tracciamentoService,diagnosticiService,transazioniExport);
 		this.outStream = new FileOutputStream(destFile);
 		this.fileName = destFile.getName();
 		SingleCsvFileExporter.log.info("\n\t -Esportazione su file:"+destFile.getAbsolutePath());
 	}
 
-	public SingleCsvFileExporter(String pathToFile,ExporterCsvProperties properties, ITransazioniService transazioniService, IDriverTracciamento tracciamentoService,IDriverMsgDiagnostici diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+	public SingleCsvFileExporter(String pathToFile,ExporterCsvProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		this(new File(pathToFile), properties, transazioniService, tracciamentoService, diagnosticiService,transazioniExport);
 	}
 
@@ -156,7 +157,7 @@ public class SingleCsvFileExporter implements IExporter{
 					String newLine = j > 0 ? "\n\n" : CostantiExport.EMPTY_STRING;
 
 					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
-					IXMLDiagnosticoBuilder diagnosticoBuilder = pf.createXMLDiagnosticoBuilder();
+					IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
 					
 					if(j==0){
 						XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
@@ -173,7 +174,7 @@ public class SingleCsvFileExporter implements IExporter{
 						}
 					}
 					
-					String msgDiagnostico = diagnosticoBuilder.toString(msg);
+					String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
 					sbDiagnostici.append(newLine).append(msgDiagnostico);
 				}
 				if(tail!=null && !"".equals(tail)){
@@ -209,7 +210,7 @@ public class SingleCsvFileExporter implements IExporter{
 			ArrayList<Traccia> tracce = new ArrayList<Traccia>();
 			try{
 				if(!isRisposta){
-					tracciaRichiesta=this.tracciamentoService.getTraccia(TipoTraccia.RICHIESTA,properties);
+					tracciaRichiesta=this.tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
 					tracce.add(tracciaRichiesta);
 				}
 			}catch(DriverTracciamentoException e){
@@ -221,7 +222,7 @@ public class SingleCsvFileExporter implements IExporter{
 			}
 			try{
 				if(isRisposta) {
-					tracciaRisposta = this.tracciamentoService.getTraccia(TipoTraccia.RISPOSTA,properties);
+					tracciaRisposta = this.tracciamentoService.getTraccia(RuoloMessaggio.RISPOSTA,properties);
 					tracce.add(tracciaRisposta);
 				}
 			}catch(DriverTracciamentoException e){
@@ -239,11 +240,11 @@ public class SingleCsvFileExporter implements IExporter{
 						Traccia tr = tracce.get(j);
 						//						String newLine = j > 0 ? "\n\n" : EMPTY_STRING;
 
-						IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
-						IXMLTracciaBuilder tracciaBuilder = pf.createXMLTracciaBuilder();
+						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
+						ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
 
 						try {
-							String traccia = tracciaBuilder.toString(tr);
+							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.DEFAULT);
 							oneLine.add(traccia);
 						} catch (ProtocolException e) {
 							String idTransazione = t.getIdTransazione();

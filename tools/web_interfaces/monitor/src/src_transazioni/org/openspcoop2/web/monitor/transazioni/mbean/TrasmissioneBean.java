@@ -26,11 +26,10 @@ public class TrasmissioneBean extends Trasmissione {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient IProtocolFactory protocolFactory;
+	private transient IProtocolFactory<?> protocolFactory;
 	private transient ITraduttore traduttore;
 
-	public TrasmissioneBean(Trasmissione trasmissione,
-			IProtocolFactory protocolFactory) {
+	public TrasmissioneBean(Trasmissione trasmissione, IProtocolFactory<?> protocolFactory) {
 
 		this.protocolFactory = protocolFactory;
 

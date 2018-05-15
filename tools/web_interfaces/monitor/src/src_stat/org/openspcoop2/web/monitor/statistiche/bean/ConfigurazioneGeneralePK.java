@@ -2,7 +2,8 @@ package org.openspcoop2.web.monitor.statistiche.bean;
 
 import java.io.Serializable;
 
-import it.link.pdd.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+
 
 public class ConfigurazioneGeneralePK implements Serializable {
 
