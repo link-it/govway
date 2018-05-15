@@ -6,6 +6,36 @@
 	
 	
 	
+	<!-- ********* INFORMAZIONI GENERALI ************* -->
+	<xsd:element name="plugin-info">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" single-instance="true"/>
+					<linkit:sql-table-mapping name="plugin_info" >
+						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="content" type="xsd:base64Binary">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-binary="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>    
+	</xsd:element>
+	
+	
+	
 	
 	<!-- ********* PLUGIN DEI SERVIZI PER PERSONALIZZAZIONI ************* -->
 	

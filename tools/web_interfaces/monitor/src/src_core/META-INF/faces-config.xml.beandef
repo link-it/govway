@@ -105,16 +105,6 @@
 			<value>#{messageManager}</value>
 		</managed-property>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>licenseBean</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.core.mbean.LicenseBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>service</property-name>
-			<property-class>org.openspcoop2.web.monitor.core.dao.ILicenseService</property-class>
-			<value>#{licenseService}</value>
-		</managed-property>
-	</managed-bean>
 	<navigation-rule>
 		<from-view-id>*</from-view-id>
 		<navigation-case>

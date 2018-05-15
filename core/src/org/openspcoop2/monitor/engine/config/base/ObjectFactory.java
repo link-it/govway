@@ -164,6 +164,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PluginInfo }
+     */
+    public PluginInfo createPluginInfo() {
+        return new PluginInfo();
+    }
+
+    /**
      * Create an instance of {@link Plugin }
      */
     public Plugin createPlugin() {

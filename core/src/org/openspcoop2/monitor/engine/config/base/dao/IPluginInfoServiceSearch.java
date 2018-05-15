@@ -17,26 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.monitor.engine.config.base.model;
+package org.openspcoop2.monitor.engine.config.base.dao;
 
-/**     
- * Factory
+import org.openspcoop2.monitor.engine.config.base.PluginInfo;
+import org.openspcoop2.generic_project.dao.IServiceSearchSingleObject;
+
+
+/** 
+* Service can be used for research objects on the backend of type org.openspcoop2.monitor.engine.config.base.PluginInfo  
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ModelFactory {
 
-	public static PluginInfoModel PLUGIN_INFO = new PluginInfoModel();
-	
-	public static PluginModel PLUGIN = new PluginModel();
-	
-	public static ConfigurazioneServizioModel CONFIGURAZIONE_SERVIZIO = new ConfigurazioneServizioModel();
-	
-	public static ConfigurazioneServizioAzioneModel CONFIGURAZIONE_SERVIZIO_AZIONE = new ConfigurazioneServizioAzioneModel();
-	
-	public static ConfigurazioneFiltroModel CONFIGURAZIONE_FILTRO = new ConfigurazioneFiltroModel();
-	
-
+public interface IPluginInfoServiceSearch extends IServiceSearchSingleObject<PluginInfo> {
 }

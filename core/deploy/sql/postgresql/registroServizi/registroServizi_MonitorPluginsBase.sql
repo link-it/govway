@@ -1,3 +1,11 @@
+-- INFORMAZIONI GENERALI
+
+CREATE TABLE plugin_info
+(
+	content BYTEA NOT NULL
+);
+
+
 -- PLUGINS
 
 CREATE SEQUENCE seq_plugins start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
@@ -71,7 +79,7 @@ CREATE TABLE plugins_filtro_comp
 	idporta_destinatario VARCHAR(255),
 	tipo_servizio VARCHAR(255),
 	nome_servizio VARCHAR(255),
-	versione_servizio INT,
+	versione_servizio INT DEFAULT 1,
 	azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_plugins_filtro_comp') NOT NULL,
@@ -94,7 +102,7 @@ CREATE TABLE plugins_conf_servizi
 	accordo VARCHAR(255) NOT NULL,
 	tipo_soggetto_referente VARCHAR(255) NOT NULL,
 	nome_soggetto_referente VARCHAR(255) NOT NULL,
-	versione VARCHAR(255) NOT NULL,
+	versione INT NOT NULL DEFAULT 1,
 	-- Nome del port-type
 	servizio VARCHAR(255),
 	-- fk/pk columns
@@ -144,7 +152,7 @@ CREATE TABLE plugins_conf_filtri
 	idporta_destinatario VARCHAR(255),
 	tipo_servizio VARCHAR(255),
 	nome_servizio VARCHAR(255),
-	versione_servizio INT,
+	versione_servizio INT DEFAULT 1,
 	azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_plugins_conf_filtri') NOT NULL,

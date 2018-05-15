@@ -23,7 +23,5 @@
 	<bean id="genericService" class="org.openspcoop2.web.monitor.core.dao.GenericService" scope="request">
 	</bean>
 	
-	<bean id="licenseService" class="org.openspcoop2.web.monitor.core.dao.LicenseService" scope="request"/>
-	
 </beans>
 

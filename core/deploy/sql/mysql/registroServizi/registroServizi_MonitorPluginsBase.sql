@@ -1,3 +1,11 @@
+-- INFORMAZIONI GENERALI
+
+CREATE TABLE plugin_info
+(
+	content MEDIUMBLOB NOT NULL
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+
 -- PLUGINS
 
 CREATE TABLE plugins
@@ -68,7 +76,7 @@ CREATE TABLE plugins_filtro_comp
 	idporta_destinatario VARCHAR(255),
 	tipo_servizio VARCHAR(255),
 	nome_servizio VARCHAR(255),
-	versione_servizio INT,
+	versione_servizio INT DEFAULT 1,
 	azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
@@ -89,7 +97,7 @@ CREATE TABLE plugins_conf_servizi
 	accordo VARCHAR(255) NOT NULL,
 	tipo_soggetto_referente VARCHAR(255) NOT NULL,
 	nome_soggetto_referente VARCHAR(255) NOT NULL,
-	versione VARCHAR(255) NOT NULL,
+	versione INT NOT NULL DEFAULT 1,
 	-- Nome del port-type
 	servizio VARCHAR(255),
 	-- fk/pk columns
@@ -137,7 +145,7 @@ CREATE TABLE plugins_conf_filtri
 	idporta_destinatario VARCHAR(255),
 	tipo_servizio VARCHAR(255),
 	nome_servizio VARCHAR(255),
-	versione_servizio INT,
+	versione_servizio INT DEFAULT 1,
 	azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,

@@ -1,3 +1,11 @@
+-- INFORMAZIONI GENERALI
+
+CREATE TABLE plugin_info
+(
+	content BLOB NOT NULL
+);
+
+
 -- PLUGINS
 
 CREATE SEQUENCE seq_plugins MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
@@ -114,6 +122,9 @@ CREATE TABLE plugins_filtro_comp
 	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
 );
 
+
+ALTER TABLE plugins_filtro_comp MODIFY versione_servizio DEFAULT 1;
+
 CREATE TRIGGER trg_plugins_filtro_comp
 BEFORE
 insert on plugins_filtro_comp
@@ -138,7 +149,7 @@ CREATE TABLE plugins_conf_servizi
 	accordo VARCHAR2(255) NOT NULL,
 	tipo_soggetto_referente VARCHAR2(255) NOT NULL,
 	nome_soggetto_referente VARCHAR2(255) NOT NULL,
-	versione VARCHAR2(255) NOT NULL,
+	versione NUMBER NOT NULL,
 	-- Nome del port-type
 	servizio VARCHAR2(255),
 	-- fk/pk columns
@@ -149,6 +160,9 @@ CREATE TABLE plugins_conf_servizi
 
 -- index
 CREATE INDEX idx_conf_servizi_1 ON plugins_conf_servizi (accordo,tipo_soggetto_referente,nome_soggetto_referente,versione,servizio);
+
+ALTER TABLE plugins_conf_servizi MODIFY versione DEFAULT 1;
+
 CREATE TRIGGER trg_plugins_conf_servizi
 BEFORE
 insert on plugins_conf_servizi
@@ -219,6 +233,9 @@ CREATE TABLE plugins_conf_filtri
 	-- fk/pk keys constraints
 	CONSTRAINT pk_plugins_conf_filtri PRIMARY KEY (id)
 );
+
+
+ALTER TABLE plugins_conf_filtri MODIFY versione_servizio DEFAULT 1;
 
 CREATE TRIGGER trg_plugins_conf_filtri
 BEFORE

@@ -19,6 +19,7 @@ DROP TABLE plugins_servizi_comp_init_seq;
 DROP TABLE plugins_servizi_comp;
 DROP TABLE plugins_init_seq;
 DROP TABLE plugins;
+DROP TABLE plugin_info;
 DROP SEQUENCE seq_plugins_conf_filtri;
 DROP SEQUENCE seq_plugins_conf_azioni;
 DROP SEQUENCE seq_plugins_conf_servizi;

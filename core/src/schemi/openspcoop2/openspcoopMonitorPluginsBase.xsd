@@ -20,6 +20,8 @@
 					<linkit:sql>
 						<linkit:sql-script generate="true">
 							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[INFORMAZIONI GENERALI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="plugin-info" object-type="plugin-info"/>
 								<linkit:sql-comment><![CDATA[PLUGINS]]></linkit:sql-comment>
 								<linkit:sql-table object-name="plugin"	object-type="plugin"/>
 								<linkit:sql-table object-name="plugin-servizio-compatibilita"	object-type="plugin-servizio-compatibilita"/>
@@ -45,6 +47,35 @@
 	
 	
 	
+	
+	
+	<!-- ********* INFORMAZIONI GENERALI ************* -->
+	<xsd:element name="plugin-info">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" single-instance="true"/>
+					<linkit:sql-table-mapping name="plugin_info" >
+						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="content" type="xsd:base64Binary">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping medium-binary="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>    
+	</xsd:element>
 	
 	
 	

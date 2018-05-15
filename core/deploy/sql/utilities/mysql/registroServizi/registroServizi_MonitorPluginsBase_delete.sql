@@ -5,3 +5,4 @@ DELETE FROM plugins_filtro_comp;
 DELETE FROM plugins_azioni_comp;
 DELETE FROM plugins_servizi_comp;
 DELETE FROM plugins;
+DELETE FROM plugin_info;

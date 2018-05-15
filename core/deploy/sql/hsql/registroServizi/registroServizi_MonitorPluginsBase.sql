@@ -1,3 +1,11 @@
+-- INFORMAZIONI GENERALI
+
+CREATE TABLE plugin_info
+(
+	content VARBINARY(16777215) NOT NULL
+);
+
+
 -- PLUGINS
 
 CREATE SEQUENCE seq_plugins AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Scommentare in hsql 2.x) NO CYCLE;
@@ -92,6 +100,9 @@ CREATE TABLE plugins_filtro_comp
 	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
 );
 
+
+ALTER TABLE plugins_filtro_comp ALTER COLUMN versione_servizio SET DEFAULT 1;
+
 CREATE TABLE plugins_filtro_comp_init_seq (id BIGINT);
 INSERT INTO plugins_filtro_comp_init_seq VALUES (NEXT VALUE FOR seq_plugins_filtro_comp);
 
@@ -107,7 +118,7 @@ CREATE TABLE plugins_conf_servizi
 	accordo VARCHAR(255) NOT NULL,
 	tipo_soggetto_referente VARCHAR(255) NOT NULL,
 	nome_soggetto_referente VARCHAR(255) NOT NULL,
-	versione VARCHAR(255) NOT NULL,
+	versione INT NOT NULL,
 	-- Nome del port-type
 	servizio VARCHAR(255),
 	-- fk/pk columns
@@ -118,6 +129,9 @@ CREATE TABLE plugins_conf_servizi
 
 -- index
 CREATE INDEX idx_conf_servizi_1 ON plugins_conf_servizi (accordo,tipo_soggetto_referente,nome_soggetto_referente,versione,servizio);
+
+ALTER TABLE plugins_conf_servizi ALTER COLUMN versione SET DEFAULT 1;
+
 CREATE TABLE plugins_conf_servizi_init_seq (id BIGINT);
 INSERT INTO plugins_conf_servizi_init_seq VALUES (NEXT VALUE FOR seq_plugins_conf_servizi);
 
@@ -175,6 +189,9 @@ CREATE TABLE plugins_conf_filtri
 
 -- index
 CREATE UNIQUE INDEX idx_conf_filtri_1 ON plugins_conf_filtri (nome);
+
+ALTER TABLE plugins_conf_filtri ALTER COLUMN versione_servizio SET DEFAULT 1;
+
 CREATE TABLE plugins_conf_filtri_init_seq (id BIGINT);
 INSERT INTO plugins_conf_filtri_init_seq VALUES (NEXT VALUE FOR seq_plugins_conf_filtri);
 

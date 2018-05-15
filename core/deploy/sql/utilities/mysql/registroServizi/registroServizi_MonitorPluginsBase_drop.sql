@@ -12,3 +12,4 @@ DROP TABLE plugins_filtro_comp;
 DROP TABLE plugins_azioni_comp;
 DROP TABLE plugins_servizi_comp;
 DROP TABLE plugins;
+DROP TABLE plugin_info;
