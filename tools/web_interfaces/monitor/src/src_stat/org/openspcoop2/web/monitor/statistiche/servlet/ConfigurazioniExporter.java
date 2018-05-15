@@ -11,13 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.utils.resources.HttpUtilities;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import it.link.pdd.core.transazioni.constants.PddRuolo;
-import it.link.pdd.core.utenti.Utente;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
@@ -63,8 +62,8 @@ public class ConfigurazioniExporter extends HttpServlet{
 			ConfigurazioniGeneraliSearchForm sfInSession = (ConfigurazioniGeneraliSearchForm)context.getBean("configurazioniGeneraliSearchForm");
 			ConfigurazioniGeneraliSearchForm searchForm = (ConfigurazioniGeneraliSearchForm)sfInSession.clone();
 			// prelevo le informazioni sull'utente loggato
-			Utente utente =null;
-			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.LoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			User utente =null;
+			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 			if(lbInSession != null && lbInSession.isLoggedIn()) {
 				utente = lbInSession.getUtente();
 			}

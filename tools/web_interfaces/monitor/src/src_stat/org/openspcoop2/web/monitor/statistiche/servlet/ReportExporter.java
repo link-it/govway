@@ -1,13 +1,33 @@
 package org.openspcoop2.web.monitor.statistiche.servlet;
 
-import it.link.pdd.core.transazioni.constants.PddRuolo;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoStatistica;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoStatistica;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpServletCredential;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
@@ -24,27 +44,6 @@ import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSABean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerSoggettoBean;
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.Identity;
-import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.resources.HttpUtilities;
 import org.slf4j.Logger;
 
 public class ReportExporter extends HttpServlet{
@@ -95,7 +94,7 @@ public class ReportExporter extends HttpServlet{
 			}
 			
 			// Lettura utenza
-			Identity identity = new Identity(req,log);
+			HttpServletCredential identity = new HttpServletCredential(req, log);
 			String username = identity.getUsername();
 			String password = identity.getPassword();
 			String principal = identity.getPrincipal();

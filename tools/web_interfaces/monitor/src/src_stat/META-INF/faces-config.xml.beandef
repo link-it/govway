@@ -141,7 +141,7 @@
   <managed-bean-scope>request</managed-bean-scope>
   <managed-property>
    <property-name>service</property-name>
-   <property-class>org.openspcoop2.web.monitor.config.dao.IStatisticaPersonalizzataService</property-class>
+   <property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatisticaPersonalizzataService</property-class>
    <value>#{statistichePersonalizzateService}</value>
   </managed-property>
   <managed-property>

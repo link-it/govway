@@ -34,27 +34,26 @@ import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.transazioni.statistiche.StatisticaGiornaliera;
-import it.link.pdd.core.transazioni.statistiche.StatisticaMensile;
-import it.link.pdd.core.transazioni.statistiche.StatisticaOraria;
-import it.link.pdd.core.transazioni.statistiche.StatisticaSettimanale;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
-import it.link.pdd.core.transazioni.statistiche.dao.IStatisticaGiornalieraServiceSearch;
-import it.link.pdd.core.transazioni.statistiche.dao.IStatisticaMensileServiceSearch;
-import it.link.pdd.core.transazioni.statistiche.dao.IStatisticaOrariaServiceSearch;
-import it.link.pdd.core.transazioni.statistiche.dao.IStatisticaSettimanaleServiceSearch;
-import it.link.pdd.core.transazioni.statistiche.model.StatisticaContenutiModel;
-import it.link.pdd.core.transazioni.statistiche.model.StatisticaGiornalieraModel;
-import it.link.pdd.core.transazioni.statistiche.model.StatisticaModel;
+import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaMensile;
+import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatisticaSettimanale;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.statistiche.dao.IStatisticaGiornalieraServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaMensileServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaOrariaServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
+import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
+import org.openspcoop2.core.statistiche.model.StatisticaGiornalieraModel;
+import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.constants.Costanti;
-import org.openspcoop2.monitor.engine.plugins.statistic.StatisticByResource;
+import org.openspcoop2.monitor.engine.statistic.StatisticByResource;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
@@ -85,7 +84,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private StatsSearchForm distribSaSearch;
 	private StatistichePersonalizzateSearchForm statistichePersonalizzateSearch;
 
-	private it.link.pdd.core.transazioni.statistiche.dao.IServiceManager transazioniStatisticheServiceManager;
+	private org.openspcoop2.core.statistiche.dao.IServiceManager transazioniStatisticheServiceManager;
 
 	private IStatisticaGiornalieraServiceSearch statGiornaliereSearchDAO;
 
@@ -102,8 +101,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public StatisticheGiornaliereService() {
 
 		try {
-			this.transazioniStatisticheServiceManager = (it.link.pdd.core.transazioni.statistiche.dao.IServiceManager) DAOFactory
-					.getInstance(StatisticheGiornaliereService.log).getServiceManager(DAO.TRANSAZIONI_STATISTICHE,StatisticheGiornaliereService.log);
+			this.transazioniStatisticheServiceManager = (org.openspcoop2.core.statistiche.dao.IServiceManager) DAOFactory
+					.getInstance(StatisticheGiornaliereService.log).getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),StatisticheGiornaliereService.log);
 
 			this.statGiornaliereSearchDAO = this.transazioniStatisticheServiceManager
 					.getStatisticaGiornalieraServiceSearch();
@@ -1024,8 +1023,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.and().
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.SERVIZIO,	idServizio.getServizio());
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			} 
 
@@ -1606,8 +1605,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					mitExpr.and().
 						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1693,8 +1692,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					destExpr.and().
 						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1828,8 +1827,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					mitExpr.and().
 						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1951,8 +1950,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					destExpr.and().
 						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -2127,8 +2126,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2221,8 +2220,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2519,8 +2518,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				erogazione_portaApplicativa_Expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2795,8 +2794,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				fruizione_portaDelegata_Expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -3896,8 +3895,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}  
 			
@@ -4736,8 +4735,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.and().
 					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getServizio());
+					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -5833,8 +5832,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expr.and().
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.TIPO_SERVIZIO,	idServizio.getTipoServizio()).
-					equals(model.SERVIZIO,	idServizio.getServizio());
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 

@@ -18,10 +18,10 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoStatistica;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoStatistica;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;

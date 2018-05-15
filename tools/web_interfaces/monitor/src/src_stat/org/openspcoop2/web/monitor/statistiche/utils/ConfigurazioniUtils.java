@@ -8,7 +8,9 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -19,7 +21,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
@@ -27,6 +29,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -151,10 +154,10 @@ public class ConfigurazioniUtils {
 	public static Connettore getConnettore( 
 			String tipoFruitore, String nomeFruitore, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore, 
-			String tipoServizio, String nomeServizio,
+			String tipoServizio, String nomeServizio, Integer versioneServizio,
 			DriverRegistroServiziDB driverRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 
-		IDServizio idServizio = new IDServizio(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio);
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, tipoSoggettoErogatore, nomeSoggettoErogatore, versioneServizio);
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica aspsOp2 = driverRegistro.getAccordoServizioParteSpecifica(idServizio);
 		for (org.openspcoop2.core.registry.Fruitore frOp2 : aspsOp2.getFruitoreList()) {
 			if(frOp2.getTipo().equals(tipoFruitore) && frOp2.getNome().equals(nomeFruitore)){
@@ -165,8 +168,8 @@ public class ConfigurazioniUtils {
 			}
 		}
 
-		if(aspsOp2.getServizio().getConnettore()!=null && !TipiConnettore.DISABILITATO.getNome().equals(aspsOp2.getServizio().getConnettore().getTipo())){
-			return aspsOp2.getServizio().getConnettore().mappingIntoConnettoreConfigurazione();
+		if(aspsOp2.getConfigurazioneServizio() !=null && aspsOp2.getConfigurazioneServizio().getConnettore() !=null && !TipiConnettore.DISABILITATO.getNome().equals(aspsOp2.getConfigurazioneServizio().getConnettore().getTipo())){
+			return aspsOp2.getConfigurazioneServizio().getConnettore().mappingIntoConnettoreConfigurazione();
 		}
 
 		return driverRegistro.getSoggetto(idServizio.getSoggettoErogatore()).getConnettore().mappingIntoConnettoreConfigurazione();
@@ -440,7 +443,7 @@ public class ConfigurazioniUtils {
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 			List<String> sa = new ArrayList<>();
 			boolean first = true;
-			for (ServizioApplicativo pdSA : pdOp2.getServizioApplicativoList()) {
+			for (PortaDelegataServizioApplicativo pdSA : pdOp2.getServizioApplicativoList()) {
 				p = new Property();
 				p.setId(idx++); 
 				if(first)
@@ -451,7 +454,7 @@ public class ConfigurazioniUtils {
 
 				String saNome = pdSA.getNome();
 				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-				idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
+				idServizioApplicativo.setIdSoggettoProprietario(idPD.getIdentificativiFruizione().getSoggettoFruitore());
 				idServizioApplicativo.setNome(saNome);
 				ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
 				if(saOp2.getInvocazionePorta()!=null && saOp2.getInvocazionePorta().sizeCredenzialiList()>0){
@@ -621,7 +624,7 @@ public class ConfigurazioniUtils {
 
 				// Identificazione Azione:  urlBased/wsdlBased
 				String suffix = "";
-				if(pdAzione!= null && CostantiConfigurazione.ABILITATO.equals(pdAzione.getForceWsdlBased())){
+				if(pdAzione!= null && CostantiConfigurazione.ABILITATO.equals(pdAzione.getForceInterfaceBased())){
 					suffix = "/"+CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.getValue();
 				}
 				if(pdAzione!= null){
@@ -742,15 +745,13 @@ public class ConfigurazioniUtils {
 		IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
 		String nomeAspc = aspc.getNome();
 
-		String versioneAspc = aspc.getVersione();
+		Integer versioneAspc = aspc.getVersione();
 
 		String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
 
 		String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
 
-		p.setValore(IDAccordoFactory
-				.getInstance()
-				.getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
+		p.setValore(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
 		lst.add(p);
 
 		p = new Property();
@@ -834,15 +835,13 @@ public class ConfigurazioniUtils {
 		IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
 		String nomeAspc = aspc.getNome();
 
-		String versioneAspc = aspc.getVersione();
+		Integer versioneAspc = aspc.getVersione();
 
 		String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
 
 		String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
 
-		p.setValore(IDAccordoFactory
-				.getInstance()
-				.getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
+		p.setValore(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
 		lst.add(p);
 
 		p = new Property();
@@ -1061,12 +1060,12 @@ public class ConfigurazioniUtils {
 
 
 	public static List<DettaglioSA> getPropertiesServiziApplicativiPA(DettaglioPA dettaglioPA,
-			DriverConfigurazioneDB driverConfigDB, IDPortaApplicativaByNome idPA ) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+			DriverConfigurazioneDB driverConfigDB, IDPortaApplicativa idPA ) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		org.openspcoop2.core.config.PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2();
 
 		List<DettaglioSA> listaSA = new ArrayList<DettaglioSA>();
 		// --- Informazioni di Integrazione ---
-		for (ServizioApplicativo saOp : paOp2.getServizioApplicativoList()) {
+		for (PortaApplicativaServizioApplicativo saOp : paOp2.getServizioApplicativoList()) {
 			DettaglioSA sa = new DettaglioPA().new DettaglioSA();
 
 
@@ -1081,7 +1080,7 @@ public class ConfigurazioniUtils {
 			lstPropertySA.add(p);
 
 			IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-			idServizioApplicativo.setIdSoggettoProprietario(idPA.getSoggetto());
+			idServizioApplicativo.setIdSoggettoProprietario(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore());
 			idServizioApplicativo.setNome(saNome);
 			ServizioApplicativo saOp2 = driverConfigDB.getServizioApplicativo(idServizioApplicativo);
 			sa.setSaOp2(saOp2);

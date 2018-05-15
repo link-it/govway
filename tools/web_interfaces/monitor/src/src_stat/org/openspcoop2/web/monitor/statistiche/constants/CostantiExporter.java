@@ -1,12 +1,12 @@
 package org.openspcoop2.web.monitor.statistiche.constants;
 
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 
 public class CostantiExporter {
 

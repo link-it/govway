@@ -9,14 +9,17 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -33,11 +36,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.slf4j.Logger;
 
-import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import it.link.pdd.core.transazioni.constants.PddRuolo;
-import it.link.pdd.core.utenti.UtenteSoggetto;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
@@ -89,14 +89,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.dynamicService = new DynamicUtilsService();
 
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
-					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(DAO.UTILS, ConfigurazioniGeneraliService.log);
+					.getInstance( ConfigurazioniGeneraliService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), ConfigurazioniGeneraliService.log);
 
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
-			String tipoDatabase = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getTipoDatabase(DAO.UTILS);
-			String datasourceJNDIName = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIName(DAO.UTILS);
-			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIContext(DAO.UTILS);
+			String tipoDatabase = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			String datasourceJNDIName = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIName(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+			Properties datasourceJNDIContext = DAOFactoryProperties.getInstance(ConfigurazioniGeneraliService.log).getDatasourceJNDIContext(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
 
 
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
@@ -254,11 +254,11 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
 				String servizioString = this.getSearch().getNomeServizio();
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipoServizio(), idServizio.getServizio());
+				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome());
 				if(aspc != null){
 					String nomeAspc = aspc.getNome();
 
-					String versioneAspc = aspc.getVersione();
+					Integer versioneAspc = aspc.getVersione();
 
 					String nomeReferenteAspc = (aspc.getIdReferente() != null) ? aspc.getIdReferente().getNome() : null;
 
@@ -286,35 +286,31 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 							// controllo sul soggetto
 							boolean existsPermessoSoggetto = false;
 							if(user.getSizeSoggetti()>0){
-								for (UtenteSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-									if(utenteSoggetto.getServizio()==null){
-										if(accordoServizioParteComune.getIdReferente().getTipo().equals(utenteSoggetto.getSoggetto().getTipo()) &&
-												accordoServizioParteComune.getIdReferente().getNome().equals(utenteSoggetto.getSoggetto().getNome())){
-											existsPermessoSoggetto = true;
-											break;
-										}
+								for (IDSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
+									if(accordoServizioParteComune.getIdReferente().getTipo().equals(utenteSoggetto.getTipo()) &&
+											accordoServizioParteComune.getIdReferente().getNome().equals(utenteSoggetto.getNome())){
+										existsPermessoSoggetto = true;
+										break;
 									}
 								}
 							}
 
 							boolean existsPermessoServizio = false;
 							if(!existsPermessoSoggetto){
-								if(user.getSizeSoggetti()>0){
-									for (UtenteSoggetto utenteSoggetto : user.getUtenteSoggettoList()) {
-										if(utenteSoggetto.getServizio()!=null){
-											AccordoServizioParteSpecifica asps = this.dynamicService.getAspsFromValues(utenteSoggetto.getServizio().getTipo(), utenteSoggetto.getServizio().getNome(),
-													utenteSoggetto.getSoggetto().getTipo(), utenteSoggetto.getSoggetto().getNome());
+								if(user.getSizeServizio()>0){
+									for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
+										AccordoServizioParteSpecifica asps = this.dynamicService.getAspsFromValues(utenteSoggetto.getTipo(), utenteSoggetto.getNome(),
+												utenteSoggetto.getSoggettoErogatore().getTipo(), utenteSoggetto.getSoggettoErogatore().getNome());
 
-											IdAccordoServizioParteComune idAccordoServizioParteComune = asps.getIdAccordoServizioParteComune();
+										IdAccordoServizioParteComune idAccordoServizioParteComune = asps.getIdAccordoServizioParteComune();
 
-											// l'accordo parte comune deve coincidere con l'erogazione associata all'utente 
-											if(idAccordoServizioParteComune.getIdSoggetto().getTipo().equals(accordoServizioParteComune.getIdReferente().getTipo()) &&
-													idAccordoServizioParteComune.getIdSoggetto().getNome().equals(accordoServizioParteComune.getIdReferente().getNome()) &&
-													idAccordoServizioParteComune.getVersione().equals(accordoServizioParteComune.getVersione()) &&
-													idAccordoServizioParteComune.getNome().equals(accordoServizioParteComune.getNome())){
-												existsPermessoServizio = true;
-												break;
-											}
+										// l'accordo parte comune deve coincidere con l'erogazione associata all'utente 
+										if(idAccordoServizioParteComune.getIdSoggetto().getTipo().equals(accordoServizioParteComune.getIdReferente().getTipo()) &&
+												idAccordoServizioParteComune.getIdSoggetto().getNome().equals(accordoServizioParteComune.getIdReferente().getNome()) &&
+												idAccordoServizioParteComune.getVersione().equals(accordoServizioParteComune.getVersione()) &&
+												idAccordoServizioParteComune.getNome().equals(accordoServizioParteComune.getNome())){
+											existsPermessoServizio = true;
+											break;
 										}
 									}
 								}
@@ -355,8 +351,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
 				String servizioString = this.getSearch().getNomeServizio();
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
-				nomeServizio = idServizio.getServizio();
-				tipoServizio = idServizio.getTipoServizio();
+				nomeServizio = idServizio.getNome();
+				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
 
@@ -390,8 +386,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				// valutare
 				//				tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
 				//				nomeSoggetto = this.getSearch().getSoggettoLocale();
-				nomeServizio = idServizio.getServizio();
-				tipoServizio = idServizio.getTipoServizio();
+				nomeServizio = idServizio.getNome();
+				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
 			}else {
@@ -431,8 +427,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				String servizioString = this.getSearch().getNomeServizio();
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
 
-				nomeServizio = idServizio.getServizio();
-				tipoServizio = idServizio.getTipoServizio();
+				nomeServizio = idServizio.getNome();
+				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
 
@@ -671,12 +667,14 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 		// carico dettaglio
 		IDPortaDelegata idPD = new IDPortaDelegata();
-		idPD.setLocationPD(dettaglioPD.getPortaDelegata().getNome());
-		idPD.setSoggettoFruitore(new IDSoggetto(dettaglioPD.getPortaDelegata().getIdSoggetto().getTipo(), dettaglioPD.getPortaDelegata().getIdSoggetto().getNome()));
+		idPD.setNome(dettaglioPD.getPortaDelegata().getNome());
+		IdentificativiFruizione identificativiFruizione = new IdentificativiFruizione();
+		identificativiFruizione.setSoggettoFruitore(new IDSoggetto(dettaglioPD.getPortaDelegata().getIdSoggetto().getTipo(), dettaglioPD.getPortaDelegata().getIdSoggetto().getNome()));
+		idPD.setIdentificativiFruizione(identificativiFruizione );
 		dettaglioPD.setPortaDelegataOp2(this.driverConfigDB.getPortaDelegata(idPD));
 		dettaglioPD.setConnettore(ConfigurazioniUtils.getConnettore(dettaglioPD.getPortaDelegata().getIdSoggetto().getTipo(), dettaglioPD.getPortaDelegata().getIdSoggetto().getNome(), 
 				dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), 
-				dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(), 
+				dettaglioPD.getPortaDelegata().getTipoServizio(), dettaglioPD.getPortaDelegata().getNomeServizio(),dettaglioPD.getPortaDelegata().getVersioneServizio(), 
 				this.driverRegistroDB));
 		dettaglioPD.setPropertyConnettore(ConfigurazioniUtils.printConnettore(dettaglioPD.getConnettore(), CostantiConfigurazioni.LABEL_MODALITA_INOLTRO, null));
 
@@ -688,9 +686,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		dettaglioPD.setPropertyAutenticazione(ConfigurazioniUtils.getPropertiesAutenticazionePD(dettaglioPD));
 		dettaglioPD.setPropertyAutorizzazione(ConfigurazioniUtils.getPropertiesAutorizzazionePD(dettaglioPD, idPD, this.driverConfigDB, this.driverRegistroDB));  
 
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(idPD.getSoggettoFruitore().getTipo());
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPD.getIdentificativiFruizione().getSoggettoFruitore().getTipo());
 		String contesto = (protocolFactory.getManifest().getWeb().getEmptyContext()!=null && protocolFactory.getManifest().getWeb().getEmptyContext().getEnabled()) ?
-				"" : protocolFactory.getManifest().getWeb().getContext(0);
+				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
 
 		dettaglioPD.setContesto(contesto);
 		dettaglioPD.setEndpointApplicativoPD(this.endpointApplicativoPD);
@@ -701,6 +699,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		return configurazione;
 	}
 
+	@SuppressWarnings("deprecation")
 	private ConfigurazioneGenerale fillDettaglioPA(PortaApplicativa portaApplicativa) throws ServiceException, NotFoundException,
 	MultipleResultException, NotImplementedException, ExpressionNotImplementedException, ExpressionException,
 	DriverConfigurazioneException, DriverConfigurazioneNotFound, ProtocolException,
@@ -713,15 +712,22 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		ConfigurazioniUtils.fillAzioniPA(dettaglioPA, this.utilsServiceManager);
 		//		}
 
-		IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(dettaglioPA.getPortaApplicativa().getNome());
-		idPA.setSoggetto(new IDSoggetto(dettaglioPA.getPortaApplicativa().getIdSoggetto().getTipo(), dettaglioPA.getPortaApplicativa().getIdSoggetto().getNome()));
+		IdentificativiErogazione identificativiErogazione = new IdentificativiErogazione();
+		IDServizio idServizio = new IDServizio();
+		idServizio.setSoggettoErogatore(new IDSoggetto(dettaglioPA.getPortaApplicativa().getIdSoggetto().getTipo(), dettaglioPA.getPortaApplicativa().getIdSoggetto().getNome()));
+		idServizio.setTipo(dettaglioPA.getPortaApplicativa().getTipoServizio());
+		idServizio.setNome(dettaglioPA.getPortaApplicativa().getNomeServizio());
+		idServizio.setAzione(dettaglioPA.getPortaApplicativa().getNomeAzione());
+		identificativiErogazione.setIdServizio(idServizio);
+		idPA.setIdentificativiErogazione(identificativiErogazione );
 		dettaglioPA.setPortaApplicativaOp2(this.driverConfigDB.getPortaApplicativa(idPA));
 
 
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryBySubjectType(idPA.getSoggetto().getTipo());
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByOrganizationType(idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getTipo());
 		String contesto = (protocolFactory.getManifest().getWeb().getEmptyContext()!=null && protocolFactory.getManifest().getWeb().getEmptyContext().getEnabled()) ?
-				"" : protocolFactory.getManifest().getWeb().getContext(0);
+				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
 
 		dettaglioPA.setContesto(contesto);
 		dettaglioPA.setEndpointApplicativoPA(this.endpointApplicativoPA);
@@ -845,8 +851,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 			expr.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getTipo());
 			expr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
-			expr.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipoServizio());
-			expr.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getServizio());
+			expr.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
+			expr.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
 		}
 
 		if(!count) {
@@ -906,8 +912,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			String servizioString = searchForm.getNomeServizio();
 			IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
 
-			expr.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipoServizio());
-			expr.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getServizio());
+			expr.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
+			expr.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
 			if(setSoggettoProprietario==false){
 				expr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
 				expr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());

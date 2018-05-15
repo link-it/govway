@@ -12,14 +12,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoReport;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.Res;

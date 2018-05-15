@@ -45,11 +45,11 @@ import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
-import org.openspcoop2.web.monitor.config.dao.IStatisticaPersonalizzataService;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.statistiche.dao.IStatisticaPersonalizzataService;
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
 
 public class StatistichePersonalizzateSearchForm extends StatsSearchForm
@@ -455,6 +455,12 @@ implements StatisticsContext{
 	@Override
 	public String getServizio() {
 		return this.estraiNomeServizioDalServizio();
+	}
+	
+	@Override
+	public Integer getVersioneServizio() {
+		// TODO capire come valorizzare
+		return null;
 	}
 
 	@Override

@@ -12,17 +12,17 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-
-import it.link.pdd.core.transazioni.statistiche.constants.Colors;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
-import it.link.pdd.core.transazioni.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.statistiche.constants.Colors;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

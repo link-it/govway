@@ -26,11 +26,11 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
@@ -288,7 +288,7 @@ public class ConfigurazioniCsvExporter {
 			IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
 			String nomeAspc = aspc.getNome();
 
-			String versioneAspc = aspc.getVersione();
+			Integer versioneAspc = aspc.getVersione();
 
 			String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
 
@@ -501,7 +501,7 @@ public class ConfigurazioniCsvExporter {
 			IdAccordoServizioParteComune aspc = dettaglioPD.getIdAccordoServizioParteComune();
 			String nomeAspc = aspc.getNome();
 
-			String versioneAspc = aspc.getVersione();
+			Integer versioneAspc = aspc.getVersione();
 
 			String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
 
@@ -577,7 +577,7 @@ public class ConfigurazioniCsvExporter {
 
 				// Identificazione Azione:  urlBased/wsdlBased
 				String suffix = "";
-				if(pdAzione!= null && CostantiConfigurazione.ABILITATO.equals(pdAzione.getForceWsdlBased())){
+				if(pdAzione!= null && CostantiConfigurazione.ABILITATO.equals(pdAzione.getForceInterfaceBased())){
 					suffix = "/"+CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.getValue();
 				}
 				if(pdAzione!= null){

@@ -17,8 +17,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;

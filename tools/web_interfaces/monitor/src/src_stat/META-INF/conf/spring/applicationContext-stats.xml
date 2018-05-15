@@ -55,6 +55,8 @@
 		<property name="statistichePersonalizzateSearch" ref="statistichePersonalizzateSearchForm"/>
 	</bean>
 	
+	<bean id="statistichePersonalizzateService" class="org.openspcoop2.web.monitor.statistiche.dao.StatistichePersonalizzateService" scope="request"/>
+	
 	<!-- Configurazioni Generali -->
 	<bean id="configurazioniGeneraliService" class="org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService" scope="request">
 		<property name="search" ref="configurazioniGeneraliSearchForm" />
