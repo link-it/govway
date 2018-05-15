@@ -8,7 +8,7 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 
-import it.link.pdd.core.plugins.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 
 public class Statistiche implements Serializable {
 

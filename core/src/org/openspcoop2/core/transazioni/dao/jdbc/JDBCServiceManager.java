@@ -26,6 +26,10 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.core.transazioni.dao.ITransazioneInfoServiceSearch;
+import org.openspcoop2.core.transazioni.dao.ITransazioneInfoService;
+import org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch;
+import org.openspcoop2.core.transazioni.dao.ITransazioneExportService;
 import org.openspcoop2.core.transazioni.dao.IDumpMessaggioServiceSearch;
 import org.openspcoop2.core.transazioni.dao.IDumpMessaggioService;
 
@@ -176,6 +180,70 @@ public class JDBCServiceManager extends org.openspcoop2.generic_project.dao.jdbc
 	@Override
 	public ITransazioneService getTransazioneService() throws ServiceException,NotImplementedException{
 		return new JDBCTransazioneService(this);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:transazione-info type:transazione-info
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneInfo}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneInfo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneInfoServiceSearch getTransazioneInfoServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneInfoServiceSearch(this);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneInfo}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneInfo}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneInfoService getTransazioneInfoService() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneInfoService(this);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:transazione-export type:transazione-export
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneExport}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneExport}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneExportServiceSearch getTransazioneExportServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneExportServiceSearch(this);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneExport}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneExport}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneExportService getTransazioneExportService() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneExportService(this);
 	}
 	
 	

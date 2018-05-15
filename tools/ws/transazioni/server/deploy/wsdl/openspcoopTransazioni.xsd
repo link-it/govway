@@ -304,6 +304,83 @@
 	
 	
 
+	<xsd:element name="transazione-info">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="data" type="xsd:dateTime">
+					
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="transazione-export">
+		
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Intervallo utilizzato dall'esportazione -->
+				<xsd:element name="intervallo-inizio" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element name="intervallo-fine" type="xsd:dateTime">
+					
+				</xsd:element>
+				<!-- eventuale nome del file/dir dello zip esportato -->
+				<xsd:element minOccurs="0" name="nome" type="xsd:string">
+					
+				</xsd:element>
+				<!-- Stato procedura Esportazione -->
+				<xsd:element name="export-state" type="export-state">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="export-error" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element name="export-time-start" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="export-time-end" type="xsd:dateTime">
+					
+				</xsd:element>
+				<!-- Stato procedura Eliminazione -->
+				<xsd:element name="delete-state" type="delete-state">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="delete-error" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="delete-time-start" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="delete-time-end" type="xsd:dateTime">
+					
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:simpleType name="export-state">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="executing"/>
+			<xsd:enumeration value="completed"/>
+			<xsd:enumeration value="error"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="delete-state">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="undefined"/>
+			<xsd:enumeration value="executing"/>
+			<xsd:enumeration value="completed"/>
+			<xsd:enumeration value="error"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+
 
 	<!-- ********* DUMP ************* -->
 

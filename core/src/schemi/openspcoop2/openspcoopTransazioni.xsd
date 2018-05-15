@@ -22,6 +22,10 @@
 								<linkit:sql-comment><![CDATA[TRANSAZIONI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="transazione"
 									object-type="transazione"/>
+								<linkit:sql-table object-name="transazione-info"
+									object-type="transazione-info"/>
+								<linkit:sql-table object-name="transazione-export"
+									object-type="transazione-export"/>
 								<linkit:sql-comment><![CDATA[DUMP - DATI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="dump-messaggio"
 									object-type="dump-messaggio"/>
@@ -1198,6 +1202,212 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 	</xsd:element>
 	
 	
+
+	<xsd:element name="transazione-info">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true">
+						<linkit:ws-interface crud="false"/>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="transazioni_info" sequence-cycle="true"
+				    	comment="Contiene informazioni generiche (come date di elaborazioni di batch) sulle transazioni">
+						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
+						<linkit:sql-table-unique create-index="false">
+							<linkit:sql-table-unique-field name="tipo"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo di evento]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="data"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Data dell'evento]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="transazione-export">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true">
+						<linkit:ws-interface crud="false"/>
+					</linkit:interface>
+				    <linkit:sql-table-mapping name="transazioni_export" sequence-cycle="true"
+				    	comment="Contiene informazioni su operazioni di esportazione delle transazioni">
+						<linkit:sql-table-unique>
+							<linkit:sql-table-unique-field name="intervallo-inizio"/>
+							<linkit:sql-table-unique-field name="intervallo-fine"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Intervallo utilizzato dall'esportazione -->
+				<xsd:element name="intervallo-inizio" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Intervallo utilizzato dall'esportazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Data di inizio intervallo utilizzato dall'esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="intervallo-fine" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data di fine intervallo utilizzato dall'esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<!-- eventuale nome del file/dir dello zip esportato -->
+				<xsd:element name="nome" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Eventuale nome del file/dir dello zip esportato]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Eventuale nome del file/dir dello zip esportato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<!-- Stato procedura Esportazione -->
+				<xsd:element name="export-state" type="export-state">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Stato procedura Esportazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato procedura Esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="export-error" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Eventuale errore avvenuto durante l'esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="export-time-start" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data di inizio dell'esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="export-time-end" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data di fine dell'esportazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<!-- Stato procedura Eliminazione -->
+				<xsd:element name="delete-state" type="delete-state">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Stato procedura Eliminazione]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato procedura Eliminazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="delete-error" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping text="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Eventuale errore avvenuto durante l'eliminazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="delete-time-start" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data di inizio dell'eliminazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="delete-time-end" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data di fine dell'eliminazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:simpleType name="export-state">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="executing"/>
+			<xsd:enumeration value="completed"/>
+			<xsd:enumeration value="error"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="delete-state">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="undefined"/>
+			<xsd:enumeration value="executing"/>
+			<xsd:enumeration value="completed"/>
+			<xsd:enumeration value="error"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
 
 
 	<!-- ********* DUMP ************* -->

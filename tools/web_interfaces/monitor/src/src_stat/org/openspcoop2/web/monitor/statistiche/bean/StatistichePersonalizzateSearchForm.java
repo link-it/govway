@@ -28,7 +28,7 @@ import org.openspcoop2.utils.TipiDatabase;
 
 import it.link.pdd.core.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.plugins.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;

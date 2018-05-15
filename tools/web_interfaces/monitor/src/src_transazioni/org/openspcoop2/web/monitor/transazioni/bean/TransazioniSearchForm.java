@@ -26,7 +26,7 @@ import org.richfaces.model.Ordering;
 
 import it.link.pdd.core.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.plugins.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;

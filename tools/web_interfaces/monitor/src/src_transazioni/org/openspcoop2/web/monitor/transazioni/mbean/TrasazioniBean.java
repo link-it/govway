@@ -19,8 +19,8 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import it.link.pdd.core.utenti.StatoTabella;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;

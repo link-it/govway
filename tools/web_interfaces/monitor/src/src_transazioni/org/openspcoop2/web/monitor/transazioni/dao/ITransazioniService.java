@@ -6,9 +6,9 @@ import java.util.List;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.generic_project.expression.SortOrder;
 
-import it.link.pdd.core.plugins.ricerche.ConfigurazioneRicerca;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import it.link.pdd.core.transazioni.DumpAllegato;
 import it.link.pdd.core.transazioni.DumpContenuto;
 import it.link.pdd.core.transazioni.DumpHeaderTrasporto;

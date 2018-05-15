@@ -32,13 +32,13 @@ import org.slf4j.Logger;
 
 import it.link.pdd.core.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.plugins.base.ConfigurazioneServizioAzione;
-import it.link.pdd.core.plugins.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import it.link.pdd.core.plugins.ricerche.ConfigurazioneRicerca;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazione;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneStato;
-import it.link.pdd.core.plugins.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
+import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
 import it.link.pdd.core.transazioni.DumpAllegato;
 import it.link.pdd.core.transazioni.DumpContenuto;
 import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
@@ -90,9 +90,9 @@ public class TransazioniService implements ITransazioniService {
 	private IConfigurazioneServizioAzioneServiceSearch confSerAzSearchDAO;
 	private IConfigurazioneTransazioneServiceSearch confTransazioneSearchDAO;
 
-	private it.link.pdd.core.plugins.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
-	private it.link.pdd.core.plugins.ricerche.dao.IServiceManager ricerchePluginsServiceManager;
-	private it.link.pdd.core.plugins.base.dao.IServiceManager basePluginsServiceManager;
+	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
+	private org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager ricerchePluginsServiceManager;
+	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
 
 	private it.link.pdd.core.transazioni.dao.IServiceManager transazioniServiceManager;
 	private it.link.pdd.core.transazioni.dao.ITransazioneService transazioniDAO;
@@ -209,17 +209,17 @@ public class TransazioniService implements ITransazioniService {
 			
 			// init Service Manager (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = 
-					(it.link.pdd.core.plugins.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,this.log);
+					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,this.log);
 			this.confTransazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			// init Service Manager (ricerche.plugins)
 			this.ricerchePluginsServiceManager = 
-					(it.link.pdd.core.plugins.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,this.log);
+					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,this.log);
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(it.link.pdd.core.plugins.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,this.log);
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
@@ -245,16 +245,16 @@ public class TransazioniService implements ITransazioniService {
 			
 			if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() || monitorProperties.isAttivoModuloRicerchePersonalizzate()){
 				
-				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((it.link.pdd.core.plugins.base.dao.IServiceManager) this.basePluginsServiceManager), 
+				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.basePluginsServiceManager), 
 						((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
 			
 				if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() ){
 					this.transactionServiceLibraryReader = 
-							new TransactionServiceLibraryReader( ((it.link.pdd.core.plugins.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
+							new TransactionServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
 				}
 				if(monitorProperties.isAttivoModuloRicerchePersonalizzate() ){
 					this.searchServiceLibraryReader = 
-							new SearchServiceLibraryReader( ((it.link.pdd.core.plugins.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
+							new SearchServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
 				}
 			}
 			
@@ -277,17 +277,17 @@ public class TransazioniService implements ITransazioniService {
 			
 			// init Service Manager (Transazioni.plugins)
 			this.transazioniPluginsServiceManager = 
-					(it.link.pdd.core.plugins.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_TRANSAZIONI,con,autoCommit,this.log);
 			this.confTransazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();
 
 			// init Service Manager (ricerche.plugins)
 			this.ricerchePluginsServiceManager = 
-					(it.link.pdd.core.plugins.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_RICERCHE,con,autoCommit,this.log);
 
 			// init Service Manager (base.plugins)
 			this.basePluginsServiceManager = 
-					(it.link.pdd.core.plugins.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,con,autoCommit,this.log);
+					(org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.daoFactory.getServiceManager(DAO.PLUGINS_BASE,con,autoCommit,this.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
 
@@ -313,16 +313,16 @@ public class TransazioniService implements ITransazioniService {
 			
 			if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() || monitorProperties.isAttivoModuloRicerchePersonalizzate()){
 			
-				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((it.link.pdd.core.plugins.base.dao.IServiceManager) this.basePluginsServiceManager), 
+				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.basePluginsServiceManager), 
 						((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
 				
 				if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() ){
 					this.transactionServiceLibraryReader = 
-						new TransactionServiceLibraryReader( ((it.link.pdd.core.plugins.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
+						new TransactionServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
 				}
 				if(monitorProperties.isAttivoModuloRicerchePersonalizzate() ){
 					this.searchServiceLibraryReader = 
-						new SearchServiceLibraryReader( ((it.link.pdd.core.plugins.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
+						new SearchServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
 				}
 				
 			}
@@ -1953,7 +1953,7 @@ public class TransazioniService implements ITransazioniService {
 
 				if (mappa != null && mappa.size() > 0) {
 					ArrayList<ConfigurazioneTransazioneRisorsaContenuto> toRet = new ArrayList<ConfigurazioneTransazioneRisorsaContenuto>();
-					for (it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazione tr : mappa.values()) {
+					for (org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione tr : mappa.values()) {
 						toRet.addAll(tr.getConfigurazioneTransazioneRisorsaContenutoList());
 					}
 

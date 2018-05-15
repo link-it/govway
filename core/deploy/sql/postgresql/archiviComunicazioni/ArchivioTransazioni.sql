@@ -120,14 +120,57 @@ CREATE TABLE transazioni
 
 -- index
 CREATE INDEX INDEX_TR_ENTRY ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio);
--- CREATE INDEX INDEX_TR_MEDIUM ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,stato);
--- CREATE INDEX INDEX_TR_FULL ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,id_correlazione_applicativa,id_correlazione_risposta,stato,protocollo,eventi_gestione,cluster_id);
--- CREATE INDEX INDEX_TR_SEARCH ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,id_correlazione_applicativa,id_correlazione_risposta,stato,protocollo,eventi_gestione,cluster_id,id,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta);
--- CREATE INDEX INDEX_TR_STATS ON transazioni (data_ingresso_richiesta,pdd_ruolo,pdd_codice,tipo_soggetto_fruitore,nome_soggetto_fruitore,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,servizio_applicativo_fruitore,servizio_applicativo_erogatore,esito,esito_contesto,stato,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta,richiesta_ingresso_bytes,richiesta_uscita_bytes,risposta_ingresso_bytes,risposta_uscita_bytes);
+CREATE INDEX INDEX_TR_MEDIUM ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,stato);
+CREATE INDEX INDEX_TR_FULL ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,id_correlazione_applicativa,id_correlazione_risposta,stato,protocollo,eventi_gestione,cluster_id);
+CREATE INDEX INDEX_TR_SEARCH ON transazioni (data_ingresso_richiesta DESC,esito,esito_contesto,pdd_ruolo,pdd_codice,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,tipo_soggetto_fruitore,nome_soggetto_fruitore,servizio_applicativo_fruitore,servizio_applicativo_erogatore,id_correlazione_applicativa,id_correlazione_risposta,stato,protocollo,eventi_gestione,cluster_id,id,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta);
+CREATE INDEX INDEX_TR_STATS ON transazioni (data_ingresso_richiesta,pdd_ruolo,pdd_codice,tipo_soggetto_fruitore,nome_soggetto_fruitore,tipo_soggetto_erogatore,nome_soggetto_erogatore,tipo_servizio,nome_servizio,azione,servizio_applicativo_fruitore,servizio_applicativo_erogatore,esito,esito_contesto,stato,data_uscita_richiesta,data_ingresso_risposta,data_uscita_risposta,richiesta_ingresso_bytes,richiesta_uscita_bytes,risposta_ingresso_bytes,risposta_uscita_bytes);
 CREATE INDEX INDEX_TR_FILTROD_REQ ON transazioni (id_messaggio_richiesta,pdd_ruolo);
 CREATE INDEX INDEX_TR_FILTROD_RES ON transazioni (id_messaggio_risposta,pdd_ruolo);
 CREATE INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni (data_id_msg_richiesta,id_messaggio_richiesta);
 CREATE INDEX INDEX_TR_FILTROD_RES_2 ON transazioni (data_id_msg_risposta,id_messaggio_risposta);
+
+CREATE TABLE transazioni_info
+(
+	tipo VARCHAR(255) NOT NULL,
+	data TIMESTAMP NOT NULL,
+	-- fk/pk columns
+	-- unique constraints
+	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo)
+);
+
+
+CREATE SEQUENCE seq_transazioni_export start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
+CREATE TABLE transazioni_export
+(
+	-- Intervallo utilizzato dall'esportazione
+	intervallo_inizio TIMESTAMP NOT NULL,
+	intervallo_fine TIMESTAMP NOT NULL,
+	-- Eventuale nome del file/dir dello zip esportato
+	nome VARCHAR(255),
+	-- Stato procedura Esportazione
+	export_state VARCHAR(255) NOT NULL,
+	export_error TEXT,
+	export_time_start TIMESTAMP NOT NULL,
+	export_time_end TIMESTAMP,
+	-- Stato procedura Eliminazione
+	delete_state VARCHAR(255) NOT NULL,
+	delete_error TEXT,
+	delete_time_start TIMESTAMP,
+	delete_time_end TIMESTAMP,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_transazioni_export') NOT NULL,
+	-- check constraints
+	CONSTRAINT chk_transazioni_export_1 CHECK (export_state IN ('executing','completed','error')),
+	CONSTRAINT chk_transazioni_export_2 CHECK (delete_state IN ('undefined','executing','completed','error')),
+	-- unique constraints
+	CONSTRAINT unique_transazioni_export_1 UNIQUE (intervallo_inizio,intervallo_fine),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_export PRIMARY KEY (id)
+);
+
+
+
 
 -- DUMP - DATI
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.link.pdd.core.plugins.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 
 import javax.faces.model.SelectItem;
 

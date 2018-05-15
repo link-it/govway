@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/monitor/engine/config/transazioni"
+	targetNamespace="http://www.openspcoop2.org/monitor/engine/config/transazioni"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="monitor_config_transazioni">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[PERSONALIZZAZIONI/PLUGINS DELLE TRANSAZIONI]]></linkit:sql-comment>
+								<linkit:sql-table object-name="configurazione-transazione"
+									object-type="configurazione-transazione"/>
+								<linkit:sql-table object-name="configurazione-transazione-plugin"
+									object-type="configurazione-transazione-plugin"/>
+								<linkit:sql-table object-name="configurazione-transazione-stato"
+									object-type="configurazione-transazione-stato"/>
+								<linkit:sql-table object-name="configurazione-transazione-risorsa-contenuto"
+									object-type="configurazione-transazione-risorsa-contenuto"/>
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="true" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+
+
+
+
+	<!-- ********* TABELLA RIFERITA ************* -->
+	
+	<xsd:element name="configurazione-servizio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="plugins_conf_servizi">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="configurazione-servizio-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-configurazione-servizio-azione" generate="false"/>
+					<linkit:sql-table-mapping name="plugins_conf_azioni">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-plugin" generate="false"/>
+					<linkit:sql-table-mapping name="plugins">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="id-plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="plugin"
+						object-type="plugin"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="ALLARME"/>
+			<xsd:element name="class-name" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- ********* PERSONALIZZAZIONI/PLUGINS DELLE TRANSAZIONI ************* -->
+
+	<xsd:element name="configurazione-transazione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-configurazione-transazione"/>
+					<linkit:sql-table-mapping name="config_transazioni" comment="Plugins attivati per l'azione indicata">
+						<linkit:sql-table-constraint unique="uniq_trans_pers" index="idx_trans_pers"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_conf_servizio_azione"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-servizio-azione"
+					type="id-configurazione-servizio-azione">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_conf_servizio_azione" />
+								<linkit:sql-id-mapping relationship="reversed" object-name="configurazione-servizio-azione"
+									object-type="configurazione-servizio-azione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'azione a cui questa configurazione riferisce (FK verso plugins_conf_azioni(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="enabled" type="xsd:boolean" > <!-- Deprecato -->
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="enabled" required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se il plugin è attivo)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="configurazione-transazione-plugin" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_configurazione_transazione"
+									required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo della configurazione associata (FK verso config_transazioni(id)))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="configurazione-transazione-stato" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_configurazione_transazione"
+									required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo della configurazione associata (FK verso config_transazioni(id)))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="configurazione-transazione-risorsa-contenuto" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_conf_transazione"
+									required="true"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo della configurazione associata (FK verso config_transazioni(id)))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="config_tran_plugins" comment="Plugins custom attivi per il monitoraggio delle transazioni gestite sulla Porta">
+						<linkit:sql-table-constraint unique="uniq_conf_trans_plug"
+							index="idx_conf_trans_plug"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_configurazione_transazione"/>
+							<linkit:sql-table-unique-field name="id-configurazione-transazione-plugin"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_configurazione_transazione"/>
+							<linkit:sql-table-unique-column name="id_plugin"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-transazione-plugin" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_conf_trans_plugin"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo unico dell'istanza di plugin]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="enabled" type="xsd:boolean" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la regola è attiva]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="plugin" type="info-plugin">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_plugin" />
+								<linkit:sql-id-mapping relationship="reversed" object-name="plugin"
+									object-type="plugin"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del plugin (FK verso plugins(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-stato">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-configurazione-transazione-stato" generate="false"/>
+					<linkit:sql-table-mapping name="configurazione_stati" comment="Stati attivi per il servizio">
+						<linkit:sql-table-constraint unique="uniq_trans_pers_stati"
+							index="idx_trans_pers_stati"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_configurazione_transazione"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="enabled" type="xsd:boolean" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la regola è attiva]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Nome dello stato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-controllo" type="tipo-controllo">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Tipologia di controlla per comprendere lo stato della transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo di messaggio a cui applicare la regola]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="valore" type="xsd:string" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Valore da utilizzare come confronto a seconda della tipologia indicata in 'tipo_controllo']]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="xpath" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Espressione regolare da applicare al messaggio per comprendere lo stato]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-risorsa-contenuto">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="conf_risorse_contenuti" comment="Risorse attive per il servizio">
+						<linkit:sql-table-constraint unique="uniq_trans_pers_risorse"
+							index="idx_trans_pers_risorse"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_conf_transazione"/>
+							<linkit:sql-table-unique-field name="nome"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Anonimizzazione/Compressione -->
+				<xsd:element name="abilita-anonimizzazione" type="xsd:integer" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la è attiva l'anonimizzazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="abilita-compressione" type="xsd:integer" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la è attiva la compressione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-compressione" type="tipo-compressione" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Tipologia di compressione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="carattere-maschera" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Carattere utilizzato per l'anonimizzazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="numero-caratteri-maschera" type="xsd:integer" minOccurs="0"
+					maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="num_char_maschera"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di caratteri utilizzati per l'anonimizzazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="posizionamento-maschera" type="posizione-mascheramento" minOccurs="0"
+					maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Posizione dei caratteri utilizzati per l'anonimizzazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-mascheramento" type="tipo-mascheramento" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Tipologia di anonimizzazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<!-- Risorsa -->
+				<xsd:element name="enabled" type="xsd:boolean" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la regola è attiva]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="nome" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Nome della risorsa]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo del messaggio da cui estrarre la risorsa]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="xpath" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Espressione xpath con cui estrarre la risorsa]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stat-enabled" type="xsd:boolean" default="false" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se la regola è attiva anche per il collezionamento statistico]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-configurazione-transazione-stato" type="id-configurazione-transazione-stato" minOccurs="0"
+					maxOccurs="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-id-mapping object-name="configurazione-transazione-stato"
+									object-type="configurazione-transazione-stato" relationship="reversed"/>
+								<linkit:sql-column-mapping name="id_configurazione_stato"
+									required="false"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Stato della transazione richiesto per attuare l'estrazione della risorsa (FK verso configurazione_stati(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+	<xsd:complexType name="id-configurazione-servizio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-servizio" object-type="configurazione-servizio"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Dati dell'accordo di servizio -->
+			<xsd:element name="accordo" type="xsd:string"/>
+			<xsd:element name="tipo-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="nome-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="versione" type="xsd:unsignedInt" default="1" minOccurs="0"/>
+			<!-- Nome del port type -->
+			<xsd:element name="servizio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-servizio-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-servizio-azione" object-type="configurazione-servizio-azione"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<!-- Relazioni definite dove viene utilizzato l'id, poiche' i nome delle foreign key differiscono da caso a caso -->
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio"/>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-transazione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-transazione" object-type="configurazione-transazione"
+						relationship="normal"/>
+					<linkit:sql-column-mapping name="id_conf_servizio_azione" required="true"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio-azione"
+				type="id-configurazione-servizio-azione">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-id-mapping
+								object-name="configurazione-servizio-azione"
+								object-type="configurazione-servizio-azione"
+								relationship="none"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-configurazione-transazione-stato">
+		<xsd:sequence>
+			<xsd:element name="stato" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="info-plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="plugin" object-type="plugin"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="TRANSAZIONE"/>
+			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="label" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>	
+	
+	
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-messaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Richiesta"/>
+			<xsd:enumeration value="Risposta"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="tipo-controllo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Match"/>
+			<xsd:enumeration value="Equals"/>
+			<xsd:enumeration value="Exist"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-mascheramento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Fisico"/>
+			<xsd:enumeration value="Logico"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-compressione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Deflater"/>
+			<xsd:enumeration value="Gzip"/>
+			<xsd:enumeration value="Zip"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="posizione-mascheramento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Primi"/>
+			<xsd:enumeration value="Ultimi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

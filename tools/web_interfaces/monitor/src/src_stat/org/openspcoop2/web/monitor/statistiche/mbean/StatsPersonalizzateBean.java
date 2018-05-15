@@ -21,7 +21,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-import it.link.pdd.core.plugins.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;

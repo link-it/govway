@@ -1,8 +1,8 @@
 package org.openspcoop2.web.monitor.core.dao;
 
-import it.link.pdd.core.plugins.base.ConfigurazioneServizio;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import it.link.pdd.core.utenti.StatoTabella;
 import it.link.pdd.core.utenti.Utente;
 import org.openspcoop2.core.commons.search.Soggetto;

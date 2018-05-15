@@ -30,6 +30,10 @@ public class ModelFactory {
 
 	public static TransazioneModel TRANSAZIONE = new TransazioneModel();
 	
+	public static TransazioneInfoModel TRANSAZIONE_INFO = new TransazioneInfoModel();
+	
+	public static TransazioneExportModel TRANSAZIONE_EXPORT = new TransazioneExportModel();
+	
 	public static DumpMessaggioModel DUMP_MESSAGGIO = new DumpMessaggioModel();
 	
 

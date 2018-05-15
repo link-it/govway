@@ -2,14 +2,14 @@ package org.openspcoop2.web.monitor.core.dao;
 
 import it.link.pdd.core.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import it.link.pdd.core.plugins.base.ConfigurazioneServizio;
-import it.link.pdd.core.plugins.base.ConfigurazioneServizioAzione;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazione;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import it.link.pdd.core.plugins.transazioni.ConfigurazioneTransazioneStato;
-import it.link.pdd.core.plugins.base.dao.IConfigurazioneServizioAzioneServiceSearch;
-import it.link.pdd.core.plugins.base.dao.IConfigurazioneServizioServiceSearch;
-import it.link.pdd.core.plugins.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizio;
+import org.openspcoop2.monitor.engine.config.base.ConfigurazioneServizioAzione;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazione;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
+import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioAzioneServiceSearch;
+import org.openspcoop2.monitor.engine.config.base.dao.IConfigurazioneServizioServiceSearch;
+import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTransazioneServiceSearch;
 import it.link.pdd.core.utenti.IdUtente;
 import it.link.pdd.core.utenti.StatoTabella;
 import it.link.pdd.core.utenti.Utente;
@@ -45,8 +45,8 @@ public class GenericService implements IGenericService {
 
 	private it.link.pdd.core.utenti.dao.IServiceManager utentiServiceManager;
 
-	private it.link.pdd.core.plugins.base.dao.IServiceManager basePluginsServiceManager;
-	private it.link.pdd.core.plugins.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
+	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager basePluginsServiceManager;
+	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager transazioniPluginsServiceManager;
 	private IConfigurazioneServizioAzioneServiceSearch confSerAzSearchDAO;
 	private IConfigurazioneServizioServiceSearch confSerSearchDAO;
 	private IConfigurazioneTransazioneServiceSearch transazioneSearchDAO;
@@ -66,7 +66,7 @@ public class GenericService implements IGenericService {
 			this.utenteDAO = this.utentiServiceManager.getUtenteService();
 
 			// init Service Manager BASE
-			this.basePluginsServiceManager = (it.link.pdd.core.plugins.base.dao.IServiceManager) DAOFactory
+			this.basePluginsServiceManager = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) DAOFactory
 					.getInstance(GenericService.log).getServiceManager(DAO.PLUGINS_BASE,GenericService.log);
 			this.confSerAzSearchDAO = this.basePluginsServiceManager
 					.getConfigurazioneServizioAzioneServiceSearch();
@@ -74,7 +74,7 @@ public class GenericService implements IGenericService {
 					.getConfigurazioneServizioServiceSearch();
 			
 			// init Service Manager RICERCHE (Transazioni.plugins)
-			this.transazioniPluginsServiceManager = (it.link.pdd.core.plugins.transazioni.dao.IServiceManager) DAOFactory
+			this.transazioniPluginsServiceManager = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) DAOFactory
 					.getInstance(GenericService.log).getServiceManager(DAO.PLUGINS_TRANSAZIONI,GenericService.log);
 			this.transazioneSearchDAO = this.transazioniPluginsServiceManager
 					.getConfigurazioneTransazioneServiceSearch();

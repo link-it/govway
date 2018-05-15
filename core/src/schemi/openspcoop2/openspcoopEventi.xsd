@@ -49,7 +49,7 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" />
-					<linkit:sql-table-mapping name="notifiche_eventi">
+					<linkit:sql-table-mapping name="notifiche_eventi" comment="Eventi generati dalla Porta">
 						<linkit:sql-table-index name="INDEX_EVENTI">
 							<linkit:sql-table-index-field name="ora-registrazione" order="DESC" ignoreTypeCompatibility="true"/>
 							<linkit:sql-table-index-field name="severita"/>

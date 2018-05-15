@@ -47,16 +47,16 @@ public class PluginConverter implements Converter {
 			return PluginConverter.NONE_STRING;
 		}
 
-		if(value instanceof it.link.pdd.core.plugins.ricerche.InfoPlugin){
-			it.link.pdd.core.plugins.ricerche.InfoPlugin facesSelectItem = (it.link.pdd.core.plugins.ricerche.InfoPlugin) value;
+		if(value instanceof org.openspcoop2.monitor.engine.config.ricerche.InfoPlugin){
+			org.openspcoop2.monitor.engine.config.ricerche.InfoPlugin facesSelectItem = (org.openspcoop2.monitor.engine.config.ricerche.InfoPlugin) value;
 			return facesSelectItem.getLabel();
 		}
-		else if(value instanceof it.link.pdd.core.plugins.transazioni.InfoPlugin){
-			it.link.pdd.core.plugins.transazioni.InfoPlugin facesSelectItem = (it.link.pdd.core.plugins.transazioni.InfoPlugin) value;
+		else if(value instanceof org.openspcoop2.monitor.engine.config.transazioni.InfoPlugin){
+			org.openspcoop2.monitor.engine.config.transazioni.InfoPlugin facesSelectItem = (org.openspcoop2.monitor.engine.config.transazioni.InfoPlugin) value;
 			return facesSelectItem.getLabel();
 		}
-		else if(value instanceof it.link.pdd.core.plugins.statistiche.InfoPlugin){
-			it.link.pdd.core.plugins.statistiche.InfoPlugin facesSelectItem = (it.link.pdd.core.plugins.statistiche.InfoPlugin) value;
+		else if(value instanceof org.openspcoop2.monitor.engine.config.statistiche.InfoPlugin){
+			org.openspcoop2.monitor.engine.config.statistiche.InfoPlugin facesSelectItem = (org.openspcoop2.monitor.engine.config.statistiche.InfoPlugin) value;
 			return facesSelectItem.getLabel();
 		}
 

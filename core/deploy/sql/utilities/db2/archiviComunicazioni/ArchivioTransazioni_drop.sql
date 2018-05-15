@@ -22,4 +22,6 @@ DROP TABLE dump_allegati;
 DROP TABLE dump_header_trasporto;
 DROP TABLE dump_multipart_header;
 DROP TABLE dump_messaggi;
+DROP TABLE transazioni_export;
+DROP TABLE transazioni_info;
 DROP TABLE transazioni;

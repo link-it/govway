@@ -73,6 +73,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransazioneInfo }
+     */
+    public TransazioneInfo createTransazioneInfo() {
+        return new TransazioneInfo();
+    }
+
+    /**
      * Create an instance of {@link DumpAllegato }
      */
     public DumpAllegato createDumpAllegato() {
@@ -105,6 +112,13 @@ public class ObjectFactory {
      */
     public DumpHeaderAllegato createDumpHeaderAllegato() {
         return new DumpHeaderAllegato();
+    }
+
+    /**
+     * Create an instance of {@link TransazioneExport }
+     */
+    public TransazioneExport createTransazioneExport() {
+        return new TransazioneExport();
     }
 
     /**

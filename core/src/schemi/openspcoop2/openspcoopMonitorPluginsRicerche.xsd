@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/monitor/engine/config/ricerche"
+	targetNamespace="http://www.openspcoop2.org/monitor/engine/config/ricerche"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="monitor_config_ricerche">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false"/>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:jdbc generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="true">
+							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[PLUGINS PER LE RICERCHE PERSONALIZZATE]]></linkit:sql-comment>
+								<linkit:sql-table object-name="configurazione-ricerca" object-type="configurazione-ricerca"/>
+							</linkit:sql-table-list>
+						</linkit:sql-script>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="true" check-tables-order-list="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+
+
+
+
+
+
+
+
+	<!-- ********* TABELLA RIFERITA ************* -->
+	
+	<xsd:element name="configurazione-servizio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-table-mapping name="plugins_conf_servizi">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="configurazione-servizio-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-configurazione-servizio-azione" generate="false"/>
+					<linkit:sql-table-mapping name="plugins_conf_azioni">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="false" id="id-plugin" generate="false"/>
+					<linkit:sql-table-mapping name="plugins">
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MAPPING" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="id-plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping relationship="none" object-name="plugin"
+						object-type="plugin"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="ALLARME"/>
+			<xsd:element name="class-name" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- ********* PLUGINS PER LE RICERCHE PERSONALIZZATE ************* -->
+	
+	<xsd:element name="configurazione-ricerca">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-configurazione-ricerca"/>
+					<linkit:sql-table-mapping name="ricerche_personalizzate" comment="Plugins (per le ricerche) attivati per l'azione indicata">
+						<linkit:sql-table-constraint unique="uniq_ricerche_pers"
+							index="idx_ricerche_pers"/>
+						<linkit:sql-table-primary-key name-id="pid"/>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_configurazione"/>
+							<linkit:sql-table-unique-field name="id-configurazione-ricerca"/>
+						</linkit:sql-table-unique>
+						<linkit:sql-table-unique create-index="true">
+							<linkit:sql-table-unique-column name="id_configurazione"/>
+							<linkit:sql-table-unique-column name="id_plugin"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-ricerca" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo della ricerca)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="id-configurazione-servizio-azione"
+					type="id-configurazione-servizio-azione">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_configurazione" />
+								<linkit:sql-id-mapping relationship="reversed" object-name="configurazione-servizio-azione"
+									object-type="configurazione-servizio-azione"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'azione a cui questa configurazione riferisce (FK verso plugins_conf_azioni(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="enabled" type="xsd:boolean" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione se il plugin è attivo)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="plugin" type="info-plugin">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="id_plugin" />
+								<linkit:sql-id-mapping relationship="reversed" object-name="plugin"
+									object-type="plugin"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del plugin (FK verso plugins(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="label" type="xsd:string" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Label descrittivo associato al plugin)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+	<xsd:complexType name="id-configurazione-servizio">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-servizio" object-type="configurazione-servizio"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<!-- Dati dell'accordo di servizio -->
+			<xsd:element name="accordo" type="xsd:string"/>
+			<xsd:element name="tipo-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="nome-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="versione" type="xsd:unsignedInt" default="1" minOccurs="0"/>
+			<!-- Nome del port type -->
+			<xsd:element name="servizio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-servizio-azione">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-servizio-azione" object-type="configurazione-servizio-azione"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<!-- Relazioni definite dove viene utilizzato l'id, poiche' i nome delle foreign key differiscono da caso a caso -->
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio"/>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="info-plugin">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="plugin" object-type="plugin"
+						relationship="none"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="RICERCA"/>
+			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="label" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-ricerca">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:sql-id-mapping object-name="configurazione-ricerca" object-type="configurazione-ricerca"
+						relationship="normal"/>
+					<linkit:sql-column-mapping name="id_configurazione" required="true"/>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio-azione"
+				type="id-configurazione-servizio-azione">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-id-mapping
+								object-name="configurazione-servizio-azione"
+								object-type="configurazione-servizio-azione"
+								relationship="none"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="id-configurazione-ricerca" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+
+
+
+	
+
+</xsd:schema>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/monitor/engine/config/ricerche"
+	targetNamespace="http://www.openspcoop2.org/monitor/engine/config/ricerche"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+
+
+	<!-- ********* PLUGINS PER LE RICERCHE PERSONALIZZATE ************* -->
+	
+	<xsd:element name="configurazione-ricerca">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-ricerca" type="xsd:string" />
+				<xsd:element name="id-configurazione-servizio-azione"
+					type="id-configurazione-servizio-azione" />
+				<xsd:element name="enabled" type="xsd:boolean" />
+				<xsd:element name="plugin" type="info-plugin" />
+				<xsd:element name="label" type="xsd:string" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+	<xsd:complexType name="id-configurazione-servizio">
+		<xsd:sequence>
+			<!-- Dati dell'accordo di servizio -->
+			<xsd:element name="accordo" type="xsd:string"/>
+			<xsd:element name="tipo-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="nome-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="versione" type="xsd:unsignedInt" default="1" minOccurs="0"/>
+			<!-- Nome del port type -->
+			<xsd:element name="servizio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-servizio-azione">
+		<!-- Relazioni definite dove viene utilizzato l'id, poiche' i nome delle foreign key differiscono da caso a caso -->
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio"/>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="info-plugin">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="RICERCA"/>
+			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="label" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-ricerca">
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio-azione"
+				type="id-configurazione-servizio-azione"/>
+
+			<xsd:element name="id-configurazione-ricerca" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+
+
+
+	
+
+</xsd:schema>

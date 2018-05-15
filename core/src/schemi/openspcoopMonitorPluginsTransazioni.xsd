@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/monitor/engine/config/transazioni"
+	targetNamespace="http://www.openspcoop2.org/monitor/engine/config/transazioni"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+
+
+
+
+
+
+
+	<!-- ********* PERSONALIZZAZIONI/PLUGINS DELLE TRANSAZIONI ************* -->
+
+	<xsd:element name="configurazione-transazione">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-servizio-azione"
+					type="id-configurazione-servizio-azione" />
+
+				<xsd:element name="enabled" type="xsd:boolean"  /> <!-- Deprecato -->
+				<xsd:element ref="configurazione-transazione-plugin" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="configurazione-transazione-stato" minOccurs="0" maxOccurs="unbounded" />
+				<xsd:element ref="configurazione-transazione-risorsa-contenuto" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-plugin">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="id-configurazione-transazione-plugin" type="xsd:string" />
+				<xsd:element name="enabled" type="xsd:boolean" />
+				<xsd:element name="plugin" type="info-plugin" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-stato">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="enabled" type="xsd:boolean" />
+				<xsd:element name="nome" type="xsd:string"/>
+				<xsd:element name="tipo-controllo" type="tipo-controllo"/>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+				<xsd:element name="valore" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="xpath" type="xsd:string"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="configurazione-transazione-risorsa-contenuto">
+		<xsd:complexType>
+			<xsd:sequence>
+				<!-- Anonimizzazione/Compressione -->
+				<xsd:element name="abilita-anonimizzazione" type="xsd:integer" default="0"/>
+				<xsd:element name="abilita-compressione" type="xsd:integer" default="0"/>
+				<xsd:element name="tipo-compressione" type="tipo-compressione" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="carattere-maschera" minOccurs="0" maxOccurs="1">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="1"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="numero-caratteri-maschera" type="xsd:integer" minOccurs="0"
+					maxOccurs="1" />
+				<xsd:element name="posizionamento-maschera" type="posizione-mascheramento" minOccurs="0"
+					maxOccurs="1"/>
+				<xsd:element name="tipo-mascheramento" type="tipo-mascheramento" minOccurs="0" maxOccurs="1"/>
+				<!-- Risorsa -->
+				<xsd:element name="enabled" type="xsd:boolean" />
+				<xsd:element name="nome" type="xsd:string"/>
+				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+				<xsd:element name="xpath" type="xsd:string"/>
+				<xsd:element name="stat-enabled" type="xsd:boolean" default="false" />
+				<xsd:element name="id-configurazione-transazione-stato" type="id-configurazione-transazione-stato" minOccurs="0"
+					maxOccurs="1" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+
+
+
+
+
+
+
+
+	<!-- ********* Identificativi / Tipi / Enumerations ************* -->
+	
+	<!-- ID -->
+	<xsd:complexType name="id-configurazione-servizio">
+		<xsd:sequence>
+			<!-- Dati dell'accordo di servizio -->
+			<xsd:element name="accordo" type="xsd:string"/>
+			<xsd:element name="tipo-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="nome-soggetto-referente" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="versione" type="xsd:unsignedInt" default="1" minOccurs="0"/>
+			<!-- Nome del port type -->
+			<xsd:element name="servizio" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-servizio-azione">
+		<!-- Relazioni definite dove viene utilizzato l'id, poiche' i nome delle foreign key differiscono da caso a caso -->
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio" type="id-configurazione-servizio"/>
+			<xsd:element name="azione" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="id-configurazione-transazione">
+		<xsd:sequence>
+			<xsd:element name="id-configurazione-servizio-azione"
+				type="id-configurazione-servizio-azione">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="id-configurazione-transazione-stato">
+		<xsd:sequence>
+			<xsd:element name="stato" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="info-plugin">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" fixed="TRANSAZIONE"/>
+			<xsd:element name="class-name" type="xsd:string" />
+			<xsd:element name="descrizione" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="label" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>	
+	
+	
+	<!-- Enumeration -->
+
+	<xsd:simpleType name="tipo-messaggio">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Richiesta"/>
+			<xsd:enumeration value="Risposta"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="tipo-controllo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Match"/>
+			<xsd:enumeration value="Equals"/>
+			<xsd:enumeration value="Exist"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-mascheramento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Fisico"/>
+			<xsd:enumeration value="Logico"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="tipo-compressione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Deflater"/>
+			<xsd:enumeration value="Gzip"/>
+			<xsd:enumeration value="Zip"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="posizione-mascheramento">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Primi"/>
+			<xsd:enumeration value="Ultimi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

@@ -24,8 +24,8 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.richfaces.model.Ordering;
 
 import it.link.pdd.core.DAO;
-import it.link.pdd.core.plugins.ricerche.ConfigurazioneRicerca;
-import it.link.pdd.core.plugins.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import it.link.pdd.core.utenti.Utente;
 import it.link.pdd.core.utenti.UtenteSoggetto;
 import org.openspcoop2.core.commons.search.IdSoggetto;

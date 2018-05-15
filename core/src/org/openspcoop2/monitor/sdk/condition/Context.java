@@ -35,6 +35,7 @@ public interface Context {
 	
 	public String getTipoServizio();
 	public String getServizio();
+	public Integer getVersioneServizio();
 	
 	public String getAzione();
 	
