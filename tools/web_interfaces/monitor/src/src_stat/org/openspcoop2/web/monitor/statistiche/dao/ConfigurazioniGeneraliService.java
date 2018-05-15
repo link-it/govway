@@ -33,7 +33,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import it.link.pdd.core.transazioni.constants.PddRuolo;

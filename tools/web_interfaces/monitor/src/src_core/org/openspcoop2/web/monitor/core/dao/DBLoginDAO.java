@@ -10,7 +10,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.crypt.Password;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import it.link.pdd.core.utenti.Ruolo;
 import it.link.pdd.core.utenti.Utente;

@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import it.link.pdd.core.utenti.dao.IUtenteServiceSearch;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;

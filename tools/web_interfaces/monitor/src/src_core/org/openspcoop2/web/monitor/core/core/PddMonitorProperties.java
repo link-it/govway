@@ -14,7 +14,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;

@@ -29,9 +29,10 @@
 	<classpathentry kind="src" path="tools/web_interfaces/lib/users/src"/>
 	<classpathentry excluding="*/jboss*.xml|*/web.xml" kind="src" path="tools/web_interfaces/control_station/src"/>
 	<classpathentry excluding="*/jboss*.xml|*/struts-config.xml|*/web.xml" kind="src" path="tools/web_interfaces/loader/src"/>
-	<classpathentry kind="src" path="tools/web_interfaces/monitor/src/src_core"/>
-	<classpathentry kind="src" path="tools/web_interfaces/monitor/src/src_transazioni"/>
-	<classpathentry kind="src" path="tools/web_interfaces/monitor/src/src_stat"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_core"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_transazioni"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_stat"/>
+	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/registry/server/src"/>
 	<classpathentry kind="src" path="tools/ws/registry/client/src"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/config/server/src"/>

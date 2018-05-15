@@ -1,6 +1,6 @@
 package org.openspcoop2.web.monitor.transazioni.dao;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import it.link.pdd.core.transazioni.TransazioneExport;
 import it.link.pdd.core.transazioni.constants.DeleteState;

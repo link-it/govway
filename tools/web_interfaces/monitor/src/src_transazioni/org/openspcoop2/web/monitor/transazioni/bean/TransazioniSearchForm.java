@@ -24,7 +24,7 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.richfaces.model.Ordering;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;

@@ -1,6 +1,6 @@
 package org.openspcoop2.web.monitor.core.dao;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import it.link.pdd.core.utenti.IdSoggetto;
 import it.link.pdd.core.utenti.IdUtente;

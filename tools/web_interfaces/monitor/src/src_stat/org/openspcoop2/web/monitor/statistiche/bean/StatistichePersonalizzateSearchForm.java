@@ -26,7 +26,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;

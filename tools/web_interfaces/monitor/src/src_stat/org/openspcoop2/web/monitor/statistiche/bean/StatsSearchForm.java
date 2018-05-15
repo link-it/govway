@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.TipiDatabase;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoBanda;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoLatenza;
 import it.link.pdd.core.transazioni.statistiche.constants.TipoReport;

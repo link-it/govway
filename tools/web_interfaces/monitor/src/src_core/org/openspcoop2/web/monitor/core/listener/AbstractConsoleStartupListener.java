@@ -19,7 +19,7 @@ import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;

@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDServizio;
 
-import it.link.pdd.core.DAO;
+import org.openspcoop2.core.commons.dao.DAO;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import it.link.pdd.core.utenti.Utente;
 import org.openspcoop2.core.commons.search.IdSoggetto;
