@@ -1,6 +1,6 @@
 package org.openspcoop2.web.monitor.transazioni.datamodel;
 
-import it.link.pdd.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;

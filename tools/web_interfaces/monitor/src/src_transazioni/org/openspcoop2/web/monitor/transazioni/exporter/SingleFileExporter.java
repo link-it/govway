@@ -35,15 +35,15 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.Transazione;
-import it.link.pdd.core.transazioni.TransazioneExport;
-import it.link.pdd.core.transazioni.constants.DeleteState;
-import it.link.pdd.core.transazioni.constants.ExportState;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.TransazioneExport;
+import org.openspcoop2.core.transazioni.constants.DeleteState;
+import org.openspcoop2.core.transazioni.constants.ExportState;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -388,9 +388,10 @@ public class SingleFileExporter implements IExporter{
 				
 				//contenuti
 				
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA);
+				// TODO aggiornare con i nuovi valori
+				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_INGRESSO);
 				
-				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA);
+				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_INGRESSO);
 			}
 
 		}//chiudo for transazioni
@@ -602,10 +603,10 @@ public class SingleFileExporter implements IExporter{
 			String dir = contenutiDir+tipo.toString().toLowerCase()+File.separator;
 
 			//envelope
-			if(dump.getEnvelope()!=null){
+			if(dump.getBody()!=null){
 				try{
 					zip.putNextEntry(new ZipEntry(dir+"envelope.xml"));
-					zip.write(dump.getEnvelope().getBytes());
+					zip.write(dump.getBody());
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
@@ -667,7 +668,7 @@ public class SingleFileExporter implements IExporter{
 						//salvo il file
 						String fileName = "allegato";
 
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getMimetype());
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
 
 						fileName+="."+ext;
 

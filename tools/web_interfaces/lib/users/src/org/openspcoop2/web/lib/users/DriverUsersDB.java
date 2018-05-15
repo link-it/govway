@@ -1653,4 +1653,133 @@ public class DriverUsersDB {
 			}catch(Exception eClose){}
 		}
 	}
+	
+	/**
+	 * Restituisce lo stato identificato da <var>login</var> e da <var>nomeOggetto</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param nomeOggetto Oggetto da ricercare
+	 *               
+	 * @return Lo stato individuato
+	 */
+	public Stato getStato(String login, String nomeOggetto) throws DriverUsersDBException {
+		if (login == null || nomeOggetto == null)
+			throw new DriverUsersDBException("[getStato] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		Stato statoObject = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
+			sqlQueryObject.addFromTable(CostantiDB.USERS_STATI);
+			sqlQueryObject.addSelectField(CostantiDB.USERS_STATI+".stato");
+			sqlQueryObject.addSelectField(CostantiDB.USERS_STATI+".oggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI +".oggetto = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			stm.setString(2, nomeOggetto);
+			rs = stm.executeQuery();
+			while (rs.next()) {
+				String oggetto = rs.getString("oggetto");
+				String stato = rs.getString("stato");
+				statoObject = new Stato();
+				statoObject.setOggetto(oggetto);
+				statoObject.setStato(stato);
+			}
+			rs.close();
+			stm.close();
+
+			return statoObject;
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::getStato] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::getStato] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	/**
+	 * Aggiorna lo stato identificato da <var>login</var> e da <var>nomeOggetto</var> 
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param nomeOggetto Oggetto da ricercare
+	 *               
+	 * @return Lo stato individuato
+	 */
+	public void saveStato(String login, String nomeOggetto, String statoOggetto) throws DriverUsersDBException {
+		if (login == null || nomeOggetto == null)
+			throw new DriverUsersDBException("[saveStato] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS_STATI);
+			sqlQueryObject.addUpdateField(CostantiDB.USERS_STATI+".stato",statoOggetto);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI +".oggetto = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			stm.setString(2, nomeOggetto);
+			stm.executeUpdate();
+			stm.close();
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveStato] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveStato] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
 }

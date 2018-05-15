@@ -31,7 +31,7 @@ public class BustaBean extends Busta {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient IProtocolFactory protocolFactory;
+	private transient IProtocolFactory<?> protocolFactory;
 	private transient ITraduttore traduttore;
 
 	private List<EccezioneBean> listaEccezioniBean;
@@ -44,7 +44,7 @@ public class BustaBean extends Busta {
 		super(protocollo);
 	}
 
-	public BustaBean(Busta busta, IProtocolFactory protocolFactory) {
+	public BustaBean(Busta busta, IProtocolFactory<?> protocolFactory) {
 		super(busta.getProtocollo());
 		this.protocolFactory = protocolFactory;
 

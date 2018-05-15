@@ -37,10 +37,10 @@ import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.TransazioneExport;
-import it.link.pdd.core.transazioni.constants.DeleteState;
-import it.link.pdd.core.transazioni.constants.ExportState;
-import it.link.pdd.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.TransazioneExport;
+import org.openspcoop2.core.transazioni.constants.DeleteState;
+import org.openspcoop2.core.transazioni.constants.ExportState;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.web.monitor.core.converter.DurataConverter;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -155,7 +155,7 @@ public class SingleCsvFileExporter implements IExporter{
 					MsgDiagnostico msg = list.get(j);
 					String newLine = j > 0 ? "\n\n" : CostantiExport.EMPTY_STRING;
 
-					IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
+					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
 					IXMLDiagnosticoBuilder diagnosticoBuilder = pf.createXMLDiagnosticoBuilder();
 					
 					if(j==0){

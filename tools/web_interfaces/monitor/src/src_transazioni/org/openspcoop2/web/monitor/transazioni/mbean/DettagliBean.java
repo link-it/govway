@@ -17,6 +17,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
@@ -24,9 +25,9 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
-import it.link.pdd.core.transazioni.Transazione;
-import it.link.pdd.core.transazioni.constants.PddRuolo;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -63,9 +64,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private static Boolean enableHeaderInfo = null;
 
-	private transient IProtocolFactory protocolFactory;
-	
-	private Boolean backwardCompatibility = false;
+	private transient IProtocolFactory<?> protocolFactory;
 	
 	private boolean showFaultCooperazione = false;
 	private boolean showFaultIntegrazione = false;
@@ -97,8 +96,6 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
 
 			this.driver  = pddMonitorProperties.getDriverTracciamento();
-			
-			this.setBackwardCompatibility(pddMonitorProperties.isBackwardCompatibilityOpenspcoop1());
 			
 			this.visualizzaDataAccettazione = pddMonitorProperties.isAttivoTransazioniDataAccettazione();
 
@@ -275,13 +272,11 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 					Traccia tr = tracce.get(j);
 					String newLine = j > 0 ? "\n\n" : "";
 
-					IProtocolFactory pf = ProtocolFactoryManager.getInstance()
-							.getProtocolFactoryByName(tr.getProtocollo());
-					ITracciaSerializer tracciaBuilder = pf
-							.createTracciaSerializer();
+					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
+					ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
 
 					try {
-						String traccia = tracciaBuilder.toString(tr);
+						String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.XML);
 
 						in = new ByteArrayInputStream(
 								(newLine + traccia).getBytes());
@@ -396,9 +391,6 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			ruolo = "Router";
 			break;
 		}
-		if(this.getBackwardCompatibility()!=null && this.getBackwardCompatibility()){
-			return ruolo;
-		}
 		if(this.dettaglio.getProtocollo()!=null){
 			return ruolo + " ("+this.dettaglio.getProtocollo()+")";
 		}
@@ -502,14 +494,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	
  	public boolean getHasDumpRichiesta() {
 		if(this.hasDumpRichiesta == null)
-			this.hasDumpRichiesta  = this.getHasDump(TipoMessaggio.RICHIESTA);
+			this.hasDumpRichiesta  = this.getHasDump(TipoMessaggio.RICHIESTA_INGRESSO); //TODO sistemare
 		
 		return this.hasDumpRichiesta;
 	}
 
 	public boolean getHasDumpRisposta() {
 		if(this.hasDumpRisposta == null)
-			this.hasDumpRisposta  = this.getHasDump(TipoMessaggio.RISPOSTA);
+			this.hasDumpRisposta  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO); //TODO sistemare
 		
 		return this.hasDumpRisposta;
 	}
@@ -520,14 +512,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public boolean getHasHeaderTrasportoRichiesta() {
 		if(this.hasHeaderTrasportoRichiesta == null)
-			this.hasHeaderTrasportoRichiesta = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA);
+			this.hasHeaderTrasportoRichiesta = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_INGRESSO); //TODO sistemare
 		
 		return this.hasHeaderTrasportoRichiesta;
 	}
 
 	public boolean getHasHeaderTrasportoRisposta() {
 		if(this.hasHeaderTrasportoRisposta == null)
-			this.hasHeaderTrasportoRisposta = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA);
+			this.hasHeaderTrasportoRisposta = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO); //TODO sistemare 
 		
 		return this.hasHeaderTrasportoRisposta;
 	}
@@ -656,16 +648,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		return toRet;
 	}
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
-	}
-
-	public Boolean getBackwardCompatibility() {
-		return this.backwardCompatibility;
-	}
-
-	public void setBackwardCompatibility(Boolean backwardCompatibility) {
-		this.backwardCompatibility = backwardCompatibility;
 	}
 
 	public boolean isVisualizzaDataAccettazione() {
@@ -675,6 +659,4 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaDataAccettazione(boolean visualizzaDataAccettazione) {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
 	}
-	
-	
 }

@@ -20,6 +20,7 @@ import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
@@ -31,15 +32,15 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.Transazione;
-import it.link.pdd.core.transazioni.TransazioneExport;
-import it.link.pdd.core.transazioni.constants.DeleteState;
-import it.link.pdd.core.transazioni.constants.ExportState;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.TransazioneExport;
+import org.openspcoop2.core.transazioni.constants.DeleteState;
+import org.openspcoop2.core.transazioni.constants.ExportState;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -183,9 +184,9 @@ public class MultiFileExporter implements IExporter{
 							Traccia tr = tracce.get(j);
 							String newLine = j > 0 ? "\n\n" : "";
 
-							IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
+							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
 							ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
-							String traccia = tracciaBuilder.toString(tr);
+							String traccia = tracciaBuilder.toString(tr,TipoSerializzazione.XML);
 
 							in = new ByteArrayInputStream((newLine + traccia).getBytes());
 
@@ -233,9 +234,9 @@ public class MultiFileExporter implements IExporter{
 						MsgDiagnostico msg = list.get(j);
 						String newLine = j > 0 ? "\n\n" : "";
 
-						IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
+						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
 						IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
-						String diagnostico = diagnosticoBuilder.toString(msg);
+						String diagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.XML);
 
 						in = new ByteArrayInputStream((newLine + diagnostico).getBytes());
 
@@ -296,9 +297,10 @@ public class MultiFileExporter implements IExporter{
 
 				//contenuti
 
-				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA);
+				// TODO aggiornare con i nuovi valori
+				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_INGRESSO);
 
-				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA);
+				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_INGRESSO);
 			}
 
 		}//chiudo for transazioni
@@ -464,10 +466,10 @@ public class MultiFileExporter implements IExporter{
 			String dir = contenutiDir+tipo.toString()+File.separator;
 
 			//envelope
-			if(dump.getEnvelope()!=null){
+			if(dump.getBody()!=null){
 				try{
 					zip.putNextEntry(new ZipEntry(dir+"envelope.xml"));
-					zip.write(dump.getEnvelope().getBytes());
+					zip.write(dump.getBody());
 					zip.flush();
 					zip.closeEntry();
 				}catch(Exception ioe){
@@ -525,7 +527,7 @@ public class MultiFileExporter implements IExporter{
 						//salvo il file
 						String fileName = "allegato";
 
-						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getMimetype());
+						String ext = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
 
 						fileName+="."+ext;
 

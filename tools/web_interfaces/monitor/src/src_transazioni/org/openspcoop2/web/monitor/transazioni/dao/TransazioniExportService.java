@@ -1,6 +1,10 @@
 package org.openspcoop2.web.monitor.transazioni.dao;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.transazioni.TransazioneExport;
+import org.openspcoop2.core.transazioni.constants.DeleteState;
+import org.openspcoop2.core.transazioni.constants.ExportState;
+import org.openspcoop2.core.transazioni.dao.IDBTransazioneExportServiceSearch;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
 import java.sql.Connection;
@@ -24,19 +28,17 @@ public class TransazioniExportService implements ITransazioniExportService {
 	private transient Logger log = null;
 
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
-	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
-	private org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch transazioniSearchDAO;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneExportService transazioneExportDAO;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch transazioneExportSearchDAO;
 	
 	public TransazioniExportService() {
 		this.log =  LoggerManager.getPddMonitorSqlLogger();
 		try {
 			// init Service Manager utenti
-			this.transazioniServiceManager = (it.link.pdd.core.transazioni.dao.IServiceManager) DAOFactory
-					.getInstance(this.log).getServiceManager(DAO.TRANSAZIONI,this.log);
-			this.transazioneExportDAO = this.transazioniServiceManager
-					.getTransazioneExportService();
-			this.transazioneExportSearchDAO = this.transazioniServiceManager
-					.getTransazioneExportServiceSearch();
+			this.transazioniServiceManager = (org.openspcoop2.core.transazioni.dao.IServiceManager) DAOFactory
+					.getInstance(this.log).getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),this.log);
+			this.transazioneExportDAO = this.transazioniServiceManager.getTransazioneExportService();
+			this.transazioneExportSearchDAO = this.transazioniServiceManager.getTransazioneExportServiceSearch();
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -47,12 +49,10 @@ public class TransazioniExportService implements ITransazioniExportService {
 		this.log = log;
 		try {
 			// init Service Manager utenti
-			this.transazioniServiceManager = (it.link.pdd.core.transazioni.dao.IServiceManager) DAOFactory
-					.getInstance(this.log).getServiceManager(DAO.TRANSAZIONI,con,autoCommit,this.log);
-			this.transazioneExportDAO = this.transazioniServiceManager
-					.getTransazioneExportService();
-			this.transazioneExportSearchDAO = this.transazioniServiceManager
-					.getTransazioneExportServiceSearch();
+			this.transazioniServiceManager = (org.openspcoop2.core.transazioni.dao.IServiceManager) DAOFactory
+					.getInstance(this.log).getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
+			this.transazioneExportDAO = this.transazioniServiceManager.getTransazioneExportService();
+			this.transazioneExportSearchDAO = this.transazioniServiceManager.getTransazioneExportServiceSearch();
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -62,12 +62,10 @@ public class TransazioniExportService implements ITransazioniExportService {
 		this.log = log;
 		try {
 			// init Service Manager utenti
-			this.transazioniServiceManager = (it.link.pdd.core.transazioni.dao.IServiceManager) DAOFactory
-					.getInstance(this.log).getServiceManager(DAO.TRANSAZIONI,this.log);
-			this.transazioneExportDAO = this.transazioniServiceManager
-					.getTransazioneExportService();
-			this.transazioneExportSearchDAO = this.transazioniServiceManager
-					.getTransazioneExportServiceSearch();
+			this.transazioniServiceManager = (org.openspcoop2.core.transazioni.dao.IServiceManager) DAOFactory
+					.getInstance(this.log).getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),this.log);
+			this.transazioneExportDAO = this.transazioniServiceManager.getTransazioneExportService();
+			this.transazioneExportSearchDAO = this.transazioniServiceManager.getTransazioneExportServiceSearch();
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -78,8 +76,7 @@ public class TransazioniExportService implements ITransazioniExportService {
 	public List<TransazioneExport> findAll(int start, int limit) {
 		try {
 			this.log.info("Find All");
-			IPaginatedExpression pagExpr = this.transazioneExportSearchDAO
-					.newPaginatedExpression();
+			IPaginatedExpression pagExpr = this.transazioneExportSearchDAO.newPaginatedExpression();
 			pagExpr.offset(start).limit(limit);
 
 			return this.transazioneExportSearchDAO.findAll(pagExpr);
@@ -149,8 +146,7 @@ public class TransazioniExportService implements ITransazioniExportService {
 	public TransazioneExport findById(Long key) {
 		try {
 			this.log.info("Find By Id: [" + key + "]");
-			return ((IDBTransazioneExportServiceSearch) this.transazioneExportSearchDAO)
-					.get(key);
+			return ((IDBTransazioneExportServiceSearch) this.transazioneExportSearchDAO).get(key);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 		}
@@ -222,10 +218,8 @@ public class TransazioniExportService implements ITransazioniExportService {
 		try {
 			expr = this.transazioneExportSearchDAO.newExpression();
 
-			expr.equals(TransazioneExport.model().EXPORT_STATE,
-					ExportState.COMPLETED);
-			expr.and().notEquals(TransazioneExport.model().DELETE_STATE,
-					DeleteState.COMPLETED);
+			expr.equals(TransazioneExport.model().EXPORT_STATE,	ExportState.COMPLETED);
+			expr.and().notEquals(TransazioneExport.model().DELETE_STATE, DeleteState.COMPLETED);
 			expr.sortOrder(SortOrder.ASC).addOrder(TransazioneExport.model().EXPORT_TIME_START)
 					;
 

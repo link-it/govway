@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
-import it.link.pdd.core.transazioni.DumpAllegato;
-import it.link.pdd.core.transazioni.DumpContenuto;
-import it.link.pdd.core.transazioni.DumpHeaderTrasporto;
-import it.link.pdd.core.transazioni.DumpMessaggio;
-import it.link.pdd.core.transazioni.Transazione;
-import it.link.pdd.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
@@ -72,11 +72,11 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	
 	public String getPrettyEnvelop(){
 		String toRet = null;
-		if(this.dumpMessaggio!=null && this.dumpMessaggio.getEnvelope()!=null)
-			toRet = Utils.prettifyXml(this.dumpMessaggio.getEnvelope());
+		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null)
+			toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
 		 
 		if(toRet == null)
-			toRet = this.dumpMessaggio.getEnvelope() != null ? this.dumpMessaggio.getEnvelope() : "";
+			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
 			
 		return toRet;
 	}
@@ -86,7 +86,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			return this.dumpMessaggio;
 		
 		try {
-			this.dumpMessaggio = (((ITransazioniService)this.service)).getDumpMessaggio(this.idTransazione, this.isRisposta ? TipoMessaggio.RISPOSTA : TipoMessaggio.RICHIESTA);
+			// TODO sistemare
+			this.dumpMessaggio = (((ITransazioniService)this.service)).getDumpMessaggio(this.idTransazione, this.isRisposta ? TipoMessaggio.RISPOSTA_INGRESSO : TipoMessaggio.RICHIESTA_INGRESSO);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 			
@@ -177,7 +178,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// suitable content type depending on your file
 			// the content type presented here is ok for, lets say, text files and
 			// others (like CSVs, PDFs)
-			response.setContentType(this.selectedAttachment.getMimetype());
+			response.setContentType(this.selectedAttachment.getContentType());
 
 			// This is another important attribute for the header of the response
 			// Here fileName, is a String with the name that you will suggest as a
@@ -187,12 +188,12 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "allegato";
 			
-			String ext = MimeTypeUtils.fileExtensionForMIMEType(this.selectedAttachment.getMimetype());
+			String ext = MimeTypeUtils.fileExtensionForMIMEType(this.selectedAttachment.getContentType());
 			
 			fileName+="."+ext;
 			
 			// Setto Proprietà Export File
-			HttpUtilities.setOutputFile(response, true, fileName, this.selectedAttachment.getMimetype());
+			HttpUtilities.setOutputFile(response, true, fileName, this.selectedAttachment.getContentType());
 			
 			// Streams we will use to read, write the file bytes to our response
 			ByteArrayInputStream bis = null;
@@ -276,7 +277,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				
 				String allegatofileName = "allegato_"+index;
 								
-				String allegatoExt = MimeTypeUtils.fileExtensionForMIMEType(allegato.getMimetype());
+				String allegatoExt = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
 				
 				allegatofileName+="."+allegatoExt;
 				zip.putNextEntry(new ZipEntry(allegatofileName));
