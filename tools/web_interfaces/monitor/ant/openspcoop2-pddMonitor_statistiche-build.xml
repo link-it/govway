@@ -1,0 +1,91 @@
+<project name="openspcoop2-compile-pddMonitor-statistiche">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.web.monitor.statistiche
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="openspcoop2-pddMonitor-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
+	<target name="compile_openspcoop2_pddMonitor_statistiche" description="compila la libreria org.openspcoop.web.monitor.statistiche.*">
+
+		<!-- Creo faces-config.xml -->
+		<antcall target="buildFacesConfig">
+			<param name="srcFacesConfigDir" value="${src_stat_pddMonitor}/META-INF"/>
+		</antcall>
+
+		<if>
+			<istrue value="${buildPddMonitor}"/>
+			<then>
+		
+				<!-- Info svn -->
+				<runtarget target="checksvn" />
+				
+				<!-- org.openspcoop2.web.monitor -->
+				<var name="packagesCompiled" value="org.openspcoop2.web.monitor" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.bean" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.constants" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.converter" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.dao" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.datamodel" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.export" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.mbean" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.report" />	
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.servlet" />		
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.monitor.statistiche.utils" />
+				<antcall target="compile_src_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_stat_pddMonitor}/"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-pddMonitor-statistiche"/>
+					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES" value="META-INF/faces-config.xml"/>
+					<param name="compile_src_openspcoop2.SRC_INCLUDES_2" value="META-INF/conf/spring/*"/>
+					<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.web.monitor.statistiche"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_pddMonitor}"/>
+					<param name="build" value="${build_pddMonitor}"/>
+				</antcall>
+				
+				<!-- Jar Complessivo -->
+				<!--<antcall target="jar_2_jar_openspcoop2">
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="compile_src_openspcoop2.SVN_ID_NAME" value="web-pddMonitor-statistiche"/>
+					<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+					<param name="dist" value="${dist_pddMonitor}"/>
+					<param name="build" value="${build_pddMonitor}"/>
+				</antcall>-->
+				
+				<!-- API -->
+				<if>
+					<istrue value="${buildAPI}"/>
+					<then>
+						<mkdir dir="${doc_pddMonitor}"/>
+					</then>
+				</if>
+				<antcall target="compile_api_openspcoop2">
+					<param name="compile_src_openspcoop2.PACKAGES" value="${packagesCompiled}"/>
+					<param name="compile_src_openspcoop2.API_NAME" value="web-pddMonitor-statistiche"/>
+					<param name="compile_src_openspcoop2.API_DIR" value="${doc_pddMonitor}/api/statistiche"/>
+					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
+					<param name="src" value="${src_stat_pddMonitor}"/>
+					<param name="doc" value="${doc_pddMonitor}"/>
+					<param name="dist" value="${dist_pddMonitor}"/>
+				</antcall>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+</project>

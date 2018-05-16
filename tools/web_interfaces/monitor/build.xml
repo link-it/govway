@@ -6,7 +6,10 @@
     </description>
 
 	<import file="./local_env.xml" />
-	<import file="./ant/openspcoop2-pddMonitor-build.xml" />
+	<import file="./ant/openspcoop2-pddMonitor_core-build.xml" />
+	<import file="./ant/openspcoop2-pddMonitor_transazioni-build.xml" />
+	<import file="./ant/openspcoop2-pddMonitor_statistiche-build.xml" />
+	<import file="./ant/openspcoop2-pddMonitor_eventi-build.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-war.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-codeGen.xml" />
 	<import file="${mvc}/build.xml" />
@@ -19,7 +22,7 @@
 	
 	<!-- set properties for this build -->
 	<property name="pddMonitor" location="${basedir}" />
-	<property name="src_pddMonitor" value="${pddMonitor}/src/" />
+	<property name="src_pddMonitor" value="${pddMonitor}/src" />
 	<property name="src_webinf_pddMonitor" value="${src_pddMonitor}/WEB-INF" />
 	<property name="src_core_pddMonitor" value="${src_pddMonitor}/src_core" />
 	<property name="src_stat_pddMonitor" value="${src_pddMonitor}/src_stat" />
@@ -314,7 +317,7 @@
 	<target name="compile_dipendenze_invoke" depends="compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddMonitor-->
-	<target name="compile_pddMonitor" depends="init_compile_pddMonitor,compile_dipendenze,compile_openspcoop2_pddMonitor" description="compila pddMonitor"/>
+	<target name="compile_pddMonitor" depends="init_compile_pddMonitor,compile_dipendenze,compile_openspcoop2_pddMonitor_core,compile_openspcoop2_pddMonitor_transazioni,compile_openspcoop2_pddMonitor_statistiche,compile_openspcoop2_pddMonitor_eventi" description="compila pddMonitor"/>
 
 
 	<!-- Creazione del modulo .WAR -->
