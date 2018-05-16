@@ -6,7 +6,7 @@ import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazio
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
-import org.openspcoop2.web.monitor.core.costants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 
 import java.util.List;
 

@@ -6,9 +6,9 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
+import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.costants.CaseSensitiveMatch;
-import org.openspcoop2.web.monitor.core.costants.TipoMatch;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 

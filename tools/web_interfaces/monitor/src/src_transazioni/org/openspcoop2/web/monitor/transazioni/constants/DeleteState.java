@@ -1,4 +1,4 @@
-package org.openspcoop2.web.monitor.transazioni.costants;
+package org.openspcoop2.web.monitor.transazioni.constants;
 
 public enum DeleteState {
 

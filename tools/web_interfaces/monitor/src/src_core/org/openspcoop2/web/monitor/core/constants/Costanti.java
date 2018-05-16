@@ -1,4 +1,4 @@
-package org.openspcoop2.web.monitor.core.costants;
+package org.openspcoop2.web.monitor.core.constants;
 
 public class Costanti {
 

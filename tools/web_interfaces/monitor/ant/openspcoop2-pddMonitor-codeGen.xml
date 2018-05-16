@@ -1,0 +1,56 @@
+<project name="openspcoop2-codeGen-pddMonitor">
+    <description>
+       Generazione sorgenti relativi al package org.openspcoop2.web.monitor
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/jaxb-utils.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+
+	<!-- ***** CODICE GENERATO A PARTIRE DAI SORGENTI ************ -->
+	
+	<target name="codegen_from_schemaxsd">
+		<!-- contents.xsd  header.xsd  manifest_allegato.xsd  manifest.xsd  searchfilter.xsd -->
+
+	   	<!-- Generazione Contents -->
+	    	<antcall target="-generatesrc_from_schema">
+			<param name="schema" value="${src_transazioni_pddMonitor}/schemi/contents.xsd"/>
+			<param name="outDir" value="${src_transazioni_pddMonitor}"/>
+		</antcall>
+
+		<!-- Generazione Header -->
+		<antcall target="-generatesrc_from_schema">
+			<param name="schema" value="${src_transazioni_pddMonitor}/schemi/header.xsd"/>
+			<param name="outDir" value="${src_transazioni_pddMonitor}"/>
+		</antcall>
+		
+		<!-- Generazione ManifestAllegato -->
+		<antcall target="-generatesrc_from_schema">
+			<param name="schema" value="${src_transazioni_pddMonitor}/schemi/manifest_allegato.xsd"/>
+			<param name="outDir" value="${src_transazioni_pddMonitor}"/>
+		</antcall>
+
+		<!-- Generazione Manifest -->
+		<antcall target="-generatesrc_from_schema">
+			<param name="schema" value="${src_transazioni_pddMonitor}/schemi/manifest.xsd"/>
+			<param name="outDir" value="${src_transazioni_pddMonitor}"/>
+		</antcall>
+
+		<!-- Generazione SearchFilter -->
+		<antcall target="-generatesrc_from_schema">
+			<param name="schema" value="${src_transazioni_pddMonitor}/schemi/searchfilter.xsd"/>
+			<param name="outDir" value="${src_transazioni_pddMonitor}"/>
+		</antcall>
+
+	</target>
+
+
+</project>

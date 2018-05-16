@@ -27,7 +27,7 @@ import org.openspcoop2.monitor.engine.config.transazioni.dao.IConfigurazioneTran
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
-import org.openspcoop2.web.monitor.core.costants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 

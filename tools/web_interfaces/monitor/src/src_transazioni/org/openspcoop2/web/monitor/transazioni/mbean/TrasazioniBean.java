@@ -27,9 +27,9 @@ import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.dao.IUserService;
 import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -44,7 +44,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 
-public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISearchFormService<TransazioneBean, String, TransazioniSearchForm>> {
+public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISearchFormService<TransazioneBean, String, TransazioniSearchForm>> {
 
 	public static final String COLUMNS_VISIBILITY_STATO_TABELLE_KEY = "columnsVisibility";
 	public static final String COLUMNS_ORDER_STATO_TABELLE_KEY = "columnsOrder";
@@ -70,11 +70,11 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	private ApplicationBean applicationBean = null;
 
-	public TransazioniBean(){
+	public TrasazioniBean(){
 		super();
 
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniBean.log);
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TrasazioniBean.log);
 			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
 			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
 			this.visualizzaDataAccettazione = pddMonitorProperties.isAttivoTransazioniDataAccettazione();
@@ -155,7 +155,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			}
 
 		} catch (Exception e) {
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 		}
 
 		return this.stati;
@@ -214,7 +214,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			}
 
 		} catch (Exception e) {
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 		}
 
 		return this.risorse;
@@ -280,7 +280,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}
@@ -332,7 +332,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione delle tracce.");
 		}
@@ -403,7 +403,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}
@@ -505,7 +505,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TransazioniBean.log.error(e.getMessage(), e);
+			TrasazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}

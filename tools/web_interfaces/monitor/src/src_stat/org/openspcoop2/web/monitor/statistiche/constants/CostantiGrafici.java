@@ -5,73 +5,73 @@ public class CostantiGrafici {
 
 	/** Costanti ereditate dal core...*/
 	
-	public static final String DAL_AL_PATTERN = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DAL_AL_PATTERN;
+	public static final String DAL_AL_PATTERN = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DAL_AL_PATTERN;
 	
-	public static final String PATTERN_DD_MMMMM_YYYY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_DD_MMMMM_YYYY;
-	public static final String PATTERN_HH_MM = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_HH_MM;
-	public static final String PATTERN_DD_MMMMM_YYYY_ORE_HH_MM = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_DD_MMMMM_YYYY_ORE_HH_MM;
-	public static final String PATTERN_HH = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_HH;
-	public static final String PATTERN_EEE_DD_MM = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_EEE_DD_MM;
-	public static final String PATTERN_DD_MM = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_DD_MM;
-	public static final String PATTERN_MMM_YY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PATTERN_MMM_YY;
+	public static final String PATTERN_DD_MMMMM_YYYY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_DD_MMMMM_YYYY;
+	public static final String PATTERN_HH_MM = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_HH_MM;
+	public static final String PATTERN_DD_MMMMM_YYYY_ORE_HH_MM = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_DD_MMMMM_YYYY_ORE_HH_MM;
+	public static final String PATTERN_HH = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_HH;
+	public static final String PATTERN_EEE_DD_MM = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_EEE_DD_MM;
+	public static final String PATTERN_DD_MM = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_DD_MM;
+	public static final String PATTERN_MMM_YY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PATTERN_MMM_YY;
 	
 	public static final String PATTERN_DD_MM_YY = "dd/MM/yy";
 	public static final String PATTERN_DD_MM_YY_HH = "dd/MM/yy HH";
 	public static final String PATTERN_MM_YY = "MM/yy";
 	
-	public static final String LABEL_SUCC = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.LABEL_SUCC;
-	public static final String LABEL_ATTUALE = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.LABEL_ATTUALE;
-	public static final String LABEL_PREC = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.LABEL_PREC;
-	public static final String PUNTO = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.PUNTO;
-	public static final String WHITE_SPACE = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.WHITE_SPACE;
+	public static final String LABEL_SUCC = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_SUCC;
+	public static final String LABEL_ATTUALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_ATTUALE;
+	public static final String LABEL_PREC = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_PREC;
+	public static final String PUNTO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.PUNTO;
+	public static final String WHITE_SPACE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.WHITE_SPACE;
 	
 	
-	public final static String DATI_NON_PRESENTI = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DATI_NON_PRESENTI;
-	public static final String ALTRI_LABEL = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.ALTRI_LABEL;
-	public static final String NUMERO_ESITI_LABEL = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.NUMERO_ESITI_LABEL;
-	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO =org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO;
+	public final static String DATI_NON_PRESENTI = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATI_NON_PRESENTI;
+	public static final String ALTRI_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.ALTRI_LABEL;
+	public static final String NUMERO_ESITI_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.NUMERO_ESITI_LABEL;
+	public static final String DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO =org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO;
 	
-	public static final String TOOLTIP_SUFFIX = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.TOOLTIP_SUFFIX;
+	public static final String TOOLTIP_SUFFIX = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOOLTIP_SUFFIX;
 	
-	public static final String TITOLO_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.TITOLO_KEY;
-	public static final String SOTTOTITOLO_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.SOTTOTITOLO_KEY;
-	public static final String Y_AXIS_LABEL_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.Y_AXIS_LABEL_KEY;
-	public static final String X_AXIS_LABEL_DIAGONALI_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.X_AXIS_LABEL_DIAGONALI_KEY;
-	public static final String CATEGORIE_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.CATEGORIE_KEY;
-	public static final String CATEGORIA_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.CATEGORIA_KEY;
-	public static final String MOSTRA_LEGENDA_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.MOSTRA_LEGENDA_KEY;
-	public static final String LABEL_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.LABEL_KEY;
-	public static final String KEY_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.KEY_KEY;
-	public static final String DATI_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DATI_KEY;
-	public static final String DATA_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DATA_KEY;
-	public static final String USA_COLORI_AUTOMATICI_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.USA_COLORI_AUTOMATICI_KEY;
-	public static final String COLORE_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.COLORE_KEY;
-	public static final String NO_DATA_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.NO_DATA_KEY;
-	public static final String X_AXIS_LABEL_DIREZIONE_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY;
-	public static final String X_AXIS_GRID_LINES_KEY = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.X_AXIS_GRID_LINES_KEY;
-	public static final int DIREZIONE_LABEL_ORIZZONTALE = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE;
-	public static final int DIREZIONE_LABEL_OBLIQUO = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_OBLIQUO;
-	public static final int DIREZIONE_LABEL_VERTICALE = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_VERTICALE;
-	public static final String DIREZIONE_LABEL_ORIZZONTALE_LABEL = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE_LABEL;
-	public static final String DIREZIONE_LABEL_OBLIQUO_LABEL = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_OBLIQUO_LABEL;
-	public static final String  DIREZIONE_LABEL_VERTICALE_LABEL = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.DIREZIONE_LABEL_VERTICALE_LABEL;
-	public static final String ABILITA_CLICK_LEGENDA_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.ABILITA_CLICK_LEGENDA_KEY;
-	public static final String VALORE_REALE_TORTA_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.VALORE_REALE_TORTA_KEY;
-	public static final String COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.COLONNE_LEGENDA_KEY;
-	public static final String LIMITE_COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY;
-	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.costants.CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE;
+	public static final String TITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TITOLO_KEY;
+	public static final String SOTTOTITOLO_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.SOTTOTITOLO_KEY;
+	public static final String Y_AXIS_LABEL_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.Y_AXIS_LABEL_KEY;
+	public static final String X_AXIS_LABEL_DIAGONALI_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_AXIS_LABEL_DIAGONALI_KEY;
+	public static final String CATEGORIE_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.CATEGORIE_KEY;
+	public static final String CATEGORIA_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.CATEGORIA_KEY;
+	public static final String MOSTRA_LEGENDA_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.MOSTRA_LEGENDA_KEY;
+	public static final String LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LABEL_KEY;
+	public static final String KEY_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.KEY_KEY;
+	public static final String DATI_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATI_KEY;
+	public static final String DATA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATA_KEY;
+	public static final String USA_COLORI_AUTOMATICI_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.USA_COLORI_AUTOMATICI_KEY;
+	public static final String COLORE_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLORE_KEY;
+	public static final String NO_DATA_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.NO_DATA_KEY;
+	public static final String X_AXIS_LABEL_DIREZIONE_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY;
+	public static final String X_AXIS_GRID_LINES_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.X_AXIS_GRID_LINES_KEY;
+	public static final int DIREZIONE_LABEL_ORIZZONTALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE;
+	public static final int DIREZIONE_LABEL_OBLIQUO = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_OBLIQUO;
+	public static final int DIREZIONE_LABEL_VERTICALE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_VERTICALE;
+	public static final String DIREZIONE_LABEL_ORIZZONTALE_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE_LABEL;
+	public static final String DIREZIONE_LABEL_OBLIQUO_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_OBLIQUO_LABEL;
+	public static final String  DIREZIONE_LABEL_VERTICALE_LABEL = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DIREZIONE_LABEL_VERTICALE_LABEL;
+	public static final String ABILITA_CLICK_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.ABILITA_CLICK_LEGENDA_KEY;
+	public static final String VALORE_REALE_TORTA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VALORE_REALE_TORTA_KEY;
+	public static final String COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLONNE_LEGENDA_KEY;
+	public static final String LIMITE_COLONNE_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY;
+	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE;
 	
-	public static final String OK_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.OK_KEY;
-	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.OK_LABEL;
+	public static final String OK_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_KEY;
+	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_LABEL;
 	
-	public static final String FAULT_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.FAULT_KEY;
-	public static final String FAULT_LABEL= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.FAULT_LABEL;
+	public static final String FAULT_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.FAULT_KEY;
+	public static final String FAULT_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.FAULT_LABEL;
 	
-	public static final String ERRORE_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.ERRORE_KEY;
-	public static final String ERRORE_LABEL= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.ERRORE_LABEL;
+	public static final String ERRORE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.ERRORE_KEY;
+	public static final String ERRORE_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.ERRORE_LABEL;
 	
-	public static final String TOTALE_KEY= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.TOTALE_KEY;
-	public static final String TOTALE_LABEL= org.openspcoop2.web.monitor.core.costants.CostantiGrafici.TOTALE_LABEL;
+	public static final String TOTALE_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_KEY;
+	public static final String TOTALE_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.TOTALE_LABEL;
 	
 	/** Costanti modulo statistiche*/
 	

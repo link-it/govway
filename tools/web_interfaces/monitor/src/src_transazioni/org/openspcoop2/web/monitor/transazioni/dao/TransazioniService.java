@@ -63,12 +63,12 @@ import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
+import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.costants.CaseSensitiveMatch;
-import org.openspcoop2.web.monitor.core.costants.ModalitaRicercaTransazioni;
-import org.openspcoop2.web.monitor.core.costants.TipoMatch;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
@@ -155,8 +155,8 @@ public class TransazioniService implements ITransazioniService {
 		case ID_APPLICATIVO:
 			return this.forceIndexIdApplicativoFindAll;
 		case ID_MESSAGGIO:
-			org.openspcoop2.web.monitor.core.costants.TipoMessaggio tipoMessaggio = 
-				org.openspcoop2.web.monitor.core.costants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
+				org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
 			switch (tipoMessaggio) {
 			case Richiesta:
 				return this.forceIndexIdMessaggioRichiestaFindAll;
@@ -177,8 +177,8 @@ public class TransazioniService implements ITransazioniService {
 		case ID_APPLICATIVO:
 			return this.forceIndexIdApplicativoCount;
 		case ID_MESSAGGIO:
-			org.openspcoop2.web.monitor.core.costants.TipoMessaggio tipoMessaggio = 
-			org.openspcoop2.web.monitor.core.costants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
+			org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
 			switch (tipoMessaggio) {
 			case Richiesta:
 				return this.forceIndexIdMessaggioRichiestaCount;
@@ -1952,8 +1952,8 @@ public class TransazioniService implements ITransazioniService {
 		if(ricerca!=null && ModalitaRicercaTransazioni.ID_MESSAGGIO.equals(ricerca) ){
 			if (StringUtils.isNotEmpty(this.searchForm.getIdEgov())) {
 				
-				org.openspcoop2.web.monitor.core.costants.TipoMessaggio tipoMessaggio = 
-						org.openspcoop2.web.monitor.core.costants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
+				org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoMessaggio = 
+						org.openspcoop2.web.monitor.core.constants.TipoMessaggio.valueOf(this.searchForm.getTipoIdMessaggio());
 				
 				String value = this.searchForm.getIdEgov().trim();
 				switch (tipoMessaggio) {
