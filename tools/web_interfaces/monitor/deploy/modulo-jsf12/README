@@ -1,0 +1,15 @@
+******* INSTALLAZIONE ***********
+
+1) Installazione Manuale
+Copiare il contenuto di questa directory all'interno della directory <WILDFLY_ROOT>/modules
+NOTA: le directory devono essere installate proprio dentro la directory 'modules' e non all'interno del path system/layers/base/*
+      es. cp -r modulo-jsf12/* <WILDFLY_ROOT>/modules/
+
+2) Installazione tramite Jboss-cli
+Accedere alla jboss-cli console ed utilizzare i seguenti comandi, sostituendo il template 'PATH_ASSOLUTO':
+. AS_HOME/bin/jboss-cli.sh
+. connect
+. module add --name=javax.faces.api --slot=mojarra-1.2_15 --resources=PATH_ASSOLUTO/modulo-jsf12/javax/faces/api/mojarra-1.2_15/jsf-api-1.2_15.jar --module-xml=PATH_ASSOLUTO/modulo-jsf12/javax/faces/api/mojarra-1.2_15/module.xml
+. module add --name=com.sun.jsf-impl --slot=mojarra-1.2_15 --resources=PATH_ASSOLUTO/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15/jsf-impl-1.2_15.jar --module-xml=PATH_ASSOLUTO/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15/module.xml
+. module add --name=org.jboss.as.jsf-injection --slot=mojarra-1.2_15 --resources=PATH_ASSOLUTO/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15/weld-core-jsf-2.1.2.Final.jar:PATH_ASSOLUTO/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15/wildfly-jsf-injection-8.0.0.Final.jar --module-xml=PATH_ASSOLUTO/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15/module.xml
+. quit

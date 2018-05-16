@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
+	<ui:param
+		value="Dettaglio Evento"
+		name="title" />
+	<ui:define name="navbar">
+		<ul>
+			<li><h:commandLink action="eventi" value="Eventi" /></li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText value="Dettaglio Evento" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="eventiBean" />
+		
+		
+		<rich:panel id="panelDettaglioTransazione" rendered="#{not empty eventiBean.evento}">
+			<f:facet name="header">
+				<h:outputText id="outDettagli" value="Dettagli Evento" />
+			</f:facet>
+			
+			<link:fieldset legend="Informazioni Generali"
+						rendered="#{true}" collapsible="false" closed="false">
+			
+				<h:panelGrid id="panelDettaglioEvento" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx" >
+				
+					<h:outputLabel value="Ora Registrazione" id="dataLabel" styleClass="outputFieldLabel" rendered="#{not empty eventiBean.evento.oraRegistrazione}"/>
+					<h:outputText id="outData" value="#{eventiBean.evento.oraRegistrazione}" rendered="#{not empty eventiBean.evento.oraRegistrazione}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+					</h:outputText>
+				
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipo" value="Tipo" rendered="#{not empty eventiBean.evento.tipo}" />
+					<h:outputText id="outTipo" value="#{eventiBean.evento.tipo}" rendered="#{not empty eventiBean.evento.tipo}" />
+				
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodice" value="Codice" rendered="#{not empty eventiBean.evento.codice}" />
+					<h:outputText id="outCodice" value="#{eventiBean.evento.codice}" rendered="#{not empty eventiBean.evento.codice}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelSeverita" value="Severità" rendered="#{not empty eventiBean.evento.severita}" />
+					<h:outputText id="outSeverita" value="#{eventiBean.evento.severitaReadable}" rendered="#{not empty eventiBean.evento.severita}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelDescrizione" value="Descrizione" rendered="#{not empty eventiBean.evento.descrizione}" />
+					<h:outputText id="outDescrizione" value="#{eventiBean.evento.descrizione}" rendered="#{not empty eventiBean.evento.descrizione}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdConfigurazione" value="Origine" rendered="#{not empty eventiBean.evento.idConfigurazione}" />
+					<h:outputText id="outIdConfigurazione" value="#{eventiBean.evento.idConfigurazione}" rendered="#{not empty eventiBean.evento.idConfigurazione}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelConfigurazione" value="Configurazione" rendered="#{not empty eventiBean.evento.configurazione}" />
+					<h:outputText id="outConfigurazione" value="#{eventiBean.evento.configurazione}" rendered="#{not empty eventiBean.evento.configurazione}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty eventiBean.evento.idTransazione}" />
+					<h:outputText id="outIdTransazione" value="#{eventiBean.evento.idTransazione}" rendered="#{not empty eventiBean.evento.idTransazione}" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty eventiBean.evento.clusterId}" />
+					<h:outputText id="outIdCluster" value="#{eventiBean.evento.clusterId}" rendered="#{not empty eventiBean.evento.clusterId}" />
+					
+				</h:panelGrid>
+			</link:fieldset>
+			
+		</rich:panel>
+		
+		
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,312 @@
+/* Form styles */
+/*collapsible field set*/
+div.form-container form fieldset.collapsed,div.form-container .display-form fieldset.collapsed {
+	    border-bottom-width: 0;
+        border-left-width: 0;
+        border-right-width: 0;
+        margin-bottom: 0;
+}
+
+div.form-container form fieldset.collapsible legend
+,div.form-container .display-form fieldset.collapsible legend{
+    background: transparent url('../images/tema_link/down.png') no-repeat left;
+    text-indent: 20px;
+    cursor: pointer;
+}
+
+div.form-container form fieldset.collapsed legend
+,div.form-container .display-form fieldset.collapsed legend{
+    background: transparent url('../images/tema_link/next.png') no-repeat left;
+    text-indent: 20px;
+    cursor: pointer;    
+}
+
+
+/* INLINE PROPERTY */  
+
+label.insideLeftProp{
+	margin-right: 3px !important;
+	padding-right: 3px !important;
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative;
+	width:  auto !important; 
+}
+
+label.insideRightProp{
+	margin-right: 3px !important;
+	padding-right: 3px !important;
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative;
+	width:  auto !important; 
+}
+
+p.legend {
+	margin-bottom: 1em;
+}
+
+p.legend em {
+	color: ${p.legend.color};
+	font-style: normal;
+}
+
+div.errorsSpacer {
+	height: 4px;
+}
+
+div.errors {
+	margin: 0 40px 20px 40px;
+	padding: 10px 20px;
+	border: ${messages.error.border.color} 1px solid;
+	background-color: ${messages.error.background.color};
+	color: ${messages.error.color};
+	border-radius: 8px;
+}
+
+div.errors p {
+	margin: 0;
+}
+
+div.errors p em {
+	color: ${messages.error.color};
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+div.info {
+	margin: 0 40px 20px 40px;
+	padding: 10px 20px;
+	border: ${messages.info.border.color} 1px solid;
+	background-color: ${messages.info.background.color};
+	color: ${messages.info.color};
+	border-radius: 8px;
+}
+
+div.info p {
+	margin: 0;
+}
+
+div.info p em {
+	color: ${messages.info.color};
+	font-size: 14px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+.rich-messages dt {
+	padding-bottom: 4px;
+}
+
+div.form-container form p,div.form-container .display-form p{
+	margin: .5em;
+}
+
+div.form-container form p.note, div.form-container .display-form p.note {
+	margin-left: 170px;
+	color: ${p.note.color};
+	line-height: 100%;
+}
+
+div.form-container form div.prop ,div.form-container .display-form div.prop, div.form-container div.prop{
+	padding: 3px 5px 5px 5px;  /* padding top 0px IE7 fix */
+}
+
+div.form-container form fieldset,div.form-container .display-form fieldset, div.form-container fieldset {
+	margin: 10px 0;
+}
+
+div.form-container form legend,div.form-container .display-form legend, div.form-container legend {
+	padding-left: 10px;
+    padding-right: 10px;
+    color: ${legend.color};
+}
+
+div.form-container label,div.form-container .display-form label {
+	margin-right: 10px;	
+	padding-right: 10px;
+	width: 150px;
+	display: block;
+	float: left;
+	text-align: right;
+	position: relative;
+	color: ${label.color};
+	padding-top: 2px;
+}
+
+label.longLabel{
+    margin-right: 10px;
+    padding-right: 10px;
+    width: 180px !important;
+    display: block;
+    float: left;
+    text-align: right;
+    position: relative;
+    color: ${label.color};
+	padding-top: 2px;
+}
+
+div.form-container label em ,div.form-container .display-form label em{
+	position: absolute;
+	right: 0;
+	font-size: 120%;
+	font-style: normal;
+	color: ${p.legend.color};
+}
+
+div.form-container div.controlset div,
+div.form-container .display-form div.controlset div {
+	margin-left: 170px;
+}
+
+div.form-container div.buttonrow,
+div.form-container .display-form div.buttonrow {
+	margin-top: 20px;
+	margin-left: 170px;
+}
+
+div.form-container div.rich-combobox,
+div.form-container .display-form div.rich-combobox{
+	margin-left: 170px;
+	padding-bottom: 5px; 
+}
+
+/* 	personalizzazioni */
+div.form-container table.controlset label,
+div.form-container .display-form table.controlset label{
+	float: right;
+	padding-left: 2px;
+	text-align: left;
+	width: auto;
+}
+
+.subtitle {
+	padding: 10px 20px 6px 5px;
+    margin-left: 166px;
+}
+
+.subtitle span {
+	font-size: 12px;
+    font-weight: bold;
+    margin-left: 0px;
+	color: ${label.color};
+}
+
+/* /* BUTTONS */ 
+
+.buttonrowlista{
+	display: block;
+	float: right;
+	padding-top: 20px;
+}
+
+.buttonrowmodal {
+	text-align: center;
+	padding: 20px;
+	margin: 0px;
+}
+
+.buttonrowheight {
+	height: 40px;
+	padding-bottom: 20px;
+}
+
+.buttonrowsonda {
+	margin-top: 16px;
+	margin-left: 170px;
+	margin-bottom: 12px;
+}
+
+.buttonrowsonda a,
+.buttonrowsonda input[type="button"],
+.buttonrowsonda input[type="submit"],
+.buttonrowmodal a,
+.buttonrowmodal input[type="button"],
+.buttonrowmodal input[type="submit"],
+.buttonrow a,
+.buttonrow input[type="button"],
+.buttonrow input[type="submit"] {
+	color: ${input.button.color};
+	border: 1px solid ${input.button.border.color};
+	background-color: ${input.button.background.color};
+	background-image: none;
+	font-size: 13px; 
+	font-weight: bold;
+	padding: 7px;
+	border-radius: 5px;
+	margin: 5px;
+	min-width: 120px;
+	cursor:pointer;
+	font-family: 'Roboto';
+	text-decoration: none;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .buttonrowmodal a:hover, .buttonrowsonda a:hover{
+   	border: 1px solid ${input.button.hover.border.color};
+	background-color: ${input.button.hover.background.color};
+	color: ${input.button.hover.color};
+	background-image: none;
+}
+
+.secondary {
+	border: 1px solid ${input.button.negative.border.color};
+	background-color:  ${input.button.negative.background.color};
+	color: ${input.button.negative.color};
+	background-image: none;
+}
+
+.buttonrow a.negative, .buttonrowmodal a.negative, .buttonrowsonda a.negative, input[type="button"].negative, input[type="submit"].negative {
+	border: 1px solid ${input.button.negative.border.color};
+	background-color: ${input.button.negative.background.color};
+	color: ${input.button.negative.color};
+	background-image: none;
+}
+
+.buttonrow a.negative:hover, .buttonrowmodal a.negative:hover, .buttonrowsonda a.negative:hover, input[type="button"].negative:hover, input[type="submit"].negative:hover{
+	border: 1px solid ${input.button.negative.hover.border.color};
+	background-color: ${input.button.negative.hover.background.color};
+	color: ${input.button.negative.hover.color};
+	background-image: none;
+}
+
+.labelSliderGrafici {
+	width: 160px  !important;
+    padding-top: 4px   !important;
+    margin-right: 0px  !important;
+}
+
+.direzioneLabelGrafici {
+	width: 28px  !important;
+	margin-right: 0px  !important;
+	padding-top: 4px   !important;
+}
+
+.labelSpinnerGrafici {
+	width: 100px  !important;
+    margin-right: 0px  !important;
+}
+
+.labelSpinnerGraficiSolo {
+    margin-right: 0px  !important;
+}
+
+.spinnerNumeroRisultatiGrafici input.rich-spinner-input{
+	width: 20px  !important;
+}
+
+.comandi-grafici-align-default{
+	width: 33%;
+}
+
+.comandi-grafici-align-center{
+	text-align: center;
+	width: 33%;
+}
+
+.comandi-grafici-align-right{
+	text-align: right;
+	width: 33%;
+}

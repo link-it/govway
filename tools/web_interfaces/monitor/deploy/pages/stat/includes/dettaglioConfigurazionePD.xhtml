@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	
+	<a4j:outputPanel id="dettaglioPDPanel">
+	
+		<link:fieldset legend="Informazioni Generali" rendered="#{true}" collapsible="false" closed="false">
+			<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+				<c:forEach items="#{mBean.selectedElement.pd.propertyGenerali}" var="prop">
+					<h:outputLabel styleClass="outputFieldLabel" value="#{prop.nome}" rendered="#{not empty prop.valore}" />
+					<h:outputText value="#{prop.valore}" rendered="#{not empty prop.valore}" />    
+				</c:forEach>
+			</h:panelGrid>
+		</link:fieldset>
+		
+		<div class="spacerDettaglio"></div>
+		
+		<link:fieldset legend="Parametri di Invocazione" rendered="#{true}" collapsible="false" closed="false">
+			<h:panelGrid id="panelIntegrazione" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					<c:forEach items="#{mBean.selectedElement.pd.propertyIntegrazione}" var="prop">
+						<h:outputLabel styleClass="outputFieldLabel" value="#{prop.nome}" rendered="#{not empty prop.valore}" />
+						<h:outputText value="#{prop.valore}" rendered="#{not empty prop.valore}" />    
+					</c:forEach>
+				</h:panelGrid>
+		</link:fieldset>
+		
+		<a4j:outputPanel id="dettaglioAccessiPanel" rendered="#{not empty mBean.selectedElement.pd.propertyAutenticazione or not empty mBean.selectedElement.pd.propertyAutorizzazione}">
+			<div class="spacerDettaglio"></div>
+			<link:fieldset legend="Controllo degli Accessi" rendered="#{true}" collapsible="false" closed="false">
+				<h:panelGrid id="panelAccessi" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					<h:outputLabel styleClass="outputFieldLabel" value="" rendered="#{not empty mBean.selectedElement.pd.propertyAutenticazione}"/>
+					<h:outputText value="Autenticazione" styleClass="outputFieldLabel" rendered="#{not empty mBean.selectedElement.pd.propertyAutenticazione}" />  
+					<c:forEach items="#{mBean.selectedElement.pd.propertyAutenticazione}" var="prop">
+						<h:outputLabel styleClass="outputFieldLabel" value="#{prop.nome}" rendered="#{not empty prop.valore}" />
+						<h:outputText value="#{prop.valore}" rendered="#{not empty prop.valore}" />    
+					</c:forEach>
+					<a4j:outputPanel styleClass="spacerDettaglio" layout="block" rendered="#{not empty mBean.selectedElement.pd.propertyAutenticazione and not empty mBean.selectedElement.pd.propertyAutorizzazione}"/>
+					<a4j:outputPanel styleClass="spacerDettaglio" layout="block" rendered="#{not empty mBean.selectedElement.pd.propertyAutenticazione and not empty mBean.selectedElement.pd.propertyAutorizzazione}" />  
+					
+					<h:outputLabel styleClass="outputFieldLabel" value="" rendered="#{not empty mBean.selectedElement.pd.propertyAutorizzazione}" />
+					<h:outputText value="Autorizzazione" styleClass="outputFieldLabel" rendered="#{not empty mBean.selectedElement.pd.propertyAutorizzazione}" />   
+					<c:forEach items="#{mBean.selectedElement.pd.propertyAutorizzazione}" var="prop">
+						<h:outputLabel styleClass="outputFieldLabel" value="#{prop.nome}" rendered="#{not empty prop.valore}" />
+						<h:outputText value="#{prop.valore}" rendered="#{not empty prop.valore}" />    
+					</c:forEach>
+				</h:panelGrid>
+			</link:fieldset>
+		</a4j:outputPanel>
+		
+		<div class="spacerDettaglio"></div>
+			
+		<a4j:outputPanel id="dettaglioConnettorePanel" rendered="#{not empty mBean.selectedElement.pd.connettore}">
+			<link:fieldset legend="Informazioni di Inoltro" rendered="#{true}" collapsible="false" closed="false">
+				<h:panelGrid id="panelDettaglioConnettore" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					<c:forEach items="#{mBean.selectedElement.pd.propertyConnettore}" var="prop">
+						<h:outputLabel styleClass="outputFieldLabel" value="#{prop.nome}" rendered="#{not empty prop.valore}" />
+						<h:outputText value="#{prop.valore}" rendered="#{not empty prop.valore}" />    
+					</c:forEach>
+				</h:panelGrid>
+			</link:fieldset>
+		</a4j:outputPanel>
+	
+	</a4j:outputPanel>
+</ui:composition>

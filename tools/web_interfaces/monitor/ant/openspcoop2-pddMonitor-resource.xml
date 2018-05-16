@@ -1,0 +1,297 @@
+<project name="openspcoop2-compile-pddMonitor">
+    <description>
+        Produzione dei jar relativi al package org.openspcoop2.web.monitor
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+	<target name="-init_prepare">
+		<mkdir dir="${build_pddMonitor_war}/WEB-INF" />
+	</target>
+
+	<target name="-create_jsf_faces_config">
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss6"/>
+				<equals arg1="${as}" arg2="jboss7"/>
+			</or> 
+			<then>
+				<delete file="${build_pddMonitor_war}/WEB-INF/faces-config.xml" />
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/faces-config.xml" append="yes">
+					<filelist dir="${src_core_pddMonitor}/META-INF" files="faces-config.xml"/>
+				</concat>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/faces-config.xml" append="yes">
+					<filelist dir="${src_core_pddMonitor}/META-INF" files="faces-config.xml.end"/>
+				</concat>
+	 		</then>
+		</if>
+	</target>
+
+	<target name="-prepare" depends="-init_prepare,-create_jsf_faces_config">
+		<tstamp/>
+		
+		<!-- Genero il file web.xml -->
+		<delete file="${build_pddMonitor_war}/WEB-INF/web.xml" />
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.start"/>
+		</concat>
+		
+		<!-- web.xml.params -->
+		<if> 
+			<or>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.params.wildfly"/>
+				</concat>
+			</then>
+		</if>
+		<if> 
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.params.jboss7"/>
+				</concat>
+			</then>
+		</if>		
+		<if> 
+			<or>
+				<equals arg1="${as}" arg2="jboss4"/>
+				<equals arg1="${as}" arg2="jboss5"/>
+				<equals arg1="${as}" arg2="jboss6"/>
+			</or>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.params"/>
+				</concat>
+			</then>
+		</if>	
+		<if> 
+			<or>
+				<matches string="${as}" pattern="tomcat.*"/>
+			</or>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.params.tomcat"/>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.web.xml.params}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.params}"/>
+				</concat>
+			</then>
+		</if>
+			
+		<!-- web.xml.filters -->
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.filters"/>
+		</concat>	
+		<if>
+	 		<equals arg1="${buildWithLoginForm}" arg2="true"/>
+            		<then>
+			    	<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			    		<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.filters.no_secure"/>
+			    	</concat>
+           		</then>
+		</if>		
+		<if>
+		 	<and>
+	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
+		 		<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+		 	</and>
+           		<then>
+		   		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.filters.secure"/>
+				</concat>
+           		</then>
+	    	</if>
+		<if>
+		 	<and>
+	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
+		 		<equals arg1="${buildWithSecurityContainer}" arg2="false"/>
+		 	</and>
+          		<then>
+			  	<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.filters.no_secure"/>
+				</concat>
+          		</then>
+	    	</if>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.web.xml.filters}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.filters}"/>
+				</concat>
+			</then>
+		</if>
+		
+		<!-- web.xml.listeners -->
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.listeners"/>
+		</concat>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.web.xml.listeners}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.listeners}"/>
+				</concat>
+			</then>
+		</if>
+		
+		<!-- web.xml.servlet -->
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.core"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.transazioni"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.statistiche"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.eventi"/>
+		</concat>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.web.xml.servlet}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet}"/>
+				</concat>
+			</then>
+		</if>
+		
+		<!-- web.xml.servlet.mapping -->		
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.mapping.core"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.mapping.transazioni"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.mapping.statistiche"/>
+		</concat>
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.servlet.mapping.eventi"/>
+		</concat>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.web.xml.servlet.mapping}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet.mapping}"/>
+				</concat>
+			</then>
+		</if>
+					
+		<!-- web.xml.secure -->	
+		<!-- Copia della sezione della sicurezza solo se l'autenticazione e' esterna col container -->
+		<if>
+			<and>
+	 		 	<equals arg1="${buildWithLoginForm}" arg2="false"/>
+		 		<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+		 	</and>
+			<then>
+		   		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.secure"/>
+				</concat>
+			</then>
+	    	</if>
+		
+		<!-- web.xml.session -->	
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.session"/>
+		</concat>
+
+		<!-- web.xml.end -->	
+		<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+			<filelist dir="${src_webinf_pddMonitor}/web" files="web.xml.end"/>
+		</concat>
+		
+		
+
+		<!-- jboss-deployment-structure.xml -->	
+
+		<delete file="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" />
+		
+		<!-- Copia del descrittore di deploy per jboss7 -->
+		<if> 
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}" files="jboss-deployment-structure.xml.jboss7"/>
+				</concat>
+			</then>
+		</if>
+		
+		<!-- Copia del descrittore di deploy per wildfly -->
+		<if> 
+			<or>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
+					<filelist dir="${src_webinf_pddMonitor}" files="jboss-deployment-structure.xml.wildfly"/>
+				</concat>
+				<if>
+					<and>
+				    		<equals arg1="${buildJsfAsModule}" arg2="true"/>
+				    	</and>
+	    				<then>
+						<replace file="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
+					    		token="Start SenzaModulo JSF -->" 
+					    		value="Start SenzaModulo JSF"/>
+						<replace file="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
+					    		token="&lt;!-- End SenzaModulo JSF" 
+					    		value="SenzaModulo"/>
+	    					
+						<replace file="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
+					    		token="Start Modulo JSF" 
+					    		value="Start Modulo JSF -->"/>
+						<replace file="${build_pddMonitor_war}/WEB-INF/jboss-deployment-structure.xml" 
+					    		token="End Modulo JSF" 
+					    		value="&lt;!-- End Modulo JSF"/>
+	    				</then>
+    				</if>
+			</then>
+		</if>
+		
+		<!-- Copia del jboss-web in caso di autenticazione container-->
+		<if>
+			<and>
+				<equals arg1="${buildWithSecurityContainer}" arg2="true"/>
+				<or>
+					<matches string="${as}" pattern="wildfly.*"/>
+					<equals arg1="${as}" arg2="jboss7"/>
+				</or>
+			</and>
+			<then>
+		   		<copy file="${src_webinf_pddMonitor}/jboss-web.xml" todir="${build_pddMonitor_war}/WEB-INF"/>
+			</then>
+		</if>
+		
+	</target>
+
+
+</project>

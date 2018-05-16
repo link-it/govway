@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	
+	<ui:include src="/includes/searchFormStatistiche.xhtml">
+		<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+ 		<ui:param name="sf_periodo" value="#{search.periodo}" />
+		<ui:param name="sf_dataInizio" value="#{search.dataInizio}" />
+		<ui:param name="sf_dataFine" value="#{search.dataFine}" />
+		<ui:param name="sf_nomeMittente" value="#{search.tipoNomeMittente}" />
+		<ui:param name="sf_nomeDestinatario" value="#{search.tipoNomeDestinatario}" />
+		<ui:param name="sf_servizio" value="#{search.nomeServizio}" />
+		<ui:param name="sf_nomeAzione" value="#{search.nomeAzione}" />
+		<ui:param name="sf_trafficoPerSoggetto" value="#{search.tipoNomeTrafficoPerSoggetto}" />
+		<ui:param name="sf_soggettoLocale" value="#{search.tipoNomeSoggettoLocale}" />
+		
+		<ui:param name="sf_soggetti" value="#{mBean.soggetti}" />
+		<ui:param name="sf_servizi" value="#{mBean.servizi}" />
+		<ui:param name="sf_azioni" value="#{mBean.azioni}" />
+		
+		<ui:param name="sf_mbean" value="#{mBean}" />
+		
+		<ui:param name="sf_tipologiaRicerca" value="#{search.tipologiaRicerca}" />
+		<ui:param name="sf_tipoReport" value="#{search._value_tipoReport}" />
+		<ui:param value="#{search}" name="sf_bean" />
+		<ui:param name="sf_showSoggetti" value="#{true}" />
+		<ui:param name="sf_showServizi" value="#{true}" />
+		<ui:param name="sf_showAzioni" value="#{false}" />
+ 	</ui:include>
+	<a4j:outputPanel layout="block" id="altriCriteri">
+ 		<link:prop label="Visualizza per ">
+ 			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{search._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
+					enableManualInput="false" width="412" converter="selectItemConverter">
+	 			<f:selectItem itemLabel="Numero Transazioni" itemValue="numeroTransazioni"/>
+	 			<f:selectItem itemLabel="Occupazione Banda" itemValue="dimensioneTransazioni"/>
+	 			<f:selectItem itemLabel="Tempo Medio Risposta" itemValue="tempoMedioRisposta"/>
+	 			<a4j:support event="onselect" actionListener="#{search.tipoVisualizzazioneListener}" reRender="altriCriteri"/>
+			</rich:comboBox>
+ 		</link:prop>
+ 		
+ 		<a4j:outputPanel id="tipoBandaCtr" layout="block" rendered="#{search._value_tipoVisualizzazione == 'dimensioneTransazioni'}">
+			<link:prop label="Tipo Banda">
+				<rich:comboBox id="tipoBandaCombo" value="#{search._value_tipoBanda}" defaultLabel="Seleziona Tipo di Banda"
+					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="412">
+					<f:selectItem itemLabel="Banda Complessiva" itemValue="Banda Complessiva"/>
+	 				<f:selectItem itemLabel="Banda Interna" itemValue="Banda Interna"/>
+	 				<f:selectItem itemLabel="Banda Esterna" itemValue="Banda Esterna"/>
+					<a4j:support event="onselect" actionListener="#{search.tipoBandaListener}"/>
+				</rich:comboBox>
+			</link:prop>
+		</a4j:outputPanel>
+ 		
+ 		<a4j:outputPanel id="tipoLatenzaCtr" layout="block" rendered="#{search._value_tipoVisualizzazione == 'tempoMedioRisposta'}">
+			<link:prop label="Tipo Latenza">
+				<rich:comboBox id="tipoLatenzaCombo" value="#{search._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
+					enableManualInput="false" required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="412">
+					<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
+	 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>
+	 				<f:selectItem itemLabel="Latenza Porta" itemValue="Latenza Porta"/>
+					<a4j:support event="onselect" actionListener="#{search.tipoLatenzaListener}"/>
+				</rich:comboBox>
+			</link:prop>
+		</a4j:outputPanel>
+	</a4j:outputPanel>
+</ui:composition>

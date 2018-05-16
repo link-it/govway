@@ -1,0 +1,112 @@
+/** 
+ *
+ * Mimetypes 
+ *
+ */
+
+ .application\/pdf
+,.application\/postscript
+{
+	background-image: url(../images/icons/mime/pdf_document.png) ! important;
+}
+.text\/plain {
+	background-image: url(../images/icons/mime/txt.png) ! important;
+}
+ .image\/bmp  
+,.image\/cgm  
+,.image\/dcm  
+,.image\/dds  
+,.image\/exr  
+,.image\/gif  
+,.image\/hdr  
+,.image\/ico  
+,.image\/jng  
+,.image\/jp2  
+,.image\/jpeg  
+,.image\/jpg  
+,.image\/pbm  
+,.image\/pbmraw  
+,.image\/pcd  
+,.image\/pcx  
+,.image\/pgm  
+,.image\/pgmraw  
+,.image\/pic  
+,.image\/png  
+,.image\/pnm  
+,.image\/psd  
+,.image\/raw  
+,.image\/rgb  
+,.image\/rgba  
+,.image\/tga  
+,.image\/tif  
+,.image\/tiff  
+,.image\/xbm  
+,.image\/xcf  
+,.image\/xpm  
+{
+	background-image: url(../images/icons/mime/image.png) ! important;
+}
+ .text\/html  
+,.text\/htm  
+,.text\/sgml  
+,.text\/xhtml  
+,.text\/xml  
+{
+	background-image: url(../images/icons/mime/html.png) ! important;
+}
+ .video\/mpeg
+ ,.video\/quicktime
+ ,.video\/x-msvideo
+{
+	background-image: url(../images/icons/mime/video.png) ! important;
+}
+ .file-ttf  
+,.file-otf 
+{
+	background-image: url(../images/icons/mime/font_truetype.png) ! important;
+}
+ 
+ .application\/msword
+{
+	background-image: url(../images/icons/mime/wordprocessing.png) ! important;
+}
+.application\/x-excel 
+{
+	background-image: url(../images/icons/mime/spreadsheet_document.png) ! important;
+}
+.application\/x-javascript  {
+	background-image: url(../images/icons/mime/source_j.png) ! important;
+}
+.text\/css  {
+	background-image: url(../images/icons/mime/source_c.png) ! important;
+}
+
+ .application\/x-7z 
+,.application\/x-a 
+,.application\/x-ace 
+,.application\/x-arj  
+,.application\/x-bz 
+,.application\/x-bz2 
+,.application\/x-cpio  
+,.application\/x-gz 
+,.application\/x-rar 
+,.application\/x-tnf 
+,.application\/x-compress  
+,.application\/x-zip  
+,.application\/x-zoo
+,.application\/x-tar
+,.application\/zip
+{
+	background-image: url(../images/icons/mime/zip.png) ! important;
+}
+ .application\/mspowerpoint  
+{
+	background-image: url(../images/icons/mime/pps.png) ! important;
+}
+ .application\/octet-stream
+ ,.application\/properties
+ {
+	background-image: url(../images/icons/mime/binary.png) ! important;
+}
+
+/* eof */

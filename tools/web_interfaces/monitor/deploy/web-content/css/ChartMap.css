@@ -1,0 +1,41 @@
+.c3-chart-font {
+    font-family: Roboto;
+}
+.c3-chart-nodata{
+    font-size: 18px;
+}
+.c3-chart-title {
+    font-size: 18px;
+}
+.c3-chart-subtitle {
+    font-size: 13px;
+}
+.c3-axis-y-label {
+    font-size: 14px;
+}
+g.c3-legend-item text {
+    font-size: 12px;
+}
+g.tick text,
+.c3 svg g g.c3-axis.c3-axis-x {
+    font-size: 11px;
+}
+.c3-tooltip td {
+    white-space: nowrap;
+}
+
+.c3-chart-arc text{
+    font-size: 18px;
+}
+.label-text {
+    alignment-baseline: middle;
+    font: 10px Roboto;
+    fill: #393939;
+}
+.label-line {
+    stroke-width: 1;
+    stroke: #393939;
+}
+.label-circle {
+    fill: #393939;
+}

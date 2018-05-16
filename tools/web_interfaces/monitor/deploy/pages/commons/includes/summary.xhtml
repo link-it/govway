@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fc="http://www.fusioncharts.com"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<a4j:outputPanel>
+		<c:if test="#{applicationBean.operatore or applicationBean.amministratore}">
+			<a4j:keepAlive beanName="summaryBean"/>
+			<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}"/>
+			<a4j:loadScript src="/FusionCharts/FusionChartsExportComponent.js" rendered="#{not summaryBean.useGraficiSVG}" />
+			<a4j:loadScript src="/scripts/d3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
+			<a4j:loadScript src="/scripts/c3.js" rendered="#{summaryBean.useGraficiSVG}" />
+			<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{summaryBean.useGraficiSVG}" />
+			
+			<rich:panel id="summaryCt">			
+				<f:facet name="header">
+					<h:outputText value="Monitoraggio Transazioni" />
+				</f:facet>
+				
+				<a4j:outputPanel layout="block" styleClass="form-container noborder" style="padding-left:0px;">
+					<a4j:region id="summaryFormRegion" renderRegionOnly="true">
+						<a4j:form>
+							<h:inputHidden value="true" id="usaSVG"/> 
+							<link:prop label="Periodo" labelId="labelPeriodoCombo">
+								<rich:comboBox value="#{summaryBean.periodo}" defaultLabel="Seleziona Periodo"
+									enableManualInput="false">
+									<f:selectItem itemValue="--" />
+									<f:selectItem itemValue="Ultime 24 ore" />
+									<f:selectItem itemValue="Ultimi 7 giorni" />
+									<f:selectItem itemValue="Ultimi 30 giorni" />
+									<f:selectItem itemValue="Ultimo anno" />
+									<a4j:support event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt"/>
+								</rich:comboBox>
+								<rich:toolTip for="labelPeriodoCombo" value="#{summaryBean.printPeriodo}"/>
+							</link:prop>
+							
+							<link:prop label="Contesto" rendered="#{summaryBean.showEsitiContesto}">
+								<rich:comboBox id="esitoContestoCombo" value="#{summaryBean.esitoContesto}"
+									defaultLabel="Seleziona contesto" directInputSuggestions="true"
+									converter="esitoContestoConverter" enableManualInput="false">
+									<f:selectItems value="#{summaryBean.esitiContesto}"/>
+									<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+								</rich:comboBox>
+							</link:prop>
+							
+							<c:if test="#{!applicationBean.amministratore}">
+								<link:prop label="#{loginBean.loggedUser.labelTipiNomiSoggettiServiziAssociati}" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+									<a4j:region renderRegionOnly="true">
+										<rich:comboBox width="412" id="sogLocaleCombo" 
+														value="#{summaryBean.soggettoLocale}" 
+														suggestionValues="#{loginBean.loggedUser.tipiNomiSoggettiServiziAssociati}"
+														enableManualInput="false">
+													<f:selectItem itemValue="--"/>
+													<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+										</rich:comboBox>
+									</a4j:region>
+								</link:prop>
+							</c:if>
+							<c:if test="#{applicationBean.amministratore}">
+								<link:prop label="Soggetto Locale / Servizio">
+									<a4j:region renderRegionOnly="true">
+										<h:inputText id="sogLocaleCombo" value="#{summaryBean.soggettoLocale}" styleClass="inputLinkLong"/>
+										<rich:suggestionbox 
+													width="412" 
+													for="sogLocaleCombo" 
+													suggestionAction="#{summaryBean.soggettiServiziAutoComplete}"
+													var="soggetto"
+													ajaxSingle="true"
+													nothingLabel="--"
+													param="sogLocaleCombo">
+												<h:column>
+													<h:outputText value="#{soggetto}"
+														rendered="#{true}" />
+												</h:column>
+											<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
+										</rich:suggestionbox>
+									</a4j:region>
+								</link:prop>
+							</c:if>
+						</a4j:form>
+					</a4j:region>
+				</a4j:outputPanel>
+				<rich:spacer height="20px"/>
+				<div id='summaryDiv'></div>
+				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}">
+					<script type="text/javascript">
+						var chartId = 'summaryDiv';
+						var chartWidth = jQuery('#summaryCt_body').width() -50;
+						var chartHeight = 650;
+
+						function updateChart(data){
+							//chartWidth = jQuery('#summaryCt_body').width() -50;
+							createChart(chartId, data, 'bar', chartWidth, chartHeight);
+						}
+					
+						var data0 = '#{summaryBean.data}';
+						// init
+						createChart(chartId, data0, 'bar', chartWidth, chartHeight);
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
+					<script type="text/javascript">
+						var chartId = 'summaryDiv';
+						var chartWidth =  '';
+						chartWidth += jQuery('#summaryCt_body').width() -12;
+						
+						function updateChart(data){
+							var c = getChartFromId('summaryChartId');					
+							c.setDataXML(data);
+						}
+					
+						var chart_summary = new FusionCharts('#{request.contextPath}/FusionCharts/MSColumn2D.swf', 'summaryChartId', chartWidth, '650', '0', '1');
+						chart_summary.setTransparent(true);
+						chart_summary.setDataXML("#{summaryBean.data}");
+						chart_summary.render(chartId);
+					</script>
+				</a4j:outputPanel>
+			</rich:panel>
+			
+		</c:if>
+		<c:if test="#{!applicationBean.operatore and !applicationBean.amministratore}">
+			<c:if test="#{applicationBean.configuratore}">
+				<div class="panelLista">
+					<h:outputText value="Benvenuto." />
+				</div>
+			</c:if>
+		</c:if>
+	</a4j:outputPanel>
+	
+</ui:composition>

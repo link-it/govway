@@ -1,0 +1,32 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:define name="navbar">
+			<c:if test="#{empty sessionScope.acclim}">	  	
+				<c:if test="#{applicationBean.operatore or applicationBean.amministratore}">
+					<ul>
+						<li><h:outputText id="dettaglio" value="Distribuzione temporale" styleClass="ultimo-path" /></li>
+					</ul>
+				</c:if>
+				<c:if test="#{!applicationBean.operatore and !applicationBean.amministratore}">
+					<c:if test="#{applicationBean.configuratore}">
+						<ul>
+							<li><h:outputText id="dettaglio" value="Welcome" styleClass="ultimo-path" /></li>
+						</ul>
+					</c:if>
+				</c:if>
+			</c:if>
+	</ui:define>
+		
+	  <ui:define name="body">
+	  		<c:if test="#{empty sessionScope.acclim}">	  	
+				<ui:include src="/includes/summary.xhtml" />
+			</c:if>
+	  </ui:define>
+</ui:composition>

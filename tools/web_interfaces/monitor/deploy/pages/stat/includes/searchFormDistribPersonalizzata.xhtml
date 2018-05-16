@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	
+	<ui:include src="/includes/searchFormStatistichePersonalizzate.xhtml">
+		<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+ 		<ui:param name="sf_periodo" value="#{search.periodo}" />
+		<ui:param name="sf_dataInizio" value="#{search.dataInizio}" />
+		<ui:param name="sf_dataFine" value="#{search.dataFine}" />
+		<ui:param name="sf_nomeMittente" value="#{search.tipoNomeMittente}" />
+		<ui:param name="sf_nomeDestinatario" value="#{search.tipoNomeDestinatario}" />
+		<ui:param name="sf_servizio" value="#{search.nomeServizio}" />
+		<ui:param name="sf_nomeAzione" value="#{search.nomeAzione}" />
+		<ui:param name="sf_trafficoPerSoggetto" value="#{search.tipoNomeTrafficoPerSoggetto}" />
+		<ui:param name="sf_soggettoLocale" value="#{search.tipoNomeSoggettoLocale}" />
+					
+		<ui:param name="sf_soggetti" value="#{mBean.soggetti}" />
+		<ui:param name="sf_servizi" value="#{mBean.servizi}" />
+		<ui:param name="sf_azioni" value="#{mBean.azioni}" />
+		
+		<ui:param name="sf_tipologiaRicerca" value="#{search.tipologiaRicerca}" />
+		<ui:param name="sf_tipoReport" value="#{search._value_tipoReport}" />
+		
+		<ui:param name="sf_bean" value="#{search}"  />
+		<ui:param name="sf_mbean" value="#{mBean}" />
+		<ui:param name="sf_showSoggetti" value="#{true}" />
+		<ui:param name="sf_showServizi" value="#{true}" />
+		<ui:param name="sf_showAzioni" value="#{true}" />
+ 	</ui:include>
+</ui:composition>

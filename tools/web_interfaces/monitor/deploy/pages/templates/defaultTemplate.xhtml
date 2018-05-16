@@ -1,0 +1,266 @@
+<rich:page xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	markupType="xhtml-transitional" contentType="text/html" sidebarPosition="left"
+	theme="simple" sidebarWidth="275">
+	<a4j:loadScript src="resource://jquery.js"/>
+	<a4j:loadScript src="resource://org/richfaces/renderkit/html/scripts/jquery.hotkeys.js"/>
+	<ui:debug hotkey="X"/>
+	<f:facet name="pageHeader">
+		<title>#{licenseBean.title}</title>
+		<link href="#{facesContext.externalContext.request.contextPath}/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+		<meta http-equiv="Content-Type" content="text/xml; charset=utf-8"/>
+		<!--[if !(IE)]><!-->
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface.css"
+			rel="stylesheet" type="text/css" />
+		<!--<![endif]-->
+		<!--[if gt IE 8]>
+     	<link
+			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface.css"
+			rel="stylesheet" type="text/css" />
+    	<![endif]-->
+		<!--[if lte IE 8]>
+     	<link
+			href="#{facesContext.externalContext.request.contextPath}/css/roboto/roboto-fontface-iefix.css"
+			rel="stylesheet" type="text/css" />
+    	<![endif]-->
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/linkit-base.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/linkit-jsf.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/linkit-crumbs.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/linkit-form.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/mimetype.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/linkit-icons.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/c3.min.css"
+			rel="stylesheet" type="text/css" />
+		<link
+			href="#{facesContext.externalContext.request.contextPath}/css/ChartMap.css"
+			rel="stylesheet" type="text/css" />
+		<script type="text/javascript">
+	       A4J.AJAX.onExpired = function(loc, expiredMsg){
+				return loc;
+	    	}
+	   </script>
+   	  </f:facet>
+      <f:facet name="header">
+      	<h:panelGroup layout="block" id="headerContentParent">
+			<h:panelGroup layout="block" id="headerLogo" styleClass="stileLogo" rendered="#{not empty loginBean.logoHeaderImage}">
+				<table style="width:100%;">
+					<tbody>
+						<tr class="stileLogo"> 
+							<td colspan="2" align="left">
+								<h:outputLink value="#{loginBean.logoHeaderLink}" target="_blank" rendered="#{not empty loginBean.logoHeaderLink}">
+									<h:graphicImage value="#{loginBean.logoHeaderImage}" title="#{loginBean.logoHeaderTitolo}" alt="#{loginBean.logoHeaderTitolo}" rendered="#{not empty loginBean.logoHeaderLink}" />
+								</h:outputLink>
+								
+								<h:graphicImage value="#{loginBean.logoHeaderImage}" title="#{loginBean.logoHeaderTitolo}" alt="#{loginBean.logoHeaderTitolo}" rendered="#{empty loginBean.logoHeaderLink}" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</h:panelGroup>
+			<h:panelGroup layout="block" id="headerTitolo" styleClass="stileTitolo">
+		      	<a4j:region id="headerPaginaLive" renderRegionOnly="true">
+		      		<a4j:form prependId="false" >
+		      			<h:inputHidden value="true" id="ps_usaSVG"/> 
+		           		<table style="width:100%;">
+		            		<tbody>
+			            		<tr>
+					                <td>
+				                		<a href="#{facesContext.externalContext.request.contextPath}/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
+											<h:outputText value="#{licenseBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
+										</a>
+					                </td>
+					                <td align="right" class="titleRight">
+					                	<c:if test="#{applicationBean.user}">
+											<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">		                	
+							                	<c:if test="#{statusBean.enable}">
+							                		<a4j:jsFunction id="pollStatoPddFn" name="pollStatoPdd" reRender="cdLabel_stPdd,statusPdd" oncomplete="startCounterStatoPdd()" rendered="#{statusBean.enable}">
+							                			<f:setPropertyActionListener value="true" target="#{statusBean.aggiornamentoAutomatico}" /> 
+							                		</a4j:jsFunction>
+							                		<script type="text/javascript">
+														var cdifp_stPdd = #{statusBean.intervalloRefresh};
+														var t_stPdd;
+														var cdt_stPdd;
+														var timer_is_on_stPdd=0;
+														var cd_stPdd = cdifp_stPdd;
+													
+														function updateCountDownStatoPdd(){
+															if(cd_stPdd>0){
+																cd_stPdd--;
+																jQuery("[id='cdLabel_stPdd']").text("Prossimo Aggiornamento dello stato tra "+cd_stPdd+" secondi");
+																cdt_stPdd = setTimeout("updateCountDownStatoPdd()", 1000);
+															}
+														}
+													
+														function startCounterStatoPdd()
+														{
+															cd_stPdd=cdifp_stPdd;
+															t_stPdd=setTimeout("pollStatoPdd()",cd_stPdd*1000);
+															//updateCountDownStatoPdd();
+														}
+													
+														function stopCounterStatoPdd(){
+															timer_is_on_stPdd = 0;
+															clearTimeout(t_stPdd);
+														}					
+													
+														function doTimerStatoPdd()
+														{
+															if (!timer_is_on_stPdd){
+															  timer_is_on_stPdd=1;
+															  startCounterStatoPdd();
+														 	}
+														}
+													
+														jQuery(document).ready(function(){
+															doTimerStatoPdd();
+														});
+														
+													</script>
+												</c:if>
+											</c:if>
+											
+											<h:panelGroup id="pgTitleDx">
+												<h:outputLabel id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
+												<h:panelGrid columns="#{(applicationBean.amministratore or applicationBean.operatore) ? 2 : 1}">
+													<rich:dropDownMenu id="menuUtente" verticalOffset="15">
+										                <f:facet name="label"> 
+										                    <h:panelGroup>
+										                        <h:outputText value="#{loginBean.loggedUser.username}" styleClass="nomeUtente"/>
+										                        <h:outputText styleClass="nomeUtenteImg" value=""/>
+										                    </h:panelGroup>
+										                </f:facet>
+										                <rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" />
+										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
+										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
+										                </rich:menuItem>
+										                <rich:menuItem submitMode="server" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>
+										            </rich:dropDownMenu>
+													
+													<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
+														<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd">
+															<a href="#{facesContext.externalContext.request.contextPath}/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
+																<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" style="vertical-align: bottom;" >
+																	<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
+																</h:graphicImage>
+															</a>
+														</a4j:outputPanel>
+													</c:if>
+												</h:panelGrid>
+											</h:panelGroup>
+										</c:if>
+					               	 </td>
+		            			</tr>
+		            		</tbody>
+		           		 </table>
+		            </a4j:form>
+	            </a4j:region>
+	        </h:panelGroup>
+	  	</h:panelGroup>
+      </f:facet>
+      
+	
+	<f:facet name="sidebar">
+		<ui:include src="/includes/menu.xhtml" />
+	</f:facet>
+	
+	<!-- Body -->
+	<ui:include src="/includes/status.xhtml" />
+	<rich:panel id="bodyWrapper" styleClass="noborder">
+		<rich:jQuery name="activeRow" 
+						timing="onJScall" 
+						query="hover(function(){jQuery(this).addClass('active')},function(){jQuery(this).removeClass('active')})" />
+		<rich:jQuery name="checkBrowser" timing="onJScall" selector="a[id*='iconLink']" query="addClass((jQuery.browser.msie &amp;&amp; jQuery.browser.version=='6.0') ? 'iconLinkie' : '')" />
+		
+		<script type="text/javascript">
+			 jQuery(document).ready(function() {
+				if(jQuery.browser.msie){
+					if(jQuery.browser.version=="6.0")
+						jQuery("a[id*='iconLink']").addClass('iconLink');
+				}
+			 });
+
+
+				function aggiornaTitoloPagina(){
+					var nuovoTitolo = jQuery("[id='licenseOutputText']").text();
+					
+					jQuery(document).attr('title', nuovoTitolo);
+					}
+		</script>
+		<h:panelGrid width="100%">
+				<rich:layout id="mainct">
+					<rich:layoutPanel id="navbar" position="top">
+						<a4j:form prependId="false">
+							<div id="breadcrumb-ct">
+								<div id="crumbs"><ui:insert name="navbar"></ui:insert></div>
+							</div>
+						</a4j:form>
+					</rich:layoutPanel>
+
+					<rich:layoutPanel position="left" width="0">
+					</rich:layoutPanel>
+
+					<rich:layoutPanel id="body" position="center" >
+						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true">
+							<h:panelGroup layout="block" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'errors' : 'info'}" rendered="#{not empty facesContext.maximumSeverity}">
+								<h:panelGroup rendered="#{facesContext.maximumSeverity.ordinal>=2}">
+									<p>
+										<em>
+											<h:outputText value="Si sono verificati degli errori:"/>
+										</em>
+									</p>
+									<div class="errorsSpacer"/>
+								</h:panelGroup>
+								<div class="errorsSpacer"/>
+								<rich:messages id="errorMessages">
+								</rich:messages>
+							</h:panelGroup>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="infoPlaceHolder" ajaxRendered="#{not empty sessionScope.acclim}">
+							<h:panelGroup layout="block" styleClass="errors" rendered="#{not empty sessionScope.acclim}">
+								<h:panelGroup rendered="true">
+									<p>
+										<em>
+											<h:outputText value="#{sessionScope.acclim}"/>
+										</em>
+									</p>
+									<rich:spacer height="7px"/>
+								</h:panelGroup>
+							</h:panelGroup>
+						</a4j:outputPanel>
+						<div>
+							<ui:insert name="body"/>
+						</div>
+					</rich:layoutPanel>
+
+					<rich:layoutPanel position="bottom" width="100%">
+					</rich:layoutPanel>
+				</rich:layout>
+		</h:panelGrid>
+	</rich:panel>
+
+	<f:facet name="footer" align="center">
+		<h:outputLink value="http://www.link.it" target="_blank">
+			<h:graphicImage value="/images/tema_link/logo_link_footer.png" title="Link.it" alt="Link.it" />
+		</h:outputLink>
+	</f:facet>
+
+</rich:page>

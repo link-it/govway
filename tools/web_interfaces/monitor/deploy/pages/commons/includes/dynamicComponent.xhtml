@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:a4j="http://richfaces.org/a4j"
+     xmlns:rich="http://richfaces.org/rich"
+     xmlns:c="http://java.sun.com/jstl/core"
+     xmlns:link="http://www.link.it">
+	<c:forEach var="param" items="#{formParameters}" varStatus="indice" step="1" begin="0">
+		<a4j:outputPanel id="#{param.containerId}_#{indice.index}" layout="block" ajaxRendered="true">
+			<!-- Risoluzione  del problema degli id duplicati:
+				Il componente c:forEach non consente la generazione dinamica dei componenti,
+				non riassegna gli id dopo una selezione successiva dei plugin ma tiene quelli che vengono generati dopo la prima selezione.
+				Risoluzione problema del refresh dei parametri dopo la selezione del secondo plugin. 
+			-->
+			<link:prop label="#{param.rendering.label}" note="#{param.rendering.suggestion}" rendered="#{param.rendered}" required="#{param.rendering.required}">
+			
+				<c:if test="#{'INPUT_TEXT'==param.type}">
+					<h:inputText id="#{param.id}_#{indice.index}" value="#{param.value}" styleClass="inputLinkLong"/> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}"/> -->
+				</c:if>
+				
+				<c:if test="#{'OUTPUT_TEXT'==param.type}">
+					<a4j:outputPanel layout="block" styleClass="divNoEdit">
+						<h:outputText id="#{param.id}_#{indice.index}" value="#{param.value}" style=" width : 412px;" />
+					</a4j:outputPanel>
+				</c:if>
+				
+				<!-- The redisplay attribute is a boolean flag indicating whether or not a previously entered password 
+				     should be rendered in this form. For security reasons, the default value for this attribute is false. 
+				     TODO: Rendere parametrico in redering questa opzione -->
+				<c:if test="#{'INPUT_SECRET'==param.type}">
+					<h:inputSecret id="#{param.id}_#{indice.index}" value="#{param.value}" redisplay="true" styleClass="inputLinkLong"/> <!-- validazione implementata in BasicValidator  required="#{param.rendering.required}"/> -->
+				</c:if>
+				
+				<c:if test="#{'TEXT_AREA'==param.type}">
+					<h:inputTextarea id="#{param.id}_#{indice.index}" value="#{param.value}" styleClass="inputLinkLong" 
+						rows="#{param.rendering.rows}" cols="#{param.rendering.columns}"
+						/> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}" /> -->
+				</c:if>
+				
+				<c:if test="#{'SELECT_LIST'==param.type}">
+					<rich:comboBox id="#{param.id}_#{indice.index}" value="#{param.value}"
+							suggestionValues="#{param.rendering.values}"
+							directInputSuggestions="true"
+							enableManualInput="false" width="412"
+							> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}"> -->
+						<a4j:support status="mainStatus" 
+									ajaxSingle="true" 
+									event="onselect" 
+									reRender="#{param.containersIdToRefresh}" 
+									rendered="#{!empty param.refreshParamIds}"
+									actionListener="#{param.valueSelectedListener}"/>
+								
+					</rich:comboBox>
+				</c:if>
+				
+				<c:if test="#{'RADIO_BUTTON'==param.type}">
+					<h:selectOneRadio id="#{param.id}_#{indice.index}" 
+									styleClass="controlset" 
+									value="#{param.value}" 
+									> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}"> -->
+						<c:forEach var="val" items="#{param.rendering.values}">
+							<f:selectItem itemLabel="#{val}" itemValue="#{val}" />
+						</c:forEach>
+						
+						<a4j:support status="mainStatus" 
+									ajaxSingle="true" 
+									event="onchange" 
+									reRender="#{param.containersIdToRefresh}" 
+									rendered="#{!empty param.refreshParamIds}"
+									actionListener="#{param.valueSelectedListener}"/>
+					</h:selectOneRadio>
+				</c:if>
+				
+				<c:if test="#{'CHECK_BOX'==param.type}">
+					<h:selectBooleanCheckbox id="#{param.id}_#{indice.index}" 
+											value="#{param.value}" 
+											> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}"> -->
+						<a4j:support status="mainStatus" 
+									ajaxSingle="true" 
+									event="onchange" 
+									reRender="#{param.containersIdToRefresh}" 
+									rendered="#{!empty param.refreshParamIds}"
+									actionListener="#{param.valueSelectedListener}"/>
+					</h:selectBooleanCheckbox>
+				</c:if>
+				
+				<c:if test="#{'CALENDAR'==param.type}">
+						<rich:calendar id="#{param.id}_#{indice.index}" datePattern="yyyy-MM-dd HH:mm"
+							defaultTime="00:00"
+							value="#{param.value}"  buttonIcon="/images/tema_link/calendar.png"
+							/> <!-- validazione implementata in BasicValidator required="#{param.rendering.required}"/> -->
+				</c:if>
+				
+				<!-- validazione implementata in BasicValidator  <rich:message for="#{param.id}_#{indice.index}" styleClass="field-error"/> -->
+			</link:prop>
+		</a4j:outputPanel>
+	</c:forEach>
+
+
+</ui:composition>

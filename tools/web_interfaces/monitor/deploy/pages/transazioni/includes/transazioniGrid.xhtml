@@ -1,0 +1,450 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	 xmlns:c="http://java.sun.com/jstl/core">
+
+	<a4j:outputPanel id="gridCtr" layout="block" styleClass="panelLista" rendered="#{value.executeQuery}">
+
+	 <link:extendedDataTable height="880px"
+					id="msgDt"
+					value="#{value}"
+					headerText="#{headerText}"
+					enableDelete="false"
+					selectionMapTarget="#{selectionMapTarget}"
+					mBean="#{mBean}"
+					tableState="#{tableState}"
+					rowsToDisplay="#{rowsToDisplay}"
+					reRenderIds="#{reRenderIds}"
+					useCount="#{useCount}"
+					>
+				<rich:column id="colEsitoImg" sortable="false" label="Esito (Immagine)" width="33px" style="text-align: center;">
+					<f:facet name="header">
+						<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+					</f:facet>
+					<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
+						<rich:toolTip for="outEsitoImgOk">
+							<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+						</rich:toolTip>
+					</h:graphicImage>
+					<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
+						<rich:toolTip for="outEsitoImgFaultApplicativo">
+							<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+						</rich:toolTip>
+					</h:graphicImage>
+					<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
+						<rich:toolTip for="outEsitoImgKo">
+							<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+						</rich:toolTip>
+					</h:graphicImage>
+					<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
+				</rich:column>
+				<rich:column id="colDataIngRich" sortable="true" sortBy="#{item.dataIngressoRichiesta}" sortOrder="#{value.sortOrders['dataIngressoRichiesta']}" label="Data Ingresso Richiesta" width="175px">
+					<f:facet name="header">
+						<h:outputText id="outDataIngRich1" value="Data Ingresso Richiesta" />
+					</f:facet>
+					<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
+						<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+						<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
+						<f:setPropertyActionListener value="#{item.pddCodice}" target="#{dettagliBean.identificativoPorta}"/>
+						<c:if test="#{not empty processiDettagliBean}">
+							<f:setPropertyActionListener value="#{selectedProcesso}" target="#{processiDettagliBean.selectedProcesso}"/>
+						</c:if>				
+						
+						<h:outputText id="outDataIngRich2" value="#{item.dataIngressoRichiesta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
+								timeZone="Europe/Rome" />
+						</h:outputText>
+						<rich:toolTip for="outDataIngRich2">
+							<h:outputText  value="#{item.dataIngressoRichiesta}">
+								<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+							</h:outputText>
+						</rich:toolTip>
+					</a4j:htmlCommandLink>
+				</rich:column>
+				<rich:column id="colProtocollo" sortable="false" label="Protocollo" rendered="#{not mBean.backwardCompatibility}" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outProtocollo1" value="Protocollo" />
+					</f:facet>
+					<h:outputText id="outProtocollo2" value="#{item.protocollo}"/>
+						<rich:toolTip for="outProtocollo2" value="#{item.protocollo}"/>
+				</rich:column>
+				<rich:column id="colPddRuolo" sortable="false" label="Tipologia" width="90px">
+					<f:facet name="header">
+						<h:outputText id="outPddRuolo1" value="Tipologia" />
+					</f:facet>
+					<h:outputText id="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
+					<rich:toolTip for="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
+				</rich:column>
+				<rich:column id="colEsito" sortable="false" label="Esito">
+					<f:facet name="header">
+						<h:outputText id="outEsito1" value="Esito" />
+					</f:facet>
+					<h:outputText id="outEsito2" value="#{item.esito}" converter="esitoConverter"/>
+					<rich:toolTip for="outEsito2">
+						<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colEsitoContesto" sortable="false" label="Contesto" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outEsitoContesto1" value="Contesto" />
+					</f:facet>
+					<h:outputText id="outEsitoContesto2" value="#{item.esitoContesto}" converter="esitoContestoConverter"/>
+					<rich:toolTip for="outEsitoContesto2">
+						<h:outputText value="#{item.esitoContesto}" converter="esitoContestoConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataAccettazioneRich" sortable="false" label="Data Accettazione Richiesta" width="190px" visible="false"
+					rendered="#{mBean.visualizzaDataAccettazione}">
+					<f:facet name="header">
+						<h:outputText id="colDataAccettazioneRich1" value="Data Accettazione Richiesta" />
+					</f:facet>
+					<h:outputText id="colDataAccettazioneRich2" value="#{item.dataAccettazioneRichiesta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+					</h:outputText>
+					<rich:toolTip for="colDataAccettazioneRich2">
+						<h:outputText value="#{item.dataAccettazioneRichiesta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataUscitaRich" sortable="false" label="Data Uscita Richiesta" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataUscitaRich1" value="Data Uscita Richiesta" />
+					</f:facet>
+					<h:outputText id="colDataUscitaRich2" value="#{item.dataUscitaRichiesta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+					</h:outputText>
+					<rich:toolTip for="colDataUscitaRich2">
+						<h:outputText value="#{item.dataUscitaRichiesta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataAccettazioneRisposta" sortable="false" label="Data Accettazione Risposta" width="190px" visible="false"
+					rendered="#{mBean.visualizzaDataAccettazione}">
+					<f:facet name="header">
+						<h:outputText id="colDataAccettazioneRisposta1" value="Data Accettazione Risposta" />
+					</f:facet>
+					<h:outputText id="colDataAccettazioneRisposta2" value="#{item.dataAccettazioneRisposta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+					</h:outputText>
+					<rich:toolTip for="colDataAccettazioneRisposta2">
+						<h:outputText value="#{item.dataAccettazioneRisposta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataInRisposta" sortable="false" label="Data Ingresso Risposta" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataInRisposta1" value="Data Ingresso Risposta" />
+					</f:facet>
+					<h:outputText id="colDataInRisposta2" value="#{item.dataIngressoRisposta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+					</h:outputText>
+					<rich:toolTip for="colDataInRisposta2">
+						<h:outputText value="#{item.dataIngressoRisposta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDataOutRisposta" sortable="false" label="Data Uscita Risposta" width="190px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colDataOutRisposta1" value="Data Uscita Risposta" />
+					</f:facet>
+					<h:outputText id="colDataOutRisposta2" value="#{item.dataUscitaRisposta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss" timeZone="Europe/Rome" />
+					</h:outputText>
+					<rich:toolTip for="colDataOutRisposta2">
+						<h:outputText  value="#{item.dataUscitaRisposta}">
+							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+						</h:outputText>
+					</rich:toolTip>
+				</rich:column>
+				
+				<rich:column id="colPdd" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}" sortable="false" label="PdD (ID)" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outPdd1" value="PdD (ID)" />
+					</f:facet>
+					<h:outputText id="outPdd2" value="#{item.pddCodice}"/>
+					<rich:toolTip for="outPdd2" value="#{item.pddCodice}"/>
+				</rich:column>
+				<rich:column id="colSoggetto" sortable="false" label="PdD (Soggetto)" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outSoggetto1" value="PdD (Soggetto)" />
+					</f:facet>
+					<h:outputText id="outSoggetto2" value="#{item.pddTipoSoggetto}/#{item.pddNomeSoggetto}" rendered="#{not empty item.pddNomeSoggetto}" />
+					<rich:toolTip for="outSoggetto2" value="#{item.pddTipoSoggetto}/#{item.pddNomeSoggetto}" rendered="#{not empty item.pddNomeSoggetto}"/>
+				</rich:column>
+				<rich:column id="colIDFruitore" sortable="false" label="Fruitore (ID PdD)" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDFruitore1" value="Fruitore (ID PdD)" />
+					</f:facet>
+					<h:outputText id="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}" />
+					<rich:toolTip for="outIDFruitore2" value="#{item.idportaSoggettoFruitore}" rendered="#{not empty item.idportaSoggettoFruitore}"/>
+				</rich:column>
+				<rich:column id="colFruitore" sortable="false" label="Fruitore (Soggetto)" width="150px">
+					<f:facet name="header">
+						<h:outputText id="outFruitore1" value="Fruitore" />
+					</f:facet>
+					<h:outputText id="outFruitore2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}" />
+					<rich:toolTip for="outFruitore2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
+				</rich:column>
+				<rich:column id="colIDErogatore" sortable="false" label="Erogatore (ID PdD)" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDErogatore1" value="Erogatore (ID PdD)" width="160px"/>
+					</f:facet>
+					<h:outputText id="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}" />
+					<rich:toolTip for="outIDErogatore2" value="#{item.idportaSoggettoErogatore}" rendered="#{not empty item.idportaSoggettoErogatore}"/>
+				</rich:column>
+				<rich:column id="colErogatore" sortable="false" label="Erogatore (Soggetto)" width="150px">
+					<f:facet name="header">
+						<h:outputText id="outErogatore1" value="Erogatore" />
+					</f:facet>
+					<h:outputText id="outErogatore2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}" />
+					<rich:toolTip for="outErogatore2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
+				</rich:column>
+				<rich:column id="colServ" sortable="false" label="Servizio" width="130px">
+					<f:facet name="header">
+						<h:outputText id="outServ1" value="Servizio" />
+					</f:facet>
+					<h:outputText id="outServ2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+					<rich:toolTip for="outServ2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+					<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+					<rich:toolTip for="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+				</rich:column>
+				<rich:column id="colVersioneServ" sortable="false" label="Versione Servizio" width="160px" rendered="#{not mBean.backwardCompatibility}" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outVersioneServ1" value="Versione Servizio" />
+					</f:facet>
+					<h:outputText id="outVersioneServ2" value="#{item.versioneServizio}" rendered="#{not empty item.nomeServizio}"/>
+					<rich:toolTip for="outVersioneServ2" value="#{item.versioneServizio}" rendered="#{not empty item.nomeServizio}"/>
+				</rich:column>
+				<rich:column id="colAzione" sortable="false" label="Azione" width="145px">
+					<f:facet name="header">
+						<h:outputText id="outAzione1" value="Azione" />
+					</f:facet>
+					<h:outputText id="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+					<rich:toolTip for="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+					<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
+					<rich:toolTip for="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
+				</rich:column>
+				<rich:column id="colLatenzaTotale" sortable="true" sortBy="#{item.latenzaTotale}" sortOrder="#{value.sortOrders['latenzaTotale']}" label="Latenza Totale" width="120px">
+					<f:facet name="header">
+						<h:outputText id="outLatenzaTotale1" value="Latenza Totale" />
+					</f:facet>
+					<h:outputText id="outLatenzaTotale2" value="#{item.latenzaTotale}" converter="latenzaConverter"/>
+					<rich:toolTip for="outLatenzaTotale2">
+						<h:outputText value="#{item.latenzaTotale}" converter="latenzaConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colLatenzaServizio" sortable="true" sortBy="#{item.latenzaServizio}" sortOrder="#{value.sortOrders['latenzaServizio']}" label="Latenza Servizio" width="130px">
+					<f:facet name="header">
+						<h:outputText id="outLatenzaServizio1" value="Latenza Servizio" />
+					</f:facet>
+					<h:outputText id="outLatenzaServizio2" value="#{item.latenzaServizio}" converter="latenzaConverter"/>
+					<rich:toolTip for="outLatenzaServizio2">
+						<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colLatenzaPorta" sortable="false" label="Latenza Porta" width="120px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outLatenzaPorta1" value="Latenza Porta" />
+					</f:facet>
+					<h:outputText id="outLatenzaPorta2" value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+					<rich:toolTip for="outLatenzaPorta2">
+						<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colIDApplicativo" sortable="false" label="ID Applicativo Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="colIDApplicativo1" value="ID Applicativo Richiesta" />
+					</f:facet>
+					<h:outputText id="colIDApplicativo2" value="#{item.idCorrelazioneApplicativa}"/>
+					<rich:toolTip for="colIDApplicativo2" value="#{item.idCorrelazioneApplicativa}"/>
+				</rich:column>
+				<rich:column id="colIDApplicativoRisp" sortable="false" label="ID Applicativo Risposta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDApplicativoRisp1" value="ID Applicativo Risposta" />
+					</f:facet>
+					<h:outputText id="outIDApplicativoRisp2" value="#{item.idCorrelazioneApplicativaRisposta}"/>
+					<rich:toolTip for="outIDApplicativoRisp2" value="#{item.idCorrelazioneApplicativaRisposta}"/>
+				</rich:column>
+				<rich:column id="colIDMessaggioRichiesta" sortable="false" label="ID Messaggio Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDMessaggioRichiesta1" value="ID Messaggio Richiesta" />
+					</f:facet>
+					<h:outputText id="outIDMessaggioRichiesta2" value="#{item.idMessaggioRichiesta}"/>
+					<rich:toolTip for="outIDMessaggioRichiesta2" value="#{item.idMessaggioRichiesta}"/>
+				</rich:column>
+				<rich:column id="colIDMessaggioRisposta" sortable="false" label="ID Messaggio Risposta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIDMessaggioRisposta1" value="ID Messaggio Risposta" />
+					</f:facet>
+					<h:outputText id="outIDMessaggioRisposta2" value="#{item.idMessaggioRisposta}"/>
+					<rich:toolTip for="outIDMessaggioRisposta2" value="#{item.idMessaggioRisposta}"/>
+				</rich:column>
+				<rich:column id="colProfColl" sortable="false" label="Profilo Collaborazione" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outProfColl1" value="Profilo Collaborazione" />
+					</f:facet>
+					<h:outputText id="outProfColl2" value="#{item.profiloCollaborazioneProt}"/>
+					<rich:toolTip for="outProfColl2" value="#{item.profiloCollaborazioneOp2}"/>
+				</rich:column>
+				<rich:column id="colServizioApplicativo" sortable="false" label="Servizio Applicativo" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outServizioApplicativo1" value="Servizio Applicativo" />
+					</f:facet>
+					<h:outputText id="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+					<rich:toolTip for="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+						<h:outputText id="outServizioApplicativo3" value="#{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+					<rich:toolTip for="outServizioApplicativo3" value="#{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+				</rich:column>
+				<rich:column id="colRichIngrBytes" sortable="false" label="Dimensioni Ingresso Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outRichIngrBytes1" value="Dimensioni Ingresso Richiesta" />
+					</f:facet>
+					<h:outputText id="outRichIngrBytes2" value="#{item.richiestaIngressoBytes}" converter="fileSizeConverter"/>
+					<rich:toolTip for="outRichIngrBytes2">
+						<h:outputText value="#{item.richiestaIngressoBytes}" converter="fileSizeConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colRichOutBytes" sortable="false" label="Dimensioni Uscita Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outRichOutBytes1" value="Dimensioni Uscita Richiesta" />
+					</f:facet>
+					<h:outputText id="outRichOutBytes2" value="#{item.richiestaUscitaBytes}" converter="fileSizeConverter"/>
+					<rich:toolTip for="outRichOutBytes2">
+						<h:outputText value="#{item.richiestaUscitaBytes}" converter="fileSizeConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colRispIngrBytes" sortable="false" label="Dimensioni Ingresso Risposta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outRispIngrBytes1" value="Dimensioni Ingresso Risposta" />
+					</f:facet>
+					<h:outputText id="outRispIngrBytes2" value="#{item.rispostaIngressoBytes}" converter="fileSizeConverter"/>
+					<rich:toolTip for="outRispIngrBytes2">
+						<h:outputText value="#{item.rispostaIngressoBytes}" converter="fileSizeConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colRispOutBytes" sortable="false" label="Dimensioni Uscita Risposta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outRispOutBytes1" value="Dimensioni Uscita Risposta" />
+					</f:facet>
+					<h:outputText id="outRispOutBytes2" value="#{item.rispostaUscitaBytes}" converter="fileSizeConverter"/>
+					<rich:toolTip for="outRispOutBytes2">
+						<h:outputText value="#{item.rispostaUscitaBytes}" converter="fileSizeConverter"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDuplicatiRichiesta" sortable="false" label="Duplicati Richiesta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outDuplicatiRichiesta1" value="Duplicati Richiesta" />
+					</f:facet>
+					<h:outputText id="outDuplicatiRichiesta2" value="#{item.duplicatiRichiesta >=0 ? item.duplicatiRichiesta : 'Duplicata'}" />
+					<rich:toolTip for="outDuplicatiRichiesta2">
+						<h:outputText value="#{item.duplicatiRichiesta >=0 ? item.duplicatiRichiesta : 'Duplicata'}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colDuplicatiRisposta" sortable="false" label="Duplicati Risposta" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outDuplicatiRisposta1" value="Duplicati Risposta" />
+					</f:facet>
+					<h:outputText id="outDuplicatiRisposta2" value="#{item.duplicatiRisposta >=0 ? item.duplicatiRisposta : 'Duplicata'}" />
+					<rich:toolTip for="outDuplicatiRisposta2">
+						<h:outputText value="#{item.duplicatiRisposta >=0 ? item.duplicatiRisposta : 'Duplicata'}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colEventi" sortable="false" label="Eventi" visible="false" rendered="#{applicationBean.showInformazioniEventiTransazioniGrid}">
+					<f:facet name="header">
+						<h:outputText id="outEventi1" value="Eventi" />
+					</f:facet>
+					<h:outputText id="outEventi2" value="#{item.eventiGestione}" />
+					<rich:toolTip for="outEventi2">
+						<h:outputText value="#{item.eventiGestione}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colStato" sortable="false" label="Stato" visible="false" rendered="#{applicationBean.showInformazioniContenutiTransazioniGrid}">
+					<f:facet name="header">
+						<h:outputText id="outStato1" value="Stato" />
+					</f:facet>
+					<h:outputText id="outStato2" value="#{item.stato}" />
+					<rich:toolTip for="outStato2">
+						<h:outputText value="#{item.stato}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colIndirizzoClient" sortable="false" label="Indirizzo Client" width="120px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outIndirizzoClient1" value="Indirizzo Client" />
+					</f:facet>
+					<h:outputText id="outIndirizzoClient2" value="#{item.socketClientAddress}" />
+					<rich:toolTip for="outIndirizzoClient2">
+						<h:outputText value="#{item.socketClientAddress}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colXForwardedFor" sortable="false" label="X-Forwarded-For" width="135px" visible="false">
+					<f:facet name="header">
+						<h:outputText id="outXForwardedFor1" value="X-Forwarded-For" />
+					</f:facet>
+					<h:outputText id="outXForwardedFor2" value="#{item.transportClientAddress}" />
+					<rich:toolTip for="outXForwardedFor2">
+						<h:outputText value="#{item.transportClientAddress}"/>
+					</rich:toolTip>
+				</rich:column>
+				<rich:column id="colIDCluster" sortable="false" label="ID Cluster" visible="false" rendered="#{mBean.visualizzaIdCluster}">
+					<f:facet name="header">
+						<h:outputText id="outIDCluster1" value="ID Cluster" />
+					</f:facet>
+					<h:outputText id="outIDCluster2" value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+					<rich:toolTip for="outIDCluster2" rendered="#{mBean.visualizzaIdCluster}">
+						<h:outputText value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+					</rich:toolTip>
+				</rich:column>
+				<ui:insert name="extraColumns"></ui:insert>
+				<ui:define name="buttons">
+					<h:panelGrid columns="3" >
+						<a4j:outputPanel styleClass="form-container" layout="block">
+							<h:selectManyCheckbox id="esportazioniChk" value="#{mBean.esportazioniSelezionate}" required="false" requiredMessage="E' necessario selezionare almeno un tipo di esportazione." styleClass="controlset">
+								<f:selectItem itemLabel="Tracce" itemValue="tracce"/>
+								<f:selectItem itemLabel="Diagnostici" itemValue="diagnostici"/>
+								<f:selectItem itemLabel="Contenuti" itemValue="contenuti"/>
+							</h:selectManyCheckbox>
+						</a4j:outputPanel>
+						<h:commandLink id="exportDiagnostici-iconLink" 
+										target="_blank" 
+										styleClass="icon-compress" 
+										action="#{mBean.exportSelected}" 
+										onclick="return checkSelection('msgDt','msgDt_checkSelection');">
+							<h:outputText value="Esporta" />
+						</h:commandLink>
+						<h:commandLink id="exportCsv-iconLink" styleClass="icon-csv" onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ if(checkExportContenutiSelection('msgDt')){ preparaFormModale(getSelectedRows('msgDt'),getExportContenutiSelection('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); }} return false;"  
+							 disabled="#{!mBean.exportCsvAbilitato}" >
+								<h:outputText value="Esporta CSV" />
+						</h:commandLink>
+					</h:panelGrid>
+				</ui:define>	
+			</link:extendedDataTable>
+			
+			<rich:modalPanel id="csvCheckSelection" width="350" height="200">
+			   <f:facet name="header">
+			   	<h:outputText value="Selezione errata." />
+			   </f:facet>
+		   		<div class="form-container noborder">
+					<div class="buttonrowmodal">
+			      		<h:panelGrid columns="2">
+			         		<h:graphicImage value="/images/tema_link/alert_orange.png" />
+				 			<h:outputText value="I contenuti non sono esportabili nel formato CSV." style="font-weight: bold;" />
+			      		</h:panelGrid>
+			     	</div>
+		        	<div class="errorsSpacer"/>
+			        <div class="buttonrowmodal">
+			     		<input type="button" value="Chiudi" 
+							   onclick="Richfaces.hideModalPanel('csvCheckSelection');return false" />
+			        </div>
+				 </div>
+			</rich:modalPanel>
+			
+	</a4j:outputPanel>
+</ui:composition>

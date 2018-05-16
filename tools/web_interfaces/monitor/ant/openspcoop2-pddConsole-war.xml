@@ -64,19 +64,6 @@
 		    <param name="file" value="monitor.properties"/>
 		</antcall>
 		
-		<if>
-			<equals arg1="${as}" arg2="jboss7"/>
-			<then>
-				<copy file="${src_pddMonitor}/WEB-INF/${jboss_deployment_structure}.${as}" tofile="${build_pddMonitor}/tmp/${jboss_deployment_structure}" />
-			</then>
-		</if>
-		<if>
-			<matches string="${as}" pattern="wildfly.*"/>
-			<then>
-				<copy file="${src_pddMonitor}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_pddMonitor}/tmp/${jboss_deployment_structure}" />
-			</then>
-		</if>
-		
 		
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
 		<if>
@@ -93,7 +80,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_pddMonitor}/pddMonitor.war" webxml="${src_pddMonitor}/WEB-INF/web.xml">
+		<war destfile="${dist_pddMonitor}/pddMonitor.war" webxml="${build_pddMonitor_war}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
 			<fileset dir="${openspcoop2}">
@@ -110,8 +97,8 @@
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
 			<zipfileset dir="${jslib}" prefix="js" />
 
-			<fileset dir="${deploy.dir}">
-				<include name="index.html" />
+			<fileset dir="${deploy.dir}/web-content">
+				<include name="**/*" />
 			</fileset>
 
 			<webinf dir="${src_pddMonitor}/WEB-INF">
@@ -119,8 +106,9 @@
 				<include name="${jboss_classloading}" />
 				<include name="${jboss_scanning}" />
 			</webinf>
-			<webinf dir="${build_pddMonitor}/tmp">
+			<webinf dir="${build_pddMonitor_war}/WEB-INF">
 				<include name="${jboss_deployment_structure}" />
+				<include name="jboss-web.xml" />
 			</webinf>
 			<classes dir="${cfg}">
 				<include name="monitor.audit.log4j2.properties" />
@@ -220,6 +208,9 @@
 			<classes dir="${plugins_pddMonitor}">
 				<include name="**/*.properties" />
 			</classes>
+			<fileset dir="${plugins_pddMonitor_pages}">
+				<include name="**/*" />
+			</fileset>
 		</war>
 		<delete dir="${build_pddMonitor}/tmp" />
 		

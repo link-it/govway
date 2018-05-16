@@ -1,0 +1,438 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	
+	<a4j:outputPanel id="searchPnl" ajaxRendered="false">
+	
+			<h:inputHidden value="#{sf_bean.usaSVG}" id="sf_usaSVG"/> 
+					
+			<a4j:outputPanel id="periodoCtr" layout="block">
+			
+				<div class="subtitle">
+					<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
+				</div>
+			
+				<link:prop label="Periodo" labelId="labelPeriodoCombo">
+					<rich:comboBox id="periodoCombo" value="#{sf_periodo}" defaultLabel="Seleziona Periodo"
+						required="true"
+						requiredMessage="E' necessario selezionare un periodo" width="412" enableManualInput="false">
+						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='oraria'}">
+							<f:selectItem itemValue="Ultime 12 ore" />
+							<f:selectItem itemValue="Ieri" />
+							<f:selectItem itemValue="Ultima settimana" />
+							<f:selectItem itemValue="Ultimo mese" />
+						</c:if>
+						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='giornaliera'}">
+							<f:selectItem itemValue="Ultima settimana" />
+							<f:selectItem itemValue="Ultimo mese" />
+						</c:if>
+						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='settimanale'}">
+							<f:selectItem itemValue="Ultimo mese" />
+						</c:if>
+						<c:if test="#{not empty sf_bean._value_modalitaTemporale and sf_bean._value_modalitaTemporale=='mensile'}">
+							<f:selectItem itemValue="Ultimo anno" />
+						</c:if>
+						<f:selectItem itemValue="Personalizzato" />
+						<a4j:support event="onselect" reRender="searchPnl" actionListener="#{sf_bean.periodoListener}"/>
+					</rich:comboBox>
+					<rich:toolTip for="labelPeriodoCombo" value="#{sf_bean.printPeriodo}"/>
+				</link:prop>
+				
+				<a4j:outputPanel id="dataInizioCtr" layout="block" >
+					<link:prop label="Data Inizio"
+						rendered="#{sf_periodo eq 'Personalizzato' }">
+						<rich:calendar id="dataInizioCalendar" value="#{sf_dataInizio}" datePattern="#{sf_bean.dateFormatPeriodoPersonalizzato}" buttonIcon="/images/tema_link/calendar.png"
+							defaultTime="00:00" rendered="#{sf_periodo eq 'Personalizzato'}"  valueChangeListener="#{sf_bean.dataInizioChangeListener}"
+							 enableManualInput="false"	>
+							<a4j:support status="mainStatus" event="onchanged" reRender="periodoCtr" actionListener="#{sf_bean.periodoListener}" />
+						</rich:calendar>
+					</link:prop>
+				</a4j:outputPanel>
+				
+				<a4j:outputPanel id="dataFineCtr" layout="block" >
+					<link:prop label="Data Fine"
+						rendered="#{sf_periodo eq 'Personalizzato'}">
+						<rich:calendar id="dataFineCalendar" value="#{sf_dataFine}" datePattern="#{sf_bean.dateFormatPeriodoPersonalizzato}" buttonIcon="/images/tema_link/calendar.png"
+							defaultTime="23:59" rendered="#{sf_periodo eq 'Personalizzato'}"  valueChangeListener="#{sf_bean.dataFineChangeListener}"
+							 enableManualInput="false"  >
+							<a4j:support status="mainStatus" event="onchanged" reRender="periodoCtr" actionListener="#{sf_bean.periodoListener}" />
+						</rich:calendar>	
+					</link:prop>
+				</a4j:outputPanel>	
+				
+			</a4j:outputPanel>	
+			
+			<a4j:outputPanel id="filtriRicercaServizio" layout="block">
+			
+				<div class="subtitle">
+					<h:outputText id="idDatiServizio" value="Filtro Dati Servizio" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="Tipologia">
+					<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
+							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
+						<f:selectItem itemLabel="Erogazione" itemValue="ingresso" />
+						<f:selectItem itemLabel="Fruizione" itemValue="uscita" />
+						<f:selectItem itemLabel="Erogazione/Fruizione" itemValue="all" />
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" actionListener="#{sf_bean.tipologiaRicercaListener}" />
+					</rich:comboBox>
+				</link:prop>
+							
+				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{!applicationBean.backwardCompatibilityOpenspcoop1 and sf_bean.showListaProtocolli}" >
+					<link:prop label="Protocollo">
+						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="allConverter" 
+							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
+							<f:selectItems value="#{sf_bean.protocolli}"/>
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl"/>
+						</rich:comboBox>
+					</link:prop>
+				</a4j:outputPanel>
+					
+				<c:if test="#{applicationBean.user}">
+					<c:if test="#{!applicationBean.amministratore}">		
+						<c:if test="#{sf_showSoggetti}">
+							<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+								
+									<rich:comboBox width="412" id="sogLocaleCombo" 
+													value="#{sf_soggettoLocale}" 
+													suggestionValues="#{loginBean.loggedUser.tipiNomiSoggettiAssociati}"
+													enableManualInput="false">
+												<f:selectItem itemValue="--"/>
+												<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+									</rich:comboBox>
+								
+							</link:prop>
+							<link:prop label="Soggetto Destinatario"
+								rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+								
+								<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogDestCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogDestCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+									</rich:suggestionbox>
+								
+							</link:prop>
+							
+		
+							<link:prop label="Soggetto Mittente"
+								rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+								
+								<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogMitCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogMitCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+								
+							</link:prop>
+							
+							<link:prop label="Soggetto Remoto"
+								rendered="#{sf_tipologiaRicerca eq 'all'}">
+								
+								
+								<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+								
+							</link:prop>
+							
+						</c:if>
+						<h:panelGroup/>
+						<h:panelGroup>
+							<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />
+							<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
+						</h:panelGroup>
+					</c:if>
+				</c:if>		
+				<c:if test="#{applicationBean.amministratore}">
+					<c:if test="#{sf_showSoggetti}">
+						<link:prop label="Soggetto Locale">
+							
+								<h:inputText id="sogLocaleCombo" value="#{sf_soggettoLocale}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogLocaleCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogLocaleCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+							
+						</link:prop>
+	
+						<link:prop label="Soggetto Destinatario"
+								rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+								
+								<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogDestCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogDestCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+							</link:prop>
+							
+		
+							<link:prop label="Soggetto Mittente"
+								rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+								
+								<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogMitCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogMitCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+							</link:prop>
+							
+							<link:prop label="Soggetto Remoto"
+								rendered="#{sf_tipologiaRicerca eq 'all'}">
+								
+								<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}" styleClass="inputLinkLong"/>
+								<rich:suggestionbox 
+											width="412" 
+											for="sogCombo" 
+											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+											var="soggetto"
+											ajaxSingle="true"
+											nothingLabel="--"
+											param="sogCombo">
+									<h:column>
+										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+									</h:column>
+									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+								</rich:suggestionbox>
+							</link:prop>
+						
+					</c:if>
+				</c:if>
+				
+				<c:if test="#{sf_showServizi}">
+					<link:prop label="Servizio" required="true">
+						<rich:comboBox value="#{sf_servizio}" listWidth="#{sf_mbean.serviziSelectItemsWidth}" id="servizioCombo2"
+							defaultLabel="Selezione Servizio" directInputSuggestions="true"
+							width="412" require="true" label="Servizio" enableManualInput="false" >
+							<f:selectItem itemValue="--"/>
+							<f:selectItems value="#{sf_servizi}" />
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:comboBox>
+						<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo2" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizio}"/>
+					</link:prop>
+					
+		
+					<c:if test="#{sf_showAzioni}">
+						<link:prop label="Azione">
+							<rich:comboBox id="azCombo" value="#{sf_nomeAzione}"
+								defaultLabel="Selezione Azione" directInputSuggestions="true"
+								width="412" enableManualInput="false" >
+								<f:selectItem itemValue="--"/>
+								<f:selectItems value="#{sf_azioni}"/>
+								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
+							</rich:comboBox>
+						</link:prop>
+					</c:if>
+				</c:if>
+				
+			</a4j:outputPanel>
+				
+			<a4j:outputPanel id="filtriRicercaTransazione" layout="block">
+			
+				<div class="subtitle">
+					<h:outputText id="idDatiTransazione" value="Filtro Dati Transazione" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="Esito">
+					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
+						defaultLabel="Seleziona esito" directInputSuggestions="true"
+						width="412" converter="esitoConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
+					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
+						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
+						width="412" converter="esitoConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglioPersonalizzato}">
+					<h:selectManyListbox id="esitoDettaglioManyListbox" value="#{sf_bean.esitoDettaglioPersonalizzato}" style="width:412px;" size="5">
+						<f:selectItems value="#{sf_bean.esitiDettagliPersonalizzati}"/>
+					</h:selectManyListbox>
+				</link:prop>
+				
+				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
+					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
+						defaultLabel="Seleziona contesto" directInputSuggestions="true"
+						width="412" converter="esitoContestoConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.esitiContesto}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"  oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+				</link:prop>
+				
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="personalizzazioneReport" layout="block">
+			
+				<div class="subtitle">
+					<h:outputText id="idTipoReport" value="Report" styleClass="subtitle"/>
+				</div> 
+					
+				<link:prop label="Tipo">
+					<rich:comboBox id="tipoReportComboDistribuzione" value="#{sf_tipoReport}" defaultLabel="Seleziona Tipo Report" directInputSuggestions="true" enableManualInput="false" width="412" converter="selectItemConverter">
+						<f:selectItem itemLabel="Tabella" itemValue="tabella"/>
+						<f:selectItem itemLabel="Pie Chart" itemValue="pie_chart"/>
+						<f:selectItem itemLabel="Bar Chart" itemValue="bar_chart"/>
+						<f:selectItem itemLabel="Andamento Temporale" itemValue="andamentoTemporale"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()" actionListener="#{sf_bean.tipoReportSelected}"/>
+					</rich:comboBox>
+				</link:prop>
+				
+				<a4j:outputPanel id="valoreRisorsaCtr" layout="block" >
+					<link:prop label="Valore Risorsa" required="true" rendered="#{sf_tipoReport == 'andamentoTemporale' and !empty sf_bean.statisticaSelezionata}">
+						<h:selectManyListbox id="valoreRisorsa" value="#{sf_bean.valoriRisorsa}" style="width:412px;" size="5">
+							<f:selectItems value="#{sf_mbean.valoriRisorse}"/>
+							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</h:selectManyListbox>
+					</link:prop>
+				</a4j:outputPanel>
+							
+		 		<link:prop label="Unità di tempo">
+		 			<rich:comboBox id="unitaTempo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Unità di Tempo"
+							converter="selectItemConverter"  width="412" enableManualInput="false">
+			 			<f:selectItems value="#{sf_bean.intervalliTemporali}"/>
+			 			<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.modalitaTemporaleListener}" reRender="periodoCtr"/>
+					</rich:comboBox>
+		 		</link:prop>
+				
+				<link:prop label="Visualizza per ">
+		 			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{sf_bean._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
+							enableManualInput="false" width="412" converter="selectItemConverter">
+			 			<f:selectItem itemLabel="Numero Transazioni" itemValue="numeroTransazioni"/>
+			 			<f:selectItem itemLabel="Occupazione Banda" itemValue="dimensioneTransazioni"/>
+			 			<f:selectItem itemLabel="Tempo Medio Risposta" itemValue="tempoMedioRisposta"/>
+			 			<a4j:support event="onselect" actionListener="#{sf_bean.tipoVisualizzazioneListener}" reRender="searchPnl"/>
+					</rich:comboBox>
+		 		</link:prop>
+		 		
+		 		<a4j:outputPanel id="tipoBandaCtr" layout="block" rendered="#{sf_bean._value_tipoVisualizzazione == 'dimensioneTransazioni'}">
+					<link:prop label="Tipo Banda">
+						<rich:comboBox id="tipoBandaCombo" value="#{sf_bean._value_tipoBanda}" defaultLabel="Seleziona Tipo di Banda"
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Banda" width="412" enableManualInput="false">
+							<f:selectItem itemLabel="Banda Complessiva" itemValue="Banda Complessiva"/>
+							<f:selectItem itemLabel="Banda Interna" itemValue="Banda Interna"/>
+							<f:selectItem itemLabel="Banda Esterna" itemValue="Banda Esterna"/>
+							<a4j:support event="onselect" actionListener="#{sf_bean.tipoBandaListener}"/>
+						</rich:comboBox>
+					</link:prop>
+				</a4j:outputPanel>
+		 		
+		 		<a4j:outputPanel id="tipoLatenzaCtr" layout="block" rendered="#{sf_bean._value_tipoVisualizzazione == 'tempoMedioRisposta'}">
+					<link:prop label="Tipo Latenza">
+						<rich:comboBox id="tipoLatenzaCombo" value="#{sf_bean._value_tipoLatenza}" defaultLabel="Seleziona Tipo di Latenza"
+							required="true" converter="selectItemConverter" requiredMessage="E' necessario selezionare un tipo Latenza" width="412" enableManualInput="false">
+							<f:selectItem itemLabel="Latenza Totale" itemValue="Latenza Totale"/>
+			 				<f:selectItem itemLabel="Latenza Servizio" itemValue="Latenza Servizio"/>
+			 				<f:selectItem itemLabel="Latenza Porta" itemValue="Latenza Porta"/>
+							<a4j:support event="onselect" actionListener="#{sf_bean.tipoLatenzaListener}"/>
+						</rich:comboBox>
+					</link:prop>
+				</a4j:outputPanel>
+				
+			</a4j:outputPanel>
+	
+			<a4j:outputPanel id="ctr-ricerca-personal">
+				<link:fieldset legend="Statistiche Personalizzate" 
+					collapsible="false" closed="false"
+					rendered="#{!empty sf_servizio}">
+					<h:outputText value="Non sono presenti statistiche personalizzate." rendered="#{empty sf_bean.statistichePersonalizzate}"/>	
+					
+					<link:prop label="Statistica" rendered="#{!empty sf_bean.statistichePersonalizzate}">
+						<rich:comboBox id="statistichePersonalizzate" value="#{sf_bean.nomeStatisticaPersonalizzata}"
+								defaultLabel="Personalizza Statistica" directInputSuggestions="true"
+								width="412" validator="#{sf_bean.validateSelectedPlugin}"
+								enableManualInput="false">
+						<f:selectItem itemValue="--"/>
+						<f:selectItems value="#{sf_bean.statistichePersonalizzate.statisticheSelectItems}"/>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.statisticaSelezionataListener}" reRender="unitaTempo,ctr-ricerca-personal,valoreRisorsaCtr,buttons"  />
+						</rich:comboBox> 
+					</link:prop>
+						
+					<a4j:outputPanel id="statistica-personal-params" layout="block">
+						<a4j:region renderRegionOnly="true">
+							<ui:include src="/includes/dynamicComponent.xhtml">
+								<ui:param value="#{sf_bean.statisticaSelezionataParameters}" name="formParameters" />
+							</ui:include>
+						</a4j:region>		
+						<a4j:outputPanel id="statistica-personal-params-campi-obbligatori" layout="block" rendered="#{sf_bean.statisticaSelezionataParametersRequired}">
+							<p class="legend">
+								<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+							</p>	
+						</a4j:outputPanel>		
+					</a4j:outputPanel>
+				</link:fieldset>	
+			</a4j:outputPanel>
+	</a4j:outputPanel>
+</ui:composition>

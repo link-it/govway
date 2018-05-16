@@ -1,0 +1,396 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto';
+	font-size: 12px;
+}
+
+h2 {
+	font-size: 197%;
+}
+
+html {
+	height: 100%;
+}
+
+fieldset {
+	border: 1px solid ${fieldset.border.color}; 
+	border-radius: 5px;
+}
+
+img {
+	border: none;
+}
+
+p {
+	margin: .5em;
+	font-family: 'Roboto';
+}
+
+legend {
+	font-family: 'Roboto';
+	font-size: 12px;
+	font-weight: bold;
+	padding-left: 10px;
+    padding-right: 10px;
+    color: ${legend.color};
+}
+
+a {
+	color: ${a.color};
+	text-decoration: underline;
+	font-family: 'Roboto';
+	font-size: 12px;
+}
+
+a:hover {
+	color: ${a.hover.color};
+	text-decoration: none;
+}
+
+a:visited {
+	color: ${a.visited.color};
+	text-decoration: none;
+}
+	
+body {
+	color: #212121;
+	height: 100%;
+	background: ${body.background.color};
+}
+
+table {
+	border: none;
+	border-spacing: 0;
+/*     border-collapse: collapse; */
+}
+
+select {
+	padding: 2px;
+	border: 1px solid ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+	background: none;
+}
+
+select:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+textarea {
+	padding: 2px;
+	border: 1px solid ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+}
+textarea:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+input:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+input[type="text"] {
+	padding: 2px;
+	border: 1px solid ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+}
+
+input[type="text"]:disabled{
+    background: ${input.text.disabled.background.color};
+    color: ${input.text.disabled.color};
+}
+
+input[type="text"]:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+input[type="password"] {
+	padding: 2px;
+	border: 1px solid ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+}
+
+input[type="password"]:disabled {
+    background: ${input.password.disabled.background.color};
+    color: ${input.password.disabled.color};
+}
+
+input[type="password"]:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+input[type="checkbox"] {
+	padding: 2px;
+	border: 1px solid ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+	background-color: ${input.background.color} ;	
+	background-image: none !important;
+}
+
+input[type="checkbox"]:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+input[type="radio"] {
+	padding: 2px;
+	border: 1px solid  ${input.border.color};
+	font-family: 'Roboto';
+	font-size: 12px;
+	background-color: ${input.background.color};	
+	background-image: none !important;
+}
+
+input[type="radio"]:focus {
+	border: 1px solid  ${input.focus.border.color};
+}
+
+option:checked  {
+	background-color: ${option.checked.background.color};
+	color:  ${option.checked.color};
+}
+
+option:hover  {
+	background-color: ${option.hover.background.color};
+	color:  ${option.hover.color};
+}
+
+option:active  {
+	background-color: ${option.active.background.color};
+	color:  ${option.active.color};
+}
+
+.inputLink {
+	background-color: ${input.background.color} ;	
+	background-image: none !important;
+	color: ${input.color};
+}
+
+.inputLinkLong {
+	background-color: ${input.background.color} ;	
+	background-image: none !important;
+	width: 406px;
+	color: ${input.color};
+}
+
+
+/* Classi header a destra */
+
+.titleRight {
+	vertical-align: middle; 
+	font-size: 13px;
+	color: ${page.header.text.color};
+}
+
+.titleRight label,
+.titleRight span{
+	font-size: 13px;
+}
+
+.titleLinkRight  {
+	font-size: 13px;
+	color: ${page.header.text.color};
+}
+
+a.titleLinkRight:visited {
+	font-size: 13px;
+	color: ${page.header.text.color} !important;
+}
+
+a.titleLinkRight:hover {
+	font-size: 13px;
+	color: ${page.header.text.color};
+}
+
+.titleStatusIconLinkLeft {
+	text-decoration: none; 
+	color: ${page.header.text.color}; 
+}
+
+.titleStatusIconLinkRight {
+	text-decoration: none; 
+	color: ${page.header.text.color}; 
+	vertical-align: bottom;
+}
+
+.spacer {
+	width: 100%;
+	height: 1px;
+}
+
+.spacerDettaglio {
+	width: 100%;
+	height: 20px;
+}
+
+.spacerLinkDownload{
+	height: 1px;
+	width: 5px;
+}
+
+.margin-top{
+    margin-top: 16px;
+}
+
+.panelLista {
+    background: ${paginacorrente.background.color};
+    padding: 24px;
+    border: none;
+}
+
+/*	diagnostici severita */
+.errorSpcoop, .errorOpenspcoop, .diag_error,
+.errorProtocol, .errorIntegration{
+	color: ${diagnostici.error.color};
+}
+
+.infoSpcoop,
+.infoOpenspcoop,
+.diag_info,
+.infoIntegration,
+.infoProtocol{
+	color: ${diagnostici.info.color};
+}
+
+.fatalOpenspcoop,
+.diag_fatal,
+.fatal{
+	color: ${diagnostici.error.color};
+	font-weight: bold;
+	font-style: normal;
+}
+
+.diag_debug,
+.debugLow,
+.debugMedium,
+.debugLow{
+	
+}
+/**
+	Esito dettaglio messaggio
+ */
+ .esito_ok{
+ 	color: ${diagnostici.info.color};
+ }
+ .esito_ko{
+ 	color: ${diagnostici.error.color};
+ }
+
+.errorMessage{
+	color: ${diagnostici.error.color};
+}
+
+.noborder {
+	border: none !important;
+}
+
+.nopadding {
+	padding: 0px !important;
+}
+
+/*Table row*/
+.even {
+	background-color: ${table.row.even.background.color};
+}
+
+.odd {
+	background-color: ${table.row.odd.background.color};
+}
+
+.active {
+	background-color: ${table.row.hover.background.color};
+}
+/*End Table row*/
+
+.columnHeaderLabel {
+	color: ${table.thead.label.color};
+	font-weight: bold;
+}
+
+.align-default{
+}
+
+.align-center{
+	text-align: center;
+}
+
+.align-right{
+	text-align: right;
+}
+
+.align-top{
+    vertical-align: top;
+}
+
+.align-left{
+	text-align: left;
+}
+
+.outputFieldLabel {
+	color: ${label.color};
+	font-weight: bold;
+}
+
+.labelAllineataDx {
+	text-align: right;
+	padding: 0px 10px;
+}
+
+.labelAllineataDxFixedWidth130 {
+	text-align: right;
+	padding: 0px 10px;
+	width: 130px;
+}
+
+.labelAllineataSx {
+	padding: 0px 10px;
+}
+
+.valueAllineataSx {
+    padding: 0 10px 0 2px;
+}
+
+.borderSpacingTable{
+	border-spacing: 3px;
+}
+
+/*Link con icona*/
+a[id$='iconLink']{
+ 	color: ${a.color};
+}
+
+a:hover[id$='iconLink']{
+ 	color: ${a.hover.color};
+}
+
+label[id$='iconLabel']{
+	display:inline-block;
+	padding-left:20px;
+	line-height:18px;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+span[id$='iconLink']{
+	color: ${a.color};
+}
+
+a.iconLinkie{
+	color: ${a.color};
+}
+
+a:hover.iconLinkie{
+	color: ${a.hover.color};
+}
+
+span.iconLinkie{
+}
+
+.divNoEdit {
+	padding-top: 2px;
+}

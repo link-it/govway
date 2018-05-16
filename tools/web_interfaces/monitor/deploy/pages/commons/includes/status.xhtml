@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:s="http://jboss.com/products/seam/taglib"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:richx="http://richfaces.org/richx">
+	<a4j:form>
+		<a4j:status id="mainStatus" layout="block">
+			<f:facet name="start">
+				<h:panelGroup>
+					<h:panelGroup styleClass="rich-mpnl-mask-div mainStatusStartStyle">
+					</h:panelGroup>
+					<h:panelGroup styleClass="mainStatusStartStyleInner">	
+						<h:graphicImage value="/images/tema_link/ajax_status.gif"/>
+					</h:panelGroup>		
+				</h:panelGroup>
+			</f:facet>
+		</a4j:status>
+	</a4j:form>
+</ui:composition>

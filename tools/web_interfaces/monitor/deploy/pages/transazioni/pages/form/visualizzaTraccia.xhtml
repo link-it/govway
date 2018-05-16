@@ -1,0 +1,698 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="pageTitle">Elenco Tracce</ui:define>
+	<ui:define name="pageHeader">Elenco Tracce</ui:define>
+	<ui:define name="navbar">
+		<ul>
+			<li><a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni" rendered="#{searchFormTransazioni.periodo != 'Live'}" />
+				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><a4j:htmlCommandLink id="dettagliTransazione" action="dettagliMessaggio" value="Dettagli Transazione">
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}" />
+					<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}" />
+					<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}" />
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="dettaglioTraccia" styleClass="ultimo-path"
+					value="Dettaglio Traccia" /></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:loadScript src="/scripts/shCore.js" />
+		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadStyle src="resource:///css/shCore.css" />
+		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
+		<script type="text/javascript">
+			//<![CDATA[
+			   jQuery(window).resize(function(){lineWrap()});
+			   jQuery(document).ready(lineWrap);
+			   
+			   SyntaxHighlighter.all();
+			   lineWrap();
+				 //]]>
+		</script>
+		<a4j:keepAlive beanName="dettagliBean" />
+		<rich:panel id="panelTraccia1" style="padding:0" styleClass="noborder" bodyClass="nopadding"
+			headerClass="outpanelHeader">
+			<h:outputText id="outNoTraccia" value="Nessuna Traccia Trovata"
+				rendered="#{empty dettagliBean.traccia or empty dettagliBean.traccia.bustaBean}" />
+			<h:panelGroup id="panelTraccia2" columnClasses="gridContent"
+				rendered="#{!empty dettagliBean.traccia.bustaBean}">
+				<rich:panel id="panelIntestazione1" bodyClass="inpanelBody">
+					<f:facet name="header">
+						<h:outputText id="outIntestazione" value="Dettagli Traccia" />
+					</f:facet>
+					
+					<link:fieldset legend="Informazioni Generali"
+						rendered="#{true}" collapsible="false" closed="false">
+					
+						<h:panelGrid id="panelIntestazione2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+	
+							<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{true}"/>
+							<h:form id="formTraccia">
+								<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
+		                    		<f:setPropertyActionListener value="#{dettagliBean.traccia.tipoMessaggio.tipo == 'Risposta'}" target="#{dettagliBean.isRisposta}"/>
+									<h:outputText id="outEsportaTraccia" value="Esporta" />
+								</h:commandLink>
+							</h:form>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outMitt" value="Mittente" />
+							<h:panelGroup id="panelMitt">
+													
+								<h:outputLabel id="outTipoMitt1" value="Tipo: "
+									style="font-style: italic;" />
+								<h:outputText id="outTipoMitt2"
+									value="#{dettagliBean.traccia.bustaBean.tipoMittente}" rendered="#{not empty dettagliBean.traccia.bustaBean.tipoMittente}" />
+								<h:outputText id="outTipoMitt3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.tipoMittente}" />
+								<br />
+								<h:outputLabel id="outNomeMitt1" value="Nome: "
+									style="font-style: italic;" />
+								<h:outputText id="outNomeMitt2"
+									value="#{dettagliBean.traccia.bustaBean.mittente}" rendered="#{not empty dettagliBean.traccia.bustaBean.mittente}" />
+								<h:outputText id="outNomeMitt3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.mittente}" />
+								<br />
+								<h:outputLabel id="outCodicePortaMitt1" value="Codice Porta: "
+									style="font-style: italic;" />
+								<h:outputText id="outCodicePortaMitt2"
+									value="#{dettagliBean.traccia.bustaBean.identificativoPortaMittente}" rendered="#{not empty dettagliBean.traccia.bustaBean.identificativoPortaMittente}" />
+								<h:outputText id="outCodicePortaMitt3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.identificativoPortaMittente}" />
+								<br />
+								<h:outputLabel id="outIndirizzoMittLabel"
+									value="Indirizzo: " style="font-style: italic;"
+									rendered="#{!empty dettagliBean.traccia.bustaBean.indirizzoMittente}" />
+								<h:outputText id="outIndirizzoMitt"
+									value="#{dettagliBean.traccia.bustaBean.indirizzoMittente}"
+									rendered="#{!empty dettagliBean.traccia.bustaBean.indirizzoMittente}" />
+							</h:panelGroup>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outDest" value="Destinatario" />
+							<h:panelGroup id="panelDest">
+								<h:outputLabel id="outTipoDest1" value="Tipo: "
+									style="font-style: italic;" />
+								<h:outputText id="outTipoDest2"
+									value="#{dettagliBean.traccia.bustaBean.tipoDestinatario}" rendered="#{not empty dettagliBean.traccia.bustaBean.tipoDestinatario}" />
+								<h:outputText id="outTipoDest3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.tipoDestinatario}" />
+								<br />
+								<h:outputLabel id="outNomeDest1" value="Nome: "
+									style="font-style: italic;" />
+								<h:outputText id="outNomeDest2"
+									value="#{dettagliBean.traccia.bustaBean.destinatario}" rendered="#{not empty dettagliBean.traccia.bustaBean.destinatario}"/>
+								<h:outputText id="outNomeDest3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.destinatario}"/>
+								<br />
+								<h:outputLabel id="outCodicePortaDest1" value="Codice Porta: "
+									style="font-style: italic;" />
+								<h:outputText id="outCodicePortaDest2"
+									value="#{dettagliBean.traccia.bustaBean.identificativoPortaDestinatario}" rendered="#{not empty dettagliBean.traccia.bustaBean.identificativoPortaDestinatario}"/>
+								<h:outputText id="outCodicePortaDest3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.identificativoPortaDestinatario}"/>
+								<br />
+								<h:outputLabel id="outIndirizzoDestLabel"
+									value="Indirizzo: " style="font-style: italic;"
+									rendered="#{!empty dettagliBean.traccia.bustaBean.indirizzoDestinatario}" />
+								<h:outputText id="outIndirizzoDest"
+									value="#{dettagliBean.traccia.bustaBean.indirizzoDestinatario}"
+									rendered="#{!empty dettagliBean.traccia.bustaBean.indirizzoDestinatario}" />
+							</h:panelGroup>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outProfColl1" value="Profilo Collaborazione" />
+							<h:outputText id="outProfColl2"
+								value="#{dettagliBean.traccia.bustaBean.profiloDiCollaborazioneRicavato}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.profiloDiCollaborazioneRicavato}" />
+							<h:outputText id="outProfColl3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.profiloDiCollaborazioneRicavato}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outSerCorr" value="Servizio Correlato" rendered="#{not empty dettagliBean.traccia.bustaBean.tipoServizioCorrelato or not empty dettagliBean.traccia.bustaBean.servizioCorrelato}"/>
+							<h:panelGroup id="panelServCorr" rendered="#{not empty dettagliBean.traccia.bustaBean.tipoServizioCorrelato or not empty dettagliBean.traccia.bustaBean.servizioCorrelato}">
+								<h:outputLabel id="outTipoServCorr1" value="Tipo: " style="font-style: italic;" />
+								<h:outputText id="outTipoServCorr2"								
+									value="#{dettagliBean.traccia.bustaBean.tipoServizioCorrelato}" rendered="#{not empty dettagliBean.traccia.bustaBean.tipoServizioCorrelato}" />
+								<h:outputText id="outTipoServCorr3"								
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.tipoServizioCorrelato}" />
+								<br />
+								<h:outputLabel id="outNomeServCorr1" value="Nome: " style="font-style: italic;" />
+								<h:outputText id="outNomeServCorr2" value="#{dettagliBean.traccia.bustaBean.servizioCorrelato}" rendered="#{not empty dettagliBean.traccia.bustaBean.servizioCorrelato}"/>
+								<h:outputText id="outNomeServCorr3" value="-" rendered="#{empty dettagliBean.traccia.bustaBean.servizioCorrelato}"/>
+							</h:panelGroup>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outColl1" value="Collaborazione"/>
+							<h:outputText id="outColl2"
+								value="#{dettagliBean.traccia.bustaBean.collaborazione}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.collaborazione}" />
+							<h:outputText id="outColl3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.collaborazione}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outServ" value="Servizio"/>
+							<h:panelGroup id="panelServ">
+								<h:outputLabel id="outTipoServ1" value="Tipo: "
+									style="font-style: italic;"/>
+								<h:outputText id="outTipoServ2"
+									value="#{dettagliBean.traccia.bustaBean.tipoServizio}" rendered="#{!empty dettagliBean.traccia.bustaBean.tipoServizio}" />
+								<h:outputText id="outTipoServ3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.tipoServizio}" />
+								<br />
+								<h:outputLabel id="outNomeServ1" value="Nome: "
+									style="font-style: italic;"/>
+								<h:outputText id="outNomeServ2"
+									value="#{dettagliBean.traccia.bustaBean.servizio}" rendered="#{!empty dettagliBean.traccia.bustaBean.servizio}" />
+								<h:outputText id="outNomeServ3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.servizio}" />
+								<br />
+								<h:outputLabel id="outVersioneServ1" value="Versione: "
+									style="font-style: italic;"/>
+								<h:outputText id="outVersioneServ2"
+									value="#{dettagliBean.traccia.bustaBean.versioneServizio}" rendered="#{!empty dettagliBean.traccia.bustaBean.versioneServizio and dettagliBean.traccia.bustaBean.versioneServizio gt 0}" />
+								<h:outputText id="outVersioneServ3"
+									value="-" rendered="#{empty dettagliBean.traccia.bustaBean.versioneServizio or dettagliBean.traccia.bustaBean.versioneServizio le 0}" />
+							</h:panelGroup>
+	
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outAzione1" value="Azione"/>
+							<h:outputText id="outAzione2"
+								value="#{dettagliBean.traccia.bustaBean.azione}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.azione}" />
+							<h:outputText id="outAzione3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.azione}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outIdEgov1" value="ID Messaggio" />
+							<h:outputText id="outIdEgov2"
+								value="#{dettagliBean.traccia.bustaBean.ID}" rendered="#{not empty dettagliBean.traccia.bustaBean.ID}" />
+							<h:outputText id="outIdEgov3"
+								value="-" rendered="#{empty dettagliBean.traccia.bustaBean.ID}"/>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outRifMsg1" value="Riferimento Messaggio"/>
+							<h:outputText id="outRifMsg2"
+								value="#{dettagliBean.traccia.bustaBean.riferimentoMessaggio}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.riferimentoMessaggio}" />
+							<h:outputText id="outRifMsg3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.riferimentoMessaggio}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outSorgenteTemporale1" value="Sorgente Temporale"/>
+							<h:outputText id="outSorgenteTemporale2"
+								value="#{dettagliBean.traccia.bustaBean.tipoOraRegistrazioneRicavato}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.tipoOraRegistrazioneRicavato}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
+									timeZone="Europe/Rome" />
+							</h:outputText>
+							<h:outputText id="outSorgenteTemporale3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.tipoOraRegistrazioneRicavato}">
+							</h:outputText>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outOraReg1" value="Ora Registrazione"/>
+							<h:outputText id="outOraReg2"
+								value="#{dettagliBean.traccia.bustaBean.oraRegistrazione}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.oraRegistrazione}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
+									timeZone="Europe/Rome" />
+							</h:outputText>
+							<h:outputText id="outOraReg3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.oraRegistrazione}"/>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outScadenza1" value="Scadenza" />
+							<h:outputText id="outScadenza2"
+								value="#{dettagliBean.traccia.bustaBean.scadenza}"
+								rendered="#{!empty dettagliBean.traccia.bustaBean.scadenza}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
+									timeZone="Europe/Rome" />
+							</h:outputText>
+							<h:outputText id="outScadenza3"
+								value="-"
+								rendered="#{empty dettagliBean.traccia.bustaBean.scadenza}"/>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outProfTrasm" value="Profilo Trasmissione" />
+							<h:panelGroup id="panelProfTrasm">
+								<h:outputLabel id="outInoltro1" value="Inoltro: "
+									style="font-style: italic;"/>
+								<h:outputText id="outInoltro2"
+									value="#{dettagliBean.traccia.bustaBean.inoltroRicavato}"
+									rendered="#{!empty dettagliBean.traccia.bustaBean.inoltroRicavato}" />
+								<h:outputText id="outInoltro3"
+									value="-"
+									rendered="#{empty dettagliBean.traccia.bustaBean.inoltroRicavato}" />
+								<rich:spacer id="spacer1" style="display: block;" />
+								<h:outputLabel id="outConfRic1" value="Conferma Ricezione: "
+									style="font-style: italic;" />
+								<h:outputText id="outConfRic2"
+									value="#{dettagliBean.traccia.bustaBean.confermaRicezione}"/>
+							</h:panelGroup>
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outSequenza1" value="Sequenza" rendered="#{dettagliBean.traccia.bustaBean.sequenza>=0}"/>
+							<h:outputText id="outSequenza2"
+								value="#{dettagliBean.traccia.bustaBean.sequenza}"
+								rendered="#{dettagliBean.traccia.bustaBean.sequenza>=0}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outDigest1" value="Digest" rendered="#{not empty dettagliBean.traccia.bustaBean.digest}"/>
+							<h:outputText id="outDigest2"
+								value="#{dettagliBean.traccia.bustaBean.digest}"
+								rendered="#{not empty dettagliBean.traccia.bustaBean.digest}" />
+	
+						</h:panelGrid>
+						
+					</link:fieldset>
+					
+					
+					<rich:spacer id="spacerRiscontri" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.listaRiscontriBean}"/>
+				
+					<link:fieldset legend="Lista Riscontri"
+							rendered="#{not empty dettagliBean.traccia.bustaBean.listaRiscontriBean}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelRiscontri2" columns="3">
+							
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.listaRiscontriBean}" var="riscontro" >
+								
+								<h:panelGroup>
+								
+									<h:outputLabel styleClass="outputFieldLabel" value="Riscontro "/>
+									<h:outputText value="#{riscontro.oraRegistrazione}">
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+									</h:outputText>
+										
+								</h:panelGroup>
+
+								<rich:spacer width="10" height="10" />
+
+								<h:panelGroup>
+									<h:panelGrid columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+											
+									<h:outputLabel value="Identificativo" style="font-weight: bold;" />
+										<h:outputText value="#{riscontro.ID}" rendered="#{not empty riscontro.ID}" />
+										<h:outputText value="-" rendered="#{empty riscontro.ID}" />
+										
+										<h:outputLabel value="Sorgente" style="font-weight: bold;"/>
+										<h:outputText value="#{riscontro.tipoOraRegistrazioneRicavato}" rendered="#{!empty riscontro.tipoOraRegistrazioneRicavato}"/>
+										<h:outputText rendered="#{empty riscontro.tipoOraRegistrazioneRicavato}" value="-" />
+									</h:panelGrid>
+								</h:panelGroup>
+								
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+														
+							</c:forEach>
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+					
+					
+					<rich:spacer id="spacerTrasmissioni" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.listaTrasmissioniBean}"/>
+					
+					<link:fieldset legend="Lista Trasmissioni"
+							rendered="#{not empty dettagliBean.traccia.bustaBean.listaTrasmissioniBean}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelListaTrasm2" columns="3">
+							
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.listaTrasmissioniBean}" var="trasmissione" >
+								
+								<h:panelGroup>
+								
+									<h:outputLabel styleClass="outputFieldLabel" value="Registrazione "/>
+									<h:outputText value="#{trasmissione.oraRegistrazione}">
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
+											timeZone="Europe/Rome" />
+									</h:outputText>
+										
+								</h:panelGroup>
+
+								<rich:spacer width="10" height="10" />
+
+								<h:panelGroup>
+									<h:panelGrid columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+									
+										<h:outputLabel styleClass="outputFieldLabel" value="Mittente" />
+										<h:panelGroup columns="2">
+	
+											<h:outputLabel  value="Tipo: "
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.tipoOrigine}"
+												rendered="#{not empty trasmissione.tipoOrigine}" />
+											<h:outputText value="-"
+												rendered="#{empty trasmissione.tipoOrigine}" />
+											
+											<br/>
+											
+											<h:outputLabel value="Nome: "
+												style="font-style: italic;"/>
+											<h:outputText value="#{trasmissione.origine}"
+												rendered="#{not empty trasmissione.origine}" />	
+											<h:outputText value="-"
+												rendered="#{empty trasmissione.origine}" />
+	
+											<br/>
+											
+											<h:outputLabel value="CodicePorta: "
+												rendered="#{not empty trasmissione.identificativoPortaOrigine}"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.identificativoPortaOrigine}"
+												rendered="#{not empty trasmissione.identificativoPortaOrigine}" />
+	
+											<br/>
+											
+											<h:outputLabel value="Indirizzo: "
+												rendered="#{not empty trasmissione.indirizzoOrigine}"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.indirizzoOrigine}"
+												rendered="#{not empty trasmissione.indirizzoOrigine}" />
+	
+										</h:panelGroup>
+	
+										<h:outputLabel styleClass="outputFieldLabel" value="Destinatario" />
+										<h:panelGroup columns="2">
+	
+											<h:outputLabel value="Tipo:"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.tipoDestinazione}"
+												rendered="#{not empty trasmissione.tipoDestinazione}" />
+											<h:outputText value="-"
+												rendered="#{empty trasmissione.tipoDestinazione}" />
+	
+											<br/>
+											
+											<h:outputLabel value="Nome:"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.destinazione}"
+												rendered="#{not empty trasmissione.destinazione}" />
+											<h:outputText value="-"
+												rendered="#{empty trasmissione.destinazione}" />
+	
+											<br/>
+											
+											<h:outputLabel value="CodicePorta: "
+												rendered="#{not empty trasmissione.identificativoPortaDestinazione}"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.identificativoPortaDestinazione}"
+												rendered="#{not empty trasmissione.identificativoPortaDestinazione}" />
+	
+											<br/>											
+											<h:outputLabel value="Indirizzo:"
+												rendered="#{not empty trasmissione.indirizzoDestinazione}"
+												style="font-style: italic;" />
+											<h:outputText value="#{trasmissione.indirizzoDestinazione}"
+												rendered="#{not empty trasmissione.indirizzoDestinazione}" />
+	
+										</h:panelGroup>
+	
+										<h:outputLabel styleClass="outputFieldLabel"
+											value="Sorgente" />
+										<h:outputText value="#{trasmissione.tempoRicavato}"
+											rendered="#{not empty trasmissione.tempoRicavato}" />
+										<h:outputText value="-"
+											rendered="#{empty trasmissione.tempoRicavato}" />
+									</h:panelGrid>
+								</h:panelGroup>
+								
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+														
+							</c:forEach>
+						
+						</h:panelGrid>
+	
+					</link:fieldset>
+					
+					<rich:spacer id="spacerEccezioni" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.listaEccezioniBean}"/>
+				
+					<link:fieldset legend="Lista Eccezioni"
+							rendered="#{not empty dettagliBean.traccia.bustaBean.listaEccezioniBean}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelEccezioni2" columns="3">
+							
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.listaEccezioniBean}" var="eccezione" >
+								
+								<h:panelGroup>
+								
+									<h:outputLabel styleClass="outputFieldLabel" value="Codice "/>
+									<h:outputText rendered="#{not empty eccezione.codiceEccezioneRicavato}"
+										value="#{eccezione.codiceEccezioneRicavato}" />
+									<h:outputText rendered="#{empty eccezione.codiceEccezioneRicavato}"
+										value="-" />
+										
+								</h:panelGroup>
+
+								<rich:spacer width="10" height="10" />
+
+								<h:panelGroup>
+									<h:panelGrid columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+										
+										<h:outputLabel style="font-weight: bold;" value="Rilevanza" />
+										<h:outputText rendered="#{not empty eccezione.rilevanzaRicavato}"
+											value="#{eccezione.rilevanzaRicavato}" />
+										<h:outputText rendered="#{empty eccezione.rilevanzaRicavato}"
+											value="-" />
+			
+										<h:outputLabel style="font-weight: bold;" value="Contesto" />
+										<h:outputText rendered="#{not empty eccezione.contestoCodificaRicavato}"
+											value="#{eccezione.contestoCodificaRicavato}" />
+										<h:outputText rendered="#{empty eccezione.contestoCodificaRicavato}"
+											value="-" />
+			
+										<h:outputLabel style="font-weight: bold;" value="Descrizione" />
+										<h:outputText rendered="#{not empty eccezione.descrizioneValue}"
+											value="#{eccezione.descrizioneValue}" />
+										<h:outputText rendered="#{empty eccezione.descrizioneValue}"
+											value="-" />
+
+									</h:panelGrid>
+								</h:panelGroup>
+								
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+														
+							</c:forEach>
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+					
+										
+					<rich:spacer id="spacerAllegati" height="20px" rendered="#{not empty dettagliBean.traccia.listaAllegati}"/>
+				
+					<link:fieldset legend="Lista Allegati"
+							rendered="#{not empty dettagliBean.traccia.listaAllegati}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelAllegati2" columns="3" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+							
+							<c:forEach items="#{dettagliBean.traccia.listaAllegati}" var="allegato" >
+								
+								<h:panelGroup>
+								
+									<h:outputLabel styleClass="outputFieldLabel" value="Content-ID "/>
+									<h:outputText rendered="#{not empty allegato.contentId}"
+										value="#{allegato.contentId}" />
+									<h:outputText rendered="#{empty allegato.contentId}"
+										value="-" />
+										
+								</h:panelGroup>
+
+								<rich:spacer width="10" height="10" />
+
+								<h:panelGroup>
+									<h:panelGrid columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+										
+										<h:outputLabel styleClass="outputFieldLabel" value="Content-Location" />
+										<h:outputText value="#{allegato.contentLocation}" rendered="#{not empty allegato.contentLocation}" />
+										<h:outputText rendered="#{empty allegato.contentLocation}" value="-" />
+		
+										<h:outputLabel styleClass="outputFieldLabel" value="Content-Type" />
+										<h:outputText value="#{allegato.contentType}" rendered="#{not empty allegato.contentType}" />
+										<h:outputText rendered="#{empty allegato.contentType}" value="-" />
+		
+										<h:outputLabel styleClass="outputFieldLabel" value="Digest" />
+										<h:outputText value="#{allegato.digest}" rendered="#{not empty allegato.digest}" />
+										<h:outputText rendered="#{empty allegato.digest}" value="-" />
+										
+									</h:panelGrid>
+								</h:panelGroup>
+								
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+								<rich:spacer height="10" />
+																								
+							</c:forEach>
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+	
+	
+					<rich:spacer id="spacerInformazioniAggiuntiveProtocollo" height="20px" rendered="#{not empty dettagliBean.traccia.bustaBean.properties}"/>
+				
+					<link:fieldset legend="Informazioni Protocollo '#{dettagliBean.traccia.protocollo}'"
+							rendered="#{not empty dettagliBean.traccia.bustaBean.properties}" collapsible="false" closed="false">
+					
+						 <h:panelGrid id="panelInformazioniAggiuntiveProtocollo2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx">
+							
+							<c:forEach items="#{dettagliBean.traccia.bustaBean.propertiesAsList}" var="property" >
+								
+								<h:outputLabel styleClass="outputFieldLabel" value="#{property.key}" />
+								
+								<h:outputText value="#{property.value}" />
+																								
+							</c:forEach>
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+					
+					
+					<rich:spacer id="spacerInformazioniAvanzate" height="20px" rendered="#{true}"/>
+				
+					<link:fieldset legend="Informazioni Avanzate"
+							rendered="#{true}" collapsible="false" closed="false">
+					
+						<h:panelGrid id="panelInformazioniAvanzate2" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outRuoloPorta1" value="Ruolo" />
+							<h:outputText id="outRuoloPorta2"
+								value="#{dettagliBean.traccia.tipoPdD}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" value="PdD" />
+							<h:panelGroup columns="2">
+	
+								<h:outputLabel value="Tipo:"
+									style="font-style: italic;" />
+								<h:outputText value="#{dettagliBean.traccia.idSoggetto.tipo}"
+									rendered="#{not empty dettagliBean.traccia.idSoggetto.tipo}" />
+								<h:outputText value="-"
+									rendered="#{empty dettagliBean.traccia.idSoggetto.tipo}" />
+
+								<br/>
+								
+								<h:outputLabel value="Nome:"
+									style="font-style: italic;" />
+								<h:outputText value="#{dettagliBean.traccia.idSoggetto.nome}"
+									rendered="#{not empty dettagliBean.traccia.idSoggetto.nome}" />
+								<h:outputText value="-"
+									rendered="#{empty dettagliBean.traccia.idSoggetto.nome}" />
+
+								<br/>
+								
+								<h:outputLabel value="CodicePorta: "
+									style="font-style: italic;" />
+								<h:outputText value="#{dettagliBean.traccia.idSoggetto.codicePorta}"
+									rendered="#{not empty dettagliBean.traccia.idSoggetto.codicePorta}" />
+								<h:outputText value="-"
+									rendered="#{empty dettagliBean.traccia.idSoggetto.codicePorta}" />
+
+							</h:panelGroup>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outTipoMessaggio1" value="Tipo Traccia" />
+							<h:outputText id="outTipoMessaggio2"
+								value="#{dettagliBean.traccia.tipoMessaggio.tipo}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outEsitoElaborazione1"
+								value="Esito Elaborazione"/>
+							<h:outputText id="outEsitoElaborazione2"
+								rendered="#{not empty dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.esito}"
+								value="#{dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.esito}" />
+							<h:outputText id="outEsitoElaborazione3"
+								rendered="#{empty dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.esito}"
+								value="-" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outDettaglioEsitoElaborazione1"
+								value="Dettaglio" rendered="#{not empty dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.dettaglio}" />
+							<h:outputText id="outDettaglioEsitoElaborazione2"
+								rendered="#{not empty dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.dettaglio}"
+								value="#{dettagliBean.traccia.esitoElaborazioneMessaggioTracciato.dettaglio}" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outServizioApplicativoFruitore1"
+								value="Applicativo Fruitore" />
+							<h:outputText id="outServizioApplicativoFruitore2"
+								rendered="#{not empty dettagliBean.traccia.bustaBean.servizioApplicativoFruitore}"
+								value="#{dettagliBean.traccia.bustaBean.servizioApplicativoFruitore}" />
+							<h:outputText id="outServizioApplicativoFruitore3"
+								rendered="#{empty dettagliBean.traccia.bustaBean.servizioApplicativoFruitore}"
+								value="-" />
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outServizioApplicativoErogatore1"
+								value="Applicativo Erogatore" />
+							<h:outputText id="outServizioApplicativoErogatore2"
+								rendered="#{not empty dettagliBean.traccia.bustaBean.servizioApplicativoErogatore}"
+								value="#{dettagliBean.traccia.bustaBean.servizioApplicativoErogatore}" />
+							<h:outputText id="outServizioApplicativoErogatore3"
+								rendered="#{empty dettagliBean.traccia.bustaBean.servizioApplicativoErogatore}"
+								value="-" />
+		
+							<h:outputLabel styleClass="outputFieldLabel" id="outCorrelazioneApplicativa1"
+								value="ID Applicativo" />
+							<h:panelGroup id="panelCorrelazioneApplicativa">
+								<h:outputLabel id="outCorrelazioneApplicativaRichiesta1"
+									value="Richiesta: " style="font-style: italic;"/>
+								<h:outputText id="outCorrelazioneApplicativaRichiesta2"
+									value="#{dettagliBean.traccia.correlazioneApplicativa}"
+									rendered="#{not empty dettagliBean.traccia.correlazioneApplicativa}" />
+								<h:outputText id="outCorrelazioneApplicativaRichiesta3"
+									value="-"
+									rendered="#{empty dettagliBean.traccia.correlazioneApplicativa}" />
+								<br />
+								<h:outputLabel id="outCorrelazioneApplicativaRisposta1"
+									value="Risposta: " style="font-style: italic;" />
+								<h:outputText id="outCorrelazioneApplicativaRisposta2"
+									value="#{dettagliBean.traccia.correlazioneApplicativaRisposta}"
+									rendered="#{not empty dettagliBean.traccia.correlazioneApplicativaRisposta}"  />
+								<h:outputText id="outCorrelazioneApplicativaRisposta3"
+									value="-"
+									rendered="#{empty dettagliBean.traccia.correlazioneApplicativaRisposta}" />
+									
+								<br />
+							</h:panelGroup>
+	
+							<h:outputLabel styleClass="outputFieldLabel" id="outLocationH"
+								value="Location" />
+							<h:panelGroup columns="2">
+								<h:outputLabel id="outLocation1"
+									rendered="#{not empty dettagliBean.traccia.locationLabel}"
+									value="#{dettagliBean.traccia.locationLabel}" />
+								<br />
+								<h:outputText id="outLocation2"
+									rendered="#{not empty dettagliBean.traccia.locationValue}"
+									value="#{dettagliBean.traccia.locationValue}" />
+							</h:panelGroup>
+							
+						
+						</h:panelGrid>
+					
+					</link:fieldset>
+					
+					<rich:spacer id="spacerContenutoHeaderXML" height="20px" rendered="#{not empty dettagliBean.traccia.bustaAsString}"/>
+				
+					<link:fieldset legend="XML Protocollo '#{dettagliBean.traccia.protocollo}'"
+							rendered="#{not empty dettagliBean.traccia.bustaAsString}" collapsible="false" closed="false">
+							
+						<div style="height: 350px; overflow-y: scroll;">
+							<pre class="brush: xml; toolbar: false;">#{dettagliBean.prettyEnvelop}</pre>
+						</div>
+							
+					</link:fieldset>
+					
+				</rich:panel>
+
+			</h:panelGroup>
+		</rich:panel>
+	</ui:define>
+</ui:composition>
+
+</html>

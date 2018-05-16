@@ -1,0 +1,573 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it">
+		
+	<ui:define name="navbar">
+			<ul>
+				<li>
+					<h:outputText value="Visualizza Transazioni" rendered="#{searchFormTransazioni.periodo != 'Live'}" styleClass="ultimo-path"/>
+					<h:outputText value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}" styleClass="ultimo-path"/>
+				</li>
+			</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:loadStyle src="resource:///css/transazioni.css" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" />
+		<a4j:loadScript src="resource://scripts/utils.min.js" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
+		<a4j:outputPanel id="panelPaginaTransazioniCtr" layout="block">
+			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live')}" 
+				label="#{ (searchFormTransazioni.executeQuery or searchFormTransazioni.periodo eq 'Live')? 'Modifica Filtri di Ricerca' : 'Filtri di Ricerca'}" switchType="client">
+				<f:facet name="openMarker">
+					<h:graphicImage value="/images/tema_link/down_white.png"/>
+				</f:facet>
+				
+				<f:facet name="closeMarker">
+					<h:graphicImage value="/images/tema_link/up_white.png"/>
+				</f:facet>
+				<a4j:keepAlive beanName="transazioniBean" />
+				<a4j:outputPanel id="panelTransazioniCtr" ajaxRendered="false">
+					<div class="form-container noborder">
+						<h:form prependId="false"  id="formSearchTransazioni" >
+							<a4j:jsFunction name="refreshPnl" reRender="panelTransazioniCtr"/>
+								<ui:include src="/includes/searchForm.xhtml" >
+									<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+									<ui:param name="sf_periodo" value="#{searchFormTransazioni.periodo}" />
+									<ui:param name="sf_dataInizio" value="#{searchFormTransazioni.dataInizio}" />
+									<ui:param name="sf_dataFine" value="#{searchFormTransazioni.dataFine}" />
+									<ui:param name="sf_nomeMittente" value="#{searchFormTransazioni.tipoNomeMittente}" />
+									<ui:param name="sf_nomeDestinatario" value="#{searchFormTransazioni.tipoNomeDestinatario}" />
+									<ui:param name="sf_servizio" value="#{searchFormTransazioni.nomeServizio}" />
+									<ui:param name="sf_nomeAzione" value="#{searchFormTransazioni.nomeAzione}" />
+									<ui:param name="sf_trafficoPerSoggetto" value="#{searchFormTransazioni.tipoNomeTrafficoPerSoggetto}" />
+									<ui:param name="sf_soggettoLocale" value="#{searchFormTransazioni.tipoNomeSoggettoLocale}" />
+									<ui:param name="sf_servizioApplicativo" value="#{searchFormTransazioni.servizioApplicativo}" />
+									
+									<ui:param name="sf_soggetti" value="#{transazioniBean.soggetti}" />
+									<ui:param name="sf_servizi" value="#{transazioniBean.servizi}" />
+									<ui:param name="sf_azioni" value="#{transazioniBean.azioni}" />
+									<ui:param value="#{transazioniBean.serviziApplicativi}" name="sf_serviziApplicativi" />
+									
+									<ui:param name="sf_tipologiaRicerca" value="#{searchFormTransazioni.tipologiaRicerca}" />
+									<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
+									<ui:param name="sf_mbean" value="#{transazioniBean}" />
+								</ui:include>
+								
+								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	
+									<a4j:commandButton id="filtra" value="#{searchFormTransazioni.aggiornamentoDatiAbilitato and
+															(searchFormTransazioni.modalitaRicercaStorico=='intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico=='idApplicativo') ? 
+															'Nuova Ricerca' : 'Filtra'}" 
+														styleClass="icon-refresh" 
+														process="searchPnl" 
+														reRender="panelPaginaTransazioniCtr"
+														rendered="#{not(searchFormTransazioni.periodo eq 'Live')}"
+														action="#{searchFormTransazioni.filtra}"
+														oncomplete="completa(event)"
+														/>
+									<a4j:commandButton id="aggiorna" value="Filtra Risultati" 
+														styleClass="icon-refresh" 
+														process="searchPnl" 
+														reRender="panelPaginaTransazioniCtr"
+														rendered="#{not(searchFormTransazioni.periodo eq 'Live') and 
+															searchFormTransazioni.aggiornamentoDatiAbilitato and
+															(searchFormTransazioni.modalitaRicercaStorico=='intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico=='idApplicativo')}"
+														action="#{searchFormTransazioni.aggiorna}"
+														oncomplete="completa(event)"
+														/>	
+									<a4j:commandButton id="filtraLive" value="Aggiorna Criteri Ricerca" 
+														styleClass="icon-refresh" 
+														process="searchPnl" 
+														reRender="listaTransazioniCtr"
+														rendered="#{searchFormTransazioni.periodo eq 'Live'}"
+														action="#"
+														oncomplete="completa(event)"
+														/>
+									<a4j:commandButton id="svuotaNotLive" value="Ripulisci"
+											styleClass="icon-refresh" process="searchPnl"
+											reRender="panelPaginaTransazioniCtr" 
+											rendered="#{not(searchFormTransazioni.periodo eq 'Live')}"
+											action="#{searchFormTransazioni.ripulisci}"
+											oncomplete="completa(event)" />
+									<a4j:commandButton id="svuotaLive" value="Ripulisci"
+											styleClass="icon-refresh" process="searchPnl"
+											reRender="searchPnl,listaTransazioniCtr" 
+											rendered="#{searchFormTransazioni.periodo eq 'Live'}"
+											action="#{searchFormTransazioni.ripulisciLive}"
+											oncomplete="completa(event)" />
+								</a4j:outputPanel>
+							</h:form>						
+					</div>
+				</a4j:outputPanel>
+			</rich:simpleTogglePanel>
+			<div class="spacer"></div>
+			
+			<a4j:outputPanel id="listaTransazioniCtr" ajaxRendered="false" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">
+				<script type="text/javascript">
+				//<![CDATA[
+				   jQuery(document).ready(nascondiChk);
+				   
+				   function nascondiChk(){
+					   jQuery("div[id$='ckbClmn:sortDiv'] span[class$='extdt-sortable-header'] img").remove();
+					   jQuery("div[id$='colEsitoImg:sortDiv'] span[class$='extdt-sortable-header'] img[class$='extdt-header-sort-img']").remove();
+					   jQuery("input[id$='msgDt_column_ckb']").parent().addClass('align-center');
+					   visualizzaPannelloComandi('msgDt');
+				   }
+							   
+				   function completa(evt){   }
+				   
+				   function checkExportContenutiSelection(containerId){
+						 var name = "csvCheckSelection";
+						 var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='esportazioniChk:2']:checked").length;
+							if(n==1){
+								Richfaces.showModalPanel(name);
+								return false;
+							}else{
+								return true;
+							}
+					 };
+					 
+				function getExportContenutiSelection(containerId){
+						 var toRet = "";
+						 var ids = jQuery("div [id$='"+containerId+"'] input:checkbox[id*='esportazioniChk']:checked");
+						 for (var i =0 ; i < ids.length ; i++) {
+								if(i > 0 ) toRet += ',';
+								
+								toRet += ids[i].id.substring(ids[i].id.indexOf(':')+1);
+							} 
+						 
+						 return toRet;
+					 };
+					 //]]>	
+				</script>
+				<h:form id="formExportListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="preparaFormModale" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.initExportListener}" limitToList="true">
+							<a4j:actionparam name="param1" assignTo="#{transazioniBean.elencoID}"  />
+							<a4j:actionparam name="param2" assignTo="#{transazioniBean.elencoEsportazioni}"  />                  
+			        	</a4j:jsFunction>
+		        	</a4j:outputPanel>
+		        </h:form>
+				<a4j:form id="formListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" prependId="false">
+					<ui:include src="/includes/transazioniGrid.xhtml">
+						<ui:param value="#{transazioniDM}" name="value" />
+						<ui:param value="Lista Transazioni" name="headerText" />
+						<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
+						<ui:param value="#{transazioniBean}" name="mBean" />
+						<ui:param value="#{transazioniBean.tableState}" name="tableState" />
+						<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
+						<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
+						<ui:param value="#{transazioniBean.exportSelected}" name="esportaTransazioniSelezionate" />
+						<ui:param value="panelPaginaTransazioniCtr" name="reRenderIds" />
+						<ui:param value="#{searchFormTransazioni.useCount}" name="useCount" />
+					</ui:include>
+				</a4j:form>
+				
+				<rich:modalPanel id="exportCsvModalPnl" showWhenRendered="false" width="800" style="overflow:auto;" autosized="true">
+					<f:facet name="header">
+						<h:outputText id="exportCsvModalPnlHeaderText" value="Export Transazioni CSV" />
+					</f:facet>
+					<f:facet name="controls">	
+						<h:panelGroup id="panelChiudiExportCsv">
+			                <h:graphicImage value="/images/tema_link/clear_white.png" id="hidelinkplugin"/>
+			                <rich:componentControl id="componentPlugin" for="exportCsvModalPnl" attachTo="hidelinkplugin" operation="hide" event="onclick"/>
+			            </h:panelGroup>
+					</f:facet>
+					<a4j:outputPanel id="fileExportCsvCtr" ajaxRendered="true">
+						<h:panelGroup  styleClass="errors" layout="block" rendered="#{not empty transazioniBean.exportCsvErrorMessage}">
+								<h:panelGroup rendered="#{not empty transazioniBean.exportCsvErrorMessage}">
+										<p>
+											<em>
+												<h:outputText value="Si sono verificati degli errori:"/>
+											</em>
+										</p>
+									<div class="errorsSpacer"/>
+									</h:panelGroup>
+								<div class="errorsSpacer"/>
+										<rich:messages id="errorExportCsvMessages">
+										</rich:messages>
+								<h:outputText id="exportCsvErrors"  
+									value="#{transazioniBean.exportCsvErrorMessage}"
+									rendered="#{not transazioniBean.exportCsvErrorMessage}" />
+						</h:panelGroup>
+					</a4j:outputPanel>
+					<p class="legend">
+						<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+					</p>
+					<h:form id="formExportReport" prependId="false">
+						<a4j:outputPanel layout="block" id="panelFormExportCsvContainer" ajaxRendered="false">
+							<style> .rich-shuttle-source-items { margin-left :0px;	}	</style>
+							<div class="form-container noborder"> 
+								<link:fieldset legend="Configura Export" collapsible="false">
+									<link:prop label="Tipologia di Documento" required="true">
+										<h:selectOneMenu id="selectTipoExport" rendered="true" value="#{transazioniBean.tipoExport}" style="width: 412px;" styleClass="inputLink">
+											<f:selectItems value="#{transazioniBean.exportDisponibili}" />
+										</h:selectOneMenu>
+									</link:prop>
+									<link:prop label="Colonne Esportate" required="true">
+										<h:selectOneMenu rendered="true" value="#{transazioniBean.colonneEsportate}" style="width: 412px;" id="selectTipoColonne" styleClass="inputLink">
+											<f:selectItems value="#{transazioniBean.tipiColonneEsportate}" />
+											<a4j:support event="onchange" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.tipoColonneSelected}" limitToList="true"/>
+										</h:selectOneMenu>
+									</link:prop>
+									<a4j:outputPanel id="selezioneColonneCtr" diplay="block" rendered="#{transazioniBean.showSelezioneColonne}">
+										<link:prop label="Selezione Colonne" required="true" note="Seleziona le colonne da includere dalla lista di sinistra">
+											<rich:listShuttle id="input_pckLst_pickColonne"
+												sourceValue="#{transazioniBean.elencoColonneDisponibili}"
+												targetValue="#{transazioniBean.elencoColonneSelezionate}" var="selectItem" listsHeight="190"
+												sourceListWidth="186" targetListWidth="186" label="Colonne Export"
+												copyAllControlLabel="Copia tutti" copyControlLabel="Copia"
+												removeAllControlLabel="Rimuovi tutti" removeControlLabel="Rimuovi"
+												downControlLabel="Sotto" bottomControlLabel="Ultimo" topControlLabel="Primo" upControlLabel="Sopra"
+												converter="multipleChoiceItemConverter"		>
+												<rich:column>
+													<h:outputText value="#{selectItem.label}"></h:outputText>
+												</rich:column>
+												<f:selectItems value="#{transazioniBean.elencoImmagineColonne}" />
+												
+												<f:facet name="topControl">
+														   		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/move_top.png"/>
+												        			</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="topControlDisabled">
+												        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			 <h:graphicImage value="/images/tema_link/move_top_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="bottomControl">
+												    	    <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/move_bottom.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="bottomControlDisabled">
+												       		<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/move_bottom_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="upControl">
+												       		 <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/move_up.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="upControlDisabled">
+												        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/move_up_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="downControl">
+												     	   <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/move_down.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="downControlDisabled">
+												        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			 <h:graphicImage value="/images/tema_link/move_down_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="copyControl">
+												        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/go_next.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="copyControlDisabled">
+												        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/go_next_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="copyAllControl">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				 <h:graphicImage value="/images/tema_link/go_end.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="copyAllControlDisabled">
+												        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/go_end_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="removeControl">
+												        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        				<h:graphicImage value="/images/tema_link/go_prev.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="removeControlDisabled">
+												        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/go_prev_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="removeAllControl">
+												        	<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button" onmouseover="this.className='rich-list-shuttle-button-light'" 
+												        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+												        			onmouseup="this.className='rich-list-shuttle-button'" 
+												        			onmouseout="this.className='rich-list-shuttle-button'">
+												        			<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button-content">
+												        				<h:graphicImage value="/images/tema_link/go_start.png"/>
+												        			</a4j:outputPanel>
+												        	 </a4j:outputPanel>
+												        </f:facet>
+												        
+												        <f:facet name="removeAllControlDisabled">
+												        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+												        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+												        			<h:graphicImage value="/images/tema_link/go_start_disabilitato.png"/>
+												        		</a4j:outputPanel>
+												        	</a4j:outputPanel>
+												        </f:facet>
+												</rich:listShuttle>
+											</link:prop>
+										</a4j:outputPanel>
+									</link:fieldset>
+									<div class="buttonrowmodal">
+										<a4j:htmlCommandLink id="esportaCsvButton-iconLink" styleClass="icon-csv positive" target="_blank" title="Esporta CSV"
+										 value="Esporta" action="#{transazioniBean.exportCsvSelected}"  ajaxSingle="true" onclick="#{rich:component('exportCsvModalPnl')}.hide();">
+												<f:setPropertyActionListener value="#{transazioniBean.elencoID}" target="#{transazioniBean.elencoID}" />
+										</a4j:htmlCommandLink>
+									</div>
+								</div>
+						</a4j:outputPanel>
+					</h:form>
+				</rich:modalPanel>
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="listaTransazioniLiveCtr" ajaxRendered="false" layout="block" styleClass="panelLista" rendered="#{searchFormTransazioni.periodo eq 'Live'}">
+				<a4j:keepAlive beanName="liveBean" />
+				<h:form id="resetSessioneLiveForm">
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="restartSessioneLive" reRender="sessioneAttivaHidden" limitToList="true" oncomplete="restartCounter();">
+							<a4j:actionparam name="param1" assignTo="#{searchFormTransazioni.sessioneLiveValida}"  />
+			        	</a4j:jsFunction>
+		        	</a4j:outputPanel>
+		        </h:form>
+				
+				<a4j:region id="regionTransazioniLive" renderRegionOnly="true">
+					<a4j:form id="formRes" rendered="#{searchFormTransazioni.periodo eq 'Live'}" prependId="false">	
+						<a4j:jsFunction id="pollFn" name="poll" reRender="sessioneAttivaHidden,panelTransazioniCtr,dtTblLive" oncomplete="startCounter();" status="mainStatus"/> 
+						<h:inputHidden id="s_dat" value="#{liveBean.serverDate}" />
+						<script type="text/javascript">
+						 	function completa(evt){
+						 		restartSessioneLive(true);					 		
+						 	}
+						
+							var cdifp = #{searchFormTransazioni.intervalloRefresh};
+							var t;
+							var cdt;
+							var timer_is_on=0;
+							var cd = cdifp;
+							
+							function restartCounter(){
+								 doTimer();
+							}
+						
+							function updateCountDown(){
+								if(cd>0){
+									cd--;
+									jQuery("[id='cdLabel']").text("Prossimo Aggiornamento tra "+cd+" secondi");
+									cdt = setTimeout("updateCountDown()", 1000);
+								}
+							}
+						
+							function startCounter()
+							{
+								cd=cdifp;
+								t=setTimeout("poll()",cd*1000);
+								
+								var pol = 'true';
+								// non disponibile su IE 
+								// vedi OPPT-732
+								if(getIEVersion() == -1)
+									pol = jQuery("[id='sessioneAttivaHidden']").val();
+								
+								
+                                if(pol == 'true')
+                                    updateCountDown();
+	                            else{
+	                                    stopCounter();
+	                                    jQuery("[id='cdLabel']").text("Sessione Live interrotta, aggiornare la ricerca per farla ripartire.");
+	                            }
+							}
+						
+							function stopCounter(){
+								timer_is_on = 0;
+								clearTimeout(t);
+							}					
+						
+							function doTimer()
+							{
+								if (!timer_is_on){
+								  timer_is_on=1;
+								  startCounter();
+							 	}
+							}
+	
+							jQuery(document).ready(function(){
+								doTimer();
+							});
+						</script>
+						<h:outputLabel id="cdLabel" value="" />
+						<rich:spacer id="spacer2" height="5px"/>
+					</a4j:form>
+					<h:inputHidden id="sessioneAttivaHidden" value="#{searchFormTransazioni.sessioneLiveValida}" />
+					<a4j:form id="res" rendered="#{searchFormTransazioni.periodo eq 'Live'}" prependId="false">	
+						<rich:dataTable id="dtTblLive" rowClasses="even,odd" value="#{liveBean.liveData}" var="item" width="100%" >
+							<rich:column id="colEsitoImg" style="text-align: center;">
+								<f:facet name="header">
+									<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+								</f:facet>
+								<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
+									<rich:toolTip for="outEsitoImgOk">
+										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+									</rich:toolTip>
+								</h:graphicImage>
+								<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
+									<rich:toolTip for="outEsitoImgFaultApplicativo">
+										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+									</rich:toolTip>
+								</h:graphicImage>
+								<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
+									<rich:toolTip for="outEsitoImgKo">
+										<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+									</rich:toolTip>
+								</h:graphicImage>
+								<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
+							</rich:column>
+							<rich:column id="colDataRichLive">
+								<f:facet name="header">
+									<h:outputText id="outDataRichLive1" value="Data Richiesta" />
+								</f:facet>
+								<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
+									<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
+									<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+									<f:setPropertyActionListener value="#{item.pddCodice}" target="#{dettagliBean.identificativoPorta}"/>
+									<h:outputText id="outDataRichLive2" value="#{item.dataIngressoRichiesta}">
+										<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"
+											timeZone="Europe/Rome" />
+									</h:outputText>
+								</a4j:htmlCommandLink>
+							</rich:column>
+							<rich:column id="colProtocollo" rendered="#{not transazioniBean.backwardCompatibility}">
+								<f:facet name="header">
+									<h:outputText id="outProtocollo1" value="Protocollo" />
+								</f:facet>
+								<h:outputText id="outProtocollo2" value="#{item.protocollo}" />
+								<rich:toolTip for="outProtocollo2" value="#{item.protocollo}" />
+							</rich:column>
+							<rich:column id="colPddRuolo" sortable="false" label="Tipologia">
+								<f:facet name="header">
+									<h:outputText id="outPddRuolo1" value="Tipologia" />
+								</f:facet>
+								<h:outputText id="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
+								<rich:toolTip for="outPddRuolo2" value="#{item.pddRuolo=='DELEGATA' ? 'Fruizione' : item.pddRuolo=='APPLICATIVA' ? 'Erogazione' : item.pddRuolo=='ROUTER' ? 'Router' : 'I.M.'}" />
+							</rich:column>
+							<rich:column id="colEsitoLive">
+								<f:facet name="header">
+									<h:outputText id="outEsitoLive1" value="Esito" />
+								</f:facet>
+								<h:outputText id="outEsitoLive2" value="#{item.esito}" converter="esitoConverter"/>
+								<rich:toolTip for="outEsitoLive2">
+									<h:outputText value="#{item.esito}" converter="esitoConverter"/>
+								</rich:toolTip>
+							</rich:column>
+							<rich:column id="colFruitoreLive">
+								<f:facet name="header">
+									<h:outputText id="outFruitoreLive1" value="Fruitore" />
+								</f:facet>
+								<h:outputText id="outFruitoreLive2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
+								<rich:toolTip for="outFruitoreLive2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
+							</rich:column>
+							<rich:column id="colErogatoreLive">
+								<f:facet name="header">
+									<h:outputText id="outErogatoreLive1" value="Erogatore" />
+								</f:facet>
+								<h:outputText id="outErogatoreLive2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}"  rendered="#{not empty item.nomeSoggettoErogatore}"/>
+								<rich:toolTip for="outErogatoreLive2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
+							</rich:column>
+							<rich:column id="colServLive">
+								<f:facet name="header">
+									<h:outputText id="outServLive1" value="Servizio" />
+								</f:facet>
+								<h:outputText id="outServLive2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<rich:toolTip for="outServLive2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+							</rich:column>
+							<rich:column id="colAzioneLive">
+								<f:facet name="header">
+									<h:outputText id="outAzioneLive1" value="Azione" />
+								</f:facet>
+								<h:outputText id="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+							</rich:column>
+						</rich:dataTable>
+					</a4j:form>
+				</a4j:region>
+			</a4j:outputPanel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>

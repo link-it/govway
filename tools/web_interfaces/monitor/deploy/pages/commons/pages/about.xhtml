@@ -1,0 +1,213 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
+	<ui:param value="Informazioni" name="title" />
+	<ui:define name="navbar">
+		<ul>
+			<li><h:outputText value="Informazioni" styleClass="ultimo-path" /></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<script type="text/javascript">
+			function closeModalPanel(){
+				aggiornaTitoloPagina();	
+				
+				return	Richfaces.hideModalPanel('fileUploadModalPnl');
+			
+				}
+ 	
+			function eliminaPath(elemId){
+				var elem = jQuery("div[id$='" + elemId + ":fileItems'] :div.rich-fileupload-name-padding").not('.rich-fileupload-bold-label');
+				var text = elem.html();
+				var idx = text.lastIndexOf("\\");
+				if(idx > -1){
+					text = text.substring(idx + 1);
+					elem.html(text);
+				}
+				
+			}
+		</script>
+	
+		<a4j:keepAlive beanName="licenseBean" />
+		<rich:panel id="panelLicenza1">
+			
+			<rich:panel id="messageRiavvioPnl"
+				rendered="#{not empty licenseBean.informazioneLicenzaModificata}" styleClass="noborder">
+				<h:outputText id="outRiavvioAS" value="#{licenseBean.informazioneLicenzaModificata}"
+					rendered="#{not empty licenseBean.informazioneLicenzaModificata}" style="text-decoration: none; FONT-WEIGHT: bold;" />
+			</rich:panel>
+		
+			<link:fieldset legend="Licenza" rendered="#{true}" collapsible="false" closed="false">
+			
+				<h:outputText id="outNoLicenza" value="Licenza non presente"
+					rendered="#{empty licenseBean.selectedElement}" />
+									
+				<rich:panel id="xmlPnl" bodyClass="nopadding">
+	
+					<h:panelGrid id="panelDettaglio3" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx" rendered="#{not empty licenseBean.selectedElement}">
+	
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelSitoWeb" value="SitoWeb" rendered="#{not empty licenseBean.selectedElement.prodotto.sitoWeb}"/>
+						<h:outputText id="outSitoWeb" value="#{licenseBean.selectedElement.prodotto.sitoWeb}" rendered="#{not empty licenseBean.selectedElement.prodotto.sitoWeb}"/>
+	
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoProdotto" value="Tipo" rendered="#{not empty licenseBean.tipoProdotto and licenseBean.selectedElement.licenza.codice==1}"/>
+						<h:outputText id="outTipoProdotto" value="#{licenseBean.tipoProdotto}" rendered="#{not empty licenseBean.tipoProdotto and licenseBean.selectedElement.licenza.codice==1}"/>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelNumero" value="Numero" rendered="#{not empty licenseBean.selectedElement.licenza.numero and licenseBean.selectedElement.licenza.codice==1}"/>
+						<h:outputText id="outNumero" value="#{licenseBean.selectedElement.licenza.numero}" rendered="#{not empty licenseBean.selectedElement.licenza.intestatario and licenseBean.selectedElement.licenza.codice==1}"/>
+	
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelIntestatario" value="Intestatario" rendered="#{not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice==1 }"/>
+						<h:outputText id="outIntestatario" value="#{licenseBean.intestatario}" rendered="#{not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice==1}"/>
+						<h:outputText id="outIntestatarioNotStandard" value="[#{licenseBean.tipoProdotto}] #{licenseBean.intestatario}" rendered="#{not empty licenseBean.tipoProdotto and not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice!=1}"/>
+						<h:outputText id="outIntestatarioNotStandardTipoNonDefinito" value="#{licenseBean.intestatario}" rendered="#{empty licenseBean.tipoProdotto and not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice!=1}"/>
+	
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelScadenza" value="Scadenza" rendered="#{not empty licenseBean.dataScadenza and licenseBean.licenzaScaduta==false}"/>
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelScaduta" value="Scaduta" rendered="#{not empty licenseBean.dataScadenza and licenseBean.licenzaScaduta}"/>
+						<h:outputText id="outDataScadenza" value="#{licenseBean.dataScadenza}" rendered="#{not empty licenseBean.dataScadenza and licenseBean.licenzaScaduta==false}"/>
+						<h:outputText id="outDataScaduta" value="#{licenseBean.dataScadenza}" rendered="#{not empty licenseBean.dataScadenza and licenseBean.licenzaScaduta}" style="text-decoration: none; color: #FF0000; FONT-WEIGHT: bold;"/>
+						
+						<h:outputLabel styleClass="outputFieldLabel" id="outLabelModuliAggiuntivi" value="Moduli" rendered="#{not empty licenseBean.moduliAbilitati and licenseBean.selectedElement.licenza.codice==1}"/>
+						<h:outputText escape="false" id="outModuliAggiuntivi" value="#{licenseBean.moduliAbilitati}" rendered="#{not empty licenseBean.moduliAbilitati and licenseBean.selectedElement.licenza.codice==1}"/>
+												
+					</h:panelGrid>
+	
+				</rich:panel>
+	
+			</link:fieldset>
+		
+			<rich:spacer id="spacerLicenzaProdotto" height="10px"/>
+		
+			<link:fieldset legend="Prodotto" rendered="#{true}" collapsible="false" closed="false">
+			
+				<h:panelGrid id="panelDettaglio4" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx" >
+	
+					<h:outputLabel styleClass="outputFieldLabel" id="outProdottoVersione" value="Versione" />
+					<h:outputText id="outVersioneProdotto" value="#{licenseBean.idProdotto}" rendered="#{not empty licenseBean.selectedElement and not empty licenseBean.idProdotto}"/>
+					<h:outputText id="outVersioneDefaultProdotto" value="PdDOpenSPCoopEnterprise" rendered="#{empty licenseBean.selectedElement or empty licenseBean.idProdotto}"/>
+										
+					<h:outputLabel styleClass="outputFieldLabel" id="outProdottoSito" value="Sito" />
+					<h:outputText id="outSitoProdotto" value="http://www.link.it" />
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outProdottoCopyright" value="Copyright" />
+					<h:outputText id="outCopyrightProdotto" value="#{licenseBean.copyright}" />
+			
+				</h:panelGrid>
+			
+			</link:fieldset>
+
+			<rich:spacer id="spacer1" height="15px" rendered="#{true}"/>
+			
+			<a4j:form prependId="false" id="formLicenza">
+				<a4j:region id="genFormPnl" renderRegionOnly="true">
+					<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block">
+						
+							<a4j:outputPanel layout="block" id="licenseFileDiv" styleClass="form-container">
+	
+								<a4j:outputPanel styleClass="buttonrow" layout="block" 	id="btnDiv">
+									<h:panelGrid columns="2">
+										<h:outputLink id="uploadBtn-iconLink" value="#"
+											styleClass="icon-arrow-up">
+											<h:outputText value="Carica Licenza" rendered="#{empty licenseBean.idProdotto or (not empty licenseBean.tipoProdotto and not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice!=1)}"/>
+											<h:outputText value="Modifica Licenza" rendered="#{not empty licenseBean.idProdotto and not (not empty licenseBean.tipoProdotto and not empty licenseBean.intestatario and licenseBean.selectedElement.licenza.codice!=1)}"/>
+											<rich:componentControl id="componentUploadBtn"
+												for="fileUploadModalPnl" attachTo="uploadBtn-iconLink"
+												operation="show" event="onclick" />
+										</h:outputLink>
+										<h:panelGrid columns="6">
+											<h:graphicImage value="/images/tema_link/verified_green.png"
+												width="16"
+												rendered="#{licenseBean.messaggioCaricato != null}"
+												height="16" title="Licenza caricata con successo" />
+											<h:outputText
+												rendered="#{licenseBean.messaggioCaricato != null and licenseBean.nomeFile != null}"
+												value="File: #{licenseBean.nomeFile}" />
+											<rich:spacer width="10"
+												rendered="#{licenseBean.messaggioCaricato != null  and licenseBean.nomeFile != null}" />
+											<h:outputText
+												rendered="#{licenseBean.messaggioCaricato != null  and licenseBean.nomeFile != null}"
+												value="Dimensione: #{empty licenseBean.dimensioneFile ? 'n.d.' :  licenseBean.dimensioneFile}"
+												converter="fileSizeConverter" />
+										</h:panelGrid>
+									</h:panelGrid>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+					
+	
+					</a4j:outputPanel>
+				</a4j:region>
+			</a4j:form>
+			
+		</rich:panel>
+		
+		<br/>
+		
+		
+
+
+		<rich:modalPanel id="fileUploadModalPnl" showWhenRendered="false"
+			autosized="true">
+			<f:facet name="header">
+				<h:outputText id="outUploadPnl" value="Carica Licenza"/>
+			</f:facet>
+			<f:facet name="controls">
+				<h:panelGroup id="panelChiudiUpload">
+					<a href="#"
+						onclick="closeModalPanel();">Chiudi</a>
+				</h:panelGroup>
+			</f:facet>
+			<a4j:outputPanel id="fileUploadErrorsCtr" ajaxRendered="true">
+				<h:panelGroup styleClass="errors" layout="block"
+					rendered="#{not empty licenseBean.fileUploadErrorMessage}">
+					<h:panelGroup
+						rendered="#{not empty licenseBean.fileUploadErrorMessage}">
+						<p>
+							<em> <h:outputText value="Si sono verificati degli errori:" />
+							</em>
+						</p>
+						<div class="errorsSpacer"/>
+						</h:panelGroup>
+							<div class="errorsSpacer"/>
+					<rich:messages id="errorUploadMessages">
+					</rich:messages>
+					<h:outputText id="fileUploadErrors"
+						value="#{licenseBean.fileUploadErrorMessage}"
+						rendered="#{not empty licenseBean.fileUploadErrorMessage}" />
+				</h:panelGroup>
+			</a4j:outputPanel>
+			<h:form id="formUploadPnl">
+				<style>
+.rich-fileupload-del {
+	visibility: hidden;
+}
+</style>
+				<rich:fileUpload allowFlash="false" id="licenzaFU"
+					fileUploadListener="#{licenseBean.fileUploadListener}"
+					maxFilesQuantity="#{licenseBean.numeroFile}"
+					addControlLabel="Sfoglia ..." uploadControlLabel="Carica Licenza"
+					cancelEntryControlLabel="Elimina" clearControlLabel="Cancella"
+					uploadData="#{licenseBean.files}" immediateUpload="true" onupload="eliminaPath('licenzaFU')"
+					doneLabel="Caricamento completato" clearAllControlLabel="Cancella">
+					<f:facet name="label">
+						<h:outputText value="{_MB}MB from {MB}MB uploaded --- {mm}:{ss}" />
+					</f:facet>
+					<a4j:support event="onuploadcomplete" oncomplete="eliminaPath('licenzaFU')"
+						reRender="licenseOutputText,licenseFileDiv,panelLicenza1,fileUploadErrorsCtr" />
+					<a4j:support event="onclear"
+						actionListener="#{licenseBean.clear}"
+						reRender="licenseOutputText,licenseFileDiv,formUploadPnl,panelLicenza1,fileUploadErrorsCtr" />
+				</rich:fileUpload>
+			</h:form>
+		</rich:modalPanel>
+
+
+
+
+		 
+
+		 
+	</ui:define>
+
+</ui:composition>

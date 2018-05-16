@@ -1,0 +1,45 @@
+
+/* Test classi tabella transazioni **/
+
+div[id$='_visibility_ckbClmn'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='_visibility_colDataIngRich'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='colDataIngRich_rich_group'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='colDataIngRich_rich_sep_1'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='colLatenzaTotale_rich_group'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='colLatenzaTotale_rich_sep_1'] {
+	display: none;
+	visibility: hidden;
+}
+
+div[id$='colLatenzaServizio_rich_group'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='colLatenzaServizio_rich_sep_1'] {
+	display: none;
+	visibility: hidden;
+}
+div[id$='ckbClmnheader:menuDiv'] {
+	display: none;
+	visibility: hidden;
+}
+
+div[id$='ckbClmn:sortDiv'] span[class$='extdt-sortable-header'] img{
+	display: none;
+	visibility: hidden;
+}

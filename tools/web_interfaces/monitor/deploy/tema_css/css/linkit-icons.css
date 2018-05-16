@@ -1,0 +1,281 @@
+/** 
+ *
+ * icons 
+ *
+ */
+ 
+.icon-go-next{
+	background-image: url(../images/tema_link/go_next.png) ! important;
+}
+
+.icon-go-end{
+	background-image: url(../images/tema_link/go_end.png) ! important;
+}
+
+.icon-go-prev{
+	background-image: url(../images/tema_link/go_prev.png) ! important;
+}
+
+.icon-go-start{
+	background-image: url(../images/tema_link/go_start.png) ! important;
+}
+
+.icon-move-top{
+	background-image: url(../images/tema_link/move_top.png) ! important;
+}
+
+.icon-move-up{
+	background-image: url(../images/tema_link/move_up.png) ! important;
+}
+
+.icon-move-down{
+	background-image: url(../images/tema_link/move_down.png) ! important;
+}
+
+.icon-move-bottom{
+	background-image: url(../images/tema_link/move_bottom.png) ! important;
+}
+
+.icon-go-next-focus{
+	background-image: url(../images/tema_link/go_next_focus.png) ! important;
+}
+
+.icon-go-end-focus{
+	background-image: url(../images/tema_link/go_end_focus.png) ! important;
+}
+
+.icon-go-prev-focus{
+	background-image: url(../images/tema_link/go_prev_focus.png) ! important;
+}
+
+.icon-go-start-focus{
+	background-image: url(../images/tema_link/go_start_focus.png) ! important;
+}
+
+.icon-move-top-focus{
+	background-image: url(../images/tema_link/move_top_focus.png) ! important;
+}
+
+.icon-move-up-focus{
+	background-image: url(../images/tema_link/move_up_focus.png) ! important;
+}
+
+.icon-move-down-focus{
+	background-image: url(../images/tema_link/move_down_focus.png) ! important;
+}
+
+.icon-move-bottom-focus{
+	background-image: url(../images/tema_link/move_bottom_focus.png) ! important;
+}
+
+
+
+.icon-go-next-disabilitato{
+	background-image: url(../images/tema_link/go_next_disabilitato.png) ! important;
+}
+
+.icon-go-end-disabilitato{
+	background-image: url(../images/tema_link/go_end_disabilitato.png) ! important;
+}
+
+.icon-go-prev-disabilitato{
+	background-image: url(../images/tema_link/go_prev_disabilitato.png) ! important;
+}
+
+.icon-go-start-disabilitato{
+	background-image: url(../images/tema_link/go_start_disabilitato.png) ! important;
+}
+
+.icon-move-top-disabilitato{
+	background-image: url(../images/tema_link/move_top_disabilitato.png) ! important;
+}
+
+.icon-move-up-disabilitato{
+	background-image: url(../images/tema_link/move_up_disabilitato.png) ! important;
+}
+
+.icon-move-down-disabilitato{
+	background-image: url(../images/tema_link/move_down_disabilitato.png) ! important;
+}
+
+.icon-move-bottom-disabilitato{
+	background-image: url(../images/tema_link/move_bottom_disabilitato.png) ! important;
+}
+
+
+.icon-check-green{
+	background-image: url(../images/tema_link/check_green.png) ! important;
+}
+
+.icon-check-grey{
+	background-image: url(../images/tema_link/check_grey.png) ! important;
+}
+
+.icon-check-orange{
+	background-image: url(../images/tema_link/check_orange.png) ! important;
+}
+
+.icon-check-red{
+	background-image: url(../images/tema_link/check_red.png) ! important;
+}
+
+.icon-check-yellow{
+	background-image: url(../images/tema_link/check_yellow.png) ! important;
+}
+
+.icon-alert{
+	background-image: url(../images/tema_link/alert.png) ! important;
+}
+
+.icon-alert-red{
+	background-image: url(../images/tema_link/alert_red.png) ! important;
+}
+
+.icon-alert-orange{
+	background-image: url(../images/tema_link/alert_orange.png) ! important;
+}
+
+.icon-alert-yellow{
+	background-image: url(../images/tema_link/alert_yellow.png) ! important;
+}
+
+.icon-clear{
+	background-image: url(../images/tema_link/clear.png) ! important;
+}
+
+.icon-clear-white{
+	background-image: url(../images/tema_link/clear_white.png) ! important;
+}
+
+.icon-down{
+	background-image: url(../images/tema_link/down.png) ! important;
+}
+
+.icon-down-white{
+	background-image: url(../images/tema_link/down_white.png) ! important;
+}
+ 
+.icon-down-full{
+	background-image: url(../images/tema_link/down_full.png) ! important;
+}
+
+.icon-down-full-focus{
+	background-image: url(../images/tema_link/down_full_focus.png) ! important;
+}
+
+.icon-ko{
+	background-image: url(../images/tema_link/ko.png) ! important;
+}
+
+.icon-ko-red{
+	background-image: url(../images/tema_link/ko-red.png) ! important;
+}
+
+.icon-ok{
+	background-image: url(../images/tema_link/ok.png) ! important;
+}
+
+.icon-ok-green{
+	background-image: url(../images/tema_link/ok_green.png) ! important;
+}
+
+.icon-question{
+	background-image: url(../images/tema_link/question.png) ! important;
+}
+
+.icon-question-yellow{
+	background-image: url(../images/tema_link/question_yellow.png) ! important;
+}
+
+.icon-up{
+	background-image: url(../images/tema_link/up.png) ! important;
+}
+
+.icon-up-white{
+	background-image: url(../images/tema_link/up_white.png) ! important;
+}
+
+.icon-verified-green{
+	background-image: url(../images/tema_link/verified_green.png) ! important;
+}
+
+.icon-verified-grey{
+	background-image: url(../images/tema_link/verified_grey.png) ! important;
+}
+
+.icon-verified-orange{
+	background-image: url(../images/tema_link/verified_orange.png) ! important;
+}
+
+.icon-verified-red{
+	background-image: url(../images/tema_link/verified_red.png) ! important;
+}
+
+.icon-verified-yellow{
+	background-image: url(../images/tema_link/verified_yellow.png) ! important;
+}
+
+.icon-next-white{
+	background-image: url(../images/tema_link/next-white.png) ! important;
+}
+
+.icon-connected-green{
+	background-image: url(../images/tema_link/connected_green.png) ! important;
+}
+
+.icon-connected-orange{
+	background-image: url(../images/tema_link/connected_orange.png) ! important;
+}
+
+.icon-connected-white{
+	background-image: url(../images/tema_link/connected_white.png) ! important;
+}
+
+.icon-disconnected-red{
+	background-image: url(../images/tema_link/disconnected_red.png) ! important;
+}
+
+.icon-disconnected-white{
+	background-image: url(../images/tema_link/disconnected_white.png) ! important;
+}
+
+.icon-disconnected-grey{
+	background-image: url(../images/tema_link/disconnected_grey.png) ! important;
+}
+
+.icon-calendar{
+	background-image: url(../images/tema_link/calendar.png) ! important;
+}
+
+.icon-status-green{
+	background-image: url(../images/tema_link/status_green.png) ! important;
+}
+
+.icon-status-red{
+	background-image: url(../images/tema_link/status_red.png) ! important;
+}
+
+.icon-status-yellow{
+	background-image: url(../images/tema_link/status_yellow.png) ! important;
+}
+
+.icon-checkbox-checked-orange{
+        background-image: url(../images/tema_link/checkbox_checked_orange.png) ! important;
+}
+
+.icon-checkbox-checked-white{
+        background-image: url(../images/tema_link/checkbox_checked_white.png) ! important;
+}
+
+.icon-checkbox-unchecked-orange{
+        background-image: url(../images/tema_link/checkbox_unchecked_orange.png) ! important;
+}
+
+.icon-checkbox-unchecked-white{
+        background-image: url(../images/tema_link/checkbox_unchecked_white.png) ! important;
+}
+
+
+
+
+/*eor*/

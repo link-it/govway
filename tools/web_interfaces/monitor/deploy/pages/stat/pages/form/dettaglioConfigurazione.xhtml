@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it" 
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/templates/defaultTemplate.xhtml">
+	<ui:param
+		value="Dettaglio Configurazione"
+		name="title" />
+	<ui:define name="navbar">
+		<ul>
+			<li><h:commandLink action="configurazioniGenerali" value="Configurazione Servizi" /></li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText value="Dettaglio Configurazione" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="configurazioniGeneraliBean" />
+	
+		<rich:panel id="panelDettaglioTransazione" rendered="#{not empty configurazioniGeneraliBean.selectedElement}">
+			<f:facet name="header">
+				<h:outputText id="outDettagli" value="Dettaglio Configurazione" />
+			</f:facet>
+			
+			<c:if test="#{not empty configurazioniGeneraliBean.selectedElement and not empty configurazioniGeneraliBean.selectedElement.pa}">
+				<ui:include src="/includes/dettaglioConfigurazionePA.xhtml">
+	               	<ui:param name="mBean" value="#{configurazioniGeneraliBean}" />
+	           	</ui:include>
+			</c:if>
+			
+			<c:if test="#{not empty configurazioniGeneraliBean.selectedElement and not empty configurazioniGeneraliBean.selectedElement.pd}">
+				<ui:include src="/includes/dettaglioConfigurazionePD.xhtml">
+	               	<ui:param name="mBean" value="#{configurazioniGeneraliBean}" />
+	           	</ui:include>
+			</c:if>
+		</rich:panel>
+	</ui:define>
+</ui:composition>

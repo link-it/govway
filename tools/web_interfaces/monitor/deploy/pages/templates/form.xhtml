@@ -1,0 +1,32 @@
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	template="/templates/defaultTemplate.xhtml"
+             xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:define name="body">
+		<rich:panel id="paginaForm">
+			<!-- 
+			<c:if test="#{not empty title}">
+				<f:facet name="header">
+					<h:outputText value="#{title}" />
+				</f:facet>
+			</c:if>
+			 -->	
+			<p class="legend">
+				<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
+			</p>
+			<div class="form-container">				
+				
+				<ui:insert name="body"/>
+				
+				
+			</div>
+		</rich:panel>
+	</ui:define>
+	
+</ui:decorate>

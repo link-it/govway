@@ -16,13 +16,22 @@
 	<property name="svn_rootDir" location="${openspcoop2}" />
 	
 	<!-- set properties for this build -->
-	<property name="src_pddMonitor" location="src/" />
+	<property name="pddMonitor" location="${basedir}" />
+	<property name="src_pddMonitor" value="${pddMonitor}/src/" />
+	<property name="src_webinf_pddMonitor" value="${src_pddMonitor}/WEB-INF" />
+	<property name="src_core_pddMonitor" value="${src_pddMonitor}/src_core" />
+	<property name="src_stat_pddMonitor" value="${src_pddMonitor}/src_stat" />
+	<property name="src_transazioni_pddMonitor" value="${src_pddMonitor}/src_transazioni" />
+	<property name="src_eventi_pddMonitor" value="${src_pddMonitor}/src_eventi" />
 	<property name="build_pddMonitor" location="build/pddMonitor" />
+	<property name="build_pddMonitor_war" location="build/pddMonitorWar" />
 	<property name="dist_pddMonitor" location="dist" />
 	<property name="doc_pddMonitor" location="doc" />
-	<property name="plugins_pddMonitor" location="deploy/plugins" />
-	<property name="cfg" location="${basedir}/deploy/properties" />
-	<property name="deploy.dir" location="${basedir}/deploy" />
+	<property name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins/config" />
+	<property name="plugins_pddMonitor_pages" value="${pddMonitor}/deploy/plugins/pages" /> <!-- xhtml e tutto il resto del materiale che deve finire dentro l'archivio -->
+	<property name="cfg" value="${pddMonitor}/deploy/properties" />
+	<property name="deploy.dir" value="${pddMonitor}/deploy" />
+	<property name="commons_temaConsole" value="${deploy.dir}/tema_css" />
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
@@ -203,6 +212,7 @@
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean_pddMonitor">
 		<delete dir="${build_pddMonitor}" />
+		<delete dir="${build_pddMonitor_war}" />
 		<delete dir="build" />
 		<delete dir="${dist_pddMonitor}" />
 		<delete dir="${doc_pddMonitor}" />
@@ -213,6 +223,7 @@
 		<mkdir dir="${build_pddMonitor}" />
 		<mkdir dir="${build_pddMonitor}/tmp" />
 		<mkdir dir="${build_pddMonitor}/tmp_css" />
+		<mkdir dir="${build_pddMonitor_war}" />
 		<mkdir dir="${dist_pddMonitor}" />
 	</target>
 	
@@ -240,6 +251,51 @@
 			<map from="${plugins_pddMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins-properties della PdDMonitor: ${plugins.classpath.properties}" />
+
+		<!-- WEB-INF/<nome>.web.xml.params -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.params">
+			<include name="**/*.web.xml.params" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.web.xml.params" refid="plugins.web.xml.params">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins WEB-INF/web.xml (params) della PdDMonitor: ${plugins.classpath.web.xml.params}" />
+
+		<!-- WEB-INF/<nome>.web.xml.filters -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.filters">
+			<include name="**/*.web.xml.filters" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.web.xml.filters" refid="plugins.web.xml.filters">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins WEB-INF/web.xml (filters) della PdDMonitor: ${plugins.classpath.web.xml.filters}" />
+
+		<!-- WEB-INF/<nome>.web.xml.listeners -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.listeners">
+			<include name="**/*.web.xml.listeners" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.web.xml.listeners" refid="plugins.web.xml.listeners">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins WEB-INF/web.xml (listeners) della PdDMonitor: ${plugins.classpath.web.xml.listeners}" />
+
+		<!-- WEB-INF/<nome>.web.xml.servlet -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.servlet">
+			<include name="**/*.web.xml.servlet" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.web.xml.servlet" refid="plugins.web.xml.servlet">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins WEB-INF/web.xml (servlet) della PdDMonitor: ${plugins.classpath.web.xml.servlet}" />
+
+		<!-- WEB-INF/<nome>.web.xml.servlet.mapping -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.servlet.mapping">
+			<include name="**/*.web.xml.servlet.mapping" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.web.xml.servlet.mapping" refid="plugins.web.xml.servlet.mapping">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins WEB-INF/web.xml (servlet.mapping) della PdDMonitor: ${plugins.classpath.web.xml.servlet.mapping}" />
 	</target>
 
 	

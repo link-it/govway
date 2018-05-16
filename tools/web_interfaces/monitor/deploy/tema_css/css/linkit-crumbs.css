@@ -1,0 +1,40 @@
+#crumbs {
+	height: 2.3em;
+	background: ${body.background.color};
+}
+
+#crumbs ul, li{
+	list-style-type:none;
+	padding:0;
+	margin:0;
+}
+#crumbs li img{
+	vertical-align: text-bottom;
+	padding-top: 6px\0/;
+}
+#crumbs li {
+	float:left;
+	color: ${crumbs.label.color};
+	padding-right: 4px;
+}		
+#crumbs li a {
+	display:block;
+	}							
+#crumbs li a:link,
+#crumbs li a:visited {
+	color: ${crumbs.label.color};
+	text-decoration:none;
+	}	
+#crumbs li a:hover,
+#crumbs li a:focus {
+	color: ${crumbs.label.color};
+	text-decoration:none;
+}
+#breadcrumb-ct{
+	padding:10px 0px 10px 0px;
+}
+
+.ultimo-path, .ultimo-path span{
+	color: ${crumbs.label.active.color};
+}
+

@@ -1,0 +1,30 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j">
+		<ui:define name="body">
+			<style>
+				.rich-page-body {
+    					margin-left: 0px;
+					}
+					
+				a , a:hover {
+					color: #f0641e;
+				}
+			</style>
+		
+			<a4j:outputPanel id="panelForm" layout="block" styleClass="panelLista">
+				<div class="form-container">	
+					<h:form>			
+						<h:outputText value="La tua sessione è scaduta, effettua nuovamente il " escape="true"/>
+						<h:commandLink action="login" value="Login" />
+						<h:outputText value=" " />
+						<h:outputText value=" ." />
+					</h:form>
+				</div>
+			</a4j:outputPanel>
+		</ui:define>
+</ui:composition>

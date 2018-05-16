@@ -18,6 +18,9 @@
       <property name="buildAsRelease" value="false"/>
       <property name="buildPddMonitor" value="true"/>
       <property name="buildAPI" value="true"/>
+      <property name="buildWithLoginForm" value="true"/>
+      <property name="buildWithSecurityContainer" value="false"/>
+      <property name="buildJsfAsModule" value="false" />
       <property name="buildSQLSinglePdD_addArchivioComunicazioni" value="true"/>
 
       <!-- Dipendenze di compilazione -->
@@ -35,7 +38,6 @@
       <!-- web-content -->
       <property name="commons_webcontent" location="../lib/web-content"/>
       <!-- Directory dove sono definiti i file css della console da valorizzare con i colori definiti nel file di properties temaConsoleProperties -->
-      <property name="commons_temaConsole" value="${commons_webcontent}/tema_css" />
       <property name="commons_webcontent_properties" value="${commons_webcontent}/properties" />
       <!-- File di properties dove sono definiti i colori da utilizzare nel css -->
       <property name="temaConsoleProperties" value="tema.css.properties" />

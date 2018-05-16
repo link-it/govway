@@ -1,0 +1,270 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:fc="http://www.fusioncharts.com"
+    xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="navbar">
+		<ul>
+			<li><h:outputText value="Configurazione Servizi" styleClass="ultimo-path" /></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
+			<rich:panel id="statusPnl">
+				<f:facet name="header">	
+					<h:outputText value="Informazioni Generali" />
+				</f:facet>
+				<a4j:outputPanel id="outPanelInformazioniGenerali" ajaxRendered="false"  layout="block">
+					<h:form>
+						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable" style="width: 100%;">
+							<a4j:outputPanel id="outPanelInformazioniGenerali2" ajaxRendered="false"  layout="block" styleClass="form-container" rendered="#{applicationBean.amministratore}">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
+									<f:facet name="header">
+		                        		<rich:columnGroup>
+			                            	<rich:column colspan="2" style="text-align: left;">
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
+		        	                    	</rich:column>
+		            	               	</rich:columnGroup>
+		       	                	</f:facet>
+									
+									<rich:column style="width: 260px;">
+										<h:outputText value="#{item.label}"/>
+									</rich:column>
+									<rich:column>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</link:simpleDataTable>
+							</a4j:outputPanel>
+							
+							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
+									<f:facet name="header">
+		                        		<rich:columnGroup>
+			                            	<rich:column colspan="2" style="text-align: left;"> 
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
+		        	                    	</rich:column>
+		            	               	</rich:columnGroup>
+		       	                	</f:facet>
+									
+									<rich:column style="width: 260px;">
+										<h:outputText value="#{item.label}"/>
+									</rich:column>
+									<rich:column>
+										<h:outputText value="#{item.value}"/>
+									</rich:column>
+								</link:simpleDataTable>
+							</a4j:outputPanel>
+						</h:panelGrid>
+					</h:form>
+				</a4j:outputPanel>
+			</rich:panel>
+		
+			<div class="spacerDettaglio"></div>
+			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
+				label="#{ configurazioniGeneraliSearchForm.executeQuery ? 'Modifica Filtri di Ricerca' : 'Filtri di Ricerca'}" opened="true">
+				<f:facet name="openMarker">
+					<h:graphicImage value="/images/tema_link/down_white.png"/>
+				</f:facet>
+				
+				<f:facet name="closeMarker">
+					<h:graphicImage value="/images/tema_link/up_white.png"/>
+				</f:facet>
+	
+				<div class="form-container noborder">
+					<h:form prependId="false">
+						<div class="subtitle">
+							<h:outputText id="idTemporale" value="Filtro Dati Servizio" styleClass="subtitle"/>
+						</div>
+						<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+						
+							<link:prop label="Tipologia">
+								<rich:comboBox id="tipologiaTransazioniCombo" value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni}" 
+										defaultLabel="Seleziona Tipologia Transazioni" converter="selectItemConverter"
+										width="412" enableManualInput="false">
+									<f:selectItem itemLabel="Erogazione" itemValue="applicativa" />
+									<f:selectItem itemLabel="Fruizione" itemValue="delegata" />
+									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,servizioComboCtr" actionListener="#{configurazioniGeneraliSearchForm.tipologiaTransazioniListener}" />
+								</rich:comboBox>
+							</link:prop>
+						
+							<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{configurazioniGeneraliSearchForm.showListaProtocolli}"
+								ajaxRendered="true">
+								<link:prop label="Protocollo">
+									<rich:comboBox id="protocolloCombo"
+										value="#{configurazioniGeneraliSearchForm.protocollo}"
+										converter="allConverter" defaultLabel="Seleziona Protocollo"
+										enableManualInput="false" directInputSuggestions="true"
+										width="412">
+										<f:selectItems
+											value="#{configurazioniGeneraliSearchForm.protocolli}" />
+										<a4j:support status="mainStatus" event="onselect"
+											actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
+											reRender="soggettoErogatoreComboCtr,servizioComboCtr" />
+									</rich:comboBox>
+								</link:prop>
+							</a4j:outputPanel>
+							
+							<a4j:outputPanel layout="block" id="soggettoErogatoreComboCtr">
+								<c:if test="#{applicationBean.user}">
+									<c:if test="#{!applicationBean.amministratore}">
+											<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
+												<rich:comboBox width="412" id="sogAssociatoSuggestion" 
+														value="#{configurazioniGeneraliSearchForm.tipoNomeSoggettoLocale}" 
+														suggestionValues="#{configurazioniGeneraliBean.tipiNomiSoggettiAssociati}"
+														enableManualInput="false">
+													<f:selectItem itemValue="--"/>
+													<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
+												</rich:comboBox>
+											</link:prop>
+										</c:if>
+								</c:if>
+								<c:if test="#{applicationBean.amministratore}">
+						
+									<link:prop label="Soggetto" rendered="#{true}">
+										<h:inputText id="sogErogCombo"
+											value="#{configurazioniGeneraliSearchForm.tipoNomeSoggettoLocale}" styleClass="inputLinkLong" />
+										<rich:suggestionbox id="sogDErogSuggestion" width="412"
+											for="sogErogCombo"
+											suggestionAction="#{configurazioniGeneraliBean.soggettiErogatoreAutoComplete}"
+											var="soggetto" ajaxSingle="true" nothingLabel="--"
+											param="sogErogCombo">
+											<h:column>
+												<h:outputText value="#{soggetto.nomeSoggetto}"
+													rendered="#{soggetto.nomeSoggetto=='--'}" />
+												<h:outputText
+													value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}"
+													rendered="#{soggetto.nomeSoggetto!='--'}" />
+											</h:column>
+											<a4j:support status="mainStatus" event="onselect"
+												actionListener="#{configurazioniGeneraliSearchForm.destinatarioSelected}"
+												reRender="searchPnl,servizioComboCtr" />
+										</rich:suggestionbox>
+		
+									</link:prop>
+								</c:if>
+							</a4j:outputPanel>
+	
+							<a4j:outputPanel layout="block" id="servizioComboCtr">
+								<link:prop label="Servizio">
+									<rich:comboBox value="#{configurazioniGeneraliSearchForm.nomeServizio}" id="servizioCombo2" enableManualInput="false"
+										defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{configurazioniGeneraliBean.serviziSelectItemsWidth}"
+										width="412">
+										<f:selectItem itemValue="--"/>
+										<f:selectItems value="#{configurazioniGeneraliBean.servizi}" />
+										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.servizioSelected}" reRender="searchPnl"/>
+									</rich:comboBox>
+									<rich:toolTip rendered="#{not empty configurazioniGeneraliSearchForm.nomeServizio}" direction="top-right" for="servizioCombo2" showDelay="200" 
+										styleClass="tooltip" layout="block" value="#{configurazioniGeneraliSearchForm.nomeServizio}"/>
+								</link:prop>
+							</a4j:outputPanel>
+	
+						</a4j:outputPanel>
+						<div class="buttonrow">
+							<a4j:commandButton styleClass="icon-refresh" value="Filtra"
+								reRender="panelPaginaRicerca" 
+								action="#{configurazioniGeneraliBean.filtra}"
+								/>
+							<a4j:commandButton id="svuota" value="Ripulisci"
+								styleClass="icon-refresh" process="searchPnl"
+								reRender="panelPaginaRicerca"
+								rendered="#{true}"
+								action="#{configurazioniGeneraliSearchForm.ripulisci}"
+							 />
+						</div>
+					</h:form>
+				</div>
+	
+			</rich:simpleTogglePanel>
+	
+			<div class="spacer"></div>
+			
+			<a4j:outputPanel id="configurazioniTbl" layout="block" styleClass="panelLista" rendered="#{configurazioniDM.executeQuery}" >
+				<script type="text/javascript">
+				//<![CDATA[
+				   jQuery(document).ready(nascondiComandi);
+				   
+				   function nascondiComandi(){
+					   visualizzaPannelloComandi('tableConfigurazioni');
+				   }
+				 //]]>	
+				</script>
+				<h:form>
+					<link:dataTable value="#{configurazioniDM}" id="tableConfigurazioni"
+						mBean="#{configurazioniGeneraliBean}" showSelectAll="true" mostraComandiFooter="true"
+						selectionMapTarget="#{configurazioniGeneraliBean.selectedIds[item]}"
+						headerText="Lista Configurazioni" enableDelete="false"
+						reRenderIds="configurazioniTbl"
+						useCount="#{configurazioniGeneraliSearchForm.useCount}">
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' ? 'Porta Delegata' : 'Porta Applicativa'}"  id="outDettaglio"/>
+							</f:facet>
+							<a4j:htmlCommandLink id="dettaglioConfigurazione-iconLink" styleClass="icon-detail" value="#{item.label}" action="dettaglioConfigurazione">
+								<f:setPropertyActionListener value="#{item.id}" target="#{configurazioniGeneraliBean.selectedId}" />
+							</a4j:htmlCommandLink>
+						</rich:column>
+						
+						<rich:column id="colAbilitata" style="text-align: center;">
+							<f:facet name="header">
+								<h:outputText id="outAbilitata" value="Stato"/>
+							</f:facet>
+							<h:panelGroup>
+								<h:graphicImage value="/images/tema_link/check_green.png" id="imgGreen" rendered="#{item.stato == 'abilitato' or (empty item.stato)}">
+									<rich:toolTip id="toolImgGreen" for="imgGreen" mode="client" value="Abilitata" />
+								</h:graphicImage>
+								<h:graphicImage value="/images/tema_link/check_red.png" id="imgRed" rendered="#{item.stato == 'disabilitato'}">
+									<rich:toolTip id="toolImgRed" for="imgRed" mode="client" value="Disabilitata" />
+								</h:graphicImage>
+							</h:panelGroup>
+						</rich:column>
+						
+						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata'}">
+							<f:facet name="header">
+								<h:outputText value="Fruitore"  id="outFruitore"/>
+							</f:facet>
+							<h:outputText value="#{item.fruitore}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Erogatore"  id="outErogatore"/>
+							</f:facet>
+							<h:outputText value="#{item.erogatore}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Servizio"  id="outServizio"/>
+							</f:facet>
+							<h:outputText value="#{item.servizio}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Azione"  id="outAzione"/>
+							</f:facet>
+							<h:outputText value="#{item.azione}" />
+						</rich:column>
+						
+						<ui:define name="buttons">
+							<h:commandLink id="export-iconLink"
+											target="_blank" 
+											styleClass="icon-compress" 
+											action="#{configurazioniGeneraliBean.exportSelected}" 
+											onclick="return checkSelection('tableConfigurazioni','tableConfigurazioni_checkSelection');">
+								<h:outputText value="Esporta" />
+							</h:commandLink>
+						</ui:define>
+					</link:dataTable>
+				</h:form>
+			</a4j:outputPanel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>

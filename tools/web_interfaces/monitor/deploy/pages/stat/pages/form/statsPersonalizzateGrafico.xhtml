@@ -1,0 +1,476 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:fc="http://www.fusioncharts.com"
+    xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<h:outputText value="Analisi Statistica" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink action="analisiStatistica" value="Filtri di Ricerca" rendered="true" actionListener="#{analisiStatisticaBean.search.tornaAiFiltri}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<h:outputText value="Distribuzione Personalizzata" styleClass="ultimo-path"/>
+			</li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="statistichePersonalizzateBean" />
+		<a4j:keepAlive beanName="analisiStatisticaBean" />
+		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/c3.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
+		<a4j:outputPanel id="scriptSVGPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+   			<script type="text/javascript">
+   			//<![CDATA[
+   				var nomeFileImageExport = '#{statistichePersonalizzateBean.exportFilenamePng}';
+   				
+				function updateChart2(slider){
+// 					console.log(slider);
+					chartWidth = parseInt(slider.value);
+					createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+				}
+   			
+	   			function updateChart(data){
+	   				data0 = data;
+					createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+	   			}
+	   		 //]]>	
+			</script>
+		</a4j:outputPanel>	
+		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
+			<script type="text/javascript">
+				//<![CDATA[
+					function updateChart(data){
+						var c = getChartFromId(chartId);
+						data0 = data;
+						c.setDataXML(data0);
+					}
+					
+					function updateChart2(slider){
+						var c = getChartFromId(chartId);
+						chartWidth = '' + slider.value;
+						c.resizeTo(chartWidth,chartHeight);
+						c.setDataXML(data0);
+						c.render(chartDivId);
+					}
+					 //]]>	
+			</script>
+		</a4j:outputPanel>
+		<a4j:outputPanel rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'andamentoTemporale') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
+			<script type="text/javascript">
+				//<![CDATA[
+		   				jQuery(document).ready(function() {
+		   					setSlider(chartWidth);
+		   					});	
+					 //]]>	
+			</script>
+			  <a4j:form >
+	        	<a4j:jsFunction name="setSlider" reRender="chartPanel">
+	            	<a4j:actionparam name="param1" assignTo="#{statistichePersonalizzateBean.initLarghezzaGrafico}"  /> 
+	        	</a4j:jsFunction>
+	    	</a4j:form>
+    	</a4j:outputPanel>
+    	<a4j:outputPanel rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'bar_chart') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
+			<script type="text/javascript">
+				//<![CDATA[
+		   				jQuery(document).ready(function() {
+		   					setSlider(chartWidth);
+		   					});	
+					 //]]>	
+			</script>
+			  <a4j:form >
+	        	<a4j:jsFunction name="setSlider" reRender="chartPanelBars">
+	            	<a4j:actionparam name="param1" assignTo="#{statistichePersonalizzateBean.initLarghezzaGrafico}"  /> 
+	        	</a4j:jsFunction>
+	    	</a4j:form>
+    	</a4j:outputPanel>
+		<a4j:outputPanel id="tabPnl" ajaxRendered="false" >
+		 	
+			<rich:panel styleClass="noborder" rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'tabella') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
+				<h:form>
+					<link:dataTable value="#{statistichePersonalizzateDM}"
+						id="table"
+						headerText="#{statistichePersonalizzateBean.caption} - #{statistichePersonalizzateBean.subCaption}"
+						enableDelete="false">
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Nome" />
+							</f:facet>
+							<h:outputText value="#{item.risultato}"/>
+						</rich:column>
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{statistichePersonalizzateBean.sommaColumnHeader}" />
+							</f:facet>
+							<h:outputText value="#{item.somma}" rendered="#{statistichePersonalizzateSearchForm._value_tipoVisualizzazione == 'numeroTransazioni'}">
+								<f:convertNumber pattern="#,###,###,##0"  integerOnly="true"/> 
+							</h:outputText>
+							<h:outputText value="#{item.somma}" rendered="#{statistichePersonalizzateSearchForm._value_tipoVisualizzazione == 'dimensioneTransazioni'}" converter="fileSizeConverter"/>
+							<h:outputText value="#{item.somma}" rendered="#{statistichePersonalizzateSearchForm._value_tipoVisualizzazione == 'tempoMedioRisposta'}" converter="latenzaConverter"/>
+						</rich:column>
+					</link:dataTable>
+				</h:form>
+				<rich:panel id="formCmdPanelPieTbl" styleClass="noborder" bodyClass="nopadding" style="float: left;">	
+					<a4j:form id="cmdPanelPieTbl">
+						<a4j:commandLink value="#{statistichePersonalizzateBean.prevBtnLabel}" reRender="tabPnl">
+							<a4j:actionparam name="dir" value="prev" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+						</a4j:commandLink>
+						<h:outputText value=" | "/>
+						<a4j:commandLink value='#{statistichePersonalizzateBean.actualBtnLabel}' reRender="tabPnl">
+							<a4j:actionparam name="dir" value="actual" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+						</a4j:commandLink>
+						<h:outputText value=" | "/>	
+						<a4j:commandLink value='#{statistichePersonalizzateBean.nextBtnLabel}' reRender="tabPnl">
+							<a4j:actionparam name="dir" value="next" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+						</a4j:commandLink>
+					</a4j:form>
+				</rich:panel>
+				<rich:panel id="exportCmdPanelTbl" styleClass="noborder" bodyClass="nopadding" style="text-align: right;"  >
+					<h:form id="formExportCmdPanelTbl" rendered="#{statistichePersonalizzateDM.visualizzaComandiExport}">
+							<h:commandLink id="exportCsvLink" target="_blank" action="#{statistichePersonalizzateBean.esportaCsv}" title="Esporta i risultati in formato CSV">
+								<h:outputText value="CSV" />
+							</h:commandLink>
+							<h:outputText value=" | "/>
+							<h:commandLink id="exportXlsLink" target="_blank" action="#{statistichePersonalizzateBean.esportaXls}" title="Esporta i risultati in formato XLS">
+								<h:outputText value="XLS" />
+							</h:commandLink>
+							<h:outputText value=" | "/>	
+							<h:commandLink id="exportPdfLink" target="_blank" action="#{statistichePersonalizzateBean.esportaPdf}" title="Esporta i risultati in formato PDF">
+								<h:outputText value="PDF" />
+							</h:commandLink>
+					</h:form>
+				</rich:panel>
+			</rich:panel>
+			
+			<rich:panel id="chartPanel" styleClass="noborder" rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'andamentoTemporale') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}">
+				<div id='statistichePersonalizzateDiv'></div>
+				<a4j:outputPanel id="svgChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+						//<![CDATA[
+		   				var chartId = 'statistichePersonalizzateId';
+		   				var chartDivId = 'statistichePersonalizzateDiv';
+		   				var chartWidth = jQuery('#chartPanel_body').width() -40;
+						var chartHeight = 650;
+						var chartType = 'line';
+		   				var data0 = '#{statistichePersonalizzateBean.data}';
+		   				
+		   				// init 
+		   				createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+		   			 //]]>	
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="flashChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+						//<![CDATA[
+						var chartId = 'statistichePersonalizzateId';
+		   				var chartDivId = 'statistichePersonalizzateDiv';
+		   				var chartWidth = '' + jQuery('#chartPanel_body').width();
+						var chartHeight = '650';
+						var data0 = "#{statistichePersonalizzateBean.data}";
+						var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/ScrollCombi2D.swf', chartId, chartWidth, chartHeight, '0', '1');
+						chart_andamentoTemporale.setTransparent(true);
+						chart_andamentoTemporale.setDataXML(data0);
+						chart_andamentoTemporale.render(chartDivId); 
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				
+				<div id="panelComandi">  
+					<h:panelGrid columns="3" id="gridComandiLine" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">				 
+							<a4j:form id="cmdPanel">
+								<h:inputHidden value="true" id="usaSVG"/>
+								<a4j:commandLink value="#{statistichePersonalizzateBean.prevBtnLabel}" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="prev" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+								<h:outputText value=" | "/>
+								<a4j:commandLink value='#{statistichePersonalizzateBean.actualBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="actual" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+								<h:outputText value=" | "/>	
+								<a4j:commandLink value='#{statistichePersonalizzateBean.nextBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="next" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+							</a4j:form>
+						</rich:panel>
+						<rich:panel id="formSliderPanel" styleClass="noborder" bodyClass="nopadding">
+							<div class="form-container noborder">
+								<a4j:form rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" id="formSlider">
+									<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+										<style>
+											div.form-container div.rich-combobox {
+												    margin-left: 0px;
+											}
+										</style>	
+									</a4j:outputPanel>
+									<h:inputHidden value="true" id="usaSVG"/>
+									<h:panelGrid columns="#{statistichePersonalizzateSearchForm.useGraficiSVG ? 3 : 1 }" >
+										<h:panelGrid columns="2" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+											<h:outputLabel value="Label" styleClass="direzioneLabelGrafici"/>
+											<rich:comboBox id="rotazioneCombo" value="#{statistichePersonalizzateBean.direzioneLabel}" defaultLabel="Seleziona Label"
+												  width="100" enableManualInput="false">
+												<f:selectItem itemValue="Orizzontale" />
+												<f:selectItem itemValue="Obliquo" />
+												<f:selectItem itemValue="Verticale" />
+												<a4j:support status="mainStatus" event="onselect" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)" reRender="gridComandiLine"/>
+											</rich:comboBox>
+										</h:panelGrid>
+										<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" layout="block" >
+											<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+										</a4j:outputPanel>
+										<h:panelGrid columns="2">
+											<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 120px !important;"/>
+											<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{statistichePersonalizzateBean.larghezzaGrafico}" onchange="updateChart2(this)"
+												showInput="false" enableManualInput="false" minValue="#{statistichePersonalizzateBean.minLarghezzaGrafico}" maxValue="#{statistichePersonalizzateBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
+											</rich:inputNumberSlider>
+										</h:panelGrid>
+									</h:panelGrid>
+								</a4j:form>
+							</div>
+						</rich:panel>
+						<rich:panel id="exportCmdPanel" styleClass="noborder" bodyClass="nopadding">
+							<h:form id="formExportCmdPanel" rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" >
+								<h:commandLink id="exportCsvLink" target="_blank" action="#{statistichePersonalizzateBean.esportaCsv}" title="Esporta i risultati in formato CSV">
+									<h:outputText value="CSV" />
+								</h:commandLink>
+								<h:outputText value=" | "/>
+								<h:commandLink id="exportXlsLink" target="_blank" action="#{statistichePersonalizzateBean.esportaXls}" title="Esporta i risultati in formato XLS">
+									<h:outputText value="XLS" />
+								</h:commandLink>
+								<h:outputText value=" | "/>	
+								<h:commandLink id="exportPdfLink" target="_blank" action="#{statistichePersonalizzateBean.esportaPdf}" title="Esporta i risultati in formato PDF">
+									<h:outputText value="PDF" />
+								</h:commandLink>
+								<h:outputText value=" | " rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}"/>
+								<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('statistichePersonalizzateDiv'); return false;" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+									<h:outputText value="PNG" /> 
+								</h:commandLink>
+							</h:form>
+						</rich:panel>
+					</h:panelGrid>
+				</div>
+			</rich:panel>
+			
+			
+			<rich:panel id="chartPanelPie" rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'pie_chart') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}" styleClass="noborder">
+				<div id='statistichePersonalizzatePieDiv'></div>
+				<a4j:outputPanel id="svgPieChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+					//<![CDATA[
+		   				var chartId = 'statistichePersonalizzatePieId';
+		   				var chartDivId = 'statistichePersonalizzatePieDiv';
+		   				var chartWidth = jQuery('#chartPanelPie_body').width();
+						var chartHeight = 650;
+						var chartType = 'pie';
+		   				var data0 = '#{statistichePersonalizzateBean.data}';
+		   				// init 
+		   				createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+		   			 //]]>
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="flashPieChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+						//<![CDATA[
+						var chartId = 'statistichePersonalizzatePieId';
+		   				var chartDivId = 'statistichePersonalizzatePieDiv';
+		   				var chartWidth = '' + jQuery('#chartPanelPie_body').width();
+						var chartHeight = '650';
+						var data0 = "#{statistichePersonalizzateBean.data}";
+						
+						var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/Pie3D.swf', chartId, chartWidth, chartHeight, '0', '1');
+						chart_andamentoTemporale.setTransparent(true);
+						chart_andamentoTemporale.setDataXML(data0);
+						chart_andamentoTemporale.render(chartDivId); 
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				<div id="panelComandiPie" style="padding-top: 12px;">
+					<h:panelGrid columns="3" id="gridComandiPie" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">  
+					<rich:panel id="formCmdPanelPie" styleClass="noborder" bodyClass="nopadding">	
+						<a4j:form id="cmdPanelPie">
+							<h:inputHidden value="true" id="usaSVG"/>
+							<a4j:commandLink value="#{statistichePersonalizzateBean.prevBtnLabel}" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+								<a4j:actionparam name="dir" value="prev" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+							</a4j:commandLink>
+							<h:outputText value=" | "/>
+							<a4j:commandLink value='#{statistichePersonalizzateBean.actualBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+								<a4j:actionparam name="dir" value="actual" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+							</a4j:commandLink>
+							<h:outputText value=" | "/>	
+							<a4j:commandLink value='#{statistichePersonalizzateBean.nextBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+								<a4j:actionparam name="dir" value="next" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+							</a4j:commandLink>
+						</a4j:form>
+					</rich:panel>
+					<rich:panel id="formSliderPanelPie" styleClass="noborder" bodyClass="nopadding">
+							<div class="form-container noborder">
+								<a4j:form rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" id="formSliderPie">
+									<h:inputHidden value="true" id="usaSVG"/>
+									<h:panelGrid columns="2">
+										<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
+										<rich:inputNumberSpinner value="#{statistichePersonalizzateBean.slice}" minValue="#{statistichePersonalizzateBean.minCategorie}"
+											maxValue="#{statistichePersonalizzateBean.maxCategorie}" cycled="false" styleClass="spinnerNumeroRisultatiGrafici">
+											<a4j:support event="onchange" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)" reRender="formSliderPie"/>
+										</rich:inputNumberSpinner>
+									</h:panelGrid>
+								</a4j:form>
+							</div>
+						</rich:panel>
+					<rich:panel id="exportCmdPanelPie" styleClass="noborder" bodyClass="nopadding">
+						<h:form id="formExportCmdPanelPie" rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" >
+							<h:commandLink id="pie_exportCsvLink" target="_blank" action="#{statistichePersonalizzateBean.esportaCsv}" title="Esporta i risultati in formato CSV">
+								<h:outputText value="CSV" />
+							</h:commandLink>
+							<h:outputText value=" | "/>
+							<h:commandLink id="pie_exportXlsLink" target="_blank" action="#{statistichePersonalizzateBean.esportaXls}" title="Esporta i risultati in formato XLS">
+								<h:outputText value="XLS" />
+							</h:commandLink>
+							<h:outputText value=" | "/>	
+							<h:commandLink id="pie_exportPdfLink" target="_blank" action="#{statistichePersonalizzateBean.esportaPdf}" title="Esporta i risultati in formato PDF">
+								<h:outputText value="PDF" />
+							</h:commandLink>
+							<h:outputText value=" | " rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}"/>
+							<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('statistichePersonalizzatePieDiv'); return false;" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+								<h:outputText value="PNG" /> 
+							</h:commandLink>
+						</h:form>
+					</rich:panel>
+					</h:panelGrid>
+				</div>
+			</rich:panel>
+			
+			<rich:panel id="chartPanelBars" rendered="#{(empty facesContext.maximumSeverity.ordinal or facesContext.maximumSeverity.ordinal lt 2) and (statistichePersonalizzateSearchForm._value_tipoReport == 'bar_chart') and (not empty statistichePersonalizzateSearchForm.statisticaSelezionata)}" styleClass="noborder">
+				<div id='statistichePersonalizzateBarDiv'></div>
+				<a4j:outputPanel id="svgBarChartPanel" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+						//<![CDATA[
+		   				var chartId = 'statistichePersonalizzateBarId';
+		   				var chartDivId = 'statistichePersonalizzateBarDiv';
+		   				var chartWidth = jQuery('#chartPanelBars_body').width() -40;
+						var chartHeight = 650;
+						var chartType = 'bar';
+		   				var data0 = '#{statistichePersonalizzateBean.data}';
+		   				// init 
+		   				createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
+		   			 //]]>	
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="flashBarChartPanel" rendered="#{not statistichePersonalizzateSearchForm.useGraficiSVG}">
+					<script type="text/javascript">
+						//<![CDATA[
+						var chartId = 'statistichePersonalizzateBarId';
+		   				var chartDivId = 'statistichePersonalizzateBarDiv';
+		   				var chartWidth = '' + jQuery('#chartPanelBars_body').width();
+						var chartHeight = '650';
+						var data0 = "#{statistichePersonalizzateBean.data}";
+						
+						var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/MSColumn2D.swf', chartId, chartWidth, chartHeight, '0', '1');
+						chart_andamentoTemporale.setTransparent(true);
+						chart_andamentoTemporale.setDataXML(data0);
+						chart_andamentoTemporale.render(chartDivId); 
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+				
+				<div id="panelComandiBars">  
+					<h:panelGrid columns="3" id="gridComandiBars" style="width:100%;" columnClasses="comandi-grafici-align-default,comandi-grafici-align-center,comandi-grafici-align-right">
+						<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
+							<a4j:form id="cmdBarsPanel">
+								<h:inputHidden value="true" id="usaSVG"/>
+								<a4j:commandLink value="#{statistichePersonalizzateBean.prevBtnLabel}" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="prev" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+								<h:outputText value=" | "/>
+								<a4j:commandLink value='#{statistichePersonalizzateBean.actualBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="actual" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+								<h:outputText value=" | "/>	
+								<a4j:commandLink value='#{statistichePersonalizzateBean.nextBtnLabel}' data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)">
+									<a4j:actionparam name="dir" value="next" assignTo="#{statistichePersonalizzateBean.dir}" actionListener="#{statistichePersonalizzateBean.updateChartDateOffset}"/>
+								</a4j:commandLink>
+							</a4j:form>
+						</rich:panel>
+						<rich:panel id="formSliderPanelBars" styleClass="noborder" bodyClass="nopadding">
+							<div class="form-container noborder">
+								<a4j:form rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" id="formSliderBars">
+									<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+										<style>
+											div.form-container div.rich-combobox {
+												    margin-left: 0px;
+											}
+										</style>	
+									</a4j:outputPanel>
+									<h:inputHidden value="true" id="usaSVG"/>
+									<h:panelGrid columns="#{statistichePersonalizzateSearchForm.useGraficiSVG ? 5 : 3 }" >
+										<h:panelGrid columns="2" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+											<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
+											<rich:comboBox id="rotazioneCombo" value="#{statistichePersonalizzateBean.direzioneLabel}" defaultLabel="Seleziona Label"
+												  width="100" enableManualInput="false">
+												<f:selectItem itemValue="Orizzontale" />
+												<f:selectItem itemValue="Obliquo" />
+												<f:selectItem itemValue="Verticale" />
+												<a4j:support status="mainStatus" event="onselect" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)" reRender="gridComandiBars"/>
+											</rich:comboBox>
+										</h:panelGrid>
+										<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" layout="block" >
+											<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+										</a4j:outputPanel>
+										<h:panelGrid columns="2">
+											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGrafici" />
+											<rich:inputNumberSpinner value="#{statistichePersonalizzateBean.slice}" minValue="#{statistichePersonalizzateBean.minCategorie}" 
+												maxValue="#{statistichePersonalizzateBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici">
+												<a4j:support event="onchange" data="#{statistichePersonalizzateBean.data}" oncomplete="updateChart(data)" reRender="formSliderBars"/>
+											</rich:inputNumberSpinner>
+										</h:panelGrid>
+										<a4j:outputPanel rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" layout="block" >
+											<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+										</a4j:outputPanel>
+										<h:panelGrid columns="2">
+											<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 120px !important;"/>
+											<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{statistichePersonalizzateBean.larghezzaGrafico}" onchange="updateChart2(this)"
+												showInput="false" enableManualInput="false" minValue="#{statistichePersonalizzateBean.minLarghezzaGrafico}" maxValue="#{statistichePersonalizzateBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
+											</rich:inputNumberSlider>
+										</h:panelGrid>
+									</h:panelGrid>
+								</a4j:form>
+							</div>
+						</rich:panel>
+						<rich:panel id="exportCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
+							<h:form id="formExportCmdPanelBars" rendered="#{statistichePersonalizzateBean.visualizzaComandiExport}" >
+								<h:commandLink id="bars_exportCsvLink" target="_blank" action="#{statistichePersonalizzateBean.esportaCsv}" title="Esporta i risultati in formato CSV">
+									<h:outputText value="CSV" />
+								</h:commandLink>
+								<h:outputText value=" | "/>
+								<h:commandLink id="bars_exportXlsLink" target="_blank" action="#{statistichePersonalizzateBean.esportaXls}" title="Esporta i risultati in formato XLS">
+									<h:outputText value="XLS" />
+								</h:commandLink>
+								<h:outputText value=" | "/>	
+								<h:commandLink id="bars_exportPdfLink" target="_blank" action="#{statistichePersonalizzateBean.esportaPdf}" title="Esporta i risultati in formato PDF">
+									<h:outputText value="PDF" />
+								</h:commandLink>
+								<h:outputText value=" | " rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}" />
+								<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('statistichePersonalizzateBarDiv'); return false;" rendered="#{statistichePersonalizzateSearchForm.useGraficiSVG}">
+									<h:outputText value="PNG" /> 
+								</h:commandLink>
+							</h:form>
+						</rich:panel>
+					</h:panelGrid>
+				</div>
+			</rich:panel>
+		</a4j:outputPanel>
+	</ui:define>
+	
+</ui:composition>

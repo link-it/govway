@@ -1,0 +1,38 @@
+<ui:composition template="/templates/form.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:link="http://www.link.it">
+      	<ui:param value="false" name="insertSideBar" />
+      	<ui:param value="Benvenuto. Inserisci le credenziali di accesso." name="title" />
+		<ui:define name="body">
+			<style>
+				.rich-page-body {
+    					margin-left: 0px;
+					}
+			</style>
+			
+			<form id="formLogin" action="j_security_check" method="post">
+				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">
+					<link:prop label="Username" required="true">
+						<h:inputText label="Username" id="j_username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
+					</link:prop>
+					
+					<link:prop label="Password" required="true">
+						<h:inputSecret label="Password" id="j_password" value="#{loginBean.pwd}" required="true" styleClass="inputLink"/>
+					</link:prop>
+					
+					<div class="buttonrow">
+						<h:commandButton type="submit" id="submitBtn" styleClass="icon-login" value="Login" />
+					</div>
+				</link:fieldset>
+			</form>
+		
+			
+			
+		</ui:define>
+</ui:composition>
+

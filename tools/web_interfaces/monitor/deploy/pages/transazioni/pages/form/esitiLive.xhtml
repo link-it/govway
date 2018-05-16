@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fc="http://www.fusioncharts.com"
+	xmlns:link="http://www.link.it"
+	template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+			<ul>
+				<li>
+					<h:outputText id="esitiLive" value="Esiti Live" styleClass="ultimo-path"/>
+				</li>
+			</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}" />
+		<a4j:loadScript src="/FusionCharts/FusionChartsExportComponent.js" rendered="#{not summaryBean.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/c3.js" rendered="#{summaryBean.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{summaryBean.useGraficiSVG}" />
+		
+		<a4j:keepAlive beanName="summaryBean"/>
+			
+		<rich:panel id="summaryCtLive" rendered="true">
+			<f:facet name="header">
+				<h:outputText id="outMonitoraggio" value="Monitoraggio Esiti Transazioni" />
+			</f:facet>
+			
+			<a4j:region id="regionPoll"  >
+				<a4j:form id="formPoll" prependId="false">	
+					<h:inputHidden value="true" id="usaSVG"/> 			
+					<a4j:jsFunction id="pollFn" name="poll" reRender="dtTblLive,filtraLive" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
+					<script type="text/javascript">
+						var cdifp = #{summaryBean.intervalloRefresh};
+						var t;
+						var cdt;
+						var timer_is_on=0;
+						var cd = cdifp;
+					
+						function updateCountDown(){
+							if(cd>0){
+								cd--;
+								jQuery("[id='cdLabel']").text("Prossimo Aggiornamento tra "+cd+" secondi");
+								cdt = setTimeout("updateCountDown()", 1000);
+							}
+						}
+					
+						function startCounter()
+						{
+							cd=cdifp;
+							t=setTimeout("poll()",cd*1000);
+							updateCountDown();
+						}
+					
+						function stopCounter(){
+							timer_is_on = 0;
+							clearTimeout(t);
+						}					
+					
+						function doTimer()
+						{
+							if (!timer_is_on){
+							  timer_is_on=1;
+							  startCounter();
+						 	}
+						}
+	
+						jQuery(document).ready(function(){
+							doTimer();
+						});
+					</script>
+					<h:outputLabel id="cdLabel" value="" />
+					<rich:spacer id="spacer2" height="5px"/>
+				</a4j:form>
+			</a4j:region>
+			<a4j:outputPanel id="chart">
+				<h:form id="formTransazioni">
+					<a4j:jsFunction id="functTransazioni" action="transazioni" name="showTransazioni"/>
+				</h:form>
+				<div id='summaryDivLive'></div>
+				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}" >
+					<script type="text/javascript"> 
+						var chartDivId = 'summaryDivLive';
+						var chartWidth = jQuery('#summaryCtLive_body').width();
+						var chartHeight = 650;
+						
+						function updateChart(data){
+							startCounter();
+							createChart(chartDivId, data, 'line', chartWidth, chartHeight);
+						}
+						
+						var data0 = '#{summaryBean.dataLive}';
+						createChart(chartDivId, data0, 'line', chartWidth, chartHeight);
+					</script>
+				</a4j:outputPanel>
+				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
+					<script type="text/javascript">
+						var chartDivId = 'summaryDivLive';
+						var chartWidth =  '';
+						chartWidth += jQuery('#summaryCtLive_body').width();
+						
+						function updateChart(data){
+							startCounter();
+							var c = getChartFromId('summaryChartLiveId');					
+							c.setDataXML(data);
+						}
+					
+						var chart_summary_live = new FusionCharts('#{request.contextPath}/FusionCharts/MSLine.swf', 'summaryChartLiveId', chartWidth, '650', '0', '1');
+						chart_summary_live.setTransparent(true);
+						chart_summary_live.setDataXML("#{summaryBean.dataLive}");
+						chart_summary_live.render(chartDivId);
+					</script>
+				</a4j:outputPanel>
+			</a4j:outputPanel>
+		</rich:panel>
+	</ui:define>
+	
+	
+</ui:composition>

@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it" xmlns:c="http://java.sun.com/jstl/core"
+	template="/templates/defaultTemplate.xhtml">
+	<ui:param value="About" name="title" />
+	<ui:define name="navbar">
+		<ul>
+			<li><h:outputText value="Stato della Porta di Dominio" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="statusBean" />
+		<a4j:outputPanel id="panelStatus1" layout="block">
+			<script type="text/javascript">
+			//<![CDATA[
+			  	 jQuery(document).ready(aggiungiMargine);
+			
+			  	 function aggiungiMargine(){
+			  		var divs = jQuery("#panelStatus1").children("div");
+			  		var l = divs.length;
+			  		
+			  		if(l >= 3) {
+			  			for(var i = 1; i < (l - 1) ; i ++) {
+			  				var div = divs [i];
+			  				div.style.marginTop = '20px';
+			  			}
+			  		}
+			  	 }
+				 //]]>	
+			</script>
+			<c:forEach items="#{statusBean.listaSondePdd}" var="sondaPdd">
+				<rich:panel>
+	
+					<f:facet name="header">
+						<h:outputText value="#{sondaPdd.name}" />
+					</f:facet>
+	
+					<!-- Descrizione -->
+					<h:panelGrid columns="#{!empty sondaPdd.linkDettaglio ? 3 : 2}" styleClass="borderSpacingTable" columnClasses="labelAllineataDx,valueAllineataSx" rendered="#{!empty sondaPdd.messaggioStatoSondaPdd}">
+						<h:outputLabel styleClass="outputFieldLabel" value="Stato:" rendered="#{!empty sondaPdd.messaggioStatoSondaPdd}" />
+						<h:outputText value="#{sondaPdd.messaggioStatoSondaPdd}" rendered="#{!empty sondaPdd.messaggioStatoSondaPdd}" />
+						<h:panelGroup columns="1" rendered="#{!empty sondaPdd.linkDettaglio}">
+							<h:form prependId="true">
+								<h:outputLink value="#{sondaPdd.linkDettaglio}" rendered="#{!empty sondaPdd.linkDettaglio}" id="details-iconLink" styleClass="icon-details">
+									<h:outputText value="Visualizza Dettagli"/>
+								</h:outputLink>
+							</h:form>
+						</h:panelGroup>
+					</h:panelGrid>
+					<rich:spacer width="1" height="10" rendered="#{!empty sondaPdd.messaggioStatoSondaPdd}" />
+					<c:forEach items="#{sondaPdd.stato}" var="statoPdd">
+	
+						<link:fieldset legend="#{statoPdd.nome}" rendered="#{true}"
+							collapsible="false" closed="false">
+	
+							<h:panelGrid columns="2" styleClass="borderSpacingTable" rowClasses="align-default,align-default,align-top"
+								columnClasses="labelAllineataDx,valueAllineataSx">
+								<h:outputLabel styleClass="outputFieldLabel" value="Stato:" />
+								<h:panelGroup columns="3">
+									<h:graphicImage value="/images/tema_link/status_green.png" rendered="#{statoPdd._value_stato == 'ok'}" />
+									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'ok'}" />
+									<h:outputText value="OK" rendered="#{statoPdd._value_stato == 'ok'}" style="text-decoration: none; vertical-align: bottom;"/>
+									<h:graphicImage value="/images/tema_link/status_yellow.png" rendered="#{statoPdd._value_stato == 'warning'}" />
+									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'warning'}" />
+									<h:outputText value="WARN" rendered="#{statoPdd._value_stato == 'warning'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />										
+									<h:graphicImage value="/images/tema_link/status_red.png" rendered="#{statoPdd._value_stato == 'error'}"/>
+									<rich:spacer width="3"  rendered="#{statoPdd._value_stato == 'error'}" />
+									<h:outputText value="ERROR" rendered="#{statoPdd._value_stato == 'error'}" style="text-decoration: none; FONT-WEIGHT: bold; vertical-align: bottom;" />
+								</h:panelGroup>
+	
+								<rich:spacer width="3" height="10" rendered="#{!empty statoPdd.descrizione}"/>
+								<rich:spacer width="3" height="10" rendered="#{!empty statoPdd.descrizione}"/>
+	
+								<h:outputLabel styleClass="outputFieldLabel"
+									value="Descrizione:" rendered="#{!empty statoPdd.descrizione}" />
+								<h:outputText value="#{statoPdd.descrizione}"
+									rendered="#{!empty statoPdd.descrizione}" />
+							</h:panelGrid>
+	
+						</link:fieldset>
+						<rich:spacer width="1" height="10" rendered="#{!empty statoPdd}" />
+					</c:forEach>
+				</rich:panel>
+			</c:forEach>
+		 	<rich:panel id="panelFormAggiornaStato">
+				<h:form prependId="false" id="formAggiornaStato">
+					<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block" styleClass="form-container">
+						<a4j:outputPanel styleClass="buttonrow" layout="block" id="btnDiv" style="margin-top:0px;">
+							<a4j:commandButton id="aggiornaStatoButton" value="Aggiorna Stato"
+								styleClass="icon-refresh"
+								reRender="panelStatus1,cdLabel_stPdd,statusPdd"
+								status="mainStatus" action="#{statusBean.aggiorna}">
+							</a4j:commandButton>
+						</a4j:outputPanel>
+					</a4j:outputPanel>
+				</h:form>
+			</rich:panel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>

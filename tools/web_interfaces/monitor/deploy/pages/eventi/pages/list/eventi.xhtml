@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li><h:outputText value="Eventi" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
+			<rich:simpleTogglePanel id="panelFiltri1" opened="true"
+				label="#{ (searchFormEventi.executeQuery or searchFormEventi.periodo eq 'Live')? 'Modifica Filtri di Ricerca' : 'Filtri di Ricerca'}" switchType="client">
+				<f:facet name="openMarker">
+					<h:graphicImage value="/images/tema_link/down_white.png"/>
+				</f:facet>
+				
+				<f:facet name="closeMarker">
+					<h:graphicImage value="/images/tema_link/up_white.png"/>
+				</f:facet>
+	
+				<div class="form-container noborder">
+	
+					<a4j:form id="formSearchEventi" prependId="false" ajaxSingle="true"
+						ajaxSubmit="true">
+						<a4j:region id="genSearchPnl" renderRegionOnly="true">
+							<a4j:outputPanel id="searchPnl" ajaxRendered="false"
+								layout="block">
+								
+								<a4j:outputPanel id="dataCtr" layout="block">
+								
+									<div class="subtitle">
+										<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
+									</div>
+								
+									<link:prop label="Periodo" labelId="labelPeriodoCombo">
+										<rich:comboBox id="periodoCombo" value="#{searchFormEventi.periodo}" defaultLabel="Seleziona Periodo"
+											required="true"
+											requiredMessage="E' necessario selezionare un periodo" width="412" enableManualInput="false">
+											<f:selectItem itemValue="Ultime 24 ore" />
+											<f:selectItem itemValue="Ultima settimana" />
+											<f:selectItem itemValue="Ultimo mese" />
+											<f:selectItem itemValue="Personalizzato" />
+											<a4j:support status="mainStatus" event="onselect" reRender="dataCtr,searchPnl"  actionListener="#{searchFormEventi.periodoListener}"/>
+										</rich:comboBox>
+										<rich:toolTip for="labelPeriodoCombo" value="#{searchFormEventi.printPeriodo}"/>
+									</link:prop>
+						
+									<link:prop label="Data Inizio"
+										rendered="#{searchFormEventi.periodo eq 'Personalizzato' }">
+										<rich:calendar id="dataInizioCalendar" value="#{searchFormEventi.dataInizio}" datePattern="yyyy-MM-dd HH:mm"
+											defaultTime="00:00" rendered="#{searchFormEventi.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
+											required="true" requiredMessage="Selezionare Data Inizio" enableManualInput="false">
+											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
+										</rich:calendar>
+									</link:prop>
+									
+									<link:prop label="Data Fine"
+										rendered="#{searchFormEventi.periodo eq 'Personalizzato'}">
+										<rich:calendar id="dataFineCalendar" value="#{searchFormEventi.dataFine}" datePattern="yyyy-MM-dd HH:mm"
+											defaultTime="23:59" rendered="#{searchFormEventi.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
+											required="true" requiredMessage="Selezionare Data Fine" enableManualInput="false">
+											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
+										</rich:calendar>	
+									</link:prop>
+										
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="eventoCtr" layout="block">					
+								
+									<div class="subtitle">
+										<h:outputText id="idDatiEvento" value="Filtro Dati Evento" styleClass="subtitle"/>
+									</div>
+								
+									<link:prop label="Severità">
+										<rich:comboBox id="severitaCombo" value="#{searchFormEventi.severita}" defaultLabel="Seleziona Severità"
+											required="true"
+											requiredMessage="E' necessario selezionare una severità" width="412" enableManualInput="false">
+											<f:selectItems value="#{eventiBean.tipiSeverita}" />
+										</rich:comboBox>
+									</link:prop>
+									
+									<link:prop label="Tipo" rendered="#{true}">
+										<h:inputText id="tipo" value="#{searchFormEventi.tipo}"
+											styleClass="inputLinkLong" />
+									</link:prop>
+									
+									<link:prop label="Codice" rendered="#{true}">
+										<h:inputText id="codice" value="#{searchFormEventi.codice}"
+											styleClass="inputLinkLong" />
+									</link:prop>
+								
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="filtriAvanzatiIdCtr" layout="block">
+								
+									<div class="subtitle">
+										<h:outputText id="idDatiIdApplicativo" value="Filtro Dati Identificativi" styleClass="subtitle"/>
+									</div>
+									
+									<link:prop label="Ricerca Esatta">
+										<h:selectOneRadio id="radioCorrApp" value="#{searchFormEventi.matchingType}" styleClass="controlset" style="margin-left: 170px">
+											<f:selectItem itemValue="EQUALS" itemLabel="Si"/>
+											<f:selectItem itemValue="LIKE" itemLabel="No"/>
+										</h:selectOneRadio>
+									</link:prop>
+									
+									<link:prop label="Case Sensitive">
+										<h:selectOneRadio id="radioCorrAppCaseSens" value="#{searchFormEventi.caseSensitiveType}" styleClass="controlset" style="margin-left: 170px">
+											<f:selectItem itemValue="SENSITIVE" itemLabel="Si"/>
+											<f:selectItem itemValue="INSENSITIVE" itemLabel="No"/>
+										</h:selectOneRadio>
+									</link:prop>
+								
+									<link:prop label="Origine" rendered="#{true}">
+										<h:inputText id="idConfigurazioneFilter" value="#{searchFormEventi.idConfigurazione}"
+											styleClass="inputLinkLong" />
+									</link:prop>
+									
+									<link:prop label="ID Cluster" rendered="#{eventiBean.visualizzaIdCluster}">
+										<h:inputText id="idClusterFilter" value="#{searchFormEventi.idCluster}" styleClass="inputLinkLong" rendered="#{eventiBean.visualizzaIdClusterAsSelectList == false}"/>
+										<rich:comboBox id="idClusterCombo" value="#{searchFormEventi.idCluster}"
+											defaultLabel="Seleziona Id" directInputSuggestions="true"
+											width="412" converter="selectItemConverter" enableManualInput="false"
+											rendered="#{eventiBean.visualizzaIdClusterAsSelectList == true}">
+											<f:selectItems value="#{eventiBean.listIdCluster}"/>
+											<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+										</rich:comboBox>
+									</link:prop>
+									
+								</a4j:outputPanel>
+								
+							</a4j:outputPanel>
+						</a4j:region>
+						<div class="buttonrow">
+							<a4j:commandButton id="filtra" value="#{searchFormEventi.aggiornamentoDatiAbilitato ? 'Nuova Ricerca' : 'Filtra'}"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{searchFormEventi.filtra}" oncomplete="completa(event)" />
+							<a4j:commandButton id="aggiorna" value="Aggiorna"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{searchFormEventi.aggiornamentoDatiAbilitato}"
+								action="#{searchFormEventi.aggiorna}" oncomplete="completa(event)" />
+							<a4j:commandButton id="svuota" value="Ripulisci"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{searchFormEventi.ripulisci}"
+								oncomplete="completa(event)" />
+						</div>
+					</a4j:form>
+				</div>
+			</rich:simpleTogglePanel>
+	
+			<div class="spacer"></div>
+	
+			<a4j:outputPanel id="eventiTbl" layout="block" styleClass="panelLista" rendered="#{eventiDM.executeQuery}">
+				<h:form>
+					<link:dataTable value="#{eventiDM}" id="tableEventi"
+						mBean="#{eventiBean}" showSelectAll="false"
+						selectionMapTarget="#{eventiBean.selectedIds[item]}"
+						headerText="Lista Eventi" enableDelete="false"
+						reRenderIds="eventiTbl"
+						useCount="#{searchFormEventi.useCount}">
+		
+						<rich:column id="colEsitoImg" style="text-align: center;">
+							<f:facet name="header">
+								<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+							</f:facet>
+							<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.severitaReadable=='INFO' or item.severitaReadable=='DEBUG'}">
+								<rich:toolTip for="outEsitoImgOk">
+									<h:outputText value="#{item.severitaReadable}"/>
+								</rich:toolTip>
+							</h:graphicImage>
+							<h:graphicImage id="outEsitoImgWarn" value="/images/tema_link/alert_yellow.png" rendered="#{item.severitaReadable=='WARN'}">
+								<rich:toolTip for="outEsitoImgWarn">
+									<h:outputText value="#{item.severitaReadable}"/>
+								</rich:toolTip>
+							</h:graphicImage>
+							<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.severitaReadable=='ERROR' or item.severitaReadable=='FATAL'}">
+								<rich:toolTip for="outEsitoImgKo">
+									<h:outputText value="#{item.severitaReadable}"/>
+								</rich:toolTip>
+							</h:graphicImage>
+							<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{item.severitaReadable!='INFO' and 
+								item.severitaReadable!='DEBUG' and 
+								item.severitaReadable!='WARN' and 
+								item.severitaReadable!='ERROR' and 
+								item.severitaReadable!='FATAL'}"/>
+						</rich:column>
+		
+						<rich:column id="colData" width="150">
+							<f:facet name="header">
+								<h:outputText id="outData" value="Ora Registrazione" />
+							</f:facet>
+							<a4j:htmlCommandLink id="edit-iconLink" styleClass="icon-details"
+								action="evento">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{eventiBean.evento}" />
+								<h:outputText id="outData2" value="#{item.oraRegistrazione}">
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS"
+									timeZone="Europe/Rome" />
+							</h:outputText>
+							</a4j:htmlCommandLink>
+						</rich:column>
+		
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Severità"  id="outSeverita"/>
+							</f:facet>
+							<h:outputText value="#{item.severitaReadable}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Tipo"  id="outTipo"/>
+							</f:facet>
+							<h:outputText value="#{item.tipo}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Codice"  id="outCodice"/>
+							</f:facet>
+							<h:outputText value="#{item.codice}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="Origine" id="outIdConf" />
+							</f:facet>
+							<h:outputText id="idConfigurazione" value="#{item.idConfigurazioneCompact}" />
+							<rich:toolTip for="idConfigurazione">
+								<h:outputText  value="#{item.idConfigurazione}"/>
+							</rich:toolTip>
+						</rich:column>
+						
+						<rich:column rendered="#{eventiBean.visualizzaIdCluster}">
+							<f:facet name="header">
+								<h:outputText value="ID Cluster" id="outIdCluster" />
+							</f:facet>
+							<h:outputText value="#{item.clusterId}" />
+						</rich:column>
+	
+					</link:dataTable>
+				</h:form>
+			</a4j:outputPanel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>
+
+</html>
