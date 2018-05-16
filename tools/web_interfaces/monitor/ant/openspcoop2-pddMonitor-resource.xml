@@ -1,11 +1,7 @@
-<project name="openspcoop2-compile-pddMonitor">
+<project name="openspcoop2-resource-pddMonitor">
     <description>
         Produzione dei jar relativi al package org.openspcoop2.web.monitor
     </description>
-
-	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
-	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
-	<import file="${openspcoop2}/ant/commons/api-build.xml" />
 	
 	<!-- estensione di ant (if .... ) -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">

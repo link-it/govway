@@ -8,6 +8,8 @@
 	<import file="./local_env.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-build.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-war.xml" />
+	<import file="./ant/openspcoop2-pddMonitor-codeGen.xml" />
+	<import file="${mvc}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${audit}/build.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
@@ -29,9 +31,9 @@
 	<property name="doc_pddMonitor" location="doc" />
 	<property name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins/config" />
 	<property name="plugins_pddMonitor_pages" value="${pddMonitor}/deploy/plugins/pages" /> <!-- xhtml e tutto il resto del materiale che deve finire dentro l'archivio -->
-	<property name="cfg" value="${pddMonitor}/deploy/properties" />
-	<property name="deploy.dir" value="${pddMonitor}/deploy" />
-	<property name="commons_temaConsole" value="${deploy.dir}/tema_css" />
+	<property name="properties_pddMonitor" value="${pddMonitor}/deploy/properties" />
+	<property name="deploy_pddMonitor" value="${pddMonitor}/deploy" />
+	<property name="commons_temaConsole" value="${deploy_pddMonitor}/tema_css" />
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
@@ -183,9 +185,9 @@
 	<var name="singlePdD.registroServizi.locale" value="true" />
 
 	<!-- Directory per librerie -->
-	<property name="lib" location="${deploy.dir}/lib" />
-	<property name="jsp" location="${deploy.dir}/jsp" />
-	<property name="images" location="${deploy.dir}/images" />
+	<property name="lib" location="${deploy_pddMonitor}/lib" />
+	<property name="jsp" location="${deploy_pddMonitor}/jsp" />
+	<property name="images" location="${deploy_pddMonitor}/images" />
 
 	
 	<!-- estensione di ant (if .... ) -->
@@ -309,7 +311,7 @@
 			</then>
 		</if>
 	</target>
-	<target name="compile_dipendenze_invoke" depends="compile_mvc,compile_users,compile_queue,compile_audit" description="compila le dipendenze" />
+	<target name="compile_dipendenze_invoke" depends="compile_users,compile_audit" description="compila le dipendenze" />
 
 	<!-- Compilazione della PddMonitor-->
 	<target name="compile_pddMonitor" depends="init_compile_pddMonitor,compile_dipendenze,compile_openspcoop2_pddMonitor" description="compila pddMonitor"/>

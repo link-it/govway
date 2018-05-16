@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/search"
-    targetNamespace="http://www.link.it/pdd/monitor/web/pddmonitor/transazioni/core/search"
+<xsd:schema xmlns="http://www.openspcoop2.org/web/monitor/transazioni/core/search"
+    targetNamespace="http://www.openspcoop2.org/web/monitor/transazioni/core/search"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
 

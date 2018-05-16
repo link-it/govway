@@ -1,4 +1,4 @@
-<project name="openspcoop2-build-pddMonitor">
+<project name="openspcoop2-war-pddMonitor">
     <description>
         Produzione del war della PddMonitor
     </description>
@@ -16,8 +16,8 @@
 	<target name="war_openspcoop2_pddMonitor" depends="css_openspcoop2_pddMonitor">
 
 		<!-- Properties -->
-		<copy file="${cfg}/monitor.datasource.properties" todir="${build_pddMonitor}/tmp" />
-		<copy file="${cfg}/monitor.properties" todir="${build_pddMonitor}/tmp" />
+		<copy file="${properties_pddMonitor}/monitor.datasource.properties" todir="${build_pddMonitor}/tmp" />
+		<copy file="${properties_pddMonitor}/monitor.properties" todir="${build_pddMonitor}/tmp" />
 				
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
@@ -97,7 +97,7 @@
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
 			<zipfileset dir="${jslib}" prefix="js" />
 
-			<fileset dir="${deploy.dir}/web-content">
+			<fileset dir="${deploy_pddMonitor}/web-content">
 				<include name="**/*" />
 			</fileset>
 
@@ -110,7 +110,7 @@
 				<include name="${jboss_deployment_structure}" />
 				<include name="jboss-web.xml" />
 			</webinf>
-			<classes dir="${cfg}">
+			<classes dir="${properties_pddMonitor}">
 				<include name="monitor.audit.log4j2.properties" />
 				<include name="monitor.log4j2.properties" />
 				<include name="monitor.registroServiziRemoto.properties" />
