@@ -15,7 +15,7 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>transazioniBean</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.TrasazioniBean</managed-bean-class>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.TransazioniBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 		<managed-property>
 			<property-name>service</property-name>

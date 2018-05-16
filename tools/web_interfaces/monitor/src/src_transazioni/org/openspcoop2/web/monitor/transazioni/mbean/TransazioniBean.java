@@ -44,7 +44,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 
-public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISearchFormService<TransazioneBean, String, TransazioniSearchForm>> {
+public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISearchFormService<TransazioneBean, String, TransazioniSearchForm>> {
 
 	public static final String COLUMNS_VISIBILITY_STATO_TABELLE_KEY = "columnsVisibility";
 	public static final String COLUMNS_ORDER_STATO_TABELLE_KEY = "columnsOrder";
@@ -70,11 +70,11 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 
 	private ApplicationBean applicationBean = null;
 
-	public TrasazioniBean(){
+	public TransazioniBean(){
 		super();
 
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TrasazioniBean.log);
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniBean.log);
 			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
 			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
 			this.visualizzaDataAccettazione = pddMonitorProperties.isAttivoTransazioniDataAccettazione();
@@ -155,7 +155,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			}
 
 		} catch (Exception e) {
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 		}
 
 		return this.stati;
@@ -214,7 +214,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			}
 
 		} catch (Exception e) {
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 		}
 
 		return this.risorse;
@@ -280,7 +280,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}
@@ -332,7 +332,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione delle tracce.");
 		}
@@ -403,7 +403,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}
@@ -505,7 +505,7 @@ public class TrasazioniBean extends DynamicPdDBean<TransazioneBean, String, ISea
 			// End of the method
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().responseComplete();
-			TrasazioniBean.log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 			MessageUtils
 			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
 		}
