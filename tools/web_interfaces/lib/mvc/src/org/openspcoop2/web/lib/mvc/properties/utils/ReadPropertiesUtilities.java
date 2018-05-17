@@ -19,11 +19,12 @@
  */
 package org.openspcoop2.web.lib.mvc.properties.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.core.mvc.properties.utils.Costanti;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Item;
@@ -42,19 +43,27 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
  *
  */
 public class ReadPropertiesUtilities {
+	
+	public static List<String> getListaNomiProperties(Config config){
+		List<String> lista = new ArrayList<String>();
+		
+		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
+		if(properties != null) {
+			List<Collection> collectionList = properties.getCollectionList();
+			for (Collection collection : collectionList) {
+				lista.add(collection.getName());
+			}
+		}
+		
+		return lista;
+	}
 
 	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
 		ConfigBean configurazione = new ConfigBean();
 		
 		ValidationEngine.validateConfig(config);
 		
-		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
-		if(properties != null) {
-			List<Collection> collectionList = properties.getCollectionList();
-			for (Collection collection : collectionList) {
-				configurazione.getListaNomiProperties().add(collection.getName());
-			}
-		}
+		configurazione.getListaNomiProperties().addAll(getListaNomiProperties(config));
 		
 		List<Section> sectionList = config.getSectionList();
 		

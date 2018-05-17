@@ -63,6 +63,8 @@ public abstract class BaseItemBean<T> {
 	public abstract Conditions getConditions();
 	
 	public abstract ItemType getItemType();
+	
+	public abstract void validate() throws Exception;
 
 	public T getItem() {
 		return this.item;

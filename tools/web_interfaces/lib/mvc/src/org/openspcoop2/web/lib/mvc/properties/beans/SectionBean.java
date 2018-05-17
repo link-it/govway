@@ -71,4 +71,7 @@ public class SectionBean extends BaseItemBean<Section>{
 	public ItemType getItemType() {
 		return null;
 	}
+	@Override
+	public void validate() throws Exception {
+	}
 }

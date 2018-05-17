@@ -22,16 +22,19 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.web.lib.mvc.Costanti;
-import org.openspcoop2.web.lib.mvc.DataElement;
-import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.ItemValue;
 import org.openspcoop2.core.mvc.properties.ItemValues;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
  * Bean di tipo Item arricchito delle informazioni grafiche.
@@ -185,14 +188,79 @@ public class ItemBean extends BaseItemBean<Item>{
 
 		return valueToCheck;
 	}
-	
+
 	@Override
 	public Conditions getConditions() {
 		return this.item.getConditions();
 	}
-	
+
 	@Override
 	public ItemType getItemType() {
 		return this.item.getType();
+	}
+
+	@Override
+	public void validate() throws Exception {
+		String itemValue = this.getPropertyValue(); // valore della property
+		Property saveProperty = this.getSaveProperty();
+
+		
+
+		// un elemento e' salvabile se non e' visible o e' da forzare 
+		boolean save = saveProperty != null && (saveProperty.isForce() || (this.getVisible() && !ItemType.HIDDEN.equals(this.getItemType())));
+		
+		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"] Validazione Abilitata ["+save+"]");  
+		
+		// validazione solo per gli elementi da salvare
+		if(save) {
+
+			// 1. Validazione campi obbligatori
+			if(this.getItem().isRequired() && itemValue == null) {
+				throw new Exception("Il Campo "+this.getName()+" &egrave; obbligatorio");
+			}
+
+			// 2. validazione generica basata sul tipo
+			switch(this.getItem().getType()) {
+			case NUMBER:
+				if(StringUtils.isNotEmpty(itemValue)) {
+					boolean numeric = NumberUtils.isParsable(itemValue);
+					if(!numeric)
+						throw new Exception("Il Campo "+this.getName()+" non contiene un valore di tipo numerico");
+				}
+				break;
+			case SELECT:
+				if(StringUtils.isNotEmpty(itemValue)) {
+					ItemValues values = this.getItem().getValues();
+					boolean found = false;
+					for (ItemValue selectItemValue : values.getValueList()) {
+						if(selectItemValue.getValue().equals(itemValue)) {
+							found = true;
+							break;
+						}
+					}
+
+					if(!found)
+						throw new Exception("Il Campo "+this.getName()+" contiene un valore non previsto");
+				}
+				break;
+			case TEXT:
+			case CHECKBOX:
+			case HIDDEN:
+				break;
+			}
+
+			// 3. validazione basata sul pattern
+			if(this.getItem().getValidation() != null && StringUtils.isNotEmpty(itemValue)) {
+				try {
+					boolean match = RegularExpressionEngine.isMatch(itemValue, this.getItem().getValidation());
+
+					if(!match)
+						throw new Exception("Il Campo "+this.getName()+" non rispetta il pattern di validazione previsto");
+
+				}catch(Exception e) {
+					throw new Exception("Impossibile validare il campo "+this.getName()+" secondo il pattern previsto nella configurazione",e);
+				}
+			}
+		}
 	}
 }

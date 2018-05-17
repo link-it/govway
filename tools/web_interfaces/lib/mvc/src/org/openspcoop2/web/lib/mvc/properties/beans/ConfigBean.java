@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.core.mvc.properties.utils.Costanti;
+import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.web.lib.mvc.properties.utils.ConditionsEngine;
 
 /***
@@ -103,71 +105,82 @@ public class ConfigBean {
 			Property saveProperty = item.getSaveProperty();
 			String itemValue = item.getPropertyValue(); // valore della property
 
+			// un elemento e' salvabile se non e' visible o e' da forzare 
+			boolean save = saveProperty != null && (saveProperty.isForce() || (itemValue != null && (item.getVisible() && !ItemType.HIDDEN.equals(item.getItemType()))));
+			
+			System.out.println("SAVE -> Item: Name ["+item.getName()+"] Value ["+itemValue+"] Force: ["+(saveProperty != null ? saveProperty.isForce() : false)+"] Visible/hidden: ["
+						+(item.getVisible() && !ItemType.HIDDEN.equals(item.getItemType()))+"] SAVE: ["+save+"]");  
+			if(save) { // per ogni elemento salvabile
 
-			System.out.println("SAVE -> Item: Name ["+item.getName()+"] Value ["+itemValue+"]");  
-			if(saveProperty != null && itemValue != null) { // per ogni elemento salvabile
-				if(saveProperty.isForce() || (!"".equals(itemValue))) {
+				String propertyName = saveProperty.getName(); // nome della property di destinazione
+				String propertiesName = saveProperty.getProperties() != null ? saveProperty.getProperties() : Costanti.NOME_MAPPA_PROPERTIES_DEFAULT; // nome delle properties di destinazione (vuoto quelle di default)
 
-					String propertyName = saveProperty.getName(); // nome della property di destinazione
-					String propertiesName = saveProperty.getProperties() != null ? saveProperty.getProperties() : Costanti.NOME_MAPPA_PROPERTIES_DEFAULT; // nome delle properties di destinazione (vuoto quelle di default)
-
-					System.out.println("SAVE -> Item: propertyName ["+propertyName+"] propertiesName ["+propertiesName+"]");  				
-					Properties p = null; // controllo esistenza properties selezionate
-					if(map.containsKey(propertiesName)) {
-						p = map.remove(propertiesName);
-					} else {
-						p = new Properties();
-					}
-					map.put(propertiesName, p);
-
-					if(!saveProperty.isAppend()) { // se la property non e' di tipo append allora setto il valore 
-						p.setProperty(propertyName, itemValue);
-					} else {
-						String appendPropertyKey = Costanti.PRE_KEY_PROPERTIES_DEFAULT + propertyName;
-						String appendKeyPropertyValue = null;
-
-						// genero la chiave per decodificare le properties concatenate
-						if(p.containsKey(appendPropertyKey)) { 
-							appendKeyPropertyValue = p.getProperty(appendPropertyKey);
-							p.remove(appendPropertyKey);
-							appendKeyPropertyValue += Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR;
-							appendKeyPropertyValue += item.getName();
-						} else {
-							appendKeyPropertyValue = item.getName();
-						}
-						p.setProperty(appendPropertyKey, appendKeyPropertyValue);
-
-						String apValue = null;
-						if(p.containsKey(propertyName)) { // controllo se la property di tipo append e' gia presente aggiungo separatore e nuovo valore a quello gia' presente
-							apValue = p.getProperty(propertyName);
-							p.remove(propertyName);
-							apValue += saveProperty.getAppendSeparator();
-							apValue += itemValue;
-						} else {
-							apValue = itemValue;
-						}
-						p.setProperty(propertyName, apValue);
-					}
-
+				System.out.println("SAVE -> Item: propertyName ["+propertyName+"] propertiesName ["+propertiesName+"]");  				
+				Properties p = null; // controllo esistenza properties selezionate
+				if(map.containsKey(propertiesName)) {
+					p = map.remove(propertiesName);
+				} else {
+					p = new Properties();
 				}
+				map.put(propertiesName, p);
 
+				if(!saveProperty.isAppend()) { // se la property non e' di tipo append allora setto il valore 
+					p.setProperty(propertyName, itemValue);
+				} else {
+					String appendPropertyKey = Costanti.PRE_KEY_PROPERTIES_DEFAULT + propertyName;
+					String appendKeyPropertyValue = null;
+
+					// genero la chiave per decodificare le properties concatenate
+					if(p.containsKey(appendPropertyKey)) { 
+						appendKeyPropertyValue = p.getProperty(appendPropertyKey);
+						p.remove(appendPropertyKey);
+						appendKeyPropertyValue += Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR;
+						appendKeyPropertyValue += item.getName();
+					} else {
+						appendKeyPropertyValue = item.getName();
+					}
+					p.setProperty(appendPropertyKey, appendKeyPropertyValue);
+
+					String apValue = null;
+					if(p.containsKey(propertyName)) { // controllo se la property di tipo append e' gia presente aggiungo separatore e nuovo valore a quello gia' presente
+						apValue = p.getProperty(propertyName);
+						p.remove(propertyName);
+						apValue += saveProperty.getAppendSeparator();
+						apValue += itemValue;
+					} else {
+						apValue = itemValue;
+					}
+					p.setProperty(propertyName, apValue);
+				}
 			}
 		}
 
 		return map;
 	}
-	
+
 	public void setValueFromRequest(String name, String parameterValue) {
 		this.getItem(name).setValueFromRequest(parameterValue);
 	}
 
-	public void updateConfigurazione() throws Exception {
+	public void updateConfigurazione(Config config) throws Exception {
 		List<BaseItemBean<?>> listaItem = this.getListaItem();
 
 		for (BaseItemBean<?> item : listaItem) {
 			boolean resolve = ConditionsEngine.resolve(item.getConditions(), this);
 			System.out.println("Item ["+item.getName()+"] Visibile ["+resolve+"]");
 			item.setVisible(resolve);
+		}
+
+		// sistemo la visualizzazione delle sezioni e subsection che hanno tutti gli elementi hidden
+
+		ConditionsEngine.controllaSezioniDaNascondere(config, this);
+	}
+
+	public void validazioneInputUtente() throws Exception {
+		List<BaseItemBean<?>> listaItem = this.getListaItem();
+
+		for (BaseItemBean<?> item : listaItem) {
+			item.validate();
 		}
 	}
 

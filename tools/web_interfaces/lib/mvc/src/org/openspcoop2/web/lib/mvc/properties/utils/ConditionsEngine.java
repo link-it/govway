@@ -19,12 +19,18 @@
  */
 package org.openspcoop2.web.lib.mvc.properties.utils;
 
-import org.openspcoop2.web.lib.mvc.ServletUtils;
+import java.util.List;
+
 import org.openspcoop2.core.mvc.properties.Condition;
 import org.openspcoop2.core.mvc.properties.Conditions;
+import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Defined;
 import org.openspcoop2.core.mvc.properties.Equals;
+import org.openspcoop2.core.mvc.properties.Item;
+import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Selected;
+import org.openspcoop2.core.mvc.properties.Subsection;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 
@@ -150,5 +156,97 @@ public class ConditionsEngine {
 		}
 	}
 
+	public static boolean controllaSezioniDaNascondere(Config config,ConfigBean cbTmp)  throws Exception{
+		List<Section> sectionList = config.getSectionList();
+		
+		boolean show = true;
+		for (int i= 0; i < sectionList.size() ; i++) {
+			Section section = sectionList.get(i);
+			show = showSection(section,"s"+i,cbTmp);
+		}
+		
+		return show;
+	}
+	
+	private static boolean showSection(Section section, String sectionIdx,ConfigBean cbTmp) throws Exception{
+		BaseItemBean<?> itemSection = cbTmp.getItem(sectionIdx);
+		
+		// 1. se la sezione e' nascosta nascondo tutti gli elementi
+		boolean show = itemSection.getVisible();
 
+		if(!show) {
+			if(section.getItemList() != null) {
+				for (Item item : section.getItemList()) {
+					BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
+					item3.setVisible(show);
+				}
+			}
+			if(section.getSubsectionList() != null) {
+				for (int i= 0; i < section.getSubsectionList().size() ; i++) {
+					Subsection subSection  = section.getSubsectionList().get(i);
+					showSubsection(subSection,sectionIdx+ "_ss"+i,cbTmp,show);
+				}
+			}
+		} else {
+			boolean allItemHidden = true;
+			boolean allSubSectionHidden = true;
+			
+			if(section.getItemList() != null) {
+				for (Item item : section.getItemList()) {
+					BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
+					if(item3.getVisible()) {
+						allItemHidden = false;
+						break;
+					}
+				}
+			}
+			
+			if(section.getSubsectionList() != null) {
+				for (int i= 0; i < section.getSubsectionList().size() ; i++) {
+					Subsection subSection  = section.getSubsectionList().get(i);
+					if(showSubsection(subSection,sectionIdx+ "_ss"+i,cbTmp,show)) {
+						allSubSectionHidden = false;
+						break;
+					}
+				}
+			}
+			
+			show = !(allItemHidden || allSubSectionHidden);
+		}
+		
+	 
+		// 2. se tutti gli elementi sono nascosti nascondo la sezione
+		itemSection.setVisible(show);
+		
+		return show;
+	}
+
+	private static boolean showSubsection(Subsection subSection, String subsectionIdx, ConfigBean cbTmp, boolean showParent) throws Exception {
+		BaseItemBean<?> itemSubSection = cbTmp.getItem(subsectionIdx);
+		
+		// 1. se la sezione e' nascosta nascondo tutti gli elementi
+		boolean show = !showParent ? false : itemSubSection.getVisible();
+		
+		if(!show) {
+			for (Item item : subSection.getItemList()) {
+				BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
+				item3.setVisible(show);
+			}
+		} else {
+			boolean allHidden = true;
+			for (Item item : subSection.getItemList()) {
+				BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
+				if(item3.getVisible()) {
+					allHidden = false;
+					break;
+				}
+			}
+			
+			show = !allHidden;
+		}
+		// 2. se tutti gli elementi sono nascosti nascondo la sezione
+		itemSubSection.setVisible(show);
+		
+		return show;
+	}
 }

@@ -72,4 +72,8 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	public ItemType getItemType() {
 		return null;
 	}
+	
+	@Override
+	public void validate() throws Exception {
+	}
 }
