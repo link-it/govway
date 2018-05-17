@@ -33,18 +33,18 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * Recupera gli esiti sul numero transazioni (ok,ko) nell'intervallo
 	 * specificato
 	 * 
-	 * @param idPorta
+	 * @param permessiUtente
 	 * @param min
 	 * @param max
-	 * @return
+	 * @param esitoContesto
+	 * @return esiti sul numero transazioni (ok,ko) nell'intervallo
 	 */
 	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto);
 
 	/**
 	 * Recupera le informazioni per la live view
 	 * 
-	 * @return L'oggetto contenente le informazioni sul numero di transazioni
-	 *         corrette/errate
+	 * @return L'oggetto contenente le informazioni sul numero di transazioni corrette/errate
 	 */
 	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick);
 
@@ -72,7 +72,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * @param idTransazione
 	 * @param idEgov
 	 * @param isRisposta
-	 * @return
+	 * @return duplicati della transazione
 	 */
 	public List<TransazioneBean> findAllDuplicati(String idTransazione,
 			String idEgov, boolean isRisposta, int start, int limit);
@@ -95,22 +95,17 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * @param idAccordo
 	 * @param nomeServizio
 	 * @param nomeAzione
-	 * @return
+	 * @return elenco degli stati
 	 */
-	public List<ConfigurazioneTransazioneStato> getStatiByValues(
-			IDAccordo idAccordo, String nomeServizio, String nomeAzione);
+	public List<ConfigurazioneTransazioneStato> getStatiByValues(IDAccordo idAccordo, String nomeServizio, String nomeAzione);
 
 	/**
 	 * Recupera la risorse di configurazione
 	 * 
-	 * @param idAccordoSelezionato
-	 *            (required)
-	 * @param nomeServizioSelezionato
-	 *            (required)
-	 * @param nomeAzioneSelezionata
-	 *            (required)
-	 * @param nomeStatoSelezionato
-	 *            (opzionale)
+	 * @param idAccordo (required)
+	 * @param nomeServizio (required)
+	 * @param nomeAzione (required)
+	 * @param nomeStato (opzionale)
 	 * @return la lista di risorse
 	 */
 	public List<ConfigurazioneTransazioneRisorsaContenuto> getRisorseContenutoByValues(

@@ -154,7 +154,7 @@ public class SummaryBean implements Serializable{
 
 	/**
 	 * recupera i dati per il riepilogo messaggi negli ultimo 12 mesi
-	 * @return
+	 * @return esitoContenuto
 	 */
 
 	public String getEsitoContesto() {
@@ -610,7 +610,7 @@ public class SummaryBean implements Serializable{
 
 	/**
 	 * Live graph
-	 * @return
+	 * @return Xml del grafico degli esiti live.
 	 */
 	public String getXmlLive(){
 

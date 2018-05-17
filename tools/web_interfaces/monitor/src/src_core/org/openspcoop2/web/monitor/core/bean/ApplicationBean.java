@@ -733,7 +733,7 @@ public class ApplicationBean implements Serializable {
 	/**
 	 * Visualizza la sezione di configurazione:{Gestione Utenti, Auditing}
 	 * 
-	 * @return
+	 * @return permesso per visualizzare la sezione utenti.
 	 */
 	public boolean getShowUserManagement() {
 

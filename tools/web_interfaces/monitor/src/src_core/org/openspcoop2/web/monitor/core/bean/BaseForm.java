@@ -102,7 +102,7 @@ public class BaseForm implements Serializable {
 	 * ad esempio non sono in un contesto j2ee e quindi spring-security non lo
 	 * utilizzo, allora viene ritornato l'utente gia' impostato
 	 * 
-	 * @return
+	 * @return utente collegato
 	 */
 	public User getUser() {
 
@@ -129,7 +129,7 @@ public class BaseForm implements Serializable {
 	/**
 	 * La stringa di input sara' del tipo tipoSoggetto/nomeSoggetto
 	 * 
-	 * @param nomeMittente
+	 * @param tipoNomeMittente
 	 */
 	public void setTipoNomeMittente(String tipoNomeMittente) {
 		this.tipoNomeMittente = tipoNomeMittente;
@@ -221,7 +221,7 @@ public class BaseForm implements Serializable {
 	/**
 	 * ritorna il nome del soggetto locale
 	 * 
-	 * @return
+	 * @return Soggetto Locale
 	 */
 	public String getSoggettoLocale() {
 		User u = getUser();

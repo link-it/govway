@@ -21,7 +21,7 @@ public interface IGenericService {
 	/**
 	 * verifica l'esistenza di un'azione di configurazione tramite il nome
 	 * @param nomeAzione
-	 * @return
+	 * @return true se l'azione e' presente false altrimenti
 	 */
 	public boolean existServizioAzioneConfigByName(IDAccordo idAccordo, String nomeServizio, String nomeAzione);
 	

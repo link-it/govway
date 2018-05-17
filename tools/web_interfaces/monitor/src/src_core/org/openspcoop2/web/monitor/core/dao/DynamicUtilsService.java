@@ -249,7 +249,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	 * 
 	 * 
 	 * @param input
-	 * @return
+	 * @return elenco risultati trovati
 	 */
 	@Override
 	public List<Soggetto> soggettiAutoComplete(String tipoProtocollo,String input) {

@@ -262,7 +262,7 @@ public class EventiService implements IEventiService{
 	 * converto i dati inseriti dall'utente nel form nella query sql
 	 * 
 	 * @param dao
-	 * @return
+	 * @return Condizioni di ricerca da applicare
 	 * @throws ExpressionException 
 	 * @throws ExpressionNotImplementedException 
 	 * @throws NotImplementedException 

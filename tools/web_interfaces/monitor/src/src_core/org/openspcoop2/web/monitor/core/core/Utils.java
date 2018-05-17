@@ -109,9 +109,8 @@ public class Utils {
 	/**
 	 * Legge le proprieta' dal fileProperties passato come parametro
 	 * 
-	 * @param fileProperties
-	 *            Il path del file properties
-	 * @return
+	 * @param fileProperties Il path del file properties
+	 * @return Properties lette dal file
 	 * @throws Exception
 	 */
 	public static Properties readProperties(String fileProperties) throws Exception {

@@ -86,7 +86,7 @@ public abstract class BaseComponent<T> extends Parameter<T>{
 	 * 
 	 * Se e' presente un {@link IDynamicLoader} allora viene utilizzato per decidere se renderizzare il componente
 	 * altrimenti viene sempre renderizzato.
-	 * @return
+	 * @return true se il componente deve essere renderizzato false altrimenti.
 	 */
 	public boolean getRendered() {
 		if(this.getLoader()==null)

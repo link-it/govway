@@ -99,7 +99,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	/***
 	 * //  eliminato dalla tabella styleClass="#{allegato.mimeTypeImageClass}"
 	 * 
-	 * @return
+	 * @return Lista degli Allegati
 	 */
 	public List<DumpAllegato> getAllegati(){
 		

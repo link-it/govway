@@ -54,7 +54,7 @@ public class BrowserInfo implements Serializable{
 	 * Funzione che calcola lo user agent
 	 * 
 	 * @param Information
-	 * @return
+	 * @return Informazioni sul browser utilizzato
 	 */
 	public static BrowserInfo getBrowserInfo(String Information) {
 		BrowserInfo browserInfo = new BrowserInfo();

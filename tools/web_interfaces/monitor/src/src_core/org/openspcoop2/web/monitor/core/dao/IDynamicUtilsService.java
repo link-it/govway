@@ -35,7 +35,7 @@ public interface IDynamicUtilsService {
 	 * supporto all'autocompletamento dell'inpu soggetti
 	 * 
 	 * @param input
-	 * @return
+	 * @return Soggetti trovati
 	 */
 	public List<Soggetto> soggettiAutoComplete(String tipoProtocollo,String input) ;
 	public List<Soggetto> soggettiAutoComplete(String tipoProtocollo,String input,boolean searchTipo) ;
@@ -56,7 +56,7 @@ public interface IDynamicUtilsService {
 	 * 
 	 * Restituisce l'elenco dei soggetti
 	 * 
-	 * @return
+	 * @return Soggetti trovati
 	 */
 	public List<Soggetto> findElencoSoggetti(String tipoProtocollo, String idPorta);
 	
@@ -68,7 +68,7 @@ public interface IDynamicUtilsService {
 	 * 
 	 * @param tipoSoggetto
 	 * @param nomeSoggetto
-	 * @return
+	 * @return Soggetto trovato
 	 */
 	public Soggetto findSoggettoByTipoNome(String tipoSoggetto,	String nomeSoggetto);
 	
@@ -77,7 +77,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce il soggetto con id passato come parametri
 	 *
 	 * @param idSoggetto
-	 * @return
+	 * @return Soggetto trovato
 	 */
 	public Soggetto findSoggettoById(long idSoggetto);
 	
@@ -86,7 +86,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce l'elenco dei soggetti con il tipo passato come parametro
 	 * 
 	 * @param tipoSoggetto
-	 * @return
+	 * @return Soggetti trovati
 	 */
 	public List<Soggetto> findElencoSoggettiFromTipoSoggetto(String tipoSoggetto);
 	
@@ -98,7 +98,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce l'elenco dei soggetti con il tipo PdD passato come parametro
 	 * 
 	 * @param tipoPdD
-	 * @return
+	 * @return Soggetti trovati
 	 */
 	public List<Soggetto> findElencoSoggettiFromTipoPdD(String tipoProtocollo, TipoPdD tipoPdD);
 	
@@ -117,7 +117,7 @@ public interface IDynamicUtilsService {
 	 * AccordoServizioParteComune
 	 * 
 	 * @param soggetto
-	 * @return
+	 * @return Servizi trovati
 	 */
 	public List<Map<String, Object>> findElencoServizi(String tipoProtocollo,Soggetto soggetto) ;
 	
@@ -134,7 +134,7 @@ public interface IDynamicUtilsService {
 	 * AccordoServizioParteComune
 	 * 
 	 * @param soggetto
-	 * @return
+	 * @return Servizi trovati
 	 */
 	public List<Map<String, Object>> findElencoServizi(String tipoProtocollo,Soggetto soggetto, String val) ;
 	public List<Map<String, Object>> findElencoServizi(String tipoProtocollo,Soggetto soggetto, String val,boolean searchTipo) ;
@@ -144,10 +144,10 @@ public interface IDynamicUtilsService {
 	 * Restituisce l'accordo di servizio parte comune relativo al servizio passato
 	 * 
 	 * @param tipoProtocollo
-	 * @param soggetto
+	 * @param idSoggetto
 	 * @param tipoServizio
 	 * @param nomeServizio
-	 * @return
+	 * @return Accordi Servizio Parte Comune trovati
 	 */
 	public AccordoServizioParteComune getAccordoServizio(String tipoProtocollo, IDSoggetto idSoggetto, String tipoServizio, String nomeServizio);
 	
@@ -161,8 +161,8 @@ public interface IDynamicUtilsService {
 	 * Nome Servizio 
 	 * AccordoServizioParteComune
 	 * 
-	 * @param soggetto
-	 * @return
+	 * @param tipoProtocollo
+	 * @return Servizi trovati
 	 */
 	public List<Map<String, Object>> findElencoServizi(String tipoProtocollo ) ;
 	
@@ -173,7 +173,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce l'elenco dei nomi dei servizi applicativi associati al soggetto passato.
 	 * 
 	 * @param soggetto
-	 * @return
+	 * @return Servizi Applicativi trovati
 	 */
 	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto);
 
@@ -185,7 +185,7 @@ public interface IDynamicUtilsService {
 	 * 
 	 * @param idAccordo
 	 * @param nomeServizio
-	 * @return
+	 * @return Azione dell'Accordo trovate
 	 */
 	public List<Map<String, Object>> getAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio ,String nomeServizio,String tipoErogatore ,	String nomeErogatore, String nomeAzione);
 	
@@ -196,7 +196,7 @@ public interface IDynamicUtilsService {
 	 * 
 	 * @param tipoServizio
 	 * @param nomeServizio
-	 * @return
+	 * @return Azione del Servizio trovate
 	 */
 	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione) ;
 	
@@ -208,7 +208,7 @@ public interface IDynamicUtilsService {
 	 * 
 	 * @param idAccordo
 	 * @param nomeServizio
-	 * @return
+	 * @return PortType trovati
 	 */
 	public PortType getPortTypeFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo ,String nomeServizio) ;
 	
@@ -219,7 +219,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce la lista degli accordi di servizio che sono erogati o utilizzano come referente il soggetto passato come parametro.
 	 * 
 	 * @param nomeSoggetto
-	 * @return
+	 * @return Accordi trovati
 	 */
 	public List<AccordoServizioParteComune> getAccordiServizio(String tipoProtocollo,String tipoSoggetto, String nomeSoggetto, boolean isReferente, boolean isErogatore);
 	
@@ -229,7 +229,7 @@ public interface IDynamicUtilsService {
 	 * Restituisce la lista dei servizi che implementano l'accordo di servizio ed erogati dal soggetto passato come parametro.
 	 * 
 	 * @param uriAccordoServizio
-	 * @return
+	 * @return Servizi Trovati
 	 */
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto);
 	public List<AccordoServizioParteSpecifica> getServizi(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, String val);
@@ -249,7 +249,7 @@ public interface IDynamicUtilsService {
 	 * @param uriAccordoServizio
 	 * @param tipoErogatore
 	 * @param nomeErogatore
-	 * @return
+	 * @return Soggetti fruitori trovati
 	 */
 	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore);
 	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String tipoFruitore, String nomeFruitore);

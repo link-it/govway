@@ -11,7 +11,7 @@ public class Utils {
 	 * Concatena la stringa a con la stringa b
 	 * @param a
 	 * @param b
-	 * @return
+	 * @return concatenazione delle stringhe passate
 	 */
 	public static String concat(String a, String b) {
 		Utils.log.debug("concateno a:"+a+" b:"+b);
@@ -23,7 +23,7 @@ public class Utils {
 	 * il carattere indicato, se il separatore e' null allora le stringhe saranno concatenate senza separatore
 	 * @param strings
 	 * @param separator
-	 * @return
+	 * @return concatenazione delle stringhe passate
 	 */
 	public static String concat(String[] strings, String separator){
 		return StringUtils.join(strings,separator);

@@ -83,7 +83,7 @@ public class GenericService implements IGenericService {
 	 * verifica l'esistenza di un'azione di configurazione tramite il nome
 	 * 
 	 * @param nomeAzione
-	 * @return
+	 * @return true se l'azione e' presente false altrimenti
 	 */
 	@Override
 	public boolean existServizioAzioneConfigByName(IDAccordo idAccordo,

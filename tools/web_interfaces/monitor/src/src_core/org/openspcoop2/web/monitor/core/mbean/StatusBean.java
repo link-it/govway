@@ -107,7 +107,7 @@ public class StatusBean implements Serializable {
 	 * 
 	 * Resistuisce il valore della label dello stato
 	 * 
-	 * @return
+	 * @return tooltip stato
 	 */
 	public String getTooltipIconaStato() {
 		return this.tooltipIconaStato;
@@ -118,7 +118,7 @@ public class StatusBean implements Serializable {
 	 * 
 	 * Restituisce il nome della classe CSS da applicare alla label dello stato.
 	 * 
-	 * @return
+	 * @return icona stato
 	 */
 	public String getIconaStato(){
 		return this.iconaStato;
@@ -222,7 +222,7 @@ public class StatusBean implements Serializable {
 	/***
 	 * Metodo getter "finto" che serve alla chiamata ajax per scatenare l'aggiornamento dello stato.
 	 * 
-	 * @return
+	 * @return label stato
 	 */
 	public String getLabelStato(){
 		if(this.aggiornamentoAutomatico)

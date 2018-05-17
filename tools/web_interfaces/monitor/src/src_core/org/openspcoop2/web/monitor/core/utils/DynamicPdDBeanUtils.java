@@ -291,8 +291,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * La Mappa contiene
 	 * Nome Azione
 	 * 
-	 * @param erogatore
-	 * @return
+	 * @param tipoProtocollo
+	 * @param tipoServizio
+	 * @param nomeServizio
+	 * @param nomeAzione
+	 * @return Azioni del servizio
 	 */
 	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione){
 		List<Map<String, Object>>  list = new ArrayList<Map<String,Object>>();
@@ -312,9 +315,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * 
 	 * Restituisce la lista delle select items  per le azioni
 	 * 
-	 * @param idAccordo
+	 * @param tipoProtocollo
+	 * @param tipoServizio
 	 * @param nomeServizio
-	 * @return
+	 * @param nomeAzione
+	 * @return SelectItems delle azioni di un Servizio
 	 */
 	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione){
 		List<SelectItem> azioni = new ArrayList<SelectItem>();
@@ -337,13 +342,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	/***
 	 * 
-	 * Restituisce l'elenco dei servizi associati al soggetto erogatore passato come parametro
+	 * Restituisce l'elenco delle Azioni dell'Accordo di servizio passato come parametro
 	 * 
 	 * La Mappa contiene
 	 * Nome Azione
 	 * 
-	 * @param erogatore
-	 * @return
+	 * @param idAccordo
+	 * @param tipoProtocollo
+	 * @param tipoServizio
+	 * @param nomeServizio
+	 * @param tipoErogatore
+	 * @param nomeErogatore
+	 * @param nomeAzione
+	 * @return Azioni dell'Accordo di servizio
 	 */
 	public List<Map<String, Object>> getAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione){
 		List<Map<String, Object>>  list = new ArrayList<Map<String,Object>>();
@@ -365,7 +376,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * 
 	 * @param idAccordo
 	 * @param nomeServizio
-	 * @return
+	 * @return Lista delle SelectItems per le Azioni trovate
 	 */
 	public List<SelectItem> getListaSelectItemsAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione){
 		List<SelectItem> azioni = new ArrayList<SelectItem>();
@@ -409,12 +420,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * Restituisce l'elenco dei servizi associati al soggetto erogatore passato come parametro
 	 * 
 	 * La Mappa contiene
-	 * Tipo Servizio  {@link AccordoServizioParteSpecifica.model().TIPO}
-	 * Nome Servizio  {@link AccordoServizioParteSpecifica.model().NOME}
+	 * Tipo Servizio  
+	 * Nome Servizio  
 	 * AccordoServizioParteComune {@link AccordoServizioParteComune}
 	 * 
+	 * @param tipoProtocollo
 	 * @param erogatore
-	 * @return
+	 * @return Lista servizi erogati dal soggetto passato
 	 */
 	public List<Map<String, Object>> findElencoServiziSoggettoErogatore(String tipoProtocollo,Soggetto erogatore){
 		List<Map<String, Object>>  list = null;
@@ -429,11 +441,11 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	/**
 	 * 
-	 * 
+	 * @param tipoProtocollo
 	 * @param erogatore
 	 * @param showTipoServizio le option generate avranno label "TipoServizio/NomeServizio"
 	 * @param showUriAccordo le option generate avranno label "NomeServizio UriAccordoServizio"
-	 * @return
+	 * @return Lista selectitems dei servizi erogati dal soggetto passato
 	 */
 	public List<SelectItem> getListaSelectItemsElencoServiziSoggettoErogatore(String tipoProtocollo,Soggetto erogatore, boolean showTipoServizio, boolean showUriAccordo){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
@@ -517,15 +529,16 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 
 	/**
+	 * Resistuisce l'elenco degli accordi di servizio
 	 * 
-	 * 
-	 * @param erogatore
-	 * @param showTipoServizio le option generate avranno label "TipoServizio/NomeServizio"
-	 * @param showUriAccordo le option generate avranno label "NomeServizio UriAccordoServizio"
-	 * @return
+     * @param tipoProtocollo 
+     * @param tipoSoggetto
+	 * @param nomeSoggetto
+	 * @param isReferente indica se il soggetto e' referente
+	 * @param isErogatore indica se il soggetto e' erogatore
+	 * @return Lista SelectItems degli accordi di servizio
 	 */
-	public List<SelectItem> getListaSelectItemsAccordiServizio(String tipoProtocollo,
-			String tipoSoggetto, String nomeSoggetto, boolean isReferente, boolean isErogatore){
+	public List<SelectItem> getListaSelectItemsAccordiServizio(String tipoProtocollo, String tipoSoggetto, String nomeSoggetto, boolean isReferente, boolean isErogatore){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
@@ -567,11 +580,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	/**
 	 * 
-	 * 
-	 * @param erogatore
-	 * @param showTipoServizio le option generate avranno label "TipoServizio/NomeServizio"
-	 * @param showUriAccordo le option generate avranno label "NomeServizio UriAccordoServizio"
-	 * @return
+	 * @param tipoProtocollo 
+     * @param tipoSoggetto
+	 * @param nomeSoggetto 
+	 * @param uriAccordoServizio
+	 * @param showErogatore le option generate avranno label "UriAccordoServizio (TipoErogatore/NomeErogatore)"
+	 * @return Lista SelectItems dei  servizi
 	 */
 	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, boolean showErogatore){
 		return getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, showErogatore, false);
@@ -580,10 +594,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	/**
 	 * 
 	 * 
-	 * @param erogatore
-	 * @param showTipoServizio le option generate avranno label "TipoServizio/NomeServizio"
-	 * @param showUriAccordo le option generate avranno label "NomeServizio UriAccordoServizio"
-	 * @return
+	 * @param tipoProtocollo
+	 * @param uriAccordoServizio
+	 * @param tipoSoggetto
+	 * @param nomeSoggetto
+	 * @param showErogatore le option generate avranno label "UriAccordoServizio (TipoErogatore/NomeErogatore)"
+	 * @param soloOperativi visualizza solo operativi 
+	 * @return Lista SelectItems dei  servizi
 	 */
 	public List<SelectItem> getListaSelectItemsElencoServiziFromAccordoAndSoggettoErogatore(String tipoProtocollo,String uriAccordoServizio, String tipoSoggetto , String nomeSoggetto, boolean showErogatore, boolean soloOperativi){
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
@@ -698,7 +715,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param minValue
 	 * @param maxValue
 	 * @param value
-	 * @return 
+	 * @return  restituisce il valore compreso nei limiti impostati
 	 */
 	public static Integer checkLimits(Integer minValue, Integer maxValue , Integer value){
 		// valore deve essere compreso minore del max ma almeno quanto la default
@@ -745,7 +762,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 	/***
 	 * utilizzo Lucida sans come font di dafault poiche' e' generalmente presente nella jdk
 	 * 
-	 * @return
+	 * @return Font di defualt dell'applicazione
 	 */
 	public Font getDefaultFont() {
 		if(this.defaultFont == null)
@@ -762,6 +779,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return this.dynamicUtilsService.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
 	}
 
+	
 	/***
 	 * 
 	 * Restituisce l'elenco delle porte delegate associate al soggetto fruitore passato come parametro
@@ -769,8 +787,17 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * La Mappa contiene
 	 * Nome Azione
 	 * 
-	 * @param erogatore
-	 * @return
+	 * @param tipoProtocollo
+	 * @param idAccordo
+	 * @param tipoServizio
+	 * @param nomeServizio
+	 * @param tipoErogatore
+	 * @param nomeErogatore
+	 * @param nomeAzione
+	 * @param tipoFruitore
+	 * @param nomeFruitore
+	 * @param permessiUtenteOperatore
+	 * @return Elenco porte delegate
 	 */
 	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<PortaDelegata>  list = new ArrayList<PortaDelegata>();

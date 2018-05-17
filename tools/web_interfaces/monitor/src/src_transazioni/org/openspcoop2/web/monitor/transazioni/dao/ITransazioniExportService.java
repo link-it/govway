@@ -14,7 +14,7 @@ public interface ITransazioniExportService extends
 	 * 
 	 * @param dataInizio
 	 * @param dataFine
-	 * @return
+	 * @return la entry contenuta nell'intervallo
 	 */
 	public TransazioneExport getByIntervallo(Date dataInizio, Date dataFine);
 

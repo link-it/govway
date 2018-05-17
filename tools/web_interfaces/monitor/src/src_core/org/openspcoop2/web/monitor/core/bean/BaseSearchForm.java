@@ -347,7 +347,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	 * ad esempio non sono in un contesto j2ee e quindi spring-security non lo
 	 * utilizzo, allora viene ritornato l'utente gia' impostato
 	 * 
-	 * @return
+	 * @return Utente collegato
 	 */
 	public User getUser() {
 
@@ -375,7 +375,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	/**
 	 * La stringa di input sara' del tipo tipoSoggetto/nomeSoggetto
 	 * 
-	 * @param nomeMittente
+	 * @param tipoNomeMittente
 	 */
 	public void setTipoNomeMittente(String tipoNomeMittente) {
 		this.tipoNomeMittente = tipoNomeMittente;
@@ -576,7 +576,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	/**
 	 * ritorna il nome del soggetto locale
 	 * 
-	 * @return
+	 * @return Soggetto Locale
 	 */
 	public String getSoggettoLocale() {
 

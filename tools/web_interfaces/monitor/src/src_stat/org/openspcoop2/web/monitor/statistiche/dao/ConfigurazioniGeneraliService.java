@@ -167,7 +167,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 	/**
 	 * 
-	 * @return
+	 * @return numero delle PdD Registrate
 	 */
 	public ConfigurazioneGenerale getPdd(){
 		ConfigurazioneGenerale configurazione = new ConfigurazioneGenerale(); 
@@ -234,7 +234,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 	/**
 	 * 
-	 * @return
+	 * @return Numero degli Accordi Servizio Parte Comune
 	 * @throws Exception
 	 */
 	public ConfigurazioneGenerale getAccordiServizioParteComune() throws Exception{

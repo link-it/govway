@@ -114,7 +114,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	 * Ritorna la transazione originale della richiesta di questa (dettaglio),
 	 * se questa e' una transazione duplicata
 	 * 
-	 * @return
+	 * @return Transazione Originale Richiesta se questa e' duplicata
 	 */
 	public Transazione getTransazioneOriginaleRichiesta() {
 

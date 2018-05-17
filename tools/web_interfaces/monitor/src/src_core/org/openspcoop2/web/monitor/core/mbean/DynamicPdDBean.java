@@ -192,7 +192,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	 *  - uscita: erogatore preso dal soggettoDestinatario
 	 *  - All non c'e' filtro sui servizi  
 	 * 
-	 * @return
+	 * @return Soggetto erogatore
 	 */
 	protected Soggetto _getSoggettoErogatore() {
 		Soggetto erogatore = null;

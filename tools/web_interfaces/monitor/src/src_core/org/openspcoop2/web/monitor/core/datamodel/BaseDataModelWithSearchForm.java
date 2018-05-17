@@ -199,10 +199,10 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	}
 
 	/**
-	 * @param firstRow
-	 * @param numberOfRows
+	 * @param start
+	 * @param limit
 	 * @param sortField
-	 * @param descending
+	 * @param sortOrder
 	 * @return List
 	 */
 	protected abstract List<T> findObjects(int start, int limit, String sortField, SortOrder sortOrder);
