@@ -1,0 +1,1 @@
+<b:root xmlns:b="http://www.link.it/" version="1" xmlns:a="http://www.link.it/employee" ><a:employees><b:lastName>Doe</b:lastName><b:firstName>John</b:firstName></a:employees><a:employees><b:lastName>Smith</b:lastName><b:firstName>Anna</b:firstName></a:employees><a:employees><b:lastName>Jones</b:lastName><b:firstName>Peter</b:firstName></a:employees></b:root>
