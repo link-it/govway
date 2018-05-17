@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 
+  Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:a4j="http://richfaces.org/a4j"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:link="http://www.link.it">
+<a4j:loadScript src="resource://jquery.js"/>
+<script type="text/javascript">
+//<![CDATA[
+	function showConfirm(name){
+		var n = jQuery("input:checkbox:checked").length;
+		if(n>=1){
+			Richfaces.showModalPanel(name);
+		}
+		return false;
+	}
+//]]>
+</script>
+
+<a4j:commandButton value="#{label}" onclick="showConfirm('#{confirmId}confirmation')" />
+ 
+<a4j:jsFunction name="submit" action="#{mBean.delete}" reRender="#{reRender}"/>
+ 
+<rich:modalPanel id="#{confirmId}confirmation" width="250" height="150">
+   <f:facet name="header">
+   	<h:outputText value="Conferma Operazione" />
+   </f:facet>
+   <h:panelGrid>
+      <h:panelGrid columns="2">
+         <h:graphicImage value="/images/warn.png" />
+	 	<h:outputText value="#{confirmMsg}" style="FONT-SIZE: large;" />
+      </h:panelGrid>
+      <h:panelGroup>
+         <rich:spacer height="20px" />
+	 <input type="button" value="Ok"
+	   onclick="#{rich:component(link:concat(confirmId,'confirmation'))}.hide();submit();return false" />
+	 <input type="button" value="Annulla"
+	   onclick="#{rich:component(link:concat(confirmId,'confirmation'))}.hide();return false" />
+      </h:panelGroup>
+   </h:panelGrid>
+</rich:modalPanel>
+</ui:component>

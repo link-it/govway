@@ -1,0 +1,103 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:rich="http://richfaces.org/rich"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:link="http://www.link.it">
+		<a4j:loadScript src="resource://jquery.js"/>
+		<a4j:loadScript src="resource:///scripts/simpleDataTable.min.js" />
+	
+		<c:if test="#{empty width}">
+			<c:set var="width" value="100%"/>
+		</c:if>
+		
+		<c:if test="#{empty rowsToDisplay}">
+			<c:set var="rowsToDisplay" value="25"/>
+		</c:if>
+		<c:if test="#{empty showSelectAll}">
+			<c:set var="showSelectAll" value="true"/>
+		</c:if>
+		<c:if test="#{empty enableDelete}">
+			<c:set var="enableDelete" value="true"/>
+		</c:if>	
+		
+		<a4j:outputPanel id="#{id}" layout="block">
+		<script type="text/javascript">
+			 jQuery(document).ready(function() {
+				checkBrowser();
+				visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
+				visualizzaColonnaSelectAll('#{id}');
+			 });
+		</script>
+		<rich:dataTable  
+				value="#{value}"
+				var="item"		
+				id="#{id}_tbl" 
+				onRowMouseOver="activeRow(this)" 
+				rowClasses="even,odd"
+				width="#{width}">
+				
+				 
+				<f:facet name="header">
+					<h:outputText value="#{headerText}" rendered="#{not empty headerText}"/>
+				</f:facet>
+				 
+				 				
+					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
+	                    <f:facet name="header">
+	                      <h:panelGroup style="width:50px;" layout="block">
+	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked );">
+	                        	
+	                        </h:selectBooleanCheckbox>
+	                       
+	                      </h:panelGroup>
+	                    </f:facet>
+	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"/>
+	                  </rich:column>
+					  
+					  <ui:insert/>
+					  
+				      <f:facet name="footer">
+				      		<h:panelGroup layout="block;" styleClass="buttonrow" id="#{id}_buttonsDiv">
+					      		<div class="buttonrowlista">
+					      			<c:if test="#{empty customDelete or customDelete==false}">
+						      			<a4j:jsFunction id="#{id}_deleteSelected" name="#{id}_deleteSelected" action="#{mBean.delete}" reRender="#{id}"/>
+						      		</c:if>
+						      		<c:if test="#{not empty customDelete and customDelete==true and enableDelete}">
+						      			<ui:insert name="customDelete"/>
+						      		</c:if>
+						      					      			
+					      			<h:commandButton id="#{id}_deleteBtn" styleClass="negative icon-delete" value="Elimina Selezionati" onclick="showConfirm('#{id}','#{id}_deleteConfirmation'); return false" rendered="#{enableDelete and showSelectAll}"/>
+					      			
+					      			<ui:insert name="buttons"/>
+					      		</div>
+					      	</h:panelGroup>
+				       </f:facet>
+					  
+						
+			</rich:dataTable>
+			
+			<rich:modalPanel id="#{id}_deleteConfirmation" width="350" height="200">
+			   <f:facet name="header">
+			   	<h:outputText value="Conferma Operazione" />
+			   </f:facet>
+			   <div class="form-container noborder">
+				  <div class="buttonrowmodal">
+			      	<h:panelGrid columns="2">
+			        	 <h:graphicImage value="/images/tema_link/alert_orange.png" />
+				 		<h:outputText value="Eliminare elementi selezionati?" style="font-weight: bold;" />
+			      	</h:panelGrid>
+				</div>
+		        	<div class="errorsSpacer"/>
+			         <div class="buttonrowmodal">
+			     		<input id="#{id}_confermaRimozioneBtn" type="button" value="Conferma rimozione" class=""
+							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');#{id}_deleteSelected();return false" />
+						<input id="#{id}_annullaRimozioneBtn" type="button" value="Annulla" class="negative icon-delete"
+							   onclick="Richfaces.hideModalPanel('#{id}_deleteConfirmation');return false" />
+			         </div>
+				 </div>
+			</rich:modalPanel>
+		</a4j:outputPanel>
+</ui:component>

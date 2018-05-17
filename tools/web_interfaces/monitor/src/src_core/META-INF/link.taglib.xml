@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE facelet-taglib PUBLIC "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN" "facelet-taglib_1_0.dtd">
+<facelet-taglib>
+	<namespace>http://www.link.it</namespace>
+	
+	<tag>
+		<tag-name>dataTable</tag-name>
+		<source>taglib/PagedDataTable.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>extendedDataTable</tag-name>
+		<source>taglib/ExtendedPagedDataTable.xhtml</source>
+	</tag>
+	<tag>
+		<tag-name>confirm</tag-name>
+		<source>taglib/confirmation.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>fieldset</tag-name>
+   		<source>taglib/FieldSet.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>prop</tag-name>
+   		<source>taglib/property.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>inlineProp</tag-name>
+   		<source>taglib/inlineProperty.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>simpleDataTable</tag-name>
+   		<source>taglib/SimpleDataTable.xhtml</source>
+   	</tag>
+   <function>
+      <function-name>concat</function-name>
+      <function-class>it.link.pdd.monitor.web.baselib.taglib.functions.Utils</function-class>
+      <function-signature>
+         	java.lang.String concat(java.lang.String,java.lang.String)
+      </function-signature>
+   </function>
+</facelet-taglib>
