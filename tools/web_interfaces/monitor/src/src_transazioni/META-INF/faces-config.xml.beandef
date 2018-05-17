@@ -132,83 +132,83 @@
 		<from-view-id>*</from-view-id>
 		<navigation-case>
 			<from-outcome>transazioni</from-outcome>
-			<to-view-id>/pages/list/transazioni.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/list/transazioni.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>transazioniList</from-outcome>
-			<to-view-id>/pages/list/transazioni.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/list/transazioni.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>esitiLive</from-outcome>
-			<to-view-id>/pages/form/esitiLive.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/esitiLive.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/list/transazioni.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/list/transazioni.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/dettagliMessaggio.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>visualizzaTraccia</from-outcome>
-			<to-view-id>/pages/form/visualizzaTraccia.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>visualizzaDiagnostici</from-outcome>
-			<to-view-id>/pages/form/visualizzaDiagnostici.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/visualizzaDiagnostici.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dettaglioDump</from-outcome>
-			<to-view-id>/pages/form/dettaglioDump.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettaglioDump.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>headerTrasporto</from-outcome>
-			<to-view-id>/pages/form/headerTrasporto.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/headerTrasporto.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fault</from-outcome>
-			<to-view-id>/pages/form/fault.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/fault.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	<navigation-rule>
-		<from-view-id>/pages/form/visualizzaTraccia.xhtml</from-view-id>
-		<navigation-case>
-			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/fault.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/visualizzaDiagnostici.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/fault.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/headerTrasporto.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/visualizzaDiagnostici.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/dettaglioDump.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/headerTrasporto.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettaglioDump.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

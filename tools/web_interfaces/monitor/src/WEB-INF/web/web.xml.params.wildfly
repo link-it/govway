@@ -1,8 +1,8 @@
 	 
-	 <context-param>
+	<!-- <context-param>
   <param-name>com.sun.faces.serializationProvider</param-name>
   <param-value>org.jboss.web.jsf.integration.serialization.JBossSerializationProvider</param-value>
- </context-param>
+ </context-param> -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath*:META-INF/conf/spring/applicationContext*.xml</param-value>
@@ -63,11 +63,11 @@
 		<param-name>org.richfaces.LoadStyleStrategy</param-name>
 		<param-value>ALL</param-value>
 	</context-param>
-	<context-param>
+<!--	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>link</param-value>
 	</context-param>
-	
+-->	
 	<context-param>
       <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
       <param-value>mojarra-1.2_15</param-value>

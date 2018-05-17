@@ -11,7 +11,8 @@
 	<a4j:loadScript src="resource://org/richfaces/renderkit/html/scripts/jquery.hotkeys.js"/>
 	<ui:debug hotkey="X"/>
 	<f:facet name="pageHeader">
-		<title>#{licenseBean.title}</title>
+		<title>PddMonitor-BETA</title>
+<!-- 		<title>#{licenseBean.title}</title> -->
 		<link href="#{facesContext.externalContext.request.contextPath}/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 		<meta http-equiv="Content-Type" content="text/xml; charset=utf-8"/>
 		<!--[if !(IE)]><!-->
@@ -84,8 +85,8 @@
 		            		<tbody>
 			            		<tr>
 					                <td>
-				                		<a href="#{facesContext.externalContext.request.contextPath}/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
-											<h:outputText value="#{licenseBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
+				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
+											<h:outputText value="PddMonitor-BETA#{licenseBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
 										</a>
 					                </td>
 					                <td align="right" class="titleRight">
@@ -148,7 +149,7 @@
 										                        <h:outputText styleClass="nomeUtenteImg" value=""/>
 										                    </h:panelGroup>
 										                </f:facet>
-										                <rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" />
+<!-- 										                <rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" /> -->
 										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
 										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
 										                </rich:menuItem>
@@ -157,7 +158,7 @@
 													
 													<c:if test="#{applicationBean.amministratore or applicationBean.operatore}">
 														<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd">
-															<a href="#{facesContext.externalContext.request.contextPath}/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
+															<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
 																<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" style="vertical-align: bottom;" >
 																	<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
 																</h:graphicImage>
@@ -179,11 +180,11 @@
       
 	
 	<f:facet name="sidebar">
-		<ui:include src="/includes/menu.xhtml" />
+		<ui:include src="/commons/includes/menu.xhtml" />
 	</f:facet>
 	
 	<!-- Body -->
-	<ui:include src="/includes/status.xhtml" />
+	<ui:include src="/commons/includes/status.xhtml" />
 	<rich:panel id="bodyWrapper" styleClass="noborder">
 		<rich:jQuery name="activeRow" 
 						timing="onJScall" 

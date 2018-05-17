@@ -33,7 +33,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					<div class="form-container noborder">
 						<h:form prependId="false"  id="formSearchTransazioni" >
 							<a4j:jsFunction name="refreshPnl" reRender="panelTransazioniCtr"/>
-								<ui:include src="/includes/searchForm.xhtml" >
+								<ui:include src="/transazioni/includes/searchForm.xhtml" >
 									<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
 									<ui:param name="sf_periodo" value="#{searchFormTransazioni.periodo}" />
 									<ui:param name="sf_dataInizio" value="#{searchFormTransazioni.dataInizio}" />
@@ -151,7 +151,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 		        	</a4j:outputPanel>
 		        </h:form>
 				<a4j:form id="formListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" prependId="false">
-					<ui:include src="/includes/transazioniGrid.xhtml">
+					<ui:include src="/transazioni/includes/transazioniGrid.xhtml">
 						<ui:param value="#{transazioniDM}" name="value" />
 						<ui:param value="Lista Transazioni" name="headerText" />
 						<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />

@@ -1,7 +1,4 @@
-<converter>
-		<converter-id>dateIntervalConverter</converter-id>
-		<converter-class>org.openspcoop2.web.monitor.statistiche.converter.DateInterval</converter-class>
-	</converter>
+
 	<converter>
 		<converter-id>fileSizeConverter</converter-id>
 		<converter-class>org.openspcoop2.web.monitor.core.converter.FileSizeConverter</converter-class>
@@ -109,7 +106,7 @@
 		<from-view-id>*</from-view-id>
 		<navigation-case>
 			<from-outcome>welcome</from-outcome>
-			<to-view-id>/pages/welcome.xhtml?usaSVG=true</to-view-id>
+			<to-view-id>/commons/pages/welcome.xhtml?usaSVG=true</to-view-id>
 			<redirect />
 		</navigation-case>
 		<navigation-case>
@@ -118,15 +115,15 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>editUser</from-outcome>
-			<to-view-id>/pages/form/user.xhtml</to-view-id>
+			<to-view-id>/core/pages/form/user.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>about</from-outcome>
-			<to-view-id>/pages/about.xhtml</to-view-id>
+			<to-view-id>/commons/pages/about.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>statusPdD</from-outcome>
-			<to-view-id>/pages/statoPdd.xhtml</to-view-id>
+			<to-view-id>/commons/pages/statoPdd.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>logoutAS</from-outcome>
@@ -137,7 +134,7 @@
 		<from-view-id>/public/login.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>loginSuccess</from-outcome>
-			<to-view-id>/pages/welcome.jsf?usaSVG=true</to-view-id>
+			<to-view-id>/commons/pages/welcome.jsf?usaSVG=true</to-view-id>
 			<redirect />
 		</navigation-case>
 	</navigation-rule>
