@@ -16,35 +16,20 @@
 	<target name="war_openspcoop2_pddMonitor" depends="css_openspcoop2_pddMonitor">
 
 		<!-- Properties -->
-		<copy file="${properties_pddMonitor}/monitor.datasource.properties" todir="${build_pddMonitor}/tmp" />
+		<copy file="${properties_pddMonitor}/daoFactory_local.properties" todir="${build_pddMonitor}/tmp" />
 		<copy file="${properties_pddMonitor}/monitor.properties" todir="${build_pddMonitor}/tmp" />
 				
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<concat destfile="${build_pddMonitor}/tmp/monitor.datasource.properties" append="yes" >
+				<concat destfile="${build_pddMonitor}/tmp/daoFactory_local.properties" append="yes" >
 
 # ----- Personalizzazione Tomcat -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build_pddMonitor}/tmp/monitor.datasource.properties"/>
-					<param name="token" value="dataSource"/>
+				    <param name="file" value="${build_pddMonitor}/tmp/daoFactory_local.properties"/>
+					<param name="token" value="db.datasource.jndiName"/>
 					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_pddMonitor}/tmp/monitor.datasource.properties"/>
-					<param name="token" value="singlePdD.monitor.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_pddMonitor}/tmp/monitor.datasource.properties"/>
-					<param name="token" value="singlePdD.tracce.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.tracciamento"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_pddMonitor}/tmp/monitor.datasource.properties"/>
-					<param name="token" value="singlePdD.msgDiagnostici.dataSource"/>
-					<param name="value" value="java:/comp/env/org.openspcoop2.dataSource.msgDiagnostici"/>
 				</antcall>
 				<antcall target="dos2unix">
 					<param name="dir" value="${build_pddMonitor}/tmp"/>
@@ -52,12 +37,28 @@
 				</antcall>
 			</then>
 		</if>
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.properties.dao}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor}/tmp/daoFactory_local.properties" append="yes" >
 
+# ----- Personalizzazione Plugins -------------
+				</concat>
+				<concat destfile="${build_pddMonitor}/tmp/daoFactory_local.properties" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.properties.dao}"/>
+				</concat>
+			</then>
+		</if>
+
+		<!--
 		<antcall target="replace_token">
 		    <param name="file" value="${build_pddMonitor}/tmp/monitor.properties"/>
 			<param name="token" value="risorseJmxPdd.aliases"/>
 			<param name="value" value="#risorseJmxPdd.aliases"/>
 		</antcall>
+		-->
 
 		<antcall target="dos2unix">
 			<param name="dir" value="${build_pddMonitor}/tmp"/>
@@ -66,9 +67,9 @@
 		
 		
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
-		<if>
+		<!-- <if>
 			<matches string="${as}" pattern="tomcat.*"/>
-			<then>
+			<then> --> <!-- Aggiungo sempre, serve anche per allarmi -->
 				<unzip src="${required_lib}/shared/mailapi-1.5.6.jar" dest="${build_pddMonitor}/tmp/mailapi"/>
 				<concat destfile="${build_pddMonitor}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
@@ -77,8 +78,8 @@
 				<jar jarfile="${build_pddMonitor}/tmp/mailapi-1.5.6-openspcoop_ext.jar">
 					<zipfileset dir="${build_pddMonitor}/tmp/mailapi"/>
 				</jar>
-			</then>
-		</if>
+		<!--	</then>
+		</if> -->
 		
 		<war destfile="${dist_pddMonitor}/pddMonitor.war" webxml="${build_pddMonitor_war}/WEB-INF/web.xml">
 
@@ -93,11 +94,13 @@
 			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
 			<zipfileset dir="${build_pddMonitor}/tmp_css" prefix="css" />
 
-			<zipfileset dir="${jsp}" prefix="jsp" />
-			<zipfileset dir="${jsplib}" prefix="jsplib" />
-			<zipfileset dir="${jslib}" prefix="js" />
+			<!-- <zipfileset dir="${jsplib}" prefix="jsplib" /> -->
+			<!-- <zipfileset dir="${jslib}" prefix="js" /> -->
 
 			<fileset dir="${deploy_pddMonitor}/web-content">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="${deploy_pddMonitor}/pages">
 				<include name="**/*" />
 			</fileset>
 
@@ -111,15 +114,12 @@
 				<include name="jboss-web.xml" />
 			</webinf>
 			<classes dir="${properties_pddMonitor}">
-				<include name="monitor.audit.log4j2.properties" />
 				<include name="monitor.log4j2.properties" />
-				<include name="monitor.registroServiziRemoto.properties" />
 				<include name="log4j2.properties" />
 			</classes>
 			<classes dir="${build_pddMonitor}/tmp">
-				<include name="monitor.datasource.properties" />
+				<include name="daoFactory_local.properties" />
 				<include name="monitor.properties" />
-				<include name="queue.properties" />
 			</classes>
 			<lib dir="${required_lib_pddMonitor}/commons">
 				<include name="commons-beanutils-1.9.2.jar" />
@@ -132,6 +132,7 @@
 				<include name="commons-lang-2.6.jar" />
 				<include name="${commons_logging_jar}"/>
 				<include name="commons-lang3-3.4.jar"/>
+				<include name="commons-codec-1.10.jar" />
 			</lib>
 			<lib dir="${required_lib_pddMonitor}/shared">
 				<include name="wsdl4j-1.6.3.jar" />
@@ -148,6 +149,7 @@
 				<include name="xmlunit-1.6.jar" />
 				<include name="snakeyaml-1.19.jar" />
 				<include name="freemarker-2.3.25.jar" />
+				<include name="activation-1.1.1.jar" />
 			</lib>
 			<lib dir="${required_lib_pddMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
@@ -156,6 +158,20 @@
 			</lib>
 			<lib dir="${required_lib_pddMonitor}/saaj">
 				<include name="*.jar" />
+			</lib>
+			<lib dir="${required_lib_pddMonitor}/faces">
+				<include name="richfaces-api-3.3.4.Final.jar" />
+				<include name="richfaces-ui-3.3.4.Final.jar" />
+				<include name="richfaces-impl-3.3.4.Final.jar" />
+				<include name="jsf-facelets-1.1.15.jar" />
+				<include name="aopalliance-1.0.jar" />
+				<include name="cglib-nodep-2.2.3.jar" />
+				<include name="${jsr311-api_jar}" />
+				<include name="${javax_servlet_jsp_jstl_jar}" />
+				<include name="${javax_servlet_jsp_jstl_api_jar}" />
+				<include name="${jsf_impl_jar}" />
+				<include name="${jsf_api_jar}" />
+				<include name="${el_impl_jar}" />
 			</lib>
 			<lib dir="${required_lib_pddMonitor}/jax">
 				<include name="jaxws-*.jar" />
@@ -169,10 +185,12 @@
 			</lib>
 			<lib dir="${required_lib}/javax">
 				<include name="${javax_jms_jar}"/>
+				<include name="${javax_el_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.0.7.jar"/>
-				<include name="${neethi_jar}" />
+				<include name="neethi-3.0.3.jar" />
+				<include name="bcprov-ext-jdk15on-155.jar" />
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>
@@ -183,8 +201,28 @@
 			<lib dir="${required_lib}/wadl">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${required_lib}/spring">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib}/swagger">
 				<include name="*.jar"/>
+			</lib>
+			<lib dir="${required_lib}/reports"> <!-- I report CSV vengono anche utilizzati per l'esportazione delle transazioni -->
+				<include name="dynamicreports-core-4.1.1.jar"/>
+				<include name="itext-2.1.7.js5.jar"/>
+				<include name="jcommon-1.0.23.jar"/>
+				<include name="jasperreports-6.2.2.jar"/>
+				<include name="poi-3.10.1.jar"/>
+				<include name="${ecj_jar}"/>
+			</lib>
+			<lib dir="${deploy_pddMonitor}/modulo-jsf12/com/sun/jsf-impl/mojarra-1.2_15">
+				<include name="${jsf_module_jar}"/>
+			</lib>
+			<lib dir="${deploy_pddMonitor}/modulo-jsf12/javax/faces/api/mojarra-1.2_15">
+				<include name="${jsf_module_jar}"/>
+			</lib>
+			<lib dir="${deploy_pddMonitor}/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15">
+				<include name="${jsf_module_jar}"/>
 			</lib>
 			<lib dir="${dist_pddMonitor}">
 				<include name="openspcoop2*.jar" />

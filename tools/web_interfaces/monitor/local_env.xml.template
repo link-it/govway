@@ -20,7 +20,7 @@
       <property name="buildAPI" value="true"/>
       <property name="buildWithLoginForm" value="true"/>
       <property name="buildWithSecurityContainer" value="false"/>
-      <property name="buildJsfAsModule" value="false" />
+      <property name="buildJsfAsModule" value="true" />
       <property name="buildSQLSinglePdD_addArchivioComunicazioni" value="true"/>
 
       <!-- Dipendenze di compilazione -->

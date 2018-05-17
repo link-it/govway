@@ -12,6 +12,7 @@
 	<import file="./ant/openspcoop2-pddMonitor_eventi-build.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-war.xml" />
 	<import file="./ant/openspcoop2-pddMonitor-codeGen.xml" />
+	<import file="./ant/openspcoop2-pddMonitor-resource.xml" />
 	<import file="${mvc}/build.xml" />
 	<import file="${users}/build.xml" />
 	<import file="${audit}/build.xml" />
@@ -67,6 +68,15 @@
 	<var name="commons_logging_jar" value="" />
 	<var name="javax_jms_jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
+	<var name="ecj_jar" value="" />
+	<var name="jsr311-api_jar" value="" />
+	<var name="javax_servlet_jsp_jstl_jar" value="" />
+	<var name="javax_servlet_jsp_jstl_api_jar" value="" />
+	<var name="jsf_impl_jar" value="" />
+	<var name="jsf_api_jar" value="" />
+	<var name="el_impl_jar" value="" />
+	<var name="javax_el_jar" value="" />
+	<var name="jsf_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -127,16 +137,6 @@
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5.jar"/>
 		</then>
 	</if>
-	<!-- neethi -->
-	<var name="neethi_jar" value="" />
-	<if>
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="neethi_jar" value="neethi-3.0.3.jar"/>
-		</then>
-	</if>
 	<!-- geronimo_jaxws_spec -->
 	<var name="geronimo_jaxws_spec_jar" value="" />
 	<if>
@@ -147,6 +147,76 @@
 			<var name="geronimo_jaxws_spec_jar" value="DADEFINIREMEGLIOgeronimo-jaxws_2.2_spec-1.1.jar"/>
 		</then>
 	</if>
+	<!-- ecj_jar -->
+	<if> 
+		<or>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="ecj_jar" value="ecj-4.3.1.jar" />
+		</then>
+	</if>
+	<!-- jsr311-api_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss6"/>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="jsr311-api_jar" value="jsr311-api-1.1.1.jar" />
+		</then>
+	</if>
+	<!-- javax_servlet_jsp_jstl_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="javax_servlet_jsp_jstl_jar" value="javax.servlet.jsp.jstl-1.2.1.jar" />
+			<var name="javax_servlet_jsp_jstl_api_jar" value="javax.servlet.jsp.jstl-api-1.2.1.jar" />
+		</then>
+	</if>
+	<!-- jsf_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jsf_impl_jar" value="jsf-impl-1.2_16.jar" />
+			<var name="jsf_api_jar" value="jsf-api-1.2_16.jar" />
+		</then>
+	</if>
+	<!-- el_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="el_impl_jar" value="el-impl-2.2.jar" />
+		</then>
+	</if>
+	<!-- javax_el_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="tomcat5"/>
+		</or>
+		<then>
+			<var name="javax_el_jar" value="javax.el.jar" />
+		</then>
+	</if>
+	
+	<!-- JSF Module -->
+	<if>
+		<and>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<equals arg1="${buildJsfAsModule}" arg2="false"/>
+		</and>
+		<then>
+			<var name="jsf_module_jar" value="*.jar" />
+		</then>
+	</if>	
+
 	<!-- jboss_classloading -->
 	<if>
 		<or>
@@ -186,11 +256,6 @@
 	<var name="singlePdD" value="false" />
 	<!-- Indicazione se produrre la versione singlePdD con registroServizi locale -->
 	<var name="singlePdD.registroServizi.locale" value="true" />
-
-	<!-- Directory per librerie -->
-	<property name="lib" location="${deploy_pddMonitor}/lib" />
-	<property name="jsp" location="${deploy_pddMonitor}/jsp" />
-	<property name="images" location="${deploy_pddMonitor}/images" />
 
 	
 	<!-- estensione di ant (if .... ) -->
@@ -257,6 +322,15 @@
 		</pathconvert>
 		<echo message="Plugins-properties della PdDMonitor: ${plugins.classpath.properties}" />
 
+		<!-- dao properties -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.properties.dao">
+			<include name="**/*.properties.dao" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.properties.dao" refid="plugins.properties.dao">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins-properties (DAO) della PdDMonitor: ${plugins.classpath.properties.dao}" />
+
 		<!-- WEB-INF/<nome>.web.xml.params -->
 		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.params">
 			<include name="**/*.web.xml.params" />
@@ -301,6 +375,7 @@
 			<map from="${plugins_pddMonitor}/" to="" />
 		</pathconvert>
 		<echo message="Plugins WEB-INF/web.xml (servlet.mapping) della PdDMonitor: ${plugins.classpath.web.xml.servlet.mapping}" />
+
 	</target>
 
 	
@@ -321,8 +396,26 @@
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_pddMonitor" depends="plugins,compile_dipendenze,compile_pddMonitor,war_openspcoop2_pddMonitor" description="Crea la struttura del modulo WAR" />
-
+	<target name="build_pddMonitor" depends="plugins,compile_dipendenze,compile_pddMonitor,-prepare,war_openspcoop2_pddMonitor" description="Crea la struttura del modulo WAR" >
+		<!-- Per wildfly devo fornire  il modulo jsf 1.2 da installare. -->
+		<if> 
+			<or>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<if>
+					<and>
+					    	<equals arg1="${buildJsfAsModule}" arg2="true"/>
+					</and>
+					<then>
+						<copy todir="${dist_pddMonitor}/modulo-jsf12">
+    							<fileset dir="${deploy_pddMonitor}/modulo-jsf12"/>
+    						</copy>
+					</then>
+				</if>
+			</then>
+		</if>
+	</target>
 	
 	<!-- alias -->
 	<target name="build" depends="build_pddMonitor"/>
