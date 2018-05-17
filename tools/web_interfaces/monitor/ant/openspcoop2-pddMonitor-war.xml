@@ -116,6 +116,7 @@
 			<classes dir="${properties_pddMonitor}">
 				<include name="monitor.log4j2.properties" />
 				<include name="log4j2.properties" />
+				<include name="messages_it.properties" />
 			</classes>
 			<classes dir="${build_pddMonitor}/tmp">
 				<include name="daoFactory_local.properties" />

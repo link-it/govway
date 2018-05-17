@@ -59,10 +59,10 @@
 		<param-name>org.richfaces.LoadStyleStrategy</param-name>
 		<param-value>ALL</param-value>
 	</context-param>
-	<context-param>
+<!--	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>link</param-value>
-	</context-param>
+	</context-param> -->
 	
 	<context-param>
       <param-name>org.jboss.jbossfaces.JSF_CONFIG_NAME</param-name>
