@@ -604,6 +604,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			
 		// Imposto risposta
+
+		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
+		
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
 		}
@@ -1036,6 +1039,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
 				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
+				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
 				if(erroreConsegnaRisposta==null){
 					postOutResponseContext.setEsito(esito);
 				}else{

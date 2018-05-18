@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * InRequestContext
@@ -36,11 +37,11 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class InRequestProtocolContext extends InRequestContext {
 
-	public InRequestProtocolContext(Logger logger,IProtocolFactory<?> protocolFactory){
-		super(logger,protocolFactory);
+	public InRequestProtocolContext(Logger logger,IProtocolFactory<?> protocolFactory, IState state){
+		super(logger,protocolFactory,state);
 	}
 	public InRequestProtocolContext(InRequestContext inRequestContext){
-		super(inRequestContext.getLogCore(),inRequestContext.getProtocolFactory());
+		super(inRequestContext.getLogCore(),inRequestContext.getProtocolFactory(),inRequestContext.getStato());
 		super.setConnettore(inRequestContext.getConnettore());
 		super.setDataAccettazioneRichiesta(inRequestContext.getDataAccettazioneRichiesta());
 		super.setDataElaborazioneMessaggio(inRequestContext.getDataElaborazioneMessaggio());

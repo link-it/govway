@@ -908,6 +908,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}
 				postOutResponseContext.setPddContext(context.getPddContext());
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
+				postOutResponseContext.setDataPrimaSpedizioneRisposta(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setMessaggio(msgResponse);
 				

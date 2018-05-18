@@ -22,6 +22,9 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import org.slf4j.Logger;
+
+import java.util.Date;
+
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 
@@ -37,7 +40,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 public class PostOutResponseContext extends OutResponseContext {
 
 	public PostOutResponseContext(Logger logger,IProtocolFactory<?> protocolFactory){
-		super(logger,protocolFactory);
+		super(logger,protocolFactory, null);
 	}
 	
 	/** Esito */
@@ -54,6 +57,9 @@ public class PostOutResponseContext extends OutResponseContext {
 	private Long outputRequestMessageSize;
 	private Long inputResponseMessageSize;
 	private Long outputResponseMessageSize;
+	
+	/** Data prima della spedizione della risposta */
+	private Date dataPrimaSpedizioneRisposta;
 	
 	public EsitoTransazione getEsito() {
 		return this.esito;
@@ -125,5 +131,13 @@ public class PostOutResponseContext extends OutResponseContext {
 				this.outputResponseMessageSize = outputResponseMessageSize;
 			}
 		}
+	}
+	
+	public Date getDataPrimaSpedizioneRisposta() {
+		return this.dataPrimaSpedizioneRisposta;
+	}
+
+	public void setDataPrimaSpedizioneRisposta(Date dataPrimaSpedizioneRisposta) {
+		this.dataPrimaSpedizioneRisposta = dataPrimaSpedizioneRisposta;
 	}
 }

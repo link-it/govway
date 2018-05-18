@@ -26,6 +26,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * OutRequestContext
@@ -37,9 +38,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class OutRequestContext extends BaseContext {
 
-	public OutRequestContext(Logger logger,IProtocolFactory<?> protocolFactory){
+	public OutRequestContext(Logger logger,IProtocolFactory<?> protocolFactory, IState state){
 		super.setLogCore(logger);
 		super.setProtocolFactory(protocolFactory);
+		super.setStato(state);
 	}
 	
 	/** Informazioni sul connettore di uscita */

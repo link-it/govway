@@ -349,7 +349,7 @@ public class RicezioneContenutiApplicativi {
 			setSOAPFault(IntegrationError.INTERNAL_ERROR, logCore, msgDiag, e, "ProtocolFactoryInstance");
 			return;
 		}
-		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory);
+		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory, null);
 		// TipoPorta
 		inRequestContext.setTipoPorta(TipoPdD.DELEGATA);
 		inRequestContext.setIdModulo(this.msgContext.getIdModulo());
@@ -484,7 +484,7 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		// ------------- out-handler -----------------------------
-		OutResponseContext outResponseContext = new OutResponseContext(logCore,protocolFactory);
+		OutResponseContext outResponseContext = new OutResponseContext(logCore,protocolFactory, null);
 		// TipoPorta
 		outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
 		outResponseContext.setIdModulo(this.msgContext.getIdModulo());

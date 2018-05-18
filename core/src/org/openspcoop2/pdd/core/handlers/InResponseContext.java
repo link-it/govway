@@ -28,6 +28,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 
 /**
@@ -40,9 +41,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class InResponseContext extends BaseContext {
 
-	public InResponseContext(Logger logger,IProtocolFactory<?> protocolFactory){
+	public InResponseContext(Logger logger,IProtocolFactory<?> protocolFactory, IState state){
 		super.setLogCore(logger);
 		super.setProtocolFactory(protocolFactory);
+		super.setStato(state);
 	}
 	
 	/** Informazioni sul connettore di uscita */
@@ -63,8 +65,14 @@ public class InResponseContext extends BaseContext {
 	/** Proprieta' di trasporto della risposta */
 	private java.util.Properties propertiesRispostaTrasporto;
 	
-	/** Data accettazione Risposta */
+	/** Data accettazione Risposta (prima della lettura della risposta) */
 	private Date dataAccettazioneRisposta;
+	
+	/** Data prima dell'invocazione del connettore send */
+	private Date dataPrimaInvocazioneConnettore = null;
+
+	/** Data dopo aver terminato l'invocazione del connettore */
+	private Date dataTerminataInvocazioneConnettore = null;
 	
 	public Date getDataAccettazioneRisposta() {
 		return this.dataAccettazioneRisposta;
@@ -72,6 +80,22 @@ public class InResponseContext extends BaseContext {
 
 	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) {
 		this.dataAccettazioneRisposta = dataAccettazioneRisposta;
+	}
+	
+	public Date getDataPrimaInvocazioneConnettore() {
+		return this.dataPrimaInvocazioneConnettore;
+	}
+
+	public void setDataPrimaInvocazioneConnettore(Date dataPrimaInvocazioneConnettore) {
+		this.dataPrimaInvocazioneConnettore = dataPrimaInvocazioneConnettore;
+	}
+
+	public Date getDataTerminataInvocazioneConnettore() {
+		return this.dataTerminataInvocazioneConnettore;
+	}
+
+	public void setDataTerminataInvocazioneConnettore(Date dataTerminataInvocazioneConnettore) {
+		this.dataTerminataInvocazioneConnettore = dataTerminataInvocazioneConnettore;
 	}
 	
 	public InfoConnettoreUscita getConnettore() {

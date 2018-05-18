@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * OutResponseContext
@@ -36,9 +37,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class OutResponseContext extends BaseContext {
 
-	public OutResponseContext(Logger logger,IProtocolFactory<?> protocolFactory){
+	public OutResponseContext(Logger logger,IProtocolFactory<?> protocolFactory, IState state){
 		super.setLogCore(logger);
 		super.setProtocolFactory(protocolFactory);
+		super.setStato(state);
 	}
 	
 	/** Informazioni protocollo */

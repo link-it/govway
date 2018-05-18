@@ -26,6 +26,7 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * InRequestContext
@@ -37,9 +38,10 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class InRequestContext extends BaseContext {
 
-	public InRequestContext(Logger logger,IProtocolFactory<?> protocolFactory){
+	public InRequestContext(Logger logger,IProtocolFactory<?> protocolFactory, IState state){
 		super.setLogCore(logger);
 		super.setProtocolFactory(protocolFactory);
+		super.setStato(state);
 	}
 	
 	/** Informazioni sul connettore di ingresso */

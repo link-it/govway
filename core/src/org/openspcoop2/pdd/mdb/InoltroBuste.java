@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.mdb;
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -1726,7 +1727,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------------- OutRequestHandler -----------------------*/
 			OutRequestContext outRequestContext = null;
 			try{
-				outRequestContext = new OutRequestContext(this.log,protocolFactory);
+				outRequestContext = new OutRequestContext(this.log,protocolFactory,openspcoopstate.getStatoRichiesta());
 				
 				// Informazioni connettore in uscita
 				InfoConnettoreUscita infoConnettoreUscita = new InfoConnettoreUscita();
@@ -1942,11 +1943,15 @@ public class InoltroBuste extends GenericLib{
 			
 
 			// --------------------- spedizione --------------------------
+			Date dataPrimaInvocazioneConnettore = null;
+			Date dataTerminataInvocazioneConnettore = null;
 			if(invokerNonSupportato==false){
 				// utilizzo connettore
 				msgDiag.logPersonalizzato("inoltroInCorso");
 				ejbUtils.setSpedizioneMsgIngresso(new Timestamp(outRequestContext.getDataElaborazioneMessaggio().getTime()));
+				dataPrimaInvocazioneConnettore = DateManager.getDate();
 				errorConsegna = !connectorSender.send(connettoreMsg);
+				dataTerminataInvocazioneConnettore = DateManager.getDate();
 			}
 			
 			
@@ -2212,7 +2217,7 @@ public class InoltroBuste extends GenericLib{
 			InResponseContext inResponseContext = null;
 			if(invokerNonSupportato==false){
 				try{
-					inResponseContext = new InResponseContext(this.log,protocolFactory);
+					inResponseContext = new InResponseContext(this.log,protocolFactory,openspcoopstate.getStatoRisposta());
 					
 					// Informazioni sul messaggio di riposta
 					if(responseMessage!=null){
@@ -2229,6 +2234,8 @@ public class InoltroBuste extends GenericLib{
 						outRequestContext.getConnettore().setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
 					}
 					inResponseContext.setConnettore(outRequestContext.getConnettore());
+					inResponseContext.setDataPrimaInvocazioneConnettore(dataPrimaInvocazioneConnettore);
+					inResponseContext.setDataTerminataInvocazioneConnettore(dataTerminataInvocazioneConnettore);
 					inResponseContext.setDataAccettazioneRisposta(connectorSender.getDataAccettazioneRisposta());
 					inResponseContext.setDataElaborazioneMessaggio(ejbUtils.getRicezioneMsgRisposta());
 					inResponseContext.setProtocollo(outRequestContext.getProtocollo());

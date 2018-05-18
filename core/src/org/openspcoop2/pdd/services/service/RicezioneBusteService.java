@@ -671,6 +671,10 @@ public class RicezioneBusteService  {
 		}
 
 
+		
+		// Imposto risposta
+
+		Date dataPrimaSpedizioneRisposta = DateManager.getDate();
 
 		if(context.getMsgDiagnostico()!=null){
 			msgDiag = context.getMsgDiagnostico();
@@ -1077,6 +1081,7 @@ public class RicezioneBusteService  {
 					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
 				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
+				postOutResponseContext.setDataPrimaSpedizioneRisposta(dataPrimaSpedizioneRisposta);
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);
 				postOutResponseContext.setPropertiesRispostaTrasporto(context.getHeaderIntegrazioneRisposta());

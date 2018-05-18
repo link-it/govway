@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * BaseContext
@@ -60,6 +61,17 @@ public abstract class BaseContext {
 	/** Logger */
 	private Logger logCore;
 	
+	/** Stato */
+	private IState stato;
+	
+	public IState getStato() {
+		return this.stato;
+	}
+
+	public void setStato(IState stato) {
+		this.stato = stato;
+	}
+
 	public OpenSPCoop2Message getMessaggio() {
 		return this.messaggio;
 	}

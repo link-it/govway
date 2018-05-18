@@ -32,11 +32,11 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 public class PostOutRequestContext extends OutRequestContext {
 
 	public PostOutRequestContext(Logger logger, IProtocolFactory<?> protocolFactory){
-		super(logger,protocolFactory);
+		super(logger,protocolFactory,null);
 	}
 	
 	public PostOutRequestContext(OutRequestContext outRequestContext){
-		super(outRequestContext.getLogCore(),outRequestContext.getProtocolFactory());
+		super(outRequestContext.getLogCore(),outRequestContext.getProtocolFactory(),outRequestContext.getStato());
 		
 		this.setConnettore(outRequestContext.getConnettore());
 		this.setProtocollo(outRequestContext.getProtocollo());

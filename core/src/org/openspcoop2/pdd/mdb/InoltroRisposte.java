@@ -780,7 +780,7 @@ public class InoltroRisposte extends GenericLib{
 			/* ---------------- OutResponseHandler ----------------------*/
 			
 			
-			OutResponseContext outResponseContext = new OutResponseContext(this.log,protocolFactory);
+			OutResponseContext outResponseContext = new OutResponseContext(this.log,protocolFactory,openspcoopstate.getStatoRichiesta());
 		
 			EsitoTransazione esitoHandler = null;
 			if(inoltroSegnalazioneErrore==false){
