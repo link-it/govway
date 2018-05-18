@@ -3,6 +3,7 @@ package org.openspcoop2.core.commons.dao;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
@@ -61,15 +62,49 @@ public class DAOFactoryProperties {
 
 		/* ---- Lettura del cammino del file di configurazione ---- */
 
-		Properties propertiesReader = new Properties();
+		Properties propertiesReaded = new Properties();
+		
+		// internal (required)
+		java.io.InputStream propertiesInternal = null;
+		try{  
+			propertiesInternal = DAOFactoryProperties.class.getResourceAsStream("/daoFactory.internal.properties");
+			if(propertiesInternal==null){
+				throw new Exception("Properties daoFactory.internal.properties not found");
+			}
+			propertiesReaded.load(propertiesInternal);
+			propertiesInternal.close();
+		}catch(java.io.IOException e) {
+			log.error("Riscontrato errore durante la lettura del file 'daoFactory.internal.properties': "+e.getMessage(),e);
+			try{
+				if(propertiesInternal!=null)
+					propertiesInternal.close();
+			}catch(Exception er){}
+			throw e;
+		}
+		
+		// opzionale e sovrascrive eventuali properties
 		java.io.InputStream properties = null;
 		try{  
 			properties = DAOFactoryProperties.class.getResourceAsStream("/daoFactory.properties");
-			if(properties==null){
-				throw new Exception("Properties daoFactory.properties not found");
+			if(properties!=null){
+				Properties tmp = new Properties();
+				tmp.load(properties);
+				properties.close();
+				if(tmp.size()>0) {
+					Iterator<?> itTmp = tmp.keySet().iterator();
+					while (itTmp.hasNext()) {
+						Object oKey = (Object) itTmp.next();
+						if(oKey instanceof String) {
+							String key = (String) oKey;
+							String value = tmp.getProperty(key);
+							if(propertiesReaded.containsKey(key)) {
+								propertiesReaded.remove(key);
+							}
+							propertiesReaded.setProperty(key, value);
+						}
+					}
+				}
 			}
-			propertiesReader.load(properties);
-			properties.close();
 		}catch(java.io.IOException e) {
 			log.error("Riscontrato errore durante la lettura del file 'daoFactory.properties': "+e.getMessage(),e);
 			try{
@@ -80,7 +115,7 @@ public class DAOFactoryProperties {
 		}	
 
 		try{
-			this.reader = new DAOFactoryInstanceProperties(propertiesReader, log);
+			this.reader = new DAOFactoryInstanceProperties(propertiesReaded, log);
 		}catch(Exception e){
 			throw new DAOFactoryException(e.getMessage(),e);
 		}
