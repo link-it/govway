@@ -139,7 +139,6 @@
 				<include name="wsdl4j-1.6.3.jar" />
 				<include name="struts-core-1.3.10.jar" />
 				<include name="xmldb.jar" />
-				<include name="json-lib-2.4-jdk15.jar" />
 				<include name="ezmorph-1.0.6.jar" />
 				<include name="xom-1.2.10.jar" />
 				<include name="${xerces_jar}"/>

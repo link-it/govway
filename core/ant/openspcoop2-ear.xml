@@ -792,7 +792,6 @@
 				<include name="velocity-1.7.jar"/>
 				<include name="urlrewritefilter-4.0.3.jar"/>
 				<include name="${concurrent_jar}"/>
-				<include name="json-lib-2.4-jdk15.jar" /> <!--jmx mini console -->
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
 				<include name="joda-time-2.9.4.jar" />
@@ -835,6 +834,7 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/json">
 				<include name="*.jar"/>
+				<!-- <include name="json-lib-2.4-jdk15.jar" /> --> <!--jmx mini console -->
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jackson">
 				<include name="*.jar"/>
