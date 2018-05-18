@@ -233,7 +233,9 @@ public class SOAPEngine {
 					
 				}
 				if(id != null) {
-					repository.add(id);
+					if(repository!=null) { // asincroni e' null
+						repository.add(id);
+					}
 				}
 			}
 			throw e;			

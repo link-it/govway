@@ -296,6 +296,12 @@ public abstract class MessageSecurityContext{
     			else if(SecurityConstants.SECURITY_ENGINE_SOAPBOX.equals(engineProperty)){
     				this.securityEngine = SecurityConstants.SECURITY_ENGINE_SOAPBOX;
     			}
+    			else if(SecurityConstants.SECURITY_ENGINE_JOSE.equals(engineProperty)){
+    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_JOSE;
+    			}
+    			else if(SecurityConstants.SECURITY_ENGINE_XML.equals(engineProperty)){
+    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_XML;
+    			}
 //    			else if(SecurityConstants.SECURITY_ENGINE_DSS.equals(engineProperty)){
 //    				this.securityEngine = SecurityConstants.SECURITY_ENGINE_DSS;
 //    			}
@@ -313,12 +319,22 @@ public abstract class MessageSecurityContext{
     			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecuritySender_soapbox");
     			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityReceiver_soapbox");
     			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.soapbox.MessageSecurityDigest_soapbox");
+    		}else if(SecurityConstants.SECURITY_ENGINE_JOSE.equals(this.securityEngine)){
+    			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecurityContext_jose");
+    			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecuritySender_jose");
+    			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecurityReceiver_jose");
+    			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.jose.MessageSecurityDigest_jose");
+    		}else if(SecurityConstants.SECURITY_ENGINE_XML.equals(this.securityEngine)){
+    			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecurityContext_xml");
+    			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecuritySender_xml");
+    			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecurityReceiver_xml");
+    			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.xml.MessageSecurityDigest_xml");
 //    		} else if(SecurityConstants.SECURITY_ENGINE_DSS.equals(this.securityEngine)){
 //			this.messageSecurityContext = (IMessageSecurityContext) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityContext_dss");
 //			this.messageSecuritySender = (IMessageSecuritySender) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecuritySender_dss");
 //			this.messageSecurityReceiver = (IMessageSecurityReceiver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityReceiver_dss");
 //			this.messageSecurityDigest = (IMessageSecurityDigest) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.dss.MessageSecurityDigest_dss");
-		}
+    		}
     		this.messageSecurityContext.init(this);
     		
     	}catch(Exception e){

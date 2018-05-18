@@ -51,6 +51,19 @@ public class JsonSignature {
 		}
 	}
 
+	public JsonSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, signatureAlgorithm, representation);
+	}
+	public JsonSignature(KeyStore keystore, String alias, String passwordPrivateKey, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
+			this.representation=representation;
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+
 
 	public String sign(String jsonString) throws UtilsException{
 		try {

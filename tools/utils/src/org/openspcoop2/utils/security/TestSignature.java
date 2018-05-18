@@ -186,6 +186,80 @@ public class TestSignature {
 			
 			
 			
+			
+			
+			
+			
+			
+			
+			// 4. Esempio Signature JSON con altri costruttori
+			
+			System.out.println("\n\n ================================");
+			System.out.println("4. Example JsonSignature (Costruttore keystore) \n");
+
+			String signatureAlgorithm = signatureProps.getProperty("rs.security.signature.algorithm");
+
+			
+			System.out.println("\n");
+			
+			// 4a. Signature Attached 
+			jsonAttachedSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm , JOSERepresentation.SELF_CONTAINED);
+			attachSign = jsonAttachedSignature.sign(jsonInput);
+			
+			System.out.println("4a. JsonSelfContainedSignature Signed: \n"+attachSign);
+			
+			// Verifica
+			jsonAttachedVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, JOSERepresentation.SELF_CONTAINED);
+			System.out.println("4a. JsonSelfContainedSignature Verify ("+jsonAttachedVerify.verify(attachSign)+") payload: "+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			if(jsonAttachedVerify.verify(attachSign.replace("payload\":\"", "payload\":\"CORROMPO"))!=false) {
+				throw new Exception("Expected validation error");
+			}
+			
+			System.out.println("\n\n");
+			
+			// 4b. Signature Compact (e uso keystore openspcoop)
+			jsonCompactSignature = new JsonSignature(keystore, alias, passwordChiavePrivata, signatureAlgorithm, JOSERepresentation.COMPACT);
+			compactSign = jsonCompactSignature.sign(jsonInput);
+			
+			System.out.println("4b. JsonCompactSignature Signed: \n"+compactSign);
+			
+			// Verifica
+			jsonCompactVerify = new JsonVerifySignature(truststore, alias, signatureAlgorithm, JOSERepresentation.COMPACT);
+			System.out.println("4b. JsonCompactSignature Verify ("+jsonCompactVerify.verify(compactSign)+" ) payload: "+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			if(jsonCompactVerify.verify(compactSign.replace(".", ".CORROMPO"))!=false) {
+				throw new Exception("Expected validation error");
+			}
+
+			
+			System.out.println("\n\n");
+			
+			// 4c. Signature Detached
+			jsonDetachedSignature = new JsonSignature(keystore.getKeystore(), alias, passwordChiavePrivata, signatureAlgorithm, JOSERepresentation.DETACHED);
+			detachedSign = jsonDetachedSignature.sign(jsonInput);
+			
+			System.out.println("4c. JsonDetachedSignature Signed: \n"+detachedSign);
+			
+			// Verifica
+			jsonDetachedVerify = new JsonVerifySignature(truststore.getKeystore(), alias, signatureAlgorithm, JOSERepresentation.DETACHED);
+			System.out.println("4c. JsonDetachedSignature Verify ("+jsonDetachedVerify.verify(detachedSign, jsonInput)+") payload:"+jsonDetachedVerify.getDecodedPayload());
+			if(jsonDetachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			jsonInputCorretto = "\n{\n\t\"name\":\"value1\",\n\t\"name2\":\"valueCORROMPO\"\n}";
+			if(jsonDetachedVerify.verify(detachedSign, jsonInputCorretto)!=false) {
+				throw new Exception("Expected validation error");
+			}
+			
+			
+			
+			
+			
 			System.out.println("Testsuite terminata");
 
 

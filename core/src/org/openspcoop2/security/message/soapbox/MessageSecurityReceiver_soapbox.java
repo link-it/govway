@@ -47,7 +47,7 @@ import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.security.message.IMessageSecurityReceiver;
+import org.openspcoop2.security.message.AbstractSOAPMessageSecurityReceiver;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageUtilities;
@@ -68,7 +68,7 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver{
+public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurityReceiver{
 
 	private X509Certificate [] certificates = null;
 	

@@ -20,6 +20,7 @@
 package org.openspcoop2.security.message.utils;
 
 import java.security.KeyStore;
+import java.util.Properties;
 
 /**
  * BaseSecurityBean
@@ -30,11 +31,18 @@ import java.security.KeyStore;
  */
 public abstract class BaseSecurityBean {
 
+	private Properties properties;
 	private KeyStore keystore;
 	private KeyStore truststore;
 	private String user;
 	private String password;
 	
+	public Properties getProperties() {
+		return this.properties;
+	}
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
 	public KeyStore getKeystore() {
 		return this.keystore;
 	}

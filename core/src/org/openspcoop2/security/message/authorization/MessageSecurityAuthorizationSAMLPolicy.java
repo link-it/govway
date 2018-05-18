@@ -117,7 +117,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     @Override
     public MessageSecurityAuthorizationResult authorize(MessageSecurityAuthorizationRequest request) throws SecurityException{
 
-    	String principalWSS = request.getWssSecurityPrincipal();
+    	String principalWSS = request.getSecurityPrincipal();
     	Busta busta = request.getBusta();
     	org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext = request.getMessageSecurityContext();
     	OpenSPCoop2Message msg = request.getMessage();

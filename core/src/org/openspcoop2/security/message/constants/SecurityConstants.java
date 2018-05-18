@@ -85,6 +85,8 @@ public class SecurityConstants {
 	public static final String SECURITY_ENGINE_WSS4J = "wss4j";
 	public static final String SECURITY_ENGINE_SOAPBOX = "soapbox";
 	public static final String SECURITY_ENGINE_DSS = "dss";
+	public static final String SECURITY_ENGINE_JOSE = "jose";
+	public static final String SECURITY_ENGINE_XML = "xml";
 	
 	public static final String NORMALIZE_TO_SAAJ_IMPL = "normalizeToSaajImpl";
 	
@@ -119,6 +121,10 @@ public class SecurityConstants {
     public static final String PART_ELEMENT = "Element";
     public static final String ATTACHMENT_INDEX_ALL =  "*";
     
+    public static final String MODE_SELF_CONTAINED = "selfContained";
+    public static final String MODE_DETACHED = "detached";
+    public static final String MODE_COMPACT = "compatct";
+    
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE = "#MultiPropUsePddFruitoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_EROGATORE = "#MultiPropUsePddErogatoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_IDENTIFICATIVO_PORTA_FRUITORE = "#MultiPropUseIdentificativoPortaFruitoreAsAlias#";
@@ -141,6 +147,7 @@ public class SecurityConstants {
     public static final String ENCRYPTION_PART_CONTENT = PART_CONTENT;
     public static final String ENCRYPTION_PART_COMPLETE = PART_COMPLETE;
     public static final String ENCRYPTION_PART_ELEMENT = PART_ELEMENT;
+    public static final String ENCRYPTION_PROPERTY_REF_ID = ConfigurationConstants.ENC_PROP_REF_ID;
     public static final String ENCRYPTION_PROPERTY_FILE = ConfigurationConstants.ENC_PROP_FILE;
     public static final String ENCRYPTION_TRUSTSTORE_PROPERTY_FILE = "encryptionTrustStorePropFile";
     public static final String ENCRYPTION_MULTI_PROPERTY_FILE = "encryptionMultiPropFile";
@@ -150,7 +157,12 @@ public class SecurityConstants {
     public static final String ENCRYPTION_KEY_TRANSPORT_ALGORITHM = ConfigurationConstants.ENC_KEY_TRANSPORT;
     public static final String ENCRYPTION_SYMMETRIC_ALGORITHM = ConfigurationConstants.ENC_SYM_ALGO;
     public static final String ENCRYPTION_KEY_IDENTIFIER = ConfigurationConstants.ENC_KEY_ID;
+    public static final String ENCRYPTION_MODE = "encryptionMode";
+    public static final String ENCRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
+    public static final String ENCRYPTION_MODE_DETACHED = MODE_DETACHED;
+    public static final String ENCRYPTION_MODE_COMPACT = MODE_COMPACT;
     public static final String DECRYPTION_PROPERTY_FILE = ConfigurationConstants.DEC_PROP_FILE;
+    public static final String DECRYPTION_PROPERTY_REF_ID = ConfigurationConstants.DEC_PROP_REF_ID;
     public static final String DECRYPTION_TRUSTSTORE_PROPERTY_FILE = "decryptionTrustStorePropFile";
     public static final String DECRYPTION_MULTI_PROPERTY_FILE = "decryptionMultiPropFile";
     public static final String DECRYPTION_SYMMETRIC_KEY_VALUE = "decryptionSymmetricKeyValue";
@@ -158,6 +170,10 @@ public class SecurityConstants {
     public static final String DECRYPTION_USER = "decryptionUser";
     public static final String DECRYPTION_PASSWORD = "decryptionPassword";
     public static final String DECRYPTION_SYMMETRIC = "decryptionSymmetricKey";
+    public static final String DECRYPTION_MODE = "decryptionMode";
+    public static final String DECRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
+    public static final String DECRYPTION_MODE_DETACHED = MODE_DETACHED;
+    public static final String DECRYPTION_MODE_COMPACT = MODE_COMPACT;
 	
     public static final String SIGNATURE_ACTION = ConfigurationConstants.SIGNATURE;
     public static final String SIGNATURE_USER = ConfigurationConstants.SIGNATURE_USER;
@@ -174,6 +190,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_PART_CONTENT = PART_CONTENT;
     public static final String SIGNATURE_PART_COMPLETE = PART_COMPLETE;
     public static final String SIGNATURE_PART_ELEMENT = PART_ELEMENT;
+    public static final String SIGNATURE_PROPERTY_REF_ID = ConfigurationConstants.SIG_PROP_REF_ID;
     public static final String SIGNATURE_PROPERTY_FILE = ConfigurationConstants.SIG_PROP_FILE;
     public static final String SIGNATURE_TRUSTSTORE_PROPERTY_FILE = "signatureTrustStorePropFile";
     public static final String SIGNATURE_MULTI_PROPERTY_FILE = "signatureMultiPropFile";
@@ -182,6 +199,14 @@ public class SecurityConstants {
     public static final String SIGNATURE_ALGORITHM = ConfigurationConstants.SIG_ALGO;
     public static final String SIGNATURE_KEY_IDENTIFIER = ConfigurationConstants.SIG_KEY_ID;
     public static final String SIGNATURE_CRL = "signatureCRL";
+    public static final String SIGNATURE_VERIFICATION_PROPERTY_REF_ID = ConfigurationConstants.SIG_VER_PROP_REF_ID;
+    public static final String SIGNATURE_VERIFICATION_PROPERTY_FILE = ConfigurationConstants.SIG_VER_PROP_FILE;
+    public static final String SIGNATURE_MODE = "signatureMode";
+    public static final String SIGNATURE_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
+    public static final String SIGNATURE_MODE_DETACHED = MODE_DETACHED;
+    public static final String SIGNATURE_MODE_COMPACT = MODE_COMPACT;
+    public static final String SIGNATURE_DETACHED_HEADER = "signatureDetachedHeader";
+    public static final String SIGNATURE_DETACHED_PROPERTY_URL = "signatureDetachedPropertyURL";
     
     
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;

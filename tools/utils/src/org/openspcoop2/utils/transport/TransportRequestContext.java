@@ -112,6 +112,19 @@ public class TransportRequestContext implements java.io.Serializable {
 		}
 		return value;
 	}
+	public Object removeParameterFormBased(String name){
+		if(this.parametersFormBased==null){
+			return null;
+		}
+		Object value = this.parametersFormBased.remove(name);
+		if(value==null){
+			value = this.parametersFormBased.remove(name.toLowerCase());
+		}
+		if(value==null){
+			value = this.parametersFormBased.remove(name.toUpperCase());
+		}
+		return value;
+	}
 	public java.util.Properties getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
@@ -125,6 +138,19 @@ public class TransportRequestContext implements java.io.Serializable {
 		}
 		if(value==null){
 			value = this.parametersTrasporto.getProperty(name.toUpperCase());
+		}
+		return value;
+	}
+	public Object removeParameterTrasporto(String name){
+		if(this.parametersTrasporto==null){
+			return null;
+		}
+		Object value = this.parametersTrasporto.remove(name);
+		if(value==null){
+			value = this.parametersTrasporto.remove(name.toLowerCase());
+		}
+		if(value==null){
+			value = this.parametersTrasporto.remove(name.toUpperCase());
 		}
 		return value;
 	}

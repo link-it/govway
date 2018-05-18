@@ -21,6 +21,7 @@
 
 package org.openspcoop2.utils.security;
 
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 import org.apache.cxf.rs.security.jose.jws.JwsCompactConsumer;
@@ -50,6 +51,19 @@ public class JsonVerifySignature {
 		try {
 			this.provider = JwsUtils.loadSignatureVerifier(props, new JwsHeaders());
 			this.representation = representation;
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+	
+	public JsonVerifySignature(java.security.KeyStore keystore, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, signatureAlgorithm, representation);
+	}
+	public JsonVerifySignature(KeyStore keystore, String alias, String signatureAlgorithm, JOSERepresentation representation) throws UtilsException{
+		try {
+			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.getAlgorithm(signatureAlgorithm);
+			this.provider = JwsUtils.getPublicKeySignatureVerifier((X509Certificate) keystore.getCertificate(alias), algo);
+			this.representation=representation;
 		}catch(Throwable t) {
 			throw new UtilsException(t.getMessage(),t);
 		}

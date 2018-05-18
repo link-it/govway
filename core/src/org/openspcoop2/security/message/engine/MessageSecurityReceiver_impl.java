@@ -107,18 +107,20 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			
 			// ** Verifico presenza header sicurezza ** /
-			if(this.messageSecurityContext.existsSecurityHeader(message, actor)==false){
-				this.msgErrore =  "Header Message Security, richiesto dalla configurazione (action:"+action+"), non riscontrato nella SOAPEnvelope ricevuta";
-				if(action.contains(SecurityConstants.ACTION_SIGNATURE)){
-					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE;
+			if(receiverInterface.checkExistsWSSecurityHeader()) {
+				if(this.messageSecurityContext.existsSecurityHeader(message, actor)==false){
+					this.msgErrore =  "Header Message Security, richiesto dalla configurazione (action:"+action+"), non riscontrato nella SOAPEnvelope ricevuta";
+					if(action.contains(SecurityConstants.ACTION_SIGNATURE)){
+						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_FIRMA_NON_PRESENTE;
+					}
+					else if(action.contains(SecurityConstants.ACTION_ENCRYPT)){
+						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE;
+					}
+					else{
+						this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE;
+					}
+					return false;
 				}
-				else if(action.contains(SecurityConstants.ACTION_ENCRYPT)){
-					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE;
-				}
-				else{
-					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE;
-				}
-				return false;
 			}
 			
 			
@@ -205,7 +207,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
             		IMessageSecurityAuthorization auth = (IMessageSecurityAuthorization)org.openspcoop2.utils.resources.Loader.getInstance().newInstance(authClass);
             		MessageSecurityAuthorizationRequest req = new MessageSecurityAuthorizationRequest();
             		req.setBusta(busta);
-            		req.setWssSecurityPrincipal(this.subject);
+            		req.setSecurityPrincipal(this.subject);
             		req.setMessageSecurityContext(this.messageSecurityContext);
             		req.setMessage(message);
                     MessageSecurityAuthorizationResult result = auth.authorize(req);
@@ -248,6 +250,11 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 				
 				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 					receiverInterface.cleanDirtyElements(this.messageSecurityContext, message.castAsSoap(), elementsToClean, detachValue, removeAllIdRefValue);
+				}
+				else {
+					if(detachValue) {
+						receiverInterface.detachSecurity(this.messageSecurityContext, message.castAsRest());
+					}
 				}
 
 			} catch (SecurityException e) {

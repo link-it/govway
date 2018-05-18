@@ -136,6 +136,17 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 		}
 	}
 	
+	@Override
+	public void updateContent(T content) throws MessageException, MessageNotSupportedException{
+		this.content = content;
+		if(this.content!=null) {
+			this.hasContent = true;
+		}
+		else {
+			this.hasContent = false;
+		}
+	}
+	
 	
 	/* ContentType */
 	

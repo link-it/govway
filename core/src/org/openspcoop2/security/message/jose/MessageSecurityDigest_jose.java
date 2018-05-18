@@ -17,32 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.security.message.jose;
 
-package org.openspcoop2.message;
-
-
-import org.openspcoop2.message.exception.MessageException;
-import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.message.IMessageSecurityDigest;
+import org.openspcoop2.security.message.MessageSecurityContext;
+import org.openspcoop2.utils.digest.IDigestReader;
 
 /**
- * OpenSPCoop2RestMessage
+ * MessageSecurityDigest_jose
  *
- * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 06:24:34 -0500 (Fri, 26 Jan 2018) $
  */
+public class MessageSecurityDigest_jose implements IMessageSecurityDigest{
 
-public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
-	
-	/* Elementi REST */
-	
-	public boolean hasContent() throws MessageException,MessageNotSupportedException;
-	
-	public T getContent() throws MessageException,MessageNotSupportedException;
-	
-	public String getContentAsString() throws MessageException,MessageNotSupportedException;
-	
-	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
-
+	@Override
+	public IDigestReader getDigestReader(MessageSecurityContext messageSecurityContext) throws SecurityException {
+		throw new SecurityException("Not Implemented");
+	}
 	
 }

@@ -35,17 +35,17 @@ import org.openspcoop2.protocol.sdk.Busta;
 
 public class MessageSecurityAuthorizationRequest {
 
-	private String wssSecurityPrincipal;
+	private String securityPrincipal;
 	private Busta busta;
 	private org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext;
 
 	private OpenSPCoop2Message message;
 	
-	public String getWssSecurityPrincipal() {
-		return this.wssSecurityPrincipal;
+	public String getSecurityPrincipal() {
+		return this.securityPrincipal;
 	}
-	public void setWssSecurityPrincipal(String wssSecurityPrincipal) {
-		this.wssSecurityPrincipal = wssSecurityPrincipal;
+	public void setSecurityPrincipal(String securityPrincipal) {
+		this.securityPrincipal = securityPrincipal;
 	}
 	public Busta getBusta() {
 		return this.busta;

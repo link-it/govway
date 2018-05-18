@@ -56,8 +56,7 @@ public class XMLSecurityDigestReader implements IDigestReader {
 	public String getDigest(Element element,String referenceId,DynamicNamespaceContext dnc) throws UtilsException{
 
 		try {
-			// TODO 
-			return null;
+			throw new Exception("Not Implemented");
 		} catch (Exception e) {
 			this.log.error("Errore durante la getDigest", e);
 			throw new UtilsException(e.getMessage(),e);

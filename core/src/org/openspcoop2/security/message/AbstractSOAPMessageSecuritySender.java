@@ -18,31 +18,17 @@
  *
  */
 
-package org.openspcoop2.message;
 
-
-import org.openspcoop2.message.exception.MessageException;
-import org.openspcoop2.message.exception.MessageNotSupportedException;
+package org.openspcoop2.security.message;
 
 /**
- * OpenSPCoop2RestMessage
+ * AbstractSOAPMessageSecuritySender
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13942 $, $Date: 2018-05-14 08:38:29 +0200 (Mon, 14 May 2018) $
  */
+public abstract class AbstractSOAPMessageSecuritySender implements IMessageSecuritySender{
 
-public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
-	
-	/* Elementi REST */
-	
-	public boolean hasContent() throws MessageException,MessageNotSupportedException;
-	
-	public T getContent() throws MessageException,MessageNotSupportedException;
-	
-	public String getContentAsString() throws MessageException,MessageNotSupportedException;
-	
-	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
 
-	
 }

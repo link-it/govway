@@ -18,31 +18,32 @@
  *
  */
 
-package org.openspcoop2.message;
 
 
-import org.openspcoop2.message.exception.MessageException;
-import org.openspcoop2.message.exception.MessageNotSupportedException;
+package org.openspcoop2.security.message.jose;
+
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.message.IMessageSecurityContext;
+import org.openspcoop2.security.message.MessageSecurityContext;
+import org.slf4j.Logger;
 
 /**
- * OpenSPCoop2RestMessage
+ * MessageSecurityContext_jose
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 06:24:34 -0500 (Fri, 26 Jan 2018) $
  */
+public class MessageSecurityContext_jose implements IMessageSecurityContext{
 
-public interface OpenSPCoop2RestMessage<T> extends OpenSPCoop2Message {
-	
-	/* Elementi REST */
-	
-	public boolean hasContent() throws MessageException,MessageNotSupportedException;
-	
-	public T getContent() throws MessageException,MessageNotSupportedException;
-	
-	public String getContentAsString() throws MessageException,MessageNotSupportedException;
-	
-	public void updateContent(T content) throws MessageException,MessageNotSupportedException;
+	@SuppressWarnings("unused")
+	private Logger log = null;
 
-	
+	@Override
+	public void init(MessageSecurityContext wssContext) throws SecurityException {
+
+		this.log = wssContext.getLog();
+		
+	}
+
 }

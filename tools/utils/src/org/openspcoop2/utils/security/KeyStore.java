@@ -77,6 +77,9 @@ public class KeyStore {
 		}
 		
 	}
+	public KeyStore(java.security.KeyStore keystore) {
+		this.keystore = keystore;
+	}
 	
 	public PrivateKey getPrivateKey(String alias,String passwordPrivateKey) throws UtilsException{
 		try{
@@ -108,5 +111,9 @@ public class KeyStore {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
+	}
+	
+	public java.security.KeyStore getKeystore() {
+		return this.keystore;
 	}
 }

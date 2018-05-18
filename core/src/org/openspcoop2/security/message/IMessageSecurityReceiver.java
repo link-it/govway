@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -39,6 +40,10 @@ import org.openspcoop2.security.SecurityException;
  * @version $Rev$, $Date$
  */
 public interface IMessageSecurityReceiver {
+	
+	public default boolean checkExistsWSSecurityHeader() {
+		return true;
+	}
 	
 	/**
 	 * Applica la sicurezza al messaggio
@@ -86,6 +91,8 @@ public interface IMessageSecurityReceiver {
 	
 	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
 			boolean detachHeaderWSSecurity, boolean removeAllIdRef) throws SecurityException;
+	
+	public void detachSecurity(MessageSecurityContext messageSecurityContext,OpenSPCoop2RestMessage<?> message) throws SecurityException;
 	
 	public String getCertificate() throws SecurityException;
 	
