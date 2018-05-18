@@ -1,5 +1,6 @@
 package org.openspcoop2.monitor.engine.transaction;
 
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.monitor.engine.config.LoggerManager;
 import org.openspcoop2.monitor.engine.config.MonitorProperties;
@@ -21,6 +22,8 @@ import org.openspcoop2.utils.resources.Loader;
 public class TransactionProcessor {
 	
 	public static void main(String[] args) throws Exception {
+		
+		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 		
 		LoggerManager.initLogger();
 		

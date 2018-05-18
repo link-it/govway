@@ -65,7 +65,7 @@ public class MonitorProperties {
 		try{  
 			properties = MonitorProperties.class.getResourceAsStream("/"+CostantiConfigurazione.CONFIG_FILENAME);
 			if(properties==null){
-				throw new Exception("Properties daoFactory.properties not found");
+				throw new Exception("Properties "+CostantiConfigurazione.CONFIG_FILENAME+" not found");
 			}
 			propertiesReader.load(properties);
 			properties.close();

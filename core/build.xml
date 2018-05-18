@@ -548,17 +548,17 @@
 				<fail message="Parametro tipoDatabase non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" fork="true">
-                <arg value="${tipoDatabase}" />
-        		<arg value="${url}" /> <!-- opzionale -->
-        		<arg value="${username}" /> <!-- opzionale -->
-        		<arg value="${password}" /> <!-- opzionale -->
-                <classpath>
-                	<path refid="classpath_run_lib" />
-                	<path refid="classpath_run_dist" />
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.protocol.engine.driver.repository.TestGestoreRepository" fork="true">
+		        <arg value="${tipoDatabase}" />
+				<arg value="${url}" /> <!-- opzionale -->
+				<arg value="${username}" /> <!-- opzionale -->
+				<arg value="${password}" /> <!-- opzionale -->
+		        <classpath>
+		        	<path refid="classpath_run_lib" />
+		        	<path refid="classpath_run_dist" />
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="test_serialization">
@@ -568,17 +568,17 @@
 				<fail message="Parametro DirOutput non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.core.registry.driver.utils.SerializationClientTest" fork="true">
-                <arg value="${DirOutput}" />
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/*.jar"/>
-                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
-                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.core.registry.driver.utils.SerializationClientTest" fork="true">
+		        <arg value="${DirOutput}" />
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="test_validazione_semantica_configurazione">
@@ -614,20 +614,20 @@
 				<fail message="Parametro validazioneConfigurazione non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
-        		<arg value="${proprietaComuni}" />
-                <arg value="${tipoConfigurazione}" />
-        	 	<arg value="${proprietaConfigurazione}" />
-                <arg value="${validazioneConfigurazione}" />
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/*.jar"/>
-                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
-                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.core.config.driver.utils.TestValidazioneSemantica" fork="true">
+				<arg value="${proprietaComuni}" />
+		        <arg value="${tipoConfigurazione}" />
+			 	<arg value="${proprietaConfigurazione}" />
+		        <arg value="${validazioneConfigurazione}" />
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
 	</target>
 	
 	<target name="test_validazione_semantica_registro">
@@ -663,43 +663,66 @@
 				<fail message="Parametro checkURI non fornito"/>
 			</then>
 		</if>
-        <!-- Run the java code  -->
-        <java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
-        		<arg value="${proprietaComuni}" />
-                <arg value="${tipoRegistro}" />
-        	 	<arg value="${proprietaRegistro}" />
-                <arg value="${checkURI}" />
-                <classpath>
-                		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/*.jar"/>
-                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
-                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
-                </classpath>
-        </java>
+		<!-- Run the java code  -->
+		<java classname="org.openspcoop2.core.registry.driver.utils.TestValidazioneSemantica" fork="true">
+				<arg value="${proprietaComuni}" />
+		        <arg value="${tipoRegistro}" />
+			 	<arg value="${proprietaRegistro}" />
+		        <arg value="${checkURI}" />
+		        <classpath>
+		        		<path refid="classpath_run_dist" />
+		        		<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
 	</target>
 	
 		
 	
-	<!-- Esecuzione test -->
+	<!-- Esecuzione test monitor framework -->
+
 	<target name="runTestConditions">
-                <if>
-                        <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
-                        <then>
-                                <fail message="Parametro configDaoFactoryDir non fornito, la proprietÃ  deve contenere una directory con il file daoFactory_local.properties ed il driver JDBC"/>
-                        </then>
-                </if>
-        <java classname="org.openspcoop2.monitor.engine.condition.TestConditions" fork="true">
-                <classpath>
-				<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
-				<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
-                		<path refid="classpath_run_dist" />
-                		<fileset dir="${required_lib}" includes="log/*.jar"/>
-                		<fileset dir="${required_lib}" includes="shared/*.jar"/>
-                		<fileset dir="${required_lib}" includes="commons/*.jar"/>
-                		<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
-                </classpath>
-        </java>
+        <if>
+                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+                <then>
+                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietà  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo" />
+                </then>
+        </if>
+		<java classname="org.openspcoop2.monitor.engine.condition.TestConditions" fork="true">
+		        <classpath>
+					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+		        	<path refid="classpath_run_dist" />
+		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
+	</target>
+
+	<!-- Esecuzione processo di generazione delle transazioni -->
+	<target name="runTransactionProcessor">
+		<if>
+                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+                <then>
+                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietà  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                </then>
+        </if>
+		<java classname="org.openspcoop2.monitor.engine.transaction.TransactionProcessor" fork="true"> 
+			<classpath>
+					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+		        	<path refid="classpath_run_dist" />
+		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
 	</target>
 	
 	
