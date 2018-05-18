@@ -1,5 +1,6 @@
 package org.openspcoop2.monitor.engine.statistic;
 
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.monitor.engine.config.LoggerManager;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -20,6 +21,8 @@ public class StatisticProcessor {
 	public static void main(String[] args) {
 		Logger logCore = null;
 		try {
+			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
+						
 			LoggerManager.initLogger();
 			
 			logCore = LoggerWrapperFactory.getLogger("org.openspcoop2.monitor.engine.statistic");

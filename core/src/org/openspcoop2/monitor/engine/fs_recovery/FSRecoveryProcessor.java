@@ -1,5 +1,6 @@
 package org.openspcoop2.monitor.engine.fs_recovery;
 
+import org.apache.logging.log4j.Level;
 import org.openspcoop2.monitor.engine.config.LoggerManager;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ public class FSRecoveryProcessor {
 		
 		Logger logger = null;
 		try {
+			LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 			
 			LoggerManager.initLogger();
 			

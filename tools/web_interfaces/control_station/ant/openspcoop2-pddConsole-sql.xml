@@ -62,6 +62,12 @@
 			
 		</delete>
 		
+		<delete dir="${sql_pddConsole}/init/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/init/registroServizi"/>
+		<delete dir="${sql_pddConsole}/init/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/init/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/init"/>
+
 		<delete dir="${sql_pddConsole}/postgresql/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/postgresql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/postgresql/runtimePdD"/>
@@ -74,8 +80,6 @@
 		<delete dir="${sql_pddConsole}/patch/postgresql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/postgresql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/postgresql/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/postgresql/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/postgresql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/mysql/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/mysql/registroServizi"/>
@@ -89,8 +93,6 @@
 		<delete dir="${sql_pddConsole}/patch/mysql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/mysql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/mysql/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/mysql/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/mysql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/oracle/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/oracle/registroServizi"/>
@@ -104,8 +106,6 @@
 		<delete dir="${sql_pddConsole}/patch/oracle/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/oracle/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/oracle/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/oracle/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/oracle/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/hsql/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/hsql/registroServizi"/>
@@ -119,8 +119,6 @@
 		<delete dir="${sql_pddConsole}/patch/hsql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/hsql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/hsql/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/hsql/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/hsql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/sqlserver/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/sqlserver/registroServizi"/>
@@ -134,8 +132,6 @@
 		<delete dir="${sql_pddConsole}/patch/sqlserver/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/sqlserver/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/sqlserver/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/sqlserver/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/sqlserver/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/db2/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/db2/registroServizi"/>
@@ -149,8 +145,6 @@
 		<delete dir="${sql_pddConsole}/patch/db2/registroServizi"/>
 		<delete dir="${sql_pddConsole}/patch/db2/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/patch/db2/archiviComunicazioni"/>
-		<delete file="${sql_pddConsole}/patch/db2/2014-12-16-patch.sql"/>
-		<!-- <delete file="${sql_pddConsole}/patch/db2/2016-10-27-patch.sql"/> -->
 			
 	</target>
 	
@@ -313,6 +307,12 @@
 		
 		<var name="sqlDataFiles" value="single_pdd/control_station_data.sql"/>
 		<var name="sqlDataFiles" value="${sqlDataFiles} single_pdd/users_data.sql"/>
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
+			<then>
+				<var name="sqlDataFiles" value="${sqlDataFiles} init/archiviComunicazioni/ArchivioStatistiche_data.sql"/>
+			</then>
+		</if>
 		
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql_pddConsole}"/>

@@ -1,0 +1,3 @@
+Per le stesse problematiche descritte per le transazioni è stato ripensato l'indice di accesso al database degli eventi.
+Su tale database, non essendo molte le colonne utilizzate per la ricerca è stato possibile creare un indice che contiene tutte le colonne utilizzate nella ricerca
+e quindi sfruttare i benefici di un full index scan.

@@ -1,0 +1,34 @@
+I dati nello storico delle transazioni  sono inizialmente scremati grazie alla data di ingresso.
+Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
+Si pensava questo poichè anche se si utilizzava indici composti (cioè con più di una colonna), le successive colonne erano tutte disordinate rispetto alla prima colonna.
+Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) è comunque molto più efficente che usare una tabella.
+Inoltre si è constatato che il doppio accesso indice-tabella è inefficente, a volte è più performante fare uno scan sulla tabella.
+Per risolvere tutte le problematiche di performance bisogna usare indici che contengono tutte le colonne, anche quelle usate nelle select list, in modo da non dover proprio accedere alla tabella (su cui si accede solo per l'eventuale dettaglio della singola transazione), e in modo da poter effettuare una 'full index scan' che risulta efficente.
+Inoltre su Oracle, è stato rilevato che è utile forzare l'utilizzo di un indice, poichè a volte oracle sembra non effettuare la scelta di indice corretta.
+							
+Quanto premesso sopra, la soluzione ideale sarebbe creare due indici ad hoc per la ricerca (INDEX_TR_SEARCH) e per le statistiche (INDEX_TR_STATS).
+Questi indici conterrebbero tutte le colonne necessarie e verrebbero forzati il loro utilizzo per Oracle.
+Putroppo questi indici hanno una lunghezza eccessiva che molti DBA o tipi di database non permettono di creare.
+Per questo motivo vengono generati tutta una serie di indici che caso per caso possono essere utilizzati dove viene concesso la loro creazione.
+														
+Gli indici vengono forniti in due possibilità (scegliere solamente una delle due possibilità)
+1) Unico indice per ricerche e statistiche. Deve essere scelto UNO dei seguenti indici (a seconda di quanto il DBA permette di avere lungo un indice):
+- INDEX_TR_ENTRY: colonne minime che permettono di effettuare un buon livello di filtro rispetto ai record nelle tabelle
+- INDEX_TR_MEDIUM: utile per ottimizzare la generazione delle statistiche e per la ricerca per lo storico. Per quanto concerne la ricerca non indicizza tutte le colonne su cui è possibile effettuare ricerca (WHERE)
+- INDEX_TR_FULL: utile per ottimizzare la generazione delle statistiche e per la ricerca per lo storico. Contiene tutte le colonne su cui è possibile effettuare la ricerca (WHERE)
+2) Due indici progettati in maniera specifica per la ricerca (INDEX_TR_SEARCH) e per la generazione delle statistiche (INDEX_TR_STATS).
+Questi indici presentano la 'qualità' di possedere tutti i campi nell'indice stesso, anche quelli utilizzati nelle select field (compresi quelli su cui viene applicata una funzioni). Questa caratteristica permette alla query di essere eseguita tramite una 'full index scan'.
+							
+Analisi dei tipi di database:
+- postgresql: consente qualsiasi indice
+- oracle: consente qualsiasi indice
+- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) 
+  non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'. 
+  Errore: Specified key was too long; max key length is 3072 bytes
+- hsql: consente qualsiasi indice
+- sqlserver: (verificato su sqlserver 2008)
+  non consente la creazione degli indici 'INDEX_TR_ADVANCED','INDEX_TR_SEARCH' e 'INDEX_TR_STATS'.
+  Errore: The maximum limit for index or statistics key column list is 16.
+  Mentre crea l'indice 'INDEX_TR_MEDIUM' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
+  Warning! The maximum key length is 900 bytes. The index 'INDEX_TR_MEDIUM' has maximum length of 1997 bytes. 
+  For some combination of large values, the insert/update operation will fail.

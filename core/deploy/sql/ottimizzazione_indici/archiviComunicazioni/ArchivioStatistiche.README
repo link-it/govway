@@ -1,0 +1,20 @@
+I dati delle statistiche  sono inizialmente scremati grazie alla data di ingresso.
+Inizialmente si pensava che bastava quindi un indice con la sola data di ingresso per avere prestazioni accettabili.
+Si è invece ravvisato che è utile usare gli indici composti, anche perchè scorrere un indice (anche scorrerlo tutto) è comunque molto più efficente che usare una tabella. per ulteriori dettagli sulla motivazione vedere i commenti per quanto riguarda gli indici sulle transazioni.
+		
+Per le statistiche vengono forniti tre possibili indici 
+(scegliere solamente uno delle tre possibilità a seconda di quanto il DBA o il DB stesso permette di avere lungo un indice)
+- INDEX_STAT_<TIPOSTAT>_ENTRY: colonne minime che permettono di effettuare un buon livello di filtro rispetto ai record nelle tabelle
+- INDEX_STAT_<TIPOSTAT>_FULL: contiene tutte le colonne su cui è possibile effettuare la ricerca (WHERE)
+- INDEX_STAT_<TIPOSTAT>: indice progettato per possedere tutti i campi nell'indice stesso, anche quelli utilizzati nelle select field (compresi quelli su cui viene applicata una funzioni). Questa caratteristica permette alla query di essere eseguita tramite una 'full index scan'.
+		
+Analisi dei tipi di database:
+- postgresql: consente qualsiasi indice
+- oracle: consente qualsiasi indice
+- mysql: (verificato su mysql  Ver 15.1 Distrib 10.1.24-MariaDB) consente qualsiasi indice
+- hsql: consente qualsiasi indice
+- sqlserver: (verificato su sqlserver 2008) non consente la creazione degli indici 'INDEX_STAT_<TIPOSTAT>'.
+  Errore: The maximum limit for index or statistics key column list is 16.
+  Mentre crea l'indice 'INDEX_STAT_<TIPOSTAT>_FULL' però segnala un warning che l'indice potrebbe non funzionare e quindi dare errore:
+  Warning! The maximum key length is 900 bytes. The index 'INDEX_STAT_<TIPOSTAT>_FULL' has maximum length of 1642 bytes. 
+  For some combination of large values, the insert/update operation will fail.

@@ -462,11 +462,12 @@
 			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste_drop.sql runtimePdD/RepositoryIdSerial_drop.sql runtimePdD/RepositoryMessaggi_drop.sql runtimePdD/Semaphore_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 		
-		<!-- Tracce e Diagnostici -->
+		<!-- Tracce, Diagnostici, Transazioni, Eventi e Statistiche -->
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
 			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql archiviComunicazioni/ArchivioEventi.sql archiviComunicazioni/ArchivioStatistiche.sql DBInfo.sql"/>
+			<param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioStatistiche_data.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Archivio delle tracce e dei messaggi diagnostici emessi dalla Porta di Dominio OpenSPCoop2');" />
 		</antcall>
 		<antcall target="build_sql_utility">
@@ -724,6 +725,51 @@
 		        </classpath>
 		</java>
 	</target>
+	
+	<!-- Esecuzione processo di generazione delle statistiche -->
+	<target name="runStatisticProcessor">
+		<if>
+                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+                <then>
+                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietà  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                </then>
+        </if>
+		<java classname="org.openspcoop2.monitor.engine.statistic.StatisticProcessor" fork="true"> 
+			<classpath>
+					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+		        	<path refid="classpath_run_dist" />
+		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
+	</target>
+	
+	<!-- Esecuzione processo di recovery da file system -->
+	<target name="runFileSystemRecoveryProcessor">
+		<if>
+                <equals arg1="${configDaoFactoryDir}" arg2="$${configDaoFactoryDir}"/>
+                <then>
+                        <fail message="Parametro configDaoFactoryDir non fornito, la proprietà  deve contenere una directory con il file daoFactory_local.properties, il driver JDBC e i plugins di protocollo"/>
+                </then>
+        </if>
+		<java classname="org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryProcessor" fork="true"> 
+			<classpath>
+					<pathelement path="${configDaoFactoryDir}"/> <!-- daoFactory_local.properties -->
+					<fileset dir="${configDaoFactoryDir}" includes="*.jar"/> <!-- jdbc -->
+		        	<path refid="classpath_run_dist" />
+		        	<pathelement path="deploy/monitor"/> <!-- openspcoop2.monitor*.properties -->
+		        	<fileset dir="${required_lib}" includes="log/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="shared/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="commons/*.jar"/>
+		        	<fileset dir="${required_lib}" includes="security/xmlsec-2.0.7.jar"/>
+		        </classpath>
+		</java>
+	</target>
+
 	
 	
 </project>
