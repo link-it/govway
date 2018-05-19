@@ -156,11 +156,16 @@ public class SecurityConstants {
     public static final String ENCRYPTION_KEY_SIZE = "encryptionKeySize";
     public static final String ENCRYPTION_KEY_TRANSPORT_ALGORITHM = ConfigurationConstants.ENC_KEY_TRANSPORT;
     public static final String ENCRYPTION_SYMMETRIC_ALGORITHM = ConfigurationConstants.ENC_SYM_ALGO;
+    public static final String ENCRYPTION_KEY_ALGORITHM = "encryptionKeyAlgorithm";
+    public static final String ENCRYPTION_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
     public static final String ENCRYPTION_KEY_IDENTIFIER = ConfigurationConstants.ENC_KEY_ID;
     public static final String ENCRYPTION_MODE = "encryptionMode";
     public static final String ENCRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
     public static final String ENCRYPTION_MODE_DETACHED = MODE_DETACHED;
     public static final String ENCRYPTION_MODE_COMPACT = MODE_COMPACT;
+    public static final String ENCRYPTION_DEFLATE = "deflate";
+    public static final String ENCRYPTION_DEFLATE_TRUE = "true";
+    public static final String ENCRYPTION_DEFLATE_FALSE = "false";
     public static final String DECRYPTION_PROPERTY_FILE = ConfigurationConstants.DEC_PROP_FILE;
     public static final String DECRYPTION_PROPERTY_REF_ID = ConfigurationConstants.DEC_PROP_REF_ID;
     public static final String DECRYPTION_TRUSTSTORE_PROPERTY_FILE = "decryptionTrustStorePropFile";
@@ -174,6 +179,7 @@ public class SecurityConstants {
     public static final String DECRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
     public static final String DECRYPTION_MODE_DETACHED = MODE_DETACHED;
     public static final String DECRYPTION_MODE_COMPACT = MODE_COMPACT;
+    
 	
     public static final String SIGNATURE_ACTION = ConfigurationConstants.SIGNATURE;
     public static final String SIGNATURE_USER = ConfigurationConstants.SIGNATURE_USER;

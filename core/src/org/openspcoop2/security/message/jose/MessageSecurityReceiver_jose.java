@@ -36,6 +36,7 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.AbstractRESTMessageSecurityReceiver;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
@@ -191,7 +192,112 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					throw new Exception("Signature verification failed");
 				}
 				
-			}
+			} // fine signature
+			
+			
+			
+			else if(encrypt) {
+				
+				
+				// **************** Leggo parametri encryption store **************************
+							
+				JOSERepresentation joseRepresentation = null;
+				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_MODE);
+				if(mode==null || "".equals(mode.trim())){
+					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.DECRYPTION_MODE+"' property");
+				}
+				try {
+					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+				}catch(Exception e) {
+					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
+				}
+				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
+					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", "+SecurityConstants.DECRYPTION_MODE+" '"+mode+"' not supported");
+				}
+				
+				EncryptionBean bean = null;
+				NotFoundException notFound = null;
+				try {
+					bean = PropertiesUtils.getReceiverEncryptionBean(messageSecurityContext);
+				}catch(NotFoundException e) {
+					notFound = e;
+				}
+				if(bean!=null) {
+					Properties encryptionProperties = bean.getProperties();
+					this.jsonDecrypt = new JsonDecrypt(encryptionProperties, this.joseRepresentation);	
+				}
+				else {	
+					KeyStore encryptionKS = null;
+					boolean encryptionSymmetric = false;
+					String aliasEncryptUser = null;
+					String aliasEncryptPassword = null;
+					try {
+						bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+					}catch(Exception e) {
+						// Lancio come messaggio eccezione precedente
+						if(notFound!=null) {
+							messageSecurityContext.getLog().error(e.getMessage(),e);
+							throw notFound;
+						}
+						else {
+							throw e;
+						}
+					}
+					
+					encryptionKS = bean.getKeystore();
+					encryptionSymmetric = bean.isEncryptionSimmetric();
+					aliasEncryptUser = bean.getUser();
+					aliasEncryptPassword = bean.getPassword();
+
+					if(encryptionKS==null) {
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require keystore");
+					}
+					if(aliasEncryptUser==null) {
+						if(encryptionSymmetric) {
+							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require alias secret key");
+						}
+						else {
+							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require alias private key");
+						}
+					}
+					if(aliasEncryptPassword==null) {
+						if(encryptionSymmetric) {
+							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password secret key");
+						}
+						else {
+							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password private key");
+						}
+					}
+
+					String encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
+					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
+					}
+					
+					String encryptionContentAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
+					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
+						throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
+					}
+					
+					this.jsonDecrypt = new JsonDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword,
+							encryptionKeyAlgorithm, encryptionContentAlgorithm, this.joseRepresentation);	
+				}
+				
+	
+				
+				
+				
+				// **************** Process **************************
+							
+				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
+				boolean verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
+				if(!verify) {
+					throw new Exception("Signature verification failed");
+				}
+		
+			
+			} // fine encrypt
+			
 			
 			
 						

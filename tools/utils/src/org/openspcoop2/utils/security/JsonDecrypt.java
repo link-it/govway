@@ -21,7 +21,10 @@
 
 package org.openspcoop2.utils.security;
 
+import java.security.PrivateKey;
 import java.util.Properties;
+
+import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionProvider;
@@ -71,6 +74,31 @@ public class JsonDecrypt {
 //				}
 //				this.keyDecriptionProvider = JweUtils.getPrivateKeyDecryptionProvider(privateKey, this.keyAlgorithm);
 //			}
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+	
+	public JsonDecrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), false, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, representation);
+	}
+	public JsonDecrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(keystore, false, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, representation);
+	}
+	public JsonDecrypt(java.security.KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), secretKey, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, representation);
+	}
+	public JsonDecrypt(KeyStore keystore, boolean secretKey, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		try {
+			this.representation=representation;
+			
+			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm keyAlgo  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
+			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm contentAlgo = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
+			if(secretKey) {
+				this.provider = JweUtils.createJweDecryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
+			}else {
+				this.provider = JweUtils.createJweDecryptionProvider( (PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
+			}
 		}catch(Throwable t) {
 			throw new UtilsException(t.getMessage(),t);
 		}

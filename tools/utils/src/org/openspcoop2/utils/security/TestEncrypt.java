@@ -47,6 +47,8 @@ public class TestEncrypt {
 		File fKeystore = null;
 		InputStream isTruststore = null;
 		File fTruststore = null;
+		InputStream isKeystoreJCEKS = null;
+		File fKeystoreJCEKS = null;
 		try{
 			isKeystore = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/keystore_example.jks");
 			fKeystore = File.createTempFile("keystore", "jks");
@@ -56,12 +58,17 @@ public class TestEncrypt {
 			fTruststore = File.createTempFile("truststore", "jks");
 			FileSystemUtilities.writeFile(fTruststore, Utilities.getAsByteArray(isTruststore));
 			
+			isKeystoreJCEKS = TestSignature.class.getResourceAsStream("/org/openspcoop2/utils/security/example.jceks");
+			fKeystoreJCEKS = File.createTempFile("keystore", "jceks");
+			FileSystemUtilities.writeFile(fKeystoreJCEKS, Utilities.getAsByteArray(isKeystoreJCEKS));
+			
 			String passwordChiavePrivata = "key123456";
 			String passwordStore = "123456";
 			String alias = "openspcoop";
 			
 			KeyStore keystore = new KeyStore(fKeystore.getAbsolutePath(), passwordStore);
 			KeyStore truststore = new KeyStore(fTruststore.getAbsolutePath(), passwordStore);
+			KeyStore keystoreJCEKS = new KeyStore(fKeystoreJCEKS.getAbsolutePath(), "JCEKS", passwordStore);
 			
 			
 			// 1. Esempio Encrypt Java 
@@ -110,18 +117,34 @@ public class TestEncrypt {
 			
 			// Chiave simmetrica
 			String keyAlgorithm = "AES";
-			SecretKey secretKey = AbstractXmlCipher.generateSecretKey(keyAlgorithm);
-			
+			SecretKey secretKeyGenerata = AbstractXmlCipher.generateSecretKey(keyAlgorithm);
+			// Si pup usareanche DESede per TRIPLEDES
+			// keytool -genseckey -alias 'openspcoop' -keyalg 'AES' -keystore example.jceks -storepass '123456' -keypass 'key123456' -storetype "JCEKS" -keysize 256
+			SecretKey secretKeyLetta = keystoreJCEKS.getSecretKey(alias, passwordChiavePrivata);
+				
+						
 			// Firma
 			encryptAlgorithm = XMLCipher.AES_128;
-			XmlEncrypt xmlEncrypt = new XmlEncrypt(secretKey);
+			XmlEncrypt xmlEncrypt = new XmlEncrypt(secretKeyGenerata);
 			xmlEncrypt.encrypt(node, encryptAlgorithm);
-			System.out.println("2a. XmlSignature Encrypted (SymmetricKey): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2a. XmlSignature Encrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica
-			XmlDecrypt xmlDecrypt = new XmlDecrypt(secretKey);
+			XmlDecrypt xmlDecrypt = new XmlDecrypt(secretKeyGenerata);
 			xmlDecrypt.decrypt(node);
-			System.out.println("2b. XmlSignature Decrypted (SymmetricKey): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2b. XmlSignature Decrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+					
+			// Firma
+			encryptAlgorithm = XMLCipher.AES_128;
+			xmlEncrypt = new XmlEncrypt(secretKeyLetta);
+			xmlEncrypt.encrypt(node, encryptAlgorithm);
+			System.out.println("2aa. XmlSignature Encrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			// Verifica
+			xmlDecrypt = new XmlDecrypt(secretKeyLetta);
+			xmlDecrypt.decrypt(node);
+			System.out.println("2bb. XmlSignature Decrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			
 			
@@ -237,61 +260,6 @@ public class TestEncrypt {
 			
 			
 			
-			// Ripeto i test disabilitando l'encrypt algorithm
-			// Non sembra possibile?
-			
-			encryptProps.remove("rs.security.encryption.key.algorithm");
-			decryptProps.remove("rs.security.encryption.key.algorithm");
-			
-
-			boolean TODO = false;
-			if(TODO) {
-				// 3c. Encrypt Attached
-				jsonAttachedEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.SELF_CONTAINED);
-				attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
-				
-				System.out.println("3c. JsonAttachedEncrypt OnlyContent (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
-				
-				// Verifica
-				jsonAttachedVerify = new JsonDecrypt(decryptProps,JOSERepresentation.SELF_CONTAINED);
-				jsonAttachedVerify.decrypt(attachEncrypt);
-				System.out.println("3c. JsonAttachedEncrypt VerifyOnlyContent (Public): \n"+jsonAttachedVerify.getDecodedPayload());
-				if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
-					throw new Exception("Found different payload");
-				}
-				try {
-					jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
-					throw new Exception("Expected validation error");
-				}catch(Exception e) {
-					System.out.println("Expected error: "+e.getMessage());
-				}
-			
-			
-			
-				System.out.println("\n\n");
-				
-				// 3d. Encrypt Compact
-				jsonCompactEncrypt = new JsonEncrypt(encryptProps, JOSERepresentation.COMPACT);
-				compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
-				
-				System.out.println("3d. JsonCompactEncrypt OnlyContent (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
-				
-				// Verifica
-				jsonCompactVerify = new JsonDecrypt(decryptProps, JOSERepresentation.COMPACT);
-				jsonCompactVerify.decrypt(compactEncrypt);
-				System.out.println("3d. JsonCompactEncrypt VerifyContent (Public): \n"+jsonCompactVerify.getDecodedPayload());
-				if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
-					throw new Exception("Found different payload");
-				}
-				try {
-					jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
-					throw new Exception("Expected validation error");
-				}catch(Exception e) {
-					System.out.println("Expected error: "+e.getMessage());
-				}
-				
-				System.out.println("\n\n");
-			}
 			
 			
 			
@@ -369,15 +337,238 @@ public class TestEncrypt {
 			
 			
 			
-//			
-//			
-//			// Cifratura con chiave privata e decifratura con chiave pubblica. Si tratta anche di un caso di firma implicita
-//			
-//			encryptProps.put("rs.security.keystore.file", fKeystore.getPath());
-//					
-//			decryptProps.put("rs.security.keystore.file", fTruststore.getPath());
-//			
 			
+			
+			
+			
+			System.out.println("\n\n ================================");
+			System.out.println("4. Example JsonEncrypt \n");
+
+			keyAlgorithm = "RSA-OAEP-256"; 
+			String contentAlgorithm = "A256GCM";
+			
+			
+			
+			// Cifratura con chiave pubblica e decifratura con chiave privata.
+			
+			System.out.println("\n");
+			
+			// 4a. Encrypt Attached 
+			jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
+			attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+			
+			System.out.println("4a. JsonAttachedEncrypt Encrypted (Public) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+			
+			// Verifica
+			jsonAttachedVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("4a. JsonAttachedEncrypt Verify (Private): \n"+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			
+			System.out.println("\n\n");
+			
+			// 4b. Encrypt Compact
+			jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("4b. JsonCompactEncrypt Encrypted (Public) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+			
+			// Verifica
+			jsonCompactVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("4b. JsonCompactEncrypt Verify (Private): \n"+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			
+			System.out.println("\n\n");
+			
+			
+			
+			
+			
+			
+			
+			// Ripeto i test aggiungendo DEFLATE!!!
+			
+			boolean deflate = true;
+			
+				
+			// 4e. Encrypt Attached
+			jsonAttachedEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
+			attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+			
+			System.out.println("4e. JsonAttachedEncrypt Deflate (Private) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+			
+			// Verifica
+			jsonAttachedVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("4e. JsonAttachedEncrypt Verify-Deflate (Public): \n"+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+		
+		
+		
+			System.out.println("\n\n");
+			
+			// 4f. Encrypt Compact
+			jsonCompactEncrypt = new JsonEncrypt(truststore, alias, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.COMPACT);
+			compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("4f. JsonCompactEncrypt Deflate (Private) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+			
+			// Verifica
+			jsonCompactVerify = new JsonDecrypt(keystore, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("4f. JsonCompactEncrypt Verify-Deflate (Public): \n"+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			System.out.println("\n\n");
+			
+			
+			
+			
+			
+			System.out.println("\n\n ================================");
+			System.out.println("5. Example JsonEncrypt (Symmetric) \n");
+
+			keyAlgorithm = "A256KW"; 
+			contentAlgorithm = "A256GCM";
+			boolean symmetric = true;
+			
+			
+			// Cifratura con chiave simmetrica
+			
+			System.out.println("\n");
+			
+			// 5a. Encrypt Attached 
+			jsonAttachedEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
+			attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+			
+			System.out.println("5a. JsonAttachedEncrypt Encrypted (Symmetric) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+			
+			// Verifica
+			jsonAttachedVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.SELF_CONTAINED);
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("5a. JsonAttachedEncrypt Verify (Symmetric): \n"+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			
+			System.out.println("\n\n");
+			
+			// 5b. Encrypt Compact
+			jsonCompactEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("5b. JsonCompactEncrypt Encrypted (Symmetric) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+			
+			// Verifica
+			jsonCompactVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("5b. JsonCompactEncrypt Verify (Symmetric): \n"+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			
+			System.out.println("\n\n");
+			
+			
+			// Ripeto i test aggiungendo DEFLATE!!!
+			
+				
+			// 5e. Encrypt Attached
+			jsonAttachedEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.SELF_CONTAINED);
+			attachEncrypt = jsonAttachedEncrypt.encrypt(jsonInput);
+			
+			System.out.println("5e. JsonAttachedEncrypt Deflate (Symmetric) (size: "+attachEncrypt.length()+"): \n"+attachEncrypt);
+			
+			// Verifica
+			jsonAttachedVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm,JOSERepresentation.SELF_CONTAINED);
+			jsonAttachedVerify.decrypt(attachEncrypt);
+			System.out.println("5e. JsonAttachedEncrypt Verify-Deflate (Symmetric): \n"+jsonAttachedVerify.getDecodedPayload());
+			if(jsonAttachedVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonAttachedVerify.decrypt(attachEncrypt.replace("ciphertext\":\"", "ciphertext\":\"CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+		
+		
+		
+			System.out.println("\n\n");
+			
+			// 5f. Encrypt Compact
+			jsonCompactEncrypt = new JsonEncrypt(keystoreJCEKS, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, deflate, JOSERepresentation.COMPACT);
+			compactEncrypt = jsonCompactEncrypt.encrypt(jsonInput);
+			
+			System.out.println("5f. JsonCompactEncrypt Deflate (Symmetric) (size: "+compactEncrypt.length()+"): \n"+compactEncrypt);
+			
+			// Verifica
+			jsonCompactVerify = new JsonDecrypt(keystoreJCEKS, symmetric, alias, passwordChiavePrivata, keyAlgorithm, contentAlgorithm, JOSERepresentation.COMPACT);
+			jsonCompactVerify.decrypt(compactEncrypt);
+			System.out.println("5f. JsonCompactEncrypt Verify-Deflate (Symmetric): \n"+jsonCompactVerify.getDecodedPayload());
+			if(jsonCompactVerify.getDecodedPayload().equals(jsonInput)==false) {
+				throw new Exception("Found different payload");
+			}
+			try {
+				jsonCompactVerify.decrypt(compactEncrypt.replace(".", ".CORROMPO"));
+				throw new Exception("Expected validation error");
+			}catch(Exception e) {
+				System.out.println("Expected error: "+e.getMessage());
+			}
+			
+			System.out.println("\n\n");
+			
+				
 		}finally{
 			try{
 				if(isKeystore!=null){
@@ -397,6 +588,16 @@ public class TestEncrypt {
 			try{
 				if(fTruststore!=null){
 					fTruststore.delete();
+				}
+			}catch(Exception e){}
+			try{
+				if(isKeystoreJCEKS!=null){
+					isKeystoreJCEKS.close();
+				}
+			}catch(Exception e){}
+			try{
+				if(fKeystoreJCEKS!=null){
+					fKeystoreJCEKS.delete();
 				}
 			}catch(Exception e){}
 		}

@@ -25,8 +25,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
+
+import javax.crypto.SecretKey;
 
 import org.openspcoop2.utils.UtilsException;
 
@@ -88,6 +91,14 @@ public class KeyStore {
 			throw new UtilsException(e.getMessage(),e);
 		}	
 	}
+	
+	public SecretKey getSecretKey(String alias,String passwordPrivateKey) throws UtilsException{
+		try{
+			return (SecretKey) this.keystore.getKey(alias, passwordPrivateKey.toCharArray());
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}	
+	}
 
 	public Certificate getCertificate() throws UtilsException{
 		try{
@@ -111,6 +122,12 @@ public class KeyStore {
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}	
+	}
+	public PublicKey getPublicKey() throws UtilsException{
+		return this.getCertificate().getPublicKey();
+	}
+	public PublicKey getPublicKey(String alias) throws UtilsException{
+		return this.getCertificate(alias).getPublicKey();
 	}
 	
 	public java.security.KeyStore getKeystore() {

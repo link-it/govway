@@ -21,7 +21,10 @@
 
 package org.openspcoop2.utils.security;
 
+import java.security.PublicKey;
 import java.util.Properties;
+
+import javax.crypto.SecretKey;
 
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm;
@@ -65,6 +68,60 @@ public class JsonEncrypt {
 				this.deflate = true;
 			}
 			
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+	
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, false, representation);
+	}
+	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(keystore, alias, keyAlgorithm, contentAlgorithm, false, representation);	
+	}
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, keyAlgorithm, contentAlgorithm, deflate, representation);
+	}
+	public JsonEncrypt(KeyStore keystore, String alias, String keyAlgorithm, String contentAlgorithm, boolean deflate, JOSERepresentation representation) throws UtilsException{
+		try {
+			this.representation=representation;
+			
+			this.keyAlgorithm  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
+			this.contentAlgorithm = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
+			String compression = null;
+			if(deflate) {
+				this.deflate = deflate;
+				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
+			}
+			
+			this.provider = JweUtils.createJweEncryptionProvider( (PublicKey) keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
+		}catch(Throwable t) {
+			throw new UtilsException(t.getMessage(),t);
+		}
+	}
+	
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, representation);
+	}
+	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, JOSERepresentation representation) throws UtilsException{
+		this(keystore, alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, false, representation);	
+	}
+	public JsonEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, JOSERepresentation representation) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, keyAlgorithm, contentAlgorithm, deflate, representation);
+	}
+	public JsonEncrypt(KeyStore keystore, String alias, String passwordPrivateKey, String keyAlgorithm, String contentAlgorithm, boolean deflate, JOSERepresentation representation) throws UtilsException{
+		try {
+			this.representation=representation;
+			
+			this.keyAlgorithm  = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.getAlgorithm(keyAlgorithm);
+			this.contentAlgorithm = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.getAlgorithm(contentAlgorithm);
+			String compression = null;
+			if(deflate) {
+				this.deflate = deflate;
+				compression = JoseConstants.JWE_DEFLATE_ZIP_ALGORITHM;
+			}
+			
+			this.provider = JweUtils.createJweEncryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 		}catch(Throwable t) {
 			throw new UtilsException(t.getMessage(),t);
 		}
