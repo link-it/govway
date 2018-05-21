@@ -56,13 +56,13 @@ import org.slf4j.Logger;
  * @author Poli Andrea (apoli@link.it)
  * @author Tronci Fabio (tronci@link.it)
  * @author Lorenzo Nardi (nardi@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
 
 
 
-public class SoapMessage implements java.io.Serializable {
+public class SavedMessage implements java.io.Serializable {
 
 	/**
 	 * serialVersionUID
@@ -112,7 +112,7 @@ public class SoapMessage implements java.io.Serializable {
 	 * @param workDir Directory dove effettuare salvataggi se il messaggio deve essere registrato su FileSystem, null se il messaggio deve essere registrato su DB
 	 * 
 	 */
-	public SoapMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, String workDir,Logger alog) throws UtilsException{
+	public SavedMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, String workDir,Logger alog) throws UtilsException{
 		this(idMsg, openspcoopstate ,box,workDir,null,alog);
 	}
 
@@ -125,7 +125,7 @@ public class SoapMessage implements java.io.Serializable {
 	 * @param adapterJDBC  JDBCAdapter se il messaggio deve essere registrato su DB, null se il messaggio deve essere registrato su file System 
 	 * 
 	 */
-	public SoapMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, IJDBCAdapter adapterJDBC,Logger alog) throws UtilsException{
+	public SavedMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, IJDBCAdapter adapterJDBC,Logger alog) throws UtilsException{
 		this(idMsg, openspcoopstate ,box,null,adapterJDBC,alog);
 	}
 
@@ -140,7 +140,7 @@ public class SoapMessage implements java.io.Serializable {
 	 * @param adapterJDBC  JDBCAdapter se il messaggio deve essere registrato su DB, null se il messaggio deve essere registrato su file System 
 	 * 
 	 */
-	public SoapMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, String workDir, 
+	public SavedMessage(String idMsg, IOpenSPCoopState openspcoopstate, String box, String workDir, 
 			IJDBCAdapter adapterJDBC,Logger alog) throws UtilsException{
 		this.idMessaggio = idMsg;
 		this.box = box;
@@ -148,7 +148,7 @@ public class SoapMessage implements java.io.Serializable {
 		if(alog!=null){
 			this.log = alog;
 		}else{
-			this.log = LoggerWrapperFactory.getLogger(SoapMessage.class);
+			this.log = LoggerWrapperFactory.getLogger(SavedMessage.class);
 		}
 		try{
 

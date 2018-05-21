@@ -1122,9 +1122,9 @@ public class GestoreMessaggi  {
 		//  Salvo contenuto messaggio 
 		if (message != null) {
 
-			SoapMessage msgSoap = null;
+			SavedMessage msgSoap = null;
 			try {
-				msgSoap = new SoapMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
+				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
 				msgSoap.save(message, this.isRichiesta, salvaNelloStateless);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
@@ -1265,9 +1265,9 @@ public class GestoreMessaggi  {
 			StateMessage stato = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) : ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
 
 
-			SoapMessage msgSoap = null;
+			SavedMessage msgSoap = null;
 			try {
-				msgSoap = new SoapMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
+				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
 				msgSoap.save(message, this.isRichiesta, false);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
@@ -2356,9 +2356,9 @@ public class GestoreMessaggi  {
 			idBustaSearch = mapRiferimentoIntoIDBusta();
 		}
 
-		SoapMessage soapMsg = null;
+		SavedMessage soapMsg = null;
 		try{
-			soapMsg = new SoapMessage(idBustaSearch, this.openspcoopstate, this.tipo,this.workDir,GestoreMessaggi.adapter,this.log);
+			soapMsg = new SavedMessage(idBustaSearch, this.openspcoopstate, this.tipo,this.workDir,GestoreMessaggi.adapter,this.log);
 			msg = soapMsg.read(this.isRichiesta, (this.portaDiTipoStateless || this.routingStateless));
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, getMessage "+this.tipo+"/"+this.idBusta+": "+e.getMessage();
@@ -5553,7 +5553,7 @@ public class GestoreMessaggi  {
 				}
 
 				// Prova poi ad eliminare il messaggio su FileSystem/DB
-				SoapMessage msgDelete = new SoapMessage(this.idBusta, this.openspcoopstate ,this.tipo,this.workDir,GestoreMessaggi.adapter,this.log); 
+				SavedMessage msgDelete = new SavedMessage(this.idBusta, this.openspcoopstate ,this.tipo,this.workDir,GestoreMessaggi.adapter,this.log); 
 				msgDelete.delete(this.isRichiesta,this.oneWayVersione11);
 
 				// Elimino il messaggio
@@ -5595,10 +5595,10 @@ public class GestoreMessaggi  {
 	 * 
 	 */
 	public void deleteMessageFromFileSystem(){
-		SoapMessage msgDelete = null;
+		SavedMessage msgDelete = null;
 		try{
 			//this.log.debug("DELETE FILE SYSTEM ID_MESSAGGIO='"+this.idBusta+"' AND TIPO='"+this.tipo+"'");
-			msgDelete = new SoapMessage(this.idBusta, this.openspcoopstate ,this.tipo,this.workDir,GestoreMessaggi.adapter,this.log); 
+			msgDelete = new SavedMessage(this.idBusta, this.openspcoopstate ,this.tipo,this.workDir,GestoreMessaggi.adapter,this.log); 
 			msgDelete.deleteMessageFromFileSystem();
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, error deleteMessage "+this.tipo+"/"+this.idBusta+": "+e.getMessage();		
