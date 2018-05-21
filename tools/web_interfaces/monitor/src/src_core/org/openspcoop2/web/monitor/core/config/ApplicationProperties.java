@@ -117,10 +117,10 @@ public class ApplicationProperties {
 		return this.getProperty("confDirectory", true, true);
 	}
 	public String getProtocolloDefault() throws Exception{
-		return this.getProperty("protocolloDefault", false, false);
+		return this.getProperty("protocolloDefault", false, true);
 	}
 	public File getRepositoryJars() throws Exception{
-		String tmp = this.getProperty("repositoryJars", false, false);
+		String tmp = this.getProperty("repositoryJars", false, true);
 		if(tmp!=null){
 			return new File(tmp);
 		}

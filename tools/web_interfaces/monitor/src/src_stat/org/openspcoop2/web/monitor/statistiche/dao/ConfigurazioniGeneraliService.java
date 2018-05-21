@@ -1,11 +1,14 @@
 package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.ConfigurazioneProtocolli;
+import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -52,7 +55,6 @@ import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
 import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
@@ -81,8 +83,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 	private transient DriverRegistroServiziDB driverRegistroDB = null;
 
-	private String endpointApplicativoPD = null;
-	private String endpointApplicativoPA = null;
+	private Hashtable<String, String> endpointApplicativoPD = null;
+	private Hashtable<String, String> endpointApplicativoPA = null;
 
 	public ConfigurazioniGeneraliService(){
 		try{
@@ -102,8 +104,15 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
 			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
 
-			this.endpointApplicativoPD = PddMonitorProperties.getInstance(ConfigurazioniGeneraliService.log).getEndpointApplicativoPD();
-			this.endpointApplicativoPA = PddMonitorProperties.getInstance(ConfigurazioniGeneraliService.log).getEndpointApplicativoPA();
+			ConfigurazioneProtocolli proto = this.driverConfigDB.getConfigurazioneGenerale().getProtocolli();
+			if(proto!=null && proto.sizeProtocolloList()>0) {
+				this.endpointApplicativoPD = new Hashtable<>();
+				this.endpointApplicativoPA = new Hashtable<>();
+			}
+			for (ConfigurazioneProtocollo configProtocollo : proto.getProtocolloList()) {
+				this.endpointApplicativoPD.put(configProtocollo.getNome(), configProtocollo.getUrlInvocazioneServizioPD());
+				this.endpointApplicativoPA.put(configProtocollo.getNome(), configProtocollo.getUrlInvocazioneServizioPA());
+			}
 
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la creazione del Service: " + e.getMessage(),e);
@@ -691,7 +700,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
 
 		dettaglioPD.setContesto(contesto);
-		dettaglioPD.setEndpointApplicativoPD(this.endpointApplicativoPD);
+		dettaglioPD.setEndpointApplicativoPD(this.endpointApplicativoPD.get(protocolFactory.getProtocol()));
 
 		dettaglioPD.setPropertyIntegrazione(ConfigurazioniUtils.getPropertiesIntegrazionePD(dettaglioPD));
 
@@ -730,7 +739,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				"" : protocolFactory.getManifest().getWeb().getContext(0).getName();
 
 		dettaglioPA.setContesto(contesto);
-		dettaglioPA.setEndpointApplicativoPA(this.endpointApplicativoPA);
+		dettaglioPA.setEndpointApplicativoPA(this.endpointApplicativoPA.get(protocolFactory.getProtocol()));
 
 		if("trasparente".equals(protocolFactory.getProtocol()))	{
 			dettaglioPA.setTrasparente(true);

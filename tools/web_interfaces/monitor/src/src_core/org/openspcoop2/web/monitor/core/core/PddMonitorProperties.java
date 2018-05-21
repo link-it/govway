@@ -68,52 +68,122 @@ public class PddMonitorProperties {
 	}
 
 	public boolean isAttivoModuloTransazioniBase() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.transazioni_base", true, false));
+		String tmp = this.appProperties.getProperty("modules.transazioni_base", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return true; // default
+		}
 	}
 	public boolean isAttivoModuloTransazioniPersonalizzate() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.transazioni_personalizzate", true, false));
+		String tmp = this.appProperties.getProperty("modules.transazioni_personalizzate", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloRicerchePersonalizzate() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.ricerche_personalizzate", true, false));
+		String tmp = this.appProperties.getProperty("modules.ricerche_personalizzate", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloTransazioniStatisticheBase() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.statistiche_base", true, false));
+		String tmp = this.appProperties.getProperty("modules.statistiche_base", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return true; // default
+		}
 	}
 	public boolean isAttivoModuloTransazioniStatistichePersonalizzate() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.statistiche_personalizzate", true, false));
+		String tmp = this.appProperties.getProperty("modules.statistiche_personalizzate", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloAllarmi() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.allarmi", true, false));
+		String tmp = this.appProperties.getProperty("modules.allarmi", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloProcessi() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.processi", true, false));
+		String tmp = this.appProperties.getProperty("modules.processi", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloSonde() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.sonde", true, false));
+		String tmp = this.appProperties.getProperty("modules.sonde", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
 	public boolean isAttivoModuloEventi() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.eventi", true, false));
+		String tmp = this.appProperties.getProperty("modules.eventi", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return true; // default
+		}
 	}
 	public boolean isAttivoModuloReports() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("modules.reports", true, false));
+		String tmp = this.appProperties.getProperty("modules.reports", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
 	}
+	public boolean isAuditingEnabled() throws Exception{
+		String tmp = this.appProperties.getProperty("auditing.auditingEnabled", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
+	}
+	
 	public boolean isAttivoLiveRuoloOperatore() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.ruoloOperatore.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.ruoloOperatore.enabled", true, true));
 	}
 	public boolean isAttivoTransazioniEsitiLive() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.esitiLiveEnabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.esitiLiveEnabled", true, true));
 	}
 	public boolean isAttivoTransazioniExportHeader() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableHeaderInfo", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableHeaderInfo", true, true));
 	}
 	public boolean isTransazioniDownloadThrowExceptionMimeTypeNotFound() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.download.mime.throwExceptionIfMappingNotFound", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.download.mime.throwExceptionIfMappingNotFound", true, true));
 	}
 	public boolean isTransazioniAllegatiDecodeBase64() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.allegati.decodeBase64", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.allegati.decodeBase64", true, true));
 	}
 	public List<String> getTransazioniAllegatiDecodeBase64_noDecodeList() throws Exception{
-		String tmp = this.appProperties.getProperty("transazioni.allegati.decodeBase64.noDecode", true, false);
+		String tmp = this.appProperties.getProperty("transazioni.allegati.decodeBase64.noDecode", true, true);
 		String [] tmpList = tmp.split(",");
 		List<String> l = new ArrayList<String>();
 		for (int i = 0; i < tmpList.length; i++) {
@@ -123,7 +193,7 @@ public class PddMonitorProperties {
 	}
 	
 	public Integer getTransazioniLiveUltimiGiorni() throws Exception{
-		String tmp = this.appProperties.getProperty("transazioni.live.ultimiGiorni", false, false);
+		String tmp = this.appProperties.getProperty("transazioni.live.ultimiGiorni", false, true);
 		if(tmp!=null){
 			return Integer.parseInt(tmp.trim());
 		}
@@ -131,7 +201,7 @@ public class PddMonitorProperties {
 	}
 	
 	public boolean isAttivoTransazioniDataAccettazione() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataAccettazione.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dataAccettazione.enabled", true, true));
 	}
 	
 	public boolean isAttivoTransazioniUtilizzoSondaPdDListAsClusterId() throws Exception{
@@ -218,12 +288,7 @@ public class PddMonitorProperties {
 		return this.getIndexList("eventi.forceIndex.count", externalRepository);
 	}
 	
-	public List<String> getReportForceIndexFindAll(Properties externalRepository) throws Exception{
-		return this.getIndexList("reports.forceIndex.findAll", externalRepository);
-	}
-	public List<String> getReportForceIndexCount(Properties externalRepository) throws Exception{
-		return this.getIndexList("reports.forceIndex.count", externalRepository);
-	}
+
 	
 	public List<String> getStatisticheForceIndexAndamentoTemporaleGroupBy(StatisticType tipologia, Properties externalRepository) throws Exception{
 		switch (tipologia) {
@@ -348,7 +413,7 @@ public class PddMonitorProperties {
 		return null;
 	}
 	
-	private List<String> getIndexList(String propertyName,Properties externalRepository) throws Exception{
+	public List<String> getIndexList(String propertyName,Properties externalRepository) throws Exception{
 		
 		String s = null;
 		if(externalRepository!=null){
@@ -461,160 +526,58 @@ public class PddMonitorProperties {
 		return _getJmxPdD_value(true, alias, "configurazioni.risorseJmxPdd.cache.dump.nomeRisorsa");
 	}
 
-	// configurazioni dump
-	private static Boolean isAttivoDumpModeChoice_forceDisabled = null;
-	public static void disabilitaFunzionalitaArchiviazioneMessaggi(){
-		isAttivoDumpModeChoice_forceDisabled = false;
-	}
-	public boolean isAttivoDumpModeChoice() throws Exception{
-		if(isAttivoDumpModeChoice_forceDisabled!=null){
-			return isAttivoDumpModeChoice_forceDisabled;
-		}
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("configurazioni.analisiContenuti.dumpModeChoice.enable", true, false));
-	}
-	
-	public boolean isAttivoConfigurazioniResetCache() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("configurazioni.analisiContenuti.enableCacheReset", true, false));
-	}
-	
-	public boolean isAttivoConfigurazioniDumpCriteriBusta() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("configurazioni.analisiContenuti.enableCriteriBusta", true, false));
-	}
+
 	
 
 	// statistiche
 
 	public boolean isAttivoStatisticheVisualizzazioneDimensione() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.abilitaVisualizzaPerDimensione", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.abilitaVisualizzaPerDimensione", true, true));
 	}
 
 	public String getOrientamentoDefaultLabelGrafici() throws Exception{
-		return this.appProperties.getProperty("statistiche.orientamentoLabelGraficiDefault", true, false);
+		return this.appProperties.getProperty("statistiche.orientamentoLabelGraficiDefault", true, true);
 	}
 	
 	public boolean isStatisticheAttivoServizioEsportazioneReport() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.service.reportExporter", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.service.reportExporter", true, true));
 	}
 	
 	
-	// allarmi
 	
-	public String getAllarmiConfigurazione() throws Exception{
-		return this.appProperties.getProperty("allarmi.configurazione", true, true);
-	}
 	
-	public String getAllarmiActiveServiceUrl() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url", true, true);
-	}
 	
-	public String getAllarmiActiveServiceUrl_SuffixStartAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.startAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixStopAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.stopAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixReStartAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.restartAlarm", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateOkAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.ok", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateWarningAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.warning", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateStateErrorAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateStateAlarm.error", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementEnabledAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.enabled", true, true);
-	}
-	
-	public String getAllarmiActiveServiceUrl_SuffixUpdateAcknoledgementDisabledAlarm() throws Exception{
-		return this.appProperties.getProperty("allarmi.active.service.url.suffix.updateAcknoledgement.disabled", true, true);
-	}
-	
-	public boolean isAllarmiConsultazioneModificaStatoAbilitata() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.modificaStatoAbilitata", true, false));
-	}
-	
-	public boolean isAllarmiAssociazioneAcknowledgedStatoAllarme() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.acknowledged.associazioneStatoAllarme", true, false));
-	}
-	
-	public boolean isAllarmiNotificaMailVisualizzazioneCompleta() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.notificaMail.visualizzazioneCompleta", true, false));
-	}
-	
-	public boolean isAllarmiMonitoraggioEsternoVisualizzazioneCompleta() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.monitoraggioEsterno.visualizzazioneCompleta", true, false));
-	}
 
-	public boolean isAllarmiConsultazioneSezioneNotificaMailReadOnly() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.sezioneNotificaMail.readOnly", true, false));
-	}
-	
-	public boolean isAllarmiConsultazioneSezioneMonitoraggioEsternoReadOnly() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.sezioneMonitoraggioEsterno.readOnly", true, false));
-	}
-	
-	public boolean isAllarmiConsultazioneParametriReadOnly() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.consultazione.sezioneParametri.readOnly", true, false));
-	}
-	
-	
-	// sonde
 
-	public boolean isTipoSondaEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("sonde.tipoSondaEnabled", true, false));
-	}
 
-	public String getTipoSondaDefault() throws Exception{
-		return this.appProperties.getProperty("sonde.tipoSondaDefault", true, false);
-	}
-
-	public boolean isDisableContentTypeUser() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("sonde.disableContentTypeUser", true, false));
-	}
-	
-	
-	//auditing
-	public boolean isAuditingEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("auditing.auditingEnabled", true, false));
-	}
 	
 	// periodo refresh live
 	
 	public String getIntervalloRefreshTransazioniLive() throws Exception{
-		return this.appProperties.getProperty("transazioni.intervalloRefreshTransazioniLive", true, false);
+		return this.appProperties.getProperty("transazioni.intervalloRefreshTransazioniLive", true, true);
 	}
 	
 	public String getIntervalloRefreshEsitiLive() throws Exception{
-		return this.appProperties.getProperty("transazioni.intervalloRefreshEsitiLive", true, false);
+		return this.appProperties.getProperty("transazioni.intervalloRefreshEsitiLive", true, true);
 	}
 	
 	public Integer getTempoMassimoRefreshLive() throws Exception{
-		return Integer.parseInt(this.appProperties.getProperty("transazioni.tempoMassimoRefreshLive", true, false));
+		return Integer.parseInt(this.appProperties.getProperty("transazioni.tempoMassimoRefreshLive", true, true));
 	}
 	
 	// status pdd
 	
 	public boolean isStatusPdDEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("statoPdD.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statoPdD.enabled", true, true));
 	}
 	
 	public String getIntervalloRefreshStatusPdD() throws Exception{
-		return this.appProperties.getProperty("statoPdD.refresh_interval", this.isStatusPdDEnabled(), false);
+		return this.appProperties.getProperty("statoPdD.refresh_interval", this.isStatusPdDEnabled(), true);
 	}
 	
 	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
 		List<String> lista = new ArrayList<String>();
-		String tmp = this.appProperties.getProperty("statoPdD.sonde.pddOE.pdd", this.isStatusPdDEnabled(), false);
+		String tmp = this.appProperties.getProperty("statoPdD.sonde.pddOE.pdd", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
 			for (int i = 0; i < split.length; i++) {
@@ -625,12 +588,12 @@ public class PddMonitorProperties {
 	}
 
 	public String getUrlCheckStatusPdD(String namePdD) throws Exception{
-		return this.appProperties.getProperty("statoPdD.pdd."+namePdD+".url", this.isStatusPdDEnabled(), false);
+		return this.appProperties.getProperty("statoPdD.pdd."+namePdD+".url", this.isStatusPdDEnabled(), true);
 	}
 	
 	public List<String> getListaSondePdd() throws Exception{
 		List<String> lista = new ArrayList<String>();
-		String tmp = this.appProperties.getProperty("statoPdD.sonde", this.isStatusPdDEnabled(), false);
+		String tmp = this.appProperties.getProperty("statoPdD.sonde", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
 			for (int i = 0; i < split.length; i++) {
@@ -652,40 +615,30 @@ public class PddMonitorProperties {
 	// Visualizza idPdd
 	
 	public boolean isVisualizzaIdPdDEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("visualizzaIdPdD.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("visualizzaIdPdD.enabled", true, true));
 	}
 	
 	
-	// Visualizza Plugins SDK
-	private static Boolean isVisualizzaPluginsSDK_forceDisabled = null;
-	public static void disabilitaFunzionalitaPluginsSDK(){
-		isVisualizzaPluginsSDK_forceDisabled = false;
-	}
-	public boolean isVisualizzaPluginsSDK() throws Exception{
-		if(isVisualizzaPluginsSDK_forceDisabled!=null){
-			return isVisualizzaPluginsSDK_forceDisabled;
-		}
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("analisiDati.visualizzaPluginsSDK", true, false));
-	}
+
 	
 	// controllo abilitazione dei grafici svg
 	
 	public boolean isGraficiSvgEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("grafici.visualizzazioneSvg.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("grafici.visualizzazioneSvg.enabled", true, true));
 	}
 	
 	// Abilita il caching delle richieste multipart
 	public boolean isMultipartRequestCache() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
 	}
 	
 	// properties per la gestione del login
 	public String getLoginTipo() throws Exception{
-		return this.appProperties.getProperty("login.tipo", true, false);
+		return this.appProperties.getProperty("login.tipo", true, true);
 	}
 
 	public boolean isLoginApplication() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application", true, true));
 	}
 
 	public Properties getLoginProperties() throws Exception{
@@ -698,7 +651,7 @@ public class PddMonitorProperties {
 	private int consoleFontStyle = -1;
 	
 	public String getConsoleFont() throws Exception{
-		return this.appProperties.getProperty("console.font", true, false);
+		return this.appProperties.getProperty("console.font", true, true);
 	}
 	
 	public String getConsoleFontName() {
@@ -725,31 +678,31 @@ public class PddMonitorProperties {
 	}
 
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws Exception{
-		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, false);
+		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, true);
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws Exception{
-		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, false);
+		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, true);
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws Exception{
-		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, false);
+		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, true);
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws Exception{
-		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, false);
+		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, true);
 	}
 
 	public boolean isMostraButtonLogout() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, true));
 	}
 
 	public String getLogoutUrlDestinazione() throws Exception{
-		return this.appProperties.getProperty("logout.urlDestinazione", true, false);
+		return this.appProperties.getProperty("logout.urlDestinazione", true, true);
 	}
 	
 	public boolean isGestionePasswordUtentiAttiva() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.gestionePassword.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.gestionePassword.enabled", true, true));
 	}
 	
 	public String getUtentiPasswordVerifier() throws Exception{
@@ -759,12 +712,12 @@ public class PddMonitorProperties {
 	// Gestore Filtri
 	
 	public boolean isGestoreFiltriEnabled() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("gestoreFiltri.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("gestoreFiltri.enabled", true, true));
 	}
 	
 	public List<String> getListaFiltri(String tipo) throws Exception{
 		List<String> lista = new ArrayList<String>();
-		String tmp = this.appProperties.getProperty(("gestoreFiltri.filters."+tipo), this.isGestoreFiltriEnabled(), false);
+		String tmp = this.appProperties.getProperty(("gestoreFiltri.filters."+tipo), this.isGestoreFiltriEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
 			for (int i = 0; i < split.length; i++) {
@@ -777,7 +730,7 @@ public class PddMonitorProperties {
 	public String getClassNameFiltro(String tipo,String nomeFiltro) throws Exception{
 		String className = "gestoreFiltri.filters."+tipo +"." + nomeFiltro+".class";
 		
-		return this.appProperties.getProperty(className, this.isGestoreFiltriEnabled(), false);
+		return this.appProperties.getProperty(className, this.isGestoreFiltriEnabled(), true);
 	}
 	
 	public Properties getPropertiesFiltro(String tipo,String nomeFiltro) throws Exception{
@@ -789,73 +742,31 @@ public class PddMonitorProperties {
 	}
 	
 	public String getLogoHeaderImage() throws Exception{
-		return this.appProperties.getProperty("console.header.logo.image", false, false);
+		return this.appProperties.getProperty("console.header.logo.image", false, true);
 	}
 
 	public String getLogoHeaderTitolo() throws Exception{
-		return this.appProperties.getProperty("console.header.logo.titolo", false, false);
+		return this.appProperties.getProperty("console.header.logo.titolo", false, true);
 	}
 
 	public String getLogoHeaderLink() throws Exception{
-		return this.appProperties.getProperty("console.header.logo.link", false, false);
+		return this.appProperties.getProperty("console.header.logo.link", false, true);
 	}
 	
 
 	
-	public String getEndpointApplicativoPD() throws Exception{
-		return this.appProperties.getProperty("endpointApplicativoPD.baseUrl", true, false);
-	}
-	
-	public String getEndpointApplicativoPA() throws Exception{
-		return this.appProperties.getProperty("endpointApplicativoPA.baseUrl", true, false);
-	}
-	
-	
-	/* Properties export report */
-	
-	public int getNumeroMaxRisultatiDistribuzioneStatistica() throws Exception{
-		return Integer.parseInt(this.appProperties.getProperty("reports.distribuzioneStatistica.maxNumeroRisultati.default", true, false));
-	}
-	public int getLimiteSuperioNumeroMaxDistribuzioneServizi() throws Exception{
-		return Integer.parseInt(this.appProperties.getProperty("reports.distribuzioneStatistica.maxNumeroRisultati.limiteSuperiore", true, false));
-	}
-	public boolean isAttivaVisualizzazioneRisultatiEsclusiComeCategoriaAltri() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("reports.distribuzioneStatistica.categoriaAltri", true, false));
-	}
-	public int getNumeroMaxCategorieErrore() throws Exception{
-		return Integer.parseInt(this.appProperties.getProperty("reports.casisticheErrori.maxNumeroCategorie.default", true, false));
-	}
-	public int getLimiteSuperioNumeroMaxCategorieErrore() throws Exception{
-		return Integer.parseInt(this.appProperties.getProperty("reports.casisticheErrori.maxNumeroCategorie.limiteSuperiore", true, false));
-	}
 	
 	/* Properties gestione della paginazione delle liste con le count */
 	
 	public boolean isAttivoUtilizzaCountStoricoTransazioni() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaCount.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaCount.enabled", true, true));
 	}
-	
-	public boolean isAttivoUtilizzaCountListaUtenti() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.lista.utilizzaCount.enabled", true, false));
-	}
-	
-	public boolean isAttivoUtilizzaCountListaSonde() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("sonde.lista.utilizzaCount.enabled", true, false));
-	}
-	
-	public boolean isAttivoUtilizzaCountListaReports() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("reports.lista.utilizzaCount.enabled", true, false));
-	}
-	
+			
 	public boolean isAttivoUtilizzaCountListaEventi() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("eventi.lista.utilizzaCount.enabled", true, false));
-	}
-	
-	public boolean isAttivoUtilizzaCountListaAllarmi() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("allarmi.lista.utilizzaCount.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("eventi.lista.utilizzaCount.enabled", true, true));
 	}
 
 	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, false));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
 	}
 }
