@@ -324,12 +324,21 @@
 
 		<!-- dao properties -->
 		<fileset dir="${plugins_pddMonitor}" id="plugins.properties.dao">
-			<include name="**/*.properties.dao" />
+			<include name="**/daoFactory_local.properties.adjunct" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties.dao" refid="plugins.properties.dao">
 			<map from="${plugins_pddMonitor}/" to="" />
 		</pathconvert>
-		<echo message="Plugins-properties (DAO) della PdDMonitor: ${plugins.classpath.properties.dao}" />
+		<echo message="Plugins-properties (DAO-Adjunct) della PdDMonitor: ${plugins.classpath.properties.dao}" />
+
+		<!-- monitor properties -->
+		<fileset dir="${plugins_pddMonitor}" id="plugins.properties.monitor">
+			<include name="**/monitor.properties.adjunct" />
+		</fileset>
+		<pathconvert pathsep=" " property="plugins.classpath.properties.monitor" refid="plugins.properties.monitor">
+			<map from="${plugins_pddMonitor}/" to="" />
+		</pathconvert>
+		<echo message="Plugins-properties (Monitor-Adjunct) della PdDMonitor: ${plugins.classpath.properties.monitor}" />
 
 		<!-- WEB-INF/<nome>.web.xml.params -->
 		<fileset dir="${plugins_pddMonitor}" id="plugins.web.xml.params">

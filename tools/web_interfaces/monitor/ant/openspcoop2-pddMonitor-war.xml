@@ -60,6 +60,20 @@
 		</antcall>
 		-->
 
+		<if>
+			<not>
+				<equals arg1="${plugins.classpath.properties.monitor}" arg2=""/>
+			</not>
+			<then>
+				<concat destfile="${build_pddMonitor}/tmp/monitor.properties" append="yes" >
+
+# ----- Personalizzazione Plugins -------------
+				</concat>
+				<concat destfile="${build_pddMonitor}/tmp/monitor.properties" append="yes">
+					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.properties.monitor}"/>
+				</concat>
+			</then>
+		</if>
 		<antcall target="dos2unix">
 			<param name="dir" value="${build_pddMonitor}/tmp"/>
 		    <param name="file" value="monitor.properties"/>
