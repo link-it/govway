@@ -33,6 +33,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.io.Base64Utilities;
 
 /**
  * AbstractRESTMessageSecurityReceiver
@@ -128,7 +129,23 @@ public abstract class AbstractRESTMessageSecurityReceiver implements IMessageSec
 				throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") header '"+this.signatureDetachedHeader+"' not found");
 			}
 		}
-		return detachedSignature;
+		
+		boolean base64Detached = SecurityConstants.SIGNATURE_DETACHED_BASE64_DEFAULT;
+		String tmpBase64 = (String) map.get(SecurityConstants.SIGNATURE_DETACHED_BASE64);
+		if(tmpBase64!=null && !"".equals(tmpBase64)) {
+			try {
+				base64Detached = Boolean.parseBoolean(tmpBase64);
+			}catch(Exception e) {
+				throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property '"+SecurityConstants.SIGNATURE_DETACHED_BASE64+
+						"' with wrong value (expected "+SecurityConstants.SIGNATURE_DETACHED_BASE64_TRUE+"/"+SecurityConstants.SIGNATURE_DETACHED_BASE64_FALSE+"): "+e.getMessage(),e);
+			}
+		}
+		if(base64Detached) {
+			return new String(Base64Utilities.decode(detachedSignature));
+		}
+		else {
+			return detachedSignature;
+		}
 	}
 	
 	protected void deleteDetachedSignatureFromMessage(OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine) throws SecurityException {

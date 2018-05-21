@@ -22,11 +22,8 @@
 package org.openspcoop2.security.message.xml;
 
 import java.security.KeyStore;
-import java.util.Properties;
 
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -39,7 +36,6 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
-import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.security.VerifyXmlSignature;
@@ -108,87 +104,36 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 				
 				// **************** Leggo parametri signature store **************************
 							
-				String mode = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_MODE);
-				if(mode==null || "".equals(mode.trim())){
-					throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_MODE+"' property");
-				}
-				try {
-					this.joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
-				}catch(Exception e) {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
-				}
-				
 				SignatureBean bean = null;
-				NotFoundException notFound = null;
 				try {
-					bean = PropertiesUtils.getReceiverSignatureBean(messageSecurityContext);
-				}catch(NotFoundException e) {
-					notFound = e;
+					bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
+				}catch(Exception e) {
+					throw e;
 				}
-				if(bean!=null) {
-					Properties signatureProperties = bean.getProperties();
-					this.xmlVerifierSignature = new JsonVerifySignature(signatureProperties, this.joseRepresentation);	
-				}
-				else {	
-					KeyStore signatureKS = null;
-					KeyStore signatureTrustStoreKS = null;
-					String aliasSignatureUser = null;
-					try {
-						bean = KeystoreUtils.getReceiverSignatureBean(messageSecurityContext);
-					}catch(Exception e) {
-						// Lancio come messaggio eccezione precedente
-						if(notFound!=null) {
-							messageSecurityContext.getLog().error(e.getMessage(),e);
-							throw notFound;
-						}
-						else {
-							throw e;
-						}
-					}
 					
-					signatureKS = bean.getKeystore();
-					signatureTrustStoreKS = bean.getTruststore();
-					aliasSignatureUser = bean.getUser();
+				KeyStore signatureKS = bean.getKeystore();
+				KeyStore signatureTrustStoreKS = bean.getTruststore();
+				String aliasSignatureUser = bean.getUser();
 
-					if(signatureKS==null && signatureTrustStoreKS==null) {
-						throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require truststore");
-					}
-					if(aliasSignatureUser==null) {
-						throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require alias certificate");
-					}
+				if(signatureKS==null && signatureTrustStoreKS==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require truststore");
+				}
+				if(aliasSignatureUser==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require alias certificate");
+				}
 					
-					String signatureAlgorithm = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
-					if(signatureAlgorithm==null || "".equals(signatureAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
-					}
-					
-					if(signatureTrustStoreKS!=null) {
-						this.xmlVerifierSignature = new JsonVerifySignature(signatureTrustStoreKS, aliasSignatureUser, signatureAlgorithm, this.joseRepresentation);	
-					}
-					else {
-						this.xmlVerifierSignature = new JsonVerifySignature(signatureKS, aliasSignatureUser, signatureAlgorithm, this.joseRepresentation);	
-					}
+				if(signatureTrustStoreKS!=null) {
+					this.xmlVerifierSignature = new VerifyXmlSignature(signatureTrustStoreKS, aliasSignatureUser);	
+				}
+				else {
+					this.xmlVerifierSignature = new VerifyXmlSignature(signatureKS, aliasSignatureUser);	
 				}
 				
-				String detachedSignature = null;
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-					detachedSignature = this.readDetachedSignatureFromMessage(messageSecurityContext.getIncomingProperties(), 
-							restJsonMessage, XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
-				}
-				
-				
-				
+
 				// **************** Process **************************
 				
-
-				
 				signatureProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
-				boolean verify = false;
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-					verify = this.xmlVerifierSignature.verify(detachedSignature, restJsonMessage.getContent());
-				}else {
-					verify = this.xmlVerifierSignature.verify(restJsonMessage.getContent());
-				}
+				boolean verify = this.xmlVerifierSignature.verify(restXmlMessage.getContent(),false);
 				if(!verify) {
 					throw new Exception("Signature verification failed");
 				}
@@ -202,99 +147,46 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 				
 				// **************** Leggo parametri encryption store **************************
 							
-				JOSERepresentation joseRepresentation = null;
-				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_MODE);
-				if(mode==null || "".equals(mode.trim())){
-					throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.DECRYPTION_MODE+"' property");
-				}
-				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
-				}catch(Exception e) {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
-				}
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+", "+SecurityConstants.DECRYPTION_MODE+" '"+mode+"' not supported");
-				}
-				
 				EncryptionBean bean = null;
-				NotFoundException notFound = null;
 				try {
-					bean = PropertiesUtils.getReceiverEncryptionBean(messageSecurityContext);
-				}catch(NotFoundException e) {
-					notFound = e;
-				}
-				if(bean!=null) {
-					Properties encryptionProperties = bean.getProperties();
-					this.xmlDecrypt = new JsonDecrypt(encryptionProperties, this.joseRepresentation);	
-				}
-				else {	
-					KeyStore encryptionKS = null;
-					boolean encryptionSymmetric = false;
-					String aliasEncryptUser = null;
-					String aliasEncryptPassword = null;
-					try {
-						bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
-					}catch(Exception e) {
-						// Lancio come messaggio eccezione precedente
-						if(notFound!=null) {
-							messageSecurityContext.getLog().error(e.getMessage(),e);
-							throw notFound;
-						}
-						else {
-							throw e;
-						}
-					}
-					
-					encryptionKS = bean.getKeystore();
-					encryptionSymmetric = bean.isEncryptionSimmetric();
-					aliasEncryptUser = bean.getUser();
-					aliasEncryptPassword = bean.getPassword();
-
-					if(encryptionKS==null) {
-						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require keystore");
-					}
-					if(aliasEncryptUser==null) {
-						if(encryptionSymmetric) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require alias secret key");
-						}
-						else {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require alias private key");
-						}
-					}
-					if(aliasEncryptPassword==null) {
-						if(encryptionSymmetric) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require password secret key");
-						}
-						else {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require password private key");
-						}
-					}
-
-					String encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
-					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
-					}
-					
-					String encryptionContentAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
-					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
-					}
-					
-					this.xmlDecrypt = new JsonDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword,
-							encryptionKeyAlgorithm, encryptionContentAlgorithm, this.joseRepresentation);	
+					bean = KeystoreUtils.getReceiverEncryptionBean(messageSecurityContext);
+				}catch(Exception e) {
+					throw e;
 				}
 				
+				KeyStore encryptionKS = bean.getKeystore();
+				boolean encryptionSymmetric = bean.isEncryptionSimmetric();
+				String aliasEncryptUser = bean.getUser();
+				String aliasEncryptPassword = bean.getPassword();
+
+				if(encryptionKS==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require keystore");
+				}
+				if(aliasEncryptUser==null) {
+					if(encryptionSymmetric) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require alias secret key");
+					}
+					else {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require alias private key");
+					}
+				}
+				if(aliasEncryptPassword==null) {
+					if(encryptionSymmetric) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require password secret key");
+					}
+					else {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_DECRYPT_DESCRIPTION+" require password private key");
+					}
+				}
+
+				this.xmlDecrypt = new XmlDecrypt(encryptionKS, encryptionSymmetric, aliasEncryptUser, aliasEncryptPassword);
+
 	
-				
-				
 				
 				// **************** Process **************************
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
-				boolean verify = this.xmlVerifierSignature.verify(restJsonMessage.getContent());
-				if(!verify) {
-					throw new Exception("Signature verification failed");
-				}
+				this.xmlDecrypt.decrypt(restXmlMessage.getContent());
 		
 			
 			} // fine encrypt
@@ -359,21 +251,16 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
 				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(MessageType.JSON.equals(messageParam.getMessageType())==false) {
-				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
+			if(MessageType.XML.equals(messageParam.getMessageType())==false) {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with REST Binding and a xml message, found: "+messageParam.getMessageType());
 			}
-			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
+			OpenSPCoop2RestXmlMessage restXmlMessage = messageParam.castAsRestXml();
 					
 			if(this.xmlVerifierSignature!=null) {
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-					this.deleteDetachedSignatureFromMessage(restJsonMessage, XMLCostanti.XML_ENGINE_VERIFIER_SIGNATURE_DESCRIPTION);
-				}	
-				else {
-					restJsonMessage.updateContent(this.xmlVerifierSignature.getDecodedPayload());
-				}
+				this.xmlVerifierSignature.detach(restXmlMessage.getContent());
 			}
 			else if(this.xmlDecrypt!=null) {
-				restJsonMessage.updateContent(this.xmlDecrypt.getDecodedPayload());
+				// nop
 			}
 			else {
 				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (detach method) usable only after one function beetwen encrypt or signature");
@@ -386,7 +273,29 @@ public class MessageSecurityReceiver_xml extends AbstractRESTMessageSecurityRece
 
 	@Override
 	public String getCertificate() throws SecurityException {
-		return null;
+		try {
+			if(this.xmlVerifierSignature!=null) {
+				if(	this.xmlVerifierSignature.getKeyInfo()!=null ) {
+					// X509
+					if(	this.xmlVerifierSignature.getKeyInfo().getX509Certificate()!=null && this.xmlVerifierSignature.getKeyInfo().getX509Certificate().getIssuerX500Principal()!=null ) {
+						return this.xmlVerifierSignature.getKeyInfo().getX509Certificate().getIssuerX500Principal().getName();
+					}
+					// RSA
+					if(	this.xmlVerifierSignature.getKeyInfo().getPublicKey()!=null) {
+						// non c'e' una stringa da tornare
+					}
+				}
+				return null;
+			}
+			else if(this.xmlDecrypt!=null) {
+				return null;
+			}
+			else {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" (getCertificate method) usable only after one function beetwen encrypt or signature");
+			}
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(), e);
+		}
 	}
 
 

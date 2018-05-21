@@ -40,7 +40,6 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
-import org.openspcoop2.security.message.xml.XMLCostanti;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.security.JOSERepresentation;
 import org.openspcoop2.utils.security.JsonDecrypt;
@@ -92,7 +91,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 					signature = true;
 				}
 				else {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+"; action '"+actions[i]+"' unsupported");
+					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+"; action '"+actions[i]+"' unsupported");
 				}
 			}
 			
@@ -182,9 +181,7 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				
 				
 				// **************** Process **************************
-				
 
-				
 				signatureProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				boolean verify = false;
 				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
@@ -288,8 +285,6 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				}
 				
 	
-				
-				
 				
 				// **************** Process **************************
 							

@@ -23,10 +23,7 @@ package org.openspcoop2.security.message.xml;
 
 
 import java.security.KeyStore;
-import java.util.Properties;
 
-import org.adroitlogic.soapbox.SecurityRequest;
-import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageType;
@@ -37,9 +34,9 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
-import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.security.XmlEncrypt;
 import org.openspcoop2.utils.security.XmlSignature;
 
 /**
@@ -188,108 +185,98 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 			
 				// **************** Leggo parametri encryption store **************************
 				
-				JOSERepresentation joseRepresentation = null;
-				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_MODE);
-				if(mode==null || "".equals(mode.trim())){
-					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_MODE+"' property");
-				}
+				XmlEncrypt xmlEncrypt = null;
+				EncryptionBean bean = null;
 				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext);
 				}catch(Exception e) {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+", '"+SecurityConstants.ENCRYPTION_MODE+"' property error: "+e.getMessage(),e);
-				}
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
-					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+", "+SecurityConstants.ENCRYPTION_MODE+" '"+mode+"' not supported");
+					throw e;
 				}
 				
-				JsonEncrypt jsonEncrypt = null;
-				EncryptionBean bean = null;
-				NotFoundException notFound = null;
-				try {
-					bean = PropertiesUtils.getSenderEncryptionBean(messageSecurityContext);
-				}catch(NotFoundException e) {
-					notFound = e;
+				KeyStore encryptionKS = bean.getKeystore();
+				KeyStore encryptionTrustStoreKS = bean.getTruststore();
+				boolean encryptionSymmetric = bean.isEncryptionSimmetric();
+				String aliasEncryptUser = bean.getUser();
+				String aliasEncryptPassword = bean.getPassword();
+
+				if(encryptionSymmetric) {
+					if(encryptionKS==null) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require keystore");
+					}
+					if(aliasEncryptUser==null) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias secret key");
+					}
+					if(aliasEncryptPassword==null) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require password secret key");
+					}
 				}
-				if(bean!=null) {
-					Properties encryptionProperties = bean.getProperties();
-					jsonEncrypt = new JsonEncrypt(encryptionProperties, joseRepresentation);	
+				else {
+					if(encryptionTrustStoreKS==null) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require truststore");
+					}
+					if(aliasEncryptUser==null) {
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias public key");
+					}
 				}
-				else {	
-					KeyStore encryptionKS = null;
-					KeyStore encryptionTrustStoreKS = null;
-					boolean encryptionSymmetric = false;
-					String aliasEncryptUser = null;
-					String aliasEncryptPassword = null;
-					try {
-						bean = KeystoreUtils.getSenderEncryptionBean(messageSecurityContext);
-					}catch(Exception e) {
-						// Lancio come messaggio eccezione precedente
-						if(notFound!=null) {
-							messageSecurityContext.getLog().error(e.getMessage(),e);
-							throw notFound;
-						}
-						else {
-							throw e;
+				
+				String encryptionAlgorithm = null;
+				String encryptionKeyAlgorithm = null;
+				String wrappedKeyAlgorithm = null;
+				if(encryptionSymmetric) {	
+					
+					encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
+					if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
+						encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_ALGORITHM);
+						if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM+"'/'"+
+									SecurityConstants.ENCRYPTION_ALGORITHM+"' property");
 						}
 					}
 					
-					encryptionKS = bean.getKeystore();
-					encryptionTrustStoreKS = bean.getTruststore();
-					encryptionSymmetric = bean.isEncryptionSimmetric();
-					aliasEncryptUser = bean.getUser();
-					aliasEncryptPassword = bean.getPassword();
-
-					if(encryptionSymmetric) {
-						if(encryptionKS==null) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require keystore");
-						}
-						if(aliasEncryptUser==null) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias secret key");
-						}
-						if(aliasEncryptPassword==null) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require password secret key");
-						}
-					}
-					else {
-						if(encryptionTrustStoreKS==null) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require truststore");
-						}
-						if(aliasEncryptUser==null) {
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias public key");
-						}
-					}
-
+					xmlEncrypt = new XmlEncrypt(encryptionKS, true, aliasEncryptUser, aliasEncryptPassword);
 					
-					String encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
+				}
+				else {
+					
+					encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_ALGORITHM);
+					if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_ALGORITHM+"' property");
+					}
+					
+					encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
 					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
 						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
 					}
 					
-					String encryptionContentAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
-					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
+					wrappedKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM);
+					if(wrappedKeyAlgorithm==null || "".equals(wrappedKeyAlgorithm.trim())){
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM+"' property");
 					}
 					
-					String encryptionDeflateParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DEFLATE);
-					boolean deflate = false;
-					if(encryptionDeflateParam!=null) {
-						deflate = SecurityConstants.ENCRYPTION_DEFLATE_TRUE.equalsIgnoreCase(encryptionDeflateParam);
-					}
-					
-					if(encryptionSymmetric) {
-						jsonEncrypt = new JsonEncrypt(encryptionKS, aliasEncryptUser, aliasEncryptPassword, encryptionKeyAlgorithm, encryptionContentAlgorithm, deflate, joseRepresentation);
-					}else {
-						jsonEncrypt = new JsonEncrypt(encryptionTrustStoreKS, aliasEncryptUser, encryptionKeyAlgorithm, encryptionContentAlgorithm, deflate, joseRepresentation);
-					}
+					xmlEncrypt = new XmlEncrypt(encryptionTrustStoreKS, aliasEncryptUser);
 				}
-		
-
+				
+				String encryptionDigestAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DIGEST_ALGORITHM);
+				if(encryptionDigestAlgorithm!=null && "".equals(encryptionDigestAlgorithm.trim())){
+					encryptionDigestAlgorithm = null; // normalizzo
+				}
+				
+				String encryptionCanonicalizationMethodAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_C14N_ALGORITHM);
+				if(encryptionCanonicalizationMethodAlgorithm!=null && "".equals(encryptionCanonicalizationMethodAlgorithm.trim())){
+					encryptionCanonicalizationMethodAlgorithm = null; // normalizzo
+				}
+				
 				
 				
 				// **************** Process **************************
 				
-				String contentEncrypted = jsonEncrypt.encrypt(restXmlMessage.getContent());
-				restXmlMessage.updateContent(contentEncrypted);
+				if(encryptionSymmetric) {	
+					xmlEncrypt.encryptSymmetric(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm);
+				}
+				else {
+					xmlEncrypt.encrypt(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm,
+							encryptionKeyAlgorithm, wrappedKeyAlgorithm);
+				}
 				
 
 			} // fine encrypt

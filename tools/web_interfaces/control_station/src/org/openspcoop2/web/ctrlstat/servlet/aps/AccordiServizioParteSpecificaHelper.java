@@ -2044,7 +2044,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			switch (serviceBinding) {
 			case REST:
 				visualizzaMTOM = false;
-				visualizzaSicurezza = false;
+				visualizzaSicurezza = true;
 				visualizzaCorrelazione = false;
 				break;
 			case SOAP:
@@ -2797,7 +2797,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			switch (serviceBinding) {
 			case REST:
 				visualizzaMTOM = false;
-				visualizzaSicurezza = false;
+				visualizzaSicurezza = true;
 				visualizzaCorrelazione = false;
 				break;
 			case SOAP:

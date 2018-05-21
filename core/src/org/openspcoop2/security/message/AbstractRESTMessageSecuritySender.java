@@ -28,6 +28,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.io.Base64Utilities;
 
 /**
  * AbstractRESTMessageSecuritySender
@@ -43,12 +44,31 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 	
 	// *** DETACHED UTILS ***
 	
-	protected void setDetachedSignatureInMessage(Hashtable<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine, String detachedSignature) throws SecurityException {
+	protected void setDetachedSignatureInMessage(Hashtable<String,Object> map, OpenSPCoop2RestMessage<?> restMessage, String descriptionEngine, String detachedSignatureParam) throws SecurityException {
 		
 		String signatureDetachedHeader = null;
 		String signatureDetachedPropertyUrl = null;
 		
 		String mode = (String) map.get(SecurityConstants.SIGNATURE_MODE);
+		
+		boolean base64Detached = SecurityConstants.SIGNATURE_DETACHED_BASE64_DEFAULT;
+		String tmpBase64 = (String) map.get(SecurityConstants.SIGNATURE_DETACHED_BASE64);
+		if(tmpBase64!=null && !"".equals(tmpBase64)) {
+			try {
+				base64Detached = Boolean.parseBoolean(tmpBase64);
+			}catch(Exception e) {
+				throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property '"+SecurityConstants.SIGNATURE_DETACHED_BASE64+
+						"' with wrong value (expected "+SecurityConstants.SIGNATURE_DETACHED_BASE64_TRUE+"/"+SecurityConstants.SIGNATURE_DETACHED_BASE64_FALSE+"): "+e.getMessage(),e);
+			}
+		}
+		String detachedSignature = null;
+		if(base64Detached) {
+			detachedSignature = Base64Utilities.encodeAsString(detachedSignatureParam.getBytes());
+		}
+		else {
+			detachedSignature = detachedSignatureParam;
+		}
+		
 		signatureDetachedHeader = (String) map.get(SecurityConstants.SIGNATURE_DETACHED_HEADER);
 		if(signatureDetachedHeader==null || "".equals(signatureDetachedHeader.trim())){
 			signatureDetachedHeader=null; // normalizzo

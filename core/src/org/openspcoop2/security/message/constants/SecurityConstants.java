@@ -157,8 +157,11 @@ public class SecurityConstants {
     public static final String ENCRYPTION_KEY_SIZE = "encryptionKeySize";
     public static final String ENCRYPTION_KEY_TRANSPORT_ALGORITHM = ConfigurationConstants.ENC_KEY_TRANSPORT;
     public static final String ENCRYPTION_SYMMETRIC_ALGORITHM = ConfigurationConstants.ENC_SYM_ALGO;
+    public static final String ENCRYPTION_DIGEST_ALGORITHM = ConfigurationConstants.ENC_DIGEST_ALGO;
+    public static final String ENCRYPTION_C14N_ALGORITHM = "encryptionC14nAlgorithm";
     public static final String ENCRYPTION_KEY_ALGORITHM = "encryptionKeyAlgorithm";
     public static final String ENCRYPTION_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
+    public static final String ENCRYPTION_ALGORITHM = "encryptionAlgorithm";
     public static final String ENCRYPTION_KEY_IDENTIFIER = ConfigurationConstants.ENC_KEY_ID;
     public static final String ENCRYPTION_MODE = "encryptionMode";
     public static final String ENCRYPTION_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
@@ -212,6 +215,10 @@ public class SecurityConstants {
     public static final String SIGNATURE_MODE_SELF_CONTAINED = MODE_SELF_CONTAINED;
     public static final String SIGNATURE_MODE_DETACHED = MODE_DETACHED;
     public static final String SIGNATURE_MODE_COMPACT = MODE_COMPACT;
+    public static final String SIGNATURE_DETACHED_BASE64 = "signatureDetachedBase64";
+    public static final String SIGNATURE_DETACHED_BASE64_TRUE = "true";
+    public static final String SIGNATURE_DETACHED_BASE64_FALSE = "false";
+    public static final boolean SIGNATURE_DETACHED_BASE64_DEFAULT = Boolean.valueOf(SIGNATURE_DETACHED_BASE64_TRUE);
     public static final String SIGNATURE_DETACHED_HEADER = "signatureDetachedHeader";
     public static final String SIGNATURE_DETACHED_PROPERTY_URL = "signatureDetachedPropertyURL";
     public static final String SIGNATURE_XML_KEY_INFO = "keyInfo";

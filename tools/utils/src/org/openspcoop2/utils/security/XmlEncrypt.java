@@ -43,6 +43,21 @@ import org.w3c.dom.Element;
  */
 public class XmlEncrypt extends AbstractXmlCipher {
 
+	// BOTH 
+	
+	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	}
+	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	}
+	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	
 	// SYMMETRIC
 	
 	public XmlEncrypt(int mode, SecretKey secretKey) throws UtilsException{
@@ -77,6 +92,12 @@ public class XmlEncrypt extends AbstractXmlCipher {
 		super(XMLCipher.ENCRYPT_MODE, key);
 	}
 
+	public XmlEncrypt(java.security.KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(java.security.KeyStore keystore) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore);
+	}
 	public XmlEncrypt(KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException {
 		super(XMLCipher.ENCRYPT_MODE, keystore, addBouncyCastleProvider);
 	}
@@ -84,7 +105,13 @@ public class XmlEncrypt extends AbstractXmlCipher {
 		super(XMLCipher.ENCRYPT_MODE, keystore);
 	}
 
-	
+	public XmlEncrypt(java.security.KeyStore keystore, String alias, boolean addBouncyCastleProvider)
+			throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore, alias, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(java.security.KeyStore keystore, String alias) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore, alias);
+	}
 	public XmlEncrypt(KeyStore keystore, String alias, boolean addBouncyCastleProvider)
 			throws UtilsException {
 		super(XMLCipher.ENCRYPT_MODE, keystore, alias, addBouncyCastleProvider);
@@ -93,6 +120,13 @@ public class XmlEncrypt extends AbstractXmlCipher {
 		super(XMLCipher.ENCRYPT_MODE, keystore, alias);
 	}
 
+	public XmlEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey,
+			boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey);
+	}
 	public XmlEncrypt(KeyStore keystore, String alias, String passwordPrivateKey,
 			boolean addBouncyCastleProvider) throws UtilsException {
 		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
@@ -102,24 +136,47 @@ public class XmlEncrypt extends AbstractXmlCipher {
 	}
 
 
-	public Document encrypt(Document document, String encryptAlgorithm) throws UtilsException{
-		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, null, null);
+	public Document encryptSymmetric(Document document, String encryptAlgorithm) throws UtilsException{
+		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, null, null, null, null);
+	}
+	public Document encryptSymmetric(Document document, String encryptAlgorithm, String canonicalizationMethod, String digestMethod) throws UtilsException{
+		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, canonicalizationMethod, digestMethod, null, null);
 	}
 	public Document encrypt(Document document, String encryptAlgorithm, String keyAlgorithm, String wrappedKeyAlgorithm) throws UtilsException{
-		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
+		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, null, null, keyAlgorithm, wrappedKeyAlgorithm);
+	}
+	public Document encrypt(Document document, String encryptAlgorithm, String keyAlgorithm, String canonicalizationMethod, String digestMethod, 
+			String wrappedKeyAlgorithm) throws UtilsException{
+		return this.encrypt(document, document.getDocumentElement(), encryptAlgorithm, canonicalizationMethod, digestMethod,keyAlgorithm, wrappedKeyAlgorithm);
 	}
 	
-	public Document encrypt(Element element, String encryptAlgorithm) throws UtilsException{
-		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, null, null);
+	public Document encryptSymmetric(Element element, String encryptAlgorithm) throws UtilsException{
+		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, null, null, null, null);
+	}
+	public Document encryptSymmetric(Element element, String encryptAlgorithm, String canonicalizationMethod, String digestMethod) throws UtilsException{
+		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, canonicalizationMethod, digestMethod, null, null);
 	}
 	public Document encrypt(Element element, String encryptAlgorithm, String keyAlgorithm, String wrappedKeyAlgorithm) throws UtilsException{
-		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
+		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, null,null, keyAlgorithm, wrappedKeyAlgorithm);
+	}
+	public Document encrypt(Element element, String encryptAlgorithm, String canonicalizationMethod, String digestMethod, 
+			String keyAlgorithm, String wrappedKeyAlgorithm) throws UtilsException{
+		return this.encrypt(element.getOwnerDocument(), element, encryptAlgorithm, canonicalizationMethod, digestMethod, keyAlgorithm, wrappedKeyAlgorithm);
 	}
 	
-	public Document encrypt(Document document, Element element, String encryptAlgorithm) throws UtilsException{
-		return this.encrypt(document, element, encryptAlgorithm, null, null);
+	// String canonicalizationMethod, String digestMethod
+	
+	public Document encryptSymmetric(Document document, Element element, String encryptAlgorithm) throws UtilsException{
+		return this.encrypt(document, element, encryptAlgorithm, null, null, null, null);
+	}
+	public Document encryptSymmetric(Document document, Element element, String encryptAlgorithm, String canonicalizationMethod, String digestMethod) throws UtilsException{
+		return this.encrypt(document, element, encryptAlgorithm, canonicalizationMethod, digestMethod, null, null);
 	}
 	public Document encrypt(Document document, Element element, String encryptAlgorithm, String keyAlgorithm, String wrappedKeyAlgorithm) throws UtilsException{
+		return this.encrypt(document, element, encryptAlgorithm, null, null, keyAlgorithm, wrappedKeyAlgorithm);
+	}
+	public Document encrypt(Document document, Element element, String encryptAlgorithm, String canonicalizationMethod, String digestMethod,
+			String keyAlgorithm, String wrappedKeyAlgorithm) throws UtilsException{
 		try{
 			if(encryptAlgorithm==null){
 				throw new UtilsException("Encrypt Algorithm undefined");
@@ -138,7 +195,7 @@ public class XmlEncrypt extends AbstractXmlCipher {
 				encryptedKey = xmlCipherWrappedAlgorithm.encryptKey(document, super.secretKey);
 			}
 			
-			org.apache.xml.security.encryption.XMLCipher xmlCipher = super.getXMLCipher(encryptAlgorithm);
+			org.apache.xml.security.encryption.XMLCipher xmlCipher = super.getXMLCipher(encryptAlgorithm, canonicalizationMethod, digestMethod);
 			
 			if(encryptedKey!=null){
 				EncryptedData encryptedData = xmlCipher.getEncryptedData();

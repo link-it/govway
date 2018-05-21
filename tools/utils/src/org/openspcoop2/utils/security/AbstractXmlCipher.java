@@ -49,6 +49,27 @@ public abstract class AbstractXmlCipher {
 		return this.encryptedKey;
 	}
 	
+	// BOTH
+	
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, new KeyStore(keystore), symmetricKey, alias, passwordPrivateKey, false);
+	}
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, new KeyStore(keystore), symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	}
+	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		if(symmetricKey) {
+			SecretKey secretKey = keystore.getSecretKey(alias, passwordPrivateKey);
+			this.initSymmetric(mode, secretKey, addBouncyCastleProvider);
+		}
+		else {
+			this.initPrivate(mode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+		}
+	}
+	
 	
 	// SYMMETRIC
 	
@@ -103,10 +124,19 @@ public abstract class AbstractXmlCipher {
 		}
 	}
 
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, new KeyStore(keystore), alias, passwordPrivateKey, false);
+	}
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, new KeyStore(keystore), alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
 		this(mode, keystore, alias, passwordPrivateKey, false);
 	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this.initPrivate(mode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	private void initPrivate(int mode, KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
 		this.key = keystore.getPrivateKey(alias, passwordPrivateKey);
 		this.init(addBouncyCastleProvider);
@@ -121,6 +151,12 @@ public abstract class AbstractXmlCipher {
 		this.init(addBouncyCastleProvider);
 	}
 
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias) throws UtilsException{
+		this(mode, new KeyStore(keystore), alias, false);
+	}
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, new KeyStore(keystore), alias, addBouncyCastleProvider);
+	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias) throws UtilsException{
 		this(mode, keystore, alias, false);
 	}
@@ -130,6 +166,12 @@ public abstract class AbstractXmlCipher {
 		this.init(addBouncyCastleProvider);
 	}
 
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore) throws UtilsException{
+		this(mode, new KeyStore(keystore), false);
+	}
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, new KeyStore(keystore), addBouncyCastleProvider);
+	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore) throws UtilsException{
 		this(mode, keystore, false);
 	}
@@ -165,9 +207,15 @@ public abstract class AbstractXmlCipher {
 		}
 	}
 
-	protected org.apache.xml.security.encryption.XMLCipher getXMLCipher(String algorithm) throws UtilsException{
+	protected org.apache.xml.security.encryption.XMLCipher getXMLCipher(String algorithm, String canon, String digest) throws UtilsException{
 		try{
-			org.apache.xml.security.encryption.XMLCipher xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+			org.apache.xml.security.encryption.XMLCipher xmlCipher = null;
+			if(canon!=null || digest!=null) {
+				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm,canon,digest);
+			}
+			else {
+				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
+			}
 			xmlCipher.init(this.mode, this.secretKey);
 			return xmlCipher;			
 		}catch(Exception e){

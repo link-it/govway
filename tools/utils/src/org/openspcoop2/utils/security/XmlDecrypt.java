@@ -45,6 +45,21 @@ import org.w3c.dom.Element;
  */
 public class XmlDecrypt extends AbstractXmlCipher {
 	
+	// BOTH 
+	
+	public XmlDecrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.DECRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	}
+	public XmlDecrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.DECRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlDecrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.DECRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	}
+	public XmlDecrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.DECRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	
 	// SYMMETRIC
 	
 	public XmlDecrypt(int mode, SecretKey secretKey) throws UtilsException{
@@ -80,6 +95,12 @@ public class XmlDecrypt extends AbstractXmlCipher {
 		super(XMLCipher.DECRYPT_MODE, key);
 	}
 
+	public XmlDecrypt(java.security.KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore, addBouncyCastleProvider);
+	}
+	public XmlDecrypt(java.security.KeyStore keystore) throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore);
+	}
 	public XmlDecrypt(KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException {
 		super(XMLCipher.DECRYPT_MODE, keystore, addBouncyCastleProvider);
 	}
@@ -87,7 +108,13 @@ public class XmlDecrypt extends AbstractXmlCipher {
 		super(XMLCipher.DECRYPT_MODE, keystore);
 	}
 
-	
+	public XmlDecrypt(java.security.KeyStore keystore, String alias, boolean addBouncyCastleProvider)
+			throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore, alias, addBouncyCastleProvider);
+	}
+	public XmlDecrypt(java.security.KeyStore keystore, String alias) throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore, alias);
+	}
 	public XmlDecrypt(KeyStore keystore, String alias, boolean addBouncyCastleProvider)
 			throws UtilsException {
 		super(XMLCipher.DECRYPT_MODE, keystore, alias, addBouncyCastleProvider);
@@ -96,6 +123,13 @@ public class XmlDecrypt extends AbstractXmlCipher {
 		super(XMLCipher.DECRYPT_MODE, keystore, alias);
 	}
 
+	public XmlDecrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey,
+			boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlDecrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
+		super(XMLCipher.DECRYPT_MODE, keystore, alias, passwordPrivateKey);
+	}
 	public XmlDecrypt(KeyStore keystore, String alias, String passwordPrivateKey,
 			boolean addBouncyCastleProvider) throws UtilsException {
 		super(XMLCipher.DECRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
@@ -144,12 +178,14 @@ public class XmlDecrypt extends AbstractXmlCipher {
 				encryptedKey = xmlCipherReaderAlgo.loadEncryptedKey(document, encryptedKeyElement);
 			}
 			String encryptAlgorithm = encryptedData.getEncryptionMethod().getAlgorithm();
+			String digestAlgorithm = encryptedData.getEncryptionMethod().getDigestAlgorithm();
+			String canonicalizationAlgorithm = null; // TODO
 			if(super.isEncryptedKey()){
 				org.apache.xml.security.encryption.XMLCipher xmlCipherUnwrap = super.getXMLCipherUnwrappedKey();
 				super.secretKey = (SecretKey) xmlCipherUnwrap.decryptKey(encryptedKey, encryptAlgorithm);
 			}
 					
-			org.apache.xml.security.encryption.XMLCipher xmlCipher = super.getXMLCipher(encryptAlgorithm);
+			org.apache.xml.security.encryption.XMLCipher xmlCipher = super.getXMLCipher(encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm);
 			return xmlCipher.doFinal(document, encryptedDataElement);			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);

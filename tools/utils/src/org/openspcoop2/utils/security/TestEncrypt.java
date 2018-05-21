@@ -117,16 +117,19 @@ public class TestEncrypt {
 			
 			// Chiave simmetrica
 			String keyAlgorithm = "AES";
+			String canonicalizationAlgorithm = null;
+			String digestAlgorithm = "SHA-256";
 			SecretKey secretKeyGenerata = AbstractXmlCipher.generateSecretKey(keyAlgorithm);
 			// Si pup usareanche DESede per TRIPLEDES
 			// keytool -genseckey -alias 'openspcoop' -keyalg 'AES' -keystore example.jceks -storepass '123456' -keypass 'key123456' -storetype "JCEKS" -keysize 256
+			@SuppressWarnings("unused")
 			SecretKey secretKeyLetta = keystoreJCEKS.getSecretKey(alias, passwordChiavePrivata);
 				
 						
 			// Firma
 			encryptAlgorithm = XMLCipher.AES_128;
 			XmlEncrypt xmlEncrypt = new XmlEncrypt(secretKeyGenerata);
-			xmlEncrypt.encrypt(node, encryptAlgorithm);
+			xmlEncrypt.encryptSymmetric(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm);
 			System.out.println("2a. XmlSignature Encrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica
@@ -136,13 +139,16 @@ public class TestEncrypt {
 			
 					
 			// Firma
+			boolean symmetricKey = true;
 			encryptAlgorithm = XMLCipher.AES_128;
-			xmlEncrypt = new XmlEncrypt(secretKeyLetta);
-			xmlEncrypt.encrypt(node, encryptAlgorithm);
+			//xmlEncrypt = new XmlEncrypt(secretKeyLetta);
+			xmlEncrypt = new XmlEncrypt(keystoreJCEKS, symmetricKey, alias, passwordChiavePrivata);
+			xmlEncrypt.encryptSymmetric(node, encryptAlgorithm);
 			System.out.println("2aa. XmlSignature Encrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica
-			xmlDecrypt = new XmlDecrypt(secretKeyLetta);
+			//xmlDecrypt = new XmlDecrypt(secretKeyLetta);
+			xmlDecrypt = new XmlDecrypt(keystoreJCEKS, symmetricKey, alias, passwordChiavePrivata);
 			xmlDecrypt.decrypt(node);
 			System.out.println("2bb. XmlSignature Decrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
@@ -156,7 +162,7 @@ public class TestEncrypt {
 			encryptAlgorithm = XMLCipher.AES_128;
 			String wrappedKeyAlgorithm = XMLCipher.RSA_v1dot5;
 			xmlEncrypt = new XmlEncrypt(keystore,alias,passwordChiavePrivata);
-			xmlEncrypt.encrypt(node, encryptAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
+			xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
 			System.out.println("2b. XmlSignature Encrypted (Private): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica

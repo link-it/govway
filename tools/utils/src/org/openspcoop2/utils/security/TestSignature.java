@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.xml.security.keys.KeyInfo;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
@@ -93,15 +94,32 @@ public class TestSignature {
 			XmlSignature xmlSignature = new XmlSignature(keystore, alias, passwordChiavePrivata);
 			xmlSignature.addX509KeyInfo();
 			xmlSignature.sign(node);
-			System.out.println("2. XmlSignature Signed: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2a. XmlSignature Signed (X509 KeyInfo): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica
 			VerifyXmlSignature xmlVerify = new VerifyXmlSignature(truststore,alias);
-			System.out.println("2. XmlSignature Verify (no clean): "+xmlVerify.verify(node, false));
-			System.out.println("2. XmlSignature Verify (no clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
-			System.out.println("2. XmlSignature Verify (clean): "+xmlVerify.verify(node, true));
-			System.out.println("2. XmlSignature Verify (clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2a. XmlSignature Verify (X509 KeyInfo) (no clean): "+xmlVerify.verify(node, false));
+			System.out.println("2a. XmlSignature Verify (X509 KeyInfo) (no clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2a. XmlSignature Verify (X509 KeyInfo) (clean): "+xmlVerify.verify(node, true));
+			System.out.println("2a. XmlSignature Verify (X509 KeyInfo) (clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			KeyInfo keyInfo = xmlVerify.getKeyInfo();
+			System.out.println("2a. XmlSignature KeyInfo (X509 KeyInfo): "+keyInfo.getX509Certificate().getIssuerX500Principal().getName());
 			
+			
+			// Firma
+			xmlSignature = new XmlSignature(keystore, alias, passwordChiavePrivata);
+			xmlSignature.addRSAKeyInfo();
+			xmlSignature.sign(node);
+			System.out.println("2b. XmlSignature Signed (RSA KeyInfo): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			// Verifica
+			 xmlVerify = new VerifyXmlSignature(truststore,alias);
+			System.out.println("2b. XmlSignature Verify (RSA KeyInfo) (no clean): "+xmlVerify.verify(node, false));
+			System.out.println("2b. XmlSignature Verify (RSA KeyInfo) (no clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2b. XmlSignature Verify (RSA KeyInfo) (clean): "+xmlVerify.verify(node, true));
+			System.out.println("2b. XmlSignature Verify (RSA KeyInfo) (clean) xml: "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			keyInfo = xmlVerify.getKeyInfo();
+			System.out.println("2b. XmlSignature KeyInfo (RSA KeyInfo): "+keyInfo.getPublicKey());
 			
 			
 			

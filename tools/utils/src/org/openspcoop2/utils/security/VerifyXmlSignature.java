@@ -25,6 +25,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
+import org.apache.xml.security.keys.KeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -45,7 +46,22 @@ public class VerifyXmlSignature {
 
 	private KeyStore keystore;
 	private Certificate certificate;
+	
+	private KeyInfo keyInfo;
 		
+	public VerifyXmlSignature(java.security.KeyStore keystore) throws UtilsException{
+		this(new KeyStore(keystore), null, false);
+	}
+	public VerifyXmlSignature(java.security.KeyStore keystore, String alias) throws UtilsException{
+		this(new KeyStore(keystore), alias, false);
+	}
+	public VerifyXmlSignature(java.security.KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException{
+		this(new KeyStore(keystore), null, addBouncyCastleProvider);
+	}
+	public VerifyXmlSignature(java.security.KeyStore keystore, String alias, boolean addBouncyCastleProvider) throws UtilsException{
+		this(new KeyStore(keystore), alias, addBouncyCastleProvider);
+	}
+	
 	public VerifyXmlSignature(KeyStore keystore) throws UtilsException{
 		this(keystore, null, false);
 	}
@@ -77,7 +93,8 @@ public class VerifyXmlSignature {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	
+
+	private Node signatureElement;
 
 	public boolean verify(Document element, boolean clean) throws UtilsException{
 		return this._verify(element.getDocumentElement(), clean);
@@ -95,15 +112,17 @@ public class VerifyXmlSignature {
 			if (o == null) {
 				throw new Exception("Signature element not found");
 			} 
-			Node signatureElement = (Node) o;
+			this.signatureElement = (Node) o;
 			
-			org.apache.xml.security.signature.XMLSignature sigXMLSec = new org.apache.xml.security.signature.XMLSignature((Element)signatureElement, null);
+			org.apache.xml.security.signature.XMLSignature sigXMLSec = new org.apache.xml.security.signature.XMLSignature((Element)this.signatureElement, null);
 			
 			boolean valida = sigXMLSec.checkSignatureValue((X509Certificate)this.certificate);
 			
+			this.keyInfo = sigXMLSec.getKeyInfo();
+			
 			// elimino elemento signature dal document
 			if(clean){
-				element.removeChild(signatureElement);
+				this.detach(element);
 			}
 			
 			return valida;
@@ -113,5 +132,19 @@ public class VerifyXmlSignature {
 		}
 	}
 
+	public KeyInfo getKeyInfo() {
+		return this.keyInfo;
+	}
+	
+	public void detach(Element element) throws UtilsException {
+		try{
+			if(this.signatureElement==null) {
+				throw new Exception("Signature element not found; invoke 'verify' method first");
+			}
+			element.removeChild(this.signatureElement);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 
 }
