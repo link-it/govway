@@ -90,7 +90,8 @@
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
 <![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
-				</concat>
+
+</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.params}"/>
 				</concat>
@@ -139,7 +140,8 @@
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
 <![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
-				</concat>
+
+</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.filters}"/>
 				</concat>
@@ -158,7 +160,8 @@
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
 <![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
-				</concat>
+
+</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.listeners}"/>
 				</concat>
@@ -186,7 +189,8 @@
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
 <![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
-				</concat>
+
+</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet}"/>
 				</concat>
@@ -214,7 +218,8 @@
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
 <![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
-				</concat>
+
+</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet.mapping}"/>
 				</concat>
