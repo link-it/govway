@@ -311,7 +311,6 @@ public class InoltroBuste extends GenericLib{
 		/* PddContext */
 		PdDContext pddContext = inoltroBusteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
-		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 						
 		/* ID e tipo di implementazione PdD con cui interoperare */
 		String idMessageRequest = openspcoopstate.getIDMessaggioSessione();
@@ -439,6 +438,43 @@ public class InoltroBuste extends GenericLib{
 			tipoPdD = TipoPdD.ROUTER;
 		}
 
+		
+		//	GestoriMessaggio
+		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessageRequest,Costanti.OUTBOX,msgDiag, pddContext);
+		OpenSPCoop2Message requestMessage = null;
+		GestoreMessaggi msgResponse = null;
+		
+		
+		// RequestInfo
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		if(requestInfo==null || idTransazione==null) {
+			// devo leggerlo dal messaggio
+			try {
+				requestMessage = msgRequest.getMessage();
+				if(requestInfo==null) {
+					Object o = requestMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					if(o==null) {
+						throw new Exception("RequestInfo non presente nel contesto");
+					}
+					requestInfo = (RequestInfo) o;
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo);
+				}
+				if(idTransazione==null) {
+					Object o = requestMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					if(o==null) {
+						throw new Exception("IdTransazione non presente nel contesto");
+					}
+					idTransazione = (String) o;
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,idTransazione);
+				}
+			}catch(Exception e) {
+				msgDiag.logErroreGenerico(e, "LetturaMessaggioErrore (Recupero Dati)"); 
+				openspcoopstate.releaseResource();
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}
 		
 		
 		
@@ -604,6 +640,7 @@ public class InoltroBuste extends GenericLib{
 		// Oneway versione 11
 		boolean oneWayVersione11 = inoltroBusteMsg.isOneWayVersione11();
 		ejbUtils.setOneWayVersione11(oneWayVersione11);
+		msgRequest.setOneWayVersione11(oneWayVersione11);
 		
 		
 		//Identificazione del tipo di porta
@@ -624,6 +661,8 @@ public class InoltroBuste extends GenericLib{
 			routingStateless = CostantiConfigurazione.ABILITATO.equals(this.propertiesReader.getStatelessRouting());
 			ejbUtils.setRollbackRichiestaInCasoErrore((routingStateless==false));
 		}
+		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
+		msgRequest.setRoutingStateless(routingStateless);
 
 		boolean sbustamentoInformazioniProtocolloRisposta = false;
 		if(functionAsRouter==false){
@@ -653,12 +692,9 @@ public class InoltroBuste extends GenericLib{
 		}
 		
 		
-		//	GestoriMessaggio
-		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessageRequest,Costanti.OUTBOX,msgDiag, pddContext);
-		GestoreMessaggi msgResponse = null;
-		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
-		msgRequest.setRoutingStateless(routingStateless);
-		msgRequest.setOneWayVersione11(oneWayVersione11);
+
+
+
 		
 		
 		
@@ -1016,10 +1052,11 @@ public class InoltroBuste extends GenericLib{
 
 			/* ------------  Ricostruzione Messaggio Soap da spedire ------------- */	
 			msgDiag.mediumDebug("Lettura messaggio soap della richiesta da spedire...");
-			OpenSPCoop2Message requestMessage = null;
 			TransportResponseContext transportResponseContext = null;
 			try{
-				requestMessage = msgRequest.getMessage();
+				if(requestMessage==null) {
+					requestMessage = msgRequest.getMessage();
+				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "msgRequest.getMessage()");
 				if(functionAsRouter){
@@ -2995,7 +3032,7 @@ public class InoltroBuste extends GenericLib{
 						//	Genero una risposta di errore, poiche' non presente
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
-									get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+bustaRichiesta.getDestinatario()),
+									get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()),
 								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eccezioneProcessamentoConnettore,
 								(responseMessage!=null ? responseMessage.getParseException() : null));
 						openspcoopstate.releaseResource();
@@ -3043,7 +3080,7 @@ public class InoltroBuste extends GenericLib{
 								OpenSPCoop2Message responseMessageError = 
 										this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 												ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
-													get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+bustaRichiesta.getDestinatario()),
+													get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()),
 																eccezioneProcessamentoConnettore,
 																(responseMessage!=null ? responseMessage.getParseException() : null));
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
@@ -4261,7 +4298,7 @@ public class InoltroBuste extends GenericLib{
 						if(enrichSoapFaultPdD){
 							this.generatoreErrore.getErroreApplicativoBuilder(responseMessage.getMessageType()).
 								insertInSOAPFault(ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.
-										get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+bustaRichiesta.getDestinatario()), 
+										get516_PortaDiDominioNonDisponibile(bustaRichiesta.getTipoDestinatario()+"-"+bustaRichiesta.getDestinatario()), 
 										responseMessage);
 						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessage,richiestaDelegata,rollbackRichiesta,pd,sa);

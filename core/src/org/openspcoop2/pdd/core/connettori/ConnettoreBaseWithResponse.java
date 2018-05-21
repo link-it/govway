@@ -270,6 +270,15 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						msgErrore = "Header Content-Type non definito nell'http reply";
 					}
 					else{
+						if(this.requestInfo==null) {
+							throw new Exception("BindingConfig is null");
+						}
+						if(this.requestInfo.getBindingConfig()==null) {
+							throw new Exception("BindingConfig is null");
+						}
+						if(this.requestMsg==null) {
+							throw new Exception("RequestMsg is null");
+						}
 						messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 								this.requestMsg.getTransportRequestContext(),
 								this.tipoRisposta, 

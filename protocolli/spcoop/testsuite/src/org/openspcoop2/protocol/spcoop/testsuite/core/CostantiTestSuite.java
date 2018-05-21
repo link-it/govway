@@ -1092,6 +1092,16 @@ public class CostantiTestSuite {
 	public static final IDSoggetto SPCOOP_SOGGETTO_TEST_URL_PREFIX_REWRITER_10 = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_TEST_URL_PREFIX_REWRITER_10, 
 			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_10, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_TEST_URL_PREFIX_REWRITER_10);
 	
+	/** ENTITA SPCOOP: Tipo Soggetto DEFAULT */
+	public static final String SPCOOP_TIPO_SOGGETTO_DEFAULT="spc";
+	/** ENTITA SPCOOP: Nome Soggetto DEFAULT */
+	public static final String SPCOOP_NOME_SOGGETTO_DEFAULT="OpenSPCoop2";
+	/** ENTITA SPCOOP: IdPorta Soggetto DEFAULT */
+	public static final String SPCOOP_IDPORTA_SOGGETTO_DEFAULT="OpenSPCoop2SPCoopIT";
+	/** ENTITA SPCOOP: IDSoggetto */
+	public static final IDSoggetto SPCOOP_SOGGETTO_DEFAULT = new IDSoggetto(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_DEFAULT, 
+			CostantiTestSuite.SPCOOP_NOME_SOGGETTO_DEFAULT, CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_DEFAULT);
+	
 	
 	/** ENTITA SPCOOP: Versione Servizio */
 	public static final Integer SPCOOP_VERSIONE_SERVIZIO_DEFAULT=1;

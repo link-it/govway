@@ -422,6 +422,8 @@ public class RicezioneContenutiApplicativiService {
 				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
+				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
+				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire
 				
 				/* ------------ Controllo MustUnderstand -------------------- */
 				String mustUnderstandError = null;

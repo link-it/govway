@@ -428,7 +428,7 @@ public class SPCoopImbustamento {
 							}
 						}
 						if(generazioneAttributo){
-							eGovProfCollaborazione.setAttribute("tipo",eGov.getTipoServizioCorrelato());
+							eGovProfCollaborazione.setAttribute("tipo",this.traduttore.toProtocolServiceType(eGov.getTipoServizioCorrelato()));
 						}
 					}
 				}

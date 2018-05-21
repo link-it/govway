@@ -7067,21 +7067,33 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativo" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoOnewayStateless" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativoStateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincrono">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testSoapFaultApplicativo" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincronoStateless" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testSoapFaultApplicativoStateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato"
@@ -7089,12 +7101,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona_Stateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona" 
             ricevuta-asincrona-simmetrica="abilitato"
@@ -7102,12 +7120,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona_Stateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato"
@@ -7115,12 +7139,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona" />
             <servizio-applicativo nome="SOAPFaultApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona_Stateless" />
             <servizio-applicativo nome="SOAPFaultApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona" 
             ricevuta-asincrona-asimmetrica="abilitato"
@@ -7128,12 +7158,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona" />
             <servizio-applicativo nome="SOAPFaultApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona_Stateless" />
             <servizio-applicativo nome="SOAPFaultApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Test gestione Errore Connessione -->
@@ -7141,21 +7177,33 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoOnewayStateless" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativoStateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincrono">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreErratoApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincronoStateless" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreErratoApplicativoStateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato"
@@ -7163,12 +7211,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona_Stateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona" 
             ricevuta-asincrona-simmetrica="abilitato"
@@ -7176,12 +7230,18 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona_Stateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato"
@@ -7189,24 +7249,36 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona_Stateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona_Stateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoAA" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Connettore Errato Read Timeout -->
@@ -7214,6 +7286,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreReadTimeoutApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoReadTimeout" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         <!-- Connettore Errato ConnectTimedOut -->
@@ -7221,6 +7296,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreConnectTimedOutApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoConnectTimedOut" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
 
 	<!-- FaultErrati -->

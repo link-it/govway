@@ -386,6 +386,7 @@ public class CooperazioneConErrori {
 			for(int i=0; i<mittenteRisposta.length; i++){
 				//IDSoggetto idSoggetto = new IDSoggetto(cooperazione.getDestinatario().getTipo(), mittenteRisposta[i], cooperazione.getDestinatario().getCodicePorta());
 				//System.out.println("Verifico per mittente["+mittenteRisposta[i].toString()+"]");
+				Reporter.log("IsTracedMittente riposta tipoServizio["+tipoServizio+"] servizio["+servizio+"] azione["+azione+"] mittente["+mittenteRisposta[i]+"] : " +id);
 				if(data.getVerificatoreTracciaRisposta().isTracedMittente(id, datiServizioAzione, mittenteRisposta[i] ,null)){
 					//System.out.println("OK");
 					test = true;
@@ -418,6 +419,7 @@ public class CooperazioneConErrori {
 			boolean test = false;
 			for(int i=0; i<mittenteRisposta.length; i++){
 				//IDSoggetto idSoggetto = new IDSoggetto(cooperazione.getDestinatario().getTipo(), mittenteRisposta[i], cooperazione.getDestinatario().getCodicePorta());
+				Reporter.log("IsTracedMittente riposta tipoServizio["+tipoServizio+"] servizio["+servizio+"] azione["+azione+"] mittente["+mittenteRisposta[i]+"] cooperazioneMittente["+cooperazione.getMittente()+"] : " +id);
 				if(data.getVerificatoreTracciaRisposta().isTracedTrasmissione(id, datiServizioAzione,
 						mittenteRisposta[i], null,
 						cooperazione.getMittente(), null)){
@@ -496,7 +498,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO,
 				null,null,param);
 		
@@ -521,7 +523,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA,
 				"profiloAsincrono_richiestaSincrona","123456",param);
 		
@@ -546,7 +548,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackProcessamento(false);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA,
 				null,null,param);
 		
@@ -561,7 +563,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ONEWAY_STATELESS,
 				null,null,param);
 	
@@ -576,7 +578,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS,
 				null,null,param);
 		
@@ -591,7 +593,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_ASINCRONA_STATELESS,
 				"profiloAsincrono_richiestaAsincrona","123456",param);
 				
@@ -606,7 +608,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_SIMMETRICO_MODALITA_SINCRONA_STATELESS,
 				"profiloAsincrono_richiestaSincrona","123456",param);
 		
@@ -621,7 +623,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_ASINCRONA_STATELESS,
 				null,null,param);
 				
@@ -636,7 +638,7 @@ public class CooperazioneConErrori {
 		param.setVerificaRollbackNonEffettuato(true);
 		param.setActorClientAtteso(CostantiPdD.OPENSPCOOP2);
 		param.setFaultCodeAtteso(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE));
-		param.setFaultString("Porta di Dominio del soggetto SPCSoggettoConnettoreErrato non disponibile");
+		param.setFaultString("Porta di Dominio del soggetto spc-SoggettoConnettoreErrato non disponibile");
 		invocaServizio(this.repositoryConnettoreErrato,CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_ASINCRONO_ASIMMETRICO_MODALITA_SINCRONA_STATELESS,
 				null,null,param);
 	

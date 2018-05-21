@@ -295,7 +295,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
-		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
 		IProtocolFactory<?> protocolFactory = null;
@@ -807,6 +806,48 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			return esito;
 		}
 		
+		// GestoriMessaggio
+		msgDiag.mediumDebug("Inizializzo contesto per la gestione (GestoreMessaggio)...");
+		String idMessaggioGestoreMessaggiRichiesta = idMessaggioConsegna;
+		if(idMessaggioPreBehaviour!=null){
+			idMessaggioGestoreMessaggiRichiesta = bustaRichiesta.getID();
+		}
+		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,pddContext);
+		OpenSPCoop2Message consegnaMessage = null;
+		GestoreMessaggi msgResponse = null;
+		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
+		
+		// RequestInfo
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		if(requestInfo==null || idTransazione==null) {
+			// devo leggerlo dal messaggio
+			try {
+				consegnaMessage = msgRequest.getMessage();
+				if(requestInfo==null) {
+					Object o = consegnaMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+					if(o==null) {
+						throw new Exception("RequestInfo non presente nel contesto");
+					}
+					requestInfo = (RequestInfo) o;
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo);
+				}
+				if(idTransazione==null) {
+					Object o = consegnaMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+					if(o==null) {
+						throw new Exception("IdTransazione non presente nel contesto");
+					}
+					idTransazione = (String) o;
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE,idTransazione);
+				}
+			}catch(Exception e) {
+				msgDiag.logErroreGenerico(e, "LetturaMessaggioErrore (Recupero Dati)"); 
+				openspcoopstate.releaseResource();
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}
+		
 		try{
 			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log,
 					this.idModulo, requestInfo, openspcoopstate.getStatoRichiesta());
@@ -828,21 +869,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(idMessaggioPreBehaviour!=null){
 			ejbUtils.setOneWayVersione11(true); // per forzare l'update su db	
 		}
-
-
-
-
-
-		// GestoriMessaggio
-		msgDiag.mediumDebug("Inizializzo contesto per la gestione (GestoreMessaggio)...");
-		String idMessaggioGestoreMessaggiRichiesta = idMessaggioConsegna;
-		if(idMessaggioPreBehaviour!=null){
-			idMessaggioGestoreMessaggiRichiesta = bustaRichiesta.getID();
-		}
-		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessaggioGestoreMessaggiRichiesta,Costanti.INBOX,msgDiag,pddContext);
-		GestoreMessaggi msgResponse = null;
-		msgRequest.setPortaDiTipoStateless(portaDiTipoStateless);
 		msgRequest.setOneWayVersione11(oneWayVersione11);
+
+
+
+
+
+
 
 		OpenSPCoop2Message responseMessage = null;
 
@@ -1136,14 +1169,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			/* ------------  Ricostruzione Messaggio Soap da spedire ------------- */
 			msgDiag.mediumDebug("Ricostruzione SOAPEnvelope di richiesta/consegna...");	
-			OpenSPCoop2Message consegnaMessage = null;
 			try{
-				if(consegnaPerRiferimento==false){
-					consegnaMessage = msgRequest.getMessage();
-				}else{
-					// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
-					consegnaMessage = 
-						msgRequest.buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi(soggettoFruitore, tipoServizio,servizio,azione);
+				if(consegnaMessage==null) {
+					if(consegnaPerRiferimento==false){
+						consegnaMessage = msgRequest.getMessage();
+					}else{
+						// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
+						consegnaMessage = 
+							msgRequest.buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi(soggettoFruitore, tipoServizio,servizio,azione);
+					}
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "msgRequest.getMessage()");
