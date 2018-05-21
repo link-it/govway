@@ -88,6 +88,10 @@
 			</not>
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+
+<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+				</concat>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.params}"/>
 				</concat>
 			</then>
@@ -133,6 +137,10 @@
 			</not>
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+
+<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+				</concat>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.filters}"/>
 				</concat>
 			</then>
@@ -147,6 +155,10 @@
 				<equals arg1="${plugins.classpath.web.xml.listeners}" arg2=""/>
 			</not>
 			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+
+<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+				</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.listeners}"/>
 				</concat>
@@ -172,6 +184,10 @@
 			</not>
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+
+<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+				</concat>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet}"/>
 				</concat>
 			</then>
@@ -195,6 +211,10 @@
 				<equals arg1="${plugins.classpath.web.xml.servlet.mapping}" arg2=""/>
 			</not>
 			<then>
+				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
+
+<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+				</concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 					<filelist dir="${plugins_pddMonitor}" files="${plugins.classpath.web.xml.servlet.mapping}"/>
 				</concat>
