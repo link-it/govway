@@ -100,10 +100,10 @@ public class SecurityConstants {
     public static final String WSS_HEADER_ELEMENT_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     public static final String WSS_HEADER_UTILITY_NAMESPACE = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";					  
     public static final String WSS_HEADER_ATTRIBUTE_REFERENCE_ID_WSSECURITY = "Id";
-    public static final String WSS_HEADER_DS_NAMESPACE = Constants.WSS_HEADER_DS_NAMESPACE;
-    public static final String WSS_HEADER_DS_REFERENCE_ELEMENT = Constants.WSS_HEADER_DS_REFERENCE_ELEMENT;
-    public static final String WSS_HEADER_DS_REFERENCE_ATTRIBUTE_URI = Constants.WSS_HEADER_DS_REFERENCE_ATTRIBUTE_URI;
-    public static final String WSS_HEADER_DS_REFERENCE_DIGEST_VALUE_ELEMENT = Constants.WSS_HEADER_DS_REFERENCE_DIGEST_VALUE_ELEMENT;
+    public static final String WSS_HEADER_DS_NAMESPACE = Constants.DS_NAMESPACE;
+    public static final String WSS_HEADER_DS_REFERENCE_ELEMENT = Constants.DS_REFERENCE_ELEMENT;
+    public static final String WSS_HEADER_DS_REFERENCE_ATTRIBUTE_URI = Constants.DS_REFERENCE_ATTRIBUTE_URI;
+    public static final String WSS_HEADER_DS_REFERENCE_DIGEST_VALUE_ELEMENT = Constants.DS_REFERENCE_DIGEST_VALUE_ELEMENT;
     
     public static final String ACTOR = ConfigurationConstants.ACTOR;
     
@@ -134,6 +134,7 @@ public class SecurityConstants {
     public static final String MULTI_USER_KEYWORD_FRUITORE_EROGATORE = "#MultiPropUseFruitoreErogatoreAsAlias#";
     
     public static final String ENCRYPT_ACTION = ConfigurationConstants.ENCRYPT;
+    public static final String DECRYPT_ACTION = "Decrypt";
     public static final String ENCRYPTION_USER = ConfigurationConstants.ENCRYPTION_USER;
     public static final String ENCRYPTION_PASSWORD = "encryptionPassword";
     public static final String ENCRYPTION_SOAP_FAULT = "encryptionSOAPFault";
@@ -213,6 +214,10 @@ public class SecurityConstants {
     public static final String SIGNATURE_MODE_COMPACT = MODE_COMPACT;
     public static final String SIGNATURE_DETACHED_HEADER = "signatureDetachedHeader";
     public static final String SIGNATURE_DETACHED_PROPERTY_URL = "signatureDetachedPropertyURL";
+    public static final String SIGNATURE_XML_KEY_INFO = "keyInfo";
+    public static final String SIGNATURE_XML_KEY_INFO_ALIAS = "keyInfoAlias";
+    public static final String SIGNATURE_XML_KEY_INFO_X509 = "x509";
+    public static final String SIGNATURE_XML_KEY_INFO_RSA = "RSA";
     
     
     public static final String TIMESTAMP_ACTION = ConfigurationConstants.TIMESTAMP;

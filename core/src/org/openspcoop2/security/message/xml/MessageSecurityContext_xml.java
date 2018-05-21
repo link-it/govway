@@ -17,22 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.digest;
+
+
+
+package org.openspcoop2.security.message.xml;
+
+import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.message.IMessageSecurityContext;
+import org.openspcoop2.security.message.MessageSecurityContext;
+import org.slf4j.Logger;
 
 /**
- * Constants
+ * MessageSecurityContext_xml
  *
- *
- * @author Andrea Poli (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Andrea Poli <apoli@link.it>
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 06:24:34 -0500 (Fri, 26 Jan 2018) $
  */
-public class Constants {
+public class MessageSecurityContext_xml implements IMessageSecurityContext{
 
-	public static final String DS_NAMESPACE = "http://www.w3.org/2000/09/xmldsig#";
-	public static final String DS_REFERENCE_ELEMENT = "Reference";
-	public static final String DS_REFERENCE_ATTRIBUTE_URI = "URI";
-	public static final String DS_REFERENCE_DIGEST_VALUE_ELEMENT = "DigestValue";    
-	
-	
+	@SuppressWarnings("unused")
+	private Logger log = null;
+
+	@Override
+	public void init(MessageSecurityContext wssContext) throws SecurityException {
+
+		this.log = wssContext.getLog();
+		
+	}
+
 }

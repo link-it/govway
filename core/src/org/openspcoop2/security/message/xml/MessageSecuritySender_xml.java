@@ -19,15 +19,16 @@
  */
 
 
-package org.openspcoop2.security.message.jose;
+package org.openspcoop2.security.message.xml;
 
 
 import java.security.KeyStore;
 import java.util.Properties;
 
+import org.adroitlogic.soapbox.SecurityRequest;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.security.SecurityException;
@@ -38,21 +39,18 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.PropertiesUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
-import org.openspcoop2.security.message.xml.XMLCostanti;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.security.JOSERepresentation;
-import org.openspcoop2.utils.security.JsonEncrypt;
-import org.openspcoop2.utils.security.JsonSignature;
+import org.openspcoop2.utils.security.XmlSignature;
 
 /**
- * MessageSecuritySender_jose
+ * MessageSecuritySender_xml
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author: apoli $
  * @version $Rev: 13743 $, $Date: 2018-03-16 10:59:08 -0400 (Fri, 16 Mar 2018) $
  */
 
-public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySender{
+public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender{
 
 	
      @Override
@@ -60,12 +58,12 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 		try{ 	
 			
 			if(ServiceBinding.REST.equals(messageParam.getServiceBinding())==false){
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding");
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with REST Binding");
 			}
-			if(MessageType.JSON.equals(messageParam.getMessageType())==false) {
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with REST Binding and a json message, found: "+messageParam.getMessageType());
+			if(MessageType.XML.equals(messageParam.getMessageType())==false) {
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with REST Binding and a xml message, found: "+messageParam.getMessageType());
 			}
-			OpenSPCoop2RestJsonMessage restJsonMessage = messageParam.castAsRestJson();
+			OpenSPCoop2RestXmlMessage restXmlMessage = messageParam.castAsRestXml();
 			
 			
 			
@@ -87,10 +85,10 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 			}
 			
 			if(encrypt && signature) {
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" usable only with one function beetwen encrypt or signature");
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" usable only with one function beetwen encrypt or signature");
 			}
 			if(!encrypt && !signature) {
-				throw new SecurityException(JOSECostanti.JOSE_ENGINE_DESCRIPTION+" require one function beetwen encrypt or signature");
+				throw new SecurityException(XMLCostanti.XML_ENGINE_DESCRIPTION+" require one function beetwen encrypt or signature");
 			}
 			
 
@@ -101,69 +99,49 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				
 				// **************** Leggo parametri signature store **************************
 
-				JOSERepresentation joseRepresentation = null;
-				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_MODE);
-				if(mode==null || "".equals(mode.trim())){
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_MODE+"' property");
-				}
+				SignatureBean bean = null;
 				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext);
 				}catch(Exception e) {
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+", '"+SecurityConstants.SIGNATURE_MODE+"' property error: "+e.getMessage(),e);
+					throw e;
 				}
 				
-				JsonSignature jsonSignature = null;
-				SignatureBean bean = null;
-				NotFoundException notFound = null;
-				try {
-					bean = PropertiesUtils.getSenderSignatureBean(messageSecurityContext);
-				}catch(NotFoundException e) {
-					notFound = e;
-				}
-				if(bean!=null) {
-					Properties signatureProperties = bean.getProperties();
-					jsonSignature = new JsonSignature(signatureProperties, joseRepresentation);	
-				}
-				else {	
-					KeyStore signatureKS = null;
-					//KeyStore signatureTrustStoreKS = null;
-					String aliasSignatureUser = null;
-					String aliasSignaturePassword = null;
-					try {
-						bean = KeystoreUtils.getSenderSignatureBean(messageSecurityContext);
-					}catch(Exception e) {
-						// Lancio come messaggio eccezione precedente
-						if(notFound!=null) {
-							messageSecurityContext.getLog().error(e.getMessage(),e);
-							throw notFound;
-						}
-						else {
-							throw e;
-						}
-					}
-					
-					signatureKS = bean.getKeystore();
-					//signatureTrustStoreKS = bean.getTruststore();
-					aliasSignatureUser = bean.getUser();
-					aliasSignaturePassword = bean.getPassword();
+				KeyStore signatureKS = bean.getKeystore();
+				String aliasSignatureUser = bean.getUser();
+				String aliasSignaturePassword = bean.getPassword();
 
-					if(signatureKS==null) {
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require keystore");
-					}
-					if(aliasSignatureUser==null) {
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require alias private key");
-					}
-					if(aliasSignaturePassword==null) {
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require password private key");
-					}
-					
-					String signatureAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
-					if(signatureAlgorithm==null || "".equals(signatureAlgorithm.trim())){
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
-					}
-					
-					jsonSignature = new JsonSignature(signatureKS, aliasSignatureUser, aliasSignaturePassword, signatureAlgorithm, joseRepresentation);	
+				if(signatureKS==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require keystore");
 				}
+				if(aliasSignatureUser==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require alias private key");
+				}
+				if(aliasSignaturePassword==null) {
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require password private key");
+				}
+								
+				String signatureAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
+				if(signatureAlgorithm==null || "".equals(signatureAlgorithm.trim())){
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_ALGORITHM+"' property");
+				}
+				
+				String digestMethodAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_DIGEST_ALGORITHM);
+				if(digestMethodAlgorithm==null || "".equals(digestMethodAlgorithm.trim())){
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_DIGEST_ALGORITHM+"' property");
+				}
+				
+				String signatureCanonicalizationMethod = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_C14N_ALGORITHM);
+				if(signatureCanonicalizationMethod==null || "".equals(signatureCanonicalizationMethod.trim())){
+					throw new SecurityException(XMLCostanti.XML_ENGINE_SIGNATURE_DESCRIPTION+" require '"+SecurityConstants.SIGNATURE_C14N_ALGORITHM+"' property");
+				}
+				
+				XmlSignature xmlSignature = new XmlSignature(signatureKS, aliasSignatureUser, aliasSignaturePassword);
+				
+				String signatureKeyInfo = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_XML_KEY_INFO);
+				String signatureKeyInfoAlias = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_XML_KEY_INFO_ALIAS);
+				
+				
+				
 				
 
 				
@@ -172,15 +150,31 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				
 				// **************** Process **************************
 				
-				String contentSign = jsonSignature.sign(restJsonMessage.getContent());
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
-					this.setDetachedSignatureInMessage(messageSecurityContext.getOutgoingProperties(), 
-							restJsonMessage, 
-							JOSECostanti.JOSE_ENGINE_SIGNATURE_DESCRIPTION, 
-							contentSign);
-				}else {
-					restJsonMessage.updateContent(contentSign);
+				if(signatureKeyInfo!=null && !"".equals(signatureKeyInfo.trim())){
+					
+					if(SecurityConstants.SIGNATURE_XML_KEY_INFO_X509.equals(signatureKeyInfo)){
+						if(signatureKeyInfoAlias!=null && !"".equals(signatureKeyInfoAlias.trim())){
+							xmlSignature.addX509KeyInfo(signatureKeyInfoAlias);
+						}
+						else {
+							xmlSignature.addX509KeyInfo();
+						}
+					}
+					else if(SecurityConstants.SIGNATURE_XML_KEY_INFO_RSA.equals(signatureKeyInfo)){
+						if(signatureKeyInfoAlias!=null && !"".equals(signatureKeyInfoAlias.trim())){
+							xmlSignature.addRSAKeyInfo(signatureKeyInfoAlias);
+						}
+						else {
+							xmlSignature.addRSAKeyInfo();
+						}
+					}
+					else{
+						throw new Exception(SecurityConstants.SIGNATURE_XML_KEY_INFO+" not supported ["+signatureKeyInfo+"]");
+					}
+					
 				}
+				
+				xmlSignature.sign(restXmlMessage.getContent(), signatureAlgorithm, digestMethodAlgorithm, signatureCanonicalizationMethod);
 				
 				
 				
@@ -197,15 +191,15 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				JOSERepresentation joseRepresentation = null;
 				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_MODE);
 				if(mode==null || "".equals(mode.trim())){
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_MODE+"' property");
+					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_MODE+"' property");
 				}
 				try {
 					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
 				}catch(Exception e) {
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+", '"+SecurityConstants.ENCRYPTION_MODE+"' property error: "+e.getMessage(),e);
+					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+", '"+SecurityConstants.ENCRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
 				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
-					throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+", "+SecurityConstants.ENCRYPTION_MODE+" '"+mode+"' not supported");
+					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+", "+SecurityConstants.ENCRYPTION_MODE+" '"+mode+"' not supported");
 				}
 				
 				JsonEncrypt jsonEncrypt = null;
@@ -247,33 +241,33 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 
 					if(encryptionSymmetric) {
 						if(encryptionKS==null) {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require keystore");
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require keystore");
 						}
 						if(aliasEncryptUser==null) {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require alias secret key");
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias secret key");
 						}
 						if(aliasEncryptPassword==null) {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require password secret key");
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require password secret key");
 						}
 					}
 					else {
 						if(encryptionTrustStoreKS==null) {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require truststore");
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require truststore");
 						}
 						if(aliasEncryptUser==null) {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require alias public key");
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias public key");
 						}
 					}
 
 					
 					String encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
 					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
 					}
 					
 					String encryptionContentAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM);
 					if(encryptionContentAlgorithm==null || "".equals(encryptionContentAlgorithm.trim())){
-						throw new SecurityException(JOSECostanti.JOSE_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_CONTENT_ALGORITHM+"' property");
 					}
 					
 					String encryptionDeflateParam = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DEFLATE);
@@ -294,8 +288,8 @@ public class MessageSecuritySender_jose extends AbstractRESTMessageSecuritySende
 				
 				// **************** Process **************************
 				
-				String contentEncrypted = jsonEncrypt.encrypt(restJsonMessage.getContent());
-				restJsonMessage.updateContent(contentEncrypted);
+				String contentEncrypted = jsonEncrypt.encrypt(restXmlMessage.getContent());
+				restXmlMessage.updateContent(contentEncrypted);
 				
 
 			} // fine encrypt

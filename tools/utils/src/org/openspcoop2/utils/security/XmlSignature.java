@@ -56,9 +56,9 @@ import org.w3c.dom.Element;
  */
 public class XmlSignature {
 
-	private final static String DEFAULT_SIGNATURE_METHOD = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"; // SignatureMethod.RSA_SHA1
-	private final static String DEFAULT_DIGEST_METHOD = DigestMethod.SHA256;
-	private final static String DEFAULT_CANONICALIZATION_METHOD = CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS;
+	public final static String DEFAULT_SIGNATURE_METHOD = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"; // SignatureMethod.RSA_SHA1
+	public final static String DEFAULT_DIGEST_METHOD = DigestMethod.SHA256;
+	public final static String DEFAULT_CANONICALIZATION_METHOD = CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS;
 	
 	private KeyStore keystore;
 	private PrivateKey privateKey;
@@ -74,6 +74,12 @@ public class XmlSignature {
 	
 	private KeyInfo keyInfo;
 	
+	public XmlSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, false);
+	}
+	public XmlSignature(java.security.KeyStore keystore, String alias, String passwordPrivateKey, boolean addBouncyCastleProvider) throws UtilsException{
+		this(new KeyStore(keystore), alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
 	public XmlSignature(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
 		this(keystore, alias, passwordPrivateKey, false);
 	}

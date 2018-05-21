@@ -20,13 +20,9 @@
 
 package org.openspcoop2.utils.digest;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
-import org.w3c.dom.Element;
+import org.slf4j.Logger;
 
 /**
  * XMLSecurityDigestReader
@@ -35,34 +31,13 @@ import org.w3c.dom.Element;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class XMLSecurityDigestReader implements IDigestReader {
-
-	private Logger log;
-	@SuppressWarnings("unused")
-	private AbstractXPathExpressionEngine xpathEngine;
-	@SuppressWarnings("unused")
-	private AbstractXMLUtils xmlUtils;
+public class XMLSecurityDigestReader extends AbstractXMLDigestReader {
 
 	public XMLSecurityDigestReader(AbstractXMLUtils xmlUtils, AbstractXPathExpressionEngine xpathEngine) {
-		this(LoggerWrapperFactory.getLogger(XMLSecurityDigestReader.class),xmlUtils, xpathEngine);
+		super(xmlUtils, xpathEngine);
 	}
 	public XMLSecurityDigestReader(Logger log, AbstractXMLUtils xmlUtils, AbstractXPathExpressionEngine xpathEngine) {
-		this.log = log;
-		this.xmlUtils = xmlUtils;
-		this.xpathEngine = xpathEngine;
-	}
-
-	@Override
-	public String getDigest(Element element,String referenceId,DynamicNamespaceContext dnc) throws UtilsException{
-
-		try {
-			throw new Exception("Not Implemented");
-		} catch (Exception e) {
-			this.log.error("Errore durante la getDigest", e);
-			throw new UtilsException(e.getMessage(),e);
-		} 
-	
-
+		super(log, xmlUtils, xpathEngine);
 	}
 
 }
