@@ -157,16 +157,6 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
-	public boolean isAuditingEnabled() throws Exception{
-		String tmp = this.appProperties.getProperty("auditing.auditingEnabled", false, true);
-		if(tmp!=null && !"".equals(tmp)) {
-			return "true".equalsIgnoreCase(tmp);
-		}
-		else {
-			return false; // default
-		}
-	}
-	
 	public boolean isAttivoLiveRuoloOperatore() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.ruoloOperatore.enabled", true, true));
 	}

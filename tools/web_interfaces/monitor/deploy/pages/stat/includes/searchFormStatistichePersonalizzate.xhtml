@@ -83,7 +83,7 @@
 					</rich:comboBox>
 				</link:prop>
 							
-				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{!applicationBean.backwardCompatibilityOpenspcoop1 and sf_bean.showListaProtocolli}" >
+				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 					<link:prop label="Protocollo">
 						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="allConverter" 
 							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
@@ -422,7 +422,7 @@
 						
 					<a4j:outputPanel id="statistica-personal-params" layout="block">
 						<a4j:region renderRegionOnly="true">
-							<ui:include src="/includes/dynamicComponent.xhtml">
+							<ui:include src="/commons/includes/dynamicComponent.xhtml">
 								<ui:param value="#{sf_bean.statisticaSelezionataParameters}" name="formParameters" />
 							</ui:include>
 						</a4j:region>		

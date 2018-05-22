@@ -38,7 +38,8 @@ public abstract class AbstractLoginBean implements Serializable{
 	protected transient ILoginDAO loginDao;
 	private transient Map<String, Soggetto> mapSoggetti = null;
 
-	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "scopedTarget.loginBean";
+//	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "scopedTarget.loginBean"; // nome del login bean in sessione quando e' gestito dal roxy aspectj
+	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "loginBean";
 
 	public AbstractLoginBean() {
 		this(false);

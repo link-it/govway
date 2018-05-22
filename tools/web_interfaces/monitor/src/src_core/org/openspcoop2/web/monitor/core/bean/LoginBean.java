@@ -25,39 +25,39 @@ import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
 public class LoginBean extends AbstractLoginBean {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	private Logger log = LoggerManager.getPddMonitorCoreLogger();
-	
+
 	private String loginErrorMessage = null;
-	
+
 	private boolean showLogout = true;
-	
+
 	private String logoutDestinazione = null;
-	
+
 	private String logoHeaderImage = null;
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
-	
+
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
 	}
-	
+
 	public LoginBean(){
 		super();
 		this.caricaProperties();
 	}
-	
+
 	private void caricaProperties(){
 		try {
 			this.showLogout = PddMonitorProperties.getInstance(this.log).isMostraButtonLogout();
 			this.logoutDestinazione = PddMonitorProperties.getInstance(this.log).getLogoutUrlDestinazione();
-			
+
 			this.setLogoHeaderImage(PddMonitorProperties.getInstance(this.log).getLogoHeaderImage());
 			this.setLogoHeaderLink(PddMonitorProperties.getInstance(this.log).getLogoHeaderLink());
 			this.setLogoHeaderTitolo(PddMonitorProperties.getInstance(this.log).getLogoHeaderTitolo()); 
@@ -66,14 +66,14 @@ public class LoginBean extends AbstractLoginBean {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
 		}
 	}
-	
+
 	@Override
 	protected void init() {
 		if(this.isInitDao()){
 			this.setLoginDao(new DBLoginDAO());
 		}
 	}
-	
+
 	@Override
 	public String login() {
 		if(this.isApplicationLogin()){
@@ -91,7 +91,7 @@ public class LoginBean extends AbstractLoginBean {
 					//			session.setAttribute("logged", true);
 					this.setLoggedIn(true);
 					this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
-					this.setDettaglioUtente(this.getLoginDao().getUtente(this.getLoggedUser()));
+					this.setDettaglioUtente(this.getLoggedUser().getUtente());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
 				}else{
@@ -109,13 +109,12 @@ public class LoginBean extends AbstractLoginBean {
 			this.loginErrorMessage = null;
 			try{
 				this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
-				this.setDettaglioUtente(this.getLoginDao().getUtente(this.getLoggedUser()));
-				
 				if(this.getLoggedUser() != null){
-				this.setLoggedIn(true);
-				this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-				return "loginSuccess";
-			}
+					this.setDettaglioUtente(this.getLoggedUser().getUtente());
+					this.setLoggedIn(true);
+					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
+					return "loginSuccess";
+				}
 			} catch (ServiceException e) {
 				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
 				this.log.error(this.loginErrorMessage);
@@ -132,7 +131,7 @@ public class LoginBean extends AbstractLoginBean {
 		}
 		return "login"; 
 	}
-	
+
 	@Override
 	public String logout() {
 		try{
@@ -144,10 +143,10 @@ public class LoginBean extends AbstractLoginBean {
 		}catch(Exception e){}
 
 		if(StringUtils.isEmpty(this.logoutDestinazione)){
-		if(this.isApplicationLogin())
-			return "login";
-		else 
-			return "logoutAS";
+			if(this.isApplicationLogin())
+				return "login";
+			else 
+				return "logoutAS";
 		}else {
 			try{
 				FacesContext fc = FacesContext.getCurrentInstance();
@@ -160,8 +159,8 @@ public class LoginBean extends AbstractLoginBean {
 			return null;
 		}
 	}
-	
-	
+
+
 	public Soggetto getSoggetto(IdSoggetto idSog){
 		String key = idSog.getTipo() + "/" + idSog.getNome();
 		if(!this.getMapSoggetti().containsKey(key)) {
@@ -170,7 +169,7 @@ public class LoginBean extends AbstractLoginBean {
 
 		return this.getMapSoggetti().get(key);
 	}
-	
+
 	public List<String> getIdentificativiPorta(User user){
 		List<String> lst = new ArrayList<String>();
 
@@ -179,17 +178,17 @@ public class LoginBean extends AbstractLoginBean {
 			idsoggetto.setNome(idSog.getNome());
 			idsoggetto.setTipo(idSog.getTipo());
 			Soggetto s = this.getSoggetto(idsoggetto);
-			
+
 			lst.add(s.getIdentificativoPorta());
 		}
 
 		return lst;
 	}
-	
+
 	public User getUtente(){
 		return this.getDettaglioUtente();
 	}
-	
+
 	public String getLoginErrorMessage() {
 		return this.loginErrorMessage;
 	}
@@ -200,9 +199,9 @@ public class LoginBean extends AbstractLoginBean {
 
 	@Override
 	public void logoutListener(ActionEvent ae) {
-		
+
 	}
-	
+
 	public boolean isShowLogout() {
 		return this.showLogout;
 	}
@@ -210,19 +209,19 @@ public class LoginBean extends AbstractLoginBean {
 	public void setShowLogout(boolean showLogout) {
 		this.showLogout = showLogout;
 	}
-	
+
 	public int getColonneUserInfo() {
 		boolean admin = this.getLoggedUser().isAdmin();
 		boolean operatore = Utility.getLoggedUser().isOperatore();
-		
+
 		//1 !applicationBean.amministratore && loginBean.loggedUser.sizeSoggetti==1
 		int v1 = (!admin && this.getLoggedUser().getSizeSoggetti() == 1) ? 1 : 0;
-		
+
 		//2 applicationBean.amministratore or applicationBean.operatore
 		int v2 = (admin || operatore) ? 1 : 0;
-		
+
 		this.colonneUserInfo = 1 + v1 + v2;
-		
+
 		return this.colonneUserInfo;
 	}
 
@@ -231,7 +230,7 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	private int colonneUserInfo = 0;
-	
+
 	public String getLogoHeaderImage() {
 		return this.logoHeaderImage;
 	}
@@ -255,5 +254,5 @@ public class LoginBean extends AbstractLoginBean {
 	public void setLogoHeaderLink(String logoHeaderLink) {
 		this.logoHeaderLink = logoHeaderLink;
 	}
-	
+
 }

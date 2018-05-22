@@ -212,122 +212,118 @@
   <from-view-id>*</from-view-id>
    <navigation-case>
    <from-outcome>analisiStatistica</from-outcome>
-   <to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
-  </navigation-case>
-   <navigation-case>
-   <from-outcome>analisiLog</from-outcome>
-   <to-view-id>/pages/report/list/listaReport.xhtml</to-view-id>
+   <to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   </navigation-case>
    <navigation-case>
    <from-outcome>configurazioniGenerali</from-outcome>
-   <to-view-id>/pages/stats/configurazioniGenerali.xhtml</to-view-id>
+   <to-view-id>/stat/pages/list/configurazioniGenerali.xhtml</to-view-id>
   </navigation-case>
  </navigation-rule>
  
   	<!-- Analisi Statistica -->
 	<navigation-rule>
-	   <from-view-id>/pages/stats/analisiStatistica.xhtml</from-view-id>
+	   <from-view-id>/stat/pages/form/analisiStatistica.xhtml</from-view-id>
  		<navigation-case>
 		<from-outcome>andamentoTemporaleGrafico</from-outcome>
-			<to-view-id>/pages/stats/andamentoTemporaleGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/andamentoTemporaleGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribSoggettoGrafico</from-outcome>
-			<to-view-id>/pages/stats/distribSoggettoGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/distribSoggettoGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribServizioGrafico</from-outcome>
-			<to-view-id>/pages/stats/distribServizioGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/distribServizioGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribSAGrafico</from-outcome>
-			<to-view-id>/pages/stats/distribSAGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/distribSAGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>statsPersonalizzateGrafico</from-outcome>
-			<to-view-id>/pages/stats/statsPersonalizzateGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/statsPersonalizzateGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>distribAzioneGrafico</from-outcome>
-			<to-view-id>/pages/stats/distribAzioneGrafico.xhtml</to-view-id>
+			<to-view-id>/stat/pages/form/distribAzioneGrafico.xhtml</to-view-id>
 			<redirect/>
 		</navigation-case>
 	</navigation-rule>
  
 	 	<!-- Andamento Temporale grafico -->
 	<navigation-rule>
-		<from-view-id>/pages/stats/andamentoTemporaleGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/andamentoTemporaleGrafico.xhtml</from-view-id>
    		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Distribuzione Azione grafico -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/distribAzioneGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/distribAzioneGrafico.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 			<!-- Distribuzione Servizio grafico -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/distribServizioGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/distribServizioGrafico.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Distribuzione Soggetto grafico -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/distribSoggettoGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/distribSoggettoGrafico.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 		<!-- Distribuzione SA grafico -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/distribSAGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/distribSAGrafico.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 		<!-- Statistiche Personalizzate grafico -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/statsPersonalizzateGrafico.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/statsPersonalizzateGrafico.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>analisiStatistica</from-outcome>
-   			<to-view-id>/pages/stats/analisiStatistica.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Configurazioni Generali -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/configurazioniGenerali.xhtml</from-view-id>
+		<from-view-id>/stat/pages/list/configurazioniGenerali.xhtml</from-view-id>
 		<navigation-case>
    			<from-outcome>dettaglioConfigurazione</from-outcome>
-   			<to-view-id>/pages/stats/form/dettaglioConfigurazione.xhtml</to-view-id>
+   			<to-view-id>/stat/pages/form/dettaglioConfigurazione.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
 	
 	<!-- Dettaglio Configurazione -->
  	<navigation-rule>
-		<from-view-id>/pages/stats/form/dettaglioConfigurazione.xhtml</from-view-id>
+		<from-view-id>/stat/pages/form/dettaglioConfigurazione.xhtml</from-view-id>
 		 <navigation-case>
-		   <from-outcome>configurazioniGenerali</from-outcome>
-		   <to-view-id>/pages/stats/configurazioniGenerali.xhtml</to-view-id>
+		   <from-outcome>list/configurazioniGenerali</from-outcome>
+		   <to-view-id>/stat/pages/list/configurazioniGenerali.xhtml</to-view-id>
 		  </navigation-case>
 	</navigation-rule>
 	

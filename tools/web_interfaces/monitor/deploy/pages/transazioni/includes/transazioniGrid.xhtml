@@ -65,7 +65,7 @@
 						</rich:toolTip>
 					</a4j:htmlCommandLink>
 				</rich:column>
-				<rich:column id="colProtocollo" sortable="false" label="Protocollo" rendered="#{not mBean.backwardCompatibility}" visible="false">
+				<rich:column id="colProtocollo" sortable="false" label="Protocollo" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outProtocollo1" value="Protocollo" />
 					</f:facet>
@@ -216,7 +216,7 @@
 					<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 				</rich:column>
-				<rich:column id="colVersioneServ" sortable="false" label="Versione Servizio" width="160px" rendered="#{not mBean.backwardCompatibility}" visible="false">
+				<rich:column id="colVersioneServ" sortable="false" label="Versione Servizio" width="160px" visible="false">
 					<f:facet name="header">
 						<h:outputText id="outVersioneServ1" value="Versione Servizio" />
 					</f:facet>

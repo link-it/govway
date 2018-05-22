@@ -88,9 +88,6 @@
 						<rich:panelMenuGroup label="Configurazione" expanded="true" id="configurazioneMenuGroup"
 							rendered="#{applicationBean.showSezioneConfigurazione}">
 							
-								<rich:panelMenuItem label="Utenti" action="user" 
-									rendered="#{applicationBean.showUserManagement}"/>
-															
 								<rich:panelMenuItem label="Allarmi" action="configurazioneAllarmi" id="confAllarmiLnk"
 									actionListener="#{allarmiBean.search.menuClickSearchListener}"
 									rendered="#{applicationBean.showConfigurazioneAllarmi}"/>
@@ -99,17 +96,12 @@
 									actionListener="#{sondeBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showConfigurazioneSonde}" />
 									
-								<rich:panelMenuItem label="Archiviazione Dati" action="dump"
-									rendered="#{applicationBean.showAnalisiContenuti}" />
-									
 								<rich:panelMenuItem label="Analisi Dati" action="configurazioneServizi"
 									rendered="#{applicationBean.showConfigurazioneLibreria}"
 									actionListener="#{configurazioneServiziBean.search.initSearchListener}" />
 									
 								<rich:panelMenuItem label="Processi" action="configProcessi"
 									rendered="#{applicationBean.showConfigurazioneProcessi}" />
-									
-								<rich:panelMenuItem label="Auditing" action="auditing" rendered="#{applicationBean.showAuditing}"/>
 						
 						</rich:panelMenuGroup>	
 						

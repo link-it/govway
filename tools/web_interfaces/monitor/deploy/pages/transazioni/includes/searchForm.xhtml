@@ -98,7 +98,7 @@
 					</rich:comboBox>
 				</link:prop>
 				
-				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{!applicationBean.backwardCompatibilityOpenspcoop1 and sf_bean.showListaProtocolli}" ajaxRendered="true" >
+				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" ajaxRendered="true" >
 					<link:prop label="Protocollo">
 						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="allConverter" 
 							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false">

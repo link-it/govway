@@ -38,42 +38,42 @@
 						</link:prop>
 						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'temporale' or analisiStatisticaBean.tipoDistribuzione == 'esiti'}">
-							<ui:include src="/includes/searchFormDistribTemporale.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribTemporale.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>
 						</c:if>
 						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'soggetto_remoto' or analisiStatisticaBean.tipoDistribuzione == 'soggetto_locale'}">
-							<ui:include src="/includes/searchFormDistribSoggetto.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribSoggetto.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>
 						</c:if>
 						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio'}">
-							<ui:include src="/includes/searchFormDistribServizio.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribServizio.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>
 						</c:if>
 						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'azione'}">
-							<ui:include src="/includes/searchFormDistribAzione.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribAzione.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>
 						</c:if>
 						
 						<c:if test="#{analisiStatisticaBean.tipoDistribuzione == 'servizio_applicativo'}">
-							<ui:include src="/includes/searchFormDistribSA.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribSA.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>
 						</c:if>
 						
 						<c:if test="#{applicationBean.showStatistichePersonalizzate and analisiStatisticaBean.tipoDistribuzione == 'personalizzata'}">
-							<ui:include src="/includes/searchFormDistribPersonalizzata.xhtml">
+							<ui:include src="/stat/includes/searchFormDistribPersonalizzata.xhtml">
 				               	<ui:param name="mBean" value="#{analisiStatisticaBean.mBean}" />
 				               	<ui:param name="search" value="#{mBean.search}" />
 				           	</ui:include>

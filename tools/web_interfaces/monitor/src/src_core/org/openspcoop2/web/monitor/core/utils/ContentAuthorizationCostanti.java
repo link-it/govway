@@ -25,34 +25,30 @@ public class ContentAuthorizationCostanti {
 	// Elenco delle pagine che sono disponibili al ruolo amministratore
 	public static String[] listaPagineRuoloAmministratore = {
 		// welcome page
-		"/pages/welcome.jsf",
-		"/pages/about.jsf",
+		"/commons/pages/welcome.jsf",
+		"/commons/pages/about.jsf",
 			
-		"/pages/statoPdd.jsf",
+		"/commons/pages/statoPdd.jsf",
 
 		// Transazioni
-		"/pages/list/transazioni.jsf",
+		"/transazioni/pages/list/transazioni.jsf",
 		
 		// Esiti Live
-		"/pages/form/esitiLive.jsf",
+		"/transazioni/pages/form/esitiLive.jsf",
 
-		// Auditing
-		"/pages/form/auditing.jsf",
-
-		// Configurazione Utenti
-		"/pages/list/user.jsf",
-		"/pages/form/user.jsf",
+		// Password Utenti
+		"/core/pages/form/user.jsf",
 
 		// Stats
-		"/pages/stats/configurazioniGenerali.jsf",
-		"/pages/stats/form/dettaglioConfigurazione.jsf",
+		"/stat/pages/list/configurazioniGenerali.jsf",
+		"/stat/pages/form/dettaglioConfigurazione.jsf",
 		
 		//Servlet Configurazioni Exporter
 		"/configurazioniexporter",
 
 		// Eventi
-		"/pages/form/evento.jsf",
-		"/pages/list/eventi.jsf",
+		"/eventi/pages/form/evento.jsf",
+		"/eventi/pages/list/eventi.jsf",
 
 		//Processi
 		"/pages/list/processi.jsf",
@@ -73,11 +69,11 @@ public class ContentAuthorizationCostanti {
 	public static String[] listaPagineRuoloConfiguratore = {
 
 		// welcome page
-		"/pages/welcome.jsf",	
-		"/pages/about.jsf",
+		"/commons/pages/welcome.jsf",	
+		"/commons/pages/about.jsf",
 			
 		// Configurazione Utenti
-		"/pages/form/user.jsf",
+		"/core/pages/form/user.jsf",
 			
 		// Configurazioni
 		"/pages/configuratore/form/configurazioneServizio.jsf",
@@ -116,24 +112,24 @@ public class ContentAuthorizationCostanti {
 
 	// Elenco delle pagine che sono disponibili al ruolo operatore
 	public static String[] listaPagineRuoloOperatore = {
-		"/pages/statoPdd.jsf",			
+		"/commons/pages/statoPdd.jsf",			
 
 		// welcome page
-		"/pages/welcome.jsf",
+		"/commons/pages/welcome.jsf",
 			
 		// Monitoraggio
-		"/pages/about.jsf",
-		"/pages/list/transazioni.jsf",
-		"/pages/form/dettagliMessaggio.jsf",
-		"/pages/form/dettaglioDump.jsf",
-		"/pages/form/esitiLive.jsf",
-		"/pages/form/fault.jsf",
-		"/pages/form/headerTrasporto.jsf",
-		"/pages/form/visualizzaDiagnostici.jsf",
-		"/pages/form/visualizzaTraccia.jsf",
+		"/commons/pages/about.jsf",
+		"/transazioni/pages/list/transazioni.jsf",
+		"/transazioni/pages/form/dettagliMessaggio.jsf",
+		"/transazioni/pages/form/dettaglioDump.jsf",
+		"/transazioni/pages/form/esitiLive.jsf",
+		"/transazioni/pages/form/fault.jsf",
+		"/transazioni/pages/form/headerTrasporto.jsf",
+		"/transazioni/pages/form/visualizzaDiagnostici.jsf",
+		"/transazioni/pages/form/visualizzaTraccia.jsf",
 
 		// Configurazione Utenti
-		"/pages/form/user.jsf",
+		"/core/pages/form/user.jsf",
 		
 		// Servlet Exporter
 		"/diagnosticiexporter",
@@ -142,21 +138,21 @@ public class ContentAuthorizationCostanti {
 		"/transazionicsvexporter",
 
 		// Stats
-		"/pages/stats/analisiStatistica.jsf",
-		"/pages/stats/andamentoTemporale.jsf",
-		"/pages/stats/andamentoTemporaleGrafico.jsf",
-		"/pages/stats/distribSA.jsf",
-		"/pages/stats/distribSAGrafico.jsf",
-		"/pages/stats/distribServizio.jsf",
-		"/pages/stats/distribServizioGrafico.jsf",
-		"/pages/stats/distribSoggetto.jsf",
-		"/pages/stats/distribSoggettoGrafico.jsf",
-		"/pages/stats/distribAzione.jsf",
-		"/pages/stats/distribAzioneGrafico.jsf",
-		"/pages/stats/statsPersonalizzate.jsf",
-		"/pages/stats/statsPersonalizzateGrafico.jsf",
-		"/pages/stats/configurazioniGenerali.jsf",
-		"/pages/stats/form/dettaglioConfigurazione.jsf",
+		"/stat/pages/form/analisiStatistica.jsf",
+		"/stat/pages/form/andamentoTemporale.jsf",
+		"/stat/pages/form/andamentoTemporaleGrafico.jsf",
+		"/stat/pages/form/distribSA.jsf",
+		"/stat/pages/form/distribSAGrafico.jsf",
+		"/stat/pages/form/distribServizio.jsf",
+		"/stat/pages/form/distribServizioGrafico.jsf",
+		"/stat/pages/form/distribSoggetto.jsf",
+		"/stat/pages/form/distribSoggettoGrafico.jsf",
+		"/stat/pages/form/distribAzione.jsf",
+		"/stat/pages/form/distribAzioneGrafico.jsf",
+		"/stat/pages/form/statsPersonalizzate.jsf",
+		"/stat/pages/form/statsPersonalizzateGrafico.jsf",
+		"/stat/pages/list/configurazioniGenerali.jsf",
+		"/stat/pages/form/dettaglioConfigurazione.jsf",
 		
 		//Servlet Configurazioni Exporter
 		"/configurazioniexporter",
@@ -177,18 +173,18 @@ public class ContentAuthorizationCostanti {
 	public static String[][] listaPagineModuli ={
 
 		// Stato della porta
-		{"/pages/statoPdd.jsf",ApplicationBean.FUNZIONALITA_STATUS_PDD},
-		{"/pages/about.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
-		{"/pages/welcome.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
+		{"/commons/pages/statoPdd.jsf",ApplicationBean.FUNZIONALITA_STATUS_PDD},
+		{"/commons/pages/about.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
+		{"/commons/pages/welcome.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 
 		// Monitoraggio
-		{"/pages/list/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/dettagliMessaggio.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/dettaglioDump.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/fault.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/headerTrasporto.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/visualizzaDiagnostici.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/pages/form/visualizzaTraccia.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/list/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/dettagliMessaggio.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/dettaglioDump.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/fault.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/headerTrasporto.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/visualizzaDiagnostici.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/visualizzaTraccia.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		// Export Transazioni
 		{"/diagnosticiexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/tracceexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
@@ -196,14 +192,11 @@ public class ContentAuthorizationCostanti {
 		{"/transazionicsvexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 
 		// Esiti Live
-		{"/pages/form/esitiLive.jsf",ApplicationBean.FUNZIONALITA_ESITI_LIVE},
-
-		// Auditing
-		{"/pages/form/auditing.jsf",ApplicationBean.FUNZIONALITA_AUDITING},
+		{"/transazioni/pages/form/esitiLive.jsf",ApplicationBean.FUNZIONALITA_ESITI_LIVE},
 
 		// Eventi
-		{"/pages/form/evento.jsf",ApplicationBean.FUNZIONALITA_EVENTI},
-		{"/pages/list/eventi.jsf",ApplicationBean.FUNZIONALITA_EVENTI},
+		{"/eventi/pages/form/evento.jsf",ApplicationBean.FUNZIONALITA_EVENTI},
+		{"/eventi/pages/list/eventi.jsf",ApplicationBean.FUNZIONALITA_EVENTI},
 
 		//Processi
 		{"/pages/configuratore/list/processi.jsf",ApplicationBean.FUNZIONALITA_PROCESSI},
@@ -244,34 +237,33 @@ public class ContentAuthorizationCostanti {
 		{"/pages/configuratore/form/statisticaParam.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 
 		//Utenti
-		{"/pages/list/user.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
-		{"/pages/form/user.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
+		{"/core/pages/form/user.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
 
 		// Sonde
 		{"/pages/form/sonda.jsf",ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE},
 		{"/pages/list/sonde.jsf",ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE},
 
 			// Stats
-		{"/pages/stats/analisiStatistica.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/configurazioniGenerali.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/form/dettaglioConfigurazione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/analisiStatistica.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/list/configurazioniGenerali.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/dettaglioConfigurazione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		
 		//Servlet Configurazioni Exporter
 		{"/configurazioniexporter",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		
-		{"/pages/stats/andamentoTemporale.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/andamentoTemporaleGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribSA.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribSAGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribServizio.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribServizioGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribSoggetto.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribSoggettoGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribAzione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		{"/pages/stats/distribAzioneGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/andamentoTemporale.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/andamentoTemporaleGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribSA.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribSAGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribServizio.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribServizioGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribSoggetto.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribSoggettoGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribAzione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/distribAzioneGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		// Statistiche personalizzate
-		{"/pages/stats/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
-		{"/pages/stats/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
+		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
+		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 
 		// Allarmi
 		{"/pages/form/allarme.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
@@ -294,15 +286,15 @@ public class ContentAuthorizationCostanti {
 	// Elenco delle pagine sulle quali non abilitare la compatibilita' IE8
 	public static String[] listaPagineNoIE8 = {
 			// Stats
-			"/pages/stats/andamentoTemporaleGrafico.jsf",
-			"/pages/stats/distribSAGrafico.jsf",
-			"/pages/stats/distribServizioGrafico.jsf",
-			"/pages/stats/distribSoggettoGrafico.jsf",
-			"/pages/stats/distribAzioneGrafico.jsf",
-			"/pages/stats/statsPersonalizzateGrafico.jsf",
+			"/stat/pages/form/andamentoTemporaleGrafico.jsf",
+			"/stat/pages/form/distribSAGrafico.jsf",
+			"/stat/pages/form/distribServizioGrafico.jsf",
+			"/stat/pages/form/distribSoggettoGrafico.jsf",
+			"/stat/pages/form/distribAzioneGrafico.jsf",
+			"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 			// Esiti Live
-			"/pages/form/esitiLive.jsf",
+			"/transazioni/pages/form/esitiLive.jsf",
 			// Summary
-			"/pages/welcome.jsf"
+			"/commons/pages/welcome.jsf"
 	};
 }

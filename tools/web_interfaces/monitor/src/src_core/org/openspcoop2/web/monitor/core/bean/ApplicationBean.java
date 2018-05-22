@@ -55,7 +55,6 @@ public class ApplicationBean implements Serializable {
 	public static final String FUNZIONALITA_PROCESSI = "processi";
 	public static final String FUNZIONALITA_EXPORT_PROCESSI = "export_processi";
 	public static final String FUNZIONALITA_SONDE_APPLICATIVE = "sonde_applicative";
-	public static final String FUNZIONALITA_AUDITING = "auditing";
 	public static final String FUNZIONALITA_EVENTI = "eventi";
 	public static final String FUNZIONALITA_ANALISI_DATI = "analisi_dati";
 	public static final String FUNZIONALITA_UTENTI = "utenti";
@@ -96,7 +95,6 @@ public class ApplicationBean implements Serializable {
 			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE,attivoModuloTransazioniStatistichePersonalizzate);
 			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_PROCESSI, pddMonitorProperties.isAttivoModuloProcessi());
 			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_SONDE_APPLICATIVE, pddMonitorProperties.isAttivoModuloSonde());
-			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_AUDITING, pddMonitorProperties.isAuditingEnabled());
 			funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_EVENTI, pddMonitorProperties.isAttivoModuloEventi());
 			// lazy initialization per i ruoli, dato che il bean login verra' // inizializzato solo dopo il login dell'utente.
 			// Funzionalita analisi dei dati abilitata se almeno una delle categorie personalizzabili e' abilitata
@@ -581,9 +579,9 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
-
-		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE)
-				|| this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
+		// I moduli di configurazione possono non essere presenti nella versione open 
+		if((this.getShowConfigurazioneAllarmi() || this.getShowConfigurazioneSonde() || this.getShowConfigurazioneLibreria() || this.getShowConfigurazioneProcessi()) 
+				&& (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE)	|| this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)))
 			return true;
 
 		return false;
@@ -716,43 +714,6 @@ public class ApplicationBean implements Serializable {
 		return false;
 	}
 
-	public boolean getShowRuoloConfiguratore() {
-
-		// Il ruolo configuratore deve essere visualizzato nella maschera di creazione degli utenti esattamente come viene visualizzato nel menu'
-		return this.getShowSezioneConfigurazione() || this.getShowCambiaPassword();
-
-		//		if (this.funzionalita.get(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE)
-		//				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE)
-		//				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI)
-		//				|| this.funzionalita.get(ApplicationBean.FUNZIONALITA_ALLARMI))
-		//			return true;
-		//
-		//		return false;
-	}
-
-	/**
-	 * Visualizza la sezione di configurazione:{Gestione Utenti, Auditing}
-	 * 
-	 * @return permesso per visualizzare la sezione utenti.
-	 */
-	public boolean getShowUserManagement() {
-
-		checkRoles();
-
-		if(this.roles == null)
-			return false;
-
-		if(this.roles!= null && this.roles.isEmpty())
-			return false;
-
-		// visualizzazione consentita solo all'amministratore
-		if (this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
-			return true;
-
-		return false;
-	}
-
-
 	public boolean getShowCambiaPassword() {
 
 		checkRoles();
@@ -788,25 +749,6 @@ public class ApplicationBean implements Serializable {
 
 		// processi visualizzabili dal configuratore
 		if (this.roles.get(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
-	}
-
-	public boolean getShowAuditing(){
-		checkRoles();
-
-		if (!this.funzionalita.get(ApplicationBean.FUNZIONALITA_AUDITING))
-			return false;
-
-		if(this.roles == null)
-			return false;
-
-		if(this.roles!= null && this.roles.isEmpty())
-			return false;
-
-		// visualizzazione consentita solo all'amministratore
-		if (this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE))
 			return true;
 
 		return false;

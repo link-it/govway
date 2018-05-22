@@ -46,16 +46,14 @@ public class UserDetailsBean implements Serializable {
 		int foundServizi = this.utenteServizioList !=  null ? this.utenteServizioList.size() : 0;
 		
 		boolean admin = (foundServizi + foundSoggetti) == 0;
-		boolean operatore = (foundServizi + foundSoggetti) > 0;
 		
 		PermessiUtente permessi = u.getPermessi();
 		
 		if(permessi.isDiagnostica()) {
+			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_OPERATORE));
+
 			if(admin)
 				this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_AMMINISTRATORE));
-			
-			if(operatore)
-				this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_OPERATORE));
 		}
 		
 		if(permessi.isSistema()) {

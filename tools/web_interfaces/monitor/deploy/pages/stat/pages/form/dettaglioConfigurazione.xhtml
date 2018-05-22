@@ -26,13 +26,13 @@
 			</f:facet>
 			
 			<c:if test="#{not empty configurazioniGeneraliBean.selectedElement and not empty configurazioniGeneraliBean.selectedElement.pa}">
-				<ui:include src="/includes/dettaglioConfigurazionePA.xhtml">
+				<ui:include src="/stat/includes/dettaglioConfigurazionePA.xhtml">
 	               	<ui:param name="mBean" value="#{configurazioniGeneraliBean}" />
 	           	</ui:include>
 			</c:if>
 			
 			<c:if test="#{not empty configurazioniGeneraliBean.selectedElement and not empty configurazioniGeneraliBean.selectedElement.pd}">
-				<ui:include src="/includes/dettaglioConfigurazionePD.xhtml">
+				<ui:include src="/stat/includes/dettaglioConfigurazionePD.xhtml">
 	               	<ui:param name="mBean" value="#{configurazioniGeneraliBean}" />
 	           	</ui:include>
 			</c:if>

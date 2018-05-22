@@ -62,8 +62,8 @@
 							<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt}"/>
 							<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore and not dettagliBean.backwardCompatibility}"/>
-							<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore and not dettagliBean.backwardCompatibility}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
+							<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 								
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoErogatore" value="Applicativo Erogatore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
 							<h:outputText id="outServizioApplicativoErogatore" value="#{dettagliBean.dettaglio.servizioApplicativoErogatore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>

@@ -12,21 +12,21 @@
 		<from-view-id>*</from-view-id>
 		<navigation-case>
 			<from-outcome>eventi</from-outcome>
-			<to-view-id>/pages/list/eventi.xhtml</to-view-id>
+			<to-view-id>/eventi/pages/list/eventi.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/list/eventi.xhtml</from-view-id>
+		<from-view-id>/eventi/pages/list/eventi.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>evento</from-outcome>
-			<to-view-id>/pages/form/evento.xhtml</to-view-id>
+			<to-view-id>/eventi/pages/form/evento.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/pages/form/evento.xhtml</from-view-id>
+		<from-view-id>/eventi/pages/form/evento.xhtml</from-view-id>
 		<navigation-case>
 			<from-action>#{eventiBean.salva}</from-action>
 			<from-outcome>success</from-outcome>
-			<to-view-id>/pages/list/eventi.xhtml</to-view-id>
+			<to-view-id>/eventi/pages/list/eventi.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
