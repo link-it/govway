@@ -9,20 +9,19 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.ServiceException;
-import org.slf4j.Logger;
-
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
-import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.slf4j.Logger;
 
 public class LoginBean extends AbstractLoginBean {
 
@@ -42,6 +41,8 @@ public class LoginBean extends AbstractLoginBean {
 	private String logoHeaderImage = null;
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
+	private String title = null;
+	private boolean showExtendedInfo = false;
 
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -61,6 +62,8 @@ public class LoginBean extends AbstractLoginBean {
 			this.setLogoHeaderImage(PddMonitorProperties.getInstance(this.log).getLogoHeaderImage());
 			this.setLogoHeaderLink(PddMonitorProperties.getInstance(this.log).getLogoHeaderLink());
 			this.setLogoHeaderTitolo(PddMonitorProperties.getInstance(this.log).getLogoHeaderTitolo()); 
+			this.setTitle(PddMonitorProperties.getInstance(this.log).getPddMonitorTitle());
+			this.setShowExtendedInfo(PddMonitorProperties.getInstance(this.log).visualizzaPaginaAboutExtendedInfo());
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -255,4 +258,17 @@ public class LoginBean extends AbstractLoginBean {
 		this.logoHeaderLink = logoHeaderLink;
 	}
 
+	public String getTitle(){
+		return this.title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public boolean isShowExtendedInfo() {
+		return this.showExtendedInfo;
+	}
+
+	public void setShowExtendedInfo(boolean showExtendedInfo) {
+		this.showExtendedInfo = showExtendedInfo;
+	}
 }

@@ -116,7 +116,8 @@ div.form-container form div.prop ,div.form-container .display-form div.prop, div
 }
 
 div.form-container form fieldset,div.form-container .display-form fieldset, div.form-container fieldset {
-	margin: 10px 0;
+	margin: 10px 0px 16px 0px;
+	padding: 16px 10px 24px 10px;
 }
 
 div.form-container form legend,div.form-container .display-form legend, div.form-container legend {
@@ -182,6 +183,15 @@ div.form-container .display-form table.controlset label{
 	text-align: left;
 	width: auto;
 }
+
+.spanNoEdit {
+/* 	vertical-align: middle; */
+}
+
+.divNoEdit {
+	padding-top: 2px;
+}
+
 
 .subtitle {
 	padding: 10px 20px 6px 5px;

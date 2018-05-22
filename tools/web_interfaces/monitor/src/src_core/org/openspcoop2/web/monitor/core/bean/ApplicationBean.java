@@ -9,14 +9,14 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
+import org.slf4j.Logger;
 
 public class ApplicationBean implements Serializable {
 
@@ -908,4 +908,34 @@ public class ApplicationBean implements Serializable {
 		}
 	}
 
+	public String getIdProdotto(){
+		String pVersion = null;
+//		if(this.consoleNomeEstesoSuffix!=null){
+//			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)){
+//				pVersion = "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
+//			}
+//			else{
+//				pVersion = this.consoleNomeEstesoSuffix;
+//			}
+//		}
+//		else {
+			pVersion = "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
+//		}
+		String buildVersion = null;
+		try {
+			buildVersion = VersionUtilities.readBuildVersion();
+		}catch(Exception e) {}
+		if(buildVersion!=null) {
+			pVersion = pVersion + " (build "+buildVersion+")";
+		}
+		return pVersion;
+	}
+	
+	public String getCopyright(){
+		return CostantiPdD.OPENSPCOOP2_COPYRIGHT;
+	}
+	
+	public String getLicenza() {
+		return CostantiPdD.OPENSPCOOP2_LICENSE;
+	}
 }

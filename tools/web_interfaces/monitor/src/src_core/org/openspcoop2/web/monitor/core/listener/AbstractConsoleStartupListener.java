@@ -25,10 +25,6 @@ import org.slf4j.Logger;
 
 public abstract class AbstractConsoleStartupListener implements ServletContextListener{
 
-	public static String titoloPddMonitor = null;
-	
-	
-
 	protected static Logger log = LoggerWrapperFactory.getLogger(AbstractConsoleStartupListener.class); 
 
 	public static boolean initializedLog = false;

@@ -759,4 +759,14 @@ public class PddMonitorProperties {
 	public boolean isAttivoUtilizzaCountStatisticheListaConfigurazioni() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.configurazioni.lista.utilizzaCount.enabled", true, true));
 	}
+	
+	public boolean visualizzaPaginaAboutExtendedInfo() throws Exception{
+		String tmp = this.appProperties.getProperty("console.extendedInfo.enabled", false, true);
+		if(tmp!=null && !"".equals(tmp)) {
+			return "true".equalsIgnoreCase(tmp);
+		}
+		else {
+			return false; // default
+		}
+	}
 }

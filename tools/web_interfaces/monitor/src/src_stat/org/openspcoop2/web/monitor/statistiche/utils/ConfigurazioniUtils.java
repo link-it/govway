@@ -64,7 +64,7 @@ public class ConfigurazioniUtils {
 		//		if(dettaglioPD.getPortaDelegata().getNomeAzione()==null){
 		AccordoServizioParteSpecifica asps = getAspsFromValues(dettaglioPD.getPortaDelegata().getTipoSoggettoErogatore(), 
 				dettaglioPD.getPortaDelegata().getNomeSoggettoErogatore(), dettaglioPD.getPortaDelegata().getTipoServizio(),
-				dettaglioPD.getPortaDelegata().getNomeServizio(), serviceManager);
+				dettaglioPD.getPortaDelegata().getNomeServizio(), dettaglioPD.getPortaDelegata().getVersioneServizio(), serviceManager);
 
 		dettaglioPD.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
 		dettaglioPD.setPortType(asps.getPortType());
@@ -74,7 +74,7 @@ public class ConfigurazioniUtils {
 	}
 
 	private static AccordoServizioParteSpecifica getAspsFromValues(String tipoSoggettoErogatore, String nomeSoggettoErogatore,
-			String tipoServizio, String nomeServizio, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager)
+			String tipoServizio, String nomeServizio, Integer versioneServizio, org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager)
 					throws ServiceException, NotFoundException, MultipleResultException, NotImplementedException {
 		IdAccordoServizioParteSpecifica idAPS = new IdAccordoServizioParteSpecifica();
 		IdSoggetto idErogatore = new IdSoggetto();
@@ -83,6 +83,7 @@ public class ConfigurazioniUtils {
 		idAPS.setIdErogatore(idErogatore);
 		idAPS.setTipo(tipoServizio);
 		idAPS.setNome(nomeServizio);
+		idAPS.setVersione(versioneServizio);
 		AccordoServizioParteSpecifica asps = serviceManager.getAccordoServizioParteSpecificaServiceSearch().get(idAPS);
 		return asps;
 	}
@@ -91,7 +92,7 @@ public class ConfigurazioniUtils {
 		//		if(dettaglioPA.getPortaApplicativa().getNomeAzione()==null){
 		AccordoServizioParteSpecifica asps = getAspsFromValues(dettaglioPA.getPortaApplicativa().getIdSoggetto().getTipo(),
 				dettaglioPA.getPortaApplicativa().getIdSoggetto().getNome(), dettaglioPA.getPortaApplicativa().getTipoServizio(),	
-				dettaglioPA.getPortaApplicativa().getNomeServizio(), serviceManager);
+				dettaglioPA.getPortaApplicativa().getNomeServizio(),  dettaglioPA.getPortaApplicativa().getVersioneServizio(), serviceManager);
 
 		dettaglioPA.setIdAccordoServizioParteComune(asps.getIdAccordoServizioParteComune());
 		dettaglioPA.setPortType(asps.getPortType());

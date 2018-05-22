@@ -11,8 +11,7 @@
 	<a4j:loadScript src="resource://org/richfaces/renderkit/html/scripts/jquery.hotkeys.js"/>
 	<ui:debug hotkey="X"/>
 	<f:facet name="pageHeader">
-		<title>PddMonitor-BETA</title>
-<!-- 		<title>#{licenseBean.title}</title> -->
+		<title>#{loginBean.title}</title>
 		<link href="#{facesContext.externalContext.request.contextPath}/images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 		<meta http-equiv="Content-Type" content="text/xml; charset=utf-8"/>
 		<!--[if !(IE)]><!-->
@@ -86,7 +85,7 @@
 			            		<tr>
 					                <td>
 				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
-											<h:outputText value="PddMonitor-BETA#{licenseBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
+											<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
 										</a>
 					                </td>
 					                <td align="right" class="titleRight">
@@ -149,7 +148,12 @@
 										                        <h:outputText styleClass="nomeUtenteImg" value=""/>
 										                    </h:panelGroup>
 										                </f:facet>
-<!-- 										                <rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" /> -->
+										                <c:if test="#{loginBean.showExtendedInfo}">
+										                	<rich:menuItem submitMode="server" value="Informazioni" action="#{licenseBean.about}" />
+									                	</c:if>
+									                	<c:if test="#{!loginBean.showExtendedInfo}">
+ 										                	<rich:menuItem submitMode="server" value="Informazioni" action="about" />
+ 										                </c:if>
 										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" >
 										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
 										                </rich:menuItem>
