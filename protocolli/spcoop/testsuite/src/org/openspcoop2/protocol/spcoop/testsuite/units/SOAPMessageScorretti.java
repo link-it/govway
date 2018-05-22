@@ -41,6 +41,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerException;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
@@ -112,10 +113,10 @@ public class SOAPMessageScorretti {
 
 
 
-	private byte[] getBusta(){
+	private byte[] getBusta() throws ProtocolException{
 		return this.getBusta(null);
 	}
-	private byte[] getBusta(String azione){
+	private byte[] getBusta(String azione) throws ProtocolException{
 		String identificativoEGov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		String bustaSOAP=UtilitiesEGov.getBustaEGov(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE,
@@ -135,7 +136,7 @@ public class SOAPMessageScorretti {
 		return bustaSOAP.getBytes();
 	}
 	
-	private String getHeaderBusta(String servizio,String azione){
+	private String getHeaderBusta(String servizio,String azione) throws ProtocolException{
 		String identificativoEGov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		String bustaSOAP=UtilitiesEGov.buildBustaEGov(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE,

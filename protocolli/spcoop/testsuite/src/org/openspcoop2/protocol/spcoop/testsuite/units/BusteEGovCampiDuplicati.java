@@ -308,13 +308,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -324,13 +324,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -481,13 +481,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -497,13 +497,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -652,13 +652,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -668,13 +668,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -826,13 +826,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -842,13 +842,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1002,13 +1002,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -1018,13 +1018,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1175,13 +1175,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloDiCollaborazione(id, this.busteEGovErrate.getProfiloCollaborazione(index), this.busteEGovErrate.getProfiloCollaborazioneSdk(index)));
 				Reporter.log("Controllo valore Profilo di Trasmissione Busta ["+this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index)+"] con id: " +id);
@@ -1191,13 +1191,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1343,13 +1343,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1361,13 +1361,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1518,13 +1518,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1536,13 +1536,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1693,13 +1693,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1711,13 +1711,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1868,13 +1868,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -1886,13 +1886,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2044,13 +2044,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2062,13 +2062,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2219,13 +2219,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2237,13 +2237,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2393,13 +2393,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2411,13 +2411,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2570,13 +2570,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2588,13 +2588,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2746,13 +2746,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2761,19 +2761,19 @@ public class BusteEGovCampiDuplicati {
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index),
 						this.busteEGovErrate.getProfiloTrasmissioneInoltro(index),this.busteEGovErrate.getProfiloTrasmissioneInoltroSdk(index)));
 				Reporter.log("Controllo lista trasmissione con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 	
 	
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2923,13 +2923,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -2938,19 +2938,19 @@ public class BusteEGovCampiDuplicati {
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index),
 						this.busteEGovErrate.getProfiloTrasmissioneInoltro(index),this.busteEGovErrate.getProfiloTrasmissioneInoltroSdk(index)));
 				Reporter.log("Controllo lista trasmissione con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 	
 	
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3099,13 +3099,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3114,19 +3114,19 @@ public class BusteEGovCampiDuplicati {
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index),
 						this.busteEGovErrate.getProfiloTrasmissioneInoltro(index),this.busteEGovErrate.getProfiloTrasmissioneInoltroSdk(index)));
 				Reporter.log("Controllo lista trasmissione con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 	
 	
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3276,13 +3276,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3291,19 +3291,19 @@ public class BusteEGovCampiDuplicati {
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedProfiloTrasmissione(id, this.busteEGovErrate.getProfiloTrasmissioneConfermaRicezione(index),
 						this.busteEGovErrate.getProfiloTrasmissioneInoltro(index),this.busteEGovErrate.getProfiloTrasmissioneInoltroSdk(index)));
 				Reporter.log("Controllo lista trasmissione con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedTrasmissione(id, this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index), this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 	
 	
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3446,13 +3446,13 @@ public class BusteEGovCampiDuplicati {
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 			Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 			Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 			Reporter.log("Controllo valore Servizio Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 			Reporter.log("Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 			Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3464,13 +3464,13 @@ public class BusteEGovCampiDuplicati {
 			Reporter.log("-------------- RISPOSTA --------------------");
 
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 			Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 			Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 			Reporter.log("Controllo valore Servizio Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 			Reporter.log("Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 			Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3603,14 +3603,14 @@ public class BusteEGovCampiDuplicati {
 
 			Reporter.log("Controllo tracciamento richiesta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
-			Reporter.log("Controllo valore Mittente Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+			Reporter.log("Controllo valore Mittente ("+this.busteEGovErrate.getMittenteRichiesta(index)+") ("+this.busteEGovErrate.getIndirizzoTelematicoMittente(index)+") Busta con id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 			Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 			Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 			Reporter.log("Controllo valore Servizio Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 			Reporter.log("Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 			Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3622,13 +3622,13 @@ public class BusteEGovCampiDuplicati {
 			Reporter.log("-------------- RISPOSTA --------------------");
 
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 			Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 			Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 			Reporter.log("Controllo valore Servizio Busta con id: " +id);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 			Reporter.log("Controllo valore Azione Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 			Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3771,13 +3771,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3927,13 +3927,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -3945,13 +3945,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -4102,13 +4102,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -4120,13 +4120,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -4279,13 +4279,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("Controllo tracciamento richiesta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGovErrate.getMittenteRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatario(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGovErrate.getDestinatarioRichiesta(index),this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRichiesta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);
@@ -4297,13 +4297,13 @@ public class BusteEGovCampiDuplicati {
 				Reporter.log("-------------- RISPOSTA --------------------");
 	
 				Reporter.log("Controllo valore Mittente Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatario(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedMittente(id,this.busteEGovErrate.getDestinatarioRisposta(index), this.busteEGovErrate.getIndirizzoTelematicoDestinatario(index)));
 				Reporter.log("Controllo valore Destinatario Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittente(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedDestinatario(id,this.busteEGovErrate.getMittenteRisposta(index),this.busteEGovErrate.getIndirizzoTelematicoMittente(index)));
 				Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedOraRegistrazione(id));
 				Reporter.log("Controllo valore Servizio Busta con id: " +id);
-				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizio(index)));
+				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedServizio(id, this.busteEGovErrate.getDatiServizioRisposta(index)));
 				Reporter.log("Controllo valore Azione Busta con id: " +id);
 				Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedAzione(id, this.busteEGovErrate.getAzione(index)));
 				Reporter.log("Controllo valore Profilo di Collaborazione Busta con id: " +id);

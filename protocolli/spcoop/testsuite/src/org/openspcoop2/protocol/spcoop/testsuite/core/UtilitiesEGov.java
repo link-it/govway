@@ -23,6 +23,10 @@ package org.openspcoop2.protocol.spcoop.testsuite.core;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
 
@@ -51,24 +55,24 @@ public class UtilitiesEGov {
 	}
 	
 	public static String getBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
-			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione){
+			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione) throws ProtocolException{
 		return getBustaEGov(tipoMittente, mittente, tipoDestinatario, destinatario, profiloCollaborazione, tipoServizio, servizio, idEGov, confermaRicezione, inoltro, scadenza, azione, null, SPCoopCostanti.TIPO_TEMPO_LOCALE,new Date());
 	}
 	public static String getBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
 		String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
-		String collaborazione,String tipo_tempo){
+		String collaborazione,String tipo_tempo) throws ProtocolException{
 		return getBustaEGov(tipoMittente, mittente, tipoDestinatario, destinatario, profiloCollaborazione, tipoServizio, servizio, idEGov, confermaRicezione, inoltro, scadenza, azione, collaborazione, tipo_tempo, new Date());
 	}
 	public static String getBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
 			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
-			String collaborazione,String tipo_tempo,Date oraRegistrazione){
+			String collaborazione,String tipo_tempo,Date oraRegistrazione) throws ProtocolException{
 		return getBustaEGov(tipoMittente, mittente, tipoDestinatario, destinatario, profiloCollaborazione, tipoServizio, servizio, idEGov, confermaRicezione, inoltro, 
 				scadenza, azione, collaborazione, tipo_tempo, oraRegistrazione, 
 				"<helloworld><a>Hello World</a><b>Hello World</b></helloworld>\n");
 	}
 	public static String getBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
 			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
-			String collaborazione,String tipo_tempo,Date oraRegistrazione,String contenutoBody){
+			String collaborazione,String tipo_tempo,Date oraRegistrazione,String contenutoBody) throws ProtocolException{
 		StringBuffer busta = new StringBuffer();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
@@ -86,17 +90,33 @@ public class UtilitiesEGov {
 	}
 	public static String buildBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
 			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
-			String collaborazione,String tipo_tempo,Date oraRegistrazione){
+			String collaborazione,String tipo_tempo,Date oraRegistrazione) throws ProtocolException{
+		
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		
 		StringBuffer busta = new StringBuffer();
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
 		busta.append("<eGov_IT:IntestazioneMessaggio>\n");
-		busta.append("<eGov_IT:Mittente><eGov_IT:IdentificativoParte tipo=\""+tipoMittente+"\">"+mittente+"</eGov_IT:IdentificativoParte></eGov_IT:Mittente>\n");
-		busta.append("<eGov_IT:Destinatario><eGov_IT:IdentificativoParte tipo=\""+tipoDestinatario+"\">"+destinatario+"</eGov_IT:IdentificativoParte></eGov_IT:Destinatario>\n");
+		String tipoMittenteProtocollo = tipoMittente;
+		try {
+			tipoMittenteProtocollo = traduttore.toProtocolOrganizationType(tipoMittenteProtocollo);
+		}catch(Exception e) {}
+		busta.append("<eGov_IT:Mittente><eGov_IT:IdentificativoParte tipo=\""+tipoMittenteProtocollo+"\">"+mittente+"</eGov_IT:IdentificativoParte></eGov_IT:Mittente>\n");
+		String tipoDestinatarioProtocollo = tipoDestinatario;
+		try {
+			tipoDestinatarioProtocollo = traduttore.toProtocolOrganizationType(tipoDestinatarioProtocollo);
+		}catch(Exception e) {}
+		busta.append("<eGov_IT:Destinatario><eGov_IT:IdentificativoParte tipo=\""+tipoDestinatarioProtocollo+"\">"+destinatario+"</eGov_IT:IdentificativoParte></eGov_IT:Destinatario>\n");
 		busta.append("<eGov_IT:ProfiloCollaborazione>"+profiloCollaborazione+"</eGov_IT:ProfiloCollaborazione>\n");
 		if(collaborazione!=null){
 			busta.append("<eGov_IT:Collaborazione>"+collaborazione+"</eGov_IT:Collaborazione>\n");
 		}
-		busta.append("<eGov_IT:Servizio tipo=\""+tipoServizio+"\">"+servizio+"</eGov_IT:Servizio>\n");
+		String tipoServizioProtocollo = tipoServizio;
+		try {
+			tipoServizioProtocollo = traduttore.toProtocolServiceType(tipoServizioProtocollo);
+		}catch(Exception e) {}
+		busta.append("<eGov_IT:Servizio tipo=\""+tipoServizioProtocollo+"\">"+servizio+"</eGov_IT:Servizio>\n");
 		if(azione!=null){
 			busta.append("<eGov_IT:Azione>"+azione+"</eGov_IT:Azione>\n");
 		}
@@ -112,8 +132,8 @@ public class UtilitiesEGov {
 		busta.append("</eGov_IT:IntestazioneMessaggio>\n");
 		busta.append("<eGov_IT:ListaTrasmissioni>\n");
 		busta.append("<eGov_IT:Trasmissione>\n");
-		busta.append("<eGov_IT:Origine><eGov_IT:IdentificativoParte tipo=\""+tipoMittente+"\">"+mittente+"</eGov_IT:IdentificativoParte></eGov_IT:Origine>\n");
-		busta.append("<eGov_IT:Destinazione><eGov_IT:IdentificativoParte tipo=\""+tipoDestinatario+"\">"+destinatario+"</eGov_IT:IdentificativoParte></eGov_IT:Destinazione>\n");
+		busta.append("<eGov_IT:Origine><eGov_IT:IdentificativoParte tipo=\""+tipoMittenteProtocollo+"\">"+mittente+"</eGov_IT:IdentificativoParte></eGov_IT:Origine>\n");
+		busta.append("<eGov_IT:Destinazione><eGov_IT:IdentificativoParte tipo=\""+tipoDestinatarioProtocollo+"\">"+destinatario+"</eGov_IT:IdentificativoParte></eGov_IT:Destinazione>\n");
 		busta.append("<eGov_IT:OraRegistrazione tempo=\""+tipo_tempo+"\">"+SPCoopUtils.getDate_eGovFormat(oraRegistrazione)+"</eGov_IT:OraRegistrazione>\n");
 		busta.append("</eGov_IT:Trasmissione>\n");
 		busta.append("</eGov_IT:ListaTrasmissioni>\n");

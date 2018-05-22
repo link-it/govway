@@ -5784,11 +5784,16 @@ public class RicezioneBuste {
 					for(int i=0;i<bustaRichiesta.sizeListaTrasmissioni();i++){
 						if( identitaPdD.getTipo().equals(bustaRichiesta.getTrasmissione(i).getTipoDestinazione()) &&
 								identitaPdD.getNome().equals(bustaRichiesta.getTrasmissione(i).getDestinazione()) ){
-							//if( !(bustaRichiesta.getTrasmissione(i).getTipoOrigine().equals(bustaRisposta.getTipoMittente()) &&
-							//     bustaRichiesta.getTrasmissione(i).getOrigine().equals(bustaRisposta.getMittente())) ){
-							tras.setDestinazione(bustaRichiesta.getTrasmissione(i).getOrigine());
-							tras.setTipoDestinazione(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
-							//}
+							boolean tipoOrigineValido = true;
+							try {
+								traduttore.toRegistryOrganizationType(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+							}catch(Exception e) {
+								tipoOrigineValido = false;
+							}
+							if(tipoOrigineValido) {
+								tras.setDestinazione(bustaRichiesta.getTrasmissione(i).getOrigine());
+								tras.setTipoDestinazione(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+							}
 						}
 					}
 					if(tras.getDestinazione()==null || tras.getTipoDestinazione()==null){

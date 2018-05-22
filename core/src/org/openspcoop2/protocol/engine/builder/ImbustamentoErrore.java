@@ -41,6 +41,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
@@ -201,6 +202,31 @@ public class ImbustamentoErrore  {
 		busta.setIndirizzoDestinatario(indTdest);
 		busta.setIdentificativoPortaDestinatario(codicePorta);
 
+		// Verifico 'bonta' dei tipi
+		try {
+			this.protocolFactory.createTraduttore().toRegistryOrganizationType(busta.getTipoMittente());
+		}catch(Exception e) {
+			if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+				busta.setTipoMittente(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault());
+			}
+		}
+		try {
+			this.protocolFactory.createTraduttore().toRegistryOrganizationType(busta.getTipoDestinatario());
+		}catch(Exception e) {
+			if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+				busta.setTipoDestinatario(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault());
+			}
+		}
+		if(busta.getTipoServizio()!=null) {
+			try {
+				this.protocolFactory.createTraduttore().toRegistryServiceType(busta.getTipoServizio());
+			}catch(Exception e) {
+				if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+					busta.setTipoServizio(this.protocolFactory.createProtocolConfiguration().getTipoServizioDefault(null));
+				}
+			}
+		}
+		
 		// Costruzione identificativo e riferimentoMessaggio
 		busta.setRiferimentoMessaggio(busta.getID());
 		busta.setID(id_busta);
@@ -695,13 +721,26 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				for(int i=0;i<listaTrasmissioniBustaRichiesta.size();i++){
 					if( identitaPdD.getTipo().equals(listaTrasmissioniBustaRichiesta.get(i).getTipoDestinazione()) &&
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
-						//if( !(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine().equals(busta.getTipoMittente()) &&
-						//      listaTrasmissioniBustaRichiesta.get(i).getOrigine().equals(busta.getMittente())) ){
-						tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
-						tras.setTipoDestinazione(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
-						tras.setIdentificativoPortaDestinazione(listaTrasmissioniBustaRichiesta.get(i).getIdentificativoPortaOrigine());
-						//}
+						boolean tipoOrigineValido = true;
+						try {
+							this.protocolFactory.createTraduttore().toRegistryOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+						}catch(Exception e) {
+							tipoOrigineValido = false;
+						}
+						if(tipoOrigineValido) {
+							tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
+							tras.setTipoDestinazione(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							tras.setIdentificativoPortaDestinazione(listaTrasmissioniBustaRichiesta.get(i).getIdentificativoPortaOrigine());
+						}
 					}
+				}
+				if(tras.getDestinazione()==null || tras.getTipoDestinazione()==null){
+					tras.setDestinazione(busta.getDestinatario());
+					tras.setTipoDestinazione(busta.getTipoDestinatario());
+					try{
+						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory);
+						tras.setIdentificativoPortaDestinazione(dominio);
+					}catch(Exception e){}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());
 				tras.setTempo(busta.getTipoOraRegistrazione());
@@ -860,13 +899,26 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				for(int i=0;i<listaTrasmissioniBustaRichiesta.size();i++){
 					if( identitaPdD.getTipo().equals(listaTrasmissioniBustaRichiesta.get(i).getTipoDestinazione()) &&
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
-						//if( !(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine().equals(busta.getTipoMittente()) &&
-						//      listaTrasmissioniBustaRichiesta.get(i).getOrigine().equals(busta.getMittente())) ){
-						tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
-						tras.setTipoDestinazione(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
-						tras.setIdentificativoPortaDestinazione(listaTrasmissioniBustaRichiesta.get(i).getIdentificativoPortaOrigine());
-						//}
+						boolean tipoOrigineValido = true;
+						try {
+							this.protocolFactory.createTraduttore().toRegistryOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+						}catch(Exception e) {
+							tipoOrigineValido = false;
+						}
+						if(tipoOrigineValido) {
+							tras.setDestinazione(listaTrasmissioniBustaRichiesta.get(i).getOrigine());
+							tras.setTipoDestinazione(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							tras.setIdentificativoPortaDestinazione(listaTrasmissioniBustaRichiesta.get(i).getIdentificativoPortaOrigine());
+						}
 					}
+				}
+				if(tras.getDestinazione()==null || tras.getTipoDestinazione()==null){
+					tras.setDestinazione(busta.getDestinatario());
+					tras.setTipoDestinazione(busta.getTipoDestinatario());
+					try{
+						String dominio = RegistroServiziManager.getInstance(this.state).getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory);
+						tras.setIdentificativoPortaDestinazione(dominio);
+					}catch(Exception e){}
 				}
 				tras.setOraRegistrazione(busta.getOraRegistrazione());
 				tras.setTempo(busta.getTipoOraRegistrazione());

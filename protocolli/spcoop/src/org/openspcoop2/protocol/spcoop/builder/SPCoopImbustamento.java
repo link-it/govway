@@ -343,7 +343,19 @@ public class SPCoopImbustamento {
 				eGovIDParteMitt.setValue(eGov.getMittente());
 			}
 			if(eGov.getTipoMittente()!=null){
-				eGovIDParteMitt.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(eGov.getTipoMittente()));
+				String tipoMittenteProtocollo = null;
+				try {
+					tipoMittenteProtocollo = this.traduttore.toProtocolOrganizationType(eGov.getTipoMittente());
+				}catch(Exception e) {
+					if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+						throw e;
+					}
+					else {
+						tipoMittenteProtocollo = eGov.getTipoMittente(); // per serializzare errori
+						this.log.warn("Produco busta con un tipo mittente non corretto: '"+tipoMittenteProtocollo+"'");
+					}
+				}
+				eGovIDParteMitt.setAttribute("tipo",tipoMittenteProtocollo);
 			}
 			if(eGov.getIndirizzoMittente() != null){
 				eGovIDParteMitt.setAttribute("indirizzoTelematico",eGov.getIndirizzoMittente());
@@ -365,7 +377,19 @@ public class SPCoopImbustamento {
 				eGovIDParteDest.setValue(eGov.getDestinatario());
 			}
 			if(eGov.getTipoDestinatario()!=null){
-				eGovIDParteDest.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(eGov.getTipoDestinatario()));
+				String tipoDestinatarioProtocollo = null;
+				try {
+					tipoDestinatarioProtocollo = this.traduttore.toProtocolOrganizationType(eGov.getTipoDestinatario());
+				}catch(Exception e) {
+					if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+						throw e;
+					}
+					else {
+						tipoDestinatarioProtocollo = eGov.getTipoDestinatario(); // per serializzare errori
+						this.log.warn("Produco busta con un tipo destinatario non corretto: '"+tipoDestinatarioProtocollo+"'");
+					}
+				}
+				eGovIDParteDest.setAttribute("tipo",tipoDestinatarioProtocollo);
 			}
 			if(eGov.getIndirizzoDestinatario() != null){
 				eGovIDParteDest.setAttribute("indirizzoTelematico",eGov.getIndirizzoDestinatario());
@@ -455,7 +479,19 @@ public class SPCoopImbustamento {
 				SOAPElement eGovServizio = eGovIntestazioneMsg.addChildElement("Servizio",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				eGovServizio.setValue(eGov.getServizio());
 				if(eGov.getTipoServizio() != null){
-					eGovServizio.setAttribute("tipo",this.traduttore.toProtocolServiceType(eGov.getTipoServizio()));
+					String tipoServizio = null;
+					try {
+						tipoServizio = this.traduttore.toProtocolServiceType(eGov.getTipoServizio());
+					}catch(Exception e) {
+						if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+							throw e;
+						}
+						else {
+							tipoServizio = eGov.getTipoServizio(); // per serializzare errori
+							this.log.warn("Produco busta con un tipo servizio non corretto: '"+tipoServizio+"'");
+						}
+					}
+					eGovServizio.setAttribute("tipo",tipoServizio);
 				}
 			}
 
@@ -669,7 +705,19 @@ public class SPCoopImbustamento {
 						SOAPElement orig = Trasmissione.addChildElement("Origine",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						SOAPElement IDParteOrigine = orig.addChildElement("IdentificativoParte",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						IDParteOrigine.setValue(tr.getOrigine());
-						IDParteOrigine.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(tr.getTipoOrigine()));
+						String tipoOrigine = null;
+						try {
+							tipoOrigine = this.traduttore.toProtocolOrganizationType(tr.getTipoOrigine());
+						}catch(Exception e) {
+							if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+								throw e;
+							}
+							else {
+								tipoOrigine = tr.getTipoOrigine(); // per serializzare errori
+								this.log.warn("Produco busta con un tipo origine nella lista trasmissione non corretto: '"+tipoOrigine+"'");
+							}
+						}
+						IDParteOrigine.setAttribute("tipo",tipoOrigine);
 						if(tr.getIndirizzoOrigine() != null){
 							IDParteOrigine.setAttribute("indirizzoTelematico",tr.getIndirizzoOrigine());
 						}
@@ -677,7 +725,19 @@ public class SPCoopImbustamento {
 						SOAPElement dest = Trasmissione.addChildElement("Destinazione",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						SOAPElement IDParteDest = dest.addChildElement("IdentificativoParte",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 						IDParteDest.setValue(tr.getDestinazione());
-						IDParteDest.setAttribute("tipo",this.traduttore.toProtocolOrganizationType(tr.getTipoDestinazione()));
+						String tipoDestinazione = null;
+						try {
+							tipoDestinazione = this.traduttore.toProtocolOrganizationType(tr.getTipoDestinazione());
+						}catch(Exception e) {
+							if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
+								throw e;
+							}
+							else {
+								tipoDestinazione = tr.getTipoDestinazione(); // per serializzare errori
+								this.log.warn("Produco busta con un tipo destinazione nella lista trasmissione non corretto: '"+tipoDestinazione+"'");
+							}
+						}
+						IDParteDest.setAttribute("tipo",tipoDestinazione);
 						if(tr.getIndirizzoDestinazione() != null){
 							IDParteDest.setAttribute("indirizzoTelematico",tr.getIndirizzoDestinazione());
 						}

@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPException;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiErroriIntegrazione;
@@ -89,7 +90,7 @@ public class SOAPAction {
 	
 
 	
-	private byte[] getBusta(){
+	private byte[] getBusta() throws ProtocolException{
 		String egov=UtilitiesEGov.getIDEGov(CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE,
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		String bustaSOAP=UtilitiesEGov.getBustaEGov(CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_FRUITORE,

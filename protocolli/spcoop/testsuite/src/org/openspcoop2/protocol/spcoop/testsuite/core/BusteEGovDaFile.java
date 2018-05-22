@@ -23,6 +23,10 @@ package org.openspcoop2.protocol.spcoop.testsuite.core;
 import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -144,17 +148,70 @@ public class BusteEGovDaFile {
 	public String getID(int index){return this.idEGov[index];}
 	public String getNomeBusta(int index){return this.nomiBuste[index];}
 	private String getNomeMittente(int index){return this.mittenti[index];}
-	private String getTipoMittente(int index){return this.tipoMittenti[index];}
+	private String getTipoMittente(int index, boolean richiesta) throws ProtocolException {
+		if(this.tipoMittenti[index]==null) {
+			return null;
+		}
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		try {
+			return traduttore.toRegistryOrganizationType(this.tipoMittenti[index]);
+		}catch(Exception e) {
+			if(richiesta) {
+				return this.tipoMittenti[index];
+			}
+			else {
+				return factory.createProtocolConfiguration().getTipoSoggettoDefault();
+			}
+		}
+	}
 	public String getIndirizzoTelematicoMittente(int index){return this.indirizzoTelematicoMittenti[index];}
-	public IDSoggetto getMittente(int index){return new IDSoggetto(this.getTipoMittente(index), this.getNomeMittente(index), this.getNomeMittente(index)+"SPCoopIT");}
+	public IDSoggetto getMittenteRichiesta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoMittente(index,true), this.getNomeMittente(index), this.getNomeMittente(index)+"SPCoopIT");}
+	public IDSoggetto getMittenteRisposta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoMittente(index,false), this.getNomeMittente(index), this.getNomeMittente(index)+"SPCoopIT");}
 	private String getNomeDestinatario(int index){return this.destinatari[index];}
-	private String getTipoDestinatario(int index){return this.tipoDestinatari[index];}
+	private String getTipoDestinatario(int index, boolean richiesta) throws ProtocolException{
+		if(this.tipoDestinatari[index]==null) {
+			return null;
+		}
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		try {
+			return traduttore.toRegistryOrganizationType(this.tipoDestinatari[index]);
+		}catch(Exception e) {
+			if(richiesta) {
+				return this.tipoDestinatari[index];
+			}
+			else {
+				return factory.createProtocolConfiguration().getTipoSoggettoDefault();
+			}
+		}
+	}
 	public String getIndirizzoTelematicoDestinatario(int index){return this.indirizzoTelematicoDestinatari[index];} 
-	public IDSoggetto getDestinatario(int index){return new IDSoggetto(this.getTipoDestinatario(index), this.getNomeDestinatario(index), this.getNomeDestinatario(index)+"SPCoopIT");}
+	public IDSoggetto getDestinatarioRichiesta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoDestinatario(index, true), this.getNomeDestinatario(index), this.getNomeDestinatario(index)+"SPCoopIT");}
+	public IDSoggetto getDestinatarioRisposta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoDestinatario(index, false), this.getNomeDestinatario(index), this.getNomeDestinatario(index)+"SPCoopIT");}
 	private String getServizio(int index){return this.servizi[index];}
-	private String getTipoServizio(int index){return this.tipoServizio[index];}
-	public DatiServizio getDatiServizio(int index){
-		return new DatiServizio(getTipoServizio(index), getServizio(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+	private String getTipoServizio(int index, boolean richiesta) throws ProtocolException{
+		if(this.tipoServizio[index]==null) {
+			return null;
+		}
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		try {
+			return traduttore.toRegistryServiceType(this.tipoServizio[index]);
+		}catch(Exception e) {
+			if(richiesta) {
+				return this.tipoServizio[index];
+			}
+			else {
+				return factory.createProtocolConfiguration().getTipoServizioDefault(null);
+			}
+		}
+	}
+	public DatiServizio getDatiServizioRichiesta(int index) throws ProtocolException{
+		return new DatiServizio(getTipoServizio(index, true), getServizio(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+	}
+	public DatiServizio getDatiServizioRisposta(int index) throws ProtocolException{
+		return new DatiServizio(getTipoServizio(index, false), getServizio(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
 	}
 	public String getAzione(int index){return this.azioni[index];}
 	public String getProfiloCollaborazione(int index){return this.profiliCollaborazione[index];}
@@ -179,10 +236,29 @@ public class BusteEGovDaFile {
 			return ProfiloDiCollaborazione.UNKNOWN;
 		}
 	}
-	private String getTipoServizioCorrelatoProfiloCollaborazione(int index){return this.tipoServizioCorrelatoProfiloCollaborazione[index];}
+	private String getTipoServizioCorrelatoProfiloCollaborazione(int index, boolean richiesta) throws ProtocolException{
+		if(this.tipoServizioCorrelatoProfiloCollaborazione[index]==null) {
+			return null;
+		}
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		try {
+			return traduttore.toRegistryServiceType(this.tipoServizioCorrelatoProfiloCollaborazione[index]);
+		}catch(Exception e) {
+			if(richiesta) {
+				return this.tipoServizioCorrelatoProfiloCollaborazione[index];
+			}
+			else {
+				return factory.createProtocolConfiguration().getTipoServizioDefault(null);
+			}
+		}
+	}
 	private String getServizioCorrelatoProfiloCollaborazione(int index){return this.servizioCorrelatoProfiloCollaborazione[index];}
-	public DatiServizio getDatiServizioCorrelatoProfiloCollaborazione(int index){
-		return new DatiServizio(getTipoServizioCorrelatoProfiloCollaborazione(index), getServizioCorrelatoProfiloCollaborazione(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+	public DatiServizio getDatiServizioCorrelatoProfiloCollaborazioneRichiesta(int index) throws ProtocolException{
+		return new DatiServizio(getTipoServizioCorrelatoProfiloCollaborazione(index, true), getServizioCorrelatoProfiloCollaborazione(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
+	}
+	public DatiServizio getDatiServizioCorrelatoProfiloCollaborazioneRisposta(int index) throws ProtocolException{
+		return new DatiServizio(getTipoServizioCorrelatoProfiloCollaborazione(index, false), getServizioCorrelatoProfiloCollaborazione(index), CostantiTestSuite.SPCOOP_VERSIONE_SERVIZIO_DEFAULT);
 	}
 	public String getCollaborazione(int index){return this.collaborazioni[index];}
 	public String getProfiloTrasmissioneInoltro(int index){return this.inoltroProfiliTrasmissioni[index];}

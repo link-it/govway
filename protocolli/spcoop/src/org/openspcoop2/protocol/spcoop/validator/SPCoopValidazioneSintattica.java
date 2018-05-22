@@ -1032,7 +1032,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							break;
 						}   
 						if(i==0){
-							errore.setTipoMittente(tipoMittente);
+							if(tipoMittente!=null) {
+								try {
+									errore.setTipoMittente(this.traduttore.toRegistryOrganizationType(tipoMittente));
+								}catch(Exception e) {
+									errore.setTipoMittente(tipoMittente); // senza traduzione
+								}
+							}
 							errore.setMittente(mittenteValue);
 						}else{
 							//errore.addEccezione(Eccezione.getEccezioneValidazione(Costanti.ECCEZIONE_MITTENTE_SCONOSCIUTO, 
@@ -1111,7 +1117,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							break;
 						}   
 						if(i==0){
-							errore.setTipoDestinatario(tipoDestinatario);
+							if(tipoDestinatario!=null) {
+								try {
+									errore.setTipoDestinatario(this.traduttore.toRegistryOrganizationType(tipoDestinatario));
+								}catch(Exception e) {
+									errore.setTipoDestinatario(tipoDestinatario); // senza traduzione
+								}
+							}
 							errore.setDestinatario(destinatarioValue);
 						}else{
 							//errore.addEccezione(Eccezione.getEccezioneValidazione(Costanti.ECCEZIONE_DESTINATARIO_SCONOSCIUTO, 
@@ -1241,7 +1253,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							hrefFindMitt = SoapUtils.getAttributeNode(idParteMittente, "tipo");
 						}
 						String itValue = hrefFindMitt.getNodeValue();
-						errore.setTipoMittente(itValue);
+						if(itValue!=null) {
+							try {
+								errore.setTipoMittente(this.traduttore.toRegistryOrganizationType(itValue));
+							}catch(Exception e) {
+								errore.setTipoMittente(itValue); // senza traduzione
+							}
+						}
 					}catch(Exception e){}
 					try{
 						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
@@ -1274,7 +1292,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							hrefFindDest = SoapUtils.getAttributeNode(idParteDest, "tipo");
 						}
 						String itValue = hrefFindDest.getNodeValue();
-						errore.setTipoDestinatario(itValue);
+						if(itValue!=null) {
+							try {
+								errore.setTipoDestinatario(this.traduttore.toRegistryOrganizationType(itValue));
+							}catch(Exception e) {
+								errore.setTipoDestinatario(itValue); // senza traduzione
+							}
+						}
 					}catch(Exception e){}
 					try{
 						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
@@ -1302,7 +1326,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}else{
 							hrefFind = SoapUtils.getAttributeNode(servizio, "tipo");
 						}
-						errore.setTipoServizio(hrefFind.getNodeValue());
+						String value = hrefFind.getNodeValue();
+						if(value!=null) {
+							try {
+								errore.setTipoServizio(this.traduttore.toRegistryServiceType(value));
+							}catch(Exception e) {
+								errore.setTipoServizio(value); // senza traduzione
+							}
+						}
 					}catch(Exception e){}
 				}
 				
@@ -1326,7 +1357,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}else{
 							hrefFind = SoapUtils.getAttributeNode(profiloCollaborazione, "tipo");
 						}
-						errore.setTipoServizioCorrelato(hrefFind.getNodeValue());
+						String value = hrefFind.getNodeValue();
+						if(value!=null) {
+							try {
+								errore.setTipoServizioCorrelato(this.traduttore.toRegistryServiceType(value));
+							}catch(Exception e) {
+								errore.setTipoServizioCorrelato(value); // senza traduzione
+							}
+						}
 					}catch(Exception e){}
 					try{
 						Node hrefFind = null;
@@ -1620,7 +1658,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try {
 			this.busta.setTipoMittente(this.traduttore.toRegistryOrganizationType(tipo));
 		}catch(Exception e) {
-			this.log.error(e.getMessage(),e);
+			this.busta.setTipoMittente(tipo); // senza traduzione
+		
+			this.log.warn(e.getMessage(),e);
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO);
@@ -1702,7 +1742,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try {
 			this.busta.setTipoDestinatario(this.traduttore.toRegistryOrganizationType(tipo));
 		}catch(Exception e) {
-			this.log.error(e.getMessage(),e);
+			this.busta.setTipoDestinatario(tipo); // senza traduzione
+			
+			this.log.warn(e.getMessage(),e);
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_DESTINATARIO_SCONOSCIUTO );
@@ -1823,12 +1865,16 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_TIPO_SERVIZIO_CORRELATO.toString());
 			this.erroriValidazione.add(ecc);
 		}
+		boolean tipoServizioCorrelatoValido = true;
 		if(tipo != null){ 
 			// Controllo tipo
 			try {
 				this.busta.setTipoServizioCorrelato(this.traduttore.toRegistryServiceType(tipo));
 			}catch(Exception e) {
-				this.log.error(e.getMessage(),e);
+				tipoServizioCorrelatoValido = false;
+				this.busta.setTipoServizioCorrelato(tipo); // senza traduzione
+				
+				this.log.warn(e.getMessage(),e);
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_SERVIZIO_CORRELATO_SCONOSCIUTO );
@@ -1889,7 +1935,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE_SERVIZIO_CORRELATO.toString());
 			this.erroriValidazione.add(ecc);
 		}
-		if (  (tipo!=null) &&  
+		if ( tipoServizioCorrelatoValido && (tipo!=null) &&  
 				(  profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY) == true || 
 						profilo.equals(SPCoopCostanti.PROFILO_COLLABORAZIONE_SINCRONO) == true    )) {
 			Eccezione ecc = new Eccezione();
@@ -2011,7 +2057,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try {
 					this.busta.setTipoServizio(this.traduttore.toRegistryServiceType(tipo));
 				}catch(Exception e) {
-					this.log.error(e.getMessage(),e);
+					this.busta.setTipoServizio(tipo); // senza traduzione
+					
+					this.log.warn(e.getMessage(),e);
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 					ecc.setCodiceEccezione(CodiceErroreCooperazione.TIPO_SERVIZIO_SCONOSCIUTO );
@@ -2977,9 +3025,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								}
 							}
 							try {
-								tipoOrigine = this.traduttore.toRegistryServiceType(tipoOrigine);
+								tipoOrigine = this.traduttore.toRegistryOrganizationType(tipoOrigine);
 							}catch(Exception e) {
-								this.log.error(e.getMessage(),e);
+								this.log.warn(e.getMessage(),e);
 								throw new Exception("Tipo non valido");
 							}
 							
@@ -3110,9 +3158,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 								}
 							}
 							try {
-								tipoDestinazione = this.traduttore.toRegistryServiceType(tipoDestinazione);
+								tipoDestinazione = this.traduttore.toRegistryOrganizationType(tipoDestinazione);
 							}catch(Exception e) {
-								this.log.error(e.getMessage(),e);
+								this.log.warn(e.getMessage(),e);
 								throw new Exception("Tipo non valido");
 							}
 							
