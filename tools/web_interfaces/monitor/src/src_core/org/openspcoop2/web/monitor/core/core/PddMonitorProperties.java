@@ -769,4 +769,8 @@ public class PddMonitorProperties {
 			return false; // default
 		}
 	}
+	
+	public String getExtendedInfoAuthorizationClass() throws Exception{
+		return this.appProperties.getProperty("console.extendedInfoAuthorizationClass", false, true);
+	}
 }

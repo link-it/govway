@@ -21,16 +21,14 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.listener.IEFilter;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
-import org.openspcoop2.web.monitor.core.utils.Costanti;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationCostanti;
 import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
+import org.openspcoop2.web.monitor.core.utils.Costanti;
+import org.slf4j.Logger;
 
 public class BrowserFilter implements Filter {
 
@@ -53,6 +51,7 @@ public class BrowserFilter implements Filter {
 	private static final String parametroEsitiLive = "esiti_live";
 	private static final String parametroTipoReport = "tipoReportCombo";
 	private static final String parametroTipoReportTabella = "Tabella";
+	private List<String> listaPagineNoIE8 = null;
 
 	private static synchronized void loadMappaBrowser(){
 		if(mappaAbilitazioneGraficiSVG == null)
@@ -185,11 +184,16 @@ public class BrowserFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		this.filterConfig = config;
-
+		
+		try {
+			this.listaPagineNoIE8 = Arrays.asList(ContentAuthorizationManager.getInstance().getListaPagineNoIE8());
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
 //		this.excludedPaths = new ArrayList<String>();
 //		this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPathConsentiti));
 		// welcome contiene un grafico che puo' essere visualizzato in modalita' ie>8
-//		this.excludedPaths.remove("/pages/welcome.jsf");
+//		this.excludedPaths.remove("/pages/welcome.jList<String> listaPagineNoIE8 =sf");
 	}
 	
 	
@@ -199,7 +203,7 @@ public class BrowserFilter implements Filter {
 	 *	
 	 */
 	@SuppressWarnings("unchecked")
-	public static boolean usaSVG(HttpServletRequest httpServletRequest) {
+	public boolean usaSVG(HttpServletRequest httpServletRequest) {
 		int svgLength = 0;
 		String svg = null;
 		
@@ -238,10 +242,7 @@ public class BrowserFilter implements Filter {
 				
 				// attivo il controllo SVG quando il polling dello stato si refresha 
 				if(parName.endsWith(parametroSVG_POLL_STATO)){
-					
-					String[] listaPagineNoIE8 = ContentAuthorizationCostanti.listaPagineNoIE8;
-					List<String> listaPagine = Arrays.asList(listaPagineNoIE8);
-					boolean thisResource = !Utils.isContentAuthorizationRequiredForThisResource(httpServletRequest, listaPagine);
+					boolean thisResource = !Utils.isContentAuthorizationRequiredForThisResource(httpServletRequest, this.listaPagineNoIE8);
 					
 					log.debug("Caso speciale Menu': Parametro ["+parametroSVG_POLL_STATO+"] con Valore ["+thisResource+"] Utilizzato per pilotare il disegno dei grafici.");
 					if(!thisResource)

@@ -89,7 +89,7 @@
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
-<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+<![CDATA[<!-- Personalizzazione Plugins -->]]>
 
 </concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
@@ -139,7 +139,7 @@
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
-<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+<![CDATA[<!-- Personalizzazione Plugins -->]]>
 
 </concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
@@ -159,7 +159,7 @@
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
-<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+<![CDATA[<!-- Personalizzazione Plugins -->]]>
 
 </concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
@@ -188,7 +188,7 @@
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
-<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+<![CDATA[<!-- Personalizzazione Plugins -->]]>
 
 </concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
@@ -217,7 +217,7 @@
 			<then>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">
 
-<![CDATA[<!-- ----- Personalizzazione Plugins ------------- -->]]>
+<![CDATA[<!-- Personalizzazione Plugins -->]]>
 
 </concat>
 				<concat destfile="${build_pddMonitor_war}/WEB-INF/web.xml" append="yes">

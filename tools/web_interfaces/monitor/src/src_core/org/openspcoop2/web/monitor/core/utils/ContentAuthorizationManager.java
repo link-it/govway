@@ -1,17 +1,19 @@
 package org.openspcoop2.web.monitor.core.utils;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
-import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-
-public class ContentAuthorizationManager {
+public class ContentAuthorizationManager implements IContentAuthorizationManager{
 
 	private Map<String, List<String>> mappaRuoliPagine = null;
 
@@ -21,34 +23,39 @@ public class ContentAuthorizationManager {
 
 	private static ContentAuthorizationManager _instance = null;
 
-	public static ContentAuthorizationManager getInstance(){
+	private IContentAuthorizationManager extendedContentAuthorizationManager = null;
+
+	public static ContentAuthorizationManager getInstance() throws Exception{ 
 		if(ContentAuthorizationManager._instance == null)
 			init();
 
 		return ContentAuthorizationManager._instance;
 	}
 
-	private static synchronized void init(){
+	private static synchronized void init() throws Exception{ 
 		if(ContentAuthorizationManager._instance == null)
 			ContentAuthorizationManager._instance = new ContentAuthorizationManager();
 	}
 
-	public ContentAuthorizationManager (){
+	public ContentAuthorizationManager () throws Exception{
 		log.debug("Inizializzazione Content Authorization Manager in corso...");
 		this.mappaRuoliPagine = new HashMap<String, List<String>>();
 		this.mappaPagineModuli = new HashMap<String,String>();
+
+		this.extendedContentAuthorizationManager = this.loadExtendedAuthorizationManager(log);
+
 		load();
 		log.debug("Inizializzazione Content Authorization Manager completata.");
 	}
 
 	private void load(){
 		// Caricamento delle map con le associazioni ruoli / pagine
-		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_AMMINISTRATORE, Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloAmministratore));
-		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_CONFIGURATORE, Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloConfiguratore));
-		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_OPERATORE, Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloOperatore));
+		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_AMMINISTRATORE, Arrays.asList(this.getListaPagineRuoloAmministratore()));
+		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_CONFIGURATORE, Arrays.asList(this.getListaPagineRuoloConfiguratore()));
+		this.mappaRuoliPagine.put(ApplicationBean.RUOLO_OPERATORE, Arrays.asList(this.getListaPagineRuoloOperatore()));
 
 		// Associazione pagine moduli
-		for (String[] regola : ContentAuthorizationCostanti.listaPagineModuli) {
+		for (String[] regola : this.getListaPagineModuli()) {
 			String pagina = regola[0];
 			String modulo = regola[1];
 			this.mappaPagineModuli.put(pagina, modulo);
@@ -135,5 +142,104 @@ public class ContentAuthorizationManager {
 			found = false;
 
 		return found;
+	}
+
+	private IContentAuthorizationManager loadExtendedAuthorizationManager(Logger log) throws Exception {
+		IContentAuthorizationManager p = null;
+		String authManagerClass = null;
+		try{
+			authManagerClass = PddMonitorProperties.getInstance(log).getExtendedInfoAuthorizationClass();
+			if(authManagerClass != null) {
+				Class<?> c = Class.forName(authManagerClass);
+				Constructor<?> constructor = c.getConstructor();
+				p = (IContentAuthorizationManager) constructor.newInstance();
+			}
+		} catch (Exception e) {
+			throw new Exception("Impossibile caricare l'Authorization Manager indicato ["+authManagerClass+"] " + e, e);
+		}
+		return  p;
+	}
+
+	@Override
+	public String[] getListaPathConsentiti() {
+		if(this.extendedContentAuthorizationManager != null) {
+			List<String> toReturn = new ArrayList<>();
+			toReturn.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPathConsentiti));
+			toReturn.addAll(Arrays.asList(this.extendedContentAuthorizationManager.getListaPathConsentiti()));
+			return toReturn.toArray(new String[toReturn.size()]); 
+		}
+		
+		return ContentAuthorizationCostanti.listaPathConsentiti;
+	}
+
+	@Override
+	public String[] getListaPagineRuoloAmministratore() {
+		if(this.extendedContentAuthorizationManager != null) {
+			List<String> toReturn = new ArrayList<>();
+			toReturn.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloAmministratore));
+			toReturn.addAll(Arrays.asList(this.extendedContentAuthorizationManager.getListaPagineRuoloAmministratore()));
+			return toReturn.toArray(new String[toReturn.size()]); 
+		}
+		
+		return ContentAuthorizationCostanti.listaPagineRuoloAmministratore;
+	}
+
+	@Override
+	public String[] getListaPagineRuoloConfiguratore() {
+		if(this.extendedContentAuthorizationManager != null) {
+			List<String> toReturn = new ArrayList<>();
+			toReturn.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloConfiguratore));
+			toReturn.addAll(Arrays.asList(this.extendedContentAuthorizationManager.getListaPagineRuoloConfiguratore()));
+			return toReturn.toArray(new String[toReturn.size()]); 
+		}
+		
+		return ContentAuthorizationCostanti.listaPagineRuoloConfiguratore;
+	}
+
+	@Override
+	public String[] getListaPagineRuoloOperatore() {
+		if(this.extendedContentAuthorizationManager != null) {
+			List<String> toReturn = new ArrayList<>();
+			toReturn.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPagineRuoloOperatore));
+			toReturn.addAll(Arrays.asList(this.extendedContentAuthorizationManager.getListaPagineRuoloOperatore()));
+			return toReturn.toArray(new String[toReturn.size()]); 
+		}
+		
+		return ContentAuthorizationCostanti.listaPagineRuoloOperatore;
+	}
+
+	@Override
+	public String[][] getListaPagineModuli() {
+		if(this.extendedContentAuthorizationManager != null) {
+			String[][] listaPagineModuli = this.extendedContentAuthorizationManager.getListaPagineModuli();
+			String [][] toReturn = new String[listaPagineModuli.length + ContentAuthorizationCostanti.listaPagineModuli.length][2];
+			
+			int c = 0;
+			for (int i = 0; i < ContentAuthorizationCostanti.listaPagineModuli.length; i++) { 
+				toReturn[i] = ContentAuthorizationCostanti.listaPagineModuli[i];
+				c++;
+			}
+			
+			for (int i = 0; i < listaPagineModuli.length; i++) { 
+				toReturn[c] = listaPagineModuli[i];
+				c++;
+			}
+			
+			return toReturn;
+		}
+		
+		return ContentAuthorizationCostanti.listaPagineModuli;
+	}
+
+	@Override
+	public String[] getListaPagineNoIE8() {
+		if(this.extendedContentAuthorizationManager != null) {
+			List<String> toReturn = new ArrayList<>();
+			toReturn.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPagineNoIE8));
+			toReturn.addAll(Arrays.asList(this.extendedContentAuthorizationManager.getListaPagineNoIE8()));
+			return toReturn.toArray(new String[toReturn.size()]); 
+		}
+		
+		return ContentAuthorizationCostanti.listaPagineNoIE8;
 	}
 }

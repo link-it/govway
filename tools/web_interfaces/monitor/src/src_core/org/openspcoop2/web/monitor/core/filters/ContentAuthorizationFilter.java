@@ -17,16 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
-import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationCostanti;
 import org.openspcoop2.web.monitor.core.utils.ContentAuthorizationManager;
+import org.slf4j.Logger;
 
 public class ContentAuthorizationFilter implements Filter {
 
@@ -212,6 +210,8 @@ public class ContentAuthorizationFilter implements Filter {
 			log.error(e.getMessage());
 		} catch (ServletException e) {
 			log.error(e.getMessage());
+		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
 	}
 
@@ -221,16 +221,12 @@ public class ContentAuthorizationFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		this.filterConfig = config;
-
+		
 		this.excludedPaths = new ArrayList<String>();
-		this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationCostanti.listaPathConsentiti));
-		//		this.excludedPaths.add("/a4j/");
-		//		this.excludedPaths.add("/images/");
-		//		this.excludedPaths.add("/css/");
-		//		this.excludedPaths.add("/scripts/");
-		//		this.excludedPaths.add("/pages/welcome.jsf");
-		//		this.excludedPaths.add("/public/timeoutPage.jsf");
-		//		this.excludedPaths.add("/public/login.jsf");
-		//		this.excludedPaths.add("/FusionCharts/");
+		try {
+			this.excludedPaths.addAll(Arrays.asList(ContentAuthorizationManager.getInstance().getListaPathConsentiti()));
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
 	}
 }
