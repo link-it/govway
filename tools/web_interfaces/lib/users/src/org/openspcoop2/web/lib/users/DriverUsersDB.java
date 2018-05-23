@@ -1732,8 +1732,8 @@ public class DriverUsersDB {
 	 * 
 	 * @param login Identificatore di un utente
 	 * @param nomeOggetto Oggetto da ricercare
+	 * @param statoOggetto Stato da salvare
 	 *               
-	 * @return Lo stato individuato
 	 */
 	public void saveStato(String login, String nomeOggetto, String statoOggetto) throws DriverUsersDBException {
 		if (login == null || nomeOggetto == null)
