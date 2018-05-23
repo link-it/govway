@@ -293,22 +293,22 @@ public class ConfigurazioneGeneraleFieldConverter extends AbstractSQLFieldConver
 		// the full definition of the table containing the alias
 		
 		if(model.equals(ConfigurazioneGenerale.model())){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().CONTROLLO_TRAFFICO)){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_FRUIZIONE)){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().TEMPI_RISPOSTA_EROGAZIONE)){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().RATE_LIMITING)){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 		if(model.equals(ConfigurazioneGenerale.model().CACHE)){
-			return CostantiDB.CONGESTIONE_CONFIG;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG;
 		}
 
 

@@ -117,9 +117,9 @@ public final class CostantiDB {
     
     public static final String CONFIG_PROTOCOLLI = "config_protocolli";
     
-    public static final String CONGESTIONE_CONFIG = "congestion_config";
-    public static final String CONGESTIONE_CONFIG_POLICY = "congestion_config_policy";
-    public static final String CONGESTIONE_ACTIVE_POLICY = "congestion_active_policy";
+    public static final String CONTROLLO_TRAFFICO_CONFIG = "ct_config";
+    public static final String CONTROLLO_TRAFFICO_CONFIG_POLICY = "ct_config_policy";
+    public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY = "ct_active_policy";
     
     public static final String MSG_DIAGN_APPENDER = "msgdiag_appender";
     public final static String MSG_DIAGN_APPENDER_COLUMN_ID = "id";

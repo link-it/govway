@@ -483,13 +483,13 @@ public class AttivazionePolicyFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(AttivazionePolicy.model())){
-			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
+			return CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
 		}
 		if(model.equals(AttivazionePolicy.model().FILTRO)){
-			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
+			return CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
 		}
 		if(model.equals(AttivazionePolicy.model().GROUP_BY)){
-			return CostantiDB.CONGESTIONE_ACTIVE_POLICY;
+			return CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
 		}
 
 

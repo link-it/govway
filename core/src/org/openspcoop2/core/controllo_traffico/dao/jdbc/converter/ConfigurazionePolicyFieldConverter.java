@@ -343,7 +343,7 @@ public class ConfigurazionePolicyFieldConverter extends AbstractSQLFieldConverte
 		// the full definition of the table containing the alias
 		
 		if(model.equals(ConfigurazionePolicy.model())){
-			return CostantiDB.CONGESTIONE_CONFIG_POLICY;
+			return CostantiDB.CONTROLLO_TRAFFICO_CONFIG_POLICY;
 		}
 
 
