@@ -1125,24 +1125,33 @@ public class BusteEGov11LineeGuida11 {
 			Reporter.log("Controllo che la busta abbia generato eccezioni, id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().existsListaEccezioni(id));
 
-			Reporter.log("Controllo che la busta abbia generato l'eccezione " + CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO+" 1 volta");
-			int num = data.getVerificatoreTracciaRisposta().countEccezioniTraced(id, CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO);
+			Reporter.log("Controllo che la busta abbia generato l'eccezione " + CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO+" 1 volta");
+			int num = data.getVerificatoreTracciaRisposta().countEccezioniTraced(id, CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO);
 			Reporter.log("Check ha trovato eccezioni num:"+num);
 			Assert.assertTrue(num==1);
 			
-			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE +": "+ CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerTutteLeEccezioni(id, CodiceErroreCooperazione.MITTENTE_SCONOSCIUTO));
+			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE +": "+ Utilities.toString(CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerAlmenoUnaEccezione(id, CodiceErroreCooperazione.TIPO_MITTENTE_NON_VALIDO));
 
+			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE+": "+ SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE_TIPO);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerAlmenoUnaEccezione(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE, SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE_TIPO.toString()));
+			
+			Reporter.log("Controllo che la busta abbia generato l'eccezione " + CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO+" 1 volta");
+			num = data.getVerificatoreTracciaRisposta().countEccezioniTraced(id, CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO);
+			Reporter.log("Check ha trovato eccezioni num:"+num);
+			Assert.assertTrue(num==1);
+			
+			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_CODICE_ECCEZIONE +": "+ Utilities.toString(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO));
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerAlmenoUnaEccezione(id, CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALIDO));
+
+			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE+": "+ SPCoopCostantiPosizioneEccezione.ECCEZIONE_ID_MESSAGGIO_NON_VALIDO_POSIZIONE);
+			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerAlmenoUnaEccezione(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE, SPCoopCostantiPosizioneEccezione.ECCEZIONE_ID_MESSAGGIO_NON_VALIDO_POSIZIONE.toString()));
+			
 			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_CONTESTO_CODIFICA +": "+ SPCoopCostanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerTutteLeEccezioni(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_CONTESTO_CODIFICA,SPCoopCostanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE));
 
 			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_RILEVANZA+": "+SPCoopCostanti.ECCEZIONE_RILEVANZA_GRAVE);
 			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerTutteLeEccezioni(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_RILEVANZA, SPCoopCostanti.ECCEZIONE_RILEVANZA_GRAVE));
-
-			// Che esistano SOLAMENTE 1 eccezioni me lo garantisce il controllo soprastante.
-
-			Reporter.log("Controllo che la busta abbia generato l'eccezione  con " +CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE+": "+ SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE_TIPO);
-			Assert.assertTrue(data.getVerificatoreTracciaRisposta().isTracedPerTutteLeEccezioni(id, CostantiDB.TRACCE_ECCEZIONI_COLUMN_POSIZIONE, SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE_TIPO.toString()));
 
 		}catch(Exception e){
 			throw e;
@@ -1394,7 +1403,7 @@ public class BusteEGov11LineeGuida11 {
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 			Reporter.log("Controllo valore Mittente Busta con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedMittente(id,this.busteEGov.getMittenteRichiesta(index), this.busteEGov.getIndirizzoTelematicoMittente(index)));
-			Reporter.log("Controllo valore Destinatario Busta con id: " +id);
+			Reporter.log("Controllo valore Destinatario Busta ["+this.busteEGov.getDestinatarioRichiesta(index)+"]["+this.busteEGov.getDestinatarioRichiesta(index).getCodicePorta()+"] con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedDestinatario(id,this.busteEGov.getDestinatarioRichiesta(index),this.busteEGov.getIndirizzoTelematicoDestinatario(index)));
 			Reporter.log("Controllo valore OraRegistrazione con id: " +id);
 			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTracedOraRegistrazione(id,SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO));

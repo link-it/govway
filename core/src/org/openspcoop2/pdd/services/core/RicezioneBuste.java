@@ -5786,7 +5786,7 @@ public class RicezioneBuste {
 								identitaPdD.getNome().equals(bustaRichiesta.getTrasmissione(i).getDestinazione()) ){
 							boolean tipoOrigineValido = true;
 							try {
-								traduttore.toRegistryOrganizationType(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+								traduttore.toProtocolOrganizationType(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
 							}catch(Exception e) {
 								tipoOrigineValido = false;
 							}

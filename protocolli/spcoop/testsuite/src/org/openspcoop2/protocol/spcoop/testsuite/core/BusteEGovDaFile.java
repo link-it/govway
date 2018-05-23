@@ -147,6 +147,11 @@ public class BusteEGovDaFile {
 	}
 	public String getID(int index){return this.idEGov[index];}
 	public String getNomeBusta(int index){return this.nomiBuste[index];}
+	private String getIdentificativoPorta(IDSoggetto idSoggetto) throws ProtocolException {
+		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
+		ITraduttore traduttore = factory.createTraduttore();
+		return traduttore.getIdentificativoPortaDefault(idSoggetto);
+	}
 	private String getNomeMittente(int index){return this.mittenti[index];}
 	private String getTipoMittente(int index, boolean richiesta) throws ProtocolException {
 		if(this.tipoMittenti[index]==null) {
@@ -166,8 +171,16 @@ public class BusteEGovDaFile {
 		}
 	}
 	public String getIndirizzoTelematicoMittente(int index){return this.indirizzoTelematicoMittenti[index];}
-	public IDSoggetto getMittenteRichiesta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoMittente(index,true), this.getNomeMittente(index), this.getNomeMittente(index)+"SPCoopIT");}
-	public IDSoggetto getMittenteRisposta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoMittente(index,false), this.getNomeMittente(index), this.getNomeMittente(index)+"SPCoopIT");}
+	public IDSoggetto getMittenteRichiesta(int index) throws ProtocolException{
+		IDSoggetto idSoggetto = new IDSoggetto(this.getTipoMittente(index,true), this.getNomeMittente(index));
+		idSoggetto.setCodicePorta(this.getIdentificativoPorta(idSoggetto));
+		return idSoggetto;
+	}
+	public IDSoggetto getMittenteRisposta(int index) throws ProtocolException{
+		IDSoggetto idSoggetto = new IDSoggetto(this.getTipoMittente(index,false), this.getNomeMittente(index));
+		idSoggetto.setCodicePorta(this.getIdentificativoPorta(idSoggetto));
+		return idSoggetto;
+	}
 	private String getNomeDestinatario(int index){return this.destinatari[index];}
 	private String getTipoDestinatario(int index, boolean richiesta) throws ProtocolException{
 		if(this.tipoDestinatari[index]==null) {
@@ -187,8 +200,16 @@ public class BusteEGovDaFile {
 		}
 	}
 	public String getIndirizzoTelematicoDestinatario(int index){return this.indirizzoTelematicoDestinatari[index];} 
-	public IDSoggetto getDestinatarioRichiesta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoDestinatario(index, true), this.getNomeDestinatario(index), this.getNomeDestinatario(index)+"SPCoopIT");}
-	public IDSoggetto getDestinatarioRisposta(int index) throws ProtocolException{return new IDSoggetto(this.getTipoDestinatario(index, false), this.getNomeDestinatario(index), this.getNomeDestinatario(index)+"SPCoopIT");}
+	public IDSoggetto getDestinatarioRichiesta(int index) throws ProtocolException{
+		IDSoggetto idSoggetto = new IDSoggetto(this.getTipoDestinatario(index, true), this.getNomeDestinatario(index));
+		idSoggetto.setCodicePorta(this.getIdentificativoPorta(idSoggetto));
+		return idSoggetto;
+	}
+	public IDSoggetto getDestinatarioRisposta(int index) throws ProtocolException{
+		IDSoggetto idSoggetto = new IDSoggetto(this.getTipoDestinatario(index, false), this.getNomeDestinatario(index));
+		idSoggetto.setCodicePorta(this.getIdentificativoPorta(idSoggetto));
+		return idSoggetto;
+	}
 	private String getServizio(int index){return this.servizi[index];}
 	private String getTipoServizio(int index, boolean richiesta) throws ProtocolException{
 		if(this.tipoServizio[index]==null) {

@@ -204,14 +204,14 @@ public class ImbustamentoErrore  {
 
 		// Verifico 'bonta' dei tipi
 		try {
-			this.protocolFactory.createTraduttore().toRegistryOrganizationType(busta.getTipoMittente());
+			this.protocolFactory.createTraduttore().toProtocolOrganizationType(busta.getTipoMittente());
 		}catch(Exception e) {
 			if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
 				busta.setTipoMittente(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault());
 			}
 		}
 		try {
-			this.protocolFactory.createTraduttore().toRegistryOrganizationType(busta.getTipoDestinatario());
+			this.protocolFactory.createTraduttore().toProtocolOrganizationType(busta.getTipoDestinatario());
 		}catch(Exception e) {
 			if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
 				busta.setTipoDestinatario(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault());
@@ -219,7 +219,7 @@ public class ImbustamentoErrore  {
 		}
 		if(busta.getTipoServizio()!=null) {
 			try {
-				this.protocolFactory.createTraduttore().toRegistryServiceType(busta.getTipoServizio());
+				this.protocolFactory.createTraduttore().toProtocolServiceType(busta.getTipoServizio());
 			}catch(Exception e) {
 				if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
 					busta.setTipoServizio(this.protocolFactory.createProtocolConfiguration().getTipoServizioDefault(null));
@@ -723,7 +723,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
 						boolean tipoOrigineValido = true;
 						try {
-							this.protocolFactory.createTraduttore().toRegistryOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
 						}catch(Exception e) {
 							tipoOrigineValido = false;
 						}
@@ -901,7 +901,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 							identitaPdD.getNome().equals(listaTrasmissioniBustaRichiesta.get(i).getDestinazione()) ){
 						boolean tipoOrigineValido = true;
 						try {
-							this.protocolFactory.createTraduttore().toRegistryOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
+							this.protocolFactory.createTraduttore().toProtocolOrganizationType(listaTrasmissioniBustaRichiesta.get(i).getTipoOrigine());
 						}catch(Exception e) {
 							tipoOrigineValido = false;
 						}
