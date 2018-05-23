@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.slf4j.Logger;
 
 /***
@@ -41,7 +42,7 @@ public class ConfigManager {
 	private static ConfigManager instance = null;
 	private Logger log = null;
 	private Map<String, Map<String,Config>> mapConfig = null;
-	private org.openspcoop2.generic_project.utils.XSDValidator validator = null; 
+	private AbstractValidatoreXSD validator = null; 
 	
 	public static ConfigManager getinstance(Logger log) throws Exception {
 		if(instance == null)
@@ -60,11 +61,7 @@ public class ConfigManager {
 		this.mapConfig = new HashMap<String, Map<String,Config>>();
 		
 		try {
-		this.validator = 
-				new org.openspcoop2.generic_project.utils.XSDValidator(this.log,Config.class, 
-				"/mvcProperties.xsd"
-				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /mvcProperties.xsd
-			);
+			this.validator = XSDValidator.getXSDValidator(log);
 		}catch(Exception e) {
 			this.log.error("Errore durante la init del ManagerConfigurazioni: " + e.getMessage(),e);
 			throw e;
@@ -99,7 +96,7 @@ public class ConfigManager {
 						// validazione XSD se prevista
 						if(validazioneXSD) {
 							try {
-								this.validator.getXsdValidator().valida(fileConfig);
+								this.validator.valida(fileConfig);
 							}catch(Exception e) {
 								this.log.error("La configurazione ["+fileConfig.getName()+"] non e' valida: " + e.getMessage());
 								throw e;
@@ -123,8 +120,9 @@ public class ConfigManager {
 	
 	public List<String> getNomiConfigurazioni(String systemPath) {
 		List<String> list = new ArrayList<String>();
-		
-		list.addAll(this.mapConfig.keySet()); // ORDINARE IN QUALE ORDINE?
+		Map<String, Config> map = this.mapConfig.get(systemPath);
+
+		list.addAll(map.keySet()); // ORDINARE IN QUALE ORDINE?
 		
 		return list;
 	}
