@@ -1,0 +1,139 @@
+<config name="WSSecurity Sender" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+	
+	<properties>
+		<collection name="signatureProperties"/>
+	</properties>
+	
+	<section label="Configurazione WSSecurity">
+		
+		<subsection label="Informazioni Generali">
+			<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+				<property name="actor" />
+			</item>
+			<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+				<property name="mustUnderstand" />
+			</item>
+		</subsection>
+			
+		<subsection label="Modalità">
+			<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+				<property name="Action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="samlAction" label="SAMLToken" reloadOnChange="true" defaultSelected="false">
+				<property name="Action" append="true" appendSeparator="_" selectedValue="SAMLTokenUnsigned" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="usernameAction" label="UsernameToken" reloadOnChange="true" defaultSelected="false">
+				<property name="Action" append="true" appendSeparator="_" selectedValue="UsernameToken" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="signatureAction" label="Signature" reloadOnChange="true" defaultSelected="false">
+				<conditions and="true">
+					<condition not="true" and="false" >
+						<selected name="encryptSignatureAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="Action" append="true" appendSeparator="_" selectedValue="Signature" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="encryptAction" label="Encrypt" reloadOnChange="true" >
+				<conditions and="true">
+					<condition not="true" and="false" >
+						<selected name="encryptSignatureAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="Action" append="true" appendSeparator="_" selectedValue="Encrypt" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="signatureEncryptAction" label="SignatureEncrypt" reloadOnChange="true" defaultSelected="false">
+				<conditions and="true">
+					<condition not="true" and="false" >
+						<selected name="signatureAction"/>
+						<selected name="encryptAction"/>
+						<selected name="encryptSignatureAction"/>
+					</condition>
+				</conditions>
+				<property name="Action" append="true" appendSeparator="_" selectedValue="Signature Encrypt" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="encryptSignatureAction" label="EncryptSignature" reloadOnChange="true" defaultSelected="false">
+				<conditions and="true">
+					<condition not="true" and="false" >
+						<selected name="signatureAction"/>
+						<selected name="encryptAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="Action" append="true" appendSeparator="_" selectedValue="Encrypt Signature" unselectedValue=""/>
+			</item>
+			
+			<item type="hidden" name="hiddenTest" value="TESTValue1">
+				<conditions and="true">
+					<condition and="false" >
+						<selected name="signatureAction"/>
+						<selected name="encryptAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="hiddenTest" />
+			</item>
+			<item type="hidden" name="hiddenTest2" value="TESTValue2">
+				<conditions and="true">
+					<condition and="false" not="true" >
+						<selected name="signatureAction"/>
+						<selected name="encryptAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="hiddenTest2" />
+			</item>
+			
+			<item type="hidden" name="hiddenTest3" value="TESTValue3">
+				<conditions and="true">
+					<condition and="false" >
+						<selected name="signatureAction"/>
+						<selected name="encryptAction"/>
+						<selected name="signatureEncryptAction"/>
+					</condition>
+				</conditions>
+				<property name="hiddenTest3" />
+			</item>
+			
+		</subsection>
+	</section>
+	
+	<section label="Timestamp">
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+		
+		<item type="number" name="timeToLive" label="TimeToLive" min="1" max="10000000">
+			<property name="timeToLive" />
+		</item>
+	</section>
+	
+	<section label="TestAction">
+		<conditions>
+			<condition and="false">
+				<selected name="samlAction"/>
+				<equals name="hiddenTest" value="TESTValue1"/>
+				<defined not="true" name="hiddenTest2"/>
+			</condition>
+		</conditions>
+
+		<item type="text" name="keystore" label="Keystore" required="true">
+        	      	<property name="keystore" properties="signatureProperties" />
+	        </item>
+		<item type="select" name="keystoreType" label="Keystore Type" required="true">
+			<values>
+				<value value="jks" label="JKS"/>
+				<value value="pkcs12" label="PKCS12"/>
+			</values>
+			<property name="keystore.type" properties="signatureProperties" />
+		</item>
+		
+	</section>
+
+</config>
+
+
+
