@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.dao.IDBServiceSearchSingleObject;
 
 
 /** 
-* Service can be used for research objects on the backend of type org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale  
+* Service can be used for research objects on the backend of type org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale  
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$

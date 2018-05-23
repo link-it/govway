@@ -37,7 +37,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="elenco-id-policy">
  * 		&lt;sequence>
- * 			&lt;element name="id-policy" type="{http://www.openspcoop2.org/core/controllo_congestione}id-policy" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="id-policy" type="{http://www.openspcoop2.org/core/controllo_traffico}id-policy" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

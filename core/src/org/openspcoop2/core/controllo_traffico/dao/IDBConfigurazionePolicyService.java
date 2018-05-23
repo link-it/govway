@@ -20,11 +20,11 @@
 package org.openspcoop2.core.controllo_traffico.dao;
 
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.generic_project.dao.IDBServiceWithId;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 
 /**     
- * Service can be used both for research that will make persistent objects on the backend of type org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy 
+ * Service can be used both for research that will make persistent objects on the backend of type org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$

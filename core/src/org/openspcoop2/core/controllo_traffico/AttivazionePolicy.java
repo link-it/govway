@@ -43,8 +43,8 @@ import java.io.Serializable;
  * 			&lt;element name="warning-only" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="ridefinisci" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro" type="{http://www.openspcoop2.org/core/controllo_congestione}attivazione-policy-filtro" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="group-by" type="{http://www.openspcoop2.org/core/controllo_congestione}attivazione-policy-raggruppamento" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="filtro" type="{http://www.openspcoop2.org/core/controllo_traffico}attivazione-policy-filtro" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="group-by" type="{http://www.openspcoop2.org/core/controllo_traffico}attivazione-policy-raggruppamento" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

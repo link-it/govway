@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://www.openspcoop2.org/core/controllo_congestione"
-	targetNamespace="http://www.openspcoop2.org/core/controllo_congestione"
+<xsd:schema xmlns="http://www.openspcoop2.org/core/controllo_traffico"
+	targetNamespace="http://www.openspcoop2.org/core/controllo_traffico"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
 	attributeFormDefault="unqualified">
 	
@@ -8,7 +8,7 @@
 	<xsd:annotation>
 		<xsd:appinfo>
 			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
-				<linkit:info version="1.0" project-name="controllo_congestione">
+				<linkit:info version="1.0" project-name="controllo_traffico">
 					<linkit:authors>
 						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
 					</linkit:authors>
@@ -56,7 +56,7 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" single-instance="true"/>
-					<linkit:sql-table-mapping name="congestion_config" 
+					<linkit:sql-table-mapping name="ct_config" 
 						comment="Configurazione generale dei meccanismi di Controllo Congestione">
 					</linkit:sql-table-mapping>
 				</linkit:generator>
@@ -87,7 +87,7 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-policy"/>
-					<linkit:sql-table-mapping name="congestion_config_policy"
+					<linkit:sql-table-mapping name="ct_config_policy"
 						comment="Definizione di una policy di RateLimiting">
 						<linkit:sql-table-constraint unique="uniq_cong_gen_policy"
 							index="idx_cong_gen_policy" 
@@ -106,7 +106,7 @@
 			<xsd:appinfo>
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" id="id-active-policy" />
-					<linkit:sql-table-mapping name="congestion_active_policy"
+					<linkit:sql-table-mapping name="ct_active_policy"
 						comment="Attivazione di una policy di RateLimiting su uno specifico servizio">
 						<linkit:sql-table-constraint unique="uniq_cong_att_policy"
 							index="idx_cong_att_policy" 

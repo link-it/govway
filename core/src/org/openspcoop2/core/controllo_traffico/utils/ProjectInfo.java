@@ -33,7 +33,7 @@ public class ProjectInfo implements IProjectInfo {
 
 	@Override
 	public String getProjectName(){
-		return "controllo_congestione";
+		return "controllo_traffico";
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class ProjectInfo implements IProjectInfo {
 
 	@Override
 	public String getProjectNamespace(){
-		return "http://www.openspcoop2.org/core/controllo_congestione";
+		return "http://www.openspcoop2.org/core/controllo_traffico";
 	}
 
 	public static ProjectInfo getInstance(){

@@ -19,18 +19,19 @@
  */
 package org.openspcoop2.core.controllo_traffico.dao.jdbc;
 
-import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyService;
-import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSearch;
-import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleService;
-import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleServiceSearch;
-import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyService;
-import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
 import java.sql.Connection;
 
 import javax.sql.DataSource;
+
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazioneGeneraleService;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IConfigurazionePolicyService;
+import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IAttivazionePolicyService;
 
 /**     
  * Manager that allows you to obtain the services of research and management of objects

@@ -35,11 +35,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="configurazione-generale">
  * 		&lt;sequence>
- * 			&lt;element name="controllo-traffico" type="{http://www.openspcoop2.org/core/controllo_congestione}configurazione-controllo-traffico" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tempi-risposta-fruizione" type="{http://www.openspcoop2.org/core/controllo_congestione}tempi-risposta-fruizione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tempi-risposta-erogazione" type="{http://www.openspcoop2.org/core/controllo_congestione}tempi-risposta-erogazione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="rate-limiting" type="{http://www.openspcoop2.org/core/controllo_congestione}configurazione-rate-limiting" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/controllo_congestione}cache" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="controllo-traffico" type="{http://www.openspcoop2.org/core/controllo_traffico}configurazione-controllo-traffico" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="tempi-risposta-fruizione" type="{http://www.openspcoop2.org/core/controllo_traffico}tempi-risposta-fruizione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="tempi-risposta-erogazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tempi-risposta-erogazione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="rate-limiting" type="{http://www.openspcoop2.org/core/controllo_traffico}configurazione-rate-limiting" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/controllo_traffico}cache" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

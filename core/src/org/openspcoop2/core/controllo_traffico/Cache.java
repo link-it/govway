@@ -25,9 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
-
 import java.io.Serializable;
 
 
@@ -40,7 +38,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="cache" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/>
  * 			&lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="algorithm" type="{http://www.openspcoop2.org/core/controllo_congestione}cache-algorithm" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="algorithm" type="{http://www.openspcoop2.org/core/controllo_traffico}cache-algorithm" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="idle-time" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="life-time" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>

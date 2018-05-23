@@ -20,6 +20,7 @@
 package org.openspcoop2.core.controllo_traffico.model;
 
 import org.openspcoop2.core.controllo_traffico.Cache;
+
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.Field;

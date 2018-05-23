@@ -21,6 +21,7 @@ package org.openspcoop2.core.controllo_traffico.dao.jdbc;
 
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithId;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -41,11 +42,11 @@ import org.openspcoop2.generic_project.dao.jdbc.JDBCPaginatedExpression;
 import org.openspcoop2.generic_project.dao.jdbc.JDBCProperties;
 import org.openspcoop2.generic_project.dao.jdbc.utils.IJDBCFetch;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBC_SQLObjectFactory;
-import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_traffico.IdPolicy;
-import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
-import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCLimitedServiceManager;
+
 import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCLimitedServiceManager;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
 import org.openspcoop2.core.controllo_traffico.utils.ProjectInfo;
 
 import java.sql.Connection;

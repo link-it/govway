@@ -24,7 +24,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 
 
 /**	
- * Manager with which 'can get the service for the management of the objects defined in the package org.openspcoop2.core.controllo_congestione 
+ * Manager with which 'can get the service for the management of the objects defined in the package org.openspcoop2.core.controllo_traffico 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$

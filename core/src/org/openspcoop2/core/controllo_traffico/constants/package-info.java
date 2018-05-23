@@ -24,7 +24,7 @@
  * @version $Rev$, $Date$
 */
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/core/controllo_congestione",
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.openspcoop2.org/core/controllo_traffico",
 	elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED,
  	attributeFormDefault = javax.xml.bind.annotation.XmlNsForm.UNQUALIFIED)
 package org.openspcoop2.core.controllo_traffico.constants;

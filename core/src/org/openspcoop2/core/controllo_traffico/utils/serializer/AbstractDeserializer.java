@@ -19,23 +19,24 @@
  */
 package org.openspcoop2.core.controllo_traffico.utils.serializer;
 
+import org.openspcoop2.generic_project.exception.DeserializerException;
+
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_traffico.Cache;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ElencoPolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
+import org.openspcoop2.core.controllo_traffico.Cache;
+import org.openspcoop2.core.controllo_traffico.ElencoPolicyAttive;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
-import org.openspcoop2.core.controllo_traffico.ElencoPolicy;
-import org.openspcoop2.core.controllo_traffico.ElencoPolicyAttive;
-import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
-import org.openspcoop2.core.controllo_traffico.IdPolicy;
-import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
-import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
-import org.openspcoop2.generic_project.exception.DeserializerException;
 
 import java.io.InputStream;
 import java.io.File;

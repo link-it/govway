@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-
 import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
@@ -33,7 +32,6 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
-
 import java.io.Serializable;
 
 
@@ -49,22 +47,22 @@ import java.io.Serializable;
  * 			&lt;element name="risorsa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="simultanee" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="valore-tipo-banda" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-banda" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="valore-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-latenza" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="valore-tipo-banda" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-banda" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="valore-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-finestra" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-applicabilita" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-applicabilita" minOccurs="1" maxOccurs="1" default="sempre"/>
+ * 			&lt;element name="finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="tipo-applicabilita" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-applicabilita" minOccurs="1" maxOccurs="1" default="sempre"/>
  * 			&lt;element name="applicabilita-con-congestione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="applicabilita-degrado-prestazionale" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="degrado-avg-time-modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="degrado-avg-time-modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="degrado-avg-time-intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-finestra" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_congestione}tipo-latenza" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="degrado-avg-time-finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="degrado-avg-time-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="applicabilita-stato-allarme" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
  * 			&lt;element name="allarme-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="allarme-stato" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>

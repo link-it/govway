@@ -21,8 +21,9 @@ package org.openspcoop2.core.controllo_traffico.utils;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
-import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.generic_project.exception.ServiceException;
+
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 
 /** 
  * XSD Validator    
@@ -39,8 +40,8 @@ public class XSDValidator {
 	private static synchronized void initValidator(Class<?> validatorImpl,Logger log) throws ServiceException{
 		if(validator==null){
 			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,ConfigurazioneGenerale.class, 
-				"/openspcoopControlloCongestione.xsd"
-				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /openspcoopControlloCongestione.xsd
+				"/openspcoopControlloTraffico.xsd"
+				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /openspcoopControlloTraffico.xsd
 			);
 		}
 	}
