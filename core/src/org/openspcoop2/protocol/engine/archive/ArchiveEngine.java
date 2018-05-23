@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.engine.archive;
 
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 
 /**

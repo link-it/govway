@@ -29,8 +29,8 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -403,9 +403,9 @@ public class ImporterArchiveUtils {
 						
 			// Controllo Congestione (Configurazione)
 			if(archive.getControlloCongestione_configurazione()!=null){
-				org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione = archive.getControlloCongestione_configurazione();
-				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> detail = 
-						new ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale>(configurazione);
+				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione = archive.getControlloCongestione_configurazione();
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> detail = 
+						new ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale>(configurazione);
 				try{
 					this.importControlloCongestione_configurazione(configurazione, detail);
 				}catch(Exception e){
@@ -2319,8 +2319,8 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	public void importControlloCongestione_configurazione(org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazione, 
-			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> detail){		
+	public void importControlloCongestione_configurazione(org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione, 
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> detail){		
 		try{
 			// update
 			this.importerEngine.updateControlloCongestione_configurazione(configurazione);

@@ -1,6 +1,6 @@
 package org.openspcoop2.pdd.core.controllo_traffico;
 
-import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 
 public class RisultatoVerificaPolicy {
 

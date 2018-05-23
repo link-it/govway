@@ -32,8 +32,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -79,7 +79,7 @@ public class ConfigurazioneControlloCongestioneAttivazionePolicyChange extends A
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
 			
 			// uso nome porta per capire se sono entrato per la prima volta nella schermata
 			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);

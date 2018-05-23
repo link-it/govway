@@ -22,11 +22,10 @@ package org.openspcoop2.pdd.core.controllo_traffico.plugins;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
-
-import org.openspcoop2.core.controllo_congestione.beans.DatiTransazione;
 
 /**
  * Dati 

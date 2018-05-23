@@ -3,9 +3,8 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.generic_project.exception.NotFoundException;
-
-import org.openspcoop2.core.controllo_congestione.constants.TipoFinestra;
 
 public class PolicyDateUtils {
 

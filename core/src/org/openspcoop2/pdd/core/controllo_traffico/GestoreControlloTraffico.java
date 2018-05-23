@@ -2,7 +2,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 
 import java.util.Date;
 
-import org.openspcoop2.core.controllo_congestione.constants.TipoErrore;
+import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;

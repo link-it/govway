@@ -8,16 +8,15 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
-import org.openspcoop2.core.controllo_congestione.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_congestione.beans.ConfigurazioneControlloCongestione;
-import org.openspcoop2.core.controllo_congestione.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_congestione.driver.CostantiServizioControlloTraffico;
-import org.openspcoop2.core.controllo_congestione.driver.IGestorePolicyAttive;
-import org.openspcoop2.core.controllo_congestione.driver.IPolicyGroupByActiveThreads;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyNotFoundException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyShutdownException;
+import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
+import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione;
+import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 
 public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 

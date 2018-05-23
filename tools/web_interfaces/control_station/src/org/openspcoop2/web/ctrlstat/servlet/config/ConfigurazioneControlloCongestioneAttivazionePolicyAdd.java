@@ -32,11 +32,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
-import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -82,7 +82,7 @@ public class ConfigurazioneControlloCongestioneAttivazionePolicyAdd extends Acti
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
 			
 			AttivazionePolicy policy = new AttivazionePolicy();
 			policy.setFiltro(new AttivazionePolicyFiltro());

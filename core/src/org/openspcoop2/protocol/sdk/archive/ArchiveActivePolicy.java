@@ -50,11 +50,11 @@ public class ArchiveActivePolicy implements IArchiveObject {
 	
 	
 	private String idPolicy;
-	private org.openspcoop2.core.controllo_congestione.AttivazionePolicy policy;
+	private org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy;
 	
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 
-	public ArchiveActivePolicy(org.openspcoop2.core.controllo_congestione.AttivazionePolicy policy, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public ArchiveActivePolicy(org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
 		if(policy==null){
 			throw new ProtocolException("Policy non fornito");
@@ -73,7 +73,7 @@ public class ArchiveActivePolicy implements IArchiveObject {
 	public String getNomePolicy() {
 		return this.idPolicy;
 	}
-	public org.openspcoop2.core.controllo_congestione.AttivazionePolicy getPolicy() {
+	public org.openspcoop2.core.controllo_traffico.AttivazionePolicy getPolicy() {
 		return this.policy;
 	}
 	

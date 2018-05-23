@@ -52,15 +52,15 @@ public class Archive {
 	
 	private ArchiveSortedMap<ArchiveConfigurationPolicy> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveConfigurationPolicy>();
 	private ArchiveSortedMap<ArchiveActivePolicy> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
-	private org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale controlloCongestione_configurazione;
+	private org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloCongestione_configurazione;
 	
 	private Configurazione configurazionePdD;
 	
-	public org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale getControlloCongestione_configurazione() {
+	public org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale getControlloCongestione_configurazione() {
 		return this.controlloCongestione_configurazione;
 	}
 	public void setControlloCongestione_configurazione(
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale controlloCongestione_configurazione) {
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloCongestione_configurazione) {
 		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
 	}
 	

@@ -8,15 +8,14 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
-
-import org.openspcoop2.core.controllo_congestione.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_congestione.beans.DatiCollezionati;
-import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupBy;
-import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.MisurazioniTransazione;
-import org.openspcoop2.core.controllo_congestione.driver.IPolicyGroupByActiveThreads;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyNotFoundException;
+import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
+import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupBy;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
 public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByActiveThreads {

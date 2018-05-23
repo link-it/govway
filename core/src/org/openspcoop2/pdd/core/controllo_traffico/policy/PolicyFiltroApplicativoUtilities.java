@@ -14,10 +14,9 @@ import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
-
-import org.openspcoop2.core.controllo_congestione.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_congestione.beans.ID;
-import org.openspcoop2.core.controllo_congestione.constants.TipoFiltroApplicativo;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.beans.ID;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 

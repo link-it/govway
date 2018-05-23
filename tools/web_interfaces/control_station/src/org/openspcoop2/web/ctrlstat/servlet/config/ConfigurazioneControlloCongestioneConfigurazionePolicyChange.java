@@ -32,9 +32,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_congestione.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -76,7 +76,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyChange extend
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
 			
 			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_ID);
 			long idPolicy = Long.parseLong(id);

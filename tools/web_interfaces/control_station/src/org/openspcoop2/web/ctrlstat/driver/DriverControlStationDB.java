@@ -42,21 +42,21 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_congestione.IdActivePolicy;
-import org.openspcoop2.core.controllo_congestione.IdPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
-import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
-import org.openspcoop2.core.controllo_congestione.constants.TipoApplicabilita;
-import org.openspcoop2.core.controllo_congestione.constants.TipoControlloPeriodo;
-import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
-import org.openspcoop2.core.controllo_congestione.dao.IDBAttivazionePolicyServiceSearch;
-import org.openspcoop2.core.controllo_congestione.dao.IDBConfigurazionePolicyServiceSearch;
-import org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
+import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.dao.IDBAttivazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.IDBConfigurazionePolicyServiceSearch;
+import org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
@@ -196,7 +196,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			this.jdbcServiceManagerControlloCongestione = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
+			this.jdbcServiceManagerControlloCongestione = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
 			this.idAccordoFactory = IDAccordoFactory.getInstance();
 			this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		} catch (Exception e) {
@@ -2241,7 +2241,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			try {
 				config = serviceManager.getConfigurazioneGeneraleServiceSearch().get();
@@ -2293,7 +2293,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			serviceManager.getConfigurazioneGeneraleService().update(configurazioneControlloCongestione);
 		} catch (Exception se) {
@@ -2347,7 +2347,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
 			
@@ -2411,7 +2411,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
@@ -2475,7 +2475,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
 			
@@ -2543,7 +2543,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
@@ -2602,7 +2602,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getConfigurazionePolicyServiceSearch().newExpression();
 			
@@ -2737,7 +2737,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
@@ -2793,7 +2793,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IExpression expr = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
@@ -2842,7 +2842,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			policy = ((IDBConfigurazionePolicyServiceSearch)serviceManager.getConfigurazionePolicyServiceSearch()).get(id);
 		}catch (NotFoundException e) {
 			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
@@ -2886,7 +2886,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IdPolicy id = new IdPolicy();
 			id.setNome(nomePolicy);
@@ -2931,7 +2931,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			serviceManager.getConfigurazionePolicyService().create(policy); 
 			
@@ -2971,7 +2971,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			serviceManager.getAttivazionePolicyService().create(policy);
 			
@@ -3011,7 +3011,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IdPolicy idToUpdate = new IdPolicy();
 			
@@ -3089,7 +3089,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IdActivePolicy id = new IdActivePolicy();
 			id.setNome(policy.getIdActivePolicy()); 
@@ -3133,7 +3133,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			serviceManager.getConfigurazionePolicyService().delete(policy); 
 			
@@ -3173,7 +3173,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			serviceManager.getAttivazionePolicyService().delete(policy);
 			
@@ -3214,7 +3214,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			policy = ((IDBAttivazionePolicyServiceSearch)serviceManager.getAttivazionePolicyServiceSearch()).get(id);
 		}catch (NotFoundException e) {
 			throw new DriverControlStationNotFound("[DriverControlStationDB::" + nomeMetodo + "] Configurazione Policy non presente.");
@@ -3257,7 +3257,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			IdActivePolicy idPolicy = new IdActivePolicy();
 			idPolicy.setNome(nomePolicy);
 			policy = serviceManager.getAttivazionePolicyServiceSearch().get(idPolicy);
@@ -3302,7 +3302,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
 			IPaginatedExpression pagExpr = serviceManager.getAttivazionePolicyServiceSearch().newPaginatedExpression();
 			pagExpr.and();
@@ -3365,7 +3365,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			IExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
 			expression.and();
@@ -3524,7 +3524,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_congestione.dao.jdbc.JDBCServiceManager(con, properties, this.log);
+			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			IExpression expression = serviceManager.getAttivazionePolicyServiceSearch().newExpression();
 			
 			expression.and();

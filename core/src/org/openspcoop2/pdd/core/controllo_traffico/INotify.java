@@ -1,7 +1,7 @@
 package org.openspcoop2.pdd.core.controllo_traffico;
 
-import org.openspcoop2.core.controllo_congestione.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_congestione.beans.RisultatoStato;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloCongestione;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.slf4j.Logger;

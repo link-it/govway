@@ -416,7 +416,7 @@ public class EsitoUtils {
 		if(archive.getControlloCongestione_configurazione()!=null){
 			bfEsito.append("Controllo del Traffico (Configurazione)\n");
 			try{
-				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> configurazione = 
+				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> configurazione = 
 						archive.getControlloCongestione_configurazione();
 				bfEsito.append("\t- ");
 				serializeStato(configurazione, bfEsito);
@@ -656,7 +656,7 @@ public class EsitoUtils {
 		
 		// ControlloCongestione (Configurazione)
 		if(archive.getControlloCongestione_configurazione()!=null){
-			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> configurazione = 
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> configurazione = 
 					archive.getControlloCongestione_configurazione();
 			if(mapIdCorrelazione.size()>1){
 				throw new ProtocolException("Configurazione permessa solo con una unica correlazione tra oggetti");

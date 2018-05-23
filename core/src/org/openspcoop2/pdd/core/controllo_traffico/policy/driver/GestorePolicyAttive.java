@@ -1,7 +1,7 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
-import org.openspcoop2.core.controllo_congestione.driver.IGestorePolicyAttive;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.slf4j.Logger;
 
 public class GestorePolicyAttive {

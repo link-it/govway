@@ -6,14 +6,13 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
-import org.openspcoop2.core.controllo_congestione.beans.DatiCollezionati;
-import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.MisurazioniTransazione;
-import org.openspcoop2.core.controllo_congestione.driver.CostantiServizioControlloTraffico;
-import org.openspcoop2.core.controllo_congestione.driver.IPolicyGroupByActiveThreads;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyNotFoundException;
+import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
+import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 
 public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads {
 

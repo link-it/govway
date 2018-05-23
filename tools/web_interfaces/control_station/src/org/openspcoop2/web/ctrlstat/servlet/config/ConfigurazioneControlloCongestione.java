@@ -31,11 +31,11 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.controllo_congestione.Cache;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneControlloTraffico;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneRateLimiting;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaErogazione;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaFruizione;
+import org.openspcoop2.core.controllo_traffico.Cache;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -81,7 +81,7 @@ public class ConfigurazioneControlloCongestione extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 
-			org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
 			long sizePolicy = confCore.countConfigurazionePolicy(null);
 			long sizeGlobalPolicy = confCore.countAttivazionePolicy(null);
 			

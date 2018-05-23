@@ -54,8 +54,8 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_congestione.constants.CacheAlgorithm;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoStatoPortaDominio;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
@@ -1441,8 +1441,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// Cache ControlloTraffico DatiStatistici
 				try{
 					ConfigurazioneGenerale configurazioneControlloCongestione = 
-							((org.openspcoop2.core.controllo_congestione.dao.IServiceManager) DAOFactory.getInstance(logControlloTrafficoSql).
-						getServiceManager(org.openspcoop2.core.controllo_congestione.utils.ProjectInfo.getInstance(), logControlloTrafficoSql)).
+							((org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(logControlloTrafficoSql).
+						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(), logControlloTrafficoSql)).
 						getConfigurazioneGeneraleServiceSearch().get();
 					if(configurazioneControlloCongestione.getCache()!=null && configurazioneControlloCongestione.getCache().isCache()){
 						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloCongestione.getCache().getSize(),
@@ -1492,7 +1492,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						if(fRepository.canWrite()==false){
 							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 						}
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoImage);
+						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
 						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 							FileInputStream fin = new FileInputStream(fDati);
 							GestorePolicyAttive.getInstance().initialize(fin,confControlloCongestione);
@@ -2313,7 +2313,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
 					}		
 					
-					File fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoImage);
+					File fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
 					out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
 					GestorePolicyAttive.getInstance().serialize(out);
 					out.flush();
@@ -2324,7 +2324,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
 					// Lascio comunque il codice se in futuro si desidera approfindire la questione
 					if(inizializzazioneAttiva) {
-						fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoEventiImage);
+						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoEventiImage);
 						NotificatoreEventi.getInstance().serialize(fDati);
 					}
 					

@@ -49,7 +49,7 @@ public class ArchiveEsitoImport {
 
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiFruitori = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
-	private ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> controlloCongestione_configurazione;
+	private ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloCongestione_configurazione;
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
@@ -103,12 +103,12 @@ public class ArchiveEsitoImport {
 		return this.accordiFruitori;
 	}
 
-	public ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> getControlloCongestione_configurazione() {
+	public ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> getControlloCongestione_configurazione() {
 		return this.controlloCongestione_configurazione;
 	}
 
 	public void setControlloCongestione_configurazione(
-			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale> controlloCongestione_configurazione) {
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloCongestione_configurazione) {
 		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
 	}
 

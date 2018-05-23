@@ -17,22 +17,21 @@ import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_congestione.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_congestione.beans.ConfigurazioneControlloCongestione;
-import org.openspcoop2.core.controllo_congestione.beans.DatiCollezionati;
-import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
-import org.openspcoop2.core.controllo_congestione.driver.IGestorePolicyAttive;
-import org.openspcoop2.core.controllo_congestione.driver.IPolicyGroupByActiveThreads;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyNotFoundException;
-import org.openspcoop2.core.controllo_congestione.driver.PolicyShutdownException;
-import org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbDeserializer;
-import org.openspcoop2.core.controllo_congestione.utils.serializer.JaxbSerializer;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
+import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione;
+import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
+import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
+import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer;
+import org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer;
 
 public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 

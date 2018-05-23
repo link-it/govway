@@ -10,12 +10,11 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.slf4j.Logger;
-
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_congestione.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 
 public class InterceptorPolicyUtilities {
 

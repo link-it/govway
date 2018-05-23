@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.core;
 
-import org.openspcoop2.core.controllo_congestione.beans.JMXConstants;
+import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 

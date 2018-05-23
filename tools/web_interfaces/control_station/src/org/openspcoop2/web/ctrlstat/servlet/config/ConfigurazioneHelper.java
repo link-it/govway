@@ -49,32 +49,32 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicy;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
-import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
-import org.openspcoop2.core.controllo_congestione.Cache;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneControlloTraffico;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_congestione.ConfigurazionePolicy;
-import org.openspcoop2.core.controllo_congestione.ConfigurazioneRateLimiting;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaErogazione;
-import org.openspcoop2.core.controllo_congestione.TempiRispostaFruizione;
-import org.openspcoop2.core.controllo_congestione.beans.ID;
-import org.openspcoop2.core.controllo_congestione.beans.InfoPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.JMXConstants;
-import org.openspcoop2.core.controllo_congestione.beans.UniqueIdentifierUtilities;
-import org.openspcoop2.core.controllo_congestione.constants.CacheAlgorithm;
-import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
-import org.openspcoop2.core.controllo_congestione.constants.TipoApplicabilita;
-import org.openspcoop2.core.controllo_congestione.constants.TipoBanda;
-import org.openspcoop2.core.controllo_congestione.constants.TipoControlloPeriodo;
-import org.openspcoop2.core.controllo_congestione.constants.TipoErrore;
-import org.openspcoop2.core.controllo_congestione.constants.TipoFiltroApplicativo;
-import org.openspcoop2.core.controllo_congestione.constants.TipoFinestra;
-import org.openspcoop2.core.controllo_congestione.constants.TipoLatenza;
-import org.openspcoop2.core.controllo_congestione.constants.TipoPeriodoRealtime;
-import org.openspcoop2.core.controllo_congestione.constants.TipoPeriodoStatistico;
-import org.openspcoop2.core.controllo_congestione.constants.TipoRisorsa;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
+import org.openspcoop2.core.controllo_traffico.Cache;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
+import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
+import org.openspcoop2.core.controllo_traffico.beans.ID;
+import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
+import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
+import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
+import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.core.controllo_traffico.constants.TipoApplicabilita;
+import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
+import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
+import org.openspcoop2.core.controllo_traffico.constants.TipoErrore;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
+import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoRealtime;
+import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
+import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -5107,7 +5107,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	
 	
-	public void addConfigurazionControlloCongestioneToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione, long sizePolicy, long sizeGlobalPolicy, boolean configurazioneTerminata) throws Exception {
+	public void addConfigurazionControlloCongestioneToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione, long sizePolicy, long sizeGlobalPolicy, boolean configurazioneTerminata) throws Exception {
 		
 		
 		boolean first = this.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME); 
@@ -5315,7 +5315,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public void addToDatiConfigurazioneRateLimiting(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale controlloTraffico, boolean first, boolean finished, long sizePolicy, long sizeGlobalPolicy) throws Exception {
+	public void addToDatiConfigurazioneRateLimiting(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico, boolean first, boolean finished, long sizePolicy, long sizeGlobalPolicy) throws Exception {
 			
 		// Policy
 		if( first || finished ){
@@ -6076,7 +6076,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	
-	public boolean checkDatiConfigurazioneControlloCongestione(TipoOperazione tipoOperazione, StringBuilder sbParsingError, org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione) throws Exception {
+	public boolean checkDatiConfigurazioneControlloCongestione(TipoOperazione tipoOperazione, StringBuilder sbParsingError, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione) throws Exception {
 
 		// errori di parsing letti durante la read della richiesta
 		if(sbParsingError.length() >0){
@@ -8794,7 +8794,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 	
-	public boolean configurazionePolicyCheckData(TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale configurazioneControlloCongestione, ConfigurazionePolicy policyToCheck,
+	public boolean configurazionePolicyCheckData(TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione, ConfigurazionePolicy policyToCheck,
 			String oldNomeSuggeritoPolicy,  String oldDescrizioneSuggeritaPolicy, String oldPolicyId,	List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato,
 	boolean updateValueInSeguitoModificaSogliaPolicy) throws Exception{
 		if(TipoOperazione.CHANGE.equals(tipoOperazione)){
@@ -8842,7 +8842,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	}
 	
 	
-	public boolean checkConfigurazionePolicy(org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale c,ConfigurazionePolicy policy) throws Exception{
+	public boolean checkConfigurazionePolicy(org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale c,ConfigurazionePolicy policy) throws Exception{
 		
 		// Dati Generali
 		if(policy.getIdPolicy()==null || "".equals(policy.getIdPolicy())){
