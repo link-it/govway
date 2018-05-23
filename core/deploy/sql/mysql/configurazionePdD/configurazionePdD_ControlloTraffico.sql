@@ -1,15 +1,15 @@
 -- CONTROLLO CONGESTIONE
 
-CREATE TABLE congestion_config
+CREATE TABLE ct_config
 (
 	-- Numero Massimo Richieste Simultanee
-	max_threads_enabled BIT NOT NULL DEFAULT 'true',
-	max_threads_warning_only BIT NOT NULL DEFAULT 'false',
+	max_threads_enabled BOOLEAN NOT NULL DEFAULT true,
+	max_threads_warning_only BOOLEAN NOT NULL DEFAULT false,
 	max_threads BIGINT NOT NULL,
 	max_threads_tipo_errore VARCHAR(255) NOT NULL DEFAULT 'fault',
-	max_threads_includi_errore BIT NOT NULL DEFAULT 'true',
+	max_threads_includi_errore BOOLEAN NOT NULL DEFAULT true,
 	-- Controllo della Congestione
-	cc_enabled BIT NOT NULL DEFAULT 'false',
+	cc_enabled BOOLEAN NOT NULL DEFAULT false,
 	cc_threshold INT,
 	-- Tempi di Risposta Fruizione
 	pd_connection_timeout INT,
@@ -21,32 +21,32 @@ CREATE TABLE congestion_config
 	pa_avg_time INT,
 	-- Rate Limiting
 	rt_tipo_errore VARCHAR(255) NOT NULL DEFAULT 'fault',
-	rt_includi_errore BIT NOT NULL DEFAULT 'true',
+	rt_includi_errore BOOLEAN NOT NULL DEFAULT true,
 	-- Cache
-	cache BIT NOT NULL DEFAULT 'true',
+	cache BOOLEAN NOT NULL DEFAULT true,
 	cache_size BIGINT,
 	cache_algorithm VARCHAR(255),
 	cache_idle_time BIGINT,
 	cache_life_time BIGINT,
 	-- fk/pk columns
-	id BIGINT IDENTITY,
+	id BIGINT AUTO_INCREMENT,
 	-- check constraints
-	CONSTRAINT chk_congestion_config_1 CHECK (cache_algorithm IN ('LRU','MRU')),
+	CONSTRAINT chk_ct_config_1 CHECK (cache_algorithm IN ('LRU','MRU')),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_config PRIMARY KEY (id)
-);
+	CONSTRAINT pk_ct_config PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 
 
 
-CREATE TABLE congestion_config_policy
+CREATE TABLE ct_config_policy
 (
 	-- Dati Generali
 	policy_id VARCHAR(255) NOT NULL,
-	rt_descrizione VARCHAR(max) NOT NULL,
+	rt_descrizione TEXT NOT NULL,
 	rt_risorsa VARCHAR(255) NOT NULL,
 	-- Valori di Soglia
-	rt_simultanee BIT NOT NULL DEFAULT 'false',
+	rt_simultanee BOOLEAN NOT NULL DEFAULT false,
 	rt_valore BIGINT,
 	rt_bytes_type VARCHAR(255),
 	rt_latency_type VARCHAR(255),
@@ -58,9 +58,9 @@ CREATE TABLE congestion_config_policy
 	-- Applicabilità
 	rt_applicabilita VARCHAR(255) NOT NULL DEFAULT 'sempre',
 	-- Applicabilità con Congestione in Corso
-	rt_applicabilita_con_cc BIT NOT NULL DEFAULT 'false',
+	rt_applicabilita_con_cc BOOLEAN NOT NULL DEFAULT false,
 	-- Applicabilità con Degrado Prestazionale
-	rt_applicabilita_degrado BIT NOT NULL DEFAULT 'false',
+	rt_applicabilita_degrado BOOLEAN NOT NULL DEFAULT false,
 	degrato_modalita_controllo VARCHAR(255),
 	degrado_avg_interval_type_real VARCHAR(255),
 	degrado_avg_interval_type_stat VARCHAR(255),
@@ -68,12 +68,12 @@ CREATE TABLE congestion_config_policy
 	degrado_avg_finestra VARCHAR(255),
 	degrado_avg_latency_type VARCHAR(255),
 	-- Applicabilità con Stato Allarme
-	rt_applicabilita_allarme BIT NOT NULL DEFAULT 'false',
+	rt_applicabilita_allarme BOOLEAN NOT NULL DEFAULT false,
 	allarme_nome VARCHAR(255),
 	allarme_stato INT,
-	allarme_not_stato BIT NOT NULL DEFAULT 'false',
+	allarme_not_stato BOOLEAN NOT NULL DEFAULT false,
 	-- fk/pk columns
-	id BIGINT IDENTITY,
+	id BIGINT AUTO_INCREMENT,
 	-- check constraints
 	CONSTRAINT chk_cong_gen_policy_1 CHECK (rt_bytes_type IN ('complessiva','interna','esterna')),
 	CONSTRAINT chk_cong_gen_policy_2 CHECK (rt_latency_type IN ('servizio','porta','totale')),
@@ -90,28 +90,29 @@ CREATE TABLE congestion_config_policy
 	-- unique constraints
 	CONSTRAINT uniq_cong_gen_policy_1 UNIQUE (policy_id),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_config_policy PRIMARY KEY (id)
-);
+	CONSTRAINT pk_ct_config_policy PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON congestion_config_policy (policy_id);
+CREATE UNIQUE INDEX idx_cong_gen_policy_1 ON ct_config_policy (policy_id);
 
 
 
-CREATE TABLE congestion_active_policy
+CREATE TABLE ct_active_policy
 (
 	-- Dati Generali
 	active_policy_id VARCHAR(255) NOT NULL,
 	policy_alias VARCHAR(255),
-	policy_update_time DATETIME2 NOT NULL,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	policy_update_time TIMESTAMP(3) NOT NULL DEFAULT 0,
 	policy_id VARCHAR(255) NOT NULL,
-	policy_enabled BIT NOT NULL,
-	policy_warning BIT NOT NULL DEFAULT 'false',
+	policy_enabled BOOLEAN NOT NULL,
+	policy_warning BOOLEAN NOT NULL DEFAULT false,
 	-- Valori di Soglia
-	policy_redefined BIT NOT NULL,
+	policy_redefined BOOLEAN NOT NULL,
 	policy_valore BIGINT,
 	-- Filtro
-	filtro_enabled BIT NOT NULL DEFAULT 'false',
+	filtro_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_protocollo VARCHAR(255),
 	filtro_ruolo VARCHAR(255),
 	filtro_tipo_fruitore VARCHAR(255),
@@ -127,35 +128,35 @@ CREATE TABLE congestion_active_policy
 	filtro_versione_servizio INT,
 	filtro_azione VARCHAR(255),
 	-- Filtro per Chiave Applicativa
-	filtro_key_enabled BIT NOT NULL DEFAULT 'false',
+	filtro_key_enabled BOOLEAN NOT NULL DEFAULT false,
 	filtro_key_type VARCHAR(255),
-	filtro_key_name VARCHAR(max),
-	filtro_key_value VARCHAR(max),
+	filtro_key_name TEXT,
+	filtro_key_value TEXT,
 	-- Raggruppamento
-	group_enabled BIT NOT NULL DEFAULT 'false',
-	group_ruolo BIT NOT NULL DEFAULT 'false',
-	group_protocollo BIT NOT NULL DEFAULT 'false',
-	group_fruitore BIT NOT NULL DEFAULT 'false',
-	group_sa_fruitore BIT NOT NULL DEFAULT 'false',
-	group_erogatore BIT NOT NULL DEFAULT 'false',
-	group_sa_erogatore BIT NOT NULL DEFAULT 'false',
-	group_servizio BIT NOT NULL DEFAULT 'false',
-	group_azione BIT NOT NULL DEFAULT 'false',
+	group_enabled BOOLEAN NOT NULL DEFAULT false,
+	group_ruolo BOOLEAN NOT NULL DEFAULT false,
+	group_protocollo BOOLEAN NOT NULL DEFAULT false,
+	group_fruitore BOOLEAN NOT NULL DEFAULT false,
+	group_sa_fruitore BOOLEAN NOT NULL DEFAULT false,
+	group_erogatore BOOLEAN NOT NULL DEFAULT false,
+	group_sa_erogatore BOOLEAN NOT NULL DEFAULT false,
+	group_servizio BOOLEAN NOT NULL DEFAULT false,
+	group_azione BOOLEAN NOT NULL DEFAULT false,
 	-- Raggruppamento per Chiave Applicativa
-	group_key_enabled BIT NOT NULL DEFAULT 'false',
+	group_key_enabled BOOLEAN NOT NULL DEFAULT false,
 	group_key_type VARCHAR(255),
-	group_key_name VARCHAR(max),
+	group_key_name TEXT,
 	-- fk/pk columns
-	id BIGINT IDENTITY,
+	id BIGINT AUTO_INCREMENT,
 	-- check constraints
 	CONSTRAINT chk_cong_att_policy_1 CHECK (filtro_ruolo IN ('delegata','applicativa','entrambi')),
 	-- unique constraints
 	CONSTRAINT uniq_cong_att_policy_1 UNIQUE (active_policy_id),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_active_policy PRIMARY KEY (id)
-);
+	CONSTRAINT pk_ct_active_policy PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE UNIQUE INDEX idx_cong_att_policy_1 ON congestion_active_policy (active_policy_id);
+CREATE UNIQUE INDEX idx_cong_att_policy_1 ON ct_active_policy (active_policy_id);
 
 

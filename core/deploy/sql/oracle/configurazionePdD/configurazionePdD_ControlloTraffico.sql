@@ -1,8 +1,8 @@
 -- CONTROLLO CONGESTIONE
 
-CREATE SEQUENCE seq_congestion_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_ct_config MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE congestion_config
+CREATE TABLE ct_config
 (
 	-- Numero Massimo Richieste Simultanee
 	max_threads_enabled NUMBER NOT NULL,
@@ -33,28 +33,28 @@ CREATE TABLE congestion_config
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
-	CONSTRAINT chk_congestion_config_1 CHECK (cache_algorithm IN ('LRU','MRU')),
+	CONSTRAINT chk_ct_config_1 CHECK (cache_algorithm IN ('LRU','MRU')),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_config PRIMARY KEY (id)
+	CONSTRAINT pk_ct_config PRIMARY KEY (id)
 );
 
 
-ALTER TABLE congestion_config MODIFY max_threads_enabled DEFAULT 1;
-ALTER TABLE congestion_config MODIFY max_threads_warning_only DEFAULT 0;
-ALTER TABLE congestion_config MODIFY max_threads_tipo_errore DEFAULT 'fault';
-ALTER TABLE congestion_config MODIFY max_threads_includi_errore DEFAULT 1;
-ALTER TABLE congestion_config MODIFY cc_enabled DEFAULT 0;
-ALTER TABLE congestion_config MODIFY rt_tipo_errore DEFAULT 'fault';
-ALTER TABLE congestion_config MODIFY rt_includi_errore DEFAULT 1;
-ALTER TABLE congestion_config MODIFY cache DEFAULT 1;
+ALTER TABLE ct_config MODIFY max_threads_enabled DEFAULT 1;
+ALTER TABLE ct_config MODIFY max_threads_warning_only DEFAULT 0;
+ALTER TABLE ct_config MODIFY max_threads_tipo_errore DEFAULT 'fault';
+ALTER TABLE ct_config MODIFY max_threads_includi_errore DEFAULT 1;
+ALTER TABLE ct_config MODIFY cc_enabled DEFAULT 0;
+ALTER TABLE ct_config MODIFY rt_tipo_errore DEFAULT 'fault';
+ALTER TABLE ct_config MODIFY rt_includi_errore DEFAULT 1;
+ALTER TABLE ct_config MODIFY cache DEFAULT 1;
 
-CREATE TRIGGER trg_congestion_config
+CREATE TRIGGER trg_ct_config
 BEFORE
-insert on congestion_config
+insert on ct_config
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_congestion_config.nextval INTO :new.id
+      SELECT seq_ct_config.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -62,9 +62,9 @@ end;
 
 
 
-CREATE SEQUENCE seq_congestion_config_policy MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_ct_config_policy MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE congestion_config_policy
+CREATE TABLE ct_config_policy
 (
 	-- Dati Generali
 	policy_id VARCHAR2(255) NOT NULL,
@@ -115,24 +115,24 @@ CREATE TABLE congestion_config_policy
 	-- unique constraints
 	CONSTRAINT uniq_cong_gen_policy_1 UNIQUE (policy_id),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_config_policy PRIMARY KEY (id)
+	CONSTRAINT pk_ct_config_policy PRIMARY KEY (id)
 );
 
 
-ALTER TABLE congestion_config_policy MODIFY rt_simultanee DEFAULT 0;
-ALTER TABLE congestion_config_policy MODIFY rt_applicabilita DEFAULT 'sempre';
-ALTER TABLE congestion_config_policy MODIFY rt_applicabilita_con_cc DEFAULT 0;
-ALTER TABLE congestion_config_policy MODIFY rt_applicabilita_degrado DEFAULT 0;
-ALTER TABLE congestion_config_policy MODIFY rt_applicabilita_allarme DEFAULT 0;
-ALTER TABLE congestion_config_policy MODIFY allarme_not_stato DEFAULT 0;
+ALTER TABLE ct_config_policy MODIFY rt_simultanee DEFAULT 0;
+ALTER TABLE ct_config_policy MODIFY rt_applicabilita DEFAULT 'sempre';
+ALTER TABLE ct_config_policy MODIFY rt_applicabilita_con_cc DEFAULT 0;
+ALTER TABLE ct_config_policy MODIFY rt_applicabilita_degrado DEFAULT 0;
+ALTER TABLE ct_config_policy MODIFY rt_applicabilita_allarme DEFAULT 0;
+ALTER TABLE ct_config_policy MODIFY allarme_not_stato DEFAULT 0;
 
-CREATE TRIGGER trg_congestion_config_policy
+CREATE TRIGGER trg_ct_config_policy
 BEFORE
-insert on congestion_config_policy
+insert on ct_config_policy
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_congestion_config_policy.nextval INTO :new.id
+      SELECT seq_ct_config_policy.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
@@ -140,9 +140,9 @@ end;
 
 
 
-CREATE SEQUENCE seq_congestion_active_policy MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+CREATE SEQUENCE seq_ct_active_policy MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
 
-CREATE TABLE congestion_active_policy
+CREATE TABLE ct_active_policy
 (
 	-- Dati Generali
 	active_policy_id VARCHAR2(255) NOT NULL,
@@ -196,31 +196,31 @@ CREATE TABLE congestion_active_policy
 	-- unique constraints
 	CONSTRAINT uniq_cong_att_policy_1 UNIQUE (active_policy_id),
 	-- fk/pk keys constraints
-	CONSTRAINT pk_congestion_active_policy PRIMARY KEY (id)
+	CONSTRAINT pk_ct_active_policy PRIMARY KEY (id)
 );
 
 
-ALTER TABLE congestion_active_policy MODIFY policy_warning DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY filtro_enabled DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY filtro_key_enabled DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_enabled DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_ruolo DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_protocollo DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_fruitore DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_sa_fruitore DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_erogatore DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_sa_erogatore DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_servizio DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_azione DEFAULT 0;
-ALTER TABLE congestion_active_policy MODIFY group_key_enabled DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY policy_warning DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY filtro_enabled DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY filtro_key_enabled DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_enabled DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_ruolo DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_protocollo DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_fruitore DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_sa_fruitore DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_erogatore DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_sa_erogatore DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_servizio DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_azione DEFAULT 0;
+ALTER TABLE ct_active_policy MODIFY group_key_enabled DEFAULT 0;
 
-CREATE TRIGGER trg_congestion_active_policy
+CREATE TRIGGER trg_ct_active_policy
 BEFORE
-insert on congestion_active_policy
+insert on ct_active_policy
 for each row
 begin
    IF (:new.id IS NULL) THEN
-      SELECT seq_congestion_active_policy.nextval INTO :new.id
+      SELECT seq_ct_active_policy.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;
