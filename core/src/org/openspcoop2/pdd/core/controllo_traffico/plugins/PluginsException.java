@@ -18,21 +18,35 @@
  *
  */
 
-package org.openspcoop2.pdd.core.controllo_congestione.plugins;
-
-import org.slf4j.Logger;
+package org.openspcoop2.pdd.core.controllo_traffico.plugins;
 
 /**
- * IRateLimiting 
+ * PluginsException 
  *
  * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IRateLimiting {
+public class PluginsException extends Exception {
 
-	public String estraiValoreFiltro(Logger log,Dati datiRichiesta) throws PluginsException;
-	
-	public String estraiValoreCollezionamentoDati(Logger log,Dati datiRichiesta) throws PluginsException;
-	
+	public PluginsException(String message, Throwable cause)
+	{
+		super(message, cause);
+	}
+	public PluginsException(Throwable cause)
+	{
+		super(cause);
+	}
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public PluginsException() {
+		super();
+	}
+	public PluginsException(String msg) {
+		super(msg);
+	}
+
 }

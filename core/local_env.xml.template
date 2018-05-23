@@ -14,6 +14,7 @@
 		<!-- Build-Options -->
 		<property name="buildAsRelease" value="false" />
 		<property name="buildAPI" value="true" />
+		<property name="buildAllAPI" value="false" />
 		<property name="forceDisableJ2eeMode" value="false" />
 
 		<!-- Sub-Build-Options -->

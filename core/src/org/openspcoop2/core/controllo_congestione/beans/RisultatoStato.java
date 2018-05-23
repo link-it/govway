@@ -31,7 +31,7 @@ import java.util.Date;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RisultatoAllarme implements Serializable {
+public class RisultatoStato implements Serializable {
 
 	/**
 	 * 

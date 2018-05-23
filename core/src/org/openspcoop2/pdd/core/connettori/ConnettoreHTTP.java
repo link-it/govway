@@ -51,6 +51,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
@@ -125,6 +126,33 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	protected void setSSLContext() throws Exception{
 		if(this.connettoreHttps){
 			this.sslContextProperties = ConnettoreHTTPSProperties.readProperties(this.properties);
+		}
+		else {
+			String location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+			if(location.trim().startsWith("https")==false){
+				if(this.debug){
+					this.logger.debug("Location non richiede gestione https ["+location.trim()+"]");
+				}
+				return;
+			}
+			boolean urlHttps_overrideDefaultConfiguration = false;
+			boolean fruizioni = false;
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi();
+				fruizioni = false;
+			}
+			else{
+				// InoltroBuste e InoltroRisposte
+				urlHttps_overrideDefaultConfiguration = OpenSPCoop2Properties.getInstance().isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste();
+				fruizioni = true;
+			}
+			if(urlHttps_overrideDefaultConfiguration==false) {
+				if(this.debug){
+					this.logger.debug("Location https ["+location.trim()+"]; gestione personalizzata dei keystore disabilitata");
+				}
+				return;
+			}
+			this.sslContextProperties = ConnettoreHTTP_urlHttps_keystoreRepository.readSSLContext(this.debug, this.logger, this.busta, fruizioni);
 		}
 	}
 	

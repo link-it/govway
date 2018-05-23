@@ -87,8 +87,11 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione.pa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_congestione" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_congestione.plugins" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.plugins" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.policy.driver" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.eventi" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.statistics" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione" />

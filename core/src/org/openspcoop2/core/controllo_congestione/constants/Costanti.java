@@ -31,4 +31,7 @@ public class Costanti {
 
 	public final static String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
 	
+	public static String controlloTrafficoImage = "image.bin";
+	public static String controlloTrafficoEventiImage = "imageEventi.bin";
+	
 }

@@ -18,27 +18,21 @@
  *
  */
 
-package org.openspcoop2.pdd.core.controllo_congestione.plugins;
+package org.openspcoop2.pdd.core.controllo_traffico.plugins;
 
 import org.slf4j.Logger;
 
 /**
- * DummyRateLimiting 
+ * IRateLimiting 
  *
  * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DummyRateLimiting implements IRateLimiting {
+public interface IRateLimiting {
 
-	@Override
-	public String estraiValoreFiltro(Logger log,Dati datiRichiesta) throws PluginsException {
-		return "FiltroDemo";
-	}
-
-	@Override
-	public String estraiValoreCollezionamentoDati(Logger log,Dati datiRichiesta) throws PluginsException {
-		return "GroupByDemo";
-	}
-
+	public String estraiValoreFiltro(Logger log,Dati datiRichiesta) throws PluginsException;
+	
+	public String estraiValoreCollezionamentoDati(Logger log,Dati datiRichiesta) throws PluginsException;
+	
 }

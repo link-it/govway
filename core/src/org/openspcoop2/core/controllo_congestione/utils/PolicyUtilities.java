@@ -26,7 +26,7 @@ import org.openspcoop2.core.controllo_congestione.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_congestione.AttivazionePolicyRaggruppamento;
 import org.openspcoop2.core.controllo_congestione.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_congestione.beans.IDUnivocoGroupByPolicy;
-import org.openspcoop2.core.controllo_congestione.beans.RisultatoAllarme;
+import org.openspcoop2.core.controllo_congestione.beans.RisultatoStato;
 import org.openspcoop2.core.controllo_congestione.constants.RuoloPolicy;
 
 /**
@@ -63,7 +63,7 @@ public class PolicyUtilities {
 		return bf.toString();
 	}
 	
-	public static String toString(RisultatoAllarme statoAllarme){
+	public static String toString(RisultatoStato statoAllarme){
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 		

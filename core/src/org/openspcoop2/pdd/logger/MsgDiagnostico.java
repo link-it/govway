@@ -866,13 +866,6 @@ public class MsgDiagnostico {
 		if(this.loggerOpenSPCoop2Core!=null)
 			this.loggerOpenSPCoop2Core.error(posizioneErrore+": "+msg,e);
 	}
-	public void logErroreGenerico(Exception e, String posizioneErrore) {
-		String msg = Utilities.readFirstErrorValidMessageFromException(e);
-		this.logErroreGenerico(msg,posizioneErrore);
-		// inoltre registro l'errore nel logger_core di openspcoop
-		if(this.loggerOpenSPCoop2Core!=null)
-			this.loggerOpenSPCoop2Core.error(posizioneErrore+": "+msg,e);
-	}
 	public void logErroreGenerico(String message, String posizioneErrore) {
 		this.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, message);
 		this.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, posizioneErrore);
@@ -880,7 +873,7 @@ public class MsgDiagnostico {
 	}
 	
 	
-	public void logFatalError(Exception e, String posizioneErrore) {
+	public void logFatalError(Throwable e, String posizioneErrore) {
 		String msg = Utilities.readFirstErrorValidMessageFromException(e);
 		this.logFatalError(msg,posizioneErrore);
 		// inoltre registro l'errore nel logger_core di openspcoop
@@ -897,7 +890,7 @@ public class MsgDiagnostico {
 	}
 	
 	
-	public void logStartupError(Exception e, String posizioneErrore) {
+	public void logStartupError(Throwable e, String posizioneErrore) {
 		String msg = null;
 		if(e instanceof NullPointerException)
 			 msg = "NullPointerException";
@@ -917,7 +910,7 @@ public class MsgDiagnostico {
 		this.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP,"erroreGenerico");
 	}
 	
-	public void logDisconnectError(Exception e, String url) {
+	public void logDisconnectError(Throwable e, String url) {
 		String msg = null;
 		if(e instanceof NullPointerException)
 			 msg = "NullPointerException";

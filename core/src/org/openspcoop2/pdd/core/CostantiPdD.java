@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import org.openspcoop2.core.controllo_congestione.beans.JMXConstants;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 
@@ -122,6 +123,13 @@ public class CostantiPdD {
     /** Variabile che indica la configurazione di dump */
     public final static String DUMP_CONFIG = "DumpConfig";
     public final static String DUMP_RICHIESTA_EFFETTUATO = "DumpRichiestaEffettuato";
+    
+    /** Configurazione soglia per salvataggio in ram */
+    public static final int DUMP_NON_REALTIME_THRESHOLD = 61440;
+    /** Modalita di dump non realtime */
+    public static final String DUMP_NON_REALTIME_MODE_DB = "db";
+    public static final String DUMP_NON_REALTIME_MODE_FILE_SYSTEM = "fs";
+    public static final String DUMP_NON_REALTIME_MODE_AUTO = "auto";
     
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
@@ -244,6 +252,10 @@ public class CostantiPdD {
     /** Timeout in millisecondi massimi durante il quale una connessione viene mantenuta aperta dalla PdD: consegna contenuti applicativi */
     public static final int CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI = 1800000;
     
+    /** Dimensione della cache */
+    public static final int CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE = 10000;
+    
+    
     
     /** Dominio utilizzato per le risorse JMX */
     public static final String JMX_DOMINIO = CostantiJMX.JMX_DOMINIO;
@@ -269,6 +281,8 @@ public class CostantiPdD {
     public static final String JMX_SYSTEM_PROPERTIES_PDD = "SystemPropertiesPdD";
     /** MBean per la configurazione di sistema */
     public static final String JMX_CONFIGURAZIONE_SISTEMA = "ConfigurazioneSistema";
+    /** MBean per il controllo del traffico */
+    public static final String JMX_CONTROLLO_TRAFFICO = JMXConstants.JMX_NAME;
     
     
     /** Limit messaggi processati dai Gestori */

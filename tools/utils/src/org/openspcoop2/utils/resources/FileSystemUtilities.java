@@ -314,4 +314,49 @@ public class FileSystemUtilities {
 		}
 	}
    
+   public static void mkdir(String f) throws Exception{
+	   mkdir(f, new FileSystemMkdirConfig());
+   }
+   public static void mkdir(String f, FileSystemMkdirConfig config) throws Exception{
+	   File dir = new File(f);
+	   mkdir(dir, config);
+   }
+   public static void mkdir(File dir) throws Exception{
+	   mkdir(dir, new FileSystemMkdirConfig());
+   }
+   public static void mkdir(File dir, FileSystemMkdirConfig config) throws Exception{
+	   if(dir.exists()){
+			if(dir.isDirectory()==false){
+				throw new Exception("File ["+dir.getAbsolutePath()+"] is not directory");
+			}
+			if(config.isCheckCanRead()) {
+				if(dir.canRead()==false){
+					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot read");
+				}
+			}
+			if(config.isCheckCanWrite()){
+				if(dir.canWrite()==false){
+					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot write");
+				}
+			}
+			if(config.isCheckCanExecute()){
+				if(dir.canExecute()==false){
+					throw new Exception("Directory ["+dir.getAbsolutePath()+"] cannot execute");
+				}
+			}
+		}
+		else{
+			if(dir.getParentFile()!=null) {
+				File parent = dir.getParentFile();
+				if(parent.exists()==false) {
+					if(config.crateParentIfNotExists) {
+						mkdirParentDirectory(parent);
+					}
+				}
+			}
+			if(dir.mkdir()==false){
+				throw new Exception("Creazione directory ["+dir.getAbsolutePath()+"] non riuscita");
+			}
+		}
+	}
 }

@@ -22,6 +22,11 @@
 
 package org.openspcoop2.pdd.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.security.Security;
 import java.util.ArrayList;
@@ -37,8 +42,10 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.slf4j.Logger;
+
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -47,13 +54,22 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.controllo_congestione.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_congestione.constants.CacheAlgorithm;
+import org.openspcoop2.core.eventi.Evento;
+import org.openspcoop2.core.eventi.constants.CodiceEventoStatoPortaDominio;
+import org.openspcoop2.core.eventi.constants.TipoEvento;
+import org.openspcoop2.core.eventi.constants.TipoSeverita;
+import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
@@ -64,11 +80,18 @@ import org.openspcoop2.pdd.config.PddProperties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.FileSystemSerializer;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -90,6 +113,8 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
+import org.openspcoop2.pdd.timers.TimerEventi;
+import org.openspcoop2.pdd.timers.TimerFileSystemRecoveryThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggiThread;
@@ -112,11 +137,14 @@ import org.openspcoop2.security.utils.ExternalPWCallback;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
 
@@ -178,6 +206,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	/** Gestore risorse JMX */
 	private GestoreRisorseJMX gestoreRisorseJMX = null;
 	public static GestoreRisorseJMX gestoreRisorseJMX_staticInstance = null;
+	
+	/** Gestore eventi */
+	private GestoreEventi gestoreEventi = null;
+	private TimerEventi threadEventi;
+	
+	/** Timer FileSystemRecovery */
+	private TimerFileSystemRecoveryThread threadFileSystemRecovery = null;
 
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -694,11 +729,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 
 			/*----------- Inizializzazione Generatore di ClusterID  --------------*/
+			String clusterID = null;
 			try{
 				String tipoGeneratoreClusterID = propertiesReader.getTipoIDManager();
 				String classClusterID = null;
 				if(CostantiConfigurazione.NONE.equals(tipoGeneratoreClusterID)){
-					String clusterID = propertiesReader.getClusterId(false);
+					clusterID = propertiesReader.getClusterId(false);
 					if(clusterID!=null){
 						classClusterID = "org.openspcoop2.utils.id.ClusterIdentifierGenerator";
 					}
@@ -1241,8 +1277,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				msgDiag.logStartupError(e,"Inizializzazione MessageSecurity");
 				return;
 			}
+
 			
-		
+			
+			
+			
+			
 		
 		
 		
@@ -1298,6 +1338,201 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 		
 		
+			
+			
+			
+			
+			
+			
+			
+			/* ----------- Directory ------------ */
+			try{
+				
+				FileSystemMkdirConfig configMkdir = new FileSystemMkdirConfig();
+				configMkdir.setCheckCanWrite(true);
+				configMkdir.setCheckCanRead(true);
+				configMkdir.setCheckCanExecute(false);
+				configMkdir.setCrateParentIfNotExists(true);
+				
+				// logDir (sarebbe meglio se fosse creata dall'utente)
+				List<File> listFiles = OpenSPCoop2Logger.getLogDirs();
+				if(listFiles!=null && listFiles.size()>0) {
+					for (File file : listFiles) {
+						if(file.exists()==false){
+							// Il Log può non funzionare
+							String msg = "WARNING: Log dir ["+file.getAbsolutePath()+"] non trovata. La directory verrà creata ma è possibile che serva un ulteriore riavvio dell'Application Server";
+							log.warn(msg);
+							System.out.println(msg);
+						}
+						FileSystemUtilities.mkdir(file, configMkdir);
+					}
+				}
+
+				// https
+				if(propertiesReader.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_consegnaContenutiApplicativi()) {
+					File dir = propertiesReader.getConnettoreHttp_urlHttps_repository_consegnaContenutiApplicativi();
+					configMkdir.setCheckCanWrite(false);
+					FileSystemUtilities.mkdir(dir, configMkdir);
+					configMkdir.setCheckCanWrite(true);
+				}
+				if(propertiesReader.isConnettoreHttp_urlHttps_overrideDefaultConfiguration_inoltroBuste()) {
+					File dir = propertiesReader.getConnettoreHttp_urlHttps_repository_inoltroBuste();
+					configMkdir.setCheckCanWrite(false);
+					FileSystemUtilities.mkdir(dir, configMkdir);
+					configMkdir.setCheckCanWrite(true);
+				}
+				
+				// recovery
+				File dirRecovery = propertiesReader.getFileSystemRecovery_repository();
+				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
+				FileSystemSerializer fs = FileSystemSerializer.getInstance();
+				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirDiagnostici().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirTracce().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirEventi().getAbsolutePath(), configMkdir);
+				
+				// dumpNotRealTime
+				if(propertiesReader.isDumpNonRealtime_fileSystemMode()) {
+					File dir = propertiesReader.getDumpNonRealtime_repository();
+					FileSystemUtilities.mkdir(dir, configMkdir);
+				}
+				
+				// attachments
+				AttachmentsProcessingMode attachProcessingMode = propertiesReader.getAttachmentsProcessingMode();
+				if(attachProcessingMode!=null && attachProcessingMode.getFileRepository()!=null){
+					File dir = attachProcessingMode.getFileRepository();
+					FileSystemUtilities.mkdir(dir, configMkdir);
+				}
+				
+				// sdkFramework
+				File sdkFrameworkDir = propertiesReader.getMonitorSDK_repositoryJars();
+				if(sdkFrameworkDir!=null){
+					configMkdir.setCheckCanWrite(false);
+					FileSystemUtilities.mkdir(sdkFrameworkDir, configMkdir);
+					configMkdir.setCheckCanWrite(true);
+				}
+				
+				// controlloTraffico
+				if(propertiesReader.isControlloTrafficoEnabled()){
+					File dirCT = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+					if(dirCT!=null){
+						FileSystemUtilities.mkdir(dirCT, configMkdir);
+					}
+				}
+				
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione Directory");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			/* ----------- Gestori utilizzati dal Controllo Congestione ------------ */
+			if(propertiesReader.isControlloTrafficoEnabled()){
+							
+				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
+				Logger logControlloTrafficoSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(propertiesReader.isControlloTrafficoDebug());
+				
+				// Cache ControlloTraffico DatiStatistici
+				try{
+					ConfigurazioneGenerale configurazioneControlloCongestione = 
+							((org.openspcoop2.core.controllo_congestione.dao.IServiceManager) DAOFactory.getInstance(logControlloTrafficoSql).
+						getServiceManager(org.openspcoop2.core.controllo_congestione.utils.ProjectInfo.getInstance(), logControlloTrafficoSql)).
+						getConfigurazioneGeneraleServiceSearch().get();
+					if(configurazioneControlloCongestione.getCache()!=null && configurazioneControlloCongestione.getCache().isCache()){
+						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloCongestione.getCache().getSize(),
+								CacheAlgorithm.LRU.equals(configurazioneControlloCongestione.getCache().getAlgorithm()),
+								configurazioneControlloCongestione.getCache().getIdleTime(), 
+								configurazioneControlloCongestione.getCache().getLifeTime(), 
+								logCore);
+						logControlloTraffico.info("Cache ControlloTraffico inizializzata");
+					}
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione Cache ControlloTraffico");
+					return;
+				}
+					
+				// Gestore dei Dati Statistici
+				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione confControlloCongestione = null;
+				try{
+					confControlloCongestione = propertiesReader.getConfigurazioneControlloCongestione();
+
+					DatiStatisticiDAOManager.initialize(confControlloCongestione);
+					
+					GestoreControlloTraffico.initialize(confControlloCongestione.isErroreGenerico());
+					
+					GestoreCacheControlloTraffico.initialize(confControlloCongestione);
+					
+					GestorePolicyAttive.initialize(logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
+							propertiesReader.getControlloTrafficoGestorePolicyWSUrl());
+					
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Inizializzazione Gestori del ControlloTraffico");
+					return;
+				}
+				
+				File fDati = null;
+				try{
+					File fRepository = propertiesReader.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+					if(fRepository!=null){
+						if(fRepository.exists()==false){
+							throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+						}
+						if(fRepository.isDirectory()==false){
+							throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+						}
+						if(fRepository.canRead()==false){
+							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+						}
+						if(fRepository.canWrite()==false){
+							throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+						}
+						fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoImage);
+						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
+							FileInputStream fin = new FileInputStream(fDati);
+							GestorePolicyAttive.getInstance().initialize(fin,confControlloCongestione);
+							fDati.delete();
+						}
+					}
+				}catch(Exception e){
+					String img = null;
+					if(fDati!=null){
+						img = fDati.getAbsolutePath();
+					}
+					logControlloTraffico.error("Inizializzazione dell'immagine ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
+					logCore.error("Inizializzazione dell'immagine ["+img+"] per il Controllo del Traffico non riuscita: "+e.getMessage(),e);
+					msgDiag.logStartupError(e,"Inizializzazione Immagine del ControlloTraffico");
+					return;
+				}
+				
+				boolean force = true;
+				OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(force).info("Motore di gestione del Controllo del Traffico avviato correttamente");
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// *** Repository MonitorSDK ***
+			try{
+				DynamicFactory.initialize(propertiesReader.getMonitorSDK_repositoryJars());
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione DynamicFactory");
+				return;
+			}
+			
+			
+			
+			
 		
 		
 		
@@ -1370,6 +1605,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConfigurazioneSistema();
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - configurazione di sistema della Porta di Dominio");
+				}
+				if(propertiesReader.isControlloTrafficoEnabled()){
+					// MBean ControlloTraffico
+					try{
+						OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanControlloTraffico();
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"RisorsaJMX - Controllo del Traffico della Porta di Dominio");
+					}
 				}
 				
 			}
@@ -1446,6 +1689,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+	
 			
 			
 			
@@ -1820,6 +2065,93 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			
+			/* ------------ Avvia il thread per il Recovery FileSystem ------------ */
+			Logger forceLogRecoveryFileSystem = OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecovery(true);
+			try{
+				boolean debug = propertiesReader.isFileSystemRecoveryDebug();
+				
+				Logger logRecoveryFS = OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecovery(debug);
+							
+				if(propertiesReader.isFileSystemRecoveryTimerEnabled()){
+					if(debug)
+						logRecoveryFS.debug("Avvio inizializzazione thread per recovery da file system ...");
+					OpenSPCoop2Startup.this.threadFileSystemRecovery = new TimerFileSystemRecoveryThread(logRecoveryFS,
+							OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecoverySql(debug));
+					OpenSPCoop2Startup.this.threadFileSystemRecovery.start();
+					forceLogRecoveryFileSystem.info("Thread per la gestione transazioni stateful avviato correttamente");
+				}
+				else{
+					forceLogRecoveryFileSystem.info("Thread per il recovery da file system disabilitato");
+				}
+			
+			}catch(Exception e){
+				String msgError = "Inizializzazione thread per il recovery da file system non riuscita: "+e.getMessage();
+				forceLogRecoveryFileSystem.error(msgError,e);
+				msgDiag.logStartupError(e,"Inizializzazione Recovery da FileSystem");
+				return;
+			}
+			
+			
+			
+
+			
+			
+			
+			
+			
+			
+			/* ------------ Eventi (ed in oltre avvia il thread) ------------ */
+			Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
+			try{
+				if(propertiesReader.isEventiEnabled()){
+					OpenSPCoop2Startup.this.gestoreEventi = GestoreEventi.getInstance();
+					boolean debugEventi = propertiesReader.isEventiDebug();
+					Logger logEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(debugEventi);
+					
+					if(propertiesReader.isEventiRegistrazioneStatoPorta()){
+						Evento evento = new Evento();
+						evento.setTipo(TipoEvento.STATO_PORTA_DOMINIO.getValue());
+						evento.setCodice(CodiceEventoStatoPortaDominio.START.getValue());
+						evento.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
+						evento.setClusterId(clusterID);
+						OpenSPCoop2Startup.this.gestoreEventi.log(evento);
+					}
+					
+					// Timer
+					if(propertiesReader.isEventiTimerEnabled()){
+						try{
+							if(debugEventi)
+								logEventi.debug("Avvio inizializzazione thread per Eventi ...");
+							OpenSPCoop2Startup.this.threadEventi = new TimerEventi(logEventi);
+							OpenSPCoop2Startup.this.threadEventi.start();
+							forceLogEventi.info("Thread per gli Eventi avviato correttamente");
+						}catch(Exception e){
+							throw new HandlerException("Avvio timer degli eventi fallito: "+e.getMessage(),e);
+						}
+					}
+					else{
+						forceLogEventi.info("Thread per gli Eventi disabilitato");
+					}
+				}
+			}catch(Exception e){
+				String msgError = "Inizializzazione gestore eventi: "+e.getMessage();
+				forceLogEventi.error(msgError,e);
+				msgDiag.logStartupError(e,"Inizializzazione GestoreEventi");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 			/* ------------ Jminix StandaloneMiniConsole  ------------ */
 			if(propertiesReader.getPortJminixConsole()!=null){
@@ -1829,8 +2161,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					logCore.info("JminixStandaloneConsole correttamente avviata");
 				}catch(Throwable e){
 					logCore.error("Errore durante l'avvio della jminixStandaloneConsole: "+e.getMessage(),e);
+					msgDiag.logStartupError(e,"Inizializzazione JminixStandaloneConsole");
 				}
 			}
+			
+			
 			
 
 
@@ -1869,6 +2204,83 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 		OpenSPCoop2Startup.contextDestroyed = true;
 		
+		OpenSPCoop2Properties properties = null;
+		try {
+			properties = OpenSPCoop2Properties.getInstance();
+		}catch(Throwable e){}
+		
+		// Eventi
+		try{
+			String clusterID = properties.getClusterId(false);
+			boolean debugEventi = properties.isEventiDebug();
+			Logger logEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(debugEventi);
+			Evento eventoShutdown = null;
+			try{
+				if(OpenSPCoop2Startup.this.gestoreEventi!=null){
+					if(properties.isEventiRegistrazioneStatoPorta()){
+						eventoShutdown = new Evento();
+						eventoShutdown.setTipo(TipoEvento.STATO_PORTA_DOMINIO.getValue());
+						eventoShutdown.setCodice(CodiceEventoStatoPortaDominio.STOP.getValue());
+						eventoShutdown.setSeverita(SeveritaConverter.toIntValue(TipoSeverita.INFO));
+						eventoShutdown.setClusterId(clusterID);
+						OpenSPCoop2Startup.this.gestoreEventi.log(eventoShutdown);
+					}
+				}
+			}catch(Exception e){
+				logEventi.error("Errore durante la segnalazione di shutdown ('Emissione Evento'): "+e.getMessage(),e);
+				if(eventoShutdown!=null){
+					try{
+				    	if(eventoShutdown.getOraRegistrazione()==null){
+				    		eventoShutdown.setOraRegistrazione(DateManager.getDate());
+				    	}
+				    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				    	eventoShutdown.writeTo(bout, WriteToSerializerType.XML_JAXB);
+				    	bout.flush();
+				    	bout.close();
+						FileSystemSerializer.getInstance().registraEvento(bout.toByteArray(), eventoShutdown.getOraRegistrazione());
+					}catch(Exception eSerializer){
+						logEventi.error("Errore durante la registrazione su file system dell'evento: "+eSerializer.getMessage(),eSerializer);
+					}
+				}
+			}
+	
+			if(properties.isEventiTimerEnabled()){
+				try{	
+					if(debugEventi)
+						logEventi.debug("Recupero thread per gli Eventi ...");
+					if(OpenSPCoop2Startup.this.threadEventi!=null){
+						OpenSPCoop2Startup.this.threadEventi.setStop(true);
+						if(debugEventi)
+							logEventi.debug("Richiesto stop al thread per gli Eventi");
+					}else{
+						throw new Exception("Thread per gli Eventi non trovato");
+					}
+				}catch(Exception e){
+					if(logEventi!=null){
+						if(debugEventi)
+							logEventi.error("Errore durante la gestione dell'exit (ThreadEventi): "+e.getMessage(),e);
+					}
+				}
+			}
+		}catch(Throwable e){}
+		
+		// Recovery FileSystem
+		try {
+			if(properties.isFileSystemRecoveryTimerEnabled()){
+				boolean debugRecoveryFileSystem = properties.isFileSystemRecoveryDebug();
+				Logger logRecoveryFileSystem = OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecovery(debugRecoveryFileSystem);
+				if(debugRecoveryFileSystem)
+					logRecoveryFileSystem.debug("Recupero thread per il recovery da file system ...");
+				if(OpenSPCoop2Startup.this.threadFileSystemRecovery!=null){
+					OpenSPCoop2Startup.this.threadFileSystemRecovery.setStop(true);
+					if(debugRecoveryFileSystem)
+						logRecoveryFileSystem.debug("Richiesto stop al thread per il recovery da file system");
+				}else{
+					throw new Exception("Thread per il recovery da file system non trovato");
+				}	
+			}
+		}catch(Throwable e){}
+
 		// ExitHandler
 		try{
 			ExitContext context = new ExitContext();
@@ -1877,6 +2289,63 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			context.setLogCore(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			GestoreHandlers.exit(context);
 		}catch(Throwable e){}
+		
+		// Gestione Stato ControlloCongestione
+		if(properties.isControlloTrafficoEnabled()){
+			OutputStream out = null;
+			Logger logControlloTraffico = null;
+			try{
+				File fRepository = properties.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository();
+				if(fRepository!=null){
+					
+					logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(properties.isControlloTrafficoDebug());
+					
+					if(fRepository.exists()==false){
+						throw new Exception("Directory ["+fRepository.getAbsolutePath()+"] not exists");
+					}
+					if(fRepository.isDirectory()==false){
+						throw new Exception("File ["+fRepository.getAbsolutePath()+"] is not directory");
+					}
+					if(fRepository.canRead()==false){
+						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot read");
+					}
+					if(fRepository.canWrite()==false){
+						throw new Exception("File ["+fRepository.getAbsolutePath()+"] cannot write");
+					}		
+					
+					File fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoImage);
+					out = new FileOutputStream(fDati, false); // se già esiste lo sovrascrive
+					GestorePolicyAttive.getInstance().serialize(out);
+					out.flush();
+					out.close();
+					out = null;
+					
+					boolean inizializzazioneAttiva = false;
+					// Il meccanismo di ripristino dell'immagine degli eventi non sembra funzionare
+					// Lascio comunque il codice se in futuro si desidera approfindire la questione
+					if(inizializzazioneAttiva) {
+						fDati = new File(fRepository, org.openspcoop2.core.controllo_congestione.constants.Costanti.controlloTrafficoEventiImage);
+						NotificatoreEventi.getInstance().serialize(fDati);
+					}
+					
+				}
+			}catch(Throwable e){
+				if(logControlloTraffico!=null){
+					logControlloTraffico.error("Errore durante la terminazione del Controllo del Traffico: "+e.getMessage(),e);
+				}
+			}finally{
+				try{
+					if(out!=null){
+						out.flush();
+					}
+				}catch(Exception eClose){}
+				try{
+					if(out!=null){
+						out.close();
+					}
+				}catch(Exception eClose){}
+			}
+		}
 		
 		// Fermo timer
 		if(this.serverJ2EE){

@@ -216,7 +216,6 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	
-	
 	/**
 	 * Registrazione del MBean per la configurazione di sistema della PdD
 	 * 
@@ -228,6 +227,22 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 		}catch(Exception e){
 			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
 			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ConfigurazioneSistema: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	
+	/**
+	 * Registrazione del MBean per il Controllo del Traffico della PdD
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanControlloTraffico()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.ControlloTraffico.class, CostantiPdD.JMX_CONTROLLO_TRAFFICO);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ControlloTraffico: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ControlloTraffico: "+e.getMessage(),e);
 		}	
 		
 	}
@@ -263,6 +278,9 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	public Object getAttributeMBeanConfigurazioneSistema(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeAttributo);
+	}
+	public Object getAttributeMBeanControlloTraffico(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_CONTROLLO_TRAFFICO, nomeAttributo);
 	}
 
 	
@@ -337,6 +355,13 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	public Object invokeMethodMBeanConfigurazioneSistema(String nomeMetodo)throws RisorseJMXException{
 		return invoke(CostantiPdD.JMX_CONFIGURAZIONE_SISTEMA, nomeMetodo, null, null);
+	}
+	
+	public Object invokeMethodMBeanControlloTraffico(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_CONTROLLO_TRAFFICO, nomeMetodo, params, signature);
+	}
+	public Object invokeMethodMBeanControlloTraffico(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_CONTROLLO_TRAFFICO, nomeMetodo, null, null);
 	}
 
 }

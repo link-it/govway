@@ -24,6 +24,7 @@
 package org.openspcoop2.pdd.logger;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -112,21 +113,67 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopDumpBinarioPD = null;
 	/**  Logger log4j utilizzato per i dati binari del servizio PA */
 	protected static Logger loggerOpenSPCoopDumpBinarioPA = null;
+	/**  Logger log4j utilizzato per gli eventi */
+	protected static Logger loggerOpenSPCoopEventi = null;
+	protected static Logger loggerOpenSPCoopEventiError = null;
+	/**  Logger log4j utilizzato per attività di file system recovery */
+	protected static Logger loggerOpenSPCoopFileSystemRecovery = null;
+	protected static Logger loggerOpenSPCoopFileSystemRecoveryError = null;
+	/**  Logger log4j utilizzato per attività di file system recovery (sql) */
+	protected static Logger loggerOpenSPCoopFileSystemRecoverySql = null;
+	protected static Logger loggerOpenSPCoopFileSystemRecoverySqlError = null;
+	/**  Logger log4j utilizzato per il Controllo del Traffico */
+	protected static Logger loggerOpenSPCoopControlloTraffico = null;
+	protected static Logger loggerOpenSPCoopControlloTrafficoError = null;
+	/**  Logger log4j utilizzato per il Controllo del Traffico (sql) */
+	protected static Logger loggerOpenSPCoopControlloTrafficoSql = null;
+	protected static Logger loggerOpenSPCoopControlloTrafficoSqlError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
-	protected static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
-	protected static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
+	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
+	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	protected static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<ITracciaProducer>(); 
-	protected static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<String>();
+	public static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<ITracciaProducer>(); 
+	public static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<String>();
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
-	protected static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<IDumpProducer>(); 
-	protected static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<String>();
+	public static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<IDumpProducer>(); 
+	public static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<String>();
 	/** PdDContextSerializer */
 	private static IPdDContextSerializer pddContextSerializer = null;
-	
-	
+	/** LogDir */
+	private static List<File> logDirs;
+	public static List<File> getLogDirs() {
+		return logDirs;
+	}
+
 	public static boolean isLoggerOpenSPCoopConsoleStartupAgganciatoLog(){
 		return OpenSPCoop2Logger.loggerOpenSPCoopConsoleStartupAgganciatoLog;
+	}
+	
+	private static List<String> filesCheck;
+	private static void initializeLogDirs(Properties p, boolean append){
+		
+		if(!append) {
+			logDirs = new ArrayList<>();
+			filesCheck = new ArrayList<>();
+		}
+		
+		Enumeration<?> en = p.keys();
+		while (en.hasMoreElements()) {
+			String key = (String) en.nextElement();
+			key = key.trim();
+			String value = p.getProperty(key);
+			value = value.trim();
+			if(key.endsWith(".fileName") || key.endsWith(".filePattern")) {
+				File fTmp = new File(value);
+				if(fTmp.getParentFile()!=null) {
+					if(filesCheck.contains(fTmp.getParentFile().getAbsolutePath())==false) {
+						logDirs.add(fTmp.getParentFile());
+						filesCheck.add(fTmp.getParentFile().getAbsolutePath());
+					}
+				}
+			}
+		}
+		
 	}
 	
 	/**
@@ -175,6 +222,7 @@ public class OpenSPCoop2Logger {
 			}
 			
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			initializeLogDirs(loggerProperties, false);
 			
 			return true;
 		}catch(Exception e){
@@ -229,6 +277,7 @@ public class OpenSPCoop2Logger {
 			}
 
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			initializeLogDirs(loggerProperties, false);
 			
 			// STARTUP CONSOLE
 			String tmp = loggerProperties.getProperty("logger.openspcoop2_startup.level");
@@ -342,7 +391,7 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopConnettori = LoggerWrapperFactory.getLogger("openspcoop2.connettori");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConnettori==null)
 				throw new Exception("Logger openspcoop2.connettori non trovato");
-			
+						
 			// RAW DATA SERVIZIO PD LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD = LoggerWrapperFactory.getLogger("openspcoop2.dumpBinarioPD");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPD==null)
@@ -352,6 +401,56 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA = LoggerWrapperFactory.getLogger("openspcoop2.dumpBinarioPA");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA==null)
 				throw new Exception("Logger openspcoop2.dumpBinarioPA non trovato");
+			
+			// EVENTI LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopEventi = LoggerWrapperFactory.getLogger("openspcoop2.eventi");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopEventi==null)
+				throw new Exception("Logger openspcoop2.eventi non trovato");
+			
+			// EVENTI LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopEventiError = LoggerWrapperFactory.getLogger("openspcoop2.eventi.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopEventiError==null)
+				throw new Exception("Logger openspcoop2.eventi.error non trovato");
+			
+			// FILE SYSTEM RECOVERY LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecovery = LoggerWrapperFactory.getLogger("openspcoop2.recoveryFileSystem");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecovery==null)
+				throw new Exception("Logger openspcoop2.recoveryFileSystem non trovato");
+			
+			// FILE SYSTEM RECOVERY LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoveryError = LoggerWrapperFactory.getLogger("openspcoop2.recoveryFileSystem.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoveryError==null)
+				throw new Exception("Logger openspcoop2.recoveryFileSystem.error non trovato");
+			
+			// FILE SYSTEM RECOVERY SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySql = LoggerWrapperFactory.getLogger("openspcoop2.recoveryFileSystem.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySql==null)
+				throw new Exception("Logger openspcoop2.recoveryFileSystem.sql non trovato");
+			
+			// FILE SYSTEM RECOVERY SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySqlError = LoggerWrapperFactory.getLogger("openspcoop2.recoveryFileSystem.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySqlError==null)
+				throw new Exception("Logger openspcoop2.recoveryFileSystem.sql.error non trovato");
+			
+			// CONTROLLO TRAFFICO LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopControlloTraffico = LoggerWrapperFactory.getLogger("openspcoop2.controlloTraffico");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTraffico==null)
+				throw new Exception("Logger openspcoop2.controlloTraffico non trovato");
+			
+			// CONTROLLO TRAFFICO LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoError = LoggerWrapperFactory.getLogger("openspcoop2.controlloTraffico.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoError==null)
+				throw new Exception("Logger openspcoop2.controlloTraffico.error non trovato");
+			
+			// CONTROLLO TRAFFICO SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSql = LoggerWrapperFactory.getLogger("openspcoop2.controlloTraffico.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSql==null)
+				throw new Exception("Logger openspcoop2.controlloTraffico.sql non trovato");
+			
+			// CONTROLLO TRAFFICO SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError = LoggerWrapperFactory.getLogger("openspcoop2.controlloTraffico.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError==null)
+				throw new Exception("Logger openspcoop2.controlloTraffico.sql.error non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
@@ -444,6 +543,7 @@ public class OpenSPCoop2Logger {
 					}
 					logConsole.info("Protocol '"+protocol+"': Log4j config append");
 					LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);
+					initializeLogDirs(loggerPropertiesProtocolAdjunct, true);
 					
 					Logger log = LoggerWrapperFactory.getLogger(CostantiPdD.getOpenspcoop2LoggerFactoryName(protocol));
 					protocolFactoryManager.getProtocolFactoryByName(protocol).initProtocolLogger(log);
@@ -769,6 +869,51 @@ public class OpenSPCoop2Logger {
 	
 	public static Logger getLoggerOpenSPCoopDumpBinarioPA() {
 		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA;
+	}
+	
+	public static Logger getLoggerOpenSPCoopEventi(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopEventi;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopEventiError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopFileSystemRecovery(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecovery;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoveryError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopFileSystemRecoverySql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopFileSystemRecoverySqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopControlloTraffico(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTraffico;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopControlloTrafficoSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError;
+		}
 	}
 	
 	public static List<IDiagnosticProducer> getLoggerMsgDiagnosticoOpenSPCoopAppender() {
