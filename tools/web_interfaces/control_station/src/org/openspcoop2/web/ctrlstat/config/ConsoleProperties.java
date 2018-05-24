@@ -257,81 +257,9 @@ public class ConsoleProperties {
 	}
 	
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
-		
-		PropertiesSourceConfiguration config = new PropertiesSourceConfiguration();
-		config.setId("messageSecurity");
-		
-		String dir = this.readProperty(false, "messageSecurity.dir");
-		if(dir!=null) {
-			File f = new File(dir);
-			if(f.exists()) {
-				config.setDirectory(f.getAbsolutePath());
-			}
-		}
-		
-		String dir_refresh = this.readProperty(false, "messageSecurity.dir.refresh");
-		if(dir_refresh!=null) {
-			config.setUpdate("true".equalsIgnoreCase(dir_refresh.trim()));
-		}
-		
-		String buildInt = this.readProperty(false, "messageSecurity.builtIn");
-		if(buildInt!=null) {
-			try {
-				//System.out.println("BASE: "+buildInt);
-				InputStream is = ConsoleProperties.class.getResourceAsStream(buildInt);
-				try {
-					if(is!=null) {
-						byte [] zipContent = Utilities.getAsByteArray(is);
-						is.close();
-						is = null;
-						File fTmp = File.createTempFile("zipMessage", ".zip");
-						//System.out.println("TMP: "+fTmp.getAbsolutePath());
-						try {
-							FileSystemUtilities.writeFile(fTmp, zipContent);
-							ZipFile zip = new ZipFile(fTmp);
-							Iterator<ZipEntry> itZip = ZipUtilities.entries(zip, true);
-							List<byte[]> builtIdList = new ArrayList<>();
-							while (itZip.hasNext()) {
-								ZipEntry zipEntry = (ZipEntry) itZip.next();
-								if(zipEntry.isDirectory() == false) {
-									InputStream isZip = zip.getInputStream(zipEntry);
-									try {
-										//System.out.println("LEGGO ["+zipEntry.getName()+"]");
-										byte [] bytes = Utilities.getAsByteArray(isZip);
-										builtIdList.add(bytes);
-									}finally {
-										try {
-											if(isZip!=null) {
-												isZip.close();
-											}
-										}catch(Exception e) {}
-									}
-								}
-							}
-							config.setBuiltIn(builtIdList);
-						}finally {
-							fTmp.delete();
-						}
-					}
-				}finally {
-					try {
-						if(is!=null) {
-							is.close();
-						}
-					}catch(Exception e) {}
-				}
-			}catch(Exception e) {
-				throw new UtilsException(e.getMessage(),e);
-			}
-		}
-		
-		String builtIn_refresh = this.readProperty(false, "messageSecurity.builtIn.refresh");
-		if(builtIn_refresh!=null) {
-			config.setUpdate("true".equalsIgnoreCase(builtIn_refresh.trim()));
-		}
-		
-		return config;
-
+		return _getSourceConfiguration("messageSecurity", 
+				"messageSecurity.dir", "messageSecurity.dir.refresh", 
+				"messageSecurity.builtIn", "messageSecurity.builtIn.refresh");
 	}
 	
 	
@@ -1127,4 +1055,86 @@ public class ConsoleProperties {
 		return lista;
 	}
 
+
+	/* ---- Utiltiies interne ------ */
+	
+	public PropertiesSourceConfiguration _getSourceConfiguration(String id, 
+			String propertyExternalDir, String propertyExternalDirRefresh,
+			String propertyBuiltIn, String propertyBuiltInRefresh) throws UtilsException {
+		
+		PropertiesSourceConfiguration config = new PropertiesSourceConfiguration();
+		config.setId(id);
+		
+		String dir = this.readProperty(false, propertyExternalDir);
+		if(dir!=null) {
+			File f = new File(dir);
+			if(f.exists()) {
+				config.setDirectory(f.getAbsolutePath());
+			}
+		}
+		
+		String dir_refresh = this.readProperty(false, propertyExternalDirRefresh);
+		if(dir_refresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(dir_refresh.trim()));
+		}
+		
+		String buildInt = this.readProperty(false, propertyBuiltIn);
+		if(buildInt!=null) {
+			try {
+				//System.out.println("BASE: "+buildInt);
+				InputStream is = ConsoleProperties.class.getResourceAsStream(buildInt);
+				try {
+					if(is!=null) {
+						byte [] zipContent = Utilities.getAsByteArray(is);
+						is.close();
+						is = null;
+						File fTmp = File.createTempFile("propertiesSourceConfiguration", ".zip");
+						//System.out.println("TMP: "+fTmp.getAbsolutePath());
+						try {
+							FileSystemUtilities.writeFile(fTmp, zipContent);
+							ZipFile zip = new ZipFile(fTmp);
+							Iterator<ZipEntry> itZip = ZipUtilities.entries(zip, true);
+							List<byte[]> builtIdList = new ArrayList<>();
+							while (itZip.hasNext()) {
+								ZipEntry zipEntry = (ZipEntry) itZip.next();
+								if(zipEntry.isDirectory() == false) {
+									InputStream isZip = zip.getInputStream(zipEntry);
+									try {
+										//System.out.println("LEGGO ["+zipEntry.getName()+"]");
+										byte [] bytes = Utilities.getAsByteArray(isZip);
+										builtIdList.add(bytes);
+									}finally {
+										try {
+											if(isZip!=null) {
+												isZip.close();
+											}
+										}catch(Exception e) {}
+									}
+								}
+							}
+							config.setBuiltIn(builtIdList);
+						}finally {
+							fTmp.delete();
+						}
+					}
+				}finally {
+					try {
+						if(is!=null) {
+							is.close();
+						}
+					}catch(Exception e) {}
+				}
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		
+		String builtIn_refresh = this.readProperty(false, propertyBuiltInRefresh);
+		if(builtIn_refresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(builtIn_refresh.trim()));
+		}
+		
+		return config;
+
+	}
 }
