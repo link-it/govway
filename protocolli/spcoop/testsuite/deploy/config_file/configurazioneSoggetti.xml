@@ -4869,6 +4869,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -4891,6 +4894,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="WSSNonAutorizzato" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -4913,6 +4919,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSTimestamp" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -4934,6 +4943,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -4960,6 +4972,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -4984,6 +4999,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5011,7 +5029,10 @@
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContent">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsContent" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5040,6 +5061,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsElement" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5068,6 +5092,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsContentOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5096,6 +5123,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsElementOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5124,6 +5154,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsOp2FormatOneOnly" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5152,6 +5185,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptP12Attachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5178,6 +5214,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptLocalForwardSoloRichiesta" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5195,6 +5234,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5223,6 +5265,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5251,6 +5296,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5280,6 +5328,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContent" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5309,6 +5360,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElement" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5338,6 +5392,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContentOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5367,6 +5424,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElementOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5396,6 +5456,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsOp2FormatOneOnly" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5425,6 +5488,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12Attachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5454,6 +5520,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForwardSolaRichiesta" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5471,6 +5540,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5501,6 +5573,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureEncrypt" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature Encrypt" />
@@ -5534,6 +5609,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptSignature" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt Signature" />
@@ -5567,6 +5645,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureEncryptAttachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature Encrypt" />
@@ -5600,6 +5681,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptSignatureAttachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt Signature" />
@@ -5635,6 +5719,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5672,6 +5759,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConFiltroDuplicatiWSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5712,6 +5802,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAS_Sincrono" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -5750,6 +5843,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -5786,6 +5882,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptError" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5813,6 +5912,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureError" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -5846,6 +5948,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_MustUnderstand1" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5874,6 +5979,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1_PdDActorMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_MustUnderstand1" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5909,6 +6017,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_MustUnderstand1" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -5937,6 +6048,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_MustUnderstand1" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5972,6 +6086,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6000,6 +6117,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6034,6 +6154,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6062,6 +6185,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6096,6 +6222,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1eActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_MustUnderstand1_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6124,6 +6253,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1eActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_MustUnderstand1_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6158,6 +6290,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Signature_MustUnderstand1_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -6186,6 +6321,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_Encrypt_MustUnderstand1_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -6218,6 +6356,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSAnnidamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_SignatureAndEncrypt_MustUnderstand1_ActorClient" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
@@ -6267,6 +6408,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20Unsigned" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6281,6 +6425,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20Signed" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6295,6 +6442,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6309,6 +6459,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedSendKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6323,6 +6476,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedP12SendKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6337,18 +6493,27 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedHolderOfKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKeyP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedHolderOfKeyP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlySubject">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlySubject" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6363,6 +6528,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlyAuthn" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6377,6 +6545,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlyAuthz" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6391,6 +6562,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedDetachWSSDisable" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6408,6 +6582,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyLocaleOk" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6423,6 +6600,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyLocaleKo" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6438,6 +6618,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyRemotaOk" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6455,6 +6638,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyRemotaKo" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6475,6 +6661,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11Unsigned" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6489,6 +6678,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11Signed" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6503,6 +6695,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6517,6 +6712,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedSendKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6531,6 +6729,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedP12SendKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6545,18 +6746,27 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedHolderOfKey" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKeyP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedHolderOfKeyP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlySubject">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlySubject" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6571,6 +6781,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlyAuthn" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6585,6 +6798,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlyAuthz" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenUnsigned" />
@@ -6599,6 +6815,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedDetachWSSDisable" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6616,6 +6835,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyLocaleOk" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6631,6 +6853,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyLocaleKo" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6646,6 +6871,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyRemotaOk" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6663,6 +6891,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyRemotaKo" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="SAMLTokenSigned" />
@@ -6683,6 +6914,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenDigest" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="UsernameToken" />
@@ -6697,6 +6931,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenText" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="UsernameToken" />
@@ -6711,6 +6948,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenNoPassword" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="UsernameTokenNoPassword" />
@@ -6725,6 +6965,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenSignature" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
 <!--
 		TODO: capire come funziona la verifica
             <message-security>
