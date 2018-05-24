@@ -16,8 +16,8 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.controllo_traffico.CategoriaEventoCongestione;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione;
+import org.openspcoop2.pdd.core.controllo_traffico.CategoriaEventoControlloTraffico;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
 import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
@@ -187,7 +187,7 @@ public class PolicyVerifier {
 			String descrizioneStatoAllarmeRilevato = null;
 			if(isApplicabile && risultatoVerificaPolicy.isApplicabilitaStatoAllarme()){
 				
-				if(((ConfigurazioneControlloCongestione)activePolicy.getConfigurazioneControlloCongestione()).isNotifierEnabled()==false){
+				if(((ConfigurazioneControlloTraffico)activePolicy.getConfigurazioneControlloTraffico()).isNotifierEnabled()==false){
 					throw new Exception("Modulo Allarmi non abilitato. La Policy deve essere applicata condizionalmente allo stato di un allarme");
 				}
 				
@@ -229,7 +229,7 @@ public class PolicyVerifier {
 			}
 			
 			// aggiorno contatori
-			if(isApplicabile || !activePolicy.getConfigurazioneControlloCongestione().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
+			if(isApplicabile || !activePolicy.getConfigurazioneControlloTraffico().isElaborazioneRealtime_incrementaSoloPolicyApplicabile()){
 			
 				datiCollezionatiReaded = gestorePolicyAttive.getActiveThreadsPolicy(activePolicy).updateDatiStartRequestApplicabile(logCC, datiGroupBy);
 				now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
@@ -578,7 +578,7 @@ public class PolicyVerifier {
 					/* // RIMETTERE
 					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
 							+"_"+
-							CodiceEventoControlloCongestione.VIOLAZIONE_WARNING_ONLY.getValue()
+							CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY.getValue()
 							+"_"+
 							activePolicy.getInstanceConfiguration().getIdActivePolicy());
 							*/
@@ -588,7 +588,7 @@ public class PolicyVerifier {
 					/* // RIMETTERE
 					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
 							+"_"+
-							CodiceEventoControlloCongestione.VIOLAZIONE.getValue()
+							CodiceEventoControlloTraffico.VIOLAZIONE.getValue()
 							+"_"+
 							activePolicy.getInstanceConfiguration().getIdActivePolicy());
 							*/
@@ -625,12 +625,12 @@ public class PolicyVerifier {
 			String idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy);
 			
 			if(violazionePolicy){
-				NotificatoreEventi.getInstance().log(CategoriaEventoCongestione.POLICY, 
+				NotificatoreEventi.getInstance().log(CategoriaEventoControlloTraffico.POLICY, 
 						idPolicyConGruppo,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}
 			if(violazionePolicy_warningOnly){
-				NotificatoreEventi.getInstance().log(CategoriaEventoCongestione.POLICY_WARNING_ONLY, 
+				NotificatoreEventi.getInstance().log(CategoriaEventoControlloTraffico.POLICY_WARNING_ONLY, 
 						idPolicyConGruppo,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}

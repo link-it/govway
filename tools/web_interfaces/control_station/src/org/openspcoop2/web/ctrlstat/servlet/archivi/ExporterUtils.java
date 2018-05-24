@@ -362,10 +362,10 @@ public class ExporterUtils {
 		}
 		
 		// controllo congestione
-		if(archive.getControlloCongestione_activePolicies()!=null && archive.getControlloCongestione_activePolicies().size()>0) {
+		if(archive.getControlloTraffico_activePolicies()!=null && archive.getControlloTraffico_activePolicies().size()>0) {
 			List<ArchiveActivePolicy> listFiltrata = new ArrayList<>();
-			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
-				ArchiveActivePolicy archivePolicy = archive.getControlloCongestione_activePolicies().get(i);
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
 				boolean filtra = false;
 				if(archivePolicy.getPolicy().getFiltro()!=null) {
 					if(archivePolicy.getPolicy().getFiltro().getTipoErogatore()!=null) {
@@ -388,12 +388,12 @@ public class ExporterUtils {
 					listFiltrata.add(archivePolicy);
 				}
 			}
-			while(archive.getControlloCongestione_activePolicies().size()>0) {
-				archive.getControlloCongestione_activePolicies().remove(0);
+			while(archive.getControlloTraffico_activePolicies().size()>0) {
+				archive.getControlloTraffico_activePolicies().remove(0);
 			}
 			if(listFiltrata.size()>0) {
 				for (ArchiveActivePolicy archiveFiltrato : listFiltrata) {
-					archive.getControlloCongestione_activePolicies().add(archiveFiltrato);		
+					archive.getControlloTraffico_activePolicies().add(archiveFiltrato);		
 				}
 			}
 		}

@@ -189,7 +189,7 @@ public class ConfigurazioneGeneraleFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(ConfigurazioneGenerale.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("congestion_config","id","seq_congestion_config","congestion_config_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("ct_config","id","seq_ct_config","ct_config_init_seq");
 			}
 			
 			else{

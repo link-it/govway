@@ -35,8 +35,8 @@ public class ArchiveEngine extends AbstractArchiveEngine {
 
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloCongestione) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloCongestione);
+			JDBCServiceManager serviceManagerControlloTraffico) {
+		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloTraffico);
 	}
 
 	@Override

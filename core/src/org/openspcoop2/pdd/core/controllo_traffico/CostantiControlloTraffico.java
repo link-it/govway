@@ -1,13 +1,13 @@
 package org.openspcoop2.pdd.core.controllo_traffico;
 
-public class CostantiControlloCongestione {
+public class CostantiControlloTraffico {
 
 	public final static String PDD_CONTEXT_PDD_CONGESTIONATA = "PDD_CONGESTIONATA";
 	
-	public final static String PARAMETRO_CONTROLLO_CONGESTIONE_REDEFINE_TEMPI_RISPOSTA = "CCRedefineTempiRisposta";
-	public final static String PARAMETRO_CONTROLLO_CONGESTIONE_CONNECTION_TIMEOUT = "CCConnectionTimeout";
-	public final static String PARAMETRO_CONTROLLO_CONGESTIONE_READ_TIMEOUT = "CCReadTimeout";
-	public final static String PARAMETRO_CONTROLLO_CONGESTIONE_TEMPO_MEDIO_RISPOSTA = "CCTempoMedioRisposta";
+	public final static String PARAMETRO_CONTROLLO_TRAFFICO_REDEFINE_TEMPI_RISPOSTA = "CTRedefineTempiRisposta";
+	public final static String PARAMETRO_CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT = "CTConnectionTimeout";
+	public final static String PARAMETRO_CONTROLLO_TRAFFICO_READ_TIMEOUT = "CTReadTimeout";
+	public final static String PARAMETRO_CONTROLLO_TRAFFICO_TEMPO_MEDIO_RISPOSTA = "CTTempoMedioRisposta";
 	
 	public final static String HTML_ERROR_TITLE_TEMPLATE = "TITLE"; 
 	public final static String HTML_ERROR_MESSAGE_TEMPLATE = "MESSAGE"; 

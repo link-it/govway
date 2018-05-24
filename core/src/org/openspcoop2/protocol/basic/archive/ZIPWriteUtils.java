@@ -95,10 +95,10 @@ public class ZIPWriteUtils {
 
 	private org.openspcoop2.core.registry.utils.serializer.JaxbSerializer jaxbRegistrySerializer = null;
 	private org.openspcoop2.core.config.utils.serializer.JaxbSerializer jaxbConfigSerializer = null;
-	private org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer jaxbControlloCongestioneSerializer = null;
+	private org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer jaxbControlloTrafficoSerializer = null;
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 	private org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsConfig = null;
-	private org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsControlloCongestione = null;
+	private org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsControlloTraffico = null;
 	
 	
 	public ZIPWriteUtils(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException{
@@ -109,10 +109,10 @@ public class ZIPWriteUtils {
 		
 		this.jaxbRegistrySerializer = new org.openspcoop2.core.registry.utils.serializer.JaxbSerializer();
 		this.jaxbConfigSerializer = new org.openspcoop2.core.config.utils.serializer.JaxbSerializer();
-		this.jaxbControlloCongestioneSerializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer();
+		this.jaxbControlloTrafficoSerializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbSerializer();
 		this.cleanerOpenSPCoop2ExtensionsRegistry = new org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions();
 		this.cleanerOpenSPCoop2ExtensionsConfig = new org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions();
-		this.cleanerOpenSPCoop2ExtensionsControlloCongestione = new org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions();
+		this.cleanerOpenSPCoop2ExtensionsControlloTraffico = new org.openspcoop2.core.controllo_traffico.utils.CleanerOpenSPCoop2Extensions();
 		
 	}
 	
@@ -183,9 +183,9 @@ public class ZIPWriteUtils {
 				method = this.jaxbConfigSerializer.getClass().getMethod("toByteArray", object.getClass());
 				bytes = (byte[]) method.invoke(this.jaxbConfigSerializer, object);
 				break;
-			case CONTROLLO_CONGESTIONE:
-				method = this.jaxbControlloCongestioneSerializer.getClass().getMethod("toByteArray", object.getClass());
-				bytes = (byte[]) method.invoke(this.jaxbControlloCongestioneSerializer, object);
+			case CONTROLLO_TRAFFICO:
+				method = this.jaxbControlloTrafficoSerializer.getClass().getMethod("toByteArray", object.getClass());
+				bytes = (byte[]) method.invoke(this.jaxbControlloTrafficoSerializer, object);
 				break;
 			}
 			
@@ -250,41 +250,41 @@ public class ZIPWriteUtils {
 				}
 			}
 			
-			// controlloCongestione
-			if(archive.getControlloCongestione_configurazione()!=null){
-				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
-						Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_FILE_NAME;
+			// controlloTraffico
+			if(archive.getControlloTraffico_configurazione()!=null){
+				nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar+
+						Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_FILE_NAME;
 				zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
-				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneCC = archive.getControlloCongestione_configurazione();
-				this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(configurazioneCC);
-				write(zipOut, "ControlloCongestione_Configurazione", "", SerializationType.CONTROLLO_CONGESTIONE, configurazioneCC);
+				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneCC = archive.getControlloTraffico_configurazione();
+				this.cleanerOpenSPCoop2ExtensionsControlloTraffico.clean(configurazioneCC);
+				write(zipOut, "ControlloTraffico_Configurazione", "", SerializationType.CONTROLLO_TRAFFICO, configurazioneCC);
 			}
 			
-			// controlloCongestione (configurationPolicy)
-			if(archive.getControlloCongestione_configurationPolicies()!=null && archive.getControlloCongestione_configurationPolicies().size()>0){
-				for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
-					ArchiveConfigurationPolicy archiveCC = archive.getControlloCongestione_configurationPolicies().get(i);
-					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
-							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIG_POLICY_DIR+File.separatorChar+
+			// controlloTraffico (configurationPolicy)
+			if(archive.getControlloTraffico_configurationPolicies()!=null && archive.getControlloTraffico_configurationPolicies().size()>0){
+				for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
+					ArchiveConfigurationPolicy archiveCC = archive.getControlloTraffico_configurationPolicies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_CONFIG_POLICY_DIR+File.separatorChar+
 							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getNomePolicy())+".xml";
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy policy = archiveCC.getPolicy();
-					this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(policy);
-					write(zipOut, "ControlloCongestione_ConfigurazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_CONGESTIONE, policy);
+					this.cleanerOpenSPCoop2ExtensionsControlloTraffico.clean(policy);
+					write(zipOut, "ControlloTraffico_ConfigurazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_TRAFFICO, policy);
 				}
 			}
 			
-			// controlloCongestione (activePolicy)
-			if(archive.getControlloCongestione_activePolicies()!=null && archive.getControlloCongestione_activePolicies().size()>0){
-				for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
-					ArchiveActivePolicy archiveCC = archive.getControlloCongestione_activePolicies().get(i);
-					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar+
-							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_ACTIVE_POLICY_DIR+File.separatorChar+
+			// controlloTraffico (activePolicy)
+			if(archive.getControlloTraffico_activePolicies()!=null && archive.getControlloTraffico_activePolicies().size()>0){
+				for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+					ArchiveActivePolicy archiveCC = archive.getControlloTraffico_activePolicies().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar+
+							Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_ACTIVE_POLICY_DIR+File.separatorChar+
 							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveCC.getNomePolicy())+".xml";
 					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
 					org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = archiveCC.getPolicy();
-					this.cleanerOpenSPCoop2ExtensionsControlloCongestione.clean(policy);
-					write(zipOut, "ControlloCongestione_AttivazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_CONGESTIONE, policy);
+					this.cleanerOpenSPCoop2ExtensionsControlloTraffico.clean(policy);
+					write(zipOut, "ControlloTraffico_AttivazionePolicy", archiveCC.getNomePolicy(), SerializationType.CONTROLLO_TRAFFICO, policy);
 				}
 			}
 			
@@ -1581,6 +1581,6 @@ public class ZIPWriteUtils {
 
 enum SerializationType {
 	
-	CONFIG, REGISTRY, CONTROLLO_CONGESTIONE
+	CONFIG, REGISTRY, CONTROLLO_TRAFFICO
 	
 }

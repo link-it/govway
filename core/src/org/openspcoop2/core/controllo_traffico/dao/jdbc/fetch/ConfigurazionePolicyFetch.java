@@ -194,7 +194,7 @@ public class ConfigurazionePolicyFetch extends AbstractJDBCFetch {
 		try{
 
 			if(model.equals(ConfigurazionePolicy.model())){
-				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("congestion_config_policy","id","seq_congestion_config_policy","congestion_config_policy_init_seq");
+				return new org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject("ct_config_policy","id","seq_ct_config_policy","ct_config_policy_init_seq");
 			}
 			
 			else{

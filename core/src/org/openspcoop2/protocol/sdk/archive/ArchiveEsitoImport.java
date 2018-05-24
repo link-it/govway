@@ -49,9 +49,9 @@ public class ArchiveEsitoImport {
 
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiFruitori = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
-	private ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloCongestione_configurazione;
-	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
-	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloTraffico_configurazione;
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_configurationPolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
 	private ArchiveEsitoImportDetailConfigurazione<Configurazione> configurazionePdD;
 
@@ -103,21 +103,21 @@ public class ArchiveEsitoImport {
 		return this.accordiFruitori;
 	}
 
-	public ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> getControlloCongestione_configurazione() {
-		return this.controlloCongestione_configurazione;
+	public ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> getControlloTraffico_configurazione() {
+		return this.controlloTraffico_configurazione;
 	}
 
-	public void setControlloCongestione_configurazione(
-			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloCongestione_configurazione) {
-		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
+	public void setControlloTraffico_configurazione(
+			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> controlloTraffico_configurazione) {
+		this.controlloTraffico_configurazione = controlloTraffico_configurazione;
 	}
 
-	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloCongestione_configurationPolicies() {
-		return this.controlloCongestione_configurationPolicies;
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloTraffico_configurationPolicies() {
+		return this.controlloTraffico_configurationPolicies;
 	}
 
-	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloCongestione_activePolicies() {
-		return this.controlloCongestione_activePolicies;
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getControlloTraffico_activePolicies() {
+		return this.controlloTraffico_activePolicies;
 	}
 	
 	public ArchiveEsitoImportDetailConfigurazione<Configurazione> getConfigurazionePdD() {

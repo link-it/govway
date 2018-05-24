@@ -319,7 +319,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyChange extend
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;
+			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 			
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 

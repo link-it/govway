@@ -26,15 +26,15 @@ import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
- * Enumeration dell'elemento CodiceEventoControlloCongestione xsd (tipo:string) 
+ * Enumeration dell'elemento CodiceEventoControlloTraffico xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-@javax.xml.bind.annotation.XmlType(name = "CodiceEventoControlloCongestione")
+@javax.xml.bind.annotation.XmlType(name = "CodiceEventoControlloTraffico")
 @javax.xml.bind.annotation.XmlEnum(String.class)
-public enum CodiceEventoControlloCongestione implements IEnumeration , Serializable , Cloneable {
+public enum CodiceEventoControlloTraffico implements IEnumeration , Serializable , Cloneable {
 
 	@javax.xml.bind.annotation.XmlEnumValue("Violazione")
 	VIOLAZIONE ("Violazione"),
@@ -56,7 +56,7 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 
 
 	/** Official Constructor */
-	CodiceEventoControlloCongestione(String value)
+	CodiceEventoControlloTraffico(String value)
 	{
 		this.value = value;
 	}
@@ -67,7 +67,7 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 	public String toString(){
 		return this.value;
 	}
-	public boolean equals(CodiceEventoControlloCongestione object){
+	public boolean equals(CodiceEventoControlloTraffico object){
 		if(object==null)
 			return false;
 		if(object.getValue()==null)
@@ -84,10 +84,10 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof CodiceEventoControlloCongestione) ){
+		if( !(object instanceof CodiceEventoControlloTraffico) ){
 			throw new RuntimeException("Wrong type: "+object.getClass().getName());
 		}
-		return this.equals(((CodiceEventoControlloCongestione)object));
+		return this.equals(((CodiceEventoControlloTraffico)object));
 	}
 	public String toString(boolean reportHTML){
 		return toString();
@@ -108,7 +108,7 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoControlloCongestione tmp : values()) {
+		for (CodiceEventoControlloTraffico tmp : values()) {
 			res[i]=tmp.getValue();
 			i++;
 		}
@@ -117,7 +117,7 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 	public static String[] toStringArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoControlloCongestione tmp : values()) {
+		for (CodiceEventoControlloTraffico tmp : values()) {
 			res[i]=tmp.toString();
 			i++;
 		}
@@ -126,7 +126,7 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 	public static String[] toEnumNameArray(){
 		String[] res = new String[values().length];
 		int i=0;
-		for (CodiceEventoControlloCongestione tmp : values()) {
+		for (CodiceEventoControlloTraffico tmp : values()) {
 			res[i]=tmp.name();
 			i++;
 		}
@@ -137,16 +137,16 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 		return toEnumConstant(value)!=null;
 	}
 	
-	public static CodiceEventoControlloCongestione toEnumConstant(String value){
+	public static CodiceEventoControlloTraffico toEnumConstant(String value){
 		try{
 			return toEnumConstant(value,false);
 		}catch(NotFoundException notFound){
 			return null;
 		}
 	}
-	public static CodiceEventoControlloCongestione toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
-		CodiceEventoControlloCongestione res = null;
-		for (CodiceEventoControlloCongestione tmp : values()) {
+	public static CodiceEventoControlloTraffico toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
+		CodiceEventoControlloTraffico res = null;
+		for (CodiceEventoControlloTraffico tmp : values()) {
 			if(tmp.getValue().equals(value)){
 				res = tmp;
 				break;
@@ -166,8 +166,8 @@ public enum CodiceEventoControlloCongestione implements IEnumeration , Serializa
 		}
 	}
 	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
-		CodiceEventoControlloCongestione res = null;
-		for (CodiceEventoControlloCongestione tmp : values()) {
+		CodiceEventoControlloTraffico res = null;
+		for (CodiceEventoControlloTraffico tmp : values()) {
 			if(tmp.toString().equals(value)){
 				res = tmp;
 				break;

@@ -401,44 +401,44 @@ public class ImporterArchiveUtils {
 			}
 			
 						
-			// Controllo Congestione (Configurazione)
-			if(archive.getControlloCongestione_configurazione()!=null){
-				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione = archive.getControlloCongestione_configurazione();
+			// Controllo Traffico (Configurazione)
+			if(archive.getControlloTraffico_configurazione()!=null){
+				org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione = archive.getControlloTraffico_configurazione();
 				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> detail = 
 						new ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale>(configurazione);
 				try{
-					this.importControlloCongestione_configurazione(configurazione, detail);
+					this.importControlloTraffico_configurazione(configurazione, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.setControlloCongestione_configurazione(detail);
+				esito.setControlloTraffico_configurazione(detail);
 			}
 					
-			// Controllo Congestione (ConfigurazionePolicy)
-			for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
-				ArchiveConfigurationPolicy archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+			// Controllo Traffico (ConfigurazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
+				ArchiveConfigurationPolicy archiveCCPolicy = archive.getControlloTraffico_configurationPolicies().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
 				try{
-					this.importControlloCongestione_configurationPolicy(archiveCCPolicy, detail);
+					this.importControlloTraffico_configurationPolicy(archiveCCPolicy, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.getControlloCongestione_configurationPolicies().add(detail);
+				esito.getControlloTraffico_configurationPolicies().add(detail);
 			}
 			
-			// Controllo Congestione (AttivazionePolicy)
-			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
-				ArchiveActivePolicy archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+			// Controllo Traffico (AttivazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveCCPolicy);
 				try{
-					this.importControlloCongestione_activePolicy(archiveCCPolicy, detail);
+					this.importControlloTraffico_activePolicy(archiveCCPolicy, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.getControlloCongestione_activePolicies().add(detail);
+				esito.getControlloTraffico_activePolicies().add(detail);
 			}
 			
 			
@@ -2319,29 +2319,29 @@ public class ImporterArchiveUtils {
 	
 	
 	
-	public void importControlloCongestione_configurazione(org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione, 
+	public void importControlloTraffico_configurazione(org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione, 
 			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> detail){		
 		try{
 			// update
-			this.importerEngine.updateControlloCongestione_configurazione(configurazione);
+			this.importerEngine.updateControlloTraffico_configurazione(configurazione);
 			detail.setState(ArchiveStatoImport.UPDATED);
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'import della configurazione del controllo congestione: "+e.getMessage(),e);
+			this.log.error("Errore durante l'import della configurazione di controllo del traffico: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
 	}
 	
 	
-	public void importControlloCongestione_configurationPolicy(ArchiveConfigurationPolicy archivePolicy,ArchiveEsitoImportDetail detail){
+	public void importControlloTraffico_configurationPolicy(ArchiveConfigurationPolicy archivePolicy,ArchiveEsitoImportDetail detail){
 		
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
 			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
-				if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)){
+				if(this.importerEngine.existsControlloTraffico_configurationPolicy(nomePolicy)){
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
 					return;
 				}
@@ -2370,21 +2370,21 @@ public class ImporterArchiveUtils {
 			
 			// --- upload ---
 			boolean create = false;
-			if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)){
+			if(this.importerEngine.existsControlloTraffico_configurationPolicy(nomePolicy)){
 				
-				ConfigurazionePolicy old = this.importerEngine.getControlloCongestione_configurationPolicy(nomePolicy);
+				ConfigurazionePolicy old = this.importerEngine.getControlloTraffico_configurationPolicy(nomePolicy);
 				archivePolicy.getPolicy().setId(old.getId());
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
 
 				// update
-				this.importerEngine.updateControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+				this.importerEngine.updateControlloTraffico_configurationPolicy(archivePolicy.getPolicy());
 				create = false;
 			}
 			// --- create ---
 			else{
-				this.importerEngine.createControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+				this.importerEngine.createControlloTraffico_configurationPolicy(archivePolicy.getPolicy());
 				create = true;
 			}
 				
@@ -2404,14 +2404,14 @@ public class ImporterArchiveUtils {
 	}
 	
 	
-	public void importControlloCongestione_activePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
+	public void importControlloTraffico_activePolicy(ArchiveActivePolicy archivePolicy,ArchiveEsitoImportDetail detail){
 		
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
 			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
-				if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)){
+				if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
 					return;
 				}
@@ -2419,7 +2419,7 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
-			if(this.importerEngine.existsControlloCongestione_configurationPolicy(archivePolicy.getPolicy().getIdPolicy()) == false ){
+			if(this.importerEngine.existsControlloTraffico_configurationPolicy(archivePolicy.getPolicy().getIdPolicy()) == false ){
 				throw new Exception("Configurazione della policy ["+archivePolicy.getPolicy().getIdPolicy()+"] non esistente nel registro");
 			}
 			
@@ -2442,21 +2442,21 @@ public class ImporterArchiveUtils {
 			
 			// --- upload ---
 			boolean create = false;
-			if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)){
+			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
 				
-				AttivazionePolicy old = this.importerEngine.getControlloCongestione_activePolicy(nomePolicy);
+				AttivazionePolicy old = this.importerEngine.getControlloTraffico_activePolicy(nomePolicy);
 				archivePolicy.getPolicy().setId(old.getId());
 				
 				// visibilita' oggetto stesso per update
 				// non esistenti
 
 				// update
-				this.importerEngine.updateControlloCongestione_activePolicy(archivePolicy.getPolicy());
+				this.importerEngine.updateControlloTraffico_activePolicy(archivePolicy.getPolicy());
 				create = false;
 			}
 			// --- create ---
 			else{
-				this.importerEngine.createControlloCongestione_activePolicy(archivePolicy.getPolicy());
+				this.importerEngine.createControlloTraffico_activePolicy(archivePolicy.getPolicy());
 				create = true;
 			}
 				

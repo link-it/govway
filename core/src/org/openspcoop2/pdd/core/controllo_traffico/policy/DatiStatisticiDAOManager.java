@@ -29,7 +29,7 @@ import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -39,9 +39,9 @@ import org.slf4j.Logger;
 public class DatiStatisticiDAOManager  {
 
 	private static DatiStatisticiDAOManager staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws Exception{
+	public static synchronized void initialize(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		if(staticInstance==null){
-			staticInstance = new DatiStatisticiDAOManager(configurazioneControlloCongestione);
+			staticInstance = new DatiStatisticiDAOManager(configurazioneControlloTraffico);
 		}
 	}
 	public static DatiStatisticiDAOManager getInstance() throws Exception{
@@ -51,7 +51,7 @@ public class DatiStatisticiDAOManager  {
 		return staticInstance;
 	}
 	
-	private ConfigurazioneControlloCongestione configurazioneControlloCongestione;
+	private ConfigurazioneControlloTraffico configurazioneControlloTraffico;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
@@ -66,14 +66,14 @@ public class DatiStatisticiDAOManager  {
 	
 	private Logger log;
 	
-	private DatiStatisticiDAOManager(ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws Exception{
+	private DatiStatisticiDAOManager(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		try{
 			
-    		this.configurazioneControlloCongestione = configurazioneControlloCongestione;
+    		this.configurazioneControlloTraffico = configurazioneControlloTraffico;
     		
-    		this.debug = this.configurazioneControlloCongestione.isDebug();
+    		this.debug = this.configurazioneControlloTraffico.isDebug();
     		
-			this.tipoDatabase = this.configurazioneControlloCongestione.getTipoDatabaseConfig();
+			this.tipoDatabase = this.configurazioneControlloTraffico.getTipoDatabaseConfig();
 			
 			if(this.tipoDatabase==null){
 				throw new Exception("Tipo Database non definito");
@@ -427,10 +427,10 @@ public class DatiStatisticiDAOManager  {
 
 		int [] esiti = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
-			esiti = this.configurazioneControlloCongestione.getCalcoloLatenzaPortaDelegataEsitiConsiderati();		
+			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaDelegataEsitiConsiderati();		
 		}
 		else{
-			esiti = this.configurazioneControlloCongestione.getCalcoloLatenzaPortaApplicativaEsitiConsiderati();			
+			esiti = this.configurazioneControlloTraffico.getCalcoloLatenzaPortaApplicativaEsitiConsiderati();			
 		}
 		
 		// esito
@@ -483,7 +483,7 @@ public class DatiStatisticiDAOManager  {
 
 		
         // escludo le transazioni con esito policy violate
-		int [] esitiPolicyViolate = this.configurazioneControlloCongestione.getEsitiPolicyViolate();    
+		int [] esitiPolicyViolate = this.configurazioneControlloTraffico.getEsitiPolicyViolate();    
 		IExpression exprEsitiPolicyViolate = dao.newExpression();
 		exprEsitiPolicyViolate.or();
 		for (int i = 0; i < esitiPolicyViolate.length; i++) {

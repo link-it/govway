@@ -50,18 +50,18 @@ public class Archive {
 	private ArchiveSortedMap<ArchiveAccordoServizioParteSpecifica> accordiServizioParteSpecifica = new ArchiveSortedMap<ArchiveAccordoServizioParteSpecifica>();
 	private ArchiveSortedMap<ArchiveFruitore> accordiFruitori = new ArchiveSortedMap<ArchiveFruitore>();
 	
-	private ArchiveSortedMap<ArchiveConfigurationPolicy> controlloCongestione_configurationPolicies = new ArchiveSortedMap<ArchiveConfigurationPolicy>();
-	private ArchiveSortedMap<ArchiveActivePolicy> controlloCongestione_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
-	private org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloCongestione_configurazione;
+	private ArchiveSortedMap<ArchiveConfigurationPolicy> controlloTraffico_configurationPolicies = new ArchiveSortedMap<ArchiveConfigurationPolicy>();
+	private ArchiveSortedMap<ArchiveActivePolicy> controlloTraffico_activePolicies = new ArchiveSortedMap<ArchiveActivePolicy>();
+	private org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico_configurazione;
 	
 	private Configurazione configurazionePdD;
 	
-	public org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale getControlloCongestione_configurazione() {
-		return this.controlloCongestione_configurazione;
+	public org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale getControlloTraffico_configurazione() {
+		return this.controlloTraffico_configurazione;
 	}
-	public void setControlloCongestione_configurazione(
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloCongestione_configurazione) {
-		this.controlloCongestione_configurazione = controlloCongestione_configurazione;
+	public void setControlloTraffico_configurazione(
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico_configurazione) {
+		this.controlloTraffico_configurazione = controlloTraffico_configurazione;
 	}
 	
 	public Configurazione getConfigurazionePdD() {
@@ -109,11 +109,11 @@ public class Archive {
 	public ArchiveSortedMap<ArchiveFruitore> getAccordiFruitori() {
 		return this.accordiFruitori;
 	}
-	public ArchiveSortedMap<ArchiveConfigurationPolicy> getControlloCongestione_configurationPolicies() {
-		return this.controlloCongestione_configurationPolicies;
+	public ArchiveSortedMap<ArchiveConfigurationPolicy> getControlloTraffico_configurationPolicies() {
+		return this.controlloTraffico_configurationPolicies;
 	}
-	public ArchiveSortedMap<ArchiveActivePolicy> getControlloCongestione_activePolicies() {
-		return this.controlloCongestione_activePolicies;
+	public ArchiveSortedMap<ArchiveActivePolicy> getControlloTraffico_activePolicies() {
+		return this.controlloTraffico_activePolicies;
 	}
 	
 }

@@ -125,8 +125,8 @@ public final class Liste
     
     public final static int CONFIGURAZIONE_EXTENDED;	
     
-    public final static int CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;	
-    public final static int CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;	
+    public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;	
+    public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;	
 	
 
     private static int numeroListe = 0;
@@ -207,8 +207,8 @@ public final class Liste
         OPERATIONS_RICERCA = numeroListe ++;
         OPERATIONS_WAITING = numeroListe ++;
         CONFIGURAZIONE_EXTENDED = numeroListe ++;	
-    	CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY = numeroListe ++;
-    	CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY = numeroListe ++;
+    	CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY = numeroListe ++;
+    	CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY = numeroListe ++;
     }
     
 	

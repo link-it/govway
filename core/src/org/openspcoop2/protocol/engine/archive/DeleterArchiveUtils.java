@@ -98,9 +98,9 @@ public class DeleterArchiveUtils {
 			ArchiveEsitoDelete esito = new ArchiveEsitoDelete();
 			
 			
-			// ControlloCongestione (AttivazionePolicy)
-			for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
-				ArchiveActivePolicy archivePolicy = archive.getControlloCongestione_activePolicies().get(i);
+			// ControlloTraffico (AttivazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+				ArchiveActivePolicy archivePolicy = archive.getControlloTraffico_activePolicies().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
 				try{
 					this.deleteActivePolicy(archivePolicy, detail);
@@ -108,12 +108,12 @@ public class DeleterArchiveUtils {
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.getControlloCongestione_activePolicies().add(detail);
+				esito.getControlloTraffico_activePolicies().add(detail);
 			}
 			
-			// ControlloCongestione (ConfigurazionePolicy)
-			for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
-				ArchiveConfigurationPolicy archivePolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+			// ControlloTraffico (ConfigurazionePolicy)
+			for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
+				ArchiveConfigurationPolicy archivePolicy = archive.getControlloTraffico_configurationPolicies().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePolicy);
 				try{
 					this.deleteConfigPolicy(archivePolicy, detail);
@@ -121,7 +121,7 @@ public class DeleterArchiveUtils {
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
 				}
-				esito.getControlloCongestione_configurationPolicies().add(detail);
+				esito.getControlloTraffico_configurationPolicies().add(detail);
 			}
 			
 			
@@ -494,7 +494,7 @@ public class DeleterArchiveUtils {
 		try{
 			
 			// --- check esistenza ---
-			if(this.importerEngine.existsControlloCongestione_configurationPolicy(nomePolicy)==false){
+			if(this.importerEngine.existsControlloTraffico_configurationPolicy(nomePolicy)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
 				return;
 			}
@@ -508,13 +508,13 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			List<String> whereIsInUso = new ArrayList<String>();
-			if (this.importerEngine.isControlloCongestione_configurationPolicyInUso(nomePolicy, whereIsInUso)) {
+			if (this.importerEngine.isControlloTraffico_configurationPolicyInUso(nomePolicy, whereIsInUso)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
 			}
 			
 			
 			// --- delete ---
-			this.importerEngine.deleteControlloCongestione_configurationPolicy(archivePolicy.getPolicy());
+			this.importerEngine.deleteControlloTraffico_configurationPolicy(archivePolicy.getPolicy());
 			detail.setState(ArchiveStatoImport.DELETED);				
 
 						
@@ -533,7 +533,7 @@ public class DeleterArchiveUtils {
 		try{
 			
 			// --- check esistenza ---
-			if(this.importerEngine.existsControlloCongestione_activePolicy(nomePolicy)==false){
+			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
 				return;
 			}
@@ -547,13 +547,13 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			List<String> whereIsInUso = new ArrayList<String>();
-			if (this.importerEngine.isControlloCongestione_activePolicyInUso(nomePolicy, whereIsInUso)) {
+			if (this.importerEngine.isControlloTraffico_activePolicyInUso(nomePolicy, whereIsInUso)) {
 				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(nomePolicy, whereIsInUso,false,NEW_LINE));
 			}
 			
 			
 			// --- delete ---
-			this.importerEngine.deleteControlloCongestione_activePolicy(archivePolicy.getPolicy());
+			this.importerEngine.deleteControlloTraffico_activePolicy(archivePolicy.getPolicy());
 			detail.setState(ArchiveStatoImport.DELETED);				
 
 						

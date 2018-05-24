@@ -283,8 +283,8 @@ public class GeneratoreMessaggiErrore {
 		case HTTP_429:
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
-				String html = CostantiControlloCongestione.HTML_429_ERROR
-						.replace(CostantiControlloCongestione.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
+				String html = CostantiControlloTraffico.HTML_429_ERROR
+						.replace(CostantiControlloTraffico.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
 				he.setResponse(html.getBytes());
 			}
 			else {
@@ -295,8 +295,8 @@ public class GeneratoreMessaggiErrore {
 		case HTTP_503:
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
-				String html = CostantiControlloCongestione.HTML_503_ERROR
-						.replace(CostantiControlloCongestione.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
+				String html = CostantiControlloTraffico.HTML_503_ERROR
+						.replace(CostantiControlloTraffico.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
 				he.setResponse(html.getBytes());
 			}
 			else {
@@ -307,8 +307,8 @@ public class GeneratoreMessaggiErrore {
 		case HTTP_500:
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
-				String html = CostantiControlloCongestione.HTML_500_ERROR
-						.replace(CostantiControlloCongestione.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
+				String html = CostantiControlloTraffico.HTML_500_ERROR
+						.replace(CostantiControlloTraffico.HTML_ERROR_MESSAGE_TEMPLATE, he.getMessage());
 				he.setResponse(html.getBytes());
 			}
 			else {

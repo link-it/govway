@@ -50,7 +50,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.TipoGestorePolicy;
 import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
@@ -1745,7 +1745,7 @@ public class OpenSPCoop2Properties {
 			
 			// ControlloTraffico
 			if(this.isControlloTrafficoEnabled()) {
-				this.initConfigurazioneControlloCongestione(loaderOpenSPCoop);
+				this.initConfigurazioneControlloTraffico(loaderOpenSPCoop);
 				TipoGestorePolicy tipo = this.getControlloTrafficoGestorePolicyTipo();
 				if(TipoGestorePolicy.WS.equals(tipo)) {
 					this.getControlloTrafficoGestorePolicyWSUrl();
@@ -13417,7 +13417,7 @@ public class OpenSPCoop2Properties {
 				else{
 					// default
 					int defaultEsito =  esitiProperties.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
-					this.log.warn("Proprieta' non presente [controlloCongestione.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"')");
+					this.log.warn("Proprieta' non presente [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"')");
 					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new int[1];
 					OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy[0] = defaultEsito;
 				}
@@ -13425,7 +13425,7 @@ public class OpenSPCoop2Properties {
 			}catch(Exception e){
 				// default
 				int defaultEsito =  esitiProperties.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA);
-				this.log.error("Errore durante la lettura della proprieta' [controlloCongestione.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"'): "+e.getMessage(),e);
+				this.log.error("Errore durante la lettura della proprieta' [org.openspcoop2.pdd.controlloTraffico.violazionePolicy.esitiConsiderati] (Uso il default '"+defaultEsito+"'): "+e.getMessage(),e);
 				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy = new int[1];
 				OpenSPCoop2Properties.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy[0] = defaultEsito;
 			}
@@ -13454,38 +13454,38 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile;
 	}
 	
-	private static ConfigurazioneControlloCongestione controlloCongestioneConfigurazione = null;
-	private void initConfigurazioneControlloCongestione(Loader loaderOpenSPCoop) throws Exception{
-		if(controlloCongestioneConfigurazione==null){
+	private static ConfigurazioneControlloTraffico controlloTrafficoConfigurazione = null;
+	private void initConfigurazioneControlloTraffico(Loader loaderOpenSPCoop) throws Exception{
+		if(controlloTrafficoConfigurazione==null){
 			
-			controlloCongestioneConfigurazione = new ConfigurazioneControlloCongestione();
+			controlloTrafficoConfigurazione = new ConfigurazioneControlloTraffico();
 						
 			AccessoConfigurazionePdD config = this.getAccessoConfigurazionePdD();
-			controlloCongestioneConfigurazione.setTipoDatabaseConfig(config.getTipoDatabase());
+			controlloTrafficoConfigurazione.setTipoDatabaseConfig(config.getTipoDatabase());
 			
-			controlloCongestioneConfigurazione.setDebug(this.isControlloTrafficoDebug());
+			controlloTrafficoConfigurazione.setDebug(this.isControlloTrafficoDebug());
 			
-			controlloCongestioneConfigurazione.setErroreGenerico(this.isControlloTrafficoViolazioneGenerazioneErroreGenerico());
+			controlloTrafficoConfigurazione.setErroreGenerico(this.isControlloTrafficoViolazioneGenerazioneErroreGenerico());
 			
-			controlloCongestioneConfigurazione.setPolicyReadedWithDynamicCache(this.isControlloTrafficoPolicyLetturaDaCacheDinamica());
+			controlloTrafficoConfigurazione.setPolicyReadedWithDynamicCache(this.isControlloTrafficoPolicyLetturaDaCacheDinamica());
 			
-			controlloCongestioneConfigurazione.setCalcoloLatenzaPortaDelegataEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata());
+			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaDelegataEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaDelegata());
 			
-			controlloCongestioneConfigurazione.setCalcoloLatenzaPortaApplicativaEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa());
+			controlloTrafficoConfigurazione.setCalcoloLatenzaPortaApplicativaEsitiConsiderati(this.getControlloTrafficoEsitiDaConsiderarePerCalcoloLatenzaPortaApplicativa());
 			
-			controlloCongestioneConfigurazione.setControlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente(this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo());
+			controlloTrafficoConfigurazione.setElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente(this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo());
 			
 			INotify notifier = this.getControlloTrafficoNotifyImpl(loaderOpenSPCoop);
-			controlloCongestioneConfigurazione.setNotifierEnabled(notifier!=null);
-			controlloCongestioneConfigurazione.setNotifier(notifier);
+			controlloTrafficoConfigurazione.setNotifierEnabled(notifier!=null);
+			controlloTrafficoConfigurazione.setNotifier(notifier);
 			
-			controlloCongestioneConfigurazione.setEsitiPolicyViolate(this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy());
+			controlloTrafficoConfigurazione.setEsitiPolicyViolate(this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy());
 			
-			controlloCongestioneConfigurazione.setElaborazioneRealtime_incrementaSoloPolicyApplicabile(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile());
+			controlloTrafficoConfigurazione.setElaborazioneRealtime_incrementaSoloPolicyApplicabile(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile());
 		}
 	}
-	public ConfigurazioneControlloCongestione getConfigurazioneControlloCongestione(){
-		return OpenSPCoop2Properties.controlloCongestioneConfigurazione;
+	public ConfigurazioneControlloTraffico getConfigurazioneControlloTraffico(){
+		return OpenSPCoop2Properties.controlloTrafficoConfigurazione;
 	}
 	
 	

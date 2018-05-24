@@ -1432,7 +1432,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			/* ----------- Gestori utilizzati dal Controllo Congestione ------------ */
+			/* ----------- Gestori utilizzati dal Controllo Traffico ------------ */
 			if(propertiesReader.isControlloTrafficoEnabled()){
 							
 				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
@@ -1440,15 +1440,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// Cache ControlloTraffico DatiStatistici
 				try{
-					ConfigurazioneGenerale configurazioneControlloCongestione = 
+					ConfigurazioneGenerale configurazioneControlloTraffico = 
 							((org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(logControlloTrafficoSql).
 						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(), logControlloTrafficoSql)).
 						getConfigurazioneGeneraleServiceSearch().get();
-					if(configurazioneControlloCongestione.getCache()!=null && configurazioneControlloCongestione.getCache().isCache()){
-						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloCongestione.getCache().getSize(),
-								CacheAlgorithm.LRU.equals(configurazioneControlloCongestione.getCache().getAlgorithm()),
-								configurazioneControlloCongestione.getCache().getIdleTime(), 
-								configurazioneControlloCongestione.getCache().getLifeTime(), 
+					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
+						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloTraffico.getCache().getSize(),
+								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),
+								configurazioneControlloTraffico.getCache().getIdleTime(), 
+								configurazioneControlloTraffico.getCache().getLifeTime(), 
 								logCore);
 						logControlloTraffico.info("Cache ControlloTraffico inizializzata");
 					}
@@ -1458,15 +1458,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 					
 				// Gestore dei Dati Statistici
-				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione confControlloCongestione = null;
+				org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico confControlloTraffico = null;
 				try{
-					confControlloCongestione = propertiesReader.getConfigurazioneControlloCongestione();
+					confControlloTraffico = propertiesReader.getConfigurazioneControlloTraffico();
 
-					DatiStatisticiDAOManager.initialize(confControlloCongestione);
+					DatiStatisticiDAOManager.initialize(confControlloTraffico);
 					
-					GestoreControlloTraffico.initialize(confControlloCongestione.isErroreGenerico());
+					GestoreControlloTraffico.initialize(confControlloTraffico.isErroreGenerico());
 					
-					GestoreCacheControlloTraffico.initialize(confControlloCongestione);
+					GestoreCacheControlloTraffico.initialize(confControlloTraffico);
 					
 					GestorePolicyAttive.initialize(logControlloTraffico, propertiesReader.getControlloTrafficoGestorePolicyTipo(),
 							propertiesReader.getControlloTrafficoGestorePolicyWSUrl());
@@ -1495,7 +1495,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						fDati = new File(fRepository, org.openspcoop2.core.controllo_traffico.constants.Costanti.controlloTrafficoImage);
 						if(fDati.exists() && fDati.canRead() && fDati.length()>0){
 							FileInputStream fin = new FileInputStream(fDati);
-							GestorePolicyAttive.getInstance().initialize(fin,confControlloCongestione);
+							GestorePolicyAttive.getInstance().initialize(fin,confControlloTraffico);
 							fDati.delete();
 						}
 					}
@@ -2290,7 +2290,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			GestoreHandlers.exit(context);
 		}catch(Throwable e){}
 		
-		// Gestione Stato ControlloCongestione
+		// Gestione Stato ControlloTraffico
 		if(properties.isControlloTrafficoEnabled()){
 			OutputStream out = null;
 			Logger logControlloTraffico = null;

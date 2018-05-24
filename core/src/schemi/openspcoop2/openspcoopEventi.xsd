@@ -212,7 +212,7 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 	
-	<xsd:simpleType name="CodiceEventoControlloCongestione">
+	<xsd:simpleType name="CodiceEventoControlloTraffico">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Violazione"/>
 			<xsd:enumeration value="ViolazioneRisolta"/>

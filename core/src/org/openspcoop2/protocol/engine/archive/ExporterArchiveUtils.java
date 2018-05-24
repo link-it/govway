@@ -197,7 +197,7 @@ public class ExporterArchiveUtils {
 			}
 			break;
 		case CONFIGURAZIONE:
-			readControlloCongestioneConfiguration(archive);
+			readControlloTrafficoConfigurazione(archive);
 			archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			break;
 		case ALL:
@@ -217,7 +217,7 @@ public class ExporterArchiveUtils {
 			
 			// configurazione solo se richiesta
 			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
-				readControlloCongestioneConfiguration(archive);
+				readControlloTrafficoConfigurazione(archive);
 				archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			}
 			
@@ -272,30 +272,30 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readControlloCongestioneConfiguration(Archive archive) throws Exception {
+	private void readControlloTrafficoConfigurazione(Archive archive) throws Exception {
 		
-		archive.setControlloCongestione_configurazione(this.archiveEngine.getControlloCongestione_Configurazione());
+		archive.setControlloTraffico_configurazione(this.archiveEngine.getControlloTraffico_Configurazione());
 		
-		List<IdPolicy> listControlloCongestione_configurationPolicies = null;
+		List<IdPolicy> listControlloTraffico_configurationPolicies = null;
 		try {
-			listControlloCongestione_configurationPolicies = this.archiveEngine.getAllIdControlloCongestione_configurationPolicies();
+			listControlloTraffico_configurationPolicies = this.archiveEngine.getAllIdControlloTraffico_configurationPolicies();
 		}catch(DriverConfigurazioneNotFound notFound) {}
-		if(listControlloCongestione_configurationPolicies!=null && listControlloCongestione_configurationPolicies.size()>0) {
-			for (IdPolicy idPolicy : listControlloCongestione_configurationPolicies) {
-				archive.getControlloCongestione_configurationPolicies().add(new ArchiveConfigurationPolicy(
-						this.archiveEngine.getControlloCongestione_configurationPolicy(idPolicy),
+		if(listControlloTraffico_configurationPolicies!=null && listControlloTraffico_configurationPolicies.size()>0) {
+			for (IdPolicy idPolicy : listControlloTraffico_configurationPolicies) {
+				archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
+						this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy),
 						this.idCorrelazione));
 			}
 		}
 		
-		List<IdActivePolicy> listControlloCongestione_activePolicies = null;
+		List<IdActivePolicy> listControlloTraffico_activePolicies = null;
 		try {
-			listControlloCongestione_activePolicies = this.archiveEngine.getAllIdControlloCongestione_activePolicies();
+			listControlloTraffico_activePolicies = this.archiveEngine.getAllIdControlloTraffico_activePolicies();
 		}catch(DriverConfigurazioneNotFound notFound) {}
-		if(listControlloCongestione_activePolicies!=null && listControlloCongestione_activePolicies.size()>0) {
-			for (IdActivePolicy idPolicy : listControlloCongestione_activePolicies) {
-				archive.getControlloCongestione_activePolicies().add(new ArchiveActivePolicy(
-						this.archiveEngine.getControlloCongestione_activePolicy(idPolicy),
+		if(listControlloTraffico_activePolicies!=null && listControlloTraffico_activePolicies.size()>0) {
+			for (IdActivePolicy idPolicy : listControlloTraffico_activePolicies) {
+				archive.getControlloTraffico_activePolicies().add(new ArchiveActivePolicy(
+						this.archiveEngine.getControlloTraffico_activePolicy(idPolicy),
 						this.idCorrelazione));
 			}
 		}

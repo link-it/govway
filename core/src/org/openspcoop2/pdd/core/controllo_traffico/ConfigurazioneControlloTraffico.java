@@ -3,7 +3,7 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 import java.io.Serializable;
 
 
-public class ConfigurazioneControlloCongestione extends org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione implements Serializable , Cloneable {
+public class ConfigurazioneControlloTraffico extends org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico implements Serializable , Cloneable {
 
 	/**
 	 * 

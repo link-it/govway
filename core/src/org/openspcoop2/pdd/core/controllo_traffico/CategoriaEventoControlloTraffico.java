@@ -1,6 +1,6 @@
 package org.openspcoop2.pdd.core.controllo_traffico;
 
-public enum CategoriaEventoCongestione {
+public enum CategoriaEventoControlloTraffico {
 
 	CONGESTIONE_PORTA_DOMINIO, 
 	LIMITE_GLOBALE_RICHIESTE_SIMULTANEE,

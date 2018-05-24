@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione;
+import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
 import org.slf4j.Logger;
 
 /**
@@ -59,6 +59,6 @@ public interface IGestorePolicyAttive {
 	
 	public void serialize(OutputStream out) throws PolicyException;
 	
-	public void initialize(InputStream in,ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws PolicyException;
+	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException;
 	
 }

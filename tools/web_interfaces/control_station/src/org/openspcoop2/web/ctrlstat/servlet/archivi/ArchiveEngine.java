@@ -61,9 +61,9 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	
 	public ArchiveEngine(DriverRegistroServiziDB driverRegistroServizi,
 			DriverConfigurazioneDB driverConfigurazione,
-			JDBCServiceManager serviceManagerControlloCongestione,
+			JDBCServiceManager serviceManagerControlloTraffico,
 			ArchiviCore archiviCore,boolean smista,String userLogin) {
-		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloCongestione);
+		super(driverRegistroServizi, driverConfigurazione, serviceManagerControlloTraffico);
 		this.archiviCore = archiviCore;
 		this.smista = smista;
 		this.userLogin = userLogin;
@@ -478,10 +478,10 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 
 
-	// --- Controllo Congestione (Configurazione) ---
+	// --- Controllo Traffico (Configurazione) ---
 	
 	@Override
-	public void updateControlloCongestione_configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+	public void updateControlloTraffico_configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, configurazione);
 		}catch(Exception e){
@@ -490,7 +490,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	@Override
-	public void deleteControlloCongestione_Configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
+	public void deleteControlloTraffico_Configurazione(ConfigurazioneGenerale configurazione) throws DriverConfigurazioneException{
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, configurazione);
 		}catch(Exception e){
@@ -499,10 +499,10 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	
-	// --- Controllo Congestione (ConfigurazionePolicy) ---
+	// --- Controllo Traffico (ConfigurazionePolicy) ---
 	
 	@Override
-	public void createControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+	public void createControlloTraffico_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -511,7 +511,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	@Override
-	public void updateControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+	public void updateControlloTraffico_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -520,7 +520,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	@Override
-	public void deleteControlloCongestione_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
+	public void deleteControlloTraffico_configurationPolicy(ConfigurazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -529,10 +529,10 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	
-	// --- Controllo Congestione (AttivazionePolicy) ---
+	// --- Controllo Traffico (AttivazionePolicy) ---
 	
 	@Override
-	public void createControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	public void createControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performCreateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -541,7 +541,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	@Override
-	public void updateControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	public void updateControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){
@@ -550,7 +550,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	}
 	
 	@Override
-	public void deleteControlloCongestione_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
+	public void deleteControlloTraffico_activePolicy(AttivazionePolicy policy) throws DriverConfigurazioneException {
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, policy);
 		}catch(Exception e){

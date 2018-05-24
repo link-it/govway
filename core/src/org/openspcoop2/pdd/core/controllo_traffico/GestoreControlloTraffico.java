@@ -105,7 +105,7 @@ public class GestoreControlloTraffico {
 					//System.out.println("PDD CONGESTIONATA: "+pddCongestionata);
 										
 					// Aggiungo l'informazione se la pdd risulta congestionata nel pddContext.
-					pddContext.addObject(CostantiControlloCongestione.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionata);
+					pddContext.addObject(CostantiControlloTraffico.PDD_CONTEXT_PDD_CONGESTIONATA, pddCongestionata);
 					
 					// Inoltre
 					if(this.pddCongestionata){
@@ -144,12 +144,12 @@ public class GestoreControlloTraffico {
 						
 			// fuori dal synchronized (per evitare deadlock)
 			if(emettiEventoMaxThreadsViolated){
-				CategoriaEventoCongestione evento = null;
+				CategoriaEventoControlloTraffico evento = null;
 				if(warningOnly) {
-					evento = CategoriaEventoCongestione.LIMITE_GLOBALE_RICHIESTE_SIMULTANEE_WARNING_ONLY;
+					evento = CategoriaEventoControlloTraffico.LIMITE_GLOBALE_RICHIESTE_SIMULTANEE_WARNING_ONLY;
 				}
 				else {
-					evento = CategoriaEventoCongestione.LIMITE_GLOBALE_RICHIESTE_SIMULTANEE;
+					evento = CategoriaEventoControlloTraffico.LIMITE_GLOBALE_RICHIESTE_SIMULTANEE;
 				}
 				NotificatoreEventi.getInstance().log(evento, dataEventoMaxThreadsViolated, descriptionEventoMaxThreadsViolated); 
 			}
@@ -166,7 +166,7 @@ public class GestoreControlloTraffico {
 			
 			// fuori dal synchronized (per evitare deadlock)
 			if(emettiEventoPddCongestionata){
-				NotificatoreEventi.getInstance().log(CategoriaEventoCongestione.CONGESTIONE_PORTA_DOMINIO, dataEventoPddCongestionata, descriptionEventoPddCongestionata); 
+				NotificatoreEventi.getInstance().log(CategoriaEventoControlloTraffico.CONGESTIONE_PORTA_DOMINIO, dataEventoPddCongestionata, descriptionEventoPddCongestionata); 
 			}
 			
 		}
@@ -181,7 +181,7 @@ public class GestoreControlloTraffico {
 //				boolean old = this.pddCongestionata;
 				this.pddCongestionata = this._isPddCongestionata(maxThreads, threshold);
 //				if(old!=this.pddCongestionata){
-//					System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA OLD["+old+"] NEW["+this.pddCongestionata+"]");
+//					System.out.println("OLD["+old+"] NEW["+this.pddCongestionata+"]");
 //				}
 			}
 			

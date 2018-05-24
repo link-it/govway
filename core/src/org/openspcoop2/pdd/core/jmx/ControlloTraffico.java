@@ -449,7 +449,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	/* Variabili per la gestione JMX */
 	private Logger log;
-	private GestoreControlloTraffico gestoreControlloCongestione;
+	private GestoreControlloTraffico gestoreControlloTraffico;
 	private IGestorePolicyAttive gestorePolicyAttive;
 	
 	/* Costruttore */
@@ -491,10 +491,10 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		
 			this.gestorePolicyAttive = GestorePolicyAttive.getInstance();
 			
-			this.gestoreControlloCongestione = GestoreControlloTraffico.getInstance();
-			this.activeThreads = this.gestoreControlloCongestione.sizeActiveThreads();
+			this.gestoreControlloTraffico = GestoreControlloTraffico.getInstance();
+			this.activeThreads = this.gestoreControlloTraffico.sizeActiveThreads();
 			
-			this.pddCongestionata = this.gestoreControlloCongestione.isPortaDominioCongestionata(this.maxThreads,configurazioneGenerale.getControlloTraffico().getControlloCongestioneThreshold());
+			this.pddCongestionata = this.gestoreControlloTraffico.isPortaDominioCongestionata(this.maxThreads,configurazioneGenerale.getControlloTraffico().getControlloCongestioneThreshold());
 			
 		}catch(Exception e){
 			try{

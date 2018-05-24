@@ -1065,7 +1065,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"updateLock.ok",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"updateLock.ko",
 		
-		// controlloCongestione (base library)
+		// controlloTraffico (base library)
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroRichieste.simultaneo",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaNumeroRichieste",
 		MsgDiagnosticiProperties.MSG_DIAG_ALL+"controlloTraffico.policy.violata.risorsaOccupazioneBanda",

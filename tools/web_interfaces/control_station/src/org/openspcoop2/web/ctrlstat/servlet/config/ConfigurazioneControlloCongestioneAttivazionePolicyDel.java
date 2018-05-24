@@ -167,7 +167,7 @@ public class ConfigurazioneControlloCongestioneAttivazionePolicyDel extends Acti
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;
+			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 

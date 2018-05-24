@@ -23,13 +23,13 @@ package org.openspcoop2.core.controllo_traffico.beans;
 import java.io.Serializable;
 
 /**
- * ConfigurazioneControlloCongestione 
+ * ConfigurazioneControlloTraffico 
  *
  * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConfigurazioneControlloCongestione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public class ConfigurazioneControlloCongestione extends org.openspcoop2.utils.be
 	
 	private int [] calcoloLatenzaPortaApplicativaEsitiConsiderati;
 	
-	private boolean controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente;
+	private boolean elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
 		
 	private int [] esitiPolicyViolate;
 	
@@ -82,7 +82,7 @@ public class ConfigurazioneControlloCongestione extends org.openspcoop2.utils.be
 		}
 		
 		bf.append(", ");
-		bf.append("controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente="+this.controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente);
+		bf.append("elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente="+this.elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente);
 		
 		if(this.esitiPolicyViolate!=null){
 			bf.append(", ");
@@ -134,14 +134,14 @@ public class ConfigurazioneControlloCongestione extends org.openspcoop2.utils.be
 	}
 
 
-	public boolean isControlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente() {
-		return this.controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente;
+	public boolean isElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente() {
+		return this.elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
 	}
 
 
-	public void setControlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente(
-			boolean controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente) {
-		this.controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente = controlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente;
+	public void setElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente(
+			boolean elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente) {
+		this.elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente = elaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente;
 	}
 
 

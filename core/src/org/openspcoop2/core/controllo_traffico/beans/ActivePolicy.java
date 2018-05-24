@@ -46,15 +46,15 @@ public class ActivePolicy extends org.openspcoop2.utils.beans.BaseBean implement
 	
 	private AttivazionePolicy instanceConfiguration;
 	
-	private ConfigurazioneControlloCongestione configurazioneControlloCongestione;
+	private ConfigurazioneControlloTraffico configurazioneControlloTraffico;
 	
-	public ConfigurazioneControlloCongestione getConfigurazioneControlloCongestione() {
-		return this.configurazioneControlloCongestione;
+	public ConfigurazioneControlloTraffico getConfigurazioneControlloTraffico() {
+		return this.configurazioneControlloTraffico;
 	}
 
-	public void setConfigurazioneControlloCongestione(
-			ConfigurazioneControlloCongestione configurazioneControlloCongestione) {
-		this.configurazioneControlloCongestione = configurazioneControlloCongestione;
+	public void setConfigurazioneControlloTraffico(
+			ConfigurazioneControlloTraffico configurazioneControlloTraffico) {
+		this.configurazioneControlloTraffico = configurazioneControlloTraffico;
 	}
 
 	public AttivazionePolicy getInstanceConfiguration() {

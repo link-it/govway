@@ -17,7 +17,7 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
-import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloCongestione;
+import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
@@ -213,9 +213,9 @@ public class GestoreCacheControlloTraffico {
 	
 	
 	private static GestoreCacheControlloTraffico staticInstance = null;
-	public static synchronized void initialize(ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws Exception{
+	public static synchronized void initialize(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		if(staticInstance==null){
-			staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloCongestione);
+			staticInstance = new GestoreCacheControlloTraffico(configurazioneControlloTraffico);
 		}
 	}
 	public static GestoreCacheControlloTraffico getInstance() throws Exception{
@@ -229,15 +229,15 @@ public class GestoreCacheControlloTraffico {
 	private INotify datiNotifierReader = null;
 	private Logger log;
 	private boolean debug;
-	private ConfigurazioneControlloCongestione configurazioneControlloCongestione;
+	private ConfigurazioneControlloTraffico configurazioneControlloTraffico;
 	
-	public GestoreCacheControlloTraffico(ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws Exception{
+	public GestoreCacheControlloTraffico(ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		this.datiStatisticiReader = DatiStatisticiDAOManager.getInstance();
-		if(configurazioneControlloCongestione.isNotifierEnabled()){
-			this.datiNotifierReader = configurazioneControlloCongestione.getNotifier();
+		if(configurazioneControlloTraffico.isNotifierEnabled()){
+			this.datiNotifierReader = configurazioneControlloTraffico.getNotifier();
 		}
-		this.configurazioneControlloCongestione = configurazioneControlloCongestione;
-		this.debug = this.configurazioneControlloCongestione.isDebug();
+		this.configurazioneControlloTraffico = configurazioneControlloTraffico;
+		this.debug = this.configurazioneControlloTraffico.isDebug();
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 	}
 	

@@ -141,7 +141,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			this.policyDateWindowInterval = activePolicy.getConfigurazionePolicy().getFinestraOsservazione();
 			
 			if(TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getFinestraOsservazione())){
-				this.policyDateCurrentInterval = activePolicy.getConfigurazioneControlloCongestione().isControlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente();
+				this.policyDateCurrentInterval = activePolicy.getConfigurazioneControlloTraffico().isElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente();
 				this.policyDateTypeInterval = UnitaTemporale.ORARIO; // USARE SEMPRE L'INTERVALLO PIU' STRETTO. Se si introdurranno i minuti si dovrà utilizzare i minuti.
 				
 				// E' però necessaria la conversione in ore.
@@ -221,7 +221,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				this.policyDegradoPrestazionaleDateWindowInterval = activePolicy.getConfigurazionePolicy().getDegradoAvgTimeFinestraOsservazione();
 				
 				if(TipoFinestra.SCORREVOLE.equals(activePolicy.getConfigurazionePolicy().getDegradoAvgTimeFinestraOsservazione())){
-					this.policyDegradoPrestazionaleDateCurrentInterval = activePolicy.getConfigurazioneControlloCongestione().isControlloCongestioneStatistiche_finestraScorrevole_gestioneIntervalloCorrente();
+					this.policyDegradoPrestazionaleDateCurrentInterval = activePolicy.getConfigurazioneControlloTraffico().isElaborazioneStatistica_finestraScorrevole_gestioneIntervalloCorrente();
 					this.policyDegradoPrestazionaleDateTypeInterval = UnitaTemporale.ORARIO; // USARE SEMPRE L'INTERVALLO PIU' STRETTO. Se si introdurranno i minuti si dovrà utilizzare i minuti.
 					
 					// E' però necessaria la conversione in ore.
@@ -831,7 +831,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			Date now = DateManager.getDate();
 
 			boolean after = now.after(rightInterval);
-			if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 				SimpleDateFormat dateformat = new SimpleDateFormat (format);
 				log.debug("checkPolicyCounterForDate now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
@@ -853,7 +853,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				Date dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
 				boolean before = dRight.before(now);
-				if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = new SimpleDateFormat (format);
 					log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
@@ -877,7 +877,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
 					before = dRight.before(now);
-					if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = new SimpleDateFormat (format);
 						log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
@@ -924,7 +924,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			Date now = DateManager.getDate();
 
 			boolean after = now.after(rightInterval);
-			if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 				SimpleDateFormat dateformat = new SimpleDateFormat (format);
 				log.debug("checkPolicyCounterForDateDegradoPrestazionale now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
@@ -944,7 +944,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				Date dRight = DateUtils.incrementDate(d, this.policyDegradoPrestazionaleDateTypeInterval, this.policyDegradoPrestazionaleDateInterval);
 				dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 				boolean before = dRight.before(now);
-				if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = new SimpleDateFormat (format);
 					log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
@@ -966,7 +966,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 					dRight = DateUtils.incrementDate(d, this.policyDegradoPrestazionaleDateTypeInterval, this.policyDegradoPrestazionaleDateInterval);
 					dRight = DateUtils.convertToRightInterval(dRight, this.policyDegradoPrestazionaleDateTypeInterval);
 					before = dRight.before(now);
-					if(activePolicy.getConfigurazioneControlloCongestione().isDebug()){
+					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = new SimpleDateFormat (format);
 						log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
@@ -1105,10 +1105,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 			int [] esitiValidi = null;
 			
 			if(TipoPdD.DELEGATA.equals(dati.getTipoPdD())){
-				esitiValidi = activePolicy.getConfigurazioneControlloCongestione().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
+				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
 			}
 			else{
-				esitiValidi = activePolicy.getConfigurazioneControlloCongestione().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
+				esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
 			}
 			boolean found = false;
 			for (int esitoValido : esitiValidi) {
@@ -1133,7 +1133,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		if(this.policyRealtime!=null && this.policyRealtime){
 		
-            int [] esitiPolicyViolate = activePolicy.getConfigurazioneControlloCongestione().getEsitiPolicyViolate();
+            int [] esitiPolicyViolate = activePolicy.getConfigurazioneControlloTraffico().getEsitiPolicyViolate();
             boolean foundEsitoDeny = false;
             for (int esitoViolato : esitiPolicyViolate) {
             	if(dati.getEsitoTransazione() == esitoViolato){
@@ -1202,10 +1202,10 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 				int [] esitiValidi = null;
 				
 				if(TipoPdD.DELEGATA.equals(dati.getTipoPdD())){
-					esitiValidi = activePolicy.getConfigurazioneControlloCongestione().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
+					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaDelegataEsitiConsiderati();
 				}
 				else{
-					esitiValidi = activePolicy.getConfigurazioneControlloCongestione().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
+					esitiValidi = activePolicy.getConfigurazioneControlloTraffico().getCalcoloLatenzaPortaApplicativaEsitiConsiderati();
 				}
 				boolean found = false;
 				for (int esitoValido : esitiValidi) {

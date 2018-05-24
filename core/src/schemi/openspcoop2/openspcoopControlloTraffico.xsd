@@ -21,7 +21,7 @@
 					<linkit:sql>
 						<linkit:sql-script generate="true">
 							<linkit:sql-table-list>
-								<linkit:sql-comment><![CDATA[CONTROLLO CONGESTIONE]]></linkit:sql-comment>
+								<linkit:sql-comment><![CDATA[CONTROLLO TRAFFICO]]></linkit:sql-comment>
 								<linkit:sql-table object-name="configurazione-generale" object-type="configurazione-generale"/>
 								<linkit:sql-table object-name="configurazione-policy" object-type="configurazione-policy" />
 								<linkit:sql-table object-name="attivazione-policy" object-type="attivazione-policy" />
@@ -57,7 +57,7 @@
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:interface crud="true" single-instance="true"/>
 					<linkit:sql-table-mapping name="ct_config" 
-						comment="Configurazione generale dei meccanismi di Controllo Congestione">
+						comment="Configurazione generale dei meccanismi di Controllo del Traffico">
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

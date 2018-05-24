@@ -9,7 +9,7 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione;
+import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
@@ -251,7 +251,7 @@ public class GestorePolicyAttiveWS implements IGestorePolicyAttive {
 		// nop;
 	}
 	@Override
-	public void initialize(InputStream in, ConfigurazioneControlloCongestione configurazioneControlloCongestione)
+	public void initialize(InputStream in, ConfigurazioneControlloTraffico configurazioneControlloTraffico)
 			throws PolicyException {
 		// nop;
 	}

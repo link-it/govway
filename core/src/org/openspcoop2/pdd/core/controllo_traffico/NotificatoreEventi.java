@@ -25,7 +25,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 import org.openspcoop2.core.eventi.Evento;
-import org.openspcoop2.core.eventi.constants.CodiceEventoControlloCongestione;
+import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.dao.IEventoService;
@@ -120,10 +120,10 @@ public class NotificatoreEventi {
 	private Hashtable<String, DatabaseDatiEventoGenerico> db_lastPolicyViolated_warningOnly = new Hashtable<String, DatabaseDatiEventoGenerico>();
 	
 	
-	public void log(CategoriaEventoCongestione evento, Date date, String descrizione) throws Exception{
+	public void log(CategoriaEventoControlloTraffico evento, Date date, String descrizione) throws Exception{
 		log(evento, null, null, descrizione);
 	}
-	public void log(CategoriaEventoCongestione evento, String idPolicy, Date date, String descrizione) throws Exception{
+	public void log(CategoriaEventoControlloTraffico evento, String idPolicy, Date date, String descrizione) throws Exception{
 		
 		if(evento==null){
 			throw new Exception("Evento non definito");
@@ -315,8 +315,8 @@ public class NotificatoreEventi {
 				local_db_lastMaxRequests, 
 				this.db_lastMaxRequests, 
 				TipoEvento.CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE,
-				CodiceEventoControlloCongestione.VIOLAZIONE, 
-				CodiceEventoControlloCongestione.VIOLAZIONE_RISOLTA, 
+				CodiceEventoControlloTraffico.VIOLAZIONE, 
+				CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
 				lastInterval, connection, this.gestoreEventi,
 				null, debug);
 		logDebug(log,debug,"1. Analisi violazioni numero massimo richieste simultanee terminata");
@@ -327,8 +327,8 @@ public class NotificatoreEventi {
 				local_db_lastMaxRequests_warningOnly, 
 				this.db_lastMaxRequests_warningOnly, 
 				TipoEvento.CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE,
-				CodiceEventoControlloCongestione.VIOLAZIONE_WARNING_ONLY, 
-				CodiceEventoControlloCongestione.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
+				CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
+				CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
 				lastInterval, connection, this.gestoreEventi,
 				null, debug);
 		logDebug(log,debug,"2. Analisi violazioni numero massimo richieste simultanee (warning-only) terminata");
@@ -339,8 +339,8 @@ public class NotificatoreEventi {
 				local_db_lastPddCongestionata, 
 				this.db_lastPddCongestionata, 
 				TipoEvento.CONTROLLO_TRAFFICO_SOGLIA_CONGESTIONE,
-				CodiceEventoControlloCongestione.VIOLAZIONE, 
-				CodiceEventoControlloCongestione.VIOLAZIONE_RISOLTA, 
+				CodiceEventoControlloTraffico.VIOLAZIONE, 
+				CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
 				lastInterval, connection, this.gestoreEventi,
 				null, debug);
 		logDebug(log,debug,"3. Analisi controllo della congestione terminata");
@@ -354,8 +354,8 @@ public class NotificatoreEventi {
 					local_db_lastPolicyViolated.get(idPolicy), 
 					this.db_lastPolicyViolated.get(idPolicy), 
 					TipoEvento.RATE_LIMITING_POLICY,
-					CodiceEventoControlloCongestione.VIOLAZIONE, 
-					CodiceEventoControlloCongestione.VIOLAZIONE_RISOLTA, 
+					CodiceEventoControlloTraffico.VIOLAZIONE, 
+					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA, 
 					lastInterval, connection, this.gestoreEventi,
 					idPolicy,debug);	
 		}
@@ -370,8 +370,8 @@ public class NotificatoreEventi {
 					local_db_lastPolicyViolated_warningOnly.get(idPolicy), 
 					this.db_lastPolicyViolated_warningOnly.get(idPolicy), 
 					TipoEvento.RATE_LIMITING_POLICY,
-					CodiceEventoControlloCongestione.VIOLAZIONE_WARNING_ONLY, 
-					CodiceEventoControlloCongestione.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
+					CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY, 
+					CodiceEventoControlloTraffico.VIOLAZIONE_RISOLTA_WARNING_ONLY, 
 					lastInterval, connection, this.gestoreEventi,
 					idPolicy,debug);	
 		}
@@ -387,7 +387,7 @@ public class NotificatoreEventi {
 	private static void processSingleEvent(Logger log, DatiEventoGenerico local_inMemory,DatabaseDatiEventoGenerico local_db,
 			DatabaseDatiEventoGenerico this_db,
 			TipoEvento tipoEvento,
-			CodiceEventoControlloCongestione eventoViolazione, CodiceEventoControlloCongestione eventoViolazioneRisolta, 
+			CodiceEventoControlloTraffico eventoViolazione, CodiceEventoControlloTraffico eventoViolazioneRisolta, 
 			Date lastInterval, Connection connection, GestoreEventi gestoreEventi,
 			String idPolicy, boolean debug) throws Exception{
 		
@@ -415,7 +415,7 @@ public class NotificatoreEventi {
 					local_db.data!=null){
 				if(eventoViolazioneRisolta.equals(local_db.codiceEvento)){
 					// sono ritornato dentro una violazione di stato
-					CodiceEventoControlloCongestione codice = eventoViolazione;
+					CodiceEventoControlloTraffico codice = eventoViolazione;
 					Evento evento = buildEvento(tipoEvento,codice, idPolicy,
 							local_inMemory.descrizione,
 							local_inMemory.data); // uso come data dell'evento la data in cui e' accaduta la segnalazione
@@ -433,7 +433,7 @@ public class NotificatoreEventi {
 			}
 			else{
 				// prima volta che succede il problema, emetto evento di violazione
-				CodiceEventoControlloCongestione codice = eventoViolazione;
+				CodiceEventoControlloTraffico codice = eventoViolazione;
 				Evento evento = buildEvento(tipoEvento,codice, idPolicy,
 						local_inMemory.descrizione,
 						local_inMemory.data); // uso come data dell'evento la data in cui e' accaduta la segnalazione
@@ -454,7 +454,7 @@ public class NotificatoreEventi {
 					local_db.data!=null){
 				if(eventoViolazione.equals(local_db.codiceEvento)){
 					// emetto evento che non risulta piu' violato.
-					CodiceEventoControlloCongestione codice = eventoViolazioneRisolta;
+					CodiceEventoControlloTraffico codice = eventoViolazioneRisolta;
 					Evento evento = buildEvento(tipoEvento,codice, idPolicy,
 							local_db.descrizione, DateManager.getDate());
 					logEvento(gestoreEventi, connection, evento, log, debug);
@@ -472,7 +472,7 @@ public class NotificatoreEventi {
 
 	}
 	
-	private static Evento buildEvento(TipoEvento tipoEvento, CodiceEventoControlloCongestione codice, String idPolicy, String descrizione, Date data) throws Exception{
+	private static Evento buildEvento(TipoEvento tipoEvento, CodiceEventoControlloTraffico codice, String idPolicy, String descrizione, Date data) throws Exception{
 		Evento evento = new Evento();
 		evento.setTipo(tipoEvento.getValue());
 		evento.setCodice(codice.getValue());
@@ -548,13 +548,13 @@ public class NotificatoreEventi {
 		
 		if(properties.isControlloTrafficoEnabled()) {
 			
-			ConfigurazioneControlloCongestione config = properties.getConfigurazioneControlloCongestione();
+			ConfigurazioneControlloTraffico config = properties.getConfigurazioneControlloTraffico();
 			if(config.isNotifierEnabled()) {
 				
 				INotify notifier = config.getNotifier();
 				if(notifier.isNotifichePassiveAttive()) {
 					TipoEvento tipoEvento = TipoEvento.toEnumConstant(evento.getTipo());
-					CodiceEventoControlloCongestione codiceEvento = CodiceEventoControlloCongestione.toEnumConstant(evento.getCodice());
+					CodiceEventoControlloTraffico codiceEvento = CodiceEventoControlloTraffico.toEnumConstant(evento.getCodice());
 					switch (tipoEvento) {
 					case CONTROLLO_TRAFFICO_NUMERO_MASSIMO_RICHIESTE_SIMULTANEE:
 					case CONTROLLO_TRAFFICO_SOGLIA_CONGESTIONE:
@@ -930,7 +930,7 @@ public class NotificatoreEventi {
 		e.datiConsumatiThread = eventoGenericoSerialized.isDatiConsumatiThread();
 		e.descrizione = eventoGenericoSerialized.getDescrizione();
 		if(eventoGenericoSerialized.getCodiceEvento()!=null) {
-			e.codiceEvento = CodiceEventoControlloCongestione.toEnumConstant(eventoGenericoSerialized.getCodiceEvento());
+			e.codiceEvento = CodiceEventoControlloTraffico.toEnumConstant(eventoGenericoSerialized.getCodiceEvento());
 		}
 		return e;
 	}
@@ -959,7 +959,7 @@ class DatiEventoGenerico{
 
 class DatabaseDatiEventoGenerico extends DatiEventoGenerico{
 	
-	CodiceEventoControlloCongestione codiceEvento;
+	CodiceEventoControlloTraffico codiceEvento;
 	
 }
 

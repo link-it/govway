@@ -37,7 +37,7 @@ public class ArchiveActivePolicy implements IArchiveObject {
 		}
 		
 		StringBuffer bf = new StringBuffer();
-		bf.append("ControlloCongestione_ActivePolicy_");
+		bf.append("ControlloTraffico_ActivePolicy_");
 		bf.append(idPolicy);
 		return bf.toString();
 	}

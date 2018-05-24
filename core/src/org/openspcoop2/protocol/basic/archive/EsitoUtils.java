@@ -412,12 +412,12 @@ public class EsitoUtils {
 		}
 		
 		
-		// Controllo Congestione (Configurazione)
-		if(archive.getControlloCongestione_configurazione()!=null){
+		// Controllo Traffico (Configurazione)
+		if(archive.getControlloTraffico_configurazione()!=null){
 			bfEsito.append("Controllo del Traffico (Configurazione)\n");
 			try{
 				ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> configurazione = 
-						archive.getControlloCongestione_configurazione();
+						archive.getControlloTraffico_configurazione();
 				bfEsito.append("\t- ");
 				serializeStato(configurazione, bfEsito);
 			}catch(Exception e){
@@ -427,13 +427,13 @@ public class EsitoUtils {
 			bfEsito.append("\n");
 		}
 		
-		// Controllo Congestione (ConfigurazionePolicies)
-		if(archive.getControlloCongestione_configurationPolicies().size()>0){
-			bfEsito.append("Controllo del Traffico (Registro Policy) (").append(archive.getControlloCongestione_configurationPolicies().size()).append(")\n");
+		// Controllo Traffico (ConfigurazionePolicies)
+		if(archive.getControlloTraffico_configurationPolicies().size()>0){
+			bfEsito.append("Controllo del Traffico (Registro Policy) (").append(archive.getControlloTraffico_configurationPolicies().size()).append(")\n");
 		}
-		for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
+		for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
 			try{
-				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_configurationPolicies().get(i);
 				String nomePolicy = ((ArchiveConfigurationPolicy)archiveCCPolicy.getArchiveObject()).getNomePolicy();
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveCCPolicy, bfEsito, importOperation);
@@ -446,13 +446,13 @@ public class EsitoUtils {
 			bfEsito.append("\n");	
 		}
 		
-		// Controllo Congestione (AttivazionePolicies)
-		if(archive.getControlloCongestione_activePolicies().size()>0){
-			bfEsito.append("Controllo del Traffico (Policy) (").append(archive.getControlloCongestione_activePolicies().size()).append(")\n");
+		// Controllo Traffico (AttivazionePolicies)
+		if(archive.getControlloTraffico_activePolicies().size()>0){
+			bfEsito.append("Controllo del Traffico (Policy) (").append(archive.getControlloTraffico_activePolicies().size()).append(")\n");
 		}
-		for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
+		for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
 			try{
-				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+				ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
 				String nomePolicy = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getNomePolicy();
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveCCPolicy, bfEsito, importOperation);
@@ -654,10 +654,10 @@ public class EsitoUtils {
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPorteApplicative().add(archivePortaApplicativa);
 		}
 		
-		// ControlloCongestione (Configurazione)
-		if(archive.getControlloCongestione_configurazione()!=null){
+		// ControlloTraffico (Configurazione)
+		if(archive.getControlloTraffico_configurazione()!=null){
 			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> configurazione = 
-					archive.getControlloCongestione_configurazione();
+					archive.getControlloTraffico_configurazione();
 			if(mapIdCorrelazione.size()>1){
 				throw new ProtocolException("Configurazione permessa solo con una unica correlazione tra oggetti");
 			}
@@ -669,21 +669,21 @@ public class EsitoUtils {
 				// l'archivio non contiene altri oggetti se non la configurazione
 				idCorrelazione = new ArchiveIdCorrelazione(ZIPUtils.ID_CORRELAZIONE_DEFAULT);
 			}
-			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).setControlloCongestione_configurazione(configurazione);
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).setControlloTraffico_configurazione(configurazione);
 		}
 		
-		// ControlloCongestione (ConfigurazionePolicy)
-		for (int i = 0; i < archive.getControlloCongestione_configurationPolicies().size(); i++) {
-			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_configurationPolicies().get(i);
+		// ControlloTraffico (ConfigurazionePolicy)
+		for (int i = 0; i < archive.getControlloTraffico_configurationPolicies().size(); i++) {
+			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_configurationPolicies().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveConfigurationPolicy)archiveCCPolicy.getArchiveObject()).getIdCorrelazione();
-			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloCongestione_configurationPolicies().add(archiveCCPolicy);
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloTraffico_configurationPolicies().add(archiveCCPolicy);
 		}
 		
-		// ControlloCongestione (AttivazionePolicy)
-		for (int i = 0; i < archive.getControlloCongestione_activePolicies().size(); i++) {
-			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloCongestione_activePolicies().get(i);
+		// ControlloTraffico (AttivazionePolicy)
+		for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {
+			ArchiveEsitoImportDetail archiveCCPolicy = archive.getControlloTraffico_activePolicies().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveActivePolicy)archiveCCPolicy.getArchiveObject()).getIdCorrelazione();
-			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloCongestione_activePolicies().add(archiveCCPolicy);
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getControlloTraffico_activePolicies().add(archiveCCPolicy);
 		}
 		
 		// Configurazione

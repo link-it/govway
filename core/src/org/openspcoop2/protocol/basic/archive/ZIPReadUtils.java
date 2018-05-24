@@ -122,7 +122,7 @@ public class ZIPReadUtils  {
 	
 	protected org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer jaxbRegistryDeserializer = null;
 	protected org.openspcoop2.core.config.utils.serializer.JaxbDeserializer jaxbConfigDeserializer = null;
-	protected org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer jaxbControlloCongestioneDeserializer = null;
+	protected org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer jaxbControlloTrafficoDeserializer = null;
 	protected org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer jaxbInformationMissingDeserializer = null;
 	
 	private org.openspcoop2.protocol.abstraction.utils.serializer.JaxbDeserializer jaxbAbstractionDeserializer = null;
@@ -185,7 +185,7 @@ public class ZIPReadUtils  {
 		
 		this.jaxbRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
 		this.jaxbConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JaxbDeserializer();
-		this.jaxbControlloCongestioneDeserializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer();
+		this.jaxbControlloTrafficoDeserializer = new org.openspcoop2.core.controllo_traffico.utils.serializer.JaxbDeserializer();
 		this.jaxbInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JaxbDeserializer();
 		
 		// abstract
@@ -395,20 +395,20 @@ public class ZIPReadUtils  {
 							}
 						}
 						
-						// ********** controllo congestione ****************
-						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_DIR+File.separatorChar)) ){
+						// ********** controllo traffico ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
-							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_CONFIG_POLICY_DIR+File.separatorChar)){
+							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_CONFIG_POLICY_DIR+File.separatorChar)){
 								bin = new ByteArrayInputStream(xml);
-								this.readControlloCongestione_configurazionePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+								this.readControlloTraffico_configurazionePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 							}
-							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_CONGESTIONE_ACTIVE_POLICY_DIR+File.separatorChar)){
+							else if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_CONTROLLO_TRAFFICO_ACTIVE_POLICY_DIR+File.separatorChar)){
 								bin = new ByteArrayInputStream(xml);
-								this.readControlloCongestione_attivazionePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+								this.readControlloTraffico_attivazionePolicy(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 							}
 							else {
 								bin = new ByteArrayInputStream(xml);
-								this.readControlloCongestione_configurazione(archivio, bin, xml, entryName, validationDocuments);
+								this.readControlloTraffico_configurazione(archivio, bin, xml, entryName, validationDocuments);
 							}
 						}
 						
@@ -1116,55 +1116,55 @@ public class ZIPReadUtils  {
 		}
 	}
 	
-	public void readControlloCongestione_configurazione(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
+	public void readControlloTraffico_configurazione(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_traffico.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione = this.jaxbControlloCongestioneDeserializer.readConfigurazioneGenerale(xml);
-			if(archivio.getControlloCongestione_configurazione()!=null){
-				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione del controllo congestione");
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione = this.jaxbControlloTrafficoDeserializer.readConfigurazioneGenerale(xml);
+			if(archivio.getControlloTraffico_configurazione()!=null){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione di controllo del traffico");
 			}
-			archivio.setControlloCongestione_configurazione(configurazione);
+			archivio.setControlloTraffico_configurazione(configurazione);
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione) non valida rispetto allo schema (ControlloCongestione): "
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione) non valida rispetto allo schema (ControlloTraffico): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
 	
-	public void readControlloCongestione_configurazionePolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public void readControlloTraffico_configurazionePolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_traffico.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy policy = this.jaxbControlloCongestioneDeserializer.readConfigurazionePolicy(xml);
+			org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy policy = this.jaxbControlloTrafficoDeserializer.readConfigurazionePolicy(xml);
 			String key = ArchiveConfigurationPolicy.buildKey(policy.getIdPolicy());
-			if(archivio.getControlloCongestione_configurationPolicies().containsKey(key)){
+			if(archivio.getControlloTraffico_configurationPolicies().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di una configurazione di policy con key ["+key+"]");
 			}
-			archivio.getControlloCongestione_configurationPolicies().add(key,new ArchiveConfigurationPolicy(policy,idCorrelazione));
+			archivio.getControlloTraffico_configurationPolicies().add(key,new ArchiveConfigurationPolicy(policy,idCorrelazione));
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione-policy) non valida rispetto allo schema (ControlloCongestione): "
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (configurazione-policy) non valida rispetto allo schema (ControlloTraffico): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
 	
-	public void readControlloCongestione_attivazionePolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public void readControlloTraffico_attivazionePolicy(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		try{
 			if(validationDocuments){
 				org.openspcoop2.core.controllo_traffico.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
-			org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = this.jaxbControlloCongestioneDeserializer.readAttivazionePolicy(xml);
+			org.openspcoop2.core.controllo_traffico.AttivazionePolicy policy = this.jaxbControlloTrafficoDeserializer.readAttivazionePolicy(xml);
 			String key = ArchiveActivePolicy.buildKey(policy.getIdActivePolicy());
-			if(archivio.getControlloCongestione_activePolicies().containsKey(key)){
+			if(archivio.getControlloTraffico_activePolicies().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un'attivazione di policy con key ["+key+"]");
 			}
-			archivio.getControlloCongestione_activePolicies().add(key,new ArchiveActivePolicy(policy,idCorrelazione));
+			archivio.getControlloTraffico_activePolicies().add(key,new ArchiveActivePolicy(policy,idCorrelazione));
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attivazione-policy) non valida rispetto allo schema (ControlloCongestione): "
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (attivazione-policy) non valida rispetto allo schema (ControlloTraffico): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

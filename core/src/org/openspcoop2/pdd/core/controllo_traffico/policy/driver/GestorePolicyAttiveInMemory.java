@@ -20,7 +20,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
-import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloCongestione;
+import org.openspcoop2.core.controllo_traffico.beans.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
@@ -339,7 +339,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	}
 	
 	@Override
-	public void initialize(InputStream in,ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws PolicyException{
+	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException{
 		synchronized (this.mapActiveThreadsPolicy) {
 			
 			if(in==null){
@@ -414,7 +414,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 									if(idActivePolicy!=null){
 										// salvo precedente immagine
 										this.mapActiveThreadsPolicy.put(idActivePolicy, 
-												this.buildPolicyGroupByActiveThreads(configurazionePolicy, attivazionePolicy, map, configurazioneControlloCongestione));
+												this.buildPolicyGroupByActiveThreads(configurazionePolicy, attivazionePolicy, map, configurazioneControlloTraffico));
 										//System.out.println("@@@ RICOSTRUITO ID ACTIVE POLICY ["+idActivePolicy+"]");
 										idActivePolicy = null;
 										configurazionePolicy = null;
@@ -480,7 +480,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				if(idActivePolicy!=null){
 					// salvo precedente immagine ?
 					this.mapActiveThreadsPolicy.put(idActivePolicy, 
-							this.buildPolicyGroupByActiveThreads(configurazionePolicy, attivazionePolicy, map, configurazioneControlloCongestione));
+							this.buildPolicyGroupByActiveThreads(configurazionePolicy, attivazionePolicy, map, configurazioneControlloTraffico));
 					//System.out.println("@@@ RICOSTRUITO FINALE ID ACTIVE POLICY ["+idActivePolicy+"]");
 					idActivePolicy = null;
 					configurazionePolicy = null;
@@ -514,7 +514,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	private PolicyGroupByActiveThreads buildPolicyGroupByActiveThreads(ConfigurazionePolicy configurazionePolicy,
 			AttivazionePolicy attivazionePolicy, Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> map,
-			ConfigurazioneControlloCongestione configurazioneControlloCongestione) throws Exception{
+			ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws Exception{
 		
 		if(configurazionePolicy==null){
 			throw new PolicyException("ConfigurazionePolicy non presente");
@@ -522,12 +522,12 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		if(attivazionePolicy==null){
 			throw new PolicyException("AttivazionePolicy non presente");
 		}
-		if(configurazioneControlloCongestione==null){
-			throw new PolicyException("ConfigurazioneControlloCongestione non presente");
+		if(configurazioneControlloTraffico==null){
+			throw new PolicyException("ConfigurazioneControlloTraffico non presente");
 		}
 		
 		ActivePolicy activePolicy = new ActivePolicy();
-		activePolicy.setConfigurazioneControlloCongestione(configurazioneControlloCongestione);
+		activePolicy.setConfigurazioneControlloTraffico(configurazioneControlloTraffico);
 		activePolicy.setConfigurazionePolicy(configurazionePolicy);
 		activePolicy.setInstanceConfiguration(attivazionePolicy);
 		activePolicy.setTipoRisorsaPolicy(TipoRisorsa.toEnumConstant(configurazionePolicy.getRisorsa(), true));		

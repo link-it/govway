@@ -2320,7 +2320,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "countConfigurazioneControlloCongestioneConfigurazionePolicy";
 		// ritorna la configurazione controllo congestione della PdD
 		Connection con = null;
-		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 		String search = null;
 
 		if(ricerca != null) {
@@ -2384,7 +2384,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "countConfigurazioneControlloCongestioneAttivazionePolicy";
 		// ritorna la configurazione controllo congestione della PdD
 		Connection con = null;
-		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 		String search = null;
 
 		if(ricerca != null) {
@@ -2441,7 +2441,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "configurazioneControlloCongestioneConfigurazionePolicyList";
 		// ritorna la configurazione controllo congestione della PdD
 		Connection con = null;
-		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 		String search = null;
 		int offset = 0;
 		int limit =0 ;
@@ -2509,7 +2509,7 @@ public class DriverControlStationDB  {
 		String nomeMetodo = "configurazioneControlloCongestioneAttivazionePolicyList";
 		// ritorna la configurazione controllo congestione della PdD
 		Connection con = null;
-		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY;
+		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 		String search = null;
 		int offset = 0;
 		int limit =0 ;
