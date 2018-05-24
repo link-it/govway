@@ -1247,7 +1247,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 4; // configurazione, tracciamento, controllo congestione e audit
+					dimensioneEntries = 4; // configurazione, tracciamento, controllo del traffico e audit
 
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
@@ -1287,7 +1287,7 @@ public class ConsoleHelper {
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI;
 					index++;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {

@@ -134,7 +134,7 @@ public class DriverControlStationDB  {
 	private DriverUsersDB usersDB = null;
 	private DriverAudit auditDB = null;
 	private DriverAuditDBAppender auditDBappender = null;
-	private JDBCServiceManager jdbcServiceManagerControlloCongestione = null;
+	private JDBCServiceManager jdbcServiceManagerControlloTraffico = null;
 
 	private IDAccordoFactory idAccordoFactory = null;
 	@SuppressWarnings("unused")
@@ -164,8 +164,8 @@ public class DriverControlStationDB  {
 		return this.auditDBappender;
 	}
 	
-	public JDBCServiceManager getJdbcServiceManagerControlloCongestione() {
-		return this.jdbcServiceManagerControlloCongestione;
+	public JDBCServiceManager getJdbcServiceManagerControlloTraffico() {
+		return this.jdbcServiceManagerControlloTraffico;
 	}
 
 	public DriverControlStationDB(Connection connection, Properties context, String tipoDB) throws DriverControlStationException {
@@ -196,7 +196,7 @@ public class DriverControlStationDB  {
 			ServiceManagerProperties properties = new ServiceManagerProperties();
 			properties.setDatabaseType(this.tipoDB);
 			properties.setShowSql(true);
-			this.jdbcServiceManagerControlloCongestione = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
+			this.jdbcServiceManagerControlloTraffico = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connection, properties, this.log);
 			this.idAccordoFactory = IDAccordoFactory.getInstance();
 			this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		} catch (Exception e) {
@@ -2209,16 +2209,16 @@ public class DriverControlStationDB  {
 	}
 	
 
-	// Controllo Congestione
+	// Controllo Traffico
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio
 	 * 
 	 * @return Configurazione
 	 * 
 	 */
-	public ConfigurazioneGenerale getConfigurazioneControlloCongestione() throws DriverControlStationException,DriverControlStationNotFound {
-		String nomeMetodo = "getConfigurazioneControlloCongestione";
-		// ritorna la configurazione controllo congestione della PdD
+	public ConfigurazioneGenerale getConfigurazioneControlloTraffico() throws DriverControlStationException,DriverControlStationNotFound {
+		String nomeMetodo = "getConfigurazioneControlloTraffico";
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
 		if (this.atomica) {
@@ -2265,13 +2265,13 @@ public class DriverControlStationDB  {
 	}
 
 	/***
-	 * Aggiorna la configurazione del controllo congestione
+	 * Aggiorna la configurazione del controllo del traffico
 	 * 
-	 * @param configurazioneControlloCongestione
+	 * @param configurazioneControlloTraffico
 	 * @throws DriverControlStationException
 	 */
-	public void updateConfigurazioneControlloCongestione(ConfigurazioneGenerale configurazioneControlloCongestione) throws DriverControlStationException {
-		String nomeMetodo = "updateConfigurazioneControlloCongestione";
+	public void updateConfigurazioneControlloTraffico(ConfigurazioneGenerale configurazioneControlloTraffico) throws DriverControlStationException {
+		String nomeMetodo = "updateConfigurazioneControlloTraffico";
 		Connection con = null;
 		if (this.atomica) {
 			try {
@@ -2295,7 +2295,7 @@ public class DriverControlStationDB  {
 			properties.setShowSql(true);
 			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager serviceManager = new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(con, properties, this.log);
 			
-			serviceManager.getConfigurazioneGeneraleService().update(configurazioneControlloCongestione);
+			serviceManager.getConfigurazioneGeneraleService().update(configurazioneControlloTraffico);
 		} catch (Exception se) {
 			throw new DriverControlStationException("[DriverControlStationDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
@@ -2316,9 +2316,9 @@ public class DriverControlStationDB  {
 	 * @return Configurazione
 	 * 
 	 */
-	public long countConfigurazioneControlloCongestioneConfigurazionePolicy(ISearch ricerca) throws DriverControlStationException {
-		String nomeMetodo = "countConfigurazioneControlloCongestioneConfigurazionePolicy";
-		// ritorna la configurazione controllo congestione della PdD
+	public long countConfigurazioneControlloTrafficoConfigurazionePolicy(ISearch ricerca) throws DriverControlStationException {
+		String nomeMetodo = "countConfigurazioneControlloTrafficoConfigurazionePolicy";
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 		String search = null;
@@ -2380,9 +2380,9 @@ public class DriverControlStationDB  {
 	 * @return Configurazione
 	 * 
 	 */
-	public long countConfigurazioneControlloCongestioneAttivazionePolicy(ISearch ricerca) throws DriverControlStationException {
-		String nomeMetodo = "countConfigurazioneControlloCongestioneAttivazionePolicy";
-		// ritorna la configurazione controllo congestione della PdD
+	public long countConfigurazioneControlloTrafficoAttivazionePolicy(ISearch ricerca) throws DriverControlStationException {
+		String nomeMetodo = "countConfigurazioneControlloTrafficoAttivazionePolicy";
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 		String search = null;
@@ -2437,9 +2437,9 @@ public class DriverControlStationDB  {
 		return count;
 	}
 
-	public List<ConfigurazionePolicy> configurazioneControlloCongestioneConfigurazionePolicyList(Search ricerca) throws DriverControlStationException{
-		String nomeMetodo = "configurazioneControlloCongestioneConfigurazionePolicyList";
-		// ritorna la configurazione controllo congestione della PdD
+	public List<ConfigurazionePolicy> configurazioneControlloTrafficoConfigurazionePolicyList(Search ricerca) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloTrafficoConfigurazionePolicyList";
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
 		String search = null;
@@ -2505,9 +2505,9 @@ public class DriverControlStationDB  {
 		return listaPolicy;
 	}
 
-	public List<AttivazionePolicy> configurazioneControlloCongestioneAttivazionePolicyList(Search ricerca) throws DriverControlStationException{
-		String nomeMetodo = "configurazioneControlloCongestioneAttivazionePolicyList";
-		// ritorna la configurazione controllo congestione della PdD
+	public List<AttivazionePolicy> configurazioneControlloTrafficoAttivazionePolicyList(Search ricerca) throws DriverControlStationException{
+		String nomeMetodo = "configurazioneControlloTrafficoAttivazionePolicyList";
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 		String search = null;
@@ -2576,7 +2576,7 @@ public class DriverControlStationDB  {
 	
 	public List<InfoPolicy> getInfoPolicyList(String idPolicyParam) throws DriverControlStationException{
 		String nomeMetodo = "getInfoPolicyList";
-		// ritorna la configurazione controllo congestione della PdD
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int offset = 0;
 		int limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
@@ -2711,7 +2711,7 @@ public class DriverControlStationDB  {
 	
 	public List<AttivazionePolicy> findInUseAttivazioni(String idPolicy, boolean escludiDisabilitate) throws DriverControlStationException{
 		String nomeMetodo = "findInUseAttivazioni";
-		// ritorna la configurazione controllo congestione della PdD
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 		int offset = 0;
 		int limit = 10000 ;  // valore altissimo che non dovrebbe accadare
@@ -2771,7 +2771,7 @@ public class DriverControlStationDB  {
 	
 	public long countInUseAttivazioni(String idPolicy, boolean escludiDisabilitate) throws DriverControlStationException{
 		String nomeMetodo = "countInUseAttivazioni";
-		// ritorna la configurazione controllo congestione della PdD
+		// ritorna la configurazione controllo del traffico della PdD
 		Connection con = null;
 
 		if (this.atomica) {

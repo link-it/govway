@@ -361,7 +361,7 @@ public class ExporterUtils {
 			}
 		}
 		
-		// controllo congestione
+		// controllo del traffico
 		if(archive.getControlloTraffico_activePolicies()!=null && archive.getControlloTraffico_activePolicies().size()>0) {
 			List<ArchiveActivePolicy> listFiltrata = new ArrayList<>();
 			for (int i = 0; i < archive.getControlloTraffico_activePolicies().size(); i++) {

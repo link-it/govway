@@ -48,7 +48,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author pintori
  *
  */
-public class ConfigurazioneControlloCongestioneRuntime  extends Action {
+public class ConfigurazioneControlloTrafficoRuntime  extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -73,7 +73,7 @@ public class ConfigurazioneControlloCongestioneRuntime  extends Action {
 
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME, null));
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
@@ -83,19 +83,19 @@ public class ConfigurazioneControlloCongestioneRuntime  extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 			// Set First is false
-			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 
-			confHelper.addConfigurazioneControlloCongestioneJmxStateToDati(dati, tipoOperazione); 
+			confHelper.addConfigurazioneControlloTrafficoJmxStateToDati(dati, tipoOperazione); 
 
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_RUNTIME,	ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME,	ForwardParams.OTHER(""));
 
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_RUNTIME, ForwardParams.OTHER(""));
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RUNTIME, ForwardParams.OTHER(""));
 		}
 	}
 }

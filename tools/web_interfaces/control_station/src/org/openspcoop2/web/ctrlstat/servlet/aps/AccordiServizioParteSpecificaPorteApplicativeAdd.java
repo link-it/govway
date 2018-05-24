@@ -614,7 +614,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						
 						tempiRisposta_enabled=null;
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 						tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
@@ -627,7 +627,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							|| 
 							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
 							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 						}

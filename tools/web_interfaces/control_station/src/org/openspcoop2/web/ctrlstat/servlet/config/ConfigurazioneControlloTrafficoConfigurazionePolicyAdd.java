@@ -52,7 +52,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author pintori
  *
  */
-public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends Action {
+public class ConfigurazioneControlloTrafficoConfigurazionePolicyAdd extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -76,7 +76,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			
 			ConfigurazionePolicy policy = new ConfigurazionePolicy();
 			policy.setRisorsa(ConfigurazioneCostanti.RISORSA_DEFAULT.getValue());
@@ -85,12 +85,12 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			policy.setTipoIntervalloOsservazioneStatistico(ConfigurazioneCostanti.TIPO_PERIODO_STATISTICO_DEFAULT);
 			policy.setTipoApplicabilita(ConfigurazioneCostanti.TIPO_APPLICABILITA_DEFAULT);
 			
-			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_ID); 
+			String id = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ID); 
 			boolean editMode = true;
 			boolean editOnlyValueMode = false;
 			long countPolicyAttiveConQualsiasiStato = 0;
 			// uso nome porta per capire se sono entrato per la prima volta nella schermata
-			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 			
 			StringBuilder sbParsingError = new StringBuilder();
 			// Dati Generali
@@ -108,7 +108,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			List<AttivazionePolicy> listPolicyAttiveConStatoDisabilitato = null;
 			boolean updateValueInSeguitoModificaSogliaPolicy = false;
 			// Read Informazioni riguardante la modifica anche di attivazioni di policy collegate
-			String value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
+			String value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_RICHIESTA_MODIFICA);
 			//System.out.println("CHECKKKKKK RICHIESTA ["+value+"]");
 			if(value!=null && ServletUtils.isCheckBoxEnabled(value)) {
 				updateValueInSeguitoModificaSogliaPolicy = true;
@@ -131,9 +131,9 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 					}
 				}
 			}else{
-				nomePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_NOME);
+				nomePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_NOME);
 				
-				oldNomeSuggeritoPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_OLD_NOME_SUGGERITO);
+				oldNomeSuggeritoPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_NOME_SUGGERITO);
 //				if(oldNomeSuggeritoPolicy!=null && !"".equals(oldNomeSuggeritoPolicy)){
 //					if(cc.getOldNomeSuggeritoPolicy()==null){
 //						cc.setOldNomeSuggeritoPolicy(oldNomeSuggeritoPolicy);
@@ -150,7 +150,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 
 			// Nome è l'id
 			
-			String oldIdPolicyS = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_OLD_ID);
+			String oldIdPolicyS = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_ID);
 			if(oldIdPolicyS!=null && !"".equals(oldIdPolicyS)){
 				if(policy.getOldIdPolicy() ==null){
 					IdPolicy oldIdPolicy = new IdPolicy();
@@ -171,7 +171,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			
 			
 			
-			value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_MODIFICA_EFFETTIVA);
+			value = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_MODIFICATO_CON_ISTANZE_ATTIVE_MODIFICA_EFFETTIVA);
 			//System.out.println("CHECKKKKKK UPDATE ["+value+"]");
 			if(value!=null && ServletUtils.isCheckBoxEnabled(value)) {
 				if(oldIdPolicyS !=null){
@@ -204,8 +204,8 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 					}
 				}
 			}else{
-				descrizionePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_DESCRIZIONE);
-				oldDescrizioneSuggeritaPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_POLICY_OLD_DESCRIZIONE_SUGGERITA);
+				descrizionePolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
+				oldDescrizioneSuggeritaPolicy = request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_OLD_DESCRIZIONE_SUGGERITA);
 //				if(oldDescrizioneSuggeritaPolicy!=null && !"".equals(oldDescrizioneSuggeritaPolicy)){
 //					if(cc.getOldDescrizioneSuggeritaPolicy()==null){
 //						cc.setOldDescrizioneSuggeritaPolicy(oldDescrizioneSuggeritaPolicy);
@@ -229,8 +229,8 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
 
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE));
-			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY_LIST));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO));
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY, ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST));
 			lstParam.add(ServletUtils.getParameterAggiungi());
 			
 			
@@ -250,10 +250,10 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 				confHelper.addConfigurazionePolicyValoriSoglia(dati, tipoOperazione, policy,	editMode, editOnlyValueMode);
 				
 				// Applicabilita'
-				confHelper.addConfigurazionePolicyApplicabilitaToDati(dati, tipoOperazione, policy,	configurazioneControlloCongestione.getControlloTraffico(), editMode);
+				confHelper.addConfigurazionePolicyApplicabilitaToDati(dati, tipoOperazione, policy,	configurazioneControlloTraffico.getControlloTraffico(), editMode);
 				
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 				
 				if(!editMode && !editOnlyValueMode) {
 					pd.disableEditMode();
@@ -264,12 +264,12 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,
-						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, 
+						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, 
 						ForwardParams.ADD());
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.configurazionePolicyCheckData(tipoOperazione, configurazioneControlloCongestione, policy, oldNomeSuggeritoPolicy,
+			boolean isOk = confHelper.configurazionePolicyCheckData(tipoOperazione, configurazioneControlloTraffico, policy, oldNomeSuggeritoPolicy,
 								oldDescrizioneSuggeritaPolicy, oldIdPolicyS, listPolicyAttiveConStatoDisabilitato, updateValueInSeguitoModificaSogliaPolicy);
 			if (!isOk) {
 				
@@ -286,10 +286,10 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 				confHelper.addConfigurazionePolicyValoriSoglia(dati, tipoOperazione, policy, editMode, editOnlyValueMode);
 				
 				// Applicabilita'
-				confHelper.addConfigurazionePolicyApplicabilitaToDati(dati, tipoOperazione, policy,	configurazioneControlloCongestione.getControlloTraffico(), editMode);
+				confHelper.addConfigurazionePolicyApplicabilitaToDati(dati, tipoOperazione, policy,	configurazioneControlloTraffico.getControlloTraffico(), editMode);
 				
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 				
 				if(!editMode && !editOnlyValueMode) {
 					pd.disableEditMode();
@@ -300,7 +300,7 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, 
-						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, 
+						ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, 
 						ForwardParams.ADD());
 			}
 
@@ -324,10 +324,10 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyAdd extends A
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, ForwardParams.ADD());
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, ForwardParams.ADD());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, ForwardParams.ADD());
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY, ForwardParams.ADD());
 		}  
 	}
 }

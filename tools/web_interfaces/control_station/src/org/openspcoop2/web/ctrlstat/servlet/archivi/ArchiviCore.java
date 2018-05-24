@@ -113,7 +113,7 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(), 
-					driver.getJdbcServiceManagerControlloCongestione(),
+					driver.getJdbcServiceManagerControlloTraffico(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -144,7 +144,7 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(), 
-					driver.getJdbcServiceManagerControlloCongestione(),
+					driver.getJdbcServiceManagerControlloTraffico(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -169,7 +169,7 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
-					driver.getJdbcServiceManagerControlloCongestione(),
+					driver.getJdbcServiceManagerControlloTraffico(),
 					this, smista, userLogin);
 			
 			ExporterArchiveUtils exportUtils = new ExporterArchiveUtils(importerEngine, log);
@@ -197,7 +197,7 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
-					driver.getJdbcServiceManagerControlloCongestione(),
+					driver.getJdbcServiceManagerControlloTraffico(),
 					this, smista, userLogin);
 			
 			ImporterArchiveUtils importerArchiveUtils = 
@@ -232,7 +232,7 @@ public class ArchiviCore extends ControlStationCore {
 
 			ArchiveEngine importerEngine = new ArchiveEngine(driver.getDriverRegistroServiziDB(), 
 					driver.getDriverConfigurazioneDB(),
-					driver.getJdbcServiceManagerControlloCongestione(),
+					driver.getJdbcServiceManagerControlloTraffico(),
 					this, smista, userLogin);
 			
 			DeleterArchiveUtils deleterArchiveUtils = 

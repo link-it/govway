@@ -2243,78 +2243,78 @@
             <forward name="configurazioneDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
         
-   		<!-- Configurazione Controllo Congestione -->
+   		<!-- Configurazione Controllo Traffico -->
     
-    	<action path="/configurazioneControlloCongestione" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestione"
+    	<action path="/configurazioneControlloTraffico" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTraffico"
             scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneOk" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoError" path="/jsplib/info.jsp"/>
         </action>
     
-  		<!-- Configurazione Controllo Congestione (Runtime) -->
+  		<!-- Configurazione Controllo Traffico (Runtime) -->
     
-    	<action path="/configurazioneControlloCongestioneRuntime" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneRuntime"
+    	<action path="/configurazioneControlloTrafficoRuntime" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoRuntime"
             scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneRuntimeForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneRuntimeOk" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneRuntimeCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneRuntimeError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoRuntimeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoRuntimeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoRuntimeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoRuntimeError" path="/jsplib/info.jsp"/>
         </action>
         
-        <!--  Configurazione Controllo Congestione (Configurazione Policiy) -->
+        <!--  Configurazione Controllo Traffico (Configurazione Policiy) -->
 
-        <action path="/configurazioneControlloCongestioneConfigurazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyAdd" 
+        <action path="/configurazioneControlloTrafficoConfigurazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoConfigurazionePolicyAdd" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneConfigurazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyList" 
+        <action path="/configurazioneControlloTrafficoConfigurazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoConfigurazionePolicyList" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyList" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneConfigurazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyChange"
+        <action path="/configurazioneControlloTrafficoConfigurazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoConfigurazionePolicyChange"
             scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneConfigurazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneConfigurazionePolicyDel" 
+        <action path="/configurazioneControlloTrafficoConfigurazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoConfigurazionePolicyDel" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyDel" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneConfigurazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoConfigurazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
         
-                <!--  Configurazione Controllo Congestione (Attivazione Policy) -->
+                <!--  Configurazione Controllo Traffico (Attivazione Policy) -->
 
-        <action path="/configurazioneControlloCongestioneAttivazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyAdd" 
+        <action path="/configurazioneControlloTrafficoAttivazionePolicyAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoAttivazionePolicyAdd" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneAttivazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyList" 
+        <action path="/configurazioneControlloTrafficoAttivazionePolicyList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoAttivazionePolicyList" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyList" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneAttivazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyChange"
+        <action path="/configurazioneControlloTrafficoAttivazionePolicyChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoAttivazionePolicyChange"
             scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/configurazioneControlloCongestioneAttivazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloCongestioneAttivazionePolicyDel" 
+        <action path="/configurazioneControlloTrafficoAttivazionePolicyDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneControlloTrafficoAttivazionePolicyDel" 
         	scope="request" validate="true">
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyDel" path="/jsplib/listElement.jsp"/>
-            <forward name="configurazioneControlloCongestioneAttivazionePolicyError" path="/jsplib/info.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazioneControlloTrafficoAttivazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
     
      	<!-- Audit (Pagina Iniziale)  -->

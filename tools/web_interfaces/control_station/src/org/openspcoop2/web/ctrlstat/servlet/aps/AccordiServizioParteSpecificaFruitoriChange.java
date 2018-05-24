@@ -601,7 +601,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
 					
 					ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 					
 					if( props!=null ) {
 						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {

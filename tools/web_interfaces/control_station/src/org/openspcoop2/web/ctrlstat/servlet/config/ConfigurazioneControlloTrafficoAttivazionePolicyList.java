@@ -45,7 +45,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @author pintori
  *
  */
-public class ConfigurazioneControlloCongestioneAttivazionePolicyList extends Action {
+public class ConfigurazioneControlloTrafficoAttivazionePolicyList extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -86,11 +86,11 @@ public class ConfigurazioneControlloCongestioneAttivazionePolicyList extends Act
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY,
+			return ServletUtils.getStrutsForward (mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY,
 					ForwardParams.LIST());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_ATTIVAZIONE_POLICY, ForwardParams.LIST());
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, ForwardParams.LIST());
 		}  
 	}
 	

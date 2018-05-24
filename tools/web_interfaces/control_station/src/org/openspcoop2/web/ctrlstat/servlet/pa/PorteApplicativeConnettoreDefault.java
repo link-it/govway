@@ -326,7 +326,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 					
 					tempiRisposta_enabled = null;
 					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
-					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 					tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 					tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 					tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaErogazione().getTempoMedioRisposta().intValue()+"";
@@ -339,7 +339,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 						|| 
 						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
 					ConfigurazioneCore configCore = new ConfigurazioneCore(porteApplicativeCore);
-					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 					if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
 						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 					}

@@ -344,9 +344,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}
 			
-			// Configurazione controllo congestione
+			// Configurazione controllo del traffico
 			else if(o instanceof ConfigurazioneGenerale) {
-				return "ConfigurazioneControlloCongestione";
+				return "ConfigurazioneControlloTraffico";
 			}
 
 			// Configurazione Policy
@@ -646,7 +646,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			
-			// Configurazione controllo congestione
+			// Configurazione controllo del traffico
 			else if(o instanceof ConfigurazioneGenerale) {
 				return null; // oggetto non modificabile nei dati identificativi
 			}
@@ -755,8 +755,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// Monitoraggio Applicativo
 			oggetti.add("EliminazioneMessaggiTramiteMonitoraggio");
 			
-			// Configurazione Controllo Congestione
-			oggetti.add("ConfigurazioneControlloCongestione");
+			// Configurazione Controllo Traffico
+			oggetti.add("ConfigurazioneControlloTraffico");
 			oggetti.add(ConfigurazionePolicy.class.getName());
 			oggetti.add(AttivazionePolicy.class.getName());
 			
@@ -807,7 +807,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// Monitoraggio Applicativo
 			oggetti.add(FilterSearch.class.getName());
 			
-			// Configurazione Controllo Congestione
+			// Configurazione Controllo del Traffico
 			oggetti.add(ConfigurazioneGenerale.class.getName());
 			oggetti.add(ConfigurazionePolicy.class.getName());
 			oggetti.add(AttivazionePolicy.class.getName());
@@ -856,7 +856,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			return "EliminazioneMessaggiTramiteMonitoraggio";
 		}
 		else if(o instanceof ConfigurazioneGenerale){
-			return "ConfigurazioneControlloCongestione";
+			return "ConfigurazioneControlloTraffico";
 		}
 		else if(o instanceof IExtendedBean){
 			return "ExtendedBean-"+o.getClass().getSimpleName();

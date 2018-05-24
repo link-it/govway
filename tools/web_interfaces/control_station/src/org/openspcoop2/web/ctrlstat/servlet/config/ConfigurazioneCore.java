@@ -386,15 +386,15 @@ public class ConfigurazioneCore extends ControlStationCore {
 	
 	
 	/**
-	 * Accesso alla configurazione del controllo congestione
+	 * Accesso alla configurazione di controllo del traffico
 	 * 
-	 * @return configurazione controllo congestione della Pdd
+	 * @return configurazione controllo del traffico della Pdd
 	 * @throws DriverControlStationNotFound
 	 * @throws DriverControlStationException
 	 */
-	public ConfigurazioneGenerale getConfigurazioneControlloCongestione() throws DriverControlStationNotFound, DriverControlStationException {
+	public ConfigurazioneGenerale getConfigurazioneControlloTraffico() throws DriverControlStationNotFound, DriverControlStationException {
 		Connection con = null;
-		String nomeMetodo = "getConfigurazioneControlloCongestione";
+		String nomeMetodo = "getConfigurazioneControlloTraffico";
 		DriverControlStationDB driver = null;
 
 		try {
@@ -403,7 +403,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.getConfigurazioneControlloCongestione();
+			return driver.getConfigurazioneControlloTraffico();
 			
 		} catch (DriverControlStationNotFound de) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
@@ -428,7 +428,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.countConfigurazioneControlloCongestioneConfigurazionePolicy(ricerca);
+			return driver.countConfigurazioneControlloTrafficoConfigurazionePolicy(ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -448,7 +448,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.countConfigurazioneControlloCongestioneAttivazionePolicy(ricerca);
+			return driver.countConfigurazioneControlloTrafficoAttivazionePolicy(ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -468,7 +468,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 			
-			return driver.configurazioneControlloCongestioneConfigurazionePolicyList(ricerca);
+			return driver.configurazioneControlloTrafficoConfigurazionePolicyList(ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -488,7 +488,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);	
 			
-			return driver.configurazioneControlloCongestioneAttivazionePolicyList(ricerca);
+			return driver.configurazioneControlloTrafficoAttivazionePolicyList(ricerca);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

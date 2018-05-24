@@ -529,7 +529,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						
 						tempiRisposta_enabled=null;
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						tempiRisposta_readTimeout = configGenerale.getTempiRispostaFruizione().getReadTimeout().intValue()+"";
 						tempiRisposta_tempoMedioRisposta = configGenerale.getTempiRispostaFruizione().getTempoMedioRisposta().intValue()+"";
@@ -542,7 +542,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							|| 
 							tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
 							tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";
 						}

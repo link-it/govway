@@ -2422,7 +2422,7 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
-					 * Operazioni su Controllo Congestione *
+					 * Operazioni su Controllo Traffico *
 					 **********************************************************/
 					// Configurazione Policy
 					if(oggetto instanceof ConfigurazionePolicy) {
@@ -2921,13 +2921,13 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
-					 * Operazioni su Controllo Congestione *
+					 * Operazioni su Controllo Traffico *
 					 **********************************************************/
 
-					// Configurazione Controllo Congestione 
+					// Configurazione Controllo Traffico 
 					if(oggetto instanceof ConfigurazioneGenerale) {
-						ConfigurazioneGenerale configurazioneControlloCongestione = (ConfigurazioneGenerale) oggetto;
-						driver.updateConfigurazioneControlloCongestione(configurazioneControlloCongestione);
+						ConfigurazioneGenerale configurazioneControlloTraffico = (ConfigurazioneGenerale) oggetto;
+						driver.updateConfigurazioneControlloTraffico(configurazioneControlloTraffico);
 						doSetDati = false;
 					}
 
@@ -3373,7 +3373,7 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
-					 * Operazioni su Controllo Congestione *
+					 * Operazioni su Controllo Traffico *
 					 **********************************************************/
 					// Configurazione Policy
 					if(oggetto instanceof ConfigurazionePolicy) {
@@ -4362,7 +4362,7 @@ public class ControlStationCore {
 			msg+=":EliminazioneMessaggiBasatiSuFiltro<"+filtro.toString()+">";
 		}
 		
-		// Configurazione Controllo Congestione
+		// Configurazione Controllo Traffico
 		else if(oggetto instanceof ConfigurazioneGenerale) {
 			msg+=":"+oggetto.getClass().getSimpleName();
 		}

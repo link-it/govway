@@ -625,7 +625,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.tempiRisposta_tempoMedioRisposta==null || "".equals(this.tempiRisposta_tempoMedioRisposta) ){
 						
 						ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
-						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloCongestione();
+						ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
 						
 						if(this.tempiRisposta_connectionTimeout==null || "".equals(this.tempiRisposta_connectionTimeout) ) {
 							this.tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaFruizione().getConnectionTimeout().intValue()+"";

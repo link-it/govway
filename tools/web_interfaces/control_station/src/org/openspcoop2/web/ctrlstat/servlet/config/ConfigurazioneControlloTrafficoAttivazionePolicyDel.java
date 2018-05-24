@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -39,9 +39,9 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
-import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.TipoOperazione;
 
 
 /***
@@ -49,7 +49,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @author pintori
  *
  */
-public class ConfigurazioneControlloCongestioneConfigurazionePolicyDel extends Action {
+public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -78,28 +78,45 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyDel extends A
 
 			// Elimino i filtri dal db
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
+
 			StringBuilder delMsg = new StringBuilder();
-			List<ConfigurazionePolicy> elemToRemove = new ArrayList<ConfigurazionePolicy>();
+			List<AttivazionePolicy> elemToRemove = new ArrayList<AttivazionePolicy>();
 			for (int i = 0; i < idsToRemove.size(); i++) {
-				boolean delete = true;
+
 				long idPolicy = Long.parseLong(idsToRemove.get(i));
-				ConfigurazionePolicy policy = confCore.getConfigurazionePolicy(idPolicy);
-					
-				long configurazioneUtilizzata = confCore.countInUseAttivazioni(policy.getIdPolicy());
+				AttivazionePolicy policy = confCore.getAttivazionePolicy(idPolicy); 
 				
-				if(configurazioneUtilizzata >0){
-					if(delMsg.length()>0){
-						delMsg.append("<br/>- ");
+				boolean delete = true;
+				if(confHelper.isAllarmiModuleEnabled()){
+					
+					// throw new NotImplementedException("Da implementare quando verranno aggiunti gli allarmi."); 
+					List<String> allarmiUtilizzanoPolicy = null;
+//					List<String> allarmiUtilizzanoPolicy = confHelper.getAllIdAllarmiUseActivePolicy(policy.getIdActivePolicy());
+					allarmiUtilizzanoPolicy = new ArrayList<String>();
+					allarmiUtilizzanoPolicy.add("Allarme1");
+					
+					if(allarmiUtilizzanoPolicy!=null && allarmiUtilizzanoPolicy.size()>0){
+						StringBuffer bf = new StringBuffer();
+						bf.append("La policy '"+policy.getIdActivePolicy()+"' risulta utilizzata da ");
+						bf.append(allarmiUtilizzanoPolicy.size());
+						if(allarmiUtilizzanoPolicy.size()<2){
+							bf.append(" allarme: ");
+						}else{
+							bf.append(" allarmi: ");
+						}
+						for (int j = 0; j < allarmiUtilizzanoPolicy.size(); j++) {
+							if(j>0){
+								bf.append(", ");
+							}
+							bf.append(allarmiUtilizzanoPolicy.get(j));
+						}
+						
+						if(delMsg.length()>0){
+							delMsg.append("<br/>");
+						}
+						delMsg.append("- "+bf.toString());
+						delete = false;
 					}
-					delMsg.append(policy.getIdPolicy());
-					delMsg.append(" viene utilizzata in ");
-					delMsg.append(configurazioneUtilizzata);
-					if(configurazioneUtilizzata >1)
-						delMsg.append(" istanze di ");
-					else
-						delMsg.append(" istanza di ");
-					delMsg.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
-					delete = false;
 				}
 
 				if(delete) {
@@ -108,43 +125,65 @@ public class ConfigurazioneControlloCongestioneConfigurazionePolicyDel extends A
 				}
 			}
 			
-			if(delMsg.length() > 0){
-				delMsg.append("<br/>Per poter eliminare una policy dal registro è necessario prima eliminare tutte le sue istanze esistenti in "+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
-			}
 			
+			String msgErrore = "";
+			if(delMsg.length()>0){
+				if(elemToRemove.size()>0){
+					msgErrore = "Non è stato possibile completare l'eliminazione di tutti gli elementi selezionati:<br/>"+delMsg.toString();
+				}
+				else{
+					msgErrore = "Non è stato possibile eliminare gli elementi selezionati:<br/>"+delMsg.toString();
+				}
+			}
 			
 			if(elemToRemove .size() > 0) {
 //			 	eseguo delete
-				confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) elemToRemove.toArray(new ConfigurazionePolicy[1])); 
+				confCore.performDeleteOperation(userLogin, confHelper.smista(), (Object[]) elemToRemove.toArray(new AttivazionePolicy[1])); 
 			}
 			
-			// alcuni elementi non sono stati eliminati
-			if(delMsg.length() > 0) {
-				pd.setMessage(delMsg.toString()); 
-			} else {
-				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO,MessageType.INFO); 
+			String msgCompletato = confHelper.eseguiResetJmx(TipoOperazione.DEL);
+			
+			if(msgCompletato!=null && !"".equals(msgCompletato)){
+				if(msgErrore!=null && !"".equals(msgErrore)){
+					if(elemToRemove.size()>0){
+						msgCompletato = msgCompletato+"<br/><br/>"+msgErrore;
+					}
+					else{
+						msgCompletato = msgErrore;
+					}
+				}
 			}
+			else{
+				msgCompletato = msgErrore;
+			}
+			if(msgCompletato!=null && !"".equals(msgCompletato)){
+				if(msgErrore!=null && !"".equals(msgErrore))
+					pd.setMessage(msgCompletato);
+				else
+					pd.setMessage(msgCompletato,Costanti.MESSAGE_TYPE_INFO);
+			}
+			
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
-			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;
+			int idLista = Liste.CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
 
 			ricerca = confHelper.checkSearchParameters(idLista, ricerca);
 
-			List<ConfigurazionePolicy> lista = confCore.configurazionePolicyList(ricerca);
+			List<AttivazionePolicy> lista = confCore.attivazionePolicyList(ricerca);
 
-			confHelper.prepareConfigurazionePolicyList(ricerca, lista, idLista);
+			confHelper.prepareAttivazionePolicyList(ricerca, lista, idLista);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForward (mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, ForwardParams.DEL());
+			return ServletUtils.getStrutsForward (mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, ForwardParams.DEL());
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_CONFIGURAZIONE_POLICY, ForwardParams.DEL());
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY, ForwardParams.DEL());
 		}  
 	}
 }

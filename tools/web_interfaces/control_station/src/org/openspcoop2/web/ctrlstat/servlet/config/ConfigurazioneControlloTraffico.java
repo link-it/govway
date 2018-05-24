@@ -32,7 +32,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.controllo_traffico.Cache;
-import org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
@@ -53,7 +52,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author pintori
  *
  */
-public class ConfigurazioneControlloCongestione extends Action {
+public class ConfigurazioneControlloTraffico extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -81,33 +80,33 @@ public class ConfigurazioneControlloCongestione extends Action {
 			ConfigurazioneCore confCore = new ConfigurazioneCore();
 			
 
-			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 			long sizePolicy = confCore.countConfigurazionePolicy(null);
 			long sizeGlobalPolicy = confCore.countAttivazionePolicy(null);
 			
 			// Stato [si usa per capire se sono entrato per la prima volta nella schermata]		
-			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME); 
+			boolean first = confHelper.isFirstTimeFromHttpParameters(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME); 
 			
-			if(configurazioneControlloCongestione.getControlloTraffico()==null){
-				configurazioneControlloCongestione.setControlloTraffico(new ConfigurazioneControlloTraffico());
+			if(configurazioneControlloTraffico.getControlloTraffico()==null){
+				configurazioneControlloTraffico.setControlloTraffico(new org.openspcoop2.core.controllo_traffico.ConfigurazioneControlloTraffico());
 			}
-			if(configurazioneControlloCongestione.getRateLimiting()==null){
-				configurazioneControlloCongestione.setRateLimiting(new ConfigurazioneRateLimiting());
+			if(configurazioneControlloTraffico.getRateLimiting()==null){
+				configurazioneControlloTraffico.setRateLimiting(new ConfigurazioneRateLimiting());
 			}
-			if(configurazioneControlloCongestione.getCache() ==null){
-				configurazioneControlloCongestione.setCache(new Cache());
+			if(configurazioneControlloTraffico.getCache() ==null){
+				configurazioneControlloTraffico.setCache(new Cache());
 			}
-			if(configurazioneControlloCongestione.getTempiRispostaErogazione() ==null){
-				configurazioneControlloCongestione.setTempiRispostaErogazione(new TempiRispostaErogazione());
+			if(configurazioneControlloTraffico.getTempiRispostaErogazione() ==null){
+				configurazioneControlloTraffico.setTempiRispostaErogazione(new TempiRispostaErogazione());
 			}
-			if(configurazioneControlloCongestione.getTempiRispostaFruizione() ==null){
-				configurazioneControlloCongestione.setTempiRispostaFruizione(new TempiRispostaFruizione());
+			if(configurazioneControlloTraffico.getTempiRispostaFruizione() ==null){
+				configurazioneControlloTraffico.setTempiRispostaFruizione(new TempiRispostaFruizione());
 			}
 			
 			StringBuilder sbParsingError = new StringBuilder();
 			// Limitazioni
 			
-			String errorControlloTraffico = confHelper.readConfigurazioneControlloTrafficoFromHttpParameters(configurazioneControlloCongestione.getControlloTraffico(), first);
+			String errorControlloTraffico = confHelper.readConfigurazioneControlloTrafficoFromHttpParameters(configurazioneControlloTraffico.getControlloTraffico(), first);
 			if(errorControlloTraffico!=null){
 				confHelper.addParsingError(sbParsingError,errorControlloTraffico);
 			}
@@ -115,7 +114,7 @@ public class ConfigurazioneControlloCongestione extends Action {
 			
 			// RateLimiting
 			
-			String errorRateLimiting = confHelper.readConfigurazioneRateLimitingFromHttpParameters(configurazioneControlloCongestione.getRateLimiting(), first);
+			String errorRateLimiting = confHelper.readConfigurazioneRateLimitingFromHttpParameters(configurazioneControlloTraffico.getRateLimiting(), first);
 			if(errorRateLimiting!=null){
 				confHelper.addParsingError(sbParsingError,errorRateLimiting);
 			}
@@ -123,7 +122,7 @@ public class ConfigurazioneControlloCongestione extends Action {
 
 			// Tempi di Risposta Fruizione
 			
-			String errorTempiRispostaFruizione = confHelper.readTempiRispostaFruizioneFromHttpParameters(configurazioneControlloCongestione.getTempiRispostaFruizione(), first);
+			String errorTempiRispostaFruizione = confHelper.readTempiRispostaFruizioneFromHttpParameters(configurazioneControlloTraffico.getTempiRispostaFruizione(), first);
 			if(errorTempiRispostaFruizione!=null){
 				confHelper.addParsingError(sbParsingError,errorTempiRispostaFruizione);
 			}
@@ -131,7 +130,7 @@ public class ConfigurazioneControlloCongestione extends Action {
 			
 			// Tempi di Risposta Erogazione
 			
-			String errorTempiRispostaErogazione = confHelper.readTempiRispostaErogazioneFromHttpParameters(configurazioneControlloCongestione.getTempiRispostaErogazione(),  first);
+			String errorTempiRispostaErogazione = confHelper.readTempiRispostaErogazioneFromHttpParameters(configurazioneControlloTraffico.getTempiRispostaErogazione(),  first);
 			if(errorTempiRispostaErogazione!=null){
 				confHelper.addParsingError(sbParsingError,errorTempiRispostaErogazione);
 			}
@@ -139,7 +138,7 @@ public class ConfigurazioneControlloCongestione extends Action {
 			
 			// Cache
 			
-			String errorCache = confHelper.readConfigurazioneCacheFromHttpParameters(configurazioneControlloCongestione.getCache(), first);
+			String errorCache = confHelper.readConfigurazioneCacheFromHttpParameters(configurazioneControlloTraffico.getCache(), first);
 			if(errorCache!=null){
 				confHelper.addParsingError(sbParsingError,errorCache);
 			}
@@ -157,19 +156,19 @@ public class ConfigurazioneControlloCongestione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 
-				confHelper.addConfigurazionControlloCongestioneToDati(dati, tipoOperazione, configurazioneControlloCongestione, sizePolicy, sizeGlobalPolicy, false); 
+				confHelper.addConfigurazionControlloTrafficoToDati(dati, tipoOperazione, configurazioneControlloTraffico, sizePolicy, sizeGlobalPolicy, false); 
 
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE,	ForwardParams.OTHER(""));
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO,	ForwardParams.OTHER(""));
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = confHelper.checkDatiConfigurazioneControlloCongestione(tipoOperazione, sbParsingError, configurazioneControlloCongestione);
+			boolean isOk = confHelper.checkDatiConfigurazioneControlloTraffico(tipoOperazione, sbParsingError, configurazioneControlloTraffico);
 			if (!isOk) {
 
 				ServletUtils.setPageDataTitle(pd, lstParam);
@@ -179,18 +178,18 @@ public class ConfigurazioneControlloCongestione extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// Set First is false
-				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_CONGESTIONE_FIRST_TIME);
+				confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_FIRST_TIME);
 
-				confHelper.addConfigurazionControlloCongestioneToDati(dati, tipoOperazione, configurazioneControlloCongestione, sizePolicy, sizeGlobalPolicy, false); 
+				confHelper.addConfigurazionControlloTrafficoToDati(dati, tipoOperazione, configurazioneControlloTraffico, sizePolicy, sizeGlobalPolicy, false); 
 
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE,	ForwardParams.OTHER(""));
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO,	ForwardParams.OTHER(""));
 			}
 
-			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneControlloCongestione);
+			confCore.performUpdateOperation(userLogin, confHelper.smista(), configurazioneControlloTraffico);
 
 			// Preparo la lista
 			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_RIAVVIO_RICHIESTO , Costanti.MESSAGE_TYPE_INFO);
@@ -201,22 +200,22 @@ public class ConfigurazioneControlloCongestione extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			// ricarico la configurazione
-			configurazioneControlloCongestione = confCore.getConfigurazioneControlloCongestione();
+			configurazioneControlloTraffico = confCore.getConfigurazioneControlloTraffico();
 
 			// Set First is false
 			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);
 
-			confHelper.addConfigurazionControlloCongestioneToDati(dati, tipoOperazione, configurazioneControlloCongestione, sizePolicy, sizeGlobalPolicy, true); 
+			confHelper.addConfigurazionControlloTrafficoToDati(dati, tipoOperazione, configurazioneControlloTraffico, sizePolicy, sizeGlobalPolicy, true); 
 
 			pd.setDati(dati);
 			pd.disableEditMode();
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE, ForwardParams.OTHER(""));
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ForwardParams.OTHER(""));
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_CONGESTIONE, ForwardParams.OTHER(""));
+					ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO, ForwardParams.OTHER(""));
 		}
 	}
 }
