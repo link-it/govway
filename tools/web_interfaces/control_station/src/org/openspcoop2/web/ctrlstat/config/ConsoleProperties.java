@@ -259,6 +259,7 @@ public class ConsoleProperties {
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
 		
 		PropertiesSourceConfiguration config = new PropertiesSourceConfiguration();
+		config.setId("messageSecurity");
 		
 		String dir = this.readProperty(false, "messageSecurity.dir");
 		if(dir!=null) {
