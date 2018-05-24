@@ -95,7 +95,12 @@ public class Message1_1_FIX_Impl extends Message1_1Impl {
 	// Wrapper
 	
     public MimeMultipart getMimeMultipart(){
-    	if (this.msg!= null) return ((Message1_1_FIX_Impl)this.msg).getMimeMultipart();	
+    	if (this.msg!= null) { 
+    		if(this.msg instanceof Message1_1_FIX_Impl)
+    			return ((Message1_1_FIX_Impl)this.msg).getMimeMultipart();
+    		else
+    			return super.mmp;
+    	}
     	else return super.mmp;
     }
 	

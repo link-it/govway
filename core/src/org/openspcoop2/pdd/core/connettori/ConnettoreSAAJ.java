@@ -139,6 +139,11 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			if(this.debug)
 				this.logger.info("Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]...",false);
 			
+			// check validity message
+			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false) {
+				throw new Exception("Connettore utilizzabile solamente in un contesto SOAP (trovato: "+this.requestMsg.getServiceBinding()+")");
+			}
+			
 			// check validita URL
 			if(this.debug)
 				this.logger.debug("Check validita URL...");
@@ -286,7 +291,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					this.logger.debug("Send...");
 				
 				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().
-						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call((SOAPMessage) this.requestMsg,this.location));
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call( this.requestMsg.castAsSoap().getSOAPMessage(),this.location));
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();
 				
@@ -326,11 +331,13 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					Iterator<?> it = soapResponse.getMimeHeaders().getAllHeaders();
 					while (it.hasNext()) {
 						MimeHeader mh = (MimeHeader) it.next();
-						this.propertiesTrasportoRisposta.put(mh.getName(),mh.getValue());
-						if("content-length".equalsIgnoreCase(mh.getName())){
-							try{
-								this.contentLength = Integer.parseInt(mh.getValue());
-							}catch(Exception e){}
+						if(mh!=null && mh.getName()!=null && mh.getValue()!=null) {
+							this.propertiesTrasportoRisposta.put(mh.getName(),mh.getValue());
+							if("content-length".equalsIgnoreCase(mh.getName())){
+								try{
+									this.contentLength = Integer.parseInt(mh.getValue());
+								}catch(Exception e){}
+							}
 						}
 					}
 				}

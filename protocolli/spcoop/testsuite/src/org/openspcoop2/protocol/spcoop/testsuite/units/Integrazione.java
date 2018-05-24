@@ -119,11 +119,11 @@ public class Integrazione {
 	
 	
 	//private static final String MSG_ERRORE = "Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
-	private static final String MSG_ERRORE_SERVIZIO="Servizio richiesto con la porta delegata non trovato nel Registro dei Servizi";
-	private static final String MSG_ERRORE_IDENTIFICAZIONE_TIPO="Riscontrato errore durante l'identificazione dei dati di cooperazione associati alla porta delegata (TIPO) utilizzando il pattern specificato nella configurazione";
+	//private static final String MSG_ERRORE_SERVIZIO="Servizio richiesto con la porta delegata non trovato nel Registro dei Servizi";
+	private static final String MSG_ERRORE_IDENTIFICAZIONE_AZIONE="Identificazione dinamica dell'azione associata alla porta delegata fallita";
 	//private static final String MSG_ERRORE_IDENTIFICAZIONE_SERVIZIO="Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
 	private static final String MSG_ERRORE_SERVIZIO_ERRATO = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:@AZIONE@) azione [@AZIONE@] non trovata nell'accordo di servizio @ACCORDO_SERVIZIO@";
-		
+	
 	public static void checkHttpRisposta(CooperazioneBase collaborazioneSPCoopBase,Properties risposta,String tipoServizio,String servizio,String azione,String idEGov)throws Exception{
 		if(risposta==null){
 			throw new Exception("Risposta is null");
@@ -1952,10 +1952,10 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
+				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
@@ -2216,10 +2216,10 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
+				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
@@ -2400,10 +2400,11 @@ public class Integrazione {
 				client.run();
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
-				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_405]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO).equals(error.getFaultCode().getLocalPart()));
-				Reporter.log("Controllo fault string ["+MSG_ERRORE_SERVIZIO+"]");
-				Assert.assertTrue(MSG_ERRORE_SERVIZIO.equals(error.getFaultString()));
+				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_423]");
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA).equals(error.getFaultCode().getLocalPart()));
+				String msgErrore = "L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:BEGIN-ID__END-ID) azione [BEGIN-ID__END-ID] non trovata nell'accordo di servizio ASRichiestaStatoAvanzamento:1";
+				Reporter.log("Controllo fault string ["+msgErrore+"]");
+				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
 				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
 				return;
@@ -2578,10 +2579,10 @@ public class Integrazione {
 			try {
 				client.run();
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]:  faultString["+error.getFaultString()+"]");
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SERVIZIO");
+				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
@@ -2959,9 +2960,9 @@ public class Integrazione {
 			headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 			
 			headerTo.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
-					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1");
 			headerAction.setValue("http://"+this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"_"+this.collaborazioneSPCoopBase.getDestinatario().getNome()+
-					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/"+
+					".openspcoop2.org/servizi/"+CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"_"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"/1/"+
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			
 			if(msg.getSOAPHeader()==null)
@@ -3093,10 +3094,10 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
+				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
@@ -3359,7 +3360,7 @@ public class Integrazione {
 				// Ci sono 2 occorrenze di azione
 				msgErrore = msgErrore.replace("@AZIONE@", soapActionTest);
 				msgErrore = msgErrore.replace("@AZIONE@", soapActionTest);
-				msgErrore = msgErrore.replace("@ACCORDO_SERVIZIO@", "ASRichiestaStatoAvanzamento");
+				msgErrore = msgErrore.replace("@ACCORDO_SERVIZIO@", "ASRichiestaStatoAvanzamento:1");
 				Reporter.log("Controllo faultString ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");
@@ -3533,10 +3534,10 @@ public class Integrazione {
 				client.run();
 				throw new Exception("Errore atteso [OPENSPCOOP_ORG_403] non si e' verificato...");
 			} catch (AxisFault error) {
-				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"] faultString["+error.getFaultString()+"]");
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "AZIONE");
+				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor [OpenSPCoop]");

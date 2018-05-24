@@ -216,7 +216,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 			throw new HeaderIntegrazioneException(type+" Value is not valid (NomeServizio non identificabile): "+format);
 		}
 		
-		String tmpVersioneServizio = nomeServizio.substring(indexVersioneServizio+1);
+		String tmpVersioneServizio = nomeVersioneServizio.substring(indexVersioneServizio+1);
 		if(tmpVersioneServizio!=null){
 			tmpVersioneServizio = tmpVersioneServizio.trim();
 		}

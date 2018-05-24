@@ -7721,7 +7721,7 @@
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_ContentBased_SOAP_stateful"  integrazione="trasporto,urlBased,soap" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless" />
+            <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteRaccoltaInfoIntegrazione" /> 
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
