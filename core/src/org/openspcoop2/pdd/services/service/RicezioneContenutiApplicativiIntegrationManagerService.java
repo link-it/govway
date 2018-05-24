@@ -121,6 +121,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		try{
 			// Request Info
 			URLProtocolContext urlProtocolContext = new URLProtocolContext(req,logCore,true,true,openSPCoopProperties.getCustomContexts());
+			urlProtocolContext.setInterfaceName(portaDelegata);
 			requestInfo = ConnectorUtils.getRequestInfo(protocolFactory, urlProtocolContext);
 		}catch(Exception e){
 			String msgError = "Lettura RequestInfo non riuscita: "+Utilities.readFirstErrorValidMessageFromException(e);
@@ -416,6 +417,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			
 			// Parametri della porta delegata invocata
 			urlProtocolContext = new URLProtocolContext();
+			urlProtocolContext.setInterfaceName(portaDelegata);
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);
 			urlProtocolContext.setFunction(URLProtocolContext.IntegrationManager_FUNCTION);
