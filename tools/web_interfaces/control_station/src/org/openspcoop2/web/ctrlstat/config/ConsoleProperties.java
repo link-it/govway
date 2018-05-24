@@ -27,18 +27,20 @@ import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import org.apache.cxf.common.util.ClasspathScanner;
 import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.slf4j.Logger;
 
@@ -274,40 +276,48 @@ public class ConsoleProperties {
 		String buildInt = this.readProperty(false, "messageSecurity.builtIn");
 		if(buildInt!=null) {
 			try {
-				List<String> basePackageList = new ArrayList<>();
-				if(buildInt.contains(",")) {
-					String [] tmp = buildInt.split(",");
-					for (int i = 0; i < tmp.length; i++) {
-						basePackageList.add(tmp[i].trim());
-					}
-				}
-				else {
-					basePackageList.add(buildInt.trim());
-				}
-				//System.out.println("BASE: "+basePackageList);
-				List<URL> list = ClasspathScanner.findResources(basePackageList, "xml",this.getClass().getClassLoader());
-//				System.out.println("AAAAAAAAAAA LISTA SIZE: "+list.size());
-//				System.out.println("AAAAAAAAAAA LISTA: "+list);
-//				System.out.println("AAAAAAAAAAA ITERO");
-				Iterator<URL> it = list.iterator();
-				if(it!=null) {
-					List<byte[]> builtIdList = new ArrayList<>();
-					while (it.hasNext()) {
-						URL url = (URL) it.next();
-						//System.out.println("AAAAAAAAAAA ITERO ["+url+"]");
-						InputStream is = url.openStream();
+				//System.out.println("BASE: "+buildInt);
+				InputStream is = ConsoleProperties.class.getResourceAsStream(buildInt);
+				try {
+					if(is!=null) {
+						byte [] zipContent = Utilities.getAsByteArray(is);
+						is.close();
+						is = null;
+						File fTmp = File.createTempFile("zipMessage", ".zip");
+						//System.out.println("TMP: "+fTmp.getAbsolutePath());
 						try {
-							byte [] bytes = Utilities.getAsByteArray(is);
-							builtIdList.add(bytes);
-						}finally {
-							try {
-								if(is!=null) {
-									is.close();
+							FileSystemUtilities.writeFile(fTmp, zipContent);
+							ZipFile zip = new ZipFile(fTmp);
+							Iterator<ZipEntry> itZip = ZipUtilities.entries(zip, true);
+							List<byte[]> builtIdList = new ArrayList<>();
+							while (itZip.hasNext()) {
+								ZipEntry zipEntry = (ZipEntry) itZip.next();
+								if(zipEntry.isDirectory() == false) {
+									InputStream isZip = zip.getInputStream(zipEntry);
+									try {
+										//System.out.println("LEGGO ["+zipEntry.getName()+"]");
+										byte [] bytes = Utilities.getAsByteArray(isZip);
+										builtIdList.add(bytes);
+									}finally {
+										try {
+											if(isZip!=null) {
+												isZip.close();
+											}
+										}catch(Exception e) {}
+									}
 								}
-							}catch(Exception e) {}
+							}
+							config.setBuiltIn(builtIdList);
+						}finally {
+							fTmp.delete();
 						}
 					}
-					config.setBuiltIn(builtIdList);
+				}finally {
+					try {
+						if(is!=null) {
+							is.close();
+						}
+					}catch(Exception e) {}
 				}
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(),e);

@@ -15,6 +15,9 @@
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
 	<target name="war_openspcoop2_pddConsole" depends="css_openspcoop2_pddConsole">
 
+		<!-- Resources -->
+		<zip destfile="${build_pddConsole}/tmp/messageSecurity.zip" basedir="deploy" includes="messageSecurity/**/*.xml" />
+
 		<!-- Properties -->
 		<copy file="${cfg}/console.datasource.properties" todir="${build_pddConsole}/tmp" />
 		<copy file="${cfg}/console.properties" todir="${build_pddConsole}/tmp" />
@@ -412,8 +415,8 @@
 			<classes dir="${plugins_pddConsole}">
 				<include name="**/*.properties" />
 			</classes>
-			<classes dir="deploy">
-				<include name="messageSecurity/**/*.xml" />
+			<classes dir="${build_pddConsole}/tmp">
+				<include name="messageSecurity.zip" />
 			</classes>
 		</war>
 		<delete dir="${build_pddConsole}/tmp" />
