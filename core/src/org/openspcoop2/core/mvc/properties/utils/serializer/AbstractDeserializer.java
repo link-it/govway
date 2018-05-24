@@ -29,10 +29,12 @@ import org.openspcoop2.core.mvc.properties.Selected;
 import org.openspcoop2.core.mvc.properties.ItemValue;
 import org.openspcoop2.core.mvc.properties.ItemValues;
 import org.openspcoop2.core.mvc.properties.Equals;
-import org.openspcoop2.core.mvc.properties.Properties;
+import org.openspcoop2.core.mvc.properties.Compatibility;
 import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.Properties;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Property;
+import org.openspcoop2.core.mvc.properties.Tags;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Condition;
 
@@ -557,63 +559,63 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
-	 Object: properties
+	 Object: compatibility
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
-	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Properties readProperties(String fileName) throws DeserializerException {
-		return (Properties) this.xmlToObj(fileName, Properties.class);
+	public Compatibility readCompatibility(String fileName) throws DeserializerException {
+		return (Compatibility) this.xmlToObj(fileName, Compatibility.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
-	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Properties readProperties(File file) throws DeserializerException {
-		return (Properties) this.xmlToObj(file, Properties.class);
+	public Compatibility readCompatibility(File file) throws DeserializerException {
+		return (Compatibility) this.xmlToObj(file, Compatibility.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
-	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Properties readProperties(InputStream in) throws DeserializerException {
-		return (Properties) this.xmlToObj(in, Properties.class);
+	public Compatibility readCompatibility(InputStream in) throws DeserializerException {
+		return (Compatibility) this.xmlToObj(in, Compatibility.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
-	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Properties readProperties(byte[] in) throws DeserializerException {
-		return (Properties) this.xmlToObj(in, Properties.class);
+	public Compatibility readCompatibility(byte[] in) throws DeserializerException {
+		return (Compatibility) this.xmlToObj(in, Compatibility.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
-	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Compatibility}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Properties readPropertiesFromString(String in) throws DeserializerException {
-		return (Properties) this.xmlToObj(in.getBytes(), Properties.class);
+	public Compatibility readCompatibilityFromString(String in) throws DeserializerException {
+		return (Compatibility) this.xmlToObj(in.getBytes(), Compatibility.class);
 	}	
 	
 	
@@ -677,6 +679,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Config readConfigFromString(String in) throws DeserializerException {
 		return (Config) this.xmlToObj(in.getBytes(), Config.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: properties
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Properties readProperties(String fileName) throws DeserializerException {
+		return (Properties) this.xmlToObj(fileName, Properties.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Properties readProperties(File file) throws DeserializerException {
+		return (Properties) this.xmlToObj(file, Properties.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Properties readProperties(InputStream in) throws DeserializerException {
+		return (Properties) this.xmlToObj(in, Properties.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Properties readProperties(byte[] in) throws DeserializerException {
+		return (Properties) this.xmlToObj(in, Properties.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Properties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Properties readPropertiesFromString(String in) throws DeserializerException {
+		return (Properties) this.xmlToObj(in.getBytes(), Properties.class);
 	}	
 	
 	
@@ -803,6 +868,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Property readPropertyFromString(String in) throws DeserializerException {
 		return (Property) this.xmlToObj(in.getBytes(), Property.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: tags
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Tags readTags(String fileName) throws DeserializerException {
+		return (Tags) this.xmlToObj(fileName, Tags.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Tags readTags(File file) throws DeserializerException {
+		return (Tags) this.xmlToObj(file, Tags.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Tags readTags(InputStream in) throws DeserializerException {
+		return (Tags) this.xmlToObj(in, Tags.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Tags readTags(byte[] in) throws DeserializerException {
+		return (Tags) this.xmlToObj(in, Tags.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @return Object type {@link org.openspcoop2.core.mvc.properties.Tags}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Tags readTagsFromString(String in) throws DeserializerException {
+		return (Tags) this.xmlToObj(in.getBytes(), Tags.class);
 	}	
 	
 	

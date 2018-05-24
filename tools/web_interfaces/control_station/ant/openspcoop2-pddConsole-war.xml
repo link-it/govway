@@ -412,6 +412,9 @@
 			<classes dir="${plugins_pddConsole}">
 				<include name="**/*.properties" />
 			</classes>
+			<classes dir="deploy">
+				<include name="messageSecurity/**/*.xml" />
+			</classes>
 		</war>
 		<delete dir="${build_pddConsole}/tmp" />
 		

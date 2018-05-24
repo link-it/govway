@@ -70,6 +70,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -463,6 +464,12 @@ public class ControlStationCore {
 		return null;
 	}
 	
+	/** MessageSecurity PropertiesSourceConfiguration */
+	private PropertiesSourceConfiguration messageSecurityPropertiesSourceConfiguration = null;
+	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() {
+		return this.messageSecurityPropertiesSourceConfiguration;
+	}
+
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1303,6 +1310,9 @@ public class ControlStationCore {
 		/** Password Verifier */
 		this.passwordVerifierConfiguration = core.passwordVerifierConfiguration;
 		
+		/** MessageSecurity PropertiesSourceConfiguration */
+		this.messageSecurityPropertiesSourceConfiguration = core.messageSecurityPropertiesSourceConfiguration;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1530,6 +1540,8 @@ public class ControlStationCore {
 			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteApplicative();
 			this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
+			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
+			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
@@ -1544,7 +1556,6 @@ public class ControlStationCore {
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
-			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.showConfigurazioniPersonalizzate = consoleProperties.isConsoleConfigurazioniPersonalizzate();
 			this.showGestioneSoggettiRouter = consoleProperties.isConsoleGestioneSoggettiRouter();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();

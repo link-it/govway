@@ -91,7 +91,7 @@ public class ValidationEngine {
 			}
 		
 		}catch(Exception e) {
-			throw new Exception("Errore durante la validazione della configurazione ["+config.getName()+"]: "+ e.getMessage());
+			throw new Exception("Errore durante la validazione della configurazione ["+config.getId()+"]: "+ e.getMessage());
 		}
 		
 		return true;

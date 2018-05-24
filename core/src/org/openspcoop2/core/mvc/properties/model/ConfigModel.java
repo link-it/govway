@@ -40,9 +40,12 @@ public class ConfigModel extends AbstractModel<Config> {
 	
 		super();
 	
+		this.COMPATIBILITY = new org.openspcoop2.core.mvc.properties.model.CompatibilityModel(new Field("compatibility",org.openspcoop2.core.mvc.properties.Compatibility.class,"config",Config.class));
 		this.PROPERTIES = new org.openspcoop2.core.mvc.properties.model.PropertiesModel(new Field("properties",org.openspcoop2.core.mvc.properties.Properties.class,"config",Config.class));
 		this.SECTION = new org.openspcoop2.core.mvc.properties.model.SectionModel(new Field("section",org.openspcoop2.core.mvc.properties.Section.class,"config",Config.class));
-		this.NAME = new Field("name",java.lang.String.class,"config",Config.class);
+		this.ID = new Field("id",java.lang.String.class,"config",Config.class);
+		this.LABEL = new Field("label",java.lang.String.class,"config",Config.class);
+		this.SORT_LABEL = new Field("sortLabel",java.lang.String.class,"config",Config.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"config",Config.class);
 	
 	}
@@ -51,20 +54,29 @@ public class ConfigModel extends AbstractModel<Config> {
 	
 		super(father);
 	
+		this.COMPATIBILITY = new org.openspcoop2.core.mvc.properties.model.CompatibilityModel(new ComplexField(father,"compatibility",org.openspcoop2.core.mvc.properties.Compatibility.class,"config",Config.class));
 		this.PROPERTIES = new org.openspcoop2.core.mvc.properties.model.PropertiesModel(new ComplexField(father,"properties",org.openspcoop2.core.mvc.properties.Properties.class,"config",Config.class));
 		this.SECTION = new org.openspcoop2.core.mvc.properties.model.SectionModel(new ComplexField(father,"section",org.openspcoop2.core.mvc.properties.Section.class,"config",Config.class));
-		this.NAME = new ComplexField(father,"name",java.lang.String.class,"config",Config.class);
+		this.ID = new ComplexField(father,"id",java.lang.String.class,"config",Config.class);
+		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"config",Config.class);
+		this.SORT_LABEL = new ComplexField(father,"sortLabel",java.lang.String.class,"config",Config.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"config",Config.class);
 	
 	}
 	
 	
 
+	public org.openspcoop2.core.mvc.properties.model.CompatibilityModel COMPATIBILITY = null;
+	 
 	public org.openspcoop2.core.mvc.properties.model.PropertiesModel PROPERTIES = null;
 	 
 	public org.openspcoop2.core.mvc.properties.model.SectionModel SECTION = null;
 	 
-	public IField NAME = null;
+	public IField ID = null;
+	 
+	public IField LABEL = null;
+	 
+	public IField SORT_LABEL = null;
 	 
 	public IField DESCRIZIONE = null;
 	 

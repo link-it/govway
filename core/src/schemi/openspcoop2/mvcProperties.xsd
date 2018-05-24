@@ -44,10 +44,13 @@
 	</xsd:element>
 	<xsd:complexType name="config">
 		<xsd:sequence>
+			<xsd:element name="compatibility" type="compatibility" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="properties" type="properties" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="section" type="section" maxOccurs="unbounded" minOccurs="1"/>
 		</xsd:sequence>
-		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="id" type="xsd:string" use="required"/>
+		<xsd:attribute name="label" type="xsd:string" use="required"/>
+		<xsd:attribute name="sortLabel" type="xsd:string" use="optional"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
@@ -129,6 +132,21 @@
 	</xsd:complexType>
 	<xsd:complexType name="collection">
 		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="compatibility">
+		<xsd:sequence>
+			<xsd:element name="tags" type="tags" maxOccurs="unbounded"  minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
+	</xsd:complexType>
+	<xsd:complexType name="tags">
+		<xsd:sequence>
+			<xsd:element name="tag" type="xsd:string" maxOccurs="unbounded"  minOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="and" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="not" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	
 	

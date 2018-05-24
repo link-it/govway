@@ -1,0 +1,34 @@
+<config id="messageSecurity.wss4j.receiver.timestamp" label="WSSecurity Timestamp" sortLabel="0_Timestamp" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+        <compatibility not="false" and="false">
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>RESPONSE</tag>
+                        <tag>PD</tag>
+                </tags>
+                <tags and="true">
+                        <tag>SOAP</tag>
+                        <tag>REQUEST</tag>
+                        <tag>PA</tag>
+                </tags>
+        </compatibility>
+	
+	<section label="Configurazione WSSecurity">
+		
+		<subsection label="Informazioni Generali">
+
+			<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+				<property name="actor" />
+			</item>
+			<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+				<property name="mustUnderstand" />
+			</item>
+			
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

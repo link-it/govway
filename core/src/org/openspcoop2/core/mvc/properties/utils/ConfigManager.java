@@ -21,7 +21,9 @@ package org.openspcoop2.core.mvc.properties.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -104,11 +106,11 @@ public class ConfigManager {
 						}
 						
 						Config configDaFile = xmlReader.readConfig(fileConfig);
-						
-						if(mapConfigFromDir.containsKey(configDaFile.getName()))
-							throw new Exception("La configurazione ["+configDaFile.getName()+"] e' duplicata all'interno del path indicato ["+systemPath+"].");
+						String id = configDaFile.getId();
+						if(mapConfigFromDir.containsKey(id))
+							throw new Exception("La configurazione con id '"+id+"' risulta duplicata all'interno del path indicato ["+systemPath+"].");
 							
-						mapConfigFromDir.put(configDaFile.getName(),configDaFile);
+						mapConfigFromDir.put(id,configDaFile);
 					}
 				}
 				this.mapConfig.put(systemPath, mapConfigFromDir);
@@ -118,17 +120,66 @@ public class ConfigManager {
 //		return this.mapConfig.get(systemPath);
 	}
 	
-	public List<String> getNomiConfigurazioni(String systemPath) {
-		List<String> list = new ArrayList<String>();
+	public List<String> getNomiConfigurazioni(String systemPath, String ... tags) {
+		List<String> mapSortedKeys = new ArrayList<>();
+		Map<String, List<String>> mapSorted = new HashMap<>();
+				
 		Map<String, Config> map = this.mapConfig.get(systemPath);
 
-		list.addAll(map.keySet()); // ORDINARE IN QUALE ORDINE?
+		Iterator<String> iterator = map.keySet().iterator();
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			Config config = map.get(id);
+			if(tags!=null && tags.length>0) {
+				// TODO FILTRARE IN BASE AI TAGS 
+				continue;
+			}
+			
+			String labelId = config.getLabel();
+			if(config.getSortLabel()!=null) {
+				labelId = config.getSortLabel();
+			}
+			
+			List<String> l = null;
+			if(mapSorted.containsKey(labelId)) {
+				l = mapSorted.get(id);
+			}
+			else {
+				l = new ArrayList<>();
+				mapSorted.put(labelId, l);
+				mapSortedKeys.add(labelId);
+			}
+			l.add(id);
+			
+		}
 		
-		return list;
+		Collections.sort(mapSortedKeys);
+		List<String> list = new ArrayList<>();
+		for (String labelId : mapSortedKeys) {
+			List<String> l = mapSorted.get(labelId);
+			list.addAll(l);
+		}
+		return list; // lista contenente gli id
 	}
 	
-	public Config getConfigurazione(String systemPAth, String name){
-		return this.mapConfig.get(systemPAth).get(name);
+	public List<String> convertToLabel(String systemPath, List<String> idList){
+	
+		Map<String, Config> map = this.mapConfig.get(systemPath);
+		List<String> listLabels = new ArrayList<>();
+		for (String id : idList) {
+			Config config = map.get(id);
+			String labelId = config.getLabel();
+			if(config.getSortLabel()!=null) {
+				labelId = config.getSortLabel();
+			}
+			listLabels.add(labelId);
+		}
+		return listLabels;
+	}
+	
+	public Config getConfigurazione(String systemPath, String name){
+		return this.mapConfig.get(systemPath).get(name);
 	}
 	
 	

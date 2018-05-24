@@ -1,0 +1,74 @@
+<config id="messageSecurity.wss4j.receiver.signature" label="WSSecurity Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+        <compatibility not="false" and="false">
+                <tags and="true">
+                        <tag>REST</tag>
+                        <tag>RESPONSE</tag>
+                        <tag>PD</tag>
+                </tags>
+                <tags and="true">
+                        <tag>REST</tag>
+                        <tag>REQUEST</tag>
+                        <tag>PA</tag>
+                </tags>
+        </compatibility>
+	
+	<properties>
+		<collection name="signaturePropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<property name="Action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+		</item>
+		<item type="hidden" name="signatureAction" value="Signature">
+			<property name="Action" append="true" appendSeparator="_" force="true"/>
+		</item>
+
+	</section>
+
+	<section label="Signature">
+
+		<item type="text" name="signatureParts" label="Elementi firmati" required="false">
+		     	<property name="signatureParts" />
+		</item>
+
+		<subsection label="TrustStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="false">
+			      	<property name="user" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

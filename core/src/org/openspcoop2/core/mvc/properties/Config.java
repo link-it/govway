@@ -37,10 +37,13 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="config">
  * 		&lt;sequence>
+ * 			&lt;element name="compatibility" type="{http://www.openspcoop2.org/core/mvc/properties}compatibility" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="properties" type="{http://www.openspcoop2.org/core/mvc/properties}properties" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="section" type="{http://www.openspcoop2.org/core/mvc/properties}section" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="sortLabel" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -54,6 +57,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "config", 
   propOrder = {
+  	"compatibility",
   	"properties",
   	"section"
   }
@@ -63,6 +67,14 @@ import java.util.List;
 
 public class Config extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Config() {
+  }
+
+  public Compatibility getCompatibility() {
+    return this.compatibility;
+  }
+
+  public void setCompatibility(Compatibility compatibility) {
+    this.compatibility = compatibility;
   }
 
   public Properties getProperties() {
@@ -97,12 +109,28 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
     return this.section.size();
   }
 
-  public java.lang.String getName() {
-    return this.name;
+  public java.lang.String getId() {
+    return this.id;
   }
 
-  public void setName(java.lang.String name) {
-    this.name = name;
+  public void setId(java.lang.String id) {
+    this.id = id;
+  }
+
+  public java.lang.String getLabel() {
+    return this.label;
+  }
+
+  public void setLabel(java.lang.String label) {
+    this.label = label;
+  }
+
+  public java.lang.String getSortLabel() {
+    return this.sortLabel;
+  }
+
+  public void setSortLabel(java.lang.String sortLabel) {
+    this.sortLabel = sortLabel;
   }
 
   public java.lang.String getDescrizione() {
@@ -128,6 +156,9 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
 	  return org.openspcoop2.core.mvc.properties.Config.modelStaticInstance;
   }
 
+
+  @XmlElement(name="compatibility",required=false,nillable=false)
+  protected Compatibility compatibility;
 
   @XmlElement(name="properties",required=false,nillable=false)
   protected Properties properties;
@@ -163,8 +194,16 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="name",required=true)
-  protected java.lang.String name;
+  @XmlAttribute(name="id",required=true)
+  protected java.lang.String id;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="label",required=true)
+  protected java.lang.String label;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="sortLabel",required=false)
+  protected java.lang.String sortLabel;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)

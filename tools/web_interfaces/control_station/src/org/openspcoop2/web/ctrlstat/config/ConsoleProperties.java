@@ -23,17 +23,24 @@
 package org.openspcoop2.web.ctrlstat.config;
 
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.Logger;
+import org.apache.cxf.common.util.ClasspathScanner;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.slf4j.Logger;
 
 
 
@@ -245,6 +252,75 @@ public class ConsoleProperties {
 	
 	public String getConsolePasswordVerifier() throws UtilsException{
 		return this.readProperty(false, "console.passwordVerifier");
+	}
+	
+	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() throws UtilsException {
+		
+		PropertiesSourceConfiguration config = new PropertiesSourceConfiguration();
+		
+		String dir = this.readProperty(false, "messageSecurity.dir");
+		if(dir!=null) {
+			File f = new File(dir);
+			if(f.exists()) {
+				config.setDirectory(f.getAbsolutePath());
+			}
+		}
+		
+		String dir_refresh = this.readProperty(false, "messageSecurity.dir.refresh");
+		if(dir_refresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(dir_refresh.trim()));
+		}
+		
+		String buildInt = this.readProperty(false, "messageSecurity.builtIn");
+		if(buildInt!=null) {
+			try {
+				List<String> basePackageList = new ArrayList<>();
+				if(buildInt.contains(",")) {
+					String [] tmp = buildInt.split(",");
+					for (int i = 0; i < tmp.length; i++) {
+						basePackageList.add(tmp[i].trim());
+					}
+				}
+				else {
+					basePackageList.add(buildInt.trim());
+				}
+				//System.out.println("BASE: "+basePackageList);
+				List<URL> list = ClasspathScanner.findResources(basePackageList, "xml",this.getClass().getClassLoader());
+//				System.out.println("AAAAAAAAAAA LISTA SIZE: "+list.size());
+//				System.out.println("AAAAAAAAAAA LISTA: "+list);
+//				System.out.println("AAAAAAAAAAA ITERO");
+				Iterator<URL> it = list.iterator();
+				if(it!=null) {
+					List<byte[]> builtIdList = new ArrayList<>();
+					while (it.hasNext()) {
+						URL url = (URL) it.next();
+						//System.out.println("AAAAAAAAAAA ITERO ["+url+"]");
+						InputStream is = url.openStream();
+						try {
+							byte [] bytes = Utilities.getAsByteArray(is);
+							builtIdList.add(bytes);
+						}finally {
+							try {
+								if(is!=null) {
+									is.close();
+								}
+							}catch(Exception e) {}
+						}
+					}
+					config.setBuiltIn(builtIdList);
+				}
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
+		
+		String builtIn_refresh = this.readProperty(false, "messageSecurity.builtIn.refresh");
+		if(builtIn_refresh!=null) {
+			config.setUpdate("true".equalsIgnoreCase(builtIn_refresh.trim()));
+		}
+		
+		return config;
+
 	}
 	
 	

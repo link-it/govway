@@ -143,6 +143,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Tags }
+     */
+    public Tags createTags() {
+        return new Tags();
+    }
+
+    /**
+     * Create an instance of {@link Compatibility }
+     */
+    public Compatibility createCompatibility() {
+        return new Compatibility();
+    }
+
+    /**
      * Create an instance of {@link Properties }
      */
     public Properties createProperties() {
