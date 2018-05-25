@@ -262,6 +262,12 @@ public class ConsoleProperties {
 				"messageSecurity.builtIn", "messageSecurity.builtIn.refresh");
 	}
 	
+	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() throws UtilsException {
+		return _getSourceConfiguration("policyGestioneToken", 
+				"policyGestioneToken.dir", "policyGestioneToken.dir.refresh", 
+				"policyGestioneToken.builtIn", "policyGestioneToken.builtIn.refresh");
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	

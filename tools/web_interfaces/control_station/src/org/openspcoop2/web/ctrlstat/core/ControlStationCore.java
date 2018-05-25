@@ -469,6 +469,12 @@ public class ControlStationCore {
 	public PropertiesSourceConfiguration getMessageSecurityPropertiesSourceConfiguration() {
 		return this.messageSecurityPropertiesSourceConfiguration;
 	}
+	
+	/** PolicyGestioneToken PropertiesSourceConfiguration */
+	private PropertiesSourceConfiguration policyGestioneTokenPropertiesSourceConfiguration = null;
+	public PropertiesSourceConfiguration getPolicyGestioneTokenPropertiesSourceConfiguration() {
+		return this.policyGestioneTokenPropertiesSourceConfiguration;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -1313,6 +1319,9 @@ public class ControlStationCore {
 		/** MessageSecurity PropertiesSourceConfiguration */
 		this.messageSecurityPropertiesSourceConfiguration = core.messageSecurityPropertiesSourceConfiguration;
 		
+		/** PolicyGestioneToken PropertiesSourceConfiguration */
+		this.policyGestioneTokenPropertiesSourceConfiguration = core.policyGestioneTokenPropertiesSourceConfiguration;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1542,6 +1551,7 @@ public class ControlStationCore {
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			this.passwordVerifierConfiguration = consoleProperties.getConsolePasswordVerifier();
 			this.messageSecurityPropertiesSourceConfiguration = consoleProperties.getMessageSecurityPropertiesSourceConfiguration();
+			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
