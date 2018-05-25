@@ -17,6 +17,7 @@
 
 		<!-- Resources -->
 		<zip destfile="${build_pddConsole}/tmp/messageSecurity.zip" basedir="deploy" includes="messageSecurity/**/*.xml" />
+		<zip destfile="${build_pddConsole}/tmp/policyGestioneToken.zip" basedir="deploy" includes="policyGestioneToken/**/*.xml" />
 
 		<!-- Properties -->
 		<copy file="${cfg}/console.datasource.properties" todir="${build_pddConsole}/tmp" />
@@ -417,6 +418,7 @@
 			</classes>
 			<classes dir="${build_pddConsole}/tmp">
 				<include name="messageSecurity.zip" />
+				<include name="policyGestioneToken.zip" />
 			</classes>
 		</war>
 		<delete dir="${build_pddConsole}/tmp" />

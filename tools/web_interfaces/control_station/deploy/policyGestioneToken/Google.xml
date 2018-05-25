@@ -1,0 +1,112 @@
+<config id="google" label="Google" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+	<properties>
+		<collection name="signaturePropRefId"/>
+	</properties>
+	
+	<section label="Informazioni Generali">
+		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+			<property name="Action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+		</item>
+		<item type="hidden" name="signatureAction" value="Signature">
+			<property name="Action" append="true" appendSeparator="_" force="true"/>
+		</item>
+
+	</section>
+
+	<section label="Timestamp">
+		
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+
+		<item type="number" name="timeToLive" label="TimeToLive" min="1" max="10000000">
+			<property name="timeToLive" />
+		</item>
+	</section>
+
+	<section label="Signature">
+
+		<item type="text" name="signatureParts" label="Elementi da firmare" required="false">
+		     	<property name="signatureParts" />
+		</item>
+
+		<subsection label="KeyStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="user" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Password Chiave Privata" required="true">
+			      	<property name="passwordCallbackRef" /> <!-- TODO Realizzare una classe Callback che ritorna questa password -->
+			</item>
+
+		</subsection>
+
+		<subsection label="Key Identifier">
+
+			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference" required="true">
+				<values>
+					<value value="DirectReference" label="DirectReference"/>
+					<value value="IssuerSerial" label="IssuerSerial"/>
+					<value value="X509KeyIdentifier" label="X509KeyIdentifier"/>
+					<value value="SKIKeyIdentifier" label="SKIKeyIdentifier"/>
+					<value value="EmbeddedKeyName" label="EmbeddedKeyName"/>
+					<value value="Thumbprint" label="Thumbprint"/>
+					<value value="EncryptedKeySHA1" label="EncryptedKeySHA1"/>
+					<value value="KeyValue" label="KeyValue"/>
+				</values>
+				<property name="signatureKeyIdentifier" />
+			</item>
+			<item type="checkbox" name="useSingleCertificate" label="Certificato Singolo" reloadOnChange="true" defaultSelected="true">
+				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+
+		</subsection>
+
+		<subsection label="Algoritmi">
+			
+			<item type="text" name="signatureAlgorithm" label="Signature" required="false">
+			      	<property name="signatureAlgorithm" />
+			</item>
+			<item type="text" name="signatureDigestAlgorithm" label="Digest" required="false">
+			      	<property name="signatureDigestAlgorithm" />
+			</item>
+			<item type="text" name="signatureC14nAlgorithm" label="Canonicalization" required="false">
+			      	<property name="signatureC14nAlgorithm" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+
