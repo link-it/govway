@@ -2,12 +2,12 @@
 
         <compatibility not="false" and="false">
                 <tags and="true">
-                        <tag>REST</tag>
+                        <tag>SOAP</tag>
                         <tag>RESPONSE</tag>
                         <tag>PD</tag>
                 </tags>
                 <tags and="true">
-                        <tag>REST</tag>
+                        <tag>SOAP</tag>
                         <tag>REQUEST</tag>
                         <tag>PA</tag>
                 </tags>

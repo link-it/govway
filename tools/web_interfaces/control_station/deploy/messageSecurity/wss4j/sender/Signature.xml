@@ -76,7 +76,7 @@
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			      	<property name="user" />
 			</item>
-			<item type="text" name="keystorePrivateKeyAlias" label="Password Chiave Privata" required="true">
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			      	<property name="passwordCallbackRef" /> <!-- TODO Realizzare una classe Callback che ritorna questa password -->
 			</item>
 

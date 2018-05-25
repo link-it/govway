@@ -35,6 +35,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 
 /**
  * Bean di tipo Item arricchito delle informazioni grafiche.
@@ -50,8 +51,10 @@ public class ItemBean extends BaseItemBean<Item>{
 
 	@Override
 	public void init(String value) {
-		// caso value == null cerco un default
-		if(value == null) {
+		Property saveProperty = this.getSaveProperty();
+
+		// caso value == null e non devo forzare con il valore letto dal db cerco un default
+		if(value == null && !saveProperty.isForce()) {
 			switch(this.getItem().getType()) {
 			case CHECKBOX:
 				this.value = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
@@ -90,47 +93,42 @@ public class ItemBean extends BaseItemBean<Item>{
 		de.setPostBack(this.getItem().getReloadOnChange());
 		de.setRequired(this.getItem().isRequired()); 
 
-		if(this.visible != null && this.visible) {
-			switch(this.getItem().getType()) {
-			case CHECKBOX:
-				de.setSelected(this.value);
-				de.setType(DataElementType.CHECKBOX);
-				break;
-			case HIDDEN:
-				de.setValue(this.value);
-				de.setType(DataElementType.HIDDEN);
-				break;
-			case NUMBER:
-				de.setValue(this.value);
-				de.setType(DataElementType.NUMBER);
-				de.setMinValue(this.getItem().getMin());
-				de.setMaxValue(this.getItem().getMax()); 
-				break;
-			case SELECT:
-				de.setSelected(this.value);
-				de.setType(DataElementType.SELECT);
-
-				List<String> valuesList = new ArrayList<String>();
-				List<String> labelsList = new ArrayList<String>();
-				ItemValues values = this.getItem().getValues();
-				for (ItemValue itemValue : values.getValueList()) {
-					valuesList.add(itemValue.getValue());
-					valuesList.add(itemValue.getLabel() != null ? itemValue.getLabel() : itemValue.getValue());
-				}
-
-				de.setValues(valuesList);
-				de.setLabels(labelsList);
-				break;
-			case TEXT:
-				de.setValue(this.value);
-				de.setType(DataElementType.TEXT_EDIT);
-				break;
-			default:
-				break;
-			}
-		}else { 
+		switch(this.getItem().getType()) {
+		case CHECKBOX:
+			de.setSelected(this.value);
+			de.setType(DataElementType.CHECKBOX);
+			break;
+		case HIDDEN:
 			de.setValue(this.value);
-			de.setType(DataElementType.HIDDEN); 
+			de.setType(DataElementType.HIDDEN);
+			break;
+		case NUMBER:
+			de.setValue(this.value);
+			de.setType(DataElementType.NUMBER);
+			de.setMinValue(this.getItem().getMin());
+			de.setMaxValue(this.getItem().getMax()); 
+			break;
+		case SELECT:
+			de.setSelected(this.value);
+			de.setType(DataElementType.SELECT);
+
+			List<String> valuesList = new ArrayList<String>();
+			List<String> labelsList = new ArrayList<String>();
+			ItemValues values = this.getItem().getValues();
+			for (ItemValue itemValue : values.getValueList()) {
+				valuesList.add(itemValue.getValue());
+				labelsList.add(itemValue.getLabel() != null ? itemValue.getLabel() : itemValue.getValue());
+			}
+
+			de.setValues(valuesList);
+			de.setLabels(labelsList);
+			break;
+		case TEXT:
+			de.setValue(this.value);
+			de.setType(DataElementType.TEXT_EDIT);
+			break;
+		default:
+			break;
 		}
 
 		return de;
@@ -150,11 +148,17 @@ public class ItemBean extends BaseItemBean<Item>{
 	public String getPropertyValue() { 
 		switch (this.getItem().getType()) {
 		case CHECKBOX:
+			String valueToCheck = null;
 			if(ServletUtils.isCheckBoxEnabled(this.value)) {
-				return this.getSaveProperty().getSelectedValue();
+				valueToCheck = this.getSaveProperty().getSelectedValue();
 			} else {
-				return this.getSaveProperty().getUnselectedValue();
+				valueToCheck = this.getSaveProperty().getUnselectedValue();
 			}
+			
+			if(valueToCheck == null) {
+				valueToCheck = ServletUtils.isCheckBoxEnabled(this.value) ? "true" : "false";
+			}
+			return valueToCheck;
 		case HIDDEN:
 		case NUMBER:
 		case SELECT:
@@ -168,12 +172,12 @@ public class ItemBean extends BaseItemBean<Item>{
 		String valueToCheck = null;
 
 		if(this.getItem().getProperty().getSelectedValue() != null) {
-			if(value.equals(this.getItem().getProperty().getSelectedValue()))
+			if(value.equals(this.getSaveProperty().getSelectedValue()))
 				valueToCheck = Costanti.CHECK_BOX_ENABLED;
 		} 
 		if(valueToCheck == null) {
 			if(this.getItem().getProperty().getUnselectedValue() != null) {
-				if(value.equals(this.getItem().getProperty().getUnselectedValue()))
+				if(value.equals(this.getSaveProperty().getUnselectedValue()))
 					valueToCheck = Costanti.CHECK_BOX_DISABLED;
 			} 
 		}
@@ -200,23 +204,23 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public void validate() throws Exception {
+	public void validate() throws UserInputValidationException {
 		String itemValue = this.getPropertyValue(); // valore della property
 		Property saveProperty = this.getSaveProperty();
 
-		
+//		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"]...");  
 
 		// un elemento e' salvabile se non e' visible o e' da forzare 
-		boolean save = saveProperty != null && (saveProperty.isForce() || (this.getVisible() && !ItemType.HIDDEN.equals(this.getItemType())));
-		
-		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"] Validazione Abilitata ["+save+"]");  
-		
+		boolean save = saveProperty != null && (saveProperty.isForce() || (this.isVisible() && !ItemType.HIDDEN.equals(this.getItemType())));
+
+//		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"] Validazione Abilitata ["+save+"]");  
+
 		// validazione solo per gli elementi da salvare
 		if(save) {
 
 			// 1. Validazione campi obbligatori
-			if(this.getItem().isRequired() && itemValue == null) {
-				throw new Exception("Il Campo "+this.getName()+" &egrave; obbligatorio");
+			if(this.getItem().isRequired() && StringUtils.isEmpty(itemValue)) {
+				throw new UserInputValidationException("Il Campo "+this.getName()+" &egrave; obbligatorio");
 			}
 
 			// 2. validazione generica basata sul tipo
@@ -225,7 +229,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				if(StringUtils.isNotEmpty(itemValue)) {
 					boolean numeric = NumberUtils.isParsable(itemValue);
 					if(!numeric)
-						throw new Exception("Il Campo "+this.getName()+" non contiene un valore di tipo numerico");
+						throw new UserInputValidationException("Il Campo "+this.getName()+" non contiene un valore di tipo numerico");
 				}
 				break;
 			case SELECT:
@@ -240,7 +244,7 @@ public class ItemBean extends BaseItemBean<Item>{
 					}
 
 					if(!found)
-						throw new Exception("Il Campo "+this.getName()+" contiene un valore non previsto");
+						throw new UserInputValidationException("Il Campo "+this.getName()+" contiene un valore non previsto");
 				}
 				break;
 			case TEXT:
@@ -255,10 +259,12 @@ public class ItemBean extends BaseItemBean<Item>{
 					boolean match = RegularExpressionEngine.isMatch(itemValue, this.getItem().getValidation());
 
 					if(!match)
-						throw new Exception("Il Campo "+this.getName()+" non rispetta il pattern di validazione previsto");
+						throw new UserInputValidationException("Il Campo "+this.getName()+" non rispetta il pattern di validazione previsto");
 
+				}catch(UserInputValidationException e) {
+					throw e;
 				}catch(Exception e) {
-					throw new Exception("Impossibile validare il campo "+this.getName()+" secondo il pattern previsto nella configurazione",e);
+					throw new UserInputValidationException("Impossibile validare il campo "+this.getName()+" secondo il pattern previsto nella configurazione",e);
 				}
 			}
 		}

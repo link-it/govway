@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -37,9 +38,16 @@ import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -98,6 +106,9 @@ public final class PorteDelegateWS extends Action {
 			if(idFruizione == null)
 				idFruizione = "";
 			
+			String idPropertiesConfigReq = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			String idPropertiesConfigRes = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -106,9 +117,15 @@ public final class PorteDelegateWS extends Action {
 
 			// Prendo il nome della porta
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(aspsCore);
 
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = pde.getNome();
+			
+			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding()); 
 
 			// Calcolo lo stato MTOM
 			boolean isMTOMAbilitatoReq = false;
@@ -138,22 +155,42 @@ public final class PorteDelegateWS extends Action {
 			MessageSecurity pdeMessageSecurity = pde.getMessageSecurity();
 			int numMessageSecurityReq = 0;
 			int numMessageSecurityRes = 0;
+			String oldIdPropertiesConfigReq = null;
+			String oldIdPropertiesConfigRes = null;
 			if (pdeMessageSecurity != null) {
 				if(pdeMessageSecurity.getRequestFlow()!=null){
 					numMessageSecurityReq = pdeMessageSecurity.getRequestFlow().sizeParameterList();
+					oldIdPropertiesConfigReq = pdeMessageSecurity.getRequestFlow().getMode();
 				}
 				if(pdeMessageSecurity.getResponseFlow()!=null){
 					numMessageSecurityRes = pdeMessageSecurity.getResponseFlow().sizeParameterList();
+					oldIdPropertiesConfigRes = pdeMessageSecurity.getResponseFlow().getMode();
 				}
 			}
 
 			if(statoMessageSecurity == null)
 				statoMessageSecurity = pde.getStatoMessageSecurity();
 			
+			// imposto lo stato iniziale del mode scelto
+			if(idPropertiesConfigReq == null)
+				idPropertiesConfigReq = oldIdPropertiesConfigReq;
+			
+			if(idPropertiesConfigRes == null)
+				idPropertiesConfigRes = oldIdPropertiesConfigRes;
+			
+			if(idPropertiesConfigReq == null)
+				idPropertiesConfigReq = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO;
+			
+			if(idPropertiesConfigRes == null)
+				idPropertiesConfigRes = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO;
+			
+			
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
 			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+			Parameter pIdPropertiesConfigReq= new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME, idPropertiesConfigReq);
+			Parameter pIdPropertiesConfigRes= new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME, idPropertiesConfigRes);
 			
 			List<Parameter> lstParam = porteDelegateHelper.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
 			
@@ -167,12 +204,71 @@ public final class PorteDelegateWS extends Action {
 			}
 			lstParam.add(new Parameter(labelPerPorta,  null));
 
-			Parameter[] urlParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			Parameter[] urlReqParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione,pIdPropertiesConfigReq };
+			Parameter[] urlResParms = { pId,pIdSoggetto,pIdAsps,pIdFrizione,pIdPropertiesConfigRes };
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
-			Parameter url1 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_LIST , urlParms);
-			Parameter url2 = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_LIST , urlParms);
+			String servletNameRequestList =  idPropertiesConfigReq.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME) 
+					? PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_LIST : PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG;
+			String servletNameResponseList = idPropertiesConfigRes.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)
+					? PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_LIST  : PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG;
+			
+			Parameter urlRequestList = new Parameter("", servletNameRequestList , urlReqParms);
+			Parameter urlResponseList = new Parameter("", servletNameResponseList , urlResParms);
+			
+			PropertiesSourceConfiguration propertiesSourceConfiguration = porteDelegateCore.getMessageSecurityPropertiesSourceConfiguration();
+			
+			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
+			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
+			
+			List<String> nomiConfigurazioniReq = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			List<String> labelConfigurazioniReq = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniReq);
+			
+			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
+			propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigReqLabelListTmp.addAll(labelConfigurazioniReq);
+			propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			
+			List<String>  propConfigReqListTmp = new ArrayList<String>(); 
+			propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigReqListTmp.addAll(nomiConfigurazioniReq);
+			propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			
+			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			List<String> labelConfigurazioniRes = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniRes);
+			
+			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 
+			propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigResLabelListTmp.addAll(labelConfigurazioniRes);
+			propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			
+			List<String>  propConfigResListTmp = new ArrayList<String>();
+			propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigResListTmp.addAll(nomiConfigurazioniRes);
+			propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+
+			
+			String[] propConfigReqLabelList = propConfigReqLabelListTmp.toArray(new String[propConfigReqLabelListTmp.size()]);
+			String[] propConfigReqList= propConfigReqListTmp.toArray(new String[propConfigReqListTmp.size()]);
+			
+			String[] propConfigResLabelList= propConfigResLabelListTmp.toArray(new String[propConfigResLabelListTmp.size()]);
+			String[] propConfigResList= propConfigResListTmp.toArray(new String[propConfigResListTmp.size()]);
+			
+			// controllo postback 
+			String postBackElementName = porteDelegateHelper.getPostBackElementName();
+			if(postBackElementName != null) {
+				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME)) {
+					applicaModifica = false;
+				}
+				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)) {
+					applicaModifica = false;
+				}
+			}
+
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
@@ -209,8 +305,9 @@ public final class PorteDelegateWS extends Action {
 					applicaMTOMRisposta = "";
 				}
 				
-				dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, url1.getValue(), url2.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
-						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+				dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
+						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
@@ -230,8 +327,9 @@ public final class PorteDelegateWS extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addMessageSecurityToDati(dati, statoMessageSecurity, url1.getValue(), url2.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
-						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+				dati = porteDelegateHelper.addMessageSecurityToDati(dati, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , contaListe, numMessageSecurityReq, numMessageSecurityRes,
+						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 
@@ -255,6 +353,23 @@ public final class PorteDelegateWS extends Action {
 			}
 			if(pde.getMessageSecurity().getResponseFlow() ==null){
 				pde.getMessageSecurity().setResponseFlow(new MessageSecurityFlow());
+			}
+			String oldRequestMode = pde.getMessageSecurity().getRequestFlow().getMode();
+			String oldResponseMode = pde.getMessageSecurity().getResponseFlow().getMode();
+			
+			String newRequestMode = !idPropertiesConfigReq.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO) ? idPropertiesConfigReq : null;
+			String newResponseMode = !idPropertiesConfigRes.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO) ? idPropertiesConfigRes : null;
+			
+			// salvataggio della configurazione delle properties
+			pde.getMessageSecurity().getRequestFlow().setMode(newRequestMode);
+			pde.getMessageSecurity().getResponseFlow().setMode(newResponseMode);
+			
+			// se ho cambiato la modalita' di configurazione della sicurezza resetto la vecchia configurazione
+			if(oldRequestMode!= null && !oldRequestMode.equals(idPropertiesConfigReq)) {
+				pde.getMessageSecurity().getRequestFlow().getParameterList().clear();
+			}
+			if(oldResponseMode!= null && !oldResponseMode.equals(idPropertiesConfigRes)) {
+				pde.getMessageSecurity().getResponseFlow().getParameterList().clear();
 			}
 
 			if(isMTOMAbilitatoReq){
@@ -292,6 +407,7 @@ public final class PorteDelegateWS extends Action {
 			if (pdeMessageSecurity != null) {
 				if(pdeMessageSecurity.getRequestFlow()!=null){
 					numMessageSecurityReq = pdeMessageSecurity.getRequestFlow().sizeParameterList();
+					oldIdPropertiesConfigReq = pdeMessageSecurity.getRequestFlow().getMode();
 					StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getRequestFlow().getApplyToMtom();
 
 					if(applicaMTOMRichiesta == null)
@@ -302,6 +418,7 @@ public final class PorteDelegateWS extends Action {
 				}
 				if(pdeMessageSecurity.getResponseFlow()!=null){
 					numMessageSecurityRes = pdeMessageSecurity.getResponseFlow().sizeParameterList();
+					oldIdPropertiesConfigRes = pdeMessageSecurity.getResponseFlow().getMode();
 					StatoFunzionalita applyToMtomRich = pdeMessageSecurity.getResponseFlow().getApplyToMtom();
 
 					if(applicaMTOMRisposta ==null)
@@ -320,8 +437,10 @@ public final class PorteDelegateWS extends Action {
 				applicaMTOMRisposta = "";
 			}
 
-			dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, url1.getValue(), url2.getValue() , 
-					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+			dati = porteDelegateHelper.addMessageSecurityToDati(dati,  statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue() , 
+					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,
+					idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+					oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 			dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, id, idsogg, null, idAsps, idFruizione, dati);
 

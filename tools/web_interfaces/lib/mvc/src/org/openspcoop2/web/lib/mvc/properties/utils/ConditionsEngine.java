@@ -33,6 +33,7 @@ import org.openspcoop2.core.mvc.properties.Subsection;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
+import org.openspcoop2.web.lib.mvc.properties.exception.ConditionException;
 
 /***
  * 
@@ -43,7 +44,7 @@ import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
  */
 public class ConditionsEngine {
 
-	public static boolean resolve(Conditions conditions, ConfigBean configBean) throws Exception {
+	public static boolean resolve(Conditions conditions, ConfigBean configBean) throws ConditionException {
 		try {
 			if(conditions == null)
 				return true;
@@ -66,11 +67,11 @@ public class ConditionsEngine {
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
 		}catch(Exception e) {
-			throw new Exception("Errore durante la risoluzione delle Conditions: " + conditions.toString(), e);
+			throw new ConditionException("Errore durante la risoluzione delle Conditions: " + conditions.toString(), e);
 		}
 	}
 
-	public static boolean resolve(Condition condition, ConfigBean configBean) throws Exception {
+	public static boolean resolve(Condition condition, ConfigBean configBean) throws ConditionException {
 		try {
 			boolean isAnd = condition.getAnd(); 
 			boolean isNot = condition.getNot();
@@ -104,26 +105,26 @@ public class ConditionsEngine {
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
 		}catch(Exception e) {
-			throw new Exception("Errore durante la risoluzione della Condition: " + condition.toString(), e);
+			throw new ConditionException("Errore durante la risoluzione della Condition: " + condition.toString(), e);
 		}
 	}
 
-	public static boolean resolveSelected(Selected selected, ConfigBean configBean) throws Exception { 
+	public static boolean resolveSelected(Selected selected, ConfigBean configBean) throws ConditionException { 
 		try {
 			String elementName = selected.getName();
 			boolean isNot = selected.getNot();
 			BaseItemBean<?> item = configBean.getItem(elementName);
 
-			boolean esito = ServletUtils.isCheckBoxEnabled(item.getValue());
+			boolean esito = item.isVisible() &&  ServletUtils.isCheckBoxEnabled(item.getValue());
 
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
 		}catch(Exception e) {
-			throw new Exception("Errore durante la risoluzione della condizione Selected: " + selected.toString(), e);
+			throw new ConditionException("Errore durante la risoluzione della condizione Selected: " + selected.toString(), e);
 		}
 	}
 
-	public static boolean resolveEquals(Equals equals, ConfigBean configBean) throws Exception {
+	public static boolean resolveEquals(Equals equals, ConfigBean configBean) throws ConditionException {
 		try {
 			String elementName = equals.getName();
 			boolean isNot = equals.getNot();
@@ -131,32 +132,32 @@ public class ConditionsEngine {
 
 			BaseItemBean<?> item = configBean.getItem(elementName);
 
-			boolean esito = value.equals(item.getValue());
+			boolean esito = item.isVisible() &&  value.equals(item.getValue());
 
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
 		}catch(Exception e) {
-			throw new Exception("Errore durante la risoluzione della condizione Equals: " + equals.toString(), e);
+			throw new ConditionException("Errore durante la risoluzione della condizione Equals: " + equals.toString(), e);
 		}
 	}
 
-	public static boolean resolveDefined(Defined defined, ConfigBean configBean) throws Exception {
+	public static boolean resolveDefined(Defined defined, ConfigBean configBean) throws ConditionException {
 		try {
 			String elementName = defined.getName();
 			boolean isNot = defined.getNot();
 
 			BaseItemBean<?> item = configBean.getItem(elementName);
 
-			boolean esito = item.getValue() != null;
+			boolean esito = item.isVisible() && item.getValue() != null;
 
 			// eventuale NOT della condizione
 			return isNot ? !esito : esito;
 		}catch(Exception e) {
-			throw new Exception("Errore durante la risoluzione della condizione Defined: " + defined.toString(), e);
+			throw new ConditionException("Errore durante la risoluzione della condizione Defined: " + defined.toString(), e);
 		}
 	}
 
-	public static boolean controllaSezioniDaNascondere(Config config,ConfigBean cbTmp)  throws Exception{
+	public static boolean controllaSezioniDaNascondere(Config config,ConfigBean cbTmp)  throws ConditionException{
 		List<Section> sectionList = config.getSectionList();
 		
 		boolean show = true;
@@ -168,11 +169,11 @@ public class ConditionsEngine {
 		return show;
 	}
 	
-	private static boolean showSection(Section section, String sectionIdx,ConfigBean cbTmp) throws Exception{
+	private static boolean showSection(Section section, String sectionIdx,ConfigBean cbTmp) throws ConditionException{
 		BaseItemBean<?> itemSection = cbTmp.getItem(sectionIdx);
 		
 		// 1. se la sezione e' nascosta nascondo tutti gli elementi
-		boolean show = itemSection.getVisible();
+		boolean show = itemSection.isVisible();
 
 		if(!show) {
 			if(section.getItemList() != null) {
@@ -194,7 +195,7 @@ public class ConditionsEngine {
 			if(section.getItemList() != null) {
 				for (Item item : section.getItemList()) {
 					BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
-					if(item3.getVisible()) {
+					if(item3.isVisible()) {
 						allItemHidden = false;
 						break;
 					}
@@ -211,7 +212,7 @@ public class ConditionsEngine {
 				}
 			}
 			
-			show = !(allItemHidden || allSubSectionHidden);
+			show = !(allItemHidden && allSubSectionHidden);
 		}
 		
 	 
@@ -221,11 +222,11 @@ public class ConditionsEngine {
 		return show;
 	}
 
-	private static boolean showSubsection(Subsection subSection, String subsectionIdx, ConfigBean cbTmp, boolean showParent) throws Exception {
+	private static boolean showSubsection(Subsection subSection, String subsectionIdx, ConfigBean cbTmp, boolean showParent) throws ConditionException {
 		BaseItemBean<?> itemSubSection = cbTmp.getItem(subsectionIdx);
 		
 		// 1. se la sezione e' nascosta nascondo tutti gli elementi
-		boolean show = !showParent ? false : itemSubSection.getVisible();
+		boolean show = !showParent ? false : itemSubSection.isVisible();
 		
 		if(!show) {
 			for (Item item : subSection.getItemList()) {
@@ -236,7 +237,7 @@ public class ConditionsEngine {
 			boolean allHidden = true;
 			for (Item item : subSection.getItemList()) {
 				BaseItemBean<?> item3 = cbTmp.getItem(item.getName());
-				if(item3.getVisible()) {
+				if(item3.isVisible()) {
 					allHidden = false;
 					break;
 				}

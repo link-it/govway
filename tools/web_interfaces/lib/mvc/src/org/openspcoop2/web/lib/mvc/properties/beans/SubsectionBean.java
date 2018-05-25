@@ -21,6 +21,7 @@ package org.openspcoop2.web.lib.mvc.properties.beans;
 
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
+import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.Subsection;
@@ -74,6 +75,6 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	}
 	
 	@Override
-	public void validate() throws Exception {
+	public void validate() throws UserInputValidationException {
 	}
 }

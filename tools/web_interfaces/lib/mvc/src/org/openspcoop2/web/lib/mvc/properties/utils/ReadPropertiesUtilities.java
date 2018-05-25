@@ -113,7 +113,7 @@ public class ReadPropertiesUtilities {
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
 		String propertyValue = getPropertyValue(propertiesMap, name);
-		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");  
+//		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");  
 		
 		// Lettura di un valore aggregato
 		if(item.getProperty() != null && item.getProperty().isAppend()) {
@@ -123,17 +123,17 @@ public class ReadPropertiesUtilities {
 				String [] chiaviSalvate = propertiesKeysValues.split(Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR);
 				String [] propertyValueSplit = propertyValue.split(item.getProperty().getAppendSeparator());
 				
-				System.out.println("READ -> SPLITPATTERN ["+item.getProperty().getAppendSeparator()+"]");
-				System.out.println("READ -> #KEYS ["+chiaviSalvate.length+"] #VALUES ["+propertyValueSplit.length+"]");
-				System.out.println("READ -> KEYS ["+propertiesKeysValues+"] VALUES ["+propertyValue+"]");
+//				System.out.println("READ -> SPLITPATTERN ["+item.getProperty().getAppendSeparator()+"]");
+//				System.out.println("READ -> #KEYS ["+chiaviSalvate.length+"] #VALUES ["+propertyValueSplit.length+"]");
+//				System.out.println("READ -> KEYS ["+propertiesKeysValues+"] VALUES ["+propertyValue+"]");
 				
 				String propertyValueTmp = null;
 				for (int j = 0; j < chiaviSalvate.length; j++) {
 					String key = chiaviSalvate[j];
-					System.out.println("READ -> CHECK KEY ["+key+"] ITEM ["+item.getName()+"]");  
+//					System.out.println("READ -> CHECK KEY ["+key+"] ITEM ["+item.getName()+"]");  
 					if(key.equals(item.getName())) {
 						propertyValueTmp = propertyValueSplit[j];
-						System.out.println("READ -> KEY ["+key+"] Values ["+propertyValueTmp+"]");  
+//						System.out.println("READ -> KEY ["+key+"] Values ["+propertyValueTmp+"]");  
 						break;
 					}
 				}
@@ -142,10 +142,11 @@ public class ReadPropertiesUtilities {
 			}
 		} 
 		
-		System.out.println("READ -> Item: Name ["+item.getName()+"] Value ["+propertyValue+"]");  
+//		System.out.println("READ -> Item: Name ["+item.getName()+"] Value ["+propertyValue+"], INIT in corso...");  
 		itemBean.init(propertyValue); 
+//		System.out.println("READ -> INIT -> Item: Name ["+item.getName()+"] Value ["+itemBean.getValue()+"]");  
 		
-		System.out.println("----------------------------------------\n");
+//		System.out.println("----------------------------------------\n");
 		configurazione.addItem(itemBean);
 	}
 

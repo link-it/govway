@@ -5087,26 +5087,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return true;
 	}
 	
-	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws Exception{
-		
-		String tmp = this.getParameter(firstTimeParameter);
-		if(tmp!=null && !"".equals(tmp.trim())){
-			return "true".equals(tmp.trim());
-		}
-		return true;
-		
-	}
-	
-	public void addToDatiFirstTimeDisabled(Vector<DataElement> dati,String firstTimeParameter){
-		DataElement de = new DataElement();
-		de.setName(firstTimeParameter);
-		de.setType(DataElementType.HIDDEN);
-		de.setValue("false");
-		dati.addElement(de);
-	}
-	
-	
-	
 	public void addConfigurazionControlloTrafficoToDati(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico, long sizePolicy, long sizeGlobalPolicy, boolean configurazioneTerminata) throws Exception {
 		
 		

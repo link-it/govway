@@ -109,6 +109,7 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE = "Configurazione non visualizzabile";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE = "Attenzione: Configurazione non standard (Utilizzare l'interfaccia avanzata)";
 	public final static String LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO = "Aggiornamento effettuato con successo";
+	public final static String LABEL_AGGIORNAMENTO_CONFIGURAZIONE_PROPERTIES_EFFETTUATO_CON_SUCCESSO = "Aggiornamento Properties effettuato con successo";
 	public final static String LABEL_STRUMENTI = "Strumenti";
 	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
 	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
@@ -208,8 +209,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI = "Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_VALIDAZIONE_CONTENUTI_CONFIG_DI = "Validazione di ";
+	public final static String LABEL_CONFIGURAZIONE_PROPERTIES = "Configurazione";
 	
 	public final static String LABEL_QUALSIASI = "Qualsiasi";
+	public final static String LABEL_DEFAULT = "Default";
+	public final static String LABEL_NESSUNO = "Nessuno";
 	
 	public final static String LABEL_DUMP = "Dump";
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
@@ -242,7 +246,11 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_DUMP_SEZIONE_USCITA = "Uscita";
 	public static final String LABEL_REGISTRAZIONE_MESSAGGI_MODIFICATA_CON_SUCCESSO = "Configurazione Registrazione Messaggi modificata con successo";
 	
+	public final static String LABEL_PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = "Schema Sicurezza";
+	public final static String LABEL_PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = "Schema Sicurezza";
 	public final static String LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME = "Nome";
+	
+	
 	/** PARAMETERS **/
 	
 	public final static String PARAMETRO_ID = "id";
@@ -288,6 +296,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_XSD = "xsd";
 	public final static String PARAMETRO_PORTE_APPLICA_MTOM = PARAMETRO_APPLICA_MTOM_RICHIESTA;
 	public final static String PARAMETRO_PROVIDER = "provider";
+	public final static String PARAMETRO_CONTROLLO_FIRST_TIME = "paramFirstTime";
 	
 	public final static String PARAMETRO_SERVICE_BINDING = "serviceBinding";
 	public final static String PARAMETRO_SERVICE_BINDING_SEARCH = "serviceBindingSearch";
@@ -323,6 +332,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS = "dumpResOutAtt";
 	public final static String PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS = "dumpResOutHead";
 	
+	public final static String PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME = "propertiesConfigNameReq";
+	public final static String PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME = "propertiesConfigNameRes";
 	public final static String PARAMETRO_PROPERTIES_CONFIG_NAME = "propertiesConfigName";
 	
 	/** PARAMETRI MESSAGE PAGE **/
@@ -399,6 +410,8 @@ public class CostantiControlStation {
 	public final static String LABEL_LIST_VALORE_NON_PRESENTE = "--";
 	public static final String DEFAULT_VALUE_AZIONE_NON_SELEZIONATA = "-";
 	public static final String DEFAULT_VALUE_NON_SELEZIONATO = "-";
+	
+	public final static String VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT = "default";
 	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";

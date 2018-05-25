@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -37,9 +38,16 @@ import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
+import org.openspcoop2.core.mvc.properties.utils.PropertiesSourceConfiguration;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -92,6 +100,10 @@ public final class PorteApplicativeWS extends Action {
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
+			
+			String idPropertiesConfigReq = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			String idPropertiesConfigRes = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -100,9 +112,15 @@ public final class PorteApplicativeWS extends Action {
 			
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			AccordiServizioParteSpecificaCore aspsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(aspsCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
+			
+			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));
+			AccordoServizioParteComune as = apcCore.getAccordoServizio(asps.getIdAccordo());
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding()); 
 
 			// Calcolo lo stato MTOM
 			boolean isMTOMAbilitatoReq = false;
@@ -132,17 +150,40 @@ public final class PorteApplicativeWS extends Action {
 			MessageSecurity paMessageSecurity = pa.getMessageSecurity();
 			int numMessageSecurityReq = 0;
 			int numMessageSecurityRes = 0;
+			String oldIdPropertiesConfigReq = null;
+			String oldIdPropertiesConfigRes = null;
 			if (paMessageSecurity != null) {
 				if(paMessageSecurity.getRequestFlow()!=null){
 					numMessageSecurityReq = paMessageSecurity.getRequestFlow().sizeParameterList();
+					oldIdPropertiesConfigReq = paMessageSecurity.getRequestFlow().getMode();
 				}
 				if(paMessageSecurity.getResponseFlow()!=null){
 					numMessageSecurityRes = paMessageSecurity.getResponseFlow().sizeParameterList();
+					oldIdPropertiesConfigRes = paMessageSecurity.getResponseFlow().getMode();
 				}
 			}
 
 			if(statoMessageSecurity == null)
 				statoMessageSecurity = pa.getStatoMessageSecurity();
+			
+			// imposto lo stato iniziale del mode scelto
+			if(idPropertiesConfigReq == null)
+				idPropertiesConfigReq = oldIdPropertiesConfigReq;
+			
+			if(idPropertiesConfigRes == null)
+				idPropertiesConfigRes = oldIdPropertiesConfigRes;
+			
+			if(idPropertiesConfigReq == null)
+				idPropertiesConfigReq = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO;
+			
+			if(idPropertiesConfigRes == null)
+				idPropertiesConfigRes = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO;
+			
+			Parameter pId = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta);
+			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps);
+			Parameter pIdPropertiesConfigReq= new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME, idPropertiesConfigReq);
+			Parameter pIdPropertiesConfigRes= new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_PROPERTIES_CONFIG_NAME, idPropertiesConfigRes);
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
@@ -155,6 +196,67 @@ public final class PorteApplicativeWS extends Action {
 				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_CONFIG_DI+idporta;
 			}
 			lstParam.add(new Parameter(labelPerPorta,  null));
+			
+			Parameter[] urlReqParms = { pId,pIdSoggetto,pIdAsps,pIdPropertiesConfigReq };
+			Parameter[] urlResParms = { pId,pIdSoggetto,pIdAsps,pIdPropertiesConfigRes };
+			
+			String servletNameRequestList =  idPropertiesConfigReq.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME) 
+					? PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST : PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_PROPERTIES_CONFIG;
+			String servletNameResponseList = idPropertiesConfigRes.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)
+					? PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST  : PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_PROPERTIES_CONFIG;
+			
+			Parameter urlRequestList = new Parameter("", servletNameRequestList , urlReqParms);
+			Parameter urlResponseList = new Parameter("", servletNameResponseList , urlResParms);
+			
+			PropertiesSourceConfiguration propertiesSourceConfiguration = porteApplicativeCore.getMessageSecurityPropertiesSourceConfiguration();
+			
+			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
+			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
+			
+			List<String> nomiConfigurazioniReq = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST,PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA);
+			List<String> labelConfigurazioniReq = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniReq);
+			
+			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
+			propConfigReqLabelListTmp.add(PorteApplicativeCostanti.LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigReqLabelListTmp.addAll(labelConfigurazioniReq);
+			propConfigReqLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			
+			List<String>  propConfigReqListTmp = new ArrayList<String>(); 
+			propConfigReqListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigReqListTmp.addAll(nomiConfigurazioniReq);
+			propConfigReqListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE,PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA);
+			List<String> labelConfigurazioniRes = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniRes);
+			
+			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 
+			propConfigResLabelListTmp.add(PorteApplicativeCostanti.LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigResLabelListTmp.addAll(labelConfigurazioniRes);
+			propConfigResLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			
+			List<String>  propConfigResListTmp = new ArrayList<String>();
+			propConfigResListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
+			propConfigResListTmp.addAll(nomiConfigurazioniRes);
+			propConfigResListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			
+			String[] propConfigReqLabelList = propConfigReqLabelListTmp.toArray(new String[propConfigReqLabelListTmp.size()]);
+			String[] propConfigReqList= propConfigReqListTmp.toArray(new String[propConfigReqListTmp.size()]);
+			
+			String[] propConfigResLabelList= propConfigResLabelListTmp.toArray(new String[propConfigResLabelListTmp.size()]);
+			String[] propConfigResList= propConfigResListTmp.toArray(new String[propConfigResListTmp.size()]);
+			
+			// controllo postback 
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName != null) {
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME)) {
+					applicaModifica = false;
+				}
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)) {
+					applicaModifica = false;
+				}
+			}
 			
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
@@ -170,19 +272,6 @@ public final class PorteApplicativeWS extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,  idAsps, dati);
 
-				Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-						);
-
-				Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-						);
-
-				
 				if (paMessageSecurity != null) {
 					if(paMessageSecurity.getRequestFlow()!=null){
 						StatoFunzionalita applyToMtomRich = paMessageSecurity.getRequestFlow().getApplyToMtom();
@@ -213,8 +302,9 @@ public final class PorteApplicativeWS extends Action {
 				}
 				
 				
-				dati = porteApplicativeHelper.addMessageSecurityToDati(dati, statoMessageSecurity, url1.getValue(), url2.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
-						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+				dati = porteApplicativeHelper.addMessageSecurityToDati(dati, statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
+						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 				pd.setDati(dati);
 
@@ -234,20 +324,9 @@ public final class PorteApplicativeWS extends Action {
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, idAsps, dati);
 
-				Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-						);
-
-				Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST,
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-						);
-
-				dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, url1.getValue(), url2.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
-						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+				dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), contaListe, numMessageSecurityReq, numMessageSecurityRes,
+						isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+						oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 				pd.setDati(dati);
 
@@ -269,6 +348,25 @@ public final class PorteApplicativeWS extends Action {
 			if(pa.getMessageSecurity().getResponseFlow() ==null){
 				pa.getMessageSecurity().setResponseFlow(new MessageSecurityFlow());
 			}
+			
+			String oldRequestMode = pa.getMessageSecurity().getRequestFlow().getMode();
+			String oldResponseMode = pa.getMessageSecurity().getResponseFlow().getMode();
+			
+			String newRequestMode = !idPropertiesConfigReq.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO) ? idPropertiesConfigReq : null;
+			String newResponseMode = !idPropertiesConfigRes.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO) ? idPropertiesConfigRes : null;
+			
+			// salvataggio della configurazione delle properties
+			pa.getMessageSecurity().getRequestFlow().setMode(newRequestMode);
+			pa.getMessageSecurity().getResponseFlow().setMode(newResponseMode);
+			
+			// se ho cambiato la modalita' di configurazione della sicurezza resetto la vecchia configurazione
+			if(oldRequestMode!= null && !oldRequestMode.equals(idPropertiesConfigReq)) {
+				pa.getMessageSecurity().getRequestFlow().getParameterList().clear();
+			}
+			if(oldResponseMode!= null && !oldResponseMode.equals(idPropertiesConfigRes)) {
+				pa.getMessageSecurity().getResponseFlow().getParameterList().clear();
+			}
+			
 
 			if(isMTOMAbilitatoReq){
 				if(applicaMTOMRichiesta != null && (ServletUtils.isCheckBoxEnabled(applicaMTOMRichiesta))){
@@ -308,6 +406,7 @@ public final class PorteApplicativeWS extends Action {
 			if (paMessageSecurity != null) {
 				if(paMessageSecurity.getRequestFlow()!=null){
 					numMessageSecurityReq = paMessageSecurity.getRequestFlow().sizeParameterList();
+					oldIdPropertiesConfigReq = paMessageSecurity.getRequestFlow().getMode();
 					StatoFunzionalita applyToMtomRich = paMessageSecurity.getRequestFlow().getApplyToMtom();
 
 					if(applicaMTOMRichiesta == null)
@@ -318,6 +417,7 @@ public final class PorteApplicativeWS extends Action {
 				}
 				if(paMessageSecurity.getResponseFlow()!=null){
 					numMessageSecurityRes = paMessageSecurity.getResponseFlow().sizeParameterList();
+					oldIdPropertiesConfigRes = paMessageSecurity.getResponseFlow().getMode();
 					StatoFunzionalita applyToMtomRich = paMessageSecurity.getResponseFlow().getApplyToMtom();
 
 					if(applicaMTOMRisposta ==null)
@@ -336,22 +436,12 @@ public final class PorteApplicativeWS extends Action {
 				applicaMTOMRisposta = "";
 			}
 		 
-			Parameter url1 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_LIST,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-					);
-
-			Parameter url2 = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_LIST,
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID	,idPorta),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO	,idsogg),
-					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) 
-					);
-
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, null, idAsps, dati);
 			
-			dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, url1.getValue(), url2.getValue(), 
-					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta);
+			dati = porteApplicativeHelper.addMessageSecurityToDati(dati,   statoMessageSecurity, urlRequestList.getValue(), urlResponseList.getValue(), 
+					contaListe, numMessageSecurityReq, numMessageSecurityRes,isMTOMAbilitatoReq, applicaMTOMRichiesta, isMTOMAbilitatoRes, applicaMTOMRisposta,
+					idPropertiesConfigReq,idPropertiesConfigRes,propConfigReqLabelList, propConfigReqList,  propConfigResLabelList, propConfigResList,
+					oldIdPropertiesConfigReq,oldIdPropertiesConfigRes);
 
 			pd.setDati(dati);
 

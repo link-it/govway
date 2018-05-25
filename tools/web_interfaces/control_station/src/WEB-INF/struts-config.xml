@@ -1341,7 +1341,26 @@
             <forward name="porteDelegateDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
     
-    
+        <!--  Porte Delegate (MessageSecurity) Properties Config Request -->
+
+		<action path="/porteDelegateWSRequestPropertiesConfig" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSRequestPropertiesConfig"
+		    scope="request" validate="true">
+		    <forward name="porteDelegateWSRequestPropertiesConfigForm" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSRequestPropertiesConfigOk" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSRequestPropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSRequestPropertiesConfigError" path="/jsplib/info.jsp"/>
+		</action>
+		
+       	<!--  Porte Delegate (MessageSecurity) Properties Config Response -->
+
+		<action path="/porteDelegateWSResponsePropertiesConfig" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateWSResponsePropertiesConfig"
+		    scope="request" validate="true">
+		    <forward name="porteDelegateWSResponsePropertiesConfigForm" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSResponsePropertiesConfigOk" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSResponsePropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteDelegateWSResponsePropertiesConfigError" path="/jsplib/info.jsp"/>
+		</action>
+		    
     	<!--  Porte Applicative -->
     
      	<action path="/porteApplicativeAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeAdd"
@@ -1753,6 +1772,26 @@
             <forward name="porteApplicativeDumpConfigurazioneCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeDumpConfigurazioneError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!--  Porte Applicative (MessageSecurity) Properties Config Request -->
+
+		<action path="/porteApplicativeWSRequestPropertiesConfig" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSRequestPropertiesConfig"
+		    scope="request" validate="true">
+		    <forward name="porteApplicativeWSRequestPropertiesConfigForm" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSRequestPropertiesConfigOk" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSRequestPropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSRequestPropertiesConfigError" path="/jsplib/info.jsp"/>
+		</action>
+		
+       	<!--  Porte Applicative (MessageSecurity) Properties Config Response -->
+
+		<action path="/porteApplicativeWSResponsePropertiesConfig" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeWSResponsePropertiesConfig"
+		    scope="request" validate="true">
+		    <forward name="porteApplicativeWSResponsePropertiesConfigForm" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSResponsePropertiesConfigOk" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSResponsePropertiesConfigCheckError" path="/jsplib/addElement.jsp"/>
+		    <forward name="porteApplicativeWSResponsePropertiesConfigError" path="/jsplib/info.jsp"/>
+		</action>
     
     
     

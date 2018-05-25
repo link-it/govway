@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,6 +71,9 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mvc.properties.Config;
+import org.openspcoop2.core.mvc.properties.plugins.PluginException;
+import org.openspcoop2.core.mvc.properties.plugins.PluginValidationException;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -168,6 +172,7 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.mvc.properties.beans.BaseItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
+import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -2044,8 +2049,10 @@ public class ConsoleHelper {
 	}
 
 	public Vector<DataElement> addMessageSecurityToDati(Vector<DataElement> dati,
-			String messageSecurity, String url1, String url2, Boolean contaListe, int numWSreq, int numWSres, boolean showApplicaMTOMReq, String applicaMTOMReq,
-			boolean showApplicaMTOMRes, String applicaMTOMRes) {
+                String messageSecurity, String url1, String url2, Boolean contaListe, int numWSreq, int numWSres, boolean showApplicaMTOMReq, String applicaMTOMReq,
+                boolean showApplicaMTOMRes, String applicaMTOMRes,String idPropConfigReq, String idPropConfigRes, 
+                String[] propConfigReqLabelList, String[] propConfigReqList, String[] propConfigResLabelList, String[] propConfigResList,String oldIdPropConfigReq, String oldIdPropConfigRes) {
+
 
 		DataElement de = new DataElement();
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_MESSAGE_SECURITY);
@@ -2092,15 +2099,36 @@ public class ConsoleHelper {
 			}
 			de.setName(CostantiControlStation.PARAMETRO_APPLICA_MTOM_RICHIESTA);
 			dati.addElement(de);
-
+			
 			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(url1);
-			if (contaListe)
-				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI+"(" + numWSreq + ")");
-			else
-				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			de.setName(CostantiControlStation.PARAMETRO_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			if(propConfigReqList.length > 1){
+				de.setType(DataElementType.SELECT);
+				de.setLabels(propConfigReqLabelList);
+				de.setValues(propConfigReqList);
+				de.setSelected(idPropConfigReq);
+				de.setPostBack(true);
+			}else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(idPropConfigReq); 
+			}
 			dati.addElement(de);
+
+			if(idPropConfigReq.equals(oldIdPropConfigReq) && !idPropConfigReq.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) { // finche' non applico la modifica questi due valori saranno diversi
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(url1);
+				if(idPropConfigReq.equals(CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT)) {
+					if (contaListe)
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI+"(" + numWSreq + ")");
+					else
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
+				} else {
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+				}
+				dati.addElement(de);
+			}
 
 			// Sezione Risposta
 			de = new DataElement();
@@ -2122,15 +2150,36 @@ public class ConsoleHelper {
 			}
 			de.setName(CostantiControlStation.PARAMETRO_APPLICA_MTOM_RISPOSTA);
 			dati.addElement(de);
-
+			
 			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(url2);
-			if (contaListe)
-				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI+"(" + numWSres + ")");
-			else
-				de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			de.setName(CostantiControlStation.PARAMETRO_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			if(propConfigResList.length > 1){
+				de.setType(DataElementType.SELECT);
+				de.setLabels(propConfigResLabelList);
+				de.setValues(propConfigResList);
+				de.setSelected(idPropConfigRes);
+				de.setPostBack(true);
+			}else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(idPropConfigReq); 
+			}
 			dati.addElement(de);
+
+			if(idPropConfigRes.equals(oldIdPropConfigRes) && !idPropConfigRes.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) { // finche' non applico la modifica questi due valori saranno diversi
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(url2);
+				if(idPropConfigRes.equals(CostantiControlStation.VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT)) {
+					if (contaListe)
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI+"(" + numWSres + ")");
+					else
+						de.setValue(CostantiControlStation.LABEL_PARAMETRO_PARAMETRI);
+				} else {
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_PROPERTIES);
+				}
+				dati.addElement(de);
+			}
 		}
 
 		dati = addParameterApplicaModifica(dati);
@@ -4916,10 +4965,50 @@ public class ConsoleHelper {
 		dati.addElement(de);
 		
 		for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
-			dati.addElement(item.toDataElement());
+			if(item.isVisible())
+				dati.addElement(item.toDataElement());
 		}
 		
 		return dati;
+	}
+	
+	public boolean checkPropertiesConfigurationData(TipoOperazione tipoOperazione,ConfigBean configurazioneBean, Config config) throws Exception{
+		// Controlli sui campi immessi
+		try {
+			configurazioneBean.validazioneInputUtente(config);
+			return true;
+		}catch(UserInputValidationException e) {
+			this.pd.setMessage(e.getMessage());  
+			return false;
+		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
+			return false;		
+		} catch(PluginException e) {
+			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile utilizzare il plugin di validazione previsto dalla configurazione"); 
+			return false;
+		} catch(PluginValidationException e) {
+			this.pd.setMessage(e.getMessage());  
+			return false;
+		}
+	}
+	
+	public boolean isFirstTimeFromHttpParameters(String firstTimeParameter) throws Exception{
+		
+		String tmp = this.getParameter(firstTimeParameter);
+		if(tmp!=null && !"".equals(tmp.trim())){
+			return "true".equals(tmp.trim());
+		}
+		return true;
+		
+	}
+	
+	public void addToDatiFirstTimeDisabled(Vector<DataElement> dati,String firstTimeParameter){
+		DataElement de = new DataElement();
+		de.setName(firstTimeParameter);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("false");
+		dati.addElement(de);
 	}
 	
 	public boolean hasOnlyPermessiDiagnostica(String isServizi,String isDiagnostica,String isSistema,String isMessaggi,

@@ -20,6 +20,7 @@
 package org.openspcoop2.web.lib.mvc.properties.beans;
 
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
@@ -64,7 +65,7 @@ public abstract class BaseItemBean<T> {
 	
 	public abstract ItemType getItemType();
 	
-	public abstract void validate() throws Exception;
+	public abstract void validate() throws UserInputValidationException;
 
 	public T getItem() {
 		return this.item;
@@ -86,5 +87,8 @@ public abstract class BaseItemBean<T> {
 		return this.visible;
 	}
 	
+	public boolean isVisible() {
+		return this.visible != null && this.visible.booleanValue();
+	}
 	
 }
