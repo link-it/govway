@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -337,6 +338,22 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce le proprieta' generiche utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	public List<GenericProperties> getGenericProperties() throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce le proprieta' generiche di una tipologia utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 

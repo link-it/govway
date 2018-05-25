@@ -1,4 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+DROP TRIGGER trg_generic_property;
+DROP TRIGGER trg_generic_properties;
 DROP TRIGGER trg_pdd_sys_props;
 DROP TRIGGER trg_servizi_pdd_filtri;
 DROP TRIGGER trg_servizi_pdd;
@@ -18,6 +20,8 @@ DROP TRIGGER trg_config_protocolli;
 DROP TRIGGER trg_configurazione;
 DROP TRIGGER trg_routing;
 DROP TRIGGER trg_registri;
+DROP TABLE generic_property;
+DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;
 DROP TABLE servizi_pdd_filtri;
 DROP TABLE servizi_pdd;
@@ -37,6 +41,8 @@ DROP TABLE config_protocolli;
 DROP TABLE configurazione;
 DROP TABLE routing;
 DROP TABLE registri;
+DROP SEQUENCE seq_generic_property;
+DROP SEQUENCE seq_generic_properties;
 DROP SEQUENCE seq_pdd_sys_props;
 DROP SEQUENCE seq_servizi_pdd_filtri;
 DROP SEQUENCE seq_servizi_pdd;

@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.driver;
 
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -387,6 +388,35 @@ public interface IDriverConfigurazioneCRUD {
 	 * @throws DriverConfigurazioneException
 	 */
 	public void deleteSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException;
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una proprieta' generica della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	public void createGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException;
+	
+	/**
+	 * Aggiorna le informazioni sulle proprieta' generiche della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	public void updateGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException;
+	
+	/**
+	 * Elimina le informazioni sulle proprieta' generiche della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	public void deleteGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException;
 	
 	
 	

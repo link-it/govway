@@ -1,3 +1,5 @@
+DELETE FROM generic_property;
+DELETE FROM generic_properties;
 DELETE FROM pdd_sys_props;
 DELETE FROM servizi_pdd_filtri;
 DELETE FROM servizi_pdd;

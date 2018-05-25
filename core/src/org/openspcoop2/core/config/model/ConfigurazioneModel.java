@@ -59,6 +59,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.INTEGRATION_MANAGER = new org.openspcoop2.core.config.model.IntegrationManagerModel(new Field("integration-manager",org.openspcoop2.core.config.IntegrationManager.class,"configurazione",Configurazione.class));
 		this.STATO_SERVIZI_PDD = new org.openspcoop2.core.config.model.StatoServiziPddModel(new Field("stato-servizi-pdd",org.openspcoop2.core.config.StatoServiziPdd.class,"configurazione",Configurazione.class));
 		this.SYSTEM_PROPERTIES = new org.openspcoop2.core.config.model.SystemPropertiesModel(new Field("system-properties",org.openspcoop2.core.config.SystemProperties.class,"configurazione",Configurazione.class));
+		this.GENERIC_PROPERTIES = new org.openspcoop2.core.config.model.GenericPropertiesModel(new Field("generic-properties",org.openspcoop2.core.config.GenericProperties.class,"configurazione",Configurazione.class));
 	
 	}
 	
@@ -85,6 +86,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.INTEGRATION_MANAGER = new org.openspcoop2.core.config.model.IntegrationManagerModel(new ComplexField(father,"integration-manager",org.openspcoop2.core.config.IntegrationManager.class,"configurazione",Configurazione.class));
 		this.STATO_SERVIZI_PDD = new org.openspcoop2.core.config.model.StatoServiziPddModel(new ComplexField(father,"stato-servizi-pdd",org.openspcoop2.core.config.StatoServiziPdd.class,"configurazione",Configurazione.class));
 		this.SYSTEM_PROPERTIES = new org.openspcoop2.core.config.model.SystemPropertiesModel(new ComplexField(father,"system-properties",org.openspcoop2.core.config.SystemProperties.class,"configurazione",Configurazione.class));
+		this.GENERIC_PROPERTIES = new org.openspcoop2.core.config.model.GenericPropertiesModel(new ComplexField(father,"generic-properties",org.openspcoop2.core.config.GenericProperties.class,"configurazione",Configurazione.class));
 	
 	}
 	
@@ -127,6 +129,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.StatoServiziPddModel STATO_SERVIZI_PDD = null;
 	 
 	public org.openspcoop2.core.config.model.SystemPropertiesModel SYSTEM_PROPERTIES = null;
+	 
+	public org.openspcoop2.core.config.model.GenericPropertiesModel GENERIC_PROPERTIES = null;
 	 
 
 	@Override

@@ -425,3 +425,43 @@ CREATE TABLE pdd_sys_props
 
 
 
+
+-- **** Proprieta Generiche ****
+
+CREATE SEQUENCE seq_generic_properties start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE generic_properties
+(
+	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255),
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_generic_properties') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_generic_properties_1 UNIQUE (tipologia,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_generic_property start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE generic_property
+(
+	id_props BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(4000) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_generic_property') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_generic_property_1 FOREIGN KEY (id_props) REFERENCES generic_properties(id),
+	CONSTRAINT pk_generic_property PRIMARY KEY (id)
+);
+
+
+

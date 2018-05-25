@@ -59,6 +59,7 @@ import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
@@ -5988,20 +5989,168 @@ public class DriverConfigurazioneDB_LIB {
 	
 	
 	
+	public static void CRUDGenericProperties(int type, GenericProperties genericProperties, Connection con) throws DriverConfigurazioneException {
+		if (genericProperties == null)
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGenericProperties] Le configurazioni per le generic properties non possono essere NULL");
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+		PreparedStatement selectStmt = null;
+		//String selectQuery = "";
+		ResultSet selectRS = null;
+		
+
+		try {
+			
+			if(genericProperties.getNome()==null) {
+				throw new DriverConfigurazioneException("Nome non fornito");
+			}
+			if(genericProperties.getTipologia()==null) {
+				throw new DriverConfigurazioneException("Tipologia non fornita");
+			}
+			
+			// Recupero id generic properties
+			long idParent = -1;
+			if(type == CostantiDB.UPDATE || type == CostantiDB.DELETE) {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("nome=?");
+				sqlQueryObject.addWhereCondition("tipologia=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				String sqlQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(sqlQuery);
+				selectStmt.setString(1, genericProperties.getNome());
+				selectStmt.setString(2, genericProperties.getTipologia());
+				selectRS = selectStmt.executeQuery();
+				
+				if(selectRS.next()) {
+					idParent = selectRS.getLong("id");
+				}
+				selectRS.close();
+				selectStmt.close();
+				
+				if(idParent<=0) {
+					throw new DriverConfigurazioneException("Configuration Property non trovato con nome ["+genericProperties.getNome()+"] e tipologia ["+genericProperties.getTipologia()+"]");
+				}
+				
+				// Elimino anche le configurazioni (nell'update le ricreo)
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+				sqlQueryObject.addWhereCondition("id_props=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idParent);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+
+				// delete
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idParent);
+				updateStmt.executeUpdate();
+				updateStmt.close();
+			}
+			
+
+			switch (type) {
+			case CREATE:
+			case UPDATE:
+		
+				// insert
+
+				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("nome", genericProperties.getNome() , InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("descrizione", genericProperties.getDescrizione() , InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipologia", genericProperties.getTipologia() , InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo", genericProperties.getTipo() , InsertAndGeneratedKeyJDBCType.STRING) );
+				
+				long idProperties = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, TipiDatabase.toEnumConstant(DriverConfigurazioneDB_LIB.tipoDB), 
+						new CustomKeyGeneratorObject(CostantiDB.CONFIG_GENERIC_PROPERTIES, CostantiDB.CONFIG_GENERIC_PROPERTIES_COLUMN_ID, 
+								CostantiDB.CONFIG_GENERIC_PROPERTIES_SEQUENCE, CostantiDB.CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID),
+						listInsertAndGeneratedKeyObject.toArray(new InsertAndGeneratedKeyObject[1]));
+				if(idProperties<=0){
+					throw new Exception("ID (Generic Properties) autoincrementale non ottenuto");
+				}
+
+				for(int l=0; l<genericProperties.sizePropertyList();l++){
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+					sqlQueryObject.addInsertField("id_props", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					updateQuery = sqlQueryObject.createSQLInsert();
+					updateStmt = con.prepareStatement(updateQuery);
+					updateStmt.setLong(1, idProperties);
+					updateStmt.setString(2, genericProperties.getProperty(l).getNome());
+					updateStmt.setString(3, genericProperties.getProperty(l).getValore());
+					updateStmt.executeUpdate();
+					updateStmt.close();
+				}
+
+				break;
+			case DELETE:
+				// non rimuovo in quanto gia fatto sopra.
+				break;
+			}
+
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGenericProperties] SQLException [" + se.getMessage() + "].",se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDGenericProperties] Exception [" + se.getMessage() + "].",se);
+		} finally {
+
+			try {
+				if(selectRS!=null)selectRS.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(selectStmt!=null)selectStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if(updateStmt!=null)updateStmt.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
+	
+	
+	
+	
 	
 	public static long CRUDConfigurazioneGenerale(int type, Configurazione config, Connection con) throws DriverConfigurazioneException {
 		
-		if(config.sizeExtendedInfoList()>0 && config.getAccessoConfigurazione()==null && config.getAccessoRegistro()==null &&
+		if(config.sizeExtendedInfoList()>0 && 
+				config.getRoutingTable()==null && 
+				config.getAccessoRegistro()==null &&
+				config.getAccessoConfigurazione()==null && 
 				config.getAccessoDatiAutorizzazione()==null &&
 				config.getAccessoDatiAutenticazione()==null && 
+				config.getProtocolli()==null &&
+				config.getValidazioneBuste()==null && 
+				config.getValidazioneContenutiApplicativi()==null &&
+				config.getIndirizzoRisposta()==null &&	
 				config.getAttachments()==null &&
-				config.getGestioneErrore()==null && config.getIndirizzoRisposta()==null &&
-				config.getInoltroBusteNonRiscontrate()==null && config.getIntegrationManager()==null &&
-				config.getMessaggiDiagnostici()==null && config.getRisposte()==null &&
-				config.getRoutingTable()==null && config.getStatoServiziPdd()==null &&
-				config.getSystemProperties()==null && config.getTracciamento()==null &&
-				config.getValidazioneBuste()==null && config.getValidazioneContenutiApplicativi()==null){
-			
+				config.getRisposte()==null &&
+				config.getInoltroBusteNonRiscontrate()==null && 
+				config.getMessaggiDiagnostici()==null && 
+				config.getTracciamento()==null &&
+				config.getDump()==null &&		
+				config.getGestioneErrore()==null && 
+				config.getIntegrationManager()==null &&
+				config.getStatoServiziPdd()==null &&
+				config.getSystemProperties()==null && 
+				(config.getGenericPropertiesList()==null || config.getGenericPropertiesList().size()<=0) ) {
+						
 			// caso speciale extended info
 			ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 			IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoConfigurazione();

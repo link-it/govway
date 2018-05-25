@@ -56,6 +56,7 @@ import java.util.List;
  * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}integration-manager" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="system-properties" type="{http://www.openspcoop2.org/core/config}system-properties" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -87,7 +88,8 @@ import java.util.List;
   	"gestioneErrore",
   	"integrationManager",
   	"statoServiziPdd",
-  	"systemProperties"
+  	"systemProperties",
+  	"genericProperties"
   }
 )
 
@@ -287,6 +289,30 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
     this.systemProperties = systemProperties;
   }
 
+  public void addGenericProperties(GenericProperties genericProperties) {
+    this.genericProperties.add(genericProperties);
+  }
+
+  public GenericProperties getGenericProperties(int index) {
+    return this.genericProperties.get( index );
+  }
+
+  public GenericProperties removeGenericProperties(int index) {
+    return this.genericProperties.remove( index );
+  }
+
+  public List<GenericProperties> getGenericPropertiesList() {
+    return this.genericProperties;
+  }
+
+  public void setGenericPropertiesList(List<GenericProperties> genericProperties) {
+    this.genericProperties=genericProperties;
+  }
+
+  public int sizeGenericPropertiesList() {
+    return this.genericProperties.size();
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -392,5 +418,35 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="system-properties",required=false,nillable=false)
   protected SystemProperties systemProperties;
+
+  @XmlElement(name="generic-properties",required=true,nillable=false)
+  protected List<GenericProperties> genericProperties = new ArrayList<GenericProperties>();
+
+  /**
+   * @deprecated Use method getGenericPropertiesList
+   * @return List<GenericProperties>
+  */
+  @Deprecated
+  public List<GenericProperties> getGenericProperties() {
+  	return this.genericProperties;
+  }
+
+  /**
+   * @deprecated Use method setGenericPropertiesList
+   * @param genericProperties List<GenericProperties>
+  */
+  @Deprecated
+  public void setGenericProperties(List<GenericProperties> genericProperties) {
+  	this.genericProperties=genericProperties;
+  }
+
+  /**
+   * @deprecated Use method sizeGenericPropertiesList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeGenericProperties() {
+  	return this.genericProperties.size();
+  }
 
 }

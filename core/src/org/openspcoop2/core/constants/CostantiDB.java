@@ -117,6 +117,12 @@ public final class CostantiDB {
     
     public static final String CONFIG_PROTOCOLLI = "config_protocolli";
     
+    public static final String CONFIG_GENERIC_PROPERTIES = "generic_properties";
+    public final static String CONFIG_GENERIC_PROPERTIES_COLUMN_ID = "id";
+    public final static String CONFIG_GENERIC_PROPERTIES_SEQUENCE = "seq_generic_properties";
+    public final static String CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID = "generic_properties_init_seq";
+    public static final String CONFIG_GENERIC_PROPERTY = "generic_property";
+    
     public static final String CONTROLLO_TRAFFICO_CONFIG = "ct_config";
     public static final String CONTROLLO_TRAFFICO_CONFIG_POLICY = "ct_config_policy";
     public static final String CONTROLLO_TRAFFICO_ACTIVE_POLICY = "ct_active_policy";

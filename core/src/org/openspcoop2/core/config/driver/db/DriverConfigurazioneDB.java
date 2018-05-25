@@ -66,6 +66,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
@@ -5670,6 +5671,145 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 
 	}
+	
+	/**
+	 * Restituisce le proprieta' generiche di una tipologia utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	@Override
+	public List<GenericProperties> getGenericProperties() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getGenericProperties(null);
+	}
+	
+	/**
+	 * Restituisce le proprieta' generiche utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	@Override
+	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		PreparedStatement stm2 = null;
+		ResultSet rs2 = null;
+
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getGenericProperties");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			List<GenericProperties> genericPropertiesList = new ArrayList<>();
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+			sqlQueryObject.addSelectField("*");
+			if(tipologia!=null) {
+				sqlQueryObject.addWhereCondition("tipologia=?");
+			}
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			if(tipologia!=null) {
+				stm.setString(1, tipologia);
+			}
+			rs = stm.executeQuery();
+
+			while(rs.next()){
+				
+				GenericProperties genericProperties = new GenericProperties();
+				genericProperties.setNome(rs.getString("nome"));
+				genericProperties.setDescrizione(rs.getString("descrizione"));
+				genericProperties.setTipologia(rs.getString("tipologia"));
+				genericProperties.setTipo(rs.getString("tipo"));
+				
+				long idP = rs.getLong("id");
+				genericProperties.setId(idP);
+				
+				//prendo le proprieta
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_props = ?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm2 = con.prepareStatement(sqlQuery);
+				stm2.setLong(1, idP);
+				rs2 = stm2.executeQuery();
+				Property genericProperty = null;
+				while(rs2.next())
+				{
+					genericProperty = new Property();
+					//proprieta
+					genericProperty.setId(rs2.getLong("id"));
+					genericProperty.setNome(rs2.getString("nome"));
+					genericProperty.setValore(rs2.getString("valore"));
+					genericProperties.addProperty(genericProperty);
+				}
+				rs2.close();
+				stm2.close();
+				
+				genericPropertiesList.add(genericProperties);
+			}
+			rs.close();
+			stm.close();
+
+			if(genericPropertiesList==null || genericPropertiesList.size()<=0)
+				throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
+			
+			return genericPropertiesList;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  SqlException: " + se.getMessage(),se);
+		}catch (DriverConfigurazioneNotFound e) {
+			throw new DriverConfigurazioneNotFound(e);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs2!=null) rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) stm2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+	}
 
 
 
@@ -5689,7 +5829,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				con = getConnectionFromDatasource("createSystemPropertiesPdD");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createServiziAttiviPdD] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createSystemPropertiesPdD] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -5835,6 +5975,178 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una proprieta' generica della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	@Override
+	public void createGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("createGenericProperties");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDGenericPropertiesPdD type = 1");
+			DriverConfigurazioneDB_LIB.CRUDGenericProperties(1, genericProperties, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::createGenericProperties] Errore durante la createSystemPropertiesPdD : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	/**
+	 * Aggiorna le informazioni sulle proprieta' generiche della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	@Override
+	public void updateGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("updateGenericProperties");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("updateGenericProperties type = 2");
+			DriverConfigurazioneDB_LIB.CRUDGenericProperties(2, genericProperties, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::updateGenericProperties] Errore durante la updateSystemPropertiesPdD : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+
+	/**
+	 * Elimina le informazioni sulle proprieta' generiche della PdD
+	 * 
+	 * @param genericProperties
+	 * @throws DriverConfigurazioneException
+	 */
+	@Override
+	public void deleteGenericProperties(GenericProperties genericProperties) throws DriverConfigurazioneException{
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("deleteGenericProperties");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			this.log.debug("deleteGenericProperties type = 3");
+			DriverConfigurazioneDB_LIB.CRUDGenericProperties(3, genericProperties, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::deleteGenericProperties] Errore durante la deleteSystemPropertiesPdD : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 
 
@@ -6322,6 +6634,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		// - SystemProperties
 		try{
 			config.setSystemProperties(getSystemPropertiesPdD());
+		}catch (Exception e) {}
+
+		// - GenericProperties
+		try{
+			config.getGenericPropertiesList().addAll(this.getGenericProperties());
 		}catch (Exception e) {}
 
 		return config;

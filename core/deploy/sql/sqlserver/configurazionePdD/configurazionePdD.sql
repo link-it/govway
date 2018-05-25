@@ -393,3 +393,41 @@ CREATE TABLE pdd_sys_props
 CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 
 
+
+-- **** Proprieta Generiche ****
+
+CREATE TABLE generic_properties
+(
+	nome VARCHAR(255) NOT NULL,
+	descrizione VARCHAR(255),
+	tipologia VARCHAR(255) NOT NULL,
+	tipo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_generic_properties_1 UNIQUE (tipologia,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_generic_properties_1 ON generic_properties (tipologia,nome);
+
+
+
+CREATE TABLE generic_property
+(
+	id_props BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(4000) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_generic_property_1 FOREIGN KEY (id_props) REFERENCES generic_properties(id),
+	CONSTRAINT pk_generic_property PRIMARY KEY (id)
+);
+
+
+

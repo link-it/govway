@@ -62,6 +62,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
@@ -2697,6 +2698,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpConfigurazione readDumpConfigurazioneFromString(String in) throws DeserializerException {
 		return (DumpConfigurazione) this.xmlToObj(in.getBytes(), DumpConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: generic-properties
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @return Object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GenericProperties readGenericProperties(String fileName) throws DeserializerException {
+		return (GenericProperties) this.xmlToObj(fileName, GenericProperties.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @return Object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GenericProperties readGenericProperties(File file) throws DeserializerException {
+		return (GenericProperties) this.xmlToObj(file, GenericProperties.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @return Object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GenericProperties readGenericProperties(InputStream in) throws DeserializerException {
+		return (GenericProperties) this.xmlToObj(in, GenericProperties.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @return Object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GenericProperties readGenericProperties(byte[] in) throws DeserializerException {
+		return (GenericProperties) this.xmlToObj(in, GenericProperties.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @return Object type {@link org.openspcoop2.core.config.GenericProperties}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GenericProperties readGenericPropertiesFromString(String in) throws DeserializerException {
+		return (GenericProperties) this.xmlToObj(in.getBytes(), GenericProperties.class);
 	}	
 	
 	

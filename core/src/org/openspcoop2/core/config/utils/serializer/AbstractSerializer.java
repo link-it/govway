@@ -64,6 +64,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.IdServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
@@ -5028,6 +5029,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(DumpConfigurazione dumpConfigurazione,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(DumpConfigurazione.class, dumpConfigurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: generic-properties
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GenericProperties genericProperties) throws SerializerException {
+		this.objToXml(fileName, GenericProperties.class, genericProperties, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GenericProperties genericProperties,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, GenericProperties.class, genericProperties, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param file Xml file to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GenericProperties genericProperties) throws SerializerException {
+		this.objToXml(file, GenericProperties.class, genericProperties, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param file Xml file to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GenericProperties genericProperties,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, GenericProperties.class, genericProperties, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param out OutputStream to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GenericProperties genericProperties) throws SerializerException {
+		this.objToXml(out, GenericProperties.class, genericProperties, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param out OutputStream to serialize the object <var>genericProperties</var>
+	 * @param genericProperties Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GenericProperties genericProperties,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, GenericProperties.class, genericProperties, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param genericProperties Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GenericProperties genericProperties) throws SerializerException {
+		return this.objToXml(GenericProperties.class, genericProperties, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param genericProperties Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GenericProperties genericProperties,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GenericProperties.class, genericProperties, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param genericProperties Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GenericProperties genericProperties) throws SerializerException {
+		return this.objToXml(GenericProperties.class, genericProperties, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>genericProperties</var> of type {@link org.openspcoop2.core.config.GenericProperties}
+	 * 
+	 * @param genericProperties Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GenericProperties genericProperties,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GenericProperties.class, genericProperties, prettyPrint).toString();
 	}
 	
 	

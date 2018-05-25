@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -1735,6 +1736,56 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 		return this.openspcoop.getConfigurazione().getSystemProperties();
 		
+	}
+	
+	/**
+	 * Restituisce le proprieta' generiche utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	@Override
+	public List<GenericProperties> getGenericProperties() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+		
+		if(this.openspcoop.getConfigurazione()==null)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione non trovata");
+		if(this.openspcoop.getConfigurazione().getGenericPropertiesList()==null || this.openspcoop.getConfigurazione().getGenericPropertiesList().size()<=0)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti");
+	
+		return this.openspcoop.getConfigurazione().getGenericPropertiesList();
+		
+	}
+	
+	/**
+	 * Restituisce le proprieta' generiche di una tipologia utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	@Override
+	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		refreshConfigurazioneXML();
+		
+		if(this.openspcoop.getConfigurazione()==null)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione non trovata");
+		if(this.openspcoop.getConfigurazione().getGenericPropertiesList()==null || this.openspcoop.getConfigurazione().getGenericPropertiesList().size()<=0)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti");
+		 
+		List<GenericProperties> list = new ArrayList<>();
+		for (GenericProperties genericProperties : this.openspcoop.getConfigurazione().getGenericPropertiesList()) {
+			if(tipologia!=null && tipologia.equals(genericProperties.getTipologia())) {
+				list.add(genericProperties);
+			}
+		}
+		
+		if(list.size()<=0) {
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"'");
+		}
+		
+		return list;
 	}
 	
 

@@ -1,7 +1,10 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_generic_properties_1;
 -- DROP INDEX index_pdd_sys_props_1;
 -- DROP INDEX index_servizi_pdd_1;
 -- DROP INDEX index_config_protocolli_1;
+DROP TABLE generic_property;
+DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;
 DROP TABLE servizi_pdd_filtri;
 DROP TABLE servizi_pdd;

@@ -416,6 +416,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GenericProperties }
+     */
+    public GenericProperties createGenericProperties() {
+        return new GenericProperties();
+    }
+
+    /**
      * Create an instance of {@link Dump }
      */
     public Dump createDump() {

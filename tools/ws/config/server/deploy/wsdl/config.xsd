@@ -611,6 +611,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="integration-manager" type="integration-manager"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="stato-servizi-pdd" type="stato-servizi-pdd"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="system-properties" type="system-properties"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="generic-properties" type="generic-properties"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -810,7 +811,6 @@
 		<xsd:attribute name="tipo-database" type="xsd:string"/>
 	</xsd:complexType>
 	
-	
 	<!-- Gestione accesso al servizio di Integration Manager -->
 	<xsd:complexType name="integration-manager">
 		<xsd:attribute default="basic,ssl" name="autenticazione" type="xsd:string"/>
@@ -867,6 +867,18 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="unbounded" minOccurs="1" name="system-property" type="Property"/>
 		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<!-- OpenSPCoop GenericConfigProperties utilizzato per configurazioni dinamiche -->
+	<xsd:complexType name="generic-properties">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="property" type="Property"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipologia" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
 	

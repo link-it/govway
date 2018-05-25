@@ -637,3 +637,65 @@ end;
 /
 
 
+
+-- **** Proprieta Generiche ****
+
+CREATE SEQUENCE seq_generic_properties MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE generic_properties
+(
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	tipologia VARCHAR2(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_generic_properties_1 UNIQUE (tipologia,nome),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_generic_properties PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_generic_properties
+BEFORE
+insert on generic_properties
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_generic_properties.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_generic_property MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE generic_property
+(
+	id_props NUMBER NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(4000) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_generic_property_1 UNIQUE (id_props,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_generic_property_1 FOREIGN KEY (id_props) REFERENCES generic_properties(id),
+	CONSTRAINT pk_generic_property PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_generic_property
+BEFORE
+insert on generic_property
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_generic_property.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
