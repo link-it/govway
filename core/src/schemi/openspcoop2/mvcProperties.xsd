@@ -52,6 +52,7 @@
 		<xsd:attribute name="label" type="xsd:string" use="required"/>
 		<xsd:attribute name="sortLabel" type="xsd:string" use="optional"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="validation" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:complexType name="section">
