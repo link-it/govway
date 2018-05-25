@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
@@ -95,6 +96,7 @@ import java.util.List;
   	"servizioApplicativo",
   	"soggetti",
   	"ruoli",
+  	"gestioneToken",
   	"proprieta",
   	"mtomProcessor",
   	"messageSecurity",
@@ -219,6 +221,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setRuoli(AutorizzazioneRuoli ruoli) {
     this.ruoli = ruoli;
+  }
+
+  public GestioneToken getGestioneToken() {
+    return this.gestioneToken;
+  }
+
+  public void setGestioneToken(GestioneToken gestioneToken) {
+    this.gestioneToken = gestioneToken;
   }
 
   public void addProprieta(Proprieta proprieta) {
@@ -681,6 +691,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
+
+  @XmlElement(name="gestione-token",required=false,nillable=false)
+  protected GestioneToken gestioneToken;
 
   @XmlElement(name="proprieta",required=true,nillable=false)
   protected List<Proprieta> proprieta = new ArrayList<Proprieta>();

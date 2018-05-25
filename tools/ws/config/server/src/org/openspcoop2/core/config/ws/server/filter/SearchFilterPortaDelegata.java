@@ -31,6 +31,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config/management}gestione-token" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-local-forward" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
@@ -73,6 +74,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataAzione;
 import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
 import java.util.Date;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataServizio;
+import org.openspcoop2.core.config.ws.server.filter.beans.GestioneToken;
 import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -91,6 +93,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "servizio",
     "azione",
     "ruoli",
+    "gestioneToken",
     "localForward",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
@@ -168,6 +171,18 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public AutorizzazioneRuoli getRuoli(){
 		return this.ruoli;
+	}
+	
+	
+	@XmlElement(name="gestione-token",required=false,nillable=false)
+	private GestioneToken gestioneToken;
+	
+	public void setGestioneToken(GestioneToken gestioneToken){
+		this.gestioneToken = gestioneToken;
+	}
+	
+	public GestioneToken getGestioneToken(){
+		return this.gestioneToken;
 	}
 	
 	

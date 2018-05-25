@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
@@ -93,6 +94,7 @@ import java.util.List;
   	"azione",
   	"servizioApplicativo",
   	"ruoli",
+  	"gestioneToken",
   	"localForward",
   	"proprieta",
   	"mtomProcessor",
@@ -210,6 +212,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setRuoli(AutorizzazioneRuoli ruoli) {
     this.ruoli = ruoli;
+  }
+
+  public GestioneToken getGestioneToken() {
+    return this.gestioneToken;
+  }
+
+  public void setGestioneToken(GestioneToken gestioneToken) {
+    this.gestioneToken = gestioneToken;
   }
 
   public PortaDelegataLocalForward getLocalForward() {
@@ -669,6 +679,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
+
+  @XmlElement(name="gestione-token",required=false,nillable=false)
+  protected GestioneToken gestioneToken;
 
   @XmlElement(name="local-forward",required=false,nillable=false)
   protected PortaDelegataLocalForward localForward;

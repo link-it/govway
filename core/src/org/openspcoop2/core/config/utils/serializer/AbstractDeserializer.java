@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -871,6 +872,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public GestioneErroreSoapFault readGestioneErroreSoapFaultFromString(String in) throws DeserializerException {
 		return (GestioneErroreSoapFault) this.xmlToObj(in.getBytes(), GestioneErroreSoapFault.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: gestione-token
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GestioneToken readGestioneToken(String fileName) throws DeserializerException {
+		return (GestioneToken) this.xmlToObj(fileName, GestioneToken.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GestioneToken readGestioneToken(File file) throws DeserializerException {
+		return (GestioneToken) this.xmlToObj(file, GestioneToken.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GestioneToken readGestioneToken(InputStream in) throws DeserializerException {
+		return (GestioneToken) this.xmlToObj(in, GestioneToken.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GestioneToken readGestioneToken(byte[] in) throws DeserializerException {
+		return (GestioneToken) this.xmlToObj(in, GestioneToken.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.GestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public GestioneToken readGestioneTokenFromString(String in) throws DeserializerException {
+		return (GestioneToken) this.xmlToObj(in.getBytes(), GestioneToken.class);
 	}	
 	
 	

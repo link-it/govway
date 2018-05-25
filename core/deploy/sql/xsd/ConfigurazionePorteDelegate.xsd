@@ -306,6 +306,73 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="token_policy" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_policy"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della policy di gestione dei token</linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Gestione Token]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_validazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_validazione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la validazione dei token è attiva durante il trattamento della policy (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_introspection" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_introspection"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la validazione dei token tramite servizio di introspection è attiva durante il trattamento della policy (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_user_info" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_user_info"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la raccolta dati utenti, tramite il servizio user_info,n è attiva durante il trattamento della policy (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_forward" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_forward"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il forward del token è attivo (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_options" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_options"/>
+                                <linkit:sql-ddl-column-comment>Opzioni di configurazione ulteriori per la gestione del token</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="autorizzazione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -318,6 +385,7 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
 - 'authenticated': solo i servizi applicativi autenticati ed associati alla porta (tramite la tabella 'porte_delegate_sa') sono autorizzati.
 - 'roles': solo i servizi applicativi che possiedono i ruoli associati alla porta delegata (tramite tabella pd_ruoli) vengono autorizzati
 - 'xacmlPolicy': solo i servizi applicativi che soddisfano la policy associata al servizio possono fruirlo]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[Autorizzazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

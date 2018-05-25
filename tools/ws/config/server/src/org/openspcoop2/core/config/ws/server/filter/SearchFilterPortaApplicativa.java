@@ -31,6 +31,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-azione" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config/management}gestione-token" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -72,6 +73,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaServiz
 import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
 import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
 import java.util.Date;
+import org.openspcoop2.core.config.ws.server.filter.beans.GestioneToken;
 import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -90,6 +92,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "servizio",
     "azione",
     "ruoli",
+    "gestioneToken",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
     "tipoSoggettoProprietario",
@@ -167,6 +170,18 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public AutorizzazioneRuoli getRuoli(){
 		return this.ruoli;
+	}
+	
+	
+	@XmlElement(name="gestione-token",required=false,nillable=false)
+	private GestioneToken gestioneToken;
+	
+	public void setGestioneToken(GestioneToken gestioneToken){
+		this.gestioneToken = gestioneToken;
+	}
+	
+	public GestioneToken getGestioneToken(){
+		return this.gestioneToken;
 	}
 	
 	

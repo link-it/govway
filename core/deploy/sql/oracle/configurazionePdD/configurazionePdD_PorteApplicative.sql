@@ -63,6 +63,14 @@ CREATE TABLE porte_applicative
 	autenticazione VARCHAR2(255),
 	-- abilitato/disabilitato
 	autenticazione_opzionale VARCHAR2(255),
+	-- Gestione Token
+	token_policy VARCHAR2(255),
+	token_validazione VARCHAR2(255),
+	token_introspection VARCHAR2(255),
+	token_user_info VARCHAR2(255),
+	token_forward VARCHAR2(255),
+	token_options VARCHAR2(255),
+	-- Autorizzazione
 	autorizzazione VARCHAR2(255),
 	autorizzazione_contenuto VARCHAR2(255),
 	-- all/any

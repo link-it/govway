@@ -63,6 +63,7 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
@@ -1292,6 +1293,7 @@ public class DriverConfigurazioneDB_LIB {
 		String autorizzazione = aPD.getAutorizzazione();
 		String autorizzazioneContenuto = aPD.getAutorizzazioneContenuto();
 		String descrizione = aPD.getDescrizione();
+		GestioneToken gestioneToken = aPD.getGestioneToken();
 
 		PortaDelegataAzione azione = aPD.getAzione();
 		long idAzione = ((azione != null && azione.getId() != null) ? azione.getId() : -1);
@@ -1423,6 +1425,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("force_interface_based_azione", "?");
 				sqlQueryObject.addInsertField("autenticazione", "?");
 				sqlQueryObject.addInsertField("autenticazione_opzionale", "?");
+				sqlQueryObject.addInsertField("token_policy", "?");
+				sqlQueryObject.addInsertField("token_validazione", "?");
+				sqlQueryObject.addInsertField("token_introspection", "?");
+				sqlQueryObject.addInsertField("token_user_info", "?");
+				sqlQueryObject.addInsertField("token_forward", "?");
+				sqlQueryObject.addInsertField("token_options", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
@@ -1474,8 +1482,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, patternAzione);
 				stm.setString(index++, nomePortaDeleganteAzione);
 				stm.setString(index++, getValue(forceInterfaceBased));
+				// autenticazione
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAutenticazioneOpzionale()) : null);
+				// token
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
+				// autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
@@ -1532,7 +1549,14 @@ public class DriverConfigurazioneDB_LIB {
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
 								idServizioPD, tipoServizio, nomeServizio, 
 								idAzione, nomeAzione, modeAzione, patternAzione, nomePortaDeleganteAzione, getValue(forceInterfaceBased),
-								autenticazione, autorizzazione, autorizzazioneContenuto,
+								autenticazione, aPD.getAutenticazioneOpzionale(),
+								(gestioneToken!=null ? gestioneToken.getPolicy() : null),
+								(gestioneToken!=null ? gestioneToken.getValidazione() : null),
+								(gestioneToken!=null ? gestioneToken.getIntrospection() : null),
+								(gestioneToken!=null ? gestioneToken.getUserInfo() : null),
+								(gestioneToken!=null ? gestioneToken.getForward() : null),
+								(gestioneToken!=null ? gestioneToken.getOptions() : null),
+								autorizzazione, autorizzazioneContenuto,
 								mtomMode_request, mtomMode_response,
 								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response, securityRequestMode, securityResponseMode,
 								idSoggettoProprietario,
@@ -1965,6 +1989,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("force_interface_based_azione", "?");
 				sqlQueryObject.addUpdateField("autenticazione", "?");
 				sqlQueryObject.addUpdateField("autenticazione_opzionale", "?");
+				sqlQueryObject.addUpdateField("token_policy", "?");
+				sqlQueryObject.addUpdateField("token_validazione", "?");
+				sqlQueryObject.addUpdateField("token_introspection", "?");
+				sqlQueryObject.addUpdateField("token_user_info", "?");
+				sqlQueryObject.addUpdateField("token_forward", "?");
+				sqlQueryObject.addUpdateField("token_options", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
@@ -2017,8 +2047,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, patternAzione);
 				stm.setString(index++, nomePortaDeleganteAzione);
 				stm.setString(index++, getValue(forceInterfaceBased));
+				// autenticazione
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getAutenticazioneOpzionale()) : null);
+				// token
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
+				// autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, autorizzazioneContenuto);
 				// mtom
@@ -3397,6 +3436,7 @@ public class DriverConfigurazioneDB_LIB {
 
 		String autenticazione = aPA.getAutenticazione();
 		String autorizzazione = aPA.getAutorizzazione();
+		GestioneToken gestioneToken = aPA.getGestioneToken(); 
 		
 		PortaApplicativaAzione azione = aPA.getAzione();
 		PortaApplicativaServizio servizio = aPA.getServizio();
@@ -3550,6 +3590,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("behaviour", "?");
 				sqlQueryObject.addInsertField("autenticazione", "?");
 				sqlQueryObject.addInsertField("autenticazione_opzionale", "?");
+				sqlQueryObject.addInsertField("token_policy", "?");
+				sqlQueryObject.addInsertField("token_validazione", "?");
+				sqlQueryObject.addInsertField("token_introspection", "?");
+				sqlQueryObject.addInsertField("token_user_info", "?");
+				sqlQueryObject.addInsertField("token_forward", "?");
+				sqlQueryObject.addInsertField("token_options", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
@@ -3612,9 +3658,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
 				stm.setString(index++, aPA!=null ? aPA.getBehaviour() : null);
 				
-				// Autenticazione/Autorizzazione
+				// Autenticazione
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAutenticazioneOpzionale()) : null);
+				// token
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
+				// Autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, aPA!=null ? aPA.getAutorizzazioneContenuto() : null);
 				
@@ -4074,6 +4128,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("behaviour", "?");
 				sqlQueryObject.addUpdateField("autenticazione", "?");
 				sqlQueryObject.addUpdateField("autenticazione_opzionale", "?");
+				sqlQueryObject.addUpdateField("token_policy", "?");
+				sqlQueryObject.addUpdateField("token_validazione", "?");
+				sqlQueryObject.addUpdateField("token_introspection", "?");
+				sqlQueryObject.addUpdateField("token_user_info", "?");
+				sqlQueryObject.addUpdateField("token_forward", "?");
+				sqlQueryObject.addUpdateField("token_options", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
@@ -4144,9 +4204,17 @@ public class DriverConfigurazioneDB_LIB {
 				// Stateless
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
 				stm.setString(index++, aPA!=null ? aPA.getBehaviour() : null);
-				// Autenticazione/Autorizzazione
+				// Autenticazione
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAutenticazioneOpzionale()) : null);
+				// token
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getPolicy() : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getValidazione()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getIntrospection()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getUserInfo()) : null);
+				stm.setString(index++, gestioneToken!=null ? DriverConfigurazioneDB_LIB.getValue(gestioneToken.getForward()) : null);
+				stm.setString(index++, gestioneToken!=null ? gestioneToken.getOptions() : null);
+				// Autorizzazione
 				stm.setString(index++, autorizzazione);
 				stm.setString(index++, aPA!=null ? aPA.getAutorizzazioneContenuto() : null);
 				// Ruoli

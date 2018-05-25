@@ -56,6 +56,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link GestioneToken }
+     */
+    public GestioneToken createGestioneToken() {
+        return new GestioneToken();
+    }
+    
+    /**
      * Create an instance of {@link PortaDelegataServizio }
      */
     public PortaDelegataServizio createPortaDelegataServizio() {

@@ -136,6 +136,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GestioneToken }
+     */
+    public GestioneToken createGestioneToken() {
+        return new GestioneToken();
+    }
+
+    /**
      * Create an instance of {@link MessageSecurity }
      */
     public MessageSecurity createMessageSecurity() {

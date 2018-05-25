@@ -34,6 +34,14 @@ CREATE TABLE porte_delegate
 	autenticazione VARCHAR(255),
 	-- abilitato/disabilitato
 	autenticazione_opzionale VARCHAR(255),
+	-- Gestione Token
+	token_policy VARCHAR(255),
+	token_validazione VARCHAR(255),
+	token_introspection VARCHAR(255),
+	token_user_info VARCHAR(255),
+	token_forward VARCHAR(255),
+	token_options VARCHAR(255),
+	-- Autorizzazione
 	autorizzazione VARCHAR(255),
 	autorizzazione_contenuto VARCHAR(255),
 	-- disable/packaging/unpackaging/verify

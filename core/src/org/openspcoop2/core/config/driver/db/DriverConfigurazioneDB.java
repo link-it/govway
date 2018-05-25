@@ -68,6 +68,7 @@ import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
@@ -12213,6 +12214,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("behaviour");
 			sqlQueryObject.addSelectField("autenticazione");
 			sqlQueryObject.addSelectField("autenticazione_opzionale");
+			sqlQueryObject.addSelectField("token_policy");
+			sqlQueryObject.addSelectField("token_validazione");
+			sqlQueryObject.addSelectField("token_introspection");
+			sqlQueryObject.addSelectField("token_user_info");
+			sqlQueryObject.addSelectField("token_forward");
+			sqlQueryObject.addSelectField("token_options");
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
@@ -12401,9 +12408,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				pa.setStateless(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stateless")));
 				pa.setBehaviour(rs.getString("behaviour"));
 
-				// Autorizzazione/Autenticazione
+				// Autorizzazione
 				pa.setAutenticazione(rs.getString("autenticazione"));
 				pa.setAutenticazioneOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("autenticazione_opzionale")));
+				
+				// GestioneToken
+				String tokenPolicy = rs.getString("token_policy");
+				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+					GestioneToken gestioneToken = new GestioneToken();
+					gestioneToken.setPolicy(tokenPolicy);
+					gestioneToken.setValidazione(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_validazione")));
+					gestioneToken.setIntrospection(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_introspection")));
+					gestioneToken.setUserInfo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_user_info")));
+					gestioneToken.setForward(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_forward")));
+					gestioneToken.setOptions(rs.getString("token_options"));
+					pa.setGestioneToken(gestioneToken);
+				}
+				
+				// Autorizzazione
 				pa.setAutorizzazione(rs.getString("autorizzazione"));
 				pa.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
 
@@ -12896,6 +12918,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("nome_soggetto");
 			sqlQueryObject.addSelectField("autenticazione");
 			sqlQueryObject.addSelectField("autenticazione_opzionale");
+			sqlQueryObject.addSelectField("token_policy");
+			sqlQueryObject.addSelectField("token_validazione");
+			sqlQueryObject.addSelectField("token_introspection");
+			sqlQueryObject.addSelectField("token_user_info");
+			sqlQueryObject.addSelectField("token_forward");
+			sqlQueryObject.addSelectField("token_options");
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("id_soggetto");
@@ -12957,8 +12985,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				pd.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
 
 				pd.setId(idPortaDelegata);
+				
 				pd.setAutenticazione(rs.getString("autenticazione"));
 				pd.setAutenticazioneOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("autenticazione_opzionale")));
+				
+				String tokenPolicy = rs.getString("token_policy");
+				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
+					GestioneToken gestioneToken = new GestioneToken();
+					gestioneToken.setPolicy(tokenPolicy);
+					gestioneToken.setValidazione(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_validazione")));
+					gestioneToken.setIntrospection(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_introspection")));
+					gestioneToken.setUserInfo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_user_info")));
+					gestioneToken.setForward(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_forward")));
+					gestioneToken.setOptions(rs.getString("token_options"));
+					pd.setGestioneToken(gestioneToken);
+				}
+				
 				pd.setAutorizzazione(rs.getString("autorizzazione"));
 				pd.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
 
