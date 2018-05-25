@@ -148,7 +148,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE), 
 						CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);				
 			}finally{
@@ -170,8 +170,15 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta delegata invocata non esiste pd["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]");
+		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest);
+		err2.setIntervalloSuperiore(dataFineTest);
+		err2.setMsgErrore("nella url di invocazione alla Porta di Dominio non e' stata fornita il nome di una Porta");
+		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
 		//}
 		
 	}
@@ -236,7 +243,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
 						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -309,7 +316,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA), 
 						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -374,7 +381,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA), 
 						CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA.replace("SERVIZIO_APPLICATIVO", "ServizioApplicativoNonEsistente"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
@@ -438,9 +445,9 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
+						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -488,9 +495,9 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
+						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -538,9 +545,9 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
+						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -588,9 +595,9 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
-						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
+						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_AZIONE_NON_VALIDA, 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -650,7 +657,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA), 
 						CostantiErroriIntegrazione.MSG_404_AUTORIZZAZIONE_FALLITA.replace("SERVIZIO_APPLICATIVO", "silY"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
@@ -716,7 +723,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO), 
 						CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -928,7 +935,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativiSOAP", 
+						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO), 
 						CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -976,7 +983,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativiSOAP", 
+						"TestRichiesteScorretteSPCoopIT","RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_408_SERVIZIO_CORRELATO_NON_TROVATO), 
 						CostantiErroriIntegrazione.MSG_408_SERVIZIO_CORRELATO_NON_TROVATO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1313,7 +1320,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO), 
 						CostantiErroriIntegrazione.MSG_412_PD_INVOCABILE_SOLO_PER_RIFERIMENTO, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1684,7 +1691,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE), 
 						CostantiErroriIntegrazione.MSG_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -1761,7 +1768,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
 						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1819,7 +1826,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
 						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1877,7 +1884,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_417_COSTRUZIONE_VALIDATORE_TRAMITE_INTERFACCIA_FALLITA), 
 						CostantiErroriIntegrazione.MSG_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA.replace("TIPO_WSDL", "Schema xsd dei messaggi"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1957,7 +1964,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_RICHIESTA_TRAMITE_INTERFACCIA_FALLITA), 
 						CostantiErroriIntegrazione.MSG_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA.replace("TIPO_WSDL", "Wsdl erogatore"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -1976,13 +1983,13 @@ public class RichiesteApplicativeScorrette {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL style:document use:literal)");
+		err.setMsgErrore("Validazione WSDL (true) fallita: Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		err2.setMsgErrore("[ValidazioneContenutiApplicativi Richiesta] Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL style:document use:literal)");
+		err2.setMsgErrore("[ValidazioneContenutiApplicativi Richiesta] Riscontrata non conformità rispetto all'interfaccia WSDL; Messaggio con elementi non conformi alla definizione wsdl dell'Operation [registrazioneUtenteWDL] del port-type [GestioneUtentiWrappedDocumentLiteral] (AccordoServizio:ASMultiPortTypeValidazioneWSDL:1 style:document use:literal)");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
 		
 	}
@@ -2144,7 +2151,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA), 
 						CostantiErroriIntegrazione.MSG_420_BUSTA_PRESENTE_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -2401,7 +2408,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA), 
 						CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2464,7 +2471,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_424_ALLEGA_BODY), 
 						CostantiErroriIntegrazione.MSG_424_ALLEGA_BODY, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2527,7 +2534,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_425_SCARTA_BODY), 
 						CostantiErroriIntegrazione.MSG_425_SCARTA_BODY, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2594,7 +2601,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR), 
 						CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2681,7 +2688,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR), 
 						CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2740,7 +2747,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA), 
 						CostantiErroriIntegrazione.MSG_428_AUTORIZZAZIONE_CONTENUTO_FALLITA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2801,7 +2808,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO), 
 						CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_NON_SUPPORTATO.replace(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_KEY, "application/soap+xml"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -2871,7 +2878,7 @@ public class RichiesteApplicativeScorrette {
 				try{
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] ...");
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
 							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "http://www.w3.org/2003/05/soap-envelope"), 
 								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -2880,7 +2887,7 @@ public class RichiesteApplicativeScorrette {
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] fallita: "+e.getMessage());
 					Reporter.log("Verifica con [Impossibile recuperare il valore del namespace] ...");
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
 							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "Impossibile recuperare il valore del namespace"), 
 								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -3060,7 +3067,7 @@ public class RichiesteApplicativeScorrette {
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA), 
 							CostantiErroriIntegrazione.MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (432): " + error.getFaultCode().getLocalPart());
@@ -3162,7 +3169,7 @@ public class RichiesteApplicativeScorrette {
 //				
 //				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE).equals(error.getFaultCode().getLocalPart()))
 //					Utilities.verificaFaultIntegrazione(error, 
-//							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
+//							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
 //							Utilities.toString(CodiceErroreIntegrazione.CODICE_433_CONTENT_TYPE_NON_PRESENTE), 
 //							CostantiErroriIntegrazione.MSG_433_CONTENT_TYPE_NON_PRESENTE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 //				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (433): " + error.getFaultCode().getLocalPart());
@@ -3324,7 +3331,7 @@ public class RichiesteApplicativeScorrette {
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							 CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,"RicezioneContenutiApplicativiSOAP", 
+							 CostantiTestSuite.SPCOOP_IDPORTA_SOGGETTO_FRUITORE,"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR), 
 							msgErrore, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (435): " + error.getFaultCode().getLocalPart());

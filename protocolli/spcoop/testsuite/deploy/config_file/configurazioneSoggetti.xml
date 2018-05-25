@@ -8119,6 +8119,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="ValidazioneApplicativaRispostaErrata" integrazione="trasporto,urlBased">
             <servizio tipo="spc" nome="TestValidazioneApplicativaErrata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAlterazioneMessaggio" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         

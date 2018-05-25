@@ -72,7 +72,7 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
  */
 public class ServiceBindingConfigurationReader  {
 
-	public static ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException{
+	public static ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound{
 		try{
 			
 			AccordoServizioParteSpecifica aps = registryReader.getAccordoServizioParteSpecifica(idServizio);
@@ -86,7 +86,11 @@ public class ServiceBindingConfigurationReader  {
 			}
 			throw new ProtocolException("Service ["+idServizio+"] not found");
 			
-		}catch(Exception e){
+		}
+		catch(RegistryNotFound notFound) {
+			throw notFound;
+		}
+		catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}

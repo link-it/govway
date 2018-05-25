@@ -1278,7 +1278,9 @@ public class RicezioneBuste {
 		parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
 		parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);
 		parametriInvioBustaErrore.setFunctionAsRouter(functionAsRouter);
-		
+		// requestInfo
+		requestInfo.setIdentitaPdD(identitaPdD);
+		// altri
 		msgDiag.setDominio(identitaPdD); // imposto anche il dominio nel msgDiag
 		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
 		parametriInvioBustaErrore.setMsgDiag(msgDiag);

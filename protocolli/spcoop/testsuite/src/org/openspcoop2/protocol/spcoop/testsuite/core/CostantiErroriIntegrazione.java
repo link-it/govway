@@ -57,18 +57,18 @@ public class CostantiErroriIntegrazione {
 	/* ******** MESSAGGI 4XX  ******** */
 
 	/** String che contiene un codice di errore OpenSPCoop2: PortaDelegataInesistente in msg*/
-	public final static String MSG_401_PD_INESISTENTE = "La porta delegata invocata non esiste";
+	public final static String MSG_401_PD_INESISTENTE = "La porta invocata non esiste";
 
 	/** String che contiene un codice di errore OpenSPCoop2: AutenticazioneFallita in msg*/
-	public final static String MSG_402_AUTENTICAZIONE_FALLITA = "Identificazione fallita, credenziali fornite non corrette";
+	public final static String MSG_402_AUTENTICAZIONE_FALLITA = "Autenticazione fallita, credenziali fornite non corrette";
 	/** String che contiene un codice di errore OpenSPCoop2: AutenticazioneFallita in msg*/
-	public final static String MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Identificazione fallita, credenziali non fornite";
+	public final static String MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
 	/** String che contiene un codice di errore OpenSPCoop2: AutenticazioneFallita in msg*/
 	public final static String MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA = "L'identità del servizio applicativo fornita [SERVIZIO_APPLICATIVO] non esiste nella configurazione della Porta di Dominio";
 
 	/** String che contiene un codice di errore OpenSPCoop2: Pattern di ricerca PD non valido in msg*/
-	public final static String MSG_403_PD_PATTERN_NON_VALIDO = "Riscontrato errore durante l'identificazione dei dati di cooperazione associati alla porta delegata (TIPO) utilizzando il pattern specificato nella configurazione";
-
+	public final static String MSG_403_PD_PATTERN_AZIONE_NON_VALIDA = "Identificazione dinamica dell'azione associata alla porta delegata fallita";
+	
 
 	/** String che contiene un codice di errore OpenSPCoop2: AutorizzazioneFallita in msg*/
 	public final static String MSG_404_AUTORIZZAZIONE_FALLITA = 

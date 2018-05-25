@@ -994,6 +994,8 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, identificativoPortaDelegata.getNome());
 		msgDiag.addKeywords(soggettoFruitore);
 		proprietaErroreAppl.setDominio(identitaPdD.getCodicePorta()); // imposto
+		// requestInfo
+		requestInfo.setIdentitaPdD(identitaPdD);
 		// anche il dominio per gli errori
 		this.msgContext.setProprietaErroreAppl(proprietaErroreAppl);
 		this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
