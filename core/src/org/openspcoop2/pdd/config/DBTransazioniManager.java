@@ -1,6 +1,7 @@
 package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
+import java.util.Hashtable;
 
 import javax.sql.DataSource;
 
@@ -31,6 +32,12 @@ public class DBTransazioniManager {
 	}
 	
 	
+	/** Informazione sui proprietari che hanno richiesto una connessione */
+	private static Hashtable<String,Resource> risorseInGestione = new Hashtable<String,Resource>();
+	
+	public static String[] getStatoRisorse() throws Exception{	
+		return DBManager.getStatoRisorse(DBTransazioniManager.risorseInGestione);
+	}
 	
 	
 	private String tipoDatabase;
@@ -41,6 +48,9 @@ public class DBTransazioniManager {
 	private Logger log;
 	
 	private DBManager dbManagerRuntimePdD;
+	public boolean useRuntimePdD() {
+		return this.dbManagerRuntimePdD!=null;
+	}
 	private DataSource datasourceTransazioni;
 	
 	public DBTransazioniManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
@@ -95,8 +105,12 @@ public class DBTransazioniManager {
 				if(bf.length()<=0) {
 					bf.append("DBTransazioniManager");
 				}
-				return DBManager.buildResource(this.getConnectionFromDatasource(bf.toString(), idTransazione),
-						idPDD, modulo, idTransazione);								
+				Resource risorsa = DBManager.buildResource(this.getConnectionFromDatasource(bf.toString(), idTransazione),
+						idPDD, modulo, idTransazione);	
+				
+				DBTransazioniManager.risorseInGestione.put(risorsa.getId(), risorsa);
+				
+				return risorsa;
 			}
 			catch(Exception e) {
 				this.log.error("Errore durante l'ottenimento di una connessione: "+e.getMessage(),e);
@@ -116,14 +130,22 @@ public class DBTransazioniManager {
 	
 	public void releaseResource(IDSoggetto idPDD,String modulo,Resource resource){
 		try {
-			if(resource!=null){
-				
-				if(resource.getResource()!=null){
-					Connection connectionDB = (Connection) resource.getResource();
-					if(connectionDB != null && (connectionDB.isClosed()==false)){
-						connectionDB.close();
-					}
-				}				
+			if(this.dbManagerRuntimePdD!=null) {
+				this.dbManagerRuntimePdD.releaseResource(idPDD, modulo, resource);
+			}
+			else {
+				if(resource!=null){
+					
+					if(resource.getResource()!=null){
+						Connection connectionDB = (Connection) resource.getResource();
+						if(connectionDB != null && (connectionDB.isClosed()==false)){
+							connectionDB.close();
+						}
+					}	
+					
+					if(DBTransazioniManager.risorseInGestione.containsKey(resource.getId()))
+						DBTransazioniManager.risorseInGestione.remove(resource.getId());
+				}
 			}
 
 		}

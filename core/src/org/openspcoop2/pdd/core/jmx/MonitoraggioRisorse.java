@@ -41,6 +41,7 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
@@ -594,13 +595,19 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	
 	public String getUsedDBConnections(){
 		String[] risorse = null;
+		boolean useRuntimePdD = true;
+		String[] risorseTransaction = null;
 		try{
 			risorse = DBManager.getStatoRisorse();
+			useRuntimePdD = DBTransazioniManager.getInstance().useRuntimePdD();
+			if(!useRuntimePdD) {
+				risorseTransaction = DBTransazioniManager.getStatoRisorse();
+			}
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
-		if(risorse==null)
+		if(risorse==null && risorseTransaction==null)
 			return "Nessuna connessione allocata";
 		
 		StringBuffer bf = new StringBuffer();
@@ -608,6 +615,14 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
 		}
+		
+		if(useRuntimePdD==false) {
+			bf.append(risorseTransaction.length+" risorse allocate per la gestione delle transazioni: \n");
+			for(int i=0; i<risorseTransaction.length; i++){
+				bf.append(risorseTransaction[i]+"\n");
+			}
+		}
+		
 		return bf.toString();
 	}
 	

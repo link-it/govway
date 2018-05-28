@@ -75,7 +75,10 @@ public class DBManager implements IMonitoraggioRisorsa {
 	private static final String DATE_FORMAT = "yyyy-MM-dd_HH:mm:ss.SSS";
 	
 	public static String[] getStatoRisorse() throws Exception{	
-		Object[] o = DBManager.risorseInGestione.values().toArray(new Resource[0]);
+		return getStatoRisorse(DBManager.risorseInGestione);
+	}
+	public static String[] getStatoRisorse(Hashtable<String,Resource> risorseInGestione) throws Exception{	
+		Object[] o = risorseInGestione.values().toArray(new Resource[0]);
 		if(o==null)
 			return null;
 		Resource[] resources = (Resource[]) o;
