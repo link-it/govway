@@ -2082,6 +2082,31 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
+			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
+			try{
+				boolean debug = propertiesReader.isTransazioniStatefulDebug();
+				
+				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debug);
+							
+				if(propertiesReader.isTransazioniStatefulEnabled()){
+					if(debug)
+						logTransazioniStateful.debug("Avvio inizializzazione thread per gestione transazioni stateful ...");
+					OpenSPCoop2Startup.this.threadRepositoryStateful = new TimerRepositoryStatefulThread();
+					OpenSPCoop2Startup.this.threadRepositoryStateful.start();
+					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful avviato correttamente");
+				}
+				else{
+					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful disabilitato");
+				}
+			
+			}catch(Exception e){
+				String msgError = "Inizializzazione thread per la gestione transazioni stateful non riuscita: "+e.getMessage();
+				forceLogTransazioniStateful.error(msgError,e);
+				msgDiag.logStartupError(e,"Inizializzazione Gesotre Transazioni Stateful");
+				return;
+			}
+			
 			
 			
 			
@@ -2113,40 +2138,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-
-			
-			
-			
-			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
-			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
-			try{
-				boolean debug = propertiesReader.isTransazioniStatefulDebug();
-				
-				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debug);
-							
-				if(propertiesReader.isTransazioniStatefulEnabled()){
-					if(debug)
-						logTransazioniStateful.debug("Avvio inizializzazione thread per gestione transazioni stateful ...");
-					OpenSPCoop2Startup.this.threadRepositoryStateful = new TimerRepositoryStatefulThread();
-					OpenSPCoop2Startup.this.threadRepositoryStateful.start();
-					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful avviato correttamente");
-				}
-				else{
-					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful disabilitato");
-				}
-			
-			}catch(Exception e){
-				String msgError = "Inizializzazione thread per la gestione transazioni stateful non riuscita: "+e.getMessage();
-				forceLogTransazioniStateful.error(msgError,e);
-				msgDiag.logStartupError(e,"Inizializzazione Gesotre Transazioni Stateful");
-				return;
-			}
-			
-			
-			
-			
-			
-			
+	
 			
 			/* ------------ Eventi (ed in oltre avvia il thread) ------------ */
 			Logger forceLogEventi = OpenSPCoop2Logger.getLoggerOpenSPCoopEventi(true);
@@ -2322,6 +2314,23 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						logRecoveryFileSystem.debug("Richiesto stop al thread per il recovery da file system");
 				}else{
 					throw new Exception("Thread per il recovery da file system non trovato");
+				}	
+			}
+		}catch(Throwable e){}
+		
+		// GestoreTransazioniStateful
+		try {
+			if(properties.isTransazioniStatefulEnabled()){
+				boolean debugTransazioniStateful = properties.isTransazioniStatefulDebug();
+				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debugTransazioniStateful);
+				if(debugTransazioniStateful)
+					logTransazioniStateful.debug("Recupero thread per la gestione delle transazioni stateful ...");
+				if(OpenSPCoop2Startup.this.threadFileSystemRecovery!=null){
+					OpenSPCoop2Startup.this.threadFileSystemRecovery.setStop(true);
+					if(debugTransazioniStateful)
+						logTransazioniStateful.debug("Richiesto stop al thread per la gestione delle transazioni stateful");
+				}else{
+					throw new Exception("Thread per la gestione delle transazioni stateful non trovato");
 				}	
 			}
 		}catch(Throwable e){}
