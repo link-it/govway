@@ -772,7 +772,7 @@ public class RicezioneContenutiApplicativiService {
 						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 				boolean consume = true;
-				if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
+				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding()) ){
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						consume = false; // può essere usato nel post out response handler
@@ -909,7 +909,7 @@ public class RicezioneContenutiApplicativiService {
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
 						(pddContext!=null ? pddContext.getContext() : null));
-				if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
+				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;

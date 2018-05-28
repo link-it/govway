@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -39,6 +40,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -701,65 +703,101 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					}catch(Exception e){}
 				}
 				
-				String contentTypeRisposta = null;
-				byte[] risposta = null;
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
-				SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
-				if(body!=null && body.hasFault()){
-					statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
-					String msgError = SoapUtils.toString(body.getFault(), false);
-					//risposta=msgError.getBytes();
-					org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
-					risposta=xmlUtils.toByteArray(body.getFault(), true);
-					//System.out.println("ELABORATO:"+new String(risposta));
-					contentTypeRisposta = responseMessage.getContentType();
-					descrizioneSoapFault = " ("+msgError+")";	
-				}else{
-					risposta=TunnelSoapUtils.sbustamentoMessaggio(responseMessage);
-					if(risposta==null || risposta.length<=0){
-						// Si puo' entrare in questo caso, se nel messaggio Soap vi era presente solo l'header
-						risposta = null;
-						if(!forced)
-							statoServletResponse = 202;
+				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())) {
+					
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+							(pddContext!=null ? pddContext.getContext() : null));
+					
+					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
+					String contentTypeRisposta = null;
+					byte[] risposta = null;
+					if(body!=null && body.hasFault()){
+						statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
+						String msgError = SoapUtils.toString(body.getFault(), false);
+						//risposta=msgError.getBytes();
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						risposta=xmlUtils.toByteArray(body.getFault(), true);
+						//System.out.println("ELABORATO:"+new String(risposta));
+						contentTypeRisposta = responseMessage.getContentType();
+						descrizioneSoapFault = " ("+msgError+")";	
 					}else{
-						
-						SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
-						if(child!=null){
-							if(protocolFactory.createErroreApplicativoBuilder().isErroreApplicativo(child)){
-								statoServletResponse = 500;
+						risposta=TunnelSoapUtils.sbustamentoMessaggio(responseMessage);
+						if(risposta==null || risposta.length<=0){
+							// Si puo' entrare in questo caso, se nel messaggio Soap vi era presente solo l'header
+							risposta = null;
+							if(!forced)
+								statoServletResponse = 202;
+						}else{
+							
+							SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
+							if(child!=null){
+								if(protocolFactory.createErroreApplicativoBuilder().isErroreApplicativo(child)){
+									statoServletResponse = 500;
+								}
+							}
+							
+							// Non serve la updateContentType. Il messaggio e' gia' stato serializzato ed il cType e' corretto.  
+							if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(body)){
+								contentTypeRisposta = TunnelSoapUtils.getContentTypeTunnelOpenSPCoopSoap(body);
+							}else{
+								contentTypeRisposta = responseMessage.getContentType();
 							}
 						}
-						
-						// Non serve la updateContentType. Il messaggio e' gia' stato serializzato ed il cType e' corretto.  
-						if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(body)){
-							contentTypeRisposta = TunnelSoapUtils.getContentTypeTunnelOpenSPCoopSoap(body);
-						}else{
-							contentTypeRisposta = responseMessage.getContentType();
-						}
+					}
+					
+					// transfer length
+					if(risposta!=null){
+						lengthOutResponse = risposta.length;
+						ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
+								req, res, Long.valueOf(risposta.length));
+					}
+					
+					// httpstatus
+					res.setStatus(statoServletResponse);
+					
+					// content type
+					if(contentTypeRisposta!=null){
+						res.setContentType(contentTypeRisposta);
+					}
+					
+					// contenuto
+					if(risposta!=null){
+						res.sendResponse(risposta);
 					}
 				}
-				
-				// transfer length
-				if(risposta!=null){
-					lengthOutResponse = risposta.length;
+				else {
+					
+					// transfer length
 					ServicesUtils.setTransferLength(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi(), 
-							req, res, Long.valueOf(risposta.length));
+							req, res, responseMessage);
+					
+					// content type
+					// Alcune implementazioni richiedono di aggiornare il Content-Type
+					responseMessage.updateContentType();
+					ServicesUtils.setContentType(responseMessage, res);
+					
+					// http status
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+							responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
+							(pddContext!=null ? pddContext.getContext() : null));
+					boolean consume = true;
+					res.setStatus(statoServletResponse);
+					
+					// contenuto
+					Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
+					
+					// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
+					// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
+					// e cambiare quindi il content length effettivo.
+					if(TransferLengthModes.CONTENT_LENGTH.equals(openSPCoopProperties.getTransferLengthModes_ricezioneContenutiApplicativi())){
+						res.sendResponse(responseMessage, false);
+					} else {
+						res.sendResponse(responseMessage, consume);
+					}
+					Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Post scrittura risposta");
+					
 				}
 				
-				// httpstatus
-				res.setStatus(statoServletResponse);
-				
-				// content type
-				if(contentTypeRisposta!=null){
-					res.setContentType(contentTypeRisposta);
-				}
-				
-				// contenuto
-				if(risposta!=null){
-					res.sendResponse(risposta);
-				}
-
 			}
 			else if(responseMessage!=null && responseMessage.getForcedResponse()!=null) {
 				byte[]response = responseMessage.getForcedResponse().getContent();

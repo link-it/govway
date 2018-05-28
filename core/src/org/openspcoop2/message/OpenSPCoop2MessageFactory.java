@@ -349,6 +349,10 @@ public abstract class OpenSPCoop2MessageFactory {
 			op2Msg.setMessageRole(messageRole);
 			op2Msg.setMessageType(messageType);
 			
+			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
+				op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
+			}
+			
 			result.setMessage(op2Msg);
 		}catch(Throwable t){
 			result.setParseException(ParseExceptionUtils.buildParseException(t));
@@ -514,7 +518,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				OpenSPCoop2SoapMessage soapMessage = null;
 				try{
 					soapMessage = result.getMessage().castAsSoap();
-					soapMessage.getSOAPPart().getEnvelope();
+					soapMessage.getSOAPHeader();
 				} catch (Throwable soapException) {
 					result.setMessage(null);
 					result.setParseException(ParseExceptionUtils.buildParseException(soapException));

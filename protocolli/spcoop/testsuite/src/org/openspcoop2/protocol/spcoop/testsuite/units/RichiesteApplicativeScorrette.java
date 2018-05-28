@@ -2195,7 +2195,7 @@ public class RichiesteApplicativeScorrette {
 			msg.setMessage("CONTENUTO_ERRATO".getBytes());
 			im.invocaPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC, msg);
 			
-			throw new Exception("Metodo invocaPortaDelegataPerRiferimento non ha causato errori");
+			throw new Exception("Metodo invocaPortaDelegata non ha causato errori");
 		}catch(IntegrationManagerException e){
 			verificaSPCoopException_421(e);
 		}
@@ -2278,7 +2278,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiHTTP", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiHTTP", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA), 
 						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);
 				
@@ -2601,7 +2601,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_426_SERVLET_ERROR), 
 						CostantiErroriIntegrazione.MSG_426_SERVLET_REQUEST_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
@@ -2688,7 +2688,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_427_MUSTUNDERSTAND_ERROR), 
 						CostantiErroriIntegrazione.MSG_427_MUSTUNDERSTAND_ERROR, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 			}finally{
