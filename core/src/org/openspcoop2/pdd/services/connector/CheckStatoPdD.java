@@ -37,8 +37,8 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 
@@ -186,13 +186,13 @@ public class CheckStatoPdD extends HttpServlet {
 			res.setStatus(500);
 			res.getOutputStream().write(msg.getBytes());	
 		}
-		else if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage();
-			log.error("[CheckStatoPdD] "+msg,TimerMonitoraggioRisorse.risorsaNonDisponibile);
+		else if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+			String msg = "Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
+			log.error("[CheckStatoPdD] "+msg,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			res.setStatus(500);
 			res.getOutputStream().write(msg.getBytes());	
 		}
-		else if( TimerThreshold.freeSpace == false){
+		else if( TimerThresholdThread.freeSpace == false){
 			String msg = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
 			log.error("[CheckStatoPdD] "+msg);
 			res.setStatus(500);

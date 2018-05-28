@@ -116,6 +116,18 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per gli eventi */
 	protected static Logger loggerOpenSPCoopEventi = null;
 	protected static Logger loggerOpenSPCoopEventiError = null;
+	/**  Logger log4j utilizzato per le transazioni */
+	protected static Logger loggerOpenSPCoopTransazioni = null;
+	protected static Logger loggerOpenSPCoopTransazioniError = null;
+	/**  Logger log4j utilizzato per le transazioni */
+	protected static Logger loggerOpenSPCoopTransazioniSql = null;
+	protected static Logger loggerOpenSPCoopTransazioniSqlError = null;
+	/**  Logger log4j utilizzato per le transazioni stateful */
+	protected static Logger loggerOpenSPCoopTransazioniStateful = null;
+	protected static Logger loggerOpenSPCoopTransazioniStatefulError = null;
+	/**  Logger log4j utilizzato per le transazioni stateful */
+	protected static Logger loggerOpenSPCoopTransazioniStatefulSql = null;
+	protected static Logger loggerOpenSPCoopTransazioniStatefulSqlError = null;
 	/**  Logger log4j utilizzato per attività di file system recovery */
 	protected static Logger loggerOpenSPCoopFileSystemRecovery = null;
 	protected static Logger loggerOpenSPCoopFileSystemRecoveryError = null;
@@ -407,6 +419,46 @@ public class OpenSPCoop2Logger {
 			if(OpenSPCoop2Logger.loggerOpenSPCoopEventi==null)
 				throw new Exception("Logger openspcoop2.eventi non trovato");
 			
+			// TRANSAZIONI LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioni = LoggerWrapperFactory.getLogger("openspcoop2.transazioni");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioni==null)
+				throw new Exception("Logger openspcoop2.transazioni non trovato");
+			
+			// TRANSAZIONI LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError==null)
+				throw new Exception("Logger openspcoop2.transazioni.error non trovato");
+			
+			// TRANSAZIONI SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql==null)
+				throw new Exception("Logger openspcoop2.transazioni.sql non trovato");
+			
+			// TRANSAZIONI SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSqlError = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSqlError==null)
+				throw new Exception("Logger openspcoop2.transazioni.sql.error non trovato");
+			
+			// TRANSAZIONI STATEFUL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStateful = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.stateful");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStateful==null)
+				throw new Exception("Logger openspcoop2.transazioni.stateful non trovato");
+			
+			// TRANSAZIONI STATEFUL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulError = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.stateful.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulError==null)
+				throw new Exception("Logger openspcoop2.transazioni.stateful.error non trovato");
+			
+			// TRANSAZIONI STATEFUL SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSql = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.stateful.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSql==null)
+				throw new Exception("Logger openspcoop2.transazioni.stateful.sql non trovato");
+			
+			// TRANSAZIONI STATEFUL SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError = LoggerWrapperFactory.getLogger("openspcoop2.transazioni.stateful.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError==null)
+				throw new Exception("Logger openspcoop2.transazioni.stateful.sql.error non trovato");
+				
 			// EVENTI LOG (ERROR)
 			OpenSPCoop2Logger.loggerOpenSPCoopEventiError = LoggerWrapperFactory.getLogger("openspcoop2.eventi.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopEventiError==null)
@@ -869,6 +921,42 @@ public class OpenSPCoop2Logger {
 	
 	public static Logger getLoggerOpenSPCoopDumpBinarioPA() {
 		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA;
+	}
+	
+	public static Logger getLoggerOpenSPCoopTransazioni(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioni;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopTransazioniSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopTransazioniStateful(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStateful;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopTransazioniStatefulSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniStatefulSqlError;
+		}
 	}
 	
 	public static Logger getLoggerOpenSPCoopEventi(boolean debug) {

@@ -880,7 +880,9 @@ public class GestoreHandlers  {
 	private static String[] updateNotifierCallback(String [] tipi) {
 		String notifierInputStreamCallback = null;
 		try{
-			notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
+			if(properties.isNotifierInputStreamEnabled()) {
+				notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
+			}
 		}catch(Exception e){}
 		if(notifierInputStreamCallback!=null){
 			List<String> list = new ArrayList<String>();

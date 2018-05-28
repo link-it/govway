@@ -42,8 +42,8 @@ public class NotifierUtilities {
 	private static synchronized void initNotifierCallback() throws Exception{
 		if(notifierCallback==null){
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-			String notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
-			if(notifierInputStreamCallback!=null){
+			if(properties.isNotifierInputStreamEnabled()) {
+				String notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
 				ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
 				notifierCallback = (INotifierCallback) Loader.getInstance().newInstance(classNameProperties.getNotifierCallback(notifierInputStreamCallback));
 			}

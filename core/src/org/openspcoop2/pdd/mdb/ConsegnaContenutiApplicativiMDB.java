@@ -44,7 +44,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -143,8 +143,8 @@ public class ConsegnaContenutiApplicativiMDB implements MessageDrivenBean, Messa
 			}
 			
 			/* ----------- Controllo risorse disponibili --------------- */
-			if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-				this.log.error("["+ConsegnaContenutiApplicativi.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorse.risorsaNonDisponibile);
+			if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+				this.log.error("["+ConsegnaContenutiApplicativi.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 				this.ctxMDB.setRollbackOnly();
 				return;
 			}

@@ -63,8 +63,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiIntegrationManagerService;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.protocol.engine.LetturaParametriBusta;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -409,12 +409,12 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
 		}
-		if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorse.risorsaNonDisponibile);
+		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
 		}
-		if (TimerThreshold.freeSpace == false) {
+		if (TimerThresholdThread.freeSpace == false) {
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Non sono disponibili abbastanza risorse per la gestione della richiesta");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO));

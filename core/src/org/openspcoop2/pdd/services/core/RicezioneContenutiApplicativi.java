@@ -127,8 +127,8 @@ import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalE
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerLock;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.basic.registry.IdentificazionePortaDelegata;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -729,9 +729,9 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		}
-		if (TimerMonitoraggioRisorse.risorseDisponibili == false) {
-			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage();
-			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore,TimerMonitoraggioRisorse.risorsaNonDisponibile);
+		if (TimerMonitoraggioRisorseThread.risorseDisponibili == false) {
+			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
+			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
@@ -745,7 +745,7 @@ public class RicezioneContenutiApplicativi {
 			}
 			return;
 		}
-		if (TimerThreshold.freeSpace == false) {
+		if (TimerThresholdThread.freeSpace == false) {
 			String msgErrore = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
 			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  "+msgErrore);
 			try{

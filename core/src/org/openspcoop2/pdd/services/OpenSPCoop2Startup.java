@@ -111,7 +111,7 @@ import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
-import org.openspcoop2.pdd.timers.TimerEventi;
+import org.openspcoop2.pdd.timers.TimerEventiThread;
 import org.openspcoop2.pdd.timers.TimerFileSystemRecoveryThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
@@ -120,8 +120,9 @@ import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
 import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliThread;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteThread;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
@@ -194,10 +195,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerGestoreRepositoryBusteThread threadRepositoryBuste;
 
 	/** Gestore Threshold */
-	private TimerThreshold timerThreshold = null;
+	private TimerThresholdThread timerThreshold = null;
 
 	/** Gestore Monitoraggio Risorse */
-	private TimerMonitoraggioRisorse timerMonitoraggioRisorse = null;
+	private TimerMonitoraggioRisorseThread timerMonitoraggioRisorse = null;
 
 	/** Timer per la gestione di riconsegna ContenutiApplicativi */
 	private TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativi;
@@ -208,11 +209,14 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Gestore eventi */
 	private GestoreEventi gestoreEventi = null;
-	private TimerEventi threadEventi;
+	private TimerEventiThread threadEventi;
 	
 	/** Timer FileSystemRecovery */
 	private TimerFileSystemRecoveryThread threadFileSystemRecovery = null;
-
+	
+	/** Timer FileSystemRecovery */
+	private TimerRepositoryStatefulThread threadRepositoryStateful = null;
+	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
 	protected long startDate ;
@@ -1744,7 +1748,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						propertiesReader.isAbilitatoControlloRisorseRegistriServizi() ||
 						propertiesReader.isAbilitatoControlloValidazioneSemanticaRegistriServizi() ||
 						propertiesReader.isAbilitatoControlloRisorseTracciamentiPersonalizzati()){
-					OpenSPCoop2Startup.this.timerMonitoraggioRisorse = new TimerMonitoraggioRisorse();
+					OpenSPCoop2Startup.this.timerMonitoraggioRisorse = new TimerMonitoraggioRisorseThread();
 					OpenSPCoop2Startup.this.timerMonitoraggioRisorse.start();
 					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Monitoraggio delle Risorse");
 				}
@@ -1761,7 +1765,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				String [] tipiThreshold = propertiesReader.getRepositoryThresholdTypes();
 				if(tipiThreshold!=null){
-					OpenSPCoop2Startup.this.timerThreshold = new TimerThreshold();
+					OpenSPCoop2Startup.this.timerThreshold = new TimerThresholdThread();
 					OpenSPCoop2Startup.this.timerThreshold.start();
 					OpenSPCoop2Startup.log.info("Inizializzo Timer per il Controllo dei Threshold sulle risorse");
 				}
@@ -2113,6 +2117,34 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
+			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
+			try{
+				boolean debug = propertiesReader.isTransazioniStatefulDebug();
+				
+				Logger logTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(debug);
+							
+				if(propertiesReader.isTransazioniStatefulEnabled()){
+					if(debug)
+						logTransazioniStateful.debug("Avvio inizializzazione thread per gestione transazioni stateful ...");
+					OpenSPCoop2Startup.this.threadRepositoryStateful = new TimerRepositoryStatefulThread();
+					OpenSPCoop2Startup.this.threadRepositoryStateful.start();
+					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful avviato correttamente");
+				}
+				else{
+					forceLogTransazioniStateful.info("Thread per la gestione transazioni stateful disabilitato");
+				}
+			
+			}catch(Exception e){
+				String msgError = "Inizializzazione thread per la gestione transazioni stateful non riuscita: "+e.getMessage();
+				forceLogTransazioniStateful.error(msgError,e);
+				msgDiag.logStartupError(e,"Inizializzazione Gesotre Transazioni Stateful");
+				return;
+			}
+			
+			
+			
+			
 			
 			
 			
@@ -2138,7 +2170,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						try{
 							if(debugEventi)
 								logEventi.debug("Avvio inizializzazione thread per Eventi ...");
-							OpenSPCoop2Startup.this.threadEventi = new TimerEventi(logEventi);
+							OpenSPCoop2Startup.this.threadEventi = new TimerEventiThread(logEventi);
 							OpenSPCoop2Startup.this.threadEventi.start();
 							forceLogEventi.info("Thread per gli Eventi avviato correttamente");
 						}catch(Exception e){

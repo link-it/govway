@@ -21,7 +21,7 @@ import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.eventi.dao.IEventoService;
 
 
-public class TimerEventi extends Thread{
+public class TimerEventiThread extends Thread{
 
 	private static final String ID_MODULO = "TimerEventi";
 	
@@ -68,7 +68,7 @@ public class TimerEventi extends Thread{
 	
 	/** Costruttore */
 	@SuppressWarnings("deprecation")
-	public TimerEventi(Logger log) throws Exception{
+	public TimerEventiThread(Logger log) throws Exception{
 	
 		this.log = log;
 	

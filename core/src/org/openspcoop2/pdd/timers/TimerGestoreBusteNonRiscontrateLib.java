@@ -174,8 +174,8 @@ public class TimerGestoreBusteNonRiscontrateLib {
 		}
 
 		// Controllo risorse di sistema disponibili
-		if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorse.risorsaNonDisponibile);
+		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+			this.logTimer.error("["+TimerGestoreBusteNonRiscontrate.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			return;
 		}
 		if( MsgDiagnostico.gestoreDiagnosticaDisponibile == false){

@@ -1340,7 +1340,30 @@ public class OpenSPCoop2Properties {
 			this.isDSOp2UtilsEnabled();
 			
 			// NotifierInputStreamEnabled
-			this.isNotifierInputStreamEnabled();
+			if(this.isNotifierInputStreamEnabled()) {
+				String notifierClass = null;
+				try{
+					notifierClass = this.getNotifierInputStreamCallback();
+				}catch(Exception e){
+					return false; // log registrato nel metodo
+				}
+				if(notifierClass!=null){
+					String tipoClass = className.getNotifierCallback(notifierClass);
+					if(tipoClass == null){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
+						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+						return false;
+					}
+					try{
+						INotifierCallback test = (INotifierCallback) loaderOpenSPCoop.newInstance(tipoClass);
+						test.toString();
+					}catch(Exception e){
+						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
+								"'. \n La classe non esiste: "+e.getMessage());
+						return false;
+					} 
+				}
+			}
 			
 			// Monitor SDK
 			this.getMonitorSDK_repositoryJars();
@@ -1366,30 +1389,6 @@ public class OpenSPCoop2Properties {
 					test.toString();
 				}catch(Exception e){
 					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
-							"'. \n La classe non esiste: "+e.getMessage());
-					return false;
-				} 
-			}
-			
-			// NotifierInputStreamCallback
-			String notifierClass = null;
-			try{
-				notifierClass = this.getNotifierInputStreamCallback();
-			}catch(Exception e){
-				return false; // log registrato nel metodo
-			}
-			if(notifierClass!=null){
-				String tipoClass = className.getNotifierCallback(notifierClass);
-				if(tipoClass == null){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
-					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-					return false;
-				}
-				try{
-					INotifierCallback test = (INotifierCallback) loaderOpenSPCoop.newInstance(tipoClass);
-					test.toString();
-				}catch(Exception e){
-					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
 							"'. \n La classe non esiste: "+e.getMessage());
 					return false;
 				} 
@@ -1465,6 +1464,7 @@ public class OpenSPCoop2Properties {
 						
 			// Transazioni
 			if(this.isTransazioniEnabled()) {
+				this.isTransazioniDebug();
 				if(this.isTransazioniUsePddRuntimeDatasource()==false) {
 					this.getTransazioniDatasource();
 					this.getTransazioniDatasourceJndiContext();
@@ -1473,6 +1473,10 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniSaveTracceInUniqueTransaction();
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction();
 				this.isTransazioniSaveDumpInUniqueTransaction();
+				if(this.isTransazioniStatefulEnabled()) {
+					this.isTransazioniStatefulDebug();
+					this.getTransazioniStatefulTimerIntervalSeconds();
+				}
 			}
 			
 			// Eventi
@@ -12342,6 +12346,24 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isNotifierInputStreamEnabled;
 	}
 	
+	private static String notifierInputStreamCallback = null;		
+	private static Boolean notifierInputStreamCallbackRead = null;		
+	public String getNotifierInputStreamCallback() throws Exception{
+		if(OpenSPCoop2Properties.notifierInputStreamCallbackRead==null){
+			try{ 
+				OpenSPCoop2Properties.notifierInputStreamCallback = this.reader.getValue("org.openspcoop2.pdd.notifierInputStream.tipo");
+				if(OpenSPCoop2Properties.notifierInputStreamCallback!=null){
+					OpenSPCoop2Properties.notifierInputStreamCallback = OpenSPCoop2Properties.notifierInputStreamCallback.trim();
+					OpenSPCoop2Properties.notifierInputStreamCallbackRead = true;
+				}
+			} catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage());
+				throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.notifierInputStreamCallback;
+	}
+	
 	
 	
 	
@@ -12526,31 +12548,6 @@ public class OpenSPCoop2Properties {
 		OpenSPCoop2Properties.realContainerCustomRead = true;
 		return OpenSPCoop2Properties.realContainerCustom;
 	}
-	
-	
-
-	/* ------------- Notifier ---------------------*/
-	
-	private static String notifierInputStreamCallback = null;		
-	private static Boolean notifierInputStreamCallbackRead = null;		
-	public String getNotifierInputStreamCallback() throws Exception{
-		if(OpenSPCoop2Properties.notifierInputStreamCallbackRead==null){
-			try{ 
-				OpenSPCoop2Properties.notifierInputStreamCallback = this.reader.getValue("org.openspcoop2.pdd.services.notifierInputStreamCallback");
-				if(OpenSPCoop2Properties.notifierInputStreamCallback!=null){
-					OpenSPCoop2Properties.notifierInputStreamCallback = OpenSPCoop2Properties.notifierInputStreamCallback.trim();
-					OpenSPCoop2Properties.notifierInputStreamCallbackRead = true;
-				}
-			} catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.notifierInputStreamCallback' non impostata correttamente,  errore:"+e.getMessage());
-				throw new Exception("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.notifierInputStreamCallback' non impostata correttamente,  errore:"+e.getMessage());
-			} 
-		}
-		return OpenSPCoop2Properties.notifierInputStreamCallback;
-	}
-	
-	
-	
 	
 	
 	
@@ -13661,6 +13658,27 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isTransazioniEnabled;
 	}	
 	
+	private static Boolean isTransazioniDebug = null;
+	public boolean isTransazioniDebug() {	
+		if(OpenSPCoop2Properties.isTransazioniDebug==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.debug");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniDebug = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniDebug = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniDebug;
+	}	
+	
 	private static Boolean isTransazioniUsePddRuntimeDatasource = null;
 	public boolean isTransazioniUsePddRuntimeDatasource() {	
 		if(OpenSPCoop2Properties.isTransazioniUsePddRuntimeDatasource==null){
@@ -13798,6 +13816,70 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction;
+	}
+	
+	// Stateful
+	
+	private static Boolean isTransazioniStatefulEnabled = null;
+	public boolean isTransazioniStatefulEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniStatefulEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniStatefulEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniStatefulEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniStatefulEnabled;
+	}
+	
+	private static Boolean isTransazioniStatefulDebug = null;
+	public boolean isTransazioniStatefulDebug() {	
+		if(OpenSPCoop2Properties.isTransazioniStatefulDebug==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.debug");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniStatefulDebug = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniStatefulDebug = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniStatefulDebug;
+	}
+	
+	private static Integer getTransazioniStatefulTimerIntervalSeconds = null;
+	public int getTransazioniStatefulTimerIntervalSeconds() throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniStatefulTimerIntervalSeconds==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.seconds");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTransazioniStatefulTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.seconds': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniStatefulTimerIntervalSeconds;
 	}
 	
 	

@@ -46,8 +46,8 @@ public class NotifierPreInRequestHandler implements PreInRequestHandler {
 		
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 			ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
-			String notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
-			if(notifierInputStreamCallback!=null){
+			if(properties.isNotifierInputStreamEnabled()) {
+				String notifierInputStreamCallback = properties.getNotifierInputStreamCallback();
 				INotifierCallback notifierCallback = (INotifierCallback) Loader.getInstance().newInstance(classNameProperties.getNotifierCallback(notifierInputStreamCallback));
 				if(notifierCallback.enableNotifierInputStream(NotifierType.PRE_IN_REQUEST, context)){
 					

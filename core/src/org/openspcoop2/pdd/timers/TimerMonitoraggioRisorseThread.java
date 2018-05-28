@@ -48,10 +48,10 @@ import org.openspcoop2.utils.Utilities;
  * 
  *  
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13783 $, $Date: 2018-03-27 11:52:51 +0200 (Tue, 27 Mar 2018) $
  */
-public class TimerMonitoraggioRisorse extends Thread{
+public class TimerMonitoraggioRisorseThread extends Thread{
 
 	/** Indicazione di risorse correttamente disponibili */
 	public static boolean risorseDisponibili = true;
@@ -101,12 +101,12 @@ public class TimerMonitoraggioRisorse extends Thread{
 	private List<String> tipiMsgDiagnosticiPersonalizzati=null;
 	
 	/** Costruttore */
-	public TimerMonitoraggioRisorse() {
+	public TimerMonitoraggioRisorseThread() {
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerMonitoraggioRisorse.ID_MODULO);
+		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerMonitoraggioRisorseThread.ID_MODULO);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_MONITORAGGIO_RISORSE);
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_MONITORAGGIO_RISORSE, TimerMonitoraggioRisorse.ID_MODULO);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_MONITORAGGIO_RISORSE, TimerMonitoraggioRisorseThread.ID_MODULO);
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopResources();
 		if(this.propertiesReader.isAbilitatoControlloRisorseDB()){
@@ -150,7 +150,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 				
 			// Controllo che il sistema non sia andando in shutdown
 			if(OpenSPCoop2Startup.contextDestroyed){
-				this.logger.error("["+TimerMonitoraggioRisorse.ID_MODULO+"] Rilevato sistema in shutdown");
+				this.logger.error("["+TimerMonitoraggioRisorseThread.ID_MODULO+"] Rilevato sistema in shutdown");
 				return;
 			}
 			
@@ -166,7 +166,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					}
 				}catch(Exception e){
 					risorsaNonDisponibile = "[MessaggioDiagnosticoAppender "+tipoMsgDiagnostico+"]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -178,7 +178,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					this.dbManager.isAlive();
 				}catch(Exception e){
 					risorsaNonDisponibile = "[Database della Porta di Dominio]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -191,7 +191,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 						this.queueManager.isAlive();
 					}catch(Exception e){
 						risorsaNonDisponibile = "[Broker JMS della Porta di Dominio]";
-						TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+						TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 						this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 						checkRisorseDisponibili = false;
 					}
@@ -204,7 +204,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					this.configPdDReader.isAlive();
 				}catch(Exception e){
 					risorsaNonDisponibile = "[Configurazione della Porta di Dominio]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -228,7 +228,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 							true, null);
 				}catch(Exception e){
 					risorsaNonDisponibile = "[Validazione semantica della Configurazione della Porta di Dominio]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -240,7 +240,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					this.registriPdDReader.isAlive(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale());
 				}catch(Exception e){
 					risorsaNonDisponibile = "[Registri dei Servizi]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -261,7 +261,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 							null);
 				}catch(Exception e){
 					risorsaNonDisponibile = "[Validazione semantica del Registri dei Servizi]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -277,7 +277,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 					}
 				}catch(Exception e){
 					risorsaNonDisponibile = "[TracciamentoAppender "+tipoTracciamento+"]";
-					TimerMonitoraggioRisorse.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
+					TimerMonitoraggioRisorseThread.risorsaNonDisponibile = new CoreException(risorsaNonDisponibile+" "+e.getMessage(),e);
 					this.logger.error(risorsaNonDisponibile+" "+e.getMessage(),e);
 					checkRisorseDisponibili = false;
 				}
@@ -303,7 +303,7 @@ public class TimerMonitoraggioRisorse extends Thread{
 				risorsaNonDisponibile = null;
 			}
 			this.lastCheck = checkRisorseDisponibili;
-			TimerMonitoraggioRisorse.risorseDisponibili = checkRisorseDisponibili;
+			TimerMonitoraggioRisorseThread.risorseDisponibili = checkRisorseDisponibili;
 						
 			// CheckInterval
 			if(this.stop==false){

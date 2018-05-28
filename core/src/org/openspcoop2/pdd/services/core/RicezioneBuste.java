@@ -133,8 +133,8 @@ import org.openspcoop2.pdd.services.service.RicezioneBusteServiceUtils;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerLock;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TipoLock;
 import org.openspcoop2.protocol.basic.registry.IdentificazionePortaApplicativa;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -776,9 +776,9 @@ public class RicezioneBuste {
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
 			return;
 		}
-		if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage();
-			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,TimerMonitoraggioRisorse.risorsaNonDisponibile);
+		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+			String msgErrore = "Risorse di sistema non disponibili: "+ TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage();
+			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 			try{
 				// provo ad emetter un diagnostico
 				if(this.msgContext.getMsgDiagnostico()!=null){
@@ -790,7 +790,7 @@ public class RicezioneBuste {
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
 			return;
 		}
-		if( TimerThreshold.freeSpace == false){
+		if( TimerThresholdThread.freeSpace == false){
 			String msgErrore = "Non sono disponibili abbastanza risorse per la gestione della richiesta";
 			logCore.error("["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
 			try{

@@ -53,8 +53,8 @@ import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.monitor.StatoPdd;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
-import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
-import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
+import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
@@ -509,10 +509,10 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public void refreshDatiMonitoraggioPdD(){
 
 		StringBuffer bf = new StringBuffer();
-		if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage());
+		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage());
 		}
-		if( TimerThreshold.freeSpace == false){
+		if( TimerThresholdThread.freeSpace == false){
 			if(bf.length()>0){
 				bf.append("\n");
 			}

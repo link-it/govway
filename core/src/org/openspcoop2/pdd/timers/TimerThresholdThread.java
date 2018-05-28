@@ -40,10 +40,10 @@ import org.openspcoop2.utils.resources.Loader;
  * 
  *  
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
-public class TimerThreshold extends Thread{
+public class TimerThresholdThread extends Thread{
 
 	/** Indicazione di uno spazio delle risorse di sistema corretto */
 	public static boolean freeSpace = true;
@@ -77,12 +77,12 @@ public class TimerThreshold extends Thread{
 	private boolean lastCheck = true;
 	
 	/** Costruttore */
-	public TimerThreshold() throws ThresholdException{
+	public TimerThresholdThread() throws ThresholdException{
 		this.propertiesReader = OpenSPCoop2Properties.getInstance();
 		
-		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerThreshold.ID_MODULO);
+		this.msgDiag = new MsgDiagnostico(this.propertiesReader.getIdentitaPortaDefault(null),TimerThresholdThread.ID_MODULO);
 		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_THRESHOLD);
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD, TimerThreshold.ID_MODULO);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_THRESHOLD, TimerThresholdThread.ID_MODULO);
 		
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources();
 		this.tipiThreshold = this.propertiesReader.getRepositoryThresholdTypes();
@@ -120,13 +120,13 @@ public class TimerThreshold extends Thread{
 			
 			// Controllo che il sistema non sia andando in shutdown
 			if(OpenSPCoop2Startup.contextDestroyed){
-				this.log.error("["+TimerThreshold.ID_MODULO+"] Rilevato sistema in shutdown");
+				this.log.error("["+TimerThresholdThread.ID_MODULO+"] Rilevato sistema in shutdown");
 				return;
 			}
 			
 			// Controllo risorse di sistema disponibili
-			if( TimerMonitoraggioRisorse.risorseDisponibili == false){
-				this.log.error("["+TimerThreshold.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorse.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorse.risorsaNonDisponibile);
+			if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
+				this.log.error("["+TimerThresholdThread.ID_MODULO+"] Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage(),TimerMonitoraggioRisorseThread.risorsaNonDisponibile);
 				this.sleep();
 				continue;
 			}
@@ -154,7 +154,7 @@ public class TimerThreshold extends Thread{
 				this.msgDiag.logPersonalizzato("risorsaRitornataDisponibile");
 			}
 			this.lastCheck = checkThreshold;
-			TimerThreshold.freeSpace = checkThreshold;
+			TimerThresholdThread.freeSpace = checkThreshold;
 			
 			
 			// CheckInterval
