@@ -49,8 +49,8 @@ import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.slf4j.Logger;
 
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Validator
@@ -89,7 +89,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			
 			this.validatorMap = new HashMap<>();
 			
+			
 			String definitionString = Json.mapper().writeValueAsString(definitions);
+			definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
 			for(String schemaName: definitions.keySet()) {
 				byte[] schema = ("{\"definitions\" : "+definitionString+"}").getBytes();
 				
@@ -125,9 +127,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		if(httpEntity instanceof HttpBaseRequestEntity) {
 			List<ApiBodyParameter> bodyParameters = operation.getRequest().getBodyParameters();
 
-			for(ApiBodyParameter body: bodyParameters) {
-				if(body.isRequired())
-					required = true;
+			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
+				for(ApiBodyParameter body: bodyParameters) {
+					if(body.isRequired())
+						required = true;
+				}
 			}
 			
 			if(required) {
@@ -135,7 +139,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				if(httpEntity.getContent() == null) {
 					throw new ValidatorException("Body required ma non trovato");
 				}
-				
+			}
+			
+			if(bodyParameters!=null && !bodyParameters.isEmpty()) {
 				try {
 					List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
 					boolean valid = false;
