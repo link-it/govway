@@ -573,8 +573,10 @@ public class ServiceBindingConfigurationReader  {
 	
 	private static org.openspcoop2.message.constants.IntegrationErrorMessageType convertToMessageType(DefaultIntegrationErrorMessageType messageType){
 		switch (messageType) {
-		case SOAP:
-			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP;
+		case SOAP_11:
+			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP_11;
+		case SOAP_12:
+			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP_12;
 		case XML:
 			return org.openspcoop2.message.constants.IntegrationErrorMessageType.XML;
 		case JSON:
@@ -587,8 +589,12 @@ public class ServiceBindingConfigurationReader  {
 	
 	private static org.openspcoop2.message.constants.IntegrationErrorMessageType convertToMessageType(IntegrationErrorMessageType messageType){
 		switch (messageType) {
-		case SOAP:
-			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP;
+		case SOAP_AS_REQUEST:
+			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP_AS_REQUEST;
+		case SOAP_11:
+			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP_11;
+		case SOAP_12:
+			return org.openspcoop2.message.constants.IntegrationErrorMessageType.SOAP_12;
 		case XML:
 			return org.openspcoop2.message.constants.IntegrationErrorMessageType.XML;
 		case JSON:

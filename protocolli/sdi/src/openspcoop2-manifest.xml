@@ -70,10 +70,10 @@
     		</integration>
    			<integrationError>
     			<internal>
-    				<default httpReturnCode="500" messageType="soap" />
+    				<default httpReturnCode="500" messageType="soap11" />
     			</internal>	
     			<external>
-    				<default httpReturnCode="500" messageType="soap" />
+    				<default httpReturnCode="500" messageType="soap11" />
     			</external>	
     		</integrationError>
     		<mediaTypeCollection>

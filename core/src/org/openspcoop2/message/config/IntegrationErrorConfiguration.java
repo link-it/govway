@@ -59,10 +59,14 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	
 	public MessageType getMessageType(MessageType requestMsgType){
 		switch (this.errorType) {
-		case SOAP:
+		case SOAP_AS_REQUEST:
 			if(MessageType.SOAP_11.equals(requestMsgType) || MessageType.SOAP_12.equals(requestMsgType) )
-				return requestMsgType;
-			return MessageType.BINARY; // content is null
+				return requestMsgType;			
+			return getDefaultMessageType(requestMsgType);
+		case SOAP_11:
+			return MessageType.SOAP_11;
+		case SOAP_12:
+			return MessageType.SOAP_12;
 		case XML:
 			return MessageType.XML;
 		case JSON:
@@ -79,10 +83,10 @@ public class IntegrationErrorConfiguration implements java.io.Serializable {
 	}
 	public MessageType getDefaultMessageType(MessageType requestMsgType){
 		switch (this.defaultErrorType) {
-		case SOAP:
-			if(MessageType.SOAP_11.equals(requestMsgType) || MessageType.SOAP_12.equals(requestMsgType) )
-				return requestMsgType;
-			return MessageType.BINARY; // content is null
+		case SOAP_11:
+			return MessageType.SOAP_11;
+		case SOAP_12:
+			return MessageType.SOAP_12;
 		case XML:
 			return MessageType.XML;
 		case JSON:

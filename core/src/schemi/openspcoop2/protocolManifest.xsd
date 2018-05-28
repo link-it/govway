@@ -488,7 +488,9 @@
        
        <xsd:simpleType name="IntegrationErrorMessageType">
               <xsd:restriction base="xsd:string">
-                     <xsd:enumeration value="soap"/>
+                     <xsd:enumeration value="soapAsRequest"/>
+                     <xsd:enumeration value="soap11"/>
+                     <xsd:enumeration value="soap12"/>
                      <xsd:enumeration value="xml"/>
                      <xsd:enumeration value="json"/>
                      <xsd:enumeration value="none"/>
@@ -497,7 +499,9 @@
        </xsd:simpleType>
        <xsd:simpleType name="DefaultIntegrationErrorMessageType">
               <xsd:restriction base="xsd:string">
-                     <xsd:enumeration value="soap"/>
+                     <!-- I tipi default devono essere tipi primitivi -->
+                     <xsd:enumeration value="soap11"/>
+                     <xsd:enumeration value="soap12"/>
                      <xsd:enumeration value="xml"/>
                      <xsd:enumeration value="json"/>
                      <xsd:enumeration value="none"/>

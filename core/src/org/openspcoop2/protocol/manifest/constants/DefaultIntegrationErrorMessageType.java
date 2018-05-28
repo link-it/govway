@@ -36,8 +36,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 @javax.xml.bind.annotation.XmlEnum(String.class)
 public enum DefaultIntegrationErrorMessageType implements IEnumeration , Serializable , Cloneable {
 
-	@javax.xml.bind.annotation.XmlEnumValue("soap")
-	SOAP ("soap"),
+	@javax.xml.bind.annotation.XmlEnumValue("soap11")
+	SOAP_11 ("soap11"),
+	@javax.xml.bind.annotation.XmlEnumValue("soap12")
+	SOAP_12 ("soap12"),
 	@javax.xml.bind.annotation.XmlEnumValue("xml")
 	XML ("xml"),
 	@javax.xml.bind.annotation.XmlEnumValue("json")

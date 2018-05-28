@@ -32,6 +32,6 @@ import java.io.Serializable;
  */
 public enum IntegrationErrorMessageType implements Serializable {
 	
-	SOAP, XML, JSON, NONE, SAME_AS_REQUEST;	
+	SOAP_AS_REQUEST, SOAP_11, SOAP_12 , XML, JSON, NONE, SAME_AS_REQUEST;	
 	
 }

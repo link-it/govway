@@ -71,11 +71,21 @@
 	    		 </subscription>
     		</integration>
     		<integrationError>
-    			<internal>
-    				<default httpReturnCode="500" messageType="soap" />
+				<internal>
+    				<authentication httpReturnCode="500" messageType="soapAsRequest" />
+	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
+	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
+	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</internal>	
     			<external>
-    				<default httpReturnCode="500" messageType="soap" />
+    				<authentication httpReturnCode="500" messageType="soapAsRequest" />
+	    			<authorization httpReturnCode="500" messageType="soapAsRequest" />
+	    			<notFound httpReturnCode="500" messageType="soapAsRequest" />
+	    			<badRequest httpReturnCode="500" messageType="soapAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="soapAsRequest" />
+	    			<default httpReturnCode="500" messageType="none" /> <!-- se non sono riuscito a capire la versione soap, ritorno 500 senza alcun fault -->
     			</external>	
     		</integrationError>
     		<mediaTypeCollection>
