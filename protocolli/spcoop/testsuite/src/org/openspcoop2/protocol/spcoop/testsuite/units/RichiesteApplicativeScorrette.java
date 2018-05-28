@@ -47,9 +47,9 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.UtilitiesEGov;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
@@ -2808,7 +2808,7 @@ public class RichiesteApplicativeScorrette {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
 				Utilities.verificaFaultIntegrazione(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO), 
 						CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_NON_SUPPORTATO.replace(CostantiErroriIntegrazione.MSG_429_CONTENT_TYPE_KEY, "application/soap+xml"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -2878,7 +2878,7 @@ public class RichiesteApplicativeScorrette {
 				try{
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] ...");
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
 							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "http://www.w3.org/2003/05/soap-envelope"), 
 								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -2887,7 +2887,7 @@ public class RichiesteApplicativeScorrette {
 					Reporter.log("Verifica con [http://www.w3.org/2003/05/soap-envelope] fallita: "+e.getMessage());
 					Reporter.log("Verifica con [Impossibile recuperare il valore del namespace] ...");
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR), 
 							CostantiErroriIntegrazione.MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR.replace(CostantiErroriIntegrazione.MSG_430_NAMESPACE_KEY, "Impossibile recuperare il valore del namespace"), 
 								Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
@@ -3067,7 +3067,7 @@ public class RichiesteApplicativeScorrette {
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA).equals(error.getFaultCode().getLocalPart()))
 					Utilities.verificaFaultIntegrazione(error, 
-							Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativi", 
+							CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativi", 
 							Utilities.toString(CodiceErroreIntegrazione.CODICE_432_PARSING_EXCEPTION_RICHIESTA), 
 							CostantiErroriIntegrazione.MSG_432_MESSAGGIO_XML_MALFORMATO_RICHIESTA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);	
 				else Assert.assertTrue(false,"FaultCode non tra quelli attesi (432): " + error.getFaultCode().getLocalPart());
@@ -3326,7 +3326,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 				
-				String infoServizio = "( Servizio v1 SPC/RichiestaStatoAvanzamentoAsincronoAsimmetrico Azione richiestaAsincrona Erogatore SPC/MinisteroErogatore )";
+				String infoServizio = "( Servizio spc/MinisteroErogatore:spc/RichiestaStatoAvanzamentoAsincronoAsimmetrico:1 )";
 				String msgErrore = CostantiErroriIntegrazione.MSG_435_LOCAL_FORWARD_CONFIG_ERRORE+ infoServizio+" profilo di collaborazione AsincronoAsimmetrico non supportato";
 				
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_435_LOCAL_FORWARD_CONFIG_ERROR).equals(error.getFaultCode().getLocalPart()))

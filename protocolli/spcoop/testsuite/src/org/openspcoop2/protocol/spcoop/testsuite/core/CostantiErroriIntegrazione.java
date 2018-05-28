@@ -176,13 +176,12 @@ public class CostantiErroriIntegrazione {
 	/** String che contiene un codice di errore OpenSPCoop2: Content Type non supportato*/
 	public final static String MSG_429_CONTENT_TYPE_KEY = "#MSG_429_CONTENT_TYPE_KEY#";
 	public final static String MSG_429_CONTENT_TYPE_NON_SUPPORTATO = 
-			"Il valore dell'header HTTP Content-Type ("+MSG_429_CONTENT_TYPE_KEY+") non rientra tra quelli supportati dal protocollo (";
-				//	SOAPVersion.SOAP11.getContentTypesAsString()+")"; TODO
+			"Il valore dell'header HTTP Content-Type ("+MSG_429_CONTENT_TYPE_KEY+") non rientra tra quelli supportati dal protocollo (text/xml)";
 				
 	/** String che contiene un codice di errore OpenSPCoop2: soap envelope namespace error */
 	public final static String MSG_430_NAMESPACE_KEY = "#MSG_430_NAMESPACE_KEY#";
 	public final static String MSG_430_SOAP_ENVELOPE_NAMESPACE_ERROR =  
-			"SOAP Envelope contiene un namespace ("+MSG_430_NAMESPACE_KEY+") diverso da quello atteso per messaggi SOAP 1.1 ("+Costanti.SOAP_ENVELOPE_NAMESPACE+")";
+			"SOAP Envelope contiene un namespace ("+MSG_430_NAMESPACE_KEY+") diverso da quello atteso per messaggi Soap-1.1 ("+Costanti.SOAP_ENVELOPE_NAMESPACE+")";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: gestore credenziali error */
 	public final static String MSG_431_TIPO_GESTORE_CREDENZIALI_KEY = "#MSG_431_GESTORE_KEY#";
@@ -206,7 +205,6 @@ public class CostantiErroriIntegrazione {
 	public final static String MSG_435_LOCAL_FORWARD_CONFIG_ERRORE = 
 			"La funzionalità local-forward non è utilizzabile nella configurazione richiesta: ";
 
-	
 
 
 	/* ---- errori spediti in buste errore ---- */
