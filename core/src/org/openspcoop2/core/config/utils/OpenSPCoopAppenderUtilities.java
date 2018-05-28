@@ -10,7 +10,8 @@ public class OpenSPCoopAppenderUtilities {
 	public static void addParameters(Logger log,List<Property> appenderProperties,
 			String dsJndiName,
 			String connectionUrl, String connectionDriver, String connectionUsername, String connectionPassword,
-			String tipoDatabase
+			String tipoDatabase,
+			boolean usePdDConnection, boolean debug
 			) throws Exception{
 		
 		
@@ -46,7 +47,28 @@ public class OpenSPCoopAppenderUtilities {
 		prop_tipoDatabase.setNome("tipoDatabase");
 		prop_tipoDatabase.setValore(tipoDatabase);
 		appenderProperties.add(prop_tipoDatabase);
+		
+		if(usePdDConnection) {
+			Property prop_usePdDConnection = new Property();
+			prop_usePdDConnection.setNome("usePdDConnection");
+			prop_usePdDConnection.setValore(usePdDConnection+"");
+			appenderProperties.add(prop_usePdDConnection);
+		}
+		
+		if(debug) {
+			Property prop_debug = new Property();
+			prop_debug.setNome("debug");
+			prop_debug.setValore(debug+"");
+			appenderProperties.add(prop_debug);
+		}
 
+	}
+	
+	public static void addCheckProperties(List<Property> appenderProperties, boolean checkProperties) {
+		Property prop_checkProperties = new Property();
+		prop_checkProperties.setNome("checkProperties");
+		prop_checkProperties.setValore(checkProperties+"");
+		appenderProperties.add(prop_checkProperties);
 	}
 	
 }

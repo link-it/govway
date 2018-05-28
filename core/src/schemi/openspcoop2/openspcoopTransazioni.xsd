@@ -1452,6 +1452,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="protocollo" type="xsd:string" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Protocollo utilizzato per la transazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
 					<xsd:annotation>
 						<xsd:appinfo>

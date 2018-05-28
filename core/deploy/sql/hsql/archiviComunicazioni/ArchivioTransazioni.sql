@@ -185,6 +185,7 @@ CREATE SEQUENCE seq_dump_messaggi AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Sc
 CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR(255) NOT NULL,
+	protocollo VARCHAR(20) NOT NULL,
 	tipo_messaggio VARCHAR(255) NOT NULL,
 	content_type VARCHAR(255),
 	multipart_content_type VARCHAR(255),

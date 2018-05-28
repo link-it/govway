@@ -179,6 +179,7 @@ CREATE SEQUENCE seq_dump_messaggi start 1 increment 1 maxvalue 92233720368547758
 CREATE TABLE dump_messaggi
 (
 	id_transazione VARCHAR(255) NOT NULL,
+	protocollo VARCHAR(20) NOT NULL,
 	tipo_messaggio VARCHAR(255) NOT NULL,
 	content_type VARCHAR(255),
 	multipart_content_type VARCHAR(255),

@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.sdk.dump;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,6 +31,12 @@ import java.util.Map;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.DumpAllegato;
+import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
+import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 
 /**
@@ -53,24 +60,105 @@ public class Messaggio implements Serializable{
 	private byte[] body;
 	private BodyMultipartInfo bodyMultipartInfo;
 
-	private List<Attachment> attachments;
+	private List<Attachment> attachments = new ArrayList<>();
 	
 	private Map<String, String> headers = new Hashtable<String, String>();
 	
 	private Map<String, String> contenuti = new Hashtable<String, String>();
 	
+	private String idTransazione;
+
 	private Date gdo;
+
+	private String protocollo;
+	
+	
+	// le restanti informazioni non vengono serializzate su database.
 	
 	private IDSoggetto dominio;
 	private TipoPdD tipoPdD;
 	private String idFunzione;
 	
-	private String idTransazione;
 	private String idBusta;
 	private IDSoggetto fruitore;
 	private IDServizio servizio;
 
-	private String protocollo;
+	
+	public Messaggio() {}
+	public Messaggio(DumpMessaggio dumpMessaggio) {
+		
+		this.tipoMessaggio = dumpMessaggio.getTipoMessaggio();
+		
+		this.contentType = dumpMessaggio.getContentType();
+		
+		this.body = dumpMessaggio.getBody();
+		if(dumpMessaggio.getMultipartContentId()!=null || 
+				dumpMessaggio.getMultipartContentLocation()!=null ||
+				dumpMessaggio.getMultipartContentType()!=null ||
+				dumpMessaggio.getMultipartHeaderList()!=null ||
+				dumpMessaggio.getMultipartHeaderList().size()>0) {
+			this.bodyMultipartInfo = new BodyMultipartInfo();
+			this.bodyMultipartInfo.setContentId(dumpMessaggio.getMultipartContentId());
+			this.bodyMultipartInfo.setContentLocation(dumpMessaggio.getMultipartContentLocation());
+			this.bodyMultipartInfo.setContentType(dumpMessaggio.getMultipartContentType());
+			if(dumpMessaggio.getMultipartHeaderList()!=null ||
+				dumpMessaggio.getMultipartHeaderList().size()>0) {
+				for (DumpMultipartHeader hdr : dumpMessaggio.getMultipartHeaderList()) {
+					String valore = hdr.getValore();
+					if(valore==null) {
+						valore = "";
+					}
+					this.bodyMultipartInfo.getHeaders().put(hdr.getNome(), valore);
+				}
+			}
+		}
+		
+		if(dumpMessaggio.sizeAllegatoList()>0) {
+			for (DumpAllegato allegato : dumpMessaggio.getAllegatoList()) {
+				Attachment attachment = new Attachment();
+				attachment.setContentId(allegato.getContentId());
+				attachment.setContentLocation(allegato.getContentLocation());
+				attachment.setContentType(allegato.getContentType());
+				attachment.setContent(allegato.getAllegato());
+				if(allegato.sizeHeaderList()>0) {
+					for (DumpHeaderAllegato hdr : allegato.getHeaderList()) {
+						String valore = hdr.getValore();
+						if(valore==null) {
+							valore = "";
+						}
+						attachment.getHeaders().put(hdr.getNome(), valore);
+					}
+				}
+				this.attachments.add(attachment);
+			}
+		}
+		
+		if(dumpMessaggio.sizeHeaderTrasportoList()>0) {
+			for (DumpHeaderTrasporto hdr : dumpMessaggio.getHeaderTrasportoList()) {
+				String valore = hdr.getValore();
+				if(valore==null) {
+					valore = "";
+				}
+				this.headers.put(hdr.getNome(), valore);
+			}
+		}
+		
+		if(dumpMessaggio.sizeContenutoList()>0) {
+			for (DumpContenuto contenuto : dumpMessaggio.getContenutoList()) {
+				String valore = contenuto.getValore();
+				if(valore==null) {
+					valore = "";
+				}
+				this.contenuti.put(contenuto.getNome(), valore);
+			}
+		}
+		
+		this.idTransazione = dumpMessaggio.getIdTransazione();
+		
+		this.gdo = dumpMessaggio.getDumpTimestamp();
+		
+		this.protocollo = dumpMessaggio.getProtocollo();
+	}
 	
 	
 	public TipoMessaggio getTipoMessaggio() {

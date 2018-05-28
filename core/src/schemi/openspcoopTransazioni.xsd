@@ -208,6 +208,7 @@
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="id-transazione" type="xsd:string"/>
+				<xsd:element name="protocollo" type="xsd:string" />
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
 				<xsd:element name="content-type" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="multipart-content-type" type="xsd:string" minOccurs="0"/>

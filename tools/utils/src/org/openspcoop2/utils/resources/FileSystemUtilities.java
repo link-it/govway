@@ -350,7 +350,7 @@ public class FileSystemUtilities {
 				File parent = dir.getParentFile();
 				if(parent.exists()==false) {
 					if(config.crateParentIfNotExists) {
-						mkdirParentDirectory(parent);
+						mkdirParentDirectory(dir);
 					}
 				}
 			}

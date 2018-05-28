@@ -144,7 +144,12 @@ public class ConfigurazionePdDManager {
 	}
 	
 	
+	
 	/* ********  U T I L S  ******** */ 
+	
+	public org.openspcoop2.core.controllo_traffico.dao.IServiceManager getControlloTrafficoServiceManager(Logger log) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getControlloTrafficoServiceManager(log);
+	}
 	
 	public void isAlive() throws CoreException{
 		this.configurazionePdDReader.isAlive();

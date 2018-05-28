@@ -89,6 +89,9 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	/** IProtocolConfiguration */
 	protected IProtocolConfiguration protocolConfiguration;
 	
+	/** ISAlive */
+	protected boolean isAlive = true;
+	
 	private BasicProducerType producerType;
 	
 	public BasicProducer(IProtocolFactory<?> factory, BasicProducerType producerType) throws ProtocolException{
@@ -239,7 +242,13 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				if(this.datasource==null){
 					this.connectionViaJDBC_url = this.appenderProperties.getProperty("connectionUrl");
 					if(this.connectionViaJDBC_url==null){
-						throw new Exception("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
+						String tmp = this.appenderProperties.getProperty("checkProperties");
+						if(tmp == null || Boolean.valueOf(tmp.trim())) {
+							throw new Exception("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
+						}
+						else {
+							this.isAlive = false;
+						}
 					}
 				}
 				
@@ -364,6 +373,9 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	 */
 	@Override
 	public void isAlive() throws CoreException{
+		if(this.isAlive==false) {
+			return;
+		}
 		// Verifico la connessione
 		Connection con = null;
 		Statement stmtTest = null;

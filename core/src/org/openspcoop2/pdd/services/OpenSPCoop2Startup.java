@@ -41,11 +41,8 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.slf4j.Logger;
-
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
-import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -74,6 +71,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.GeneralInstanceProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PddProperties;
@@ -107,10 +105,10 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.services.core.RicezioneBuste;
-import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerEventi;
@@ -147,6 +145,7 @@ import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 
 
@@ -725,6 +724,20 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
+			// GestoreTransazioni
+			try{
+				if(propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
+					DBTransazioniManager.init(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+				}
+				else {
+					DBTransazioniManager.init(propertiesReader.getTransazioniDatasource(), propertiesReader.getTransazioniDatasourceJndiContext(), 
+							logCore, propertiesReader.getDatabaseType(), 
+							propertiesReader.isTransazioniDatasourceUseDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+				}
+			}catch(Exception e){
+				OpenSPCoop2Startup.log.error("Inizializzazione DBTransazioniManager", e);
+				return;
+			}
 
 
 
@@ -797,7 +810,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				this.logError("Riscontrato errore durante l'inizializzazione della configurazione di OpenSPCoop.");
 				return;
 			}
-			ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+			ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 			if(msgDiagProperties.checkValoriFiltriMsgDiagnostici(OpenSPCoop2Startup.log)==false){
 				return;
 			}
@@ -851,7 +864,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/*----------- Inizializzazione SystemProperties --------------*/
 			try{
-				SystemPropertiesManager spm = new SystemPropertiesManager(configurazionePdDReader,logCore);
+				SystemPropertiesManager spm = new SystemPropertiesManager(configurazionePdDManager,logCore);
 				spm.updateSystemProperties();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione proprieta' di sistema");
@@ -865,7 +878,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/*----------- Inizializzazione Autorizzazione --------------*/
 			try{
-				AccessoDatiAutorizzazione datiAutorizzazione = configurazionePdDReader.getAccessoDatiAutorizzazione();
+				AccessoDatiAutorizzazione datiAutorizzazione = configurazionePdDManager.getAccessoDatiAutorizzazione();
 				if(datiAutorizzazione!=null && datiAutorizzazione.getCache()!=null){
 					
 					int dimensioneCache = -1;
@@ -916,7 +929,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/*----------- Inizializzazione Autenticazione --------------*/
 			try{
-				AccessoDatiAutenticazione datiAutenticazione = configurazionePdDReader.getAccessoDatiAutenticazione();
+				AccessoDatiAutenticazione datiAutenticazione = configurazionePdDManager.getAccessoDatiAutenticazione();
 				if(datiAutenticazione!=null && datiAutenticazione.getCache()!=null){
 					
 					int dimensioneCache = -1;
@@ -1029,15 +1042,15 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 			/* ------------- Inizializzo il sistema di Logging per gli appender personalizzati --------------- */
 			boolean isInitializeAppender = false;
-			isInitializeAppender = OpenSPCoop2Logger.initializeMsgDiagnosticiOpenSPCoopAppender(configurazionePdDReader.getOpenSPCoopAppender_MsgDiagnostici());
+			isInitializeAppender = OpenSPCoop2Logger.initializeMsgDiagnosticiOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_MsgDiagnostici());
 			if(isInitializeAppender == false){
 				return;
 			}
-			isInitializeAppender = OpenSPCoop2Logger.initializeTracciamentoOpenSPCoopAppender(configurazionePdDReader.getOpenSPCoopAppender_Tracciamento());
+			isInitializeAppender = OpenSPCoop2Logger.initializeTracciamentoOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Tracciamento());
 			if(isInitializeAppender == false){
 				return;
 			}
-			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDReader.getOpenSPCoopAppender_Dump());
+			isInitializeAppender = OpenSPCoop2Logger.initializeDumpOpenSPCoopAppender(configurazionePdDManager.getOpenSPCoopAppender_Dump());
 			if(isInitializeAppender == false){
 				return;
 			}
@@ -1105,13 +1118,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ----------- Inizializzazione Registro dei Servizi ---------------- */
 
 			// Check configurazione registro dei Servizi
-			if( configurazionePdDReader.getAccessoRegistroServizi() == null ){
+			if( configurazionePdDManager.getAccessoRegistroServizi() == null ){
 				msgDiag.logStartupError("Riscontrato errore durante la lettura dei valori associati al registro dei servizi di OpenSPCoop.", "Lettura configurazione PdD");
 				return;
 			}
 
 			// Controllo la consistenza dei registri di tipo DB
-			AccessoRegistro accessoRegistro = configurazionePdDReader.getAccessoRegistroServizi();
+			AccessoRegistro accessoRegistro = configurazionePdDManager.getAccessoRegistroServizi();
 			for(int i=0; i<accessoRegistro.sizeRegistroList(); i++){	
 				AccessoRegistroRegistro registro = accessoRegistro.getRegistro(i);
 				if(CostantiConfigurazione.REGISTRO_DB.equals(registro.getTipo().toString())){
@@ -1295,13 +1308,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			try{
-				RicezioneContenutiApplicativi.initializeService(configurazionePdDReader, classNameReader, propertiesReader, logCore);
+				RicezioneContenutiApplicativi.initializeService(configurazionePdDManager, classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneContenutiApplicativi");
 				return;
 			}
 			try{
-				RicezioneBuste.initializeService(configurazionePdDReader,classNameReader, propertiesReader, logCore);
+				RicezioneBuste.initializeService(configurazionePdDManager,classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneBuste");
 				return;
@@ -1389,6 +1402,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDiagnostici().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirTracce().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirDump().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirEventi().getAbsolutePath(), configMkdir);
 				
 				// dumpNotRealTime
@@ -1441,9 +1455,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// Cache ControlloTraffico DatiStatistici
 				try{
 					ConfigurazioneGenerale configurazioneControlloTraffico = 
-							((org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(logControlloTrafficoSql).
-						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(), logControlloTrafficoSql)).
-						getConfigurazioneGeneraleServiceSearch().get();
+							configurazionePdDManager.getControlloTrafficoServiceManager(logControlloTrafficoSql).
+							getConfigurazioneGeneraleServiceSearch().get();
 					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
 						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloTraffico.getCache().getSize(),
 								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),
@@ -1671,11 +1684,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						statoServiziPdD.getComponentePD(), statoServiziPdD.getComponentePD_abilitazioniPuntuali(), statoServiziPdD.getComponentePD_disabilitazioniPuntuali(),
 						statoServiziPdD.getComponentePA(), statoServiziPdD.getComponentePA_abilitazioniPuntuali(), statoServiziPdD.getComponentePA_disabilitazioniPuntuali(),
 						statoServiziPdD.getComponenteIM(),
-						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici(),true),
-						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici(),true),
+						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeverita_msgDiagnostici(),true),
+						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeveritaLog4J_msgDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,
-						configurazionePdDReader.tracciamentoBuste(), configurazionePdDReader.dumpMessaggi(),
-						configurazionePdDReader.dumpBinarioPD(), configurazionePdDReader.dumpBinarioPA(),
+						configurazionePdDManager.tracciamentoBuste(), configurazionePdDManager.dumpMessaggi(),
+						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
 						infoConfigSistema.getInformazioniDatabase(),
 						infoConfigSistema.getInformazioniSSL(true,true),

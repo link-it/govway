@@ -2,6 +2,7 @@ package org.openspcoop2.monitor.engine.fs_recovery;
 
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 
 import java.io.File;
@@ -20,13 +21,15 @@ public class FSRecoveryLibrary {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
+			IDumpProducer dumpAppender,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM){
-		generate(config, transazioniSM, tracciamentoAppender, diagnosticoAppender, pluginsEventiSM, null);
+		generate(config, transazioniSM, tracciamentoAppender, diagnosticoAppender, dumpAppender, pluginsEventiSM, null);
 	}
 	public static void generate(FSRecoveryConfig config,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender,
+			IDumpProducer dumpAppender,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			Connection connection){
 		try{
@@ -72,15 +75,21 @@ public class FSRecoveryLibrary {
 				File dirTracceDLQ = new File(dirTracce,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
 				checkDir(dirTracceDLQ, true, true);
 				
+				File dirDump = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP);
+				checkDir(dirDump, true, false);
+				File dirDumpDLQ = new File(dirDump,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
+				checkDir(dirDumpDLQ, true, true);
+				
 				File dirTransazioni = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE);
 				checkDir(dirTransazioni, true, false);
 				File dirTransazioniDLQ = new File(dirTransazioni,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
 				checkDir(dirTransazioniDLQ, true, true);
 				
 				FSRecoveryTransazioni fs = new FSRecoveryTransazioni(config.getLogCore(),config.isDebug(),transazioniSM,
-						tracciamentoAppender, diagnosticoAppender, 
+						tracciamentoAppender, diagnosticoAppender, dumpAppender, 
 						dirDiagnostici,dirDiagnosticiDLQ,
 						dirTracce,dirTracceDLQ,
+						dirDump,dirDumpDLQ,
 						dirTransazioni,dirTransazioniDLQ,
 						config.getTentativi());
 				fs.process(connection);

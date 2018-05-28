@@ -391,6 +391,9 @@
 				<xsd:element name="id-transazione" type="xsd:string">
 					
 				</xsd:element>
+				<xsd:element name="protocollo" type="xsd:string">
+					
+				</xsd:element>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
 					
 				</xsd:element>

@@ -13,10 +13,11 @@ import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryConfig;
 import org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryLibrary;
-import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
@@ -54,6 +55,8 @@ public class TimerFileSystemRecoveryThread extends Thread{
 	private ITracciaProducer loggerTracciamentoOpenSPCoopAppender = null; 
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop2 */
 	private IDiagnosticProducer loggerMsgDiagnosticoOpenSPCoopAppender = null; 
+	/** Appender personalizzati per i dump di OpenSPCoop2 */
+	private IDumpProducer loggerDumpOpenSPCoopAppender = null; 
 	
     // VARIABILE PER STOP
 	private boolean stop = false;
@@ -110,16 +113,24 @@ public class TimerFileSystemRecoveryThread extends Thread{
 		
 		if(this.recoveryTransazioni){
 			
+			boolean usePdDConnection = true;
+			
 			try{
 				
 				this.loggerTracciamentoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.TracciamentoOpenSPCoopProtocolAppender();
 				OpenspcoopAppender tracciamentoOpenSPCoopAppender = new OpenspcoopAppender();
-				tracciamentoOpenSPCoopAppender.setTipo("protocol");
+				tracciamentoOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
 				List<Property> tracciamentoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 	
+				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, tracciamentoOpenSPCoopAppenderProperties, 
-						daoFactoryProperties.getDatasourceJNDIName(org.openspcoop2.core.tracciamento.utils.ProjectInfo.getInstance()),
-						null, null, null, null, this.tipoDatabaseRuntime);
+						null, // nessun datasource
+						null, null, null, null,  // nessuna connection
+						this.tipoDatabaseRuntime,
+						usePdDConnection, // viene usata la connessione della PdD 
+						this.debug
+						);
+				OpenSPCoopAppenderUtilities.addCheckProperties(tracciamentoOpenSPCoopAppenderProperties, false);
 	
 				tracciamentoOpenSPCoopAppender.setPropertyList(tracciamentoOpenSPCoopAppenderProperties);
 				this.loggerTracciamentoOpenSPCoopAppender.initializeAppender(tracciamentoOpenSPCoopAppender);
@@ -134,16 +145,48 @@ public class TimerFileSystemRecoveryThread extends Thread{
 				// Init
 				this.loggerMsgDiagnosticoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.MsgDiagnosticoOpenSPCoopProtocolAppender();
 				OpenspcoopAppender diagnosticoOpenSPCoopAppender = new OpenspcoopAppender();
-				diagnosticoOpenSPCoopAppender.setTipo("protocol");
+				diagnosticoOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
 				List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 	
+				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
 				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, diagnosticoOpenSPCoopAppenderProperties, 
-						daoFactoryProperties.getDatasourceJNDIName(org.openspcoop2.core.diagnostica.utils.ProjectInfo.getInstance()),
-						null, null, null, null, this.tipoDatabaseRuntime);
+						null, // nessun datasource
+						null, null, null, null,  // nessuna connection
+						this.tipoDatabaseRuntime,
+						usePdDConnection, // viene usata la connessione della PdD
+						this.debug
+						);
+				OpenSPCoopAppenderUtilities.addCheckProperties(diagnosticoOpenSPCoopAppenderProperties, false);
 	
 				diagnosticoOpenSPCoopAppender.setPropertyList(diagnosticoOpenSPCoopAppenderProperties);
 				this.loggerMsgDiagnosticoOpenSPCoopAppender.initializeAppender(diagnosticoOpenSPCoopAppender);
 				this.loggerMsgDiagnosticoOpenSPCoopAppender.isAlive();
+				
+			}catch(Exception e){
+				throw new Exception("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
+			} 
+			
+			try{
+				
+				// Init
+				this.loggerDumpOpenSPCoopAppender = new org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender();
+				OpenspcoopAppender dumpOpenSPCoopAppender = new OpenspcoopAppender();
+				dumpOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
+				List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<Property>();
+	
+				// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
+				OpenSPCoopAppenderUtilities.addParameters(this.daoFactoryLogger, dumpOpenSPCoopAppenderProperties, 
+						null, // nessun datasource
+						null, null, null, null,  // nessuna connection
+						this.tipoDatabaseRuntime,
+						usePdDConnection, // viene usata la connessione della PdD 
+						this.debug
+						);
+				OpenSPCoopAppenderUtilities.addCheckProperties(dumpOpenSPCoopAppenderProperties, false);
+	
+				dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
+				this.loggerDumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
+				this.loggerDumpOpenSPCoopAppender.isAlive();
 				
 			}catch(Exception e){
 				throw new Exception("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
@@ -185,10 +228,10 @@ public class TimerFileSystemRecoveryThread extends Thread{
 		
 		while(this.stop == false){
 			
-			DBManager dbManager = null;
+			DBTransazioniManager dbManager = null;
 	    	Resource r = null;
 			try{
-				dbManager = DBManager.getInstance();
+				dbManager = DBTransazioniManager.getInstance();
 				r = dbManager.getResource(this.properties.getIdentitaPortaDefault(null), ID_MODULO, null);
 				if(r==null){
 					throw new Exception("Risorsa al database non disponibile");
@@ -203,7 +246,7 @@ public class TimerFileSystemRecoveryThread extends Thread{
 							this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
 							this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
 				}
-				
+
 				org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM = null;
 				if(this.recoveryEventi){
 					pluginsSM = (org.openspcoop2.core.eventi.dao.IServiceManager) 
@@ -211,7 +254,11 @@ public class TimerFileSystemRecoveryThread extends Thread{
 							this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
 				}
 									
-				FSRecoveryLibrary.generate(conf, transazioniSM, this.loggerTracciamentoOpenSPCoopAppender, this.loggerMsgDiagnosticoOpenSPCoopAppender, pluginsSM, con);
+				FSRecoveryLibrary.generate(conf, transazioniSM, 
+						this.loggerTracciamentoOpenSPCoopAppender, 
+						this.loggerMsgDiagnosticoOpenSPCoopAppender,
+						this.loggerDumpOpenSPCoopAppender,
+						pluginsSM, con);
 				
 			}catch(Exception e){
 				this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);

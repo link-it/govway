@@ -21,6 +21,7 @@ import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -63,6 +64,7 @@ public class TimerFSRecoveryThread extends Thread{
 	/** OpenSPCoopAppender */
 	private ITracciaProducer tracciamentoAppender;
 	private IDiagnosticProducer diagnosticoAppender;
+	private IDumpProducer dumpAppender;
 	
     // VARIABILE PER STOP
 	private boolean stop = false;
@@ -80,11 +82,13 @@ public class TimerFSRecoveryThread extends Thread{
 	public TimerFSRecoveryThread(DataSource ds, 
 			ITracciaProducer tracciamentoAppender,
 			IDiagnosticProducer diagnosticoAppender, 
+			IDumpProducer dumpAppender,
 			FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
 		this.ds = ds;
 		this.tracciamentoAppender = tracciamentoAppender;
 		this.diagnosticoAppender = diagnosticoAppender;
+		this.dumpAppender = dumpAppender;
 	}
 	public TimerFSRecoveryThread(String ds,Properties dsContext, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
@@ -100,12 +104,14 @@ public class TimerFSRecoveryThread extends Thread{
 	/** Costruttore Connection */
 	public TimerFSRecoveryThread(Connection connection, 
 			ITracciaProducer tracciamentoAppender,
-			IDiagnosticProducer diagnosticoAppender, 
+			IDiagnosticProducer diagnosticoAppender,
+			IDumpProducer dumpAppender,
 			OpenspcoopAppender appenderProperties, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
 		this.connection = connection;
 		this.tracciamentoAppender = tracciamentoAppender;
 		this.diagnosticoAppender = diagnosticoAppender;
+		this.dumpAppender = dumpAppender;
 	}
 	public TimerFSRecoveryThread(String connectionUrl,String driverJDBC,String username, String password, FSRecoveryConfig fsRepositoryConfig) throws EngineException{
 		this(fsRepositoryConfig);
@@ -154,7 +160,9 @@ public class TimerFSRecoveryThread extends Thread{
 		
 		while(this.stop == false){
 			
-			FSRecoveryLibrary.generate(this.fsRepositoryConfig, this.transazioniSM, this.tracciamentoAppender, this.diagnosticoAppender, this.pluginsEventiSM);
+			FSRecoveryLibrary.generate(this.fsRepositoryConfig, this.transazioniSM, 
+					this.tracciamentoAppender, this.diagnosticoAppender, this.dumpAppender,
+					this.pluginsEventiSM);
 							
 			// CheckInterval
 			if(this.stop==false){
@@ -246,7 +254,7 @@ public class TimerFSRecoveryThread extends Thread{
 				// Init
 				this.tracciamentoAppender = new BasicProtocolFactory(this.fsRepositoryConfig.getLogCore()).createTracciaProducer();
 				OpenspcoopAppender tracciamentoOpenSPCoopAppender = new OpenspcoopAppender();
-				tracciamentoOpenSPCoopAppender.setTipo("dbTracciamentoAppender");
+				tracciamentoOpenSPCoopAppender.setTipo("__threadLibraryFileSystemRecovery");
 				List<Property> tracciamentoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 
 				this.addParameters(tracciamentoOpenSPCoopAppenderProperties);
@@ -267,13 +275,34 @@ public class TimerFSRecoveryThread extends Thread{
 				// Init
 				this.diagnosticoAppender = new BasicProtocolFactory(this.fsRepositoryConfig.getLogCore()).createDiagnosticProducer();
 				OpenspcoopAppender diagnosticoOpenSPCoopAppender = new OpenspcoopAppender();
-				diagnosticoOpenSPCoopAppender.setTipo("dbDiagnosticoAppender");
+				diagnosticoOpenSPCoopAppender.setTipo("__threadLibraryFileSystemRecovery");
 				List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 
 				this.addParameters(diagnosticoOpenSPCoopAppenderProperties);
 
 				diagnosticoOpenSPCoopAppender.setPropertyList(diagnosticoOpenSPCoopAppenderProperties);
 				this.diagnosticoAppender.initializeAppender(diagnosticoOpenSPCoopAppender);
+				this.diagnosticoAppender.isAlive();
+				
+			}catch(Exception e){
+				this.fsRepositoryConfig.getLogCore().error("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
+			} 
+		}
+		
+		if(this.fsRepositoryConfig.isRipristinoTransazioni() && this.dumpAppender==null){
+			
+			try{
+							
+				// Init
+				this.dumpAppender = new BasicProtocolFactory(this.fsRepositoryConfig.getLogCore()).createDumpProducer();
+				OpenspcoopAppender dumpOpenSPCoopAppender = new OpenspcoopAppender();
+				dumpOpenSPCoopAppender.setTipo("__threadLibraryFileSystemRecovery");
+				List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<Property>();
+
+				this.addParameters(dumpOpenSPCoopAppenderProperties);
+
+				dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
+				this.diagnosticoAppender.initializeAppender(dumpOpenSPCoopAppender);
 				this.diagnosticoAppender.isAlive();
 				
 			}catch(Exception e){
@@ -312,7 +341,13 @@ public class TimerFSRecoveryThread extends Thread{
 			}
 		}
 		
-		OpenSPCoopAppenderUtilities.addParameters(this.fsRepositoryConfig.getLogCore(), appenderProperties, dsJndiName, connectionUrl, connectionDriver, connectionUsername, connectionPassword, tipoDatabase);
+		boolean debug = daoFactoryProperties.isShowSql(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
+		
+		OpenSPCoopAppenderUtilities.addParameters(this.fsRepositoryConfig.getLogCore(), appenderProperties, 
+				dsJndiName, 
+				connectionUrl, connectionDriver, connectionUsername, connectionPassword, 
+				tipoDatabase,
+				true, debug);
 		
 	}
 }

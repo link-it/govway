@@ -1167,7 +1167,7 @@ public class ConsoleHelper {
 				List<String> aliases = this.confCore.getJmxPdD_aliases();
 				
 				if ( pu.isCodeMessaggi() || pu.isAuditing() || 
-						(aliases!=null && aliases.size()>0) ||
+						(pu.isSistema() && aliases!=null && aliases.size()>0) ||
 						(listStrumenti!=null && listStrumenti.size()>0) ) {
 					// Se l'utente non ha i permessi "diagnostica", devo
 					// gestire la reportistica
@@ -1175,7 +1175,7 @@ public class ConsoleHelper {
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
 
 					int totEntries = 0;
-					if(aliases!=null && aliases.size()>0){
+					if(pu.isSistema() && aliases!=null && aliases.size()>0){
 						totEntries++; // runtime
 					}
 					if(this.isModalitaAvanzata() && pu.isCodeMessaggi()) {
@@ -1201,7 +1201,7 @@ public class ConsoleHelper {
 
 					int i = 0;
 
-					if(aliases!=null && aliases.size()>0){
+					if(pu.isSistema() && aliases!=null && aliases.size()>0){
 						entries[i][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUNTIME;
 						entries[i][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD;
 						i++;

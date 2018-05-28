@@ -13,6 +13,7 @@ public class Costanti {
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE = "transazioni";
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_DIAGNOSTICO = "diagnostici";
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_TRACCIA = "tracce";
+	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP = "messaggi";
 	
 	public static final String DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ = "dlq";
 	
@@ -20,6 +21,7 @@ public class Costanti {
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE = "Transazione";
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_DIAGNOSTICO = "Diagnostico";
 	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_TRACCIA = "Traccia";
+	public static final String PREFIX_FILE_SYSTEM_REPOSITORY_DUMP = "Messaggio";
 	
 	public static final String EVENTO_FILE_SYSTEM_RECOVERY = "RecoveredFileSystem";
 	

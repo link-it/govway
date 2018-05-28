@@ -208,22 +208,11 @@ public class DBManager implements IMonitoraggioRisorsa {
 		if(this.dataSource == null)
 			throw new Exception("Datasource non istanziato");
 
-		Resource risorsa = new Resource();
+		Resource risorsa = null;
 		try {
-			Connection connectionDB = this.dataSource.getConnection();
-			if(connectionDB==null)
-				throw new Exception("is null");
-
-			String idUnivoco = Resource.generaIdentificatoreUnivoco(idPDD, modulo);
-			risorsa.setId(idUnivoco);
-			risorsa.setDate(DateManager.getDate());
-			risorsa.setIdentificativoPorta(idPDD);
-			risorsa.setModuloFunzionale(modulo);
-			risorsa.setResource(connectionDB);
-			risorsa.setResourceType(Connection.class.getName());
-			risorsa.setIdTransazione(idTransazione);
+			risorsa = DBManager.buildResource(this.dataSource, idPDD, modulo, idTransazione);
 				
-			DBManager.risorseInGestione.put(idUnivoco, risorsa);
+			DBManager.risorseInGestione.put(risorsa.getId(), risorsa);
 			
 			//if(this.dataSource instanceof SharedPoolDataSource)
 			//	System.out.println("IDLE["+((SharedPoolDataSource)this.dataSource).getNumIdle()+"] ACTIVE["+((SharedPoolDataSource)this.dataSource).getNumActive()+"]");
@@ -240,6 +229,27 @@ public class DBManager implements IMonitoraggioRisorsa {
 		return risorsa;
 	}
 
+	public static Resource buildResource(DataSource dataSource, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		Connection connectionDB = dataSource.getConnection();
+		if(connectionDB==null)
+			throw new Exception("is null");
+		return buildResource(connectionDB, idPDD, modulo, idTransazione);
+	}
+	public static Resource buildResource(Connection connectionDB, IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+		
+		Resource risorsa = new Resource();
+		String idUnivoco = Resource.generaIdentificatoreUnivoco(idPDD, modulo);
+		risorsa.setId(idUnivoco);
+		risorsa.setDate(DateManager.getDate());
+		risorsa.setIdentificativoPorta(idPDD);
+		risorsa.setModuloFunzionale(modulo);
+		risorsa.setResource(connectionDB);
+		risorsa.setResourceType(Connection.class.getName());
+		risorsa.setIdTransazione(idTransazione);
+		
+		return risorsa;
+
+	}
 
 
 

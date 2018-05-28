@@ -28,9 +28,6 @@ package org.openspcoop2.core.controllo_traffico.beans;
  */
 public class ID {
 
-	// Il valore di questa costante è cablata anche in it.link.pdd.interceptor.openspcoop.handler.InitHandler per non mettere dipendenza con questo jar
-	public static final String CONFIGURAZIONE_GENERALE_CONTROLLO_TRAFFICO = "ConfigurazioneGeneraleControlloTraffico";
-	
 	public static final String ELENCO_POLICY_CONFIGURATE_CONTROLLO_TRAFFICO = "ElencoPolicyConfigurateControlloTraffico";
 	
 	public static final String ELENCO_ID_POLICY_CONFIGURATE_CONTROLLO_TRAFFICO = "ElencoIdPolicyConfigurateControlloTraffico";

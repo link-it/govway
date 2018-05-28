@@ -41,6 +41,7 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		super();
 	
 		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.TIPO_MESSAGGIO = new Field("tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_TYPE = new Field("multipart-content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -66,6 +67,7 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		super(father);
 	
 		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.TIPO_MESSAGGIO = new ComplexField(father,"tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.MULTIPART_CONTENT_TYPE = new ComplexField(father,"multipart-content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -89,6 +91,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	
 
 	public IField ID_TRANSAZIONE = null;
+	 
+	public IField PROTOCOLLO = null;
 	 
 	public IField TIPO_MESSAGGIO = null;
 	 

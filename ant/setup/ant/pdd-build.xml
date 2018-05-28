@@ -302,7 +302,7 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.out-response"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.out-response"/>
 					<param name="value" value="faultCodeOpV1"/>
 				</antcall>
 				<antcall target="set_property">
@@ -326,12 +326,12 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.init"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.init"/>
 					<param name="value" value="as4"/>
 				</antcall>	
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.exit"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.exit"/>
 					<param name="value" value="as4"/>
 				</antcall>	
 			</then>
@@ -343,7 +343,7 @@
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="org.openspcoop2.pdd.handler.pre-in-request"/>
+					<param name="token" value="org.openspcoop2.pdd.handler.built-in.pre-in-request"/>
 					<param name="value" value="fatturapa"/>
 				</antcall>	
 			</then>
@@ -460,7 +460,7 @@
 					<then>
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
-							<param name="token" value="org.openspcoop2.pdd.handler.out-response.faultCodeOpV1"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.built-in.out-response.faultCodeOpV1"/>
 							<param name="value" value="org.openspcoop2.protocol.spcoop.backward_compatibility.handler.IntegrazioneOutResponse"/>
 						</antcall>
 						
@@ -514,12 +514,12 @@
 					<then>
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
-							<param name="token" value="org.openspcoop2.pdd.handler.init.as4"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.built-in.init.as4"/>
 							<param name="value" value="org.openspcoop2.protocol.as4.services.InitHandler"/>
 						</antcall>	
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
-							<param name="token" value="org.openspcoop2.pdd.handler.exit.as4"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.built-in.exit.as4"/>
 							<param name="value" value="org.openspcoop2.protocol.as4.services.ExitHandler"/>
 						</antcall>	
 					</then>
@@ -536,7 +536,7 @@
 						</antcall>	
 						<antcall target="set_property">
 						    <param name="file" value="${file}"/>
-							<param name="token" value="org.openspcoop2.pdd.handler.pre-in-request.fatturapa"/>
+							<param name="token" value="org.openspcoop2.pdd.handler.built-in.pre-in-request.fatturapa"/>
 							<param name="value" value="org.openspcoop2.protocol.sdi.utils.PreInRequestHandler"/>
 						</antcall>	
 					</then>

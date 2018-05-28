@@ -420,6 +420,175 @@ public class ClassNameProperties {
 	
 	
 	
+	
+	// Handler BuiltIn
+	
+	
+	/**
+	 * Ritorna una classe 'InitHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getInitHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.init.", nome);
+	}
+	public String[] getInitHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.init.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'ExitHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getExitHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.exit.", nome);
+	}
+	public String[] getExitHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.exit.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'PreInRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getPreInRequestHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.pre-in-request.", nome);
+	}
+	public String[] getPreInRequestHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.pre-in-request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'InRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getInRequestHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-request.", nome);
+	}
+	public String[] getInRequestHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'InProtocolRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getInRequestProtocolHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-protocol-request.", nome);
+	}
+	public String[] getInRequestProtocolHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-protocol-request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'OutRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getOutRequestHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.out-request.", nome);
+	}
+	public String[] getOutRequestHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.out-request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'PostOutRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getPostOutRequestHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.post-out-request.", nome);
+	}
+	public String[] getPostOutRequestHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.post-out-request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'PreInResponseHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getPreInResponseHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.pre-in-response.", nome);
+	}
+	public String[] getPreInResponseHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.pre-in-response.");
+	}
+	
+	/**
+	 * Ritorna una classe 'InResponseHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getInResponseHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.in-response.", nome);
+	}
+	public String[] getInResponseHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.in-response.");
+	}
+	
+	/**
+	 * Ritorna una classe 'OutResponseHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getOutResponseHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.out-response.", nome);
+	}
+	public String[] getOutResponseHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.out-response.");
+	}
+	
+	/**
+	 * Ritorna una classe 'PostOutResponseHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getPostOutResponseHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.handler.built-in.post-out-response.", nome);
+	}
+	public String[] getPostOutResponseHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.handler.built-in.post-out-response.");
+	}
+	
+	/**
+	 * Ritorna una classe 'IntegrationManagerRequestHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getIntegrationManagerRequestHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.built-in.request.", nome);
+	}
+	public String[] getIntegrationManagerRequestHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.built-in.request.");
+	}
+	
+	/**
+	 * Ritorna una classe 'IntegrationManagerResponseHandlerBuiltIn' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getIntegrationManagerResponseHandlerBuiltIn(String nome){
+		return this.getValue("org.openspcoop2.pdd.integrationManager.handler.built-in.response.", nome);
+	}
+	public String[] getIntegrationManagerResponseHandlerBuiltIn() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.integrationManager.handler.built-in.response.");
+	}
+	
+	
+	
+	
+	// Handler 
+	
 	/**
 	 * Ritorna una classe 'InitHandler' se questa e' stata precedentemente registrata
 	 *

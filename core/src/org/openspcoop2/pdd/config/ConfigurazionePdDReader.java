@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
+import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -81,7 +82,9 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -480,6 +483,22 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
+	protected org.openspcoop2.core.controllo_traffico.dao.IServiceManager getControlloTrafficoServiceManager(Logger log) throws DriverConfigurazioneException{
+		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
+		if(driver instanceof DriverConfigurazioneDB) {
+			try {
+				return (org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(log).
+					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
+							((DriverConfigurazioneDB)driver).getDatasource(),
+							log);
+			}catch(Exception e) {
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+		else {
+			throw new DriverConfigurazioneException("Tipo di configurazione ["+driver.getClass().getName()+"] non supportata"); 
+		}
+	}
 
 
 

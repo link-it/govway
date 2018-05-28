@@ -39,6 +39,7 @@ import java.util.List;
  * &lt;complexType name="dump-messaggio">
  * 		&lt;sequence>
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -70,6 +71,7 @@ import java.util.List;
 @XmlType(name = "dump-messaggio", 
   propOrder = {
   	"idTransazione",
+  	"protocollo",
   	"tipoMessaggio",
   	"contentType",
   	"multipartContentType",
@@ -116,6 +118,14 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setIdTransazione(java.lang.String idTransazione) {
     this.idTransazione = idTransazione;
+  }
+
+  public java.lang.String getProtocollo() {
+    return this.protocollo;
+  }
+
+  public void setProtocollo(java.lang.String protocollo) {
+    this.protocollo = protocollo;
   }
 
   public void set_value_tipoMessaggio(String value) {
@@ -352,6 +362,10 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-transazione",required=true,nillable=false)
   protected java.lang.String idTransazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="protocollo",required=true,nillable=false)
+  protected java.lang.String protocollo;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoMessaggio;

@@ -1,19 +1,26 @@
+-- Le tracce, i dump ed i diagnostici sono inseriti con le transazioni
+-- Se si abilita un appender, disabilitare il salvataggio associato alla transazione
+-- openspcoop.properties:
+--   org.openspcoop2.pdd.transazioni.tracce.enabled
+--   org.openspcoop2.pdd.transazioni.diagnostici.enabled
+--   org.openspcoop2.pdd.transazioni.dump.enabled
+
 -- Tracciamento
-INSERT INTO tracce_appender (tipo) VALUES ('protocol');
-INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
-INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
-INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'usePdDConnection','true'); 
+-- INSERT INTO tracce_appender (tipo) VALUES ('protocol');
+-- INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
+-- INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
+-- INSERT INTO tracce_appender_prop (id_appender,nome,valore) VALUES ((select id from tracce_appender where tipo='protocol'),'usePdDConnection','true'); 
 
 -- Dump
-INSERT INTO dump_appender (tipo) VALUES ('protocol');
-INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
-INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
-INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'usePdDConnection','true');
+-- INSERT INTO dump_appender (tipo) VALUES ('protocol');
+-- INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
+-- INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'tipoDatabase','@TIPO_DATABASE@');
+-- INSERT INTO dump_appender_prop (id_appender,nome,valore) VALUES ((select id from dump_appender where tipo='protocol'),'usePdDConnection','true');
 
 -- MsgDiagnostici
-INSERT INTO msgdiag_appender (tipo) VALUES ('protocol');
-INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id from msgdiag_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
-INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id from msgdiag_appender where tipo='protocol'),'usePdDConnection','true');
+-- INSERT INTO msgdiag_appender (tipo) VALUES ('protocol');
+-- INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id from msgdiag_appender where tipo='protocol'),'datasource','org.openspcoop2.dataSource');
+-- INSERT INTO msgdiag_appender_prop (id_appender,nome,valore) VALUES ((select id from msgdiag_appender where tipo='protocol'),'usePdDConnection','true');
 
 -- PdD
 UPDATE pdd set nome='PdD@NOME_SOGGETTO@';

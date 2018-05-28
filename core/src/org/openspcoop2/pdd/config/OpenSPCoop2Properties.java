@@ -253,8 +253,7 @@ public class OpenSPCoop2Properties {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.confDirectory'. \n La directory indicata non esiste ["+getRootDirectory()+"].");
 				return false;
 			}
-
-
+			
 			// Tipo server
 			Boolean serverJ2EE = isServerJ2EE();
 			if(serverJ2EE==null){
@@ -298,6 +297,9 @@ public class OpenSPCoop2Properties {
 					loaderOpenSPCoop = Loader.getInstance();
 				}
 			}
+			
+			// EsitiProperties
+			EsitiProperties.initialize(getRootDirectory(), this.log, loaderOpenSPCoop);
 			
 			// Repository
 			String tipoRepository = getRepositoryType();
@@ -1192,282 +1194,19 @@ public class OpenSPCoop2Properties {
 			this.isGestioneOnewayStateful_1_1();
 			this.isRinegoziamentoConnessione();
 
+			// Handlers
+			this.isMergeHandlerBuiltInAndHandlerUser();
+			
+			// Handlers BuiltIn
+			this.isPrintInfoHandlerBuiltIn();
+			if(this._validateHandlersBuiltIn(className, loaderOpenSPCoop)==false) {
+				return false;
+			}
+			
+			// Handlers
 			this.isPrintInfoHandler();
-			
-			// InitHandler
-			if ( this.getInitHandler() != null ){
-				String[] tipiHandler = this.getInitHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getInitHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			
-			// ExitHandler
-			if ( this.getExitHandler() != null ){
-				String[] tipiHandler = this.getExitHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getExitHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			
-			// PreInRequestHandler
-			if ( this.getPreInRequestHandler() != null ){
-				String[] tipiHandler = this.getPreInRequestHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getPreInRequestHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// InRequestHandler
-			if ( this.getInRequestHandler() != null ){
-				String[] tipiHandler = this.getInRequestHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getInRequestHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// InRequestProtocolHandler
-			if ( this.getInRequestProtocolHandler() != null ){
-				String[] tipiHandler = this.getInRequestProtocolHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getInRequestProtocolHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// OutRequestHandler
-			if ( this.getOutRequestHandler() != null ){
-				String[] tipiHandler = this.getOutRequestHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getOutRequestHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// PostOutRequestHandler
-			if ( this.getPostOutRequestHandler() != null ){
-				String[] tipiHandler = this.getPostOutRequestHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getPostOutRequestHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// PreInResponseHandler
-			if ( this.getPreInResponseHandler() != null ){
-				String[] tipiHandler = this.getPreInResponseHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getPreInResponseHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// InResponseHandler
-			if ( this.getInResponseHandler() != null ){
-				String[] tipiHandler = this.getInResponseHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getInResponseHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// OutResponseHandler
-			if ( this.getOutResponseHandler() != null ){
-				String[] tipiHandler = this.getOutResponseHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getOutResponseHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// PostOutResponseHandler
-			if ( this.getPostOutResponseHandler() != null ){
-				String[] tipiHandler = this.getPostOutResponseHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getPostOutResponseHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// IntegrationManagerRequestHandler
-			if ( this.getIntegrationManagerRequestHandler() != null ){
-				String[] tipiHandler = this.getIntegrationManagerRequestHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getIntegrationManagerRequestHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
-			}
-			// IntegrationManagerResponseHandler
-			if ( this.getIntegrationManagerResponseHandler() != null ){
-				String[] tipiHandler = this.getIntegrationManagerResponseHandler();
-				// Check tipi registrati
-				for(int i=0; i<tipiHandler.length;i++){
-					String tipoClass = className.getIntegrationManagerResponseHandler(tipiHandler[i]);
-					if(tipoClass == null){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
-						"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
-						return false;
-					}
-					try{
-						IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
-						handler.toString();
-					}catch(Exception e){
-						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
-								"'. \n La classe non esiste: "+e.getMessage());
-						return false;
-					}
-				}
+			if(this._validateHandlers(className, loaderOpenSPCoop)==false) {
+				return false;
 			}
 			
 			// MessageSecurity
@@ -1724,6 +1463,18 @@ public class OpenSPCoop2Properties {
 			this.isRESTServices_inoltroBuste_proxyPassReverse();
 			this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
 						
+			// Transazioni
+			if(this.isTransazioniEnabled()) {
+				if(this.isTransazioniUsePddRuntimeDatasource()==false) {
+					this.getTransazioniDatasource();
+					this.getTransazioniDatasourceJndiContext();
+					this.isTransazioniDatasourceUseDBUtils();
+				}
+				this.isTransazioniSaveTracceInUniqueTransaction();
+				this.isTransazioniSaveDiagnosticiInUniqueTransaction();
+				this.isTransazioniSaveDumpInUniqueTransaction();
+			}
+			
 			// Eventi
 			if(this.isEventiEnabled()) {
 				this.isEventiDebug();
@@ -1762,7 +1513,564 @@ public class OpenSPCoop2Properties {
 	}
 
 
-
+	private boolean _validateHandlersBuiltIn(ClassNameProperties className, Loader loaderOpenSPCoop) {
+		// InitHandlerBuiltIn
+		if ( this.getInitHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getInitHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getInitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		
+		// ExitHandlerBuiltIn
+		if ( this.getExitHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getExitHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getExitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		
+		// PreInRequestHandlerBuiltIn
+		if ( this.getPreInRequestHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getPreInRequestHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getPreInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InRequestHandlerBuiltIn
+		if ( this.getInRequestHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getInRequestHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InRequestProtocolHandlerBuiltIn
+		if ( this.getInRequestProtocolHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getInRequestProtocolHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getInRequestProtocolHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// OutRequestHandlerBuiltIn
+		if ( this.getOutRequestHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getOutRequestHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PostOutRequestHandlerBuiltIn
+		if ( this.getPostOutRequestHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getPostOutRequestHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getPostOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PreInResponseHandlerBuiltIn
+		if ( this.getPreInResponseHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getPreInResponseHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getPreInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InResponseHandlerBuiltIn
+		if ( this.getInResponseHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getInResponseHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// OutResponseHandlerBuiltIn
+		if ( this.getOutResponseHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getOutResponseHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PostOutResponseHandlerBuiltIn
+		if ( this.getPostOutResponseHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getPostOutResponseHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getPostOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// IntegrationManagerRequestHandlerBuiltIn
+		if ( this.getIntegrationManagerRequestHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getIntegrationManagerRequestHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getIntegrationManagerRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// IntegrationManagerResponseHandlerBuiltIn
+		if ( this.getIntegrationManagerResponseHandlerBuiltIn() != null ){
+			String[] tipiHandlerBuiltIn = this.getIntegrationManagerResponseHandlerBuiltIn();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
+				String tipoClass = className.getIntegrationManagerResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	private boolean _validateHandlers(ClassNameProperties className, Loader loaderOpenSPCoop) {
+		// InitHandler
+		if ( this.getInitHandler() != null ){
+			String[] tipiHandler = this.getInitHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getInitHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		
+		// ExitHandler
+		if ( this.getExitHandler() != null ){
+			String[] tipiHandler = this.getExitHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getExitHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		
+		// PreInRequestHandler
+		if ( this.getPreInRequestHandler() != null ){
+			String[] tipiHandler = this.getPreInRequestHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getPreInRequestHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InRequestHandler
+		if ( this.getInRequestHandler() != null ){
+			String[] tipiHandler = this.getInRequestHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getInRequestHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InRequestProtocolHandler
+		if ( this.getInRequestProtocolHandler() != null ){
+			String[] tipiHandler = this.getInRequestProtocolHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getInRequestProtocolHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// OutRequestHandler
+		if ( this.getOutRequestHandler() != null ){
+			String[] tipiHandler = this.getOutRequestHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getOutRequestHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PostOutRequestHandler
+		if ( this.getPostOutRequestHandler() != null ){
+			String[] tipiHandler = this.getPostOutRequestHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getPostOutRequestHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PreInResponseHandler
+		if ( this.getPreInResponseHandler() != null ){
+			String[] tipiHandler = this.getPreInResponseHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getPreInResponseHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// InResponseHandler
+		if ( this.getInResponseHandler() != null ){
+			String[] tipiHandler = this.getInResponseHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getInResponseHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// OutResponseHandler
+		if ( this.getOutResponseHandler() != null ){
+			String[] tipiHandler = this.getOutResponseHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getOutResponseHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// PostOutResponseHandler
+		if ( this.getPostOutResponseHandler() != null ){
+			String[] tipiHandler = this.getPostOutResponseHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getPostOutResponseHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// IntegrationManagerRequestHandler
+		if ( this.getIntegrationManagerRequestHandler() != null ){
+			String[] tipiHandler = this.getIntegrationManagerRequestHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getIntegrationManagerRequestHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		// IntegrationManagerResponseHandler
+		if ( this.getIntegrationManagerResponseHandler() != null ){
+			String[] tipiHandler = this.getIntegrationManagerResponseHandler();
+			// Check tipi registrati
+			for(int i=0; i<tipiHandler.length;i++){
+				String tipoClass = className.getIntegrationManagerResponseHandler(tipiHandler[i]);
+				if(tipoClass == null){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+					"'. \n Il tipo non esiste nelle classi registrate in OpenSPCoop");
+					return false;
+				}
+				try{
+					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
+					handler.toString();
+				}catch(Exception e){
+					this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+							"'. \n La classe non esiste: "+e.getMessage());
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 
 	public List<String> getKeywordsIntegrazione(){
@@ -9918,7 +10226,420 @@ public class OpenSPCoop2Properties {
 
 
 
+	private static Boolean mergeHandlerBuiltInAndHandlerUser = null;
+	public boolean isMergeHandlerBuiltInAndHandlerUser() {	
+		if(OpenSPCoop2Properties.mergeHandlerBuiltInAndHandlerUser==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.merge");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.mergeHandlerBuiltInAndHandlerUser = Boolean.parseBoolean(v);
+				} 
+				else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.mergeHandlerBuiltInAndHandlerUser = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.mergeHandlerBuiltInAndHandlerUser;
+	}
+	
+	/*---------- Gestori handler built-in -------------*/
+	
+	private static Boolean printInfoHandlerBuiltIn = null;
+	public boolean isPrintInfoHandlerBuiltIn() {	
+		if(OpenSPCoop2Properties.printInfoHandlerBuiltIn==null){
+			try{ 
+				String v = null;
+				v = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.printInfo");
+				if(v!=null){
+					v = v.trim();
+					OpenSPCoop2Properties.printInfoHandlerBuiltIn = Boolean.parseBoolean(v);
+				} 
+				else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata, viene utilizzato il default="+true);
+					OpenSPCoop2Properties.printInfoHandlerBuiltIn = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata correttamente,  errore:"+e.getMessage());
+			} 
+		}
+		return OpenSPCoop2Properties.printInfoHandlerBuiltIn;
+	}
+	
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo InitHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo InitHandlerBuiltIn
+	 */
+	private static String[] tipiInitHandlerBuiltIn = null;
+	private static boolean tipiInitHandlerBuiltInRead = false;
+	public String[] getInitHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiInitHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.init");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiInitHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiInitHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.init': "+e.getMessage());
+				OpenSPCoop2Properties.tipiInitHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiInitHandlerBuiltInRead = true;
+		}
 
+		return OpenSPCoop2Properties.tipiInitHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo ExitHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo ExitHandlerBuiltIn
+	 */
+	private static String[] tipiExitHandlerBuiltIn = null;
+	private static boolean tipiExitHandlerBuiltInRead = false;
+	public String[] getExitHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiExitHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.exit");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiExitHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiExitHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.exit': "+e.getMessage());
+				OpenSPCoop2Properties.tipiExitHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiExitHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiExitHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo PreInRequestHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo PreInRequestHandlerBuiltIn
+	 */
+	private static String[] tipiPreInRequestHandlerBuiltIn = null;
+	private static boolean tipiPreInRequestHandlerBuiltInRead = false;
+	public String[] getPreInRequestHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiPreInRequestHandlerBuiltIn;
+	}
+
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo InRequestHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo InRequestHandlerBuiltIn
+	 */
+	private static String[] tipiInRequestHandlerBuiltIn = null;
+	private static boolean tipiInRequestHandlerBuiltInRead = false;
+	public String[] getInRequestHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiInRequestHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiInRequestHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiInRequestHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiInRequestHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiInRequestHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiInRequestHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo InRequestProtocolHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo InRequestProtocolHandlerBuiltIn
+	 */
+	private static String[] tipiInRequestProtocolHandlerBuiltIn = null;
+	private static boolean tipiInRequestProtocolHandlerBuiltInRead = false;
+	public String[] getInRequestProtocolHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-protocol-request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-protocol-request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiInRequestProtocolHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo OutRequestHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo OutRequestHandlerBuiltIn
+	 */
+	private static String[] tipiOutRequestHandlerBuiltIn = null;
+	private static boolean tipiOutRequestHandlerBuiltInRead = false;
+	public String[] getOutRequestHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiOutRequestHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiOutRequestHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiOutRequestHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiOutRequestHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiOutRequestHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiOutRequestHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo PostOutRequestHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo PostOutRequestHandlerBuiltIn
+	 */
+	private static String[] tipiPostOutRequestHandlerBuiltIn = null;
+	private static boolean tipiPostOutRequestHandlerBuiltInRead = false;
+	public String[] getPostOutRequestHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiPostOutRequestHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo PreInResponseHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo PreInResponseHandlerBuiltIn
+	 */
+	private static String[] tipiPreInResponseHandlerBuiltIn = null;
+	private static boolean tipiPreInResponseHandlerBuiltInRead = false;
+	public String[] getPreInResponseHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.pre-in-response");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.pre-in-response': "+e.getMessage());
+				OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiPreInResponseHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo InResponseHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo InResponseHandlerBuiltIn
+	 */
+	private static String[] tipiInResponseHandlerBuiltIn = null;
+	private static boolean tipiInResponseHandlerBuiltInRead = false;
+	public String[] getInResponseHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiInResponseHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.in-response");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiInResponseHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiInResponseHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.in-response': "+e.getMessage());
+				OpenSPCoop2Properties.tipiInResponseHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiInResponseHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiInResponseHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo OutResponseHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo OutResponseHandlerBuiltIn
+	 */
+	private static String[] tipiOutResponseHandlerBuiltIn = null;
+	private static boolean tipiOutResponseHandlerBuiltInRead = false;
+	public String[] getOutResponseHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiOutResponseHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.out-response");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiOutResponseHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiOutResponseHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.out-response': "+e.getMessage());
+				OpenSPCoop2Properties.tipiOutResponseHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiOutResponseHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiOutResponseHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo PostOutResponseHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo PostOutResponseHandlerBuiltIn
+	 */
+	private static String[] tipiPostOutResponseHandlerBuiltIn = null;
+	private static boolean tipiPostOutResponseHandlerBuiltInRead = false;
+	public String[] getPostOutResponseHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.handler.built-in.post-out-response");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.handler.built-in.post-out-response': "+e.getMessage());
+				OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiPostOutResponseHandlerBuiltIn;
+	}
+
+	/**
+	 * Restituisce l'elenco degli handlers di tipo IntegrationManagerRequestHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo IntegrationManagerRequestHandlerBuiltIn
+	 */
+	private static String[] tipiIntegrationManagerRequestHandlerBuiltIn = null;
+	private static boolean tipiIntegrationManagerRequestHandlerBuiltInRead = false;
+	public String[] getIntegrationManagerRequestHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.request");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.request': "+e.getMessage());
+				OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiIntegrationManagerRequestHandlerBuiltIn;
+	}
+	
+	/**
+	 * Restituisce l'elenco degli handlers di tipo IntegrationManagerResponseHandlerBuiltIn
+	 * 
+	 * @return  Restituisce l'elenco degli handlers di tipo IntegrationManagerResponseHandlerBuiltIn
+	 */
+	private static String[] tipiIntegrationManagerResponseHandlerBuiltIn = null;
+	private static boolean tipiIntegrationManagerResponseHandlerBuiltInRead = false;
+	public String[] getIntegrationManagerResponseHandlerBuiltIn() {
+		if(OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltInRead == false){
+			try{ 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.integrationManager.handler.built-in.response");
+				if(value!=null){
+					value = value.trim();
+					String [] r = value.split(",");
+					OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltIn = r;
+				}else{
+					OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltIn = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura dei tipi di handler 'org.openspcoop2.pdd.integrationManager.handler.built-in.response': "+e.getMessage());
+				OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltIn = null;
+			}   
+			OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltInRead = true;
+		}
+
+		return OpenSPCoop2Properties.tipiIntegrationManagerResponseHandlerBuiltIn;
+	}
+	
+	
+	
+	
+	
 
 	/*---------- Gestori handler -------------*/
 	
@@ -12917,6 +13638,170 @@ public class OpenSPCoop2Properties {
 
 	
 	
+	/* ------------- Transazioni ---------------------*/
+	
+	private static Boolean isTransazioniEnabled = null;
+	public boolean isTransazioniEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniEnabled = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniEnabled;
+	}	
+	
+	private static Boolean isTransazioniUsePddRuntimeDatasource = null;
+	public boolean isTransazioniUsePddRuntimeDatasource() {	
+		if(OpenSPCoop2Properties.isTransazioniUsePddRuntimeDatasource==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniUsePddRuntimeDatasource = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniUsePddRuntimeDatasource = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniUsePddRuntimeDatasource;
+	}
+	
+	private static String getTransazioniDatasource = null;
+	public String getTransazioniDatasource() throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniDatasource==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getTransazioniDatasource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniDatasource;
+	}
+	
+	private static Properties getTransazioniDatasourceJndiContext = null;
+	public Properties getTransazioniDatasourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniDatasourceJndiContext==null){
+			try{ 
+				OpenSPCoop2Properties.getTransazioniDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.property.");
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniDatasourceJndiContext;
+	}
+	
+	private static Boolean isTransazioniDatasourceUseDBUtils = null;
+	public boolean isTransazioniDatasourceUseDBUtils() {	
+		if(OpenSPCoop2Properties.isTransazioniDatasourceUseDBUtils==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.datasource.useDSUtils");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniDatasourceUseDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniDatasourceUseDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniDatasourceUseDBUtils;
+	}
+	
+	private static Boolean isTransazioniSaveTracceInUniqueTransaction = null;
+	public boolean isTransazioniSaveTracceInUniqueTransaction() {	
+		if(OpenSPCoop2Properties.isTransazioniSaveTracceInUniqueTransaction==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniSaveTracceInUniqueTransaction = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniSaveTracceInUniqueTransaction = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniSaveTracceInUniqueTransaction;
+	}
+	
+	private static Boolean isTransazioniSaveDiagnosticiInUniqueTransaction = null;
+	public boolean isTransazioniSaveDiagnosticiInUniqueTransaction() {	
+		if(OpenSPCoop2Properties.isTransazioniSaveDiagnosticiInUniqueTransaction==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniSaveDiagnosticiInUniqueTransaction = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniSaveDiagnosticiInUniqueTransaction = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniSaveDiagnosticiInUniqueTransaction;
+	}
+	
+	private static Boolean isTransazioniSaveDumpInUniqueTransaction = null;
+	public boolean isTransazioniSaveDumpInUniqueTransaction() {	
+		if(OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.dump.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled', viene utilizzato il default=true : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniSaveDumpInUniqueTransaction;
+	}
+	
+	
+	
 	
 	/* ------------- Eventi ---------------------*/
 	
@@ -13122,7 +14007,7 @@ public class OpenSPCoop2Properties {
 			}    
 		}
 
-		return OpenSPCoop2Properties.getEventiTimerIntervalSeconds;
+		return OpenSPCoop2Properties.getFileSystemRecoveryTimerIntervalSeconds;
 	}
 		
 	private static Integer getFileSystemRecoveryTimerMaxAttempts = null;

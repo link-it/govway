@@ -38,21 +38,19 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.jmx.JMXUtils;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
-import org.openspcoop2.core.controllo_traffico.beans.ID;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.slf4j.Logger;
 
 
 /**
@@ -449,6 +447,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	/* Variabili per la gestione JMX */
 	private Logger log;
+	private Logger logSql;
 	private GestoreControlloTraffico gestoreControlloTraffico;
 	private IGestorePolicyAttive gestorePolicyAttive;
 	
@@ -457,6 +456,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 
 		boolean force = true;
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(force);  // per gli errori
+		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
 
 		this.refreshDati();
 		
@@ -470,10 +470,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		try{
 		
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-			Object o = configPdDManager.getSingleExtendedInfoConfigurazione(ID.CONFIGURAZIONE_GENERALE_CONTROLLO_TRAFFICO);
-			if(o!=null){
-				configurazioneGenerale = (ConfigurazioneGenerale) o;
-			}
+			configurazioneGenerale = configPdDManager.getControlloTrafficoServiceManager(this.logSql).getConfigurazioneGeneraleServiceSearch().get();
 			
 			if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsEnabled()) {
 				if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsWarningOnly()) {
