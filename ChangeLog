@@ -1,3 +1,9 @@
+2018-05-28  Giovanni Bussu <bussu@link.it>
+
+	* [Utils]
+	Risolto Bug OP-723
+	In OpenAPI se il body della richiesta era presente ma non era required, la validazione non veniva eseguita.
+
 2018-04-26  Andrea Poli <apoli@link.it>
 
 	* [Pdd, Pdd, ProtocolloSDI, ProtocolloSPCoop, ProtocolloTrasparente]
