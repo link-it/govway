@@ -5695,13 +5695,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	 */
 	@Override
 	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return getGenericProperties(tipologia, null, null,true);
+	}
+	
+	/**
+	 * Restituisce le proprieta' generiche utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	public List<GenericProperties> getGenericProperties(String tipologia, Integer idLista, ISearch ricerca, boolean throwNotFoundException) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		PreparedStatement stm2 = null;
 		ResultSet rs2 = null;
-
+		
+		Integer offset = null;
+		Integer limit =null;
+		String search = "";
+		if(idLista != null && ricerca != null) {
+			limit = ricerca.getPageSize(idLista);
+			offset = ricerca.getIndexIniziale(idLista);
+			search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		}
+		
+		
 		String sqlQuery = "";
 
 		if (this.atomica) {
@@ -5718,13 +5738,52 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 		try {
 			List<GenericProperties> genericPropertiesList = new ArrayList<>();
-
+			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+			sqlQueryObject.addSelectCountField("*", "cont");
+			if(tipologia!=null) {
+				sqlQueryObject.addWhereCondition("tipologia=?");
+			}
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			 
+			stm = con.prepareStatement(sqlQuery);
+			if(tipologia!=null) {
+				stm.setString(1, tipologia);
+			}
+			rs = stm.executeQuery();
+			if (rs.next() && ricerca != null)
+				ricerca.setNumEntries(idLista,rs.getInt(1));
+			rs.close();
+			stm.close();
+
+			// ricavo le entries
+			if (limit!= null && limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
 			sqlQueryObject.addSelectField("*");
 			if(tipologia!=null) {
 				sqlQueryObject.addWhereCondition("tipologia=?");
 			}
+			if (!search.equals("")) {
+				//query con search
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+			} 
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addOrderBy("nome");
+			sqlQueryObject.setSortType(true);
+			if(limit!= null)
+				sqlQueryObject.setLimit(limit);
+			if(offset != null)
+				sqlQueryObject.setOffset(offset);
+			
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 			if(tipologia!=null) {
@@ -5770,7 +5829,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			rs.close();
 			stm.close();
 
-			if(genericPropertiesList==null || genericPropertiesList.size()<=0)
+			if((genericPropertiesList==null || genericPropertiesList.size()<=0) && throwNotFoundException)
 				throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
 			
 			return genericPropertiesList;
@@ -18841,6 +18900,384 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				//ignore
 			}
 
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public GenericProperties getGenericProperties(long idGenericProperties) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		PreparedStatement stm2 = null;
+		ResultSet rs2 = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getGenericProperties");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			GenericProperties genericProperties = null;
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id=?");
+			
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setLong(1, idGenericProperties);
+			rs = stm.executeQuery();
+
+			if(rs.next()){
+				
+				genericProperties = new GenericProperties();
+				genericProperties.setNome(rs.getString("nome"));
+				genericProperties.setDescrizione(rs.getString("descrizione"));
+				genericProperties.setTipologia(rs.getString("tipologia"));
+				genericProperties.setTipo(rs.getString("tipo"));
+				
+				long idP = rs.getLong("id");
+				genericProperties.setId(idP);
+				
+				//prendo le proprieta
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_props = ?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm2 = con.prepareStatement(sqlQuery);
+				stm2.setLong(1, idP);
+				rs2 = stm2.executeQuery();
+				Property genericProperty = null;
+				while(rs2.next())
+				{
+					genericProperty = new Property();
+					//proprieta
+					genericProperty.setId(rs2.getLong("id"));
+					genericProperty.setNome(rs2.getString("nome"));
+					genericProperty.setValore(rs2.getString("valore"));
+					genericProperties.addProperty(genericProperty);
+				}
+				rs2.close();
+				stm2.close();
+				
+			}
+			rs.close();
+			stm.close();
+
+			if(genericProperties==null )
+				throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
+			
+			return genericProperties;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  SqlException: " + se.getMessage(),se);
+		}catch (DriverConfigurazioneNotFound e) {
+			throw new DriverConfigurazioneNotFound(e);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs2!=null) rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) stm2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public GenericProperties getGenericProperties(String nome, String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		PreparedStatement stm2 = null;
+		ResultSet rs2 = null;
+		
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getGenericProperties");
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[getGenericProperties] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			GenericProperties genericProperties = null;
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTIES);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome=?");
+			sqlQueryObject.addWhereCondition("tipologia=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			stm.setString(2, tipologia);
+			rs = stm.executeQuery();
+
+			if(rs.next()){
+				
+				genericProperties = new GenericProperties();
+				genericProperties.setNome(rs.getString("nome"));
+				genericProperties.setDescrizione(rs.getString("descrizione"));
+				genericProperties.setTipologia(rs.getString("tipologia"));
+				genericProperties.setTipo(rs.getString("tipo"));
+				
+				long idP = rs.getLong("id");
+				genericProperties.setId(idP);
+				
+				//prendo le proprieta
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.CONFIG_GENERIC_PROPERTY);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_props = ?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm2 = con.prepareStatement(sqlQuery);
+				stm2.setLong(1, idP);
+				rs2 = stm2.executeQuery();
+				Property genericProperty = null;
+				while(rs2.next())
+				{
+					genericProperty = new Property();
+					//proprieta
+					genericProperty.setId(rs2.getLong("id"));
+					genericProperty.setNome(rs2.getString("nome"));
+					genericProperty.setValore(rs2.getString("valore"));
+					genericProperties.addProperty(genericProperty);
+				}
+				rs2.close();
+				stm2.close();
+				
+			}
+			rs.close();
+			stm.close();
+
+			if(genericProperties==null )
+				throw new DriverConfigurazioneNotFound("Generic Properties non presenti");
+			
+			return genericProperties;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  SqlException: " + se.getMessage(),se);
+		}catch (DriverConfigurazioneNotFound e) {
+			throw new DriverConfigurazioneNotFound(e);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[getGenericProperties]  Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs2!=null) rs2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm2!=null) stm2.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<PortaApplicativa> getPorteApplicativeByPolicyGestioneToken(String nome) throws DriverConfigurazioneException{
+		String nomeMetodo = "getPorteApplicativeByPolicyGestioneToken";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("token_policy=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nome);
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+
+				Long id = risultato.getLong("id");
+				lista.add(this.getPortaApplicativa(id));
+
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	public List<PortaDelegata> getPorteDelegateByPolicyGestioneToken(String nome) throws DriverConfigurazioneException{
+		String nomeMetodo = "getPorteDelegateByPolicyGestioneToken";
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("token_policy=?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, nome);
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+
+				Long id = risultato.getLong("id");
+				lista.add(this.getPortaDelegata(id));
+
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
 			try {
 				if (error && this.atomica) {
 					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");

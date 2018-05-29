@@ -382,6 +382,12 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_NOME = "nome";
     public static final String PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_COLUMN_VALORE = "valore";
     
+    /*COLONNE TABELLA CONFIG_GENERIC_PROPERTY */
+    public static final String CONFIG_GENERIC_PROPERTY_COLUMN_ID_PROPS = "id_props";
+    public static final String CONFIG_GENERIC_PROPERTY_COLUMN_NOME = "nome";
+    public static final String CONFIG_GENERIC_PROPERTY_COLUMN_VALORE = "valore";
+    
+    
     /**
      * PROPRIETA CONNETTORE
      */

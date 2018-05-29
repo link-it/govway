@@ -126,7 +126,8 @@ public final class Liste
     public final static int CONFIGURAZIONE_EXTENDED;	
     
     public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY;	
-    public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;	
+    public final static int CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY;
+    public final static int CONFIGURAZIONE_GESTIONE_POLICY_TOKEN;	
 	
 
     private static int numeroListe = 0;
@@ -209,6 +210,7 @@ public final class Liste
         CONFIGURAZIONE_EXTENDED = numeroListe ++;	
     	CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY = numeroListe ++;
     	CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY = numeroListe ++;
+    	CONFIGURAZIONE_GESTIONE_POLICY_TOKEN = numeroListe ++;
     }
     
 	
