@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
@@ -2460,6 +2461,16 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
+					 * Operazioni su Generic Properties *
+					 **********************************************************/
+					// Generic Propertie
+					if(oggetto instanceof GenericProperties) {
+						GenericProperties genericProperties = (GenericProperties) oggetto;
+						driver.getDriverConfigurazioneDB().createGenericProperties(genericProperties);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
 					 * Extended *
 					 **********************************************************/
 					if(extendedBean!=null && extendedServlet!=null){
@@ -2967,6 +2978,16 @@ public class ControlStationCore {
 					}
 					
 					/***********************************************************
+					 * Operazioni su Generic Properties *
+					 **********************************************************/
+					// Generic Propertie
+					if(oggetto instanceof GenericProperties) {
+						GenericProperties genericProperties = (GenericProperties) oggetto;
+						driver.getDriverConfigurazioneDB().updateGenericProperties(genericProperties);
+						doSetDati = false;
+					}
+					
+					/***********************************************************
 					 * Extended *
 					 **********************************************************/
 					if(extendedBean!=null && extendedServlet!=null){
@@ -3407,6 +3428,16 @@ public class ControlStationCore {
 					if(oggetto instanceof AttivazionePolicy) {
 						AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 						driver.deleteAttivazionePolicy(policy); 
+						doSetDati = false;
+					}
+					
+					/***********************************************************
+					 * Operazioni su Generic Properties *
+					 **********************************************************/
+					// Generic Propertie
+					if(oggetto instanceof GenericProperties) {
+						GenericProperties genericProperties = (GenericProperties) oggetto;
+						driver.getDriverConfigurazioneDB().deleteGenericProperties(genericProperties);
 						doSetDati = false;
 					}
 					
@@ -4399,6 +4430,14 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			StringBuffer bf = new StringBuffer();
 			bf.append("IDActivePolicy[").append(policy.getIdActivePolicy()).append("] IDPolicy[").append(policy.getIdPolicy()).append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		// Generic Propertie
+		else if(oggetto instanceof GenericProperties) {
+			GenericProperties genericProperties = (GenericProperties) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuffer bf = new StringBuffer();
+			bf.append("Nome[").append(genericProperties.getNome()).append("] Tipologia[").append(genericProperties.getTipologia()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}
 		// IExtendedBean

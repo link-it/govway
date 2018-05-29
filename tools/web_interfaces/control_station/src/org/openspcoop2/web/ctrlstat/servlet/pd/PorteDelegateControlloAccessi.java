@@ -32,9 +32,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -42,6 +45,8 @@ import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -111,12 +116,19 @@ public class PorteDelegateControlloAccessi extends Action {
 			String applicaModificaS = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
+			String gestioneToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			String gestioneTokenPolicy = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			String gestioneTokenValidazioneInput = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			String gestioneTokenIntrospection = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			String gestioneTokenUserInfo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			String gestioneTokenTokenForward = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
 			// Prendo il nome della porta
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore();
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 
 			PortaDelegata portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			String idporta = portaDelegata.getNome();
@@ -171,6 +183,19 @@ public class PorteDelegateControlloAccessi extends Action {
 			
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI;
 			
+			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
+			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
+			
+			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			
+			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+				policyLabels[(i+1)] = genericProperties.getNome();
+				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
 			if(	porteDelegateHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
@@ -214,12 +239,65 @@ public class PorteDelegateControlloAccessi extends Action {
 				if(autorizzazioneContenuti==null){
 					autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
 				}
+				
+				if(gestioneToken == null) {
+					if(portaDelegata.getGestioneToken() != null) {
+						gestioneTokenPolicy = portaDelegata.getGestioneToken().getPolicy();
+						if(gestioneTokenPolicy == null) {
+							gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+							gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+						} else {
+							gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+						}
+						
+						StatoFunzionalitaConWarning validazione = portaDelegata.getGestioneToken().getValidazione();
+						if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenValidazioneInput = "";
+						}else { 
+							gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalitaConWarning introspection = portaDelegata.getGestioneToken().getIntrospection();
+						if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenIntrospection = "";
+						}else { 
+							gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalitaConWarning userinfo = portaDelegata.getGestioneToken().getUserInfo();
+						if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenUserInfo = "";
+						}else { 
+							gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalita tokenForward = portaDelegata.getGestioneToken().getForward();
+						if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+							gestioneTokenTokenForward = "";
+						}else { 
+							gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+					else {
+						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+						gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+						gestioneTokenValidazioneInput = "";
+						gestioneTokenIntrospection = "";
+						gestioneTokenUserInfo = "";
+						gestioneTokenTokenForward = "";
+					}
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				porteDelegateHelper.controlloAccessi(dati);
+				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				
+				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -246,14 +324,23 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
 					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli);
-					
+			
+			if(isOk) {
+				isOk = porteDelegateHelper.controlloAccessiGestioneTokenCheck(TipoOperazione.OTHER, gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, isPortaDelegata, portaDelegata);
+			}		
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
+				porteDelegateHelper.controlloAccessi(dati);
+				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				
+				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -305,6 +392,23 @@ public class PorteDelegateControlloAccessi extends Action {
 				}
 			}
 			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			
+			if(portaDelegata.getGestioneToken() == null)
+				portaDelegata.setGestioneToken(new GestioneToken());
+			
+			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
+				portaDelegata.getGestioneToken().setValidazione(ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput) ? StatoFunzionalitaConWarning.ABILITATO : StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setIntrospection(ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setUserInfo(ServletUtils.isCheckBoxEnabled(gestioneTokenUserInfo) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setForward(ServletUtils.isCheckBoxEnabled(gestioneTokenTokenForward) ? StatoFunzionalita.ABILITATO :StatoFunzionalita.DISABILITATO); 	
+			} else {
+				portaDelegata.getGestioneToken().setPolicy(null);
+				portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
+				portaDelegata.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
+			}
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -370,7 +474,58 @@ public class PorteDelegateControlloAccessi extends Action {
 				autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
 			}
 			
+			if(portaDelegata.getGestioneToken() != null) {
+				gestioneTokenPolicy = portaDelegata.getGestioneToken().getPolicy();
+				if(gestioneTokenPolicy == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				} else {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
+				StatoFunzionalitaConWarning validazione = portaDelegata.getGestioneToken().getValidazione();
+				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenValidazioneInput = "";
+				}else { 
+					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalitaConWarning introspection = portaDelegata.getGestioneToken().getIntrospection();
+				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenIntrospection = "";
+				}else { 
+					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalitaConWarning userinfo = portaDelegata.getGestioneToken().getUserInfo();
+				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenUserInfo = "";
+				}else { 
+					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalita tokenForward = portaDelegata.getGestioneToken().getForward();
+				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+					gestioneTokenTokenForward = "";
+				}else { 
+					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+				}
+			}
+			else {
+				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				gestioneTokenValidazioneInput = "";
+				gestioneTokenIntrospection = "";
+				gestioneTokenUserInfo = "";
+				gestioneTokenTokenForward = "";
+			}
+			
+			porteDelegateHelper.controlloAccessi(dati);
+			
 			porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+			
+			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
 
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,

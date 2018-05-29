@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -371,6 +372,17 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}
 			
+			// Generic Properties
+			else if(o instanceof GenericProperties) {
+				GenericProperties genericProperties = (GenericProperties) o;
+				String id = genericProperties.getNome();
+				if(this.prefix){
+					return "[GenericProperties] "+ id;
+				}else{
+					return id;
+				}
+			}
+			
 			// IExtendedBean
 			else if(o instanceof IExtendedBean){
 				IExtendedBean w = (IExtendedBean) o;
@@ -679,6 +691,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}
 			
+			// Generic Properties
+			else if(o instanceof GenericProperties) {
+				return null; // oggetto non modificabile nei dati identificativi
+			}
+			
 			// IExtendedBean
 			else if(o instanceof IExtendedBean){
 				IExtendedBean w = (IExtendedBean) o;
@@ -760,6 +777,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(ConfigurazionePolicy.class.getName());
 			oggetti.add(AttivazionePolicy.class.getName());
 			
+			// Generic Properties
+			oggetti.add(GenericProperties.class.getName());
+			
 			// IExtendedBean
 			oggetti.add("ExtendedBean");
 			
@@ -811,6 +831,9 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(ConfigurazioneGenerale.class.getName());
 			oggetti.add(ConfigurazionePolicy.class.getName());
 			oggetti.add(AttivazionePolicy.class.getName());
+			
+			// Generic Properties
+			oggetti.add(GenericProperties.class.getName());
 			
 			// IExtendedBean
 			oggetti.add(IExtendedBean.class.getName());

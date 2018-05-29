@@ -1252,7 +1252,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 4; // configurazione, tracciamento, controllo del traffico e audit
+					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, gestione policy token e audit
 
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
@@ -1293,6 +1293,9 @@ public class ConsoleHelper {
 					index++;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
+					index++;
+					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
 					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
@@ -3059,6 +3062,71 @@ public class ConsoleHelper {
 		
 	}
 	
+	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto) {
+		DataElement de = new DataElement();
+		de.setType(DataElementType.SUBTITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
+		dati.addElement(de);
+		
+		String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
+		
+		// stato abilitazione
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
+		de.setType(DataElementType.SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+		de.setValues(valoriAbilitazione);
+		de.setPostBack(true);
+		de.setSelected(gestioneToken);
+		dati.addElement(de);
+		
+		if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
+			// nome della policy da utilizzare
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			de.setValues(gestioneTokenPolicyValues);
+			de.setValues(gestioneTokenPolicyLabels);
+			de.setSelected(gestioneTokenPolicy);
+			de.setRequired(true);
+			dati.addElement(de);
+
+			// validazione input
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			de.setSelected(gestioneTokenValidazioneInput);
+			dati.addElement(de);
+			
+			// introspection
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			de.setSelected(gestioneTokenIntrospection);
+			dati.addElement(de);
+			
+			// userInfo
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			de.setSelected(gestioneTokenUserInfo);
+			dati.addElement(de);
+			
+			// token forward
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			de.setType(DataElementType.CHECKBOX);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			de.setSelected(gestioneTokenForward);
+			dati.addElement(de);
+		}
+	}
+	
 	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
 			String autenticazione, 
 			String autorizzazione, String autorizzazioneCustom, 
@@ -3520,6 +3588,41 @@ public class ConsoleHelper {
 			
 			return true;
 
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean controlloAccessiGestioneTokenCheck(TipoOperazione tipoOperazione, String abilitato, String policy, String validazioneInput, String introspection, String userInfo, String forward, boolean isPortaDelegata, Object oggetto
+			) throws Exception{
+		try {
+			
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(abilitato)){
+				
+				if(StringUtils.isEmpty(policy) || policy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));
+					return false;
+				}
+				
+				
+				boolean validazioneInputB = ServletUtils.isCheckBoxEnabled(validazioneInput);
+				boolean introspectionB = ServletUtils.isCheckBoxEnabled(introspection);
+				boolean userInfoB = ServletUtils.isCheckBoxEnabled(userInfo);
+				boolean forwardB = ServletUtils.isCheckBoxEnabled(forward);
+				
+				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
+					StringBuffer sb = new StringBuffer();
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT).append(", ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION).append(", ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO).append(" o ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA, sb.toString()));
+					return false;
+				}
+				
+			}			
+			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -4955,18 +5058,24 @@ public class ConsoleHelper {
 			configurazione.getItem(key).setValueFromRequest(this.getParameter(key)); 
 		}
 	}
-	
 	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean) throws Exception {
-		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
-		de.setValue(configName);
-		de.setType(DataElementType.HIDDEN);
-		de.setName(CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME);
-		dati.addElement(de);
-		
-		for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
-			if(item.isVisible())
-				dati.addElement(item.toDataElement());
+		return addPropertiesConfigToDati(tipoOperazione, dati, configName, configurazioneBean, true);
+	}
+	
+	public Vector<DataElement> addPropertiesConfigToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String configName, ConfigBean configurazioneBean, boolean addHiddenConfigName) throws Exception {
+		if(addHiddenConfigName) {
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PROPERTIES_CONFIG_NAME);
+			de.setValue(configName);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_PROPERTIES_CONFIG_NAME);
+			dati.addElement(de);
+		}
+		if(configurazioneBean != null) {
+			for (BaseItemBean<?> item : configurazioneBean.getListaItem()) {
+				if(item.isVisible())
+					dati.addElement(item.toDataElement());
+			}
 		}
 		
 		return dati;

@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
@@ -357,6 +358,59 @@ public final class PorteDelegateChange extends Action {
 				if(vx.getAcceptMtomMessage()!=null)
 					if (vx.getAcceptMtomMessage().equals(StatoFunzionalita.ABILITATO)) 
 						applicaMTOM = Costanti.CHECK_BOX_ENABLED;
+			}
+			
+			String gestioneToken = null;
+			String gestioneTokenPolicy = null;
+			String gestioneTokenValidazioneInput = null;
+			String gestioneTokenIntrospection = null;
+			String gestioneTokenUserInfo = null;
+			String gestioneTokenTokenForward = null;
+			
+			if(pde.getGestioneToken() != null) {
+				gestioneTokenPolicy = pde.getGestioneToken().getPolicy();
+				if(gestioneTokenPolicy == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				} else {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
+				StatoFunzionalitaConWarning validazione = pde.getGestioneToken().getValidazione();
+				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenValidazioneInput = "";
+				}else { 
+					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalitaConWarning introspection = pde.getGestioneToken().getIntrospection();
+				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenIntrospection = "";
+				}else { 
+					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalitaConWarning userinfo = pde.getGestioneToken().getUserInfo();
+				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenUserInfo = "";
+				}else { 
+					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalita tokenForward = pde.getGestioneToken().getForward();
+				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+					gestioneTokenTokenForward = "";
+				}else { 
+					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+			}
+			else {
+				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				gestioneTokenValidazioneInput = "";
+				gestioneTokenIntrospection = "";
+				gestioneTokenUserInfo = "";
+				gestioneTokenTokenForward = "";
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -744,7 +798,7 @@ public final class PorteDelegateChange extends Action {
 						servS, as,serviceBinding,
 						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
-						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null));
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -899,7 +953,7 @@ public final class PorteDelegateChange extends Action {
 						servS, as,serviceBinding,
 						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
-						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null));
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 

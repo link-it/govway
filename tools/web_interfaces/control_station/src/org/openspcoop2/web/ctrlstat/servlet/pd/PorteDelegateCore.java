@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -38,6 +39,8 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -118,6 +121,27 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 		
 	}
+	
+	public void configureControlloAccessiGestioneToken (PortaDelegata portaDelegata, String gestioneToken, String gestioneTokenPolicy, String gestioneTokenValidazioneInput, 
+			String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) {
+		if(portaDelegata.getGestioneToken() == null)
+			portaDelegata.setGestioneToken(new GestioneToken());
+		
+		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+			portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
+			portaDelegata.getGestioneToken().setValidazione(ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput) ? StatoFunzionalitaConWarning.ABILITATO : StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setIntrospection(ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setUserInfo(ServletUtils.isCheckBoxEnabled(gestioneTokenUserInfo) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setForward(ServletUtils.isCheckBoxEnabled(gestioneTokenForward) ? StatoFunzionalita.ABILITATO :StatoFunzionalita.DISABILITATO); 	
+		} else {
+			portaDelegata.getGestioneToken().setPolicy(null);
+			portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
+			portaDelegata.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
+		}
+	}
+	
 	
 	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;

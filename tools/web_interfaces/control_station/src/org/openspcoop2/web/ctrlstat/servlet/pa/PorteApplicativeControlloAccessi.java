@@ -33,9 +33,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -44,6 +47,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -112,6 +117,12 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String applicaModificaS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MODIFICA);
 			boolean applicaModifica = ServletUtils.isCheckBoxEnabled(applicaModificaS);
 
+			String gestioneToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			String gestioneTokenPolicy = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			String gestioneTokenValidazioneInput = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			String gestioneTokenIntrospection = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			String gestioneTokenUserInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			String gestioneTokenTokenForward = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -119,6 +130,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 			// Prendo il nome della porta
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
@@ -188,6 +200,19 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
 			
+			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
+			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
+			
+			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			
+			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+				policyLabels[(i+1)] = genericProperties.getNome();
+				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
 			if(	porteApplicativeHelper.isEditModeInProgress() && !applicaModifica){
 
 				if (autenticazione == null) {
@@ -231,12 +256,64 @@ public class PorteApplicativeControlloAccessi extends Action {
 				if(autorizzazioneContenuti==null){
 					autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
 				}
+				
+				if(gestioneToken == null) {
+					if(pa.getGestioneToken() != null) {
+						gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
+						if(gestioneTokenPolicy == null) {
+							gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+							gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+						} else {
+							gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+						}
+						
+						StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
+						if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenValidazioneInput = "";
+						}else { 
+							gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
+						if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenIntrospection = "";
+						}else { 
+							gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
+						if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+							gestioneTokenUserInfo = "";
+						}else { 
+							gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+						}
+						
+						StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
+						if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+							gestioneTokenTokenForward = "";
+						}else { 
+							gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+						}
+					}
+					else {
+						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+						gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+						gestioneTokenValidazioneInput = "";
+						gestioneTokenIntrospection = "";
+						gestioneTokenUserInfo = "";
+						gestioneTokenTokenForward = "";
+					}
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				porteApplicativeHelper.controlloAccessi(dati);
 
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				
+				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
@@ -264,13 +341,21 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneRuoliTipologia, ruoloMatch, 
 					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli);
 					
+			if(isOk) {
+				isOk = porteApplicativeHelper.controlloAccessiGestioneTokenCheck(TipoOperazione.OTHER, gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, isPortaDelegata, pa);
+			}
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
+				porteApplicativeHelper.controlloAccessi(dati);
+				
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				
+				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
@@ -322,6 +407,24 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 			}
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			
+			if(pa.getGestioneToken() == null)
+				pa.setGestioneToken(new GestioneToken());
+			
+			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				pa.getGestioneToken().setPolicy(gestioneTokenPolicy);
+				pa.getGestioneToken().setValidazione(ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput) ? StatoFunzionalitaConWarning.ABILITATO : StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setIntrospection(ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setUserInfo(ServletUtils.isCheckBoxEnabled(gestioneTokenUserInfo) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setForward(ServletUtils.isCheckBoxEnabled(gestioneTokenTokenForward) ? StatoFunzionalita.ABILITATO :StatoFunzionalita.DISABILITATO); 	
+			} else {
+				pa.getGestioneToken().setPolicy(null);
+				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
+			}
+			
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -387,7 +490,57 @@ public class PorteApplicativeControlloAccessi extends Action {
 				autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
 			}
 			
+			if(pa.getGestioneToken() != null) {
+				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
+				if(gestioneTokenPolicy == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				} else {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
+				StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
+				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenValidazioneInput = "";
+				}else { 
+					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
+				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenIntrospection = "";
+				}else { 
+					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
+				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenUserInfo = "";
+				}else { 
+					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+				}
+				
+				StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
+				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+					gestioneTokenTokenForward = "";
+				}else { 
+					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+				}
+			}
+			else {
+				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				gestioneTokenValidazioneInput = "";
+				gestioneTokenIntrospection = "";
+				gestioneTokenUserInfo = "";
+				gestioneTokenTokenForward = "";
+			}
+			
+			porteApplicativeHelper.controlloAccessi(dati);
+			
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+			
+			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
 
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,

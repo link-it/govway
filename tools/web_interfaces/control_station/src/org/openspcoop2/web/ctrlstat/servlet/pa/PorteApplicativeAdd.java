@@ -40,6 +40,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
@@ -70,6 +71,8 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -165,6 +168,13 @@ public final class PorteApplicativeAdd extends Action {
 				azione = "";
 			}
 			
+			String gestioneToken = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			String gestioneTokenPolicy = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			String gestioneTokenValidazioneInput = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			String gestioneTokenIntrospection = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			String gestioneTokenUserInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			String gestioneTokenTokenForward = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -172,6 +182,7 @@ public final class PorteApplicativeAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteApplicativeCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoNomeSoggettoProprietario = null;
@@ -389,6 +400,19 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 			
+			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
+			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
+			
+			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			
+			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+				policyLabels[(i+1)] = genericProperties.getNome();
+				policyValues[(i+1)] = genericProperties.getNome();
+			}
+			
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
@@ -457,6 +481,15 @@ public final class PorteApplicativeAdd extends Action {
 						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(defaultAutorizzazione).getValue();
 					}
 				}
+				
+				if(gestioneToken == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+					gestioneTokenValidazioneInput = "";
+					gestioneTokenIntrospection = "";
+					gestioneTokenUserInfo = "";
+					gestioneTokenTokenForward = "";
+				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
@@ -470,7 +503,7 @@ public final class PorteApplicativeAdd extends Action {
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta, modeaz,  azid,  azione, forceWsdlBased,false,false,
-						false,null);
+						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				pd.setDati(dati);
 
@@ -512,7 +545,7 @@ public final class PorteApplicativeAdd extends Action {
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta, modeaz,  azid, azione, forceWsdlBased, false,false,
-						false,null);
+						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				pd.setDati(dati);
 

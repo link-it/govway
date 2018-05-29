@@ -2355,6 +2355,34 @@
             <forward name="configurazioneControlloTrafficoAttivazionePolicyDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneControlloTrafficoAttivazionePolicyError" path="/jsplib/info.jsp"/>
         </action>
+        
+        
+        <!--  Configurazione Policy Gestione Token -->
+
+        <action path="/configurazionePolicyGestioneTokenAdd" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePolicyGestioneTokenAdd" 
+        	scope="request" validate="true">
+            <forward name="configurazionePolicyGestioneTokenAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePolicyGestioneTokenList" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePolicyGestioneTokenList" 
+        	scope="request" validate="true">
+            <forward name="configurazionePolicyGestioneTokenList" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePolicyGestioneTokenChange" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePolicyGestioneTokenChange"
+            scope="request" validate="true">
+            <forward name="configurazionePolicyGestioneTokenChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/configurazionePolicyGestioneTokenDel" type="org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazionePolicyGestioneTokenDel" 
+        	scope="request" validate="true">
+            <forward name="configurazionePolicyGestioneTokenDel" path="/jsplib/listElement.jsp"/>
+            <forward name="configurazionePolicyGestioneTokenError" path="/jsplib/info.jsp"/>
+        </action>
     
      	<!-- Audit (Pagina Iniziale)  -->
     

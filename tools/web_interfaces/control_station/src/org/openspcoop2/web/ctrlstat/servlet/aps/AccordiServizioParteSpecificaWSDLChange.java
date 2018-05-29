@@ -754,7 +754,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					null, null, null, null, null,
 					null, null, null, null, null,
 					null, null, null, null,
-					null);
+					null,null,null,null,null,null,null,null,null);
 
 			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,

@@ -40,6 +40,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
@@ -73,6 +74,8 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -150,6 +153,13 @@ public final class PorteDelegateAdd extends Action {
 			String autorizzazioneRuoliTipologia = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
 			String ruoloMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
 			
+			String gestioneToken = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			String gestioneTokenPolicy = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+			String gestioneTokenValidazioneInput = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+			String gestioneTokenIntrospection = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+			String gestioneTokenUserInfo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+			String gestioneTokenTokenForward = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			
 			if(sp == null) {
 				tiposp = "";
 				sp = "";
@@ -189,6 +199,7 @@ public final class PorteDelegateAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
+			ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
 
 			String tmpTitle = null, protocollo = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
@@ -363,6 +374,19 @@ public final class PorteDelegateAdd extends Action {
 			int numAzioni = 0;
 			if (azioniList != null)
 				numAzioni = azioniList.length;
+			
+			List<GenericProperties> gestorePolicyTokenList = confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN, null);
+			String [] policyLabels = new String[gestorePolicyTokenList.size() + 1];
+			String [] policyValues = new String[gestorePolicyTokenList.size() + 1];
+			
+			policyLabels[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			policyValues[0] = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+			
+			for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+			GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+				policyLabels[(i+1)] = genericProperties.getNome();
+				policyValues[(i+1)] = genericProperties.getNome();
+			}
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -453,6 +477,15 @@ public final class PorteDelegateAdd extends Action {
 				if (applicaMTOM == null) {
 					applicaMTOM = "";
 				}
+				
+				if(gestioneToken == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+					gestioneTokenValidazioneInput = "";
+					gestioneTokenIntrospection = "";
+					gestioneTokenUserInfo = "";
+					gestioneTokenTokenForward = "";
+				}
 
 				// i pattern sono i nomi
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.ADD, 
@@ -473,7 +506,8 @@ public final class PorteDelegateAdd extends Action {
 						forceWsdlBased,applicaMTOM,false,
 						servS,as,serviceBinding,
 						statoPorta,false,false,
-						false,null);
+						false,null,
+						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				pd.setDati(dati);
 
@@ -520,7 +554,9 @@ public final class PorteDelegateAdd extends Action {
 						forceWsdlBased,applicaMTOM,false,
 						servS,as,serviceBinding,
 						statoPorta,false,false,
-						false,null);
+						false,null,
+						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward
+						);
 
 				pd.setDati(dati);
 

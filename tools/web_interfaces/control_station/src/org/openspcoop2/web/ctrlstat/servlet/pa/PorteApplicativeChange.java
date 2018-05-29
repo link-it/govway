@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.id.IDAccordo;
@@ -365,6 +366,59 @@ public final class PorteApplicativeChange extends Action {
 				if(pa.getRuoli()!=null && pa.getRuoli().getMatch()!=null){
 					ruoloMatch = pa.getRuoli().getMatch().getValue();
 				}
+			}
+			
+			String gestioneToken = null; 
+			String gestioneTokenPolicy = null;
+			String gestioneTokenValidazioneInput = null;
+			String gestioneTokenIntrospection = null;
+			String gestioneTokenUserInfo = null;
+			String gestioneTokenTokenForward = null;
+			
+			if(pa.getGestioneToken() != null) {
+				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
+				if(gestioneTokenPolicy == null) {
+					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				} else {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
+				StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
+				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenValidazioneInput = "";
+				}else { 
+					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
+				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenIntrospection = "";
+				}else { 
+					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
+				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
+					gestioneTokenUserInfo = "";
+				}else { 
+					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+				
+				StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
+				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
+					gestioneTokenTokenForward = "";
+				}else { 
+					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+				}
+			}
+			else {
+				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
+				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				gestioneTokenValidazioneInput = "";
+				gestioneTokenIntrospection = "";
+				gestioneTokenUserInfo = "";
+				gestioneTokenTokenForward = "";
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -769,7 +823,7 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null));
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				pd.setDati(dati);
 
@@ -934,7 +988,7 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null));
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
 
 				pd.setDati(dati);
 

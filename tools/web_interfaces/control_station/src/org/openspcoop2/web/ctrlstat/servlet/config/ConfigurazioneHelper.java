@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.Dump;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
@@ -49,6 +50,7 @@ import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -99,6 +101,7 @@ import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
@@ -3337,8 +3340,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 	
-	public void addRegistrazioneMessaggiToDati(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,
-			Vector<DataElement> dati, Boolean contaListe) {
+	public void addRegistrazioneMessaggiToDati(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati, Boolean contaListe) {
 		DataElement de;
 		// DUMP
 		
@@ -3367,11 +3369,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
-			de = new DataElement();
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
-			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
-			dati.addElement(de);
+			String oldDumpApplicativo =null;
+			if(configurazione.getDump().getStato()!=null)
+				oldDumpApplicativo = configurazione.getDump().getStato().toString();
+			
+			if(dumpApplicativo.equals(oldDumpApplicativo)) {
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+				de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE);
+				dati.addElement(de);
+			}
 		}
 		
 		if (this.isModalitaAvanzata()) {
@@ -3391,10 +3399,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE);
-		de.setType(DataElementType.SUBTITLE);
-		dati.addElement(de);
+		if(this.isModalitaAvanzata()){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE);
+			de.setType(DataElementType.SUBTITLE);
+			dati.addElement(de);
+		}
 		
 		String[] tipoDumpConnettorePD = {
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
@@ -11264,5 +11274,167 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		
 		return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_MODIFICATA_CON_SUCCESSO_SENZA_RIAVVIO_RICHIESTO;
+	}
+
+	public void prepareGestorePolicyTokenList(Search ricerca, List<GenericProperties> lista, int idLista) throws Exception{
+		try {
+			ServletUtils.addListElementIntoSession(this.session, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+			
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+			
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<Parameter>();
+
+			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN, null));
+			
+			this.pd.setSearchLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+			}else{
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+			
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME, search);
+			}
+			
+			// setto le label delle colonne
+			String[] labels = { 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO 
+			};
+			this.pd.setLabels(labels);
+		
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				for (int i = 0; i < lista.size(); i++) {
+					Vector<DataElement> e = new Vector<DataElement>();
+					GenericProperties policy = lista.get(i);
+					
+					Parameter pPolicyId = new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID, policy.getId() + ""); 
+
+					DataElement de = new DataElement();
+					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_CHANGE, pPolicyId);
+					de.setValue(policy.getNome());
+					de.setIdToRemove(""+policy.getId());
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(policy.getDescrizione());
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(policy.getTipo());
+					e.addElement(de);
+					
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+
+	public Vector<DataElement> addPolicyGestioneTokenToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String id, String nome, String descrizione, String tipo, String[] propConfigPolicyGestioneTokenLabelList, String[] propConfigPolicyGestioneTokenList) throws Exception {
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		// id
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(id);
+		dati.addElement(de);
+		
+		// nome
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setRequired(true);
+		} else {
+			de.setType(DataElementType.TEXT);
+		}
+		de.setValue(nome);
+		dati.addElement(de);
+		
+		// descrizione
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setValue(descrizione);
+		dati.addElement(de);
+		
+		
+		// tipo
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			de.setType(DataElementType.SELECT);
+			de.setPostBack(true);
+			de.setValues(propConfigPolicyGestioneTokenList);
+			de.setLabels(propConfigPolicyGestioneTokenLabelList);
+			de.setSelected(tipo); 
+		}else {
+			de.setType(DataElementType.TEXT);
+			de.setValue(tipo);
+		}
+		dati.addElement(de);
+		
+		return dati;
+	}
+
+	public boolean policyGestioneTokenCheckData(TipoOperazione tipoOperazione, String nome, String descrizione,	String tipo,String tipologia) throws Exception {
+		
+		if(tipoOperazione.equals(TipoOperazione.ADD)) {
+			// Nome
+			if(StringUtils.isEmpty(nome)){
+				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME+"'";
+				this.pd.setMessage(messaggio);
+				return false;
+			}
+			
+			// Tipo
+			if(StringUtils.isEmpty(tipo)  || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tipo)){
+				String messaggio = "Deve essere indicato un valore in '"+ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO+"'";
+				this.pd.setMessage(messaggio);
+				return false;
+			}
+		
+			try {
+				// check duplicati per tipologia
+				this.confCore.getGenericProperties(nome, tipologia);
+				String messaggio = "&Egrave; gi&agrave; presente un Policy Gestione Token con nome " + nome ;
+				this.pd.setMessage(messaggio);
+				return false;
+			} catch(DriverConfigurazioneNotFound e) {
+				// ok
+			} catch(Exception e) {
+				throw e;
+			}
+		}
+		return true;
 	}
 }
