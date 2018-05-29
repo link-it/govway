@@ -117,13 +117,13 @@ public class ConfigBean {
 			// un elemento e' salvabile se non e' visible o e' da forzare 
 			boolean save = saveProperty != null && (saveProperty.isForce() || (StringUtils.isNotEmpty(itemValue) && (item.isVisible() && !ItemType.HIDDEN.equals(item.getItemType()))));
 			
-//			System.out.println("SAVE -> Item: Name ["+item.getName()+"] Value ["+itemValue+"] Force: ["+(saveProperty != null ? saveProperty.isForce() : false)+"] VisibleAND!hidden: ["+(item.isVisible() && !ItemType.HIDDEN.equals(item.getItemType()))+"] SAVE: ["+save+"]");  
+			System.out.println("SAVE -> Item: Name ["+item.getName()+"] Value ["+itemValue+"] Force: ["+(saveProperty != null ? saveProperty.isForce() : false)+"] VisibleAND!hidden: ["+(item.isVisible() && !ItemType.HIDDEN.equals(item.getItemType()))+"] SAVE: ["+save+"]");  
 			if(save) { // per ogni elemento salvabile
 
 				String propertyName = saveProperty.getName(); // nome della property di destinazione
 				String propertiesName = saveProperty.getProperties() != null ? saveProperty.getProperties() : Costanti.NOME_MAPPA_PROPERTIES_DEFAULT; // nome delle properties di destinazione (vuoto quelle di default)
 
-//				System.out.println("SAVE -> Item: propertyName ["+propertyName+"] propertiesName ["+propertiesName+"]");  				
+				System.out.println("SAVE -> Item: propertyName ["+propertyName+"] propertiesName ["+propertiesName+"]");  				
 				Properties p = null; // controllo esistenza properties selezionate
 				if(map.containsKey(propertiesName)) {
 					p = map.remove(propertiesName);

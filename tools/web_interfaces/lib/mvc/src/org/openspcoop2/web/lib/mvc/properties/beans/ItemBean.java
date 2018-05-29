@@ -51,10 +51,11 @@ public class ItemBean extends BaseItemBean<Item>{
 
 	@Override
 	public void init(String value) {
-		Property saveProperty = this.getSaveProperty();
+//		Property saveProperty = this.getSaveProperty();
 
 		// caso value == null e non devo forzare con il valore letto dal db cerco un default
-		if(value == null && !saveProperty.isForce()) {
+		if(value == null) {
+//			if(value == null && !saveProperty.isForce()) {
 			switch(this.getItem().getType()) {
 			case CHECKBOX:
 				this.value = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
@@ -136,7 +137,18 @@ public class ItemBean extends BaseItemBean<Item>{
 
 	@Override
 	public void setValueFromRequest(String parameterValue) {
-		this.value = parameterValue;
+		switch(this.getItem().getType()) {
+		case HIDDEN:
+			this.value = (parameterValue == null && this.getSaveProperty().isForce()) ? this.getItem().getValue() : parameterValue;
+			break;
+		case CHECKBOX:
+		case NUMBER:
+		case SELECT:
+		case TEXT:
+		default:
+			this.value = parameterValue;
+			break;
+		}
 	}
 
 	@Override
@@ -150,16 +162,18 @@ public class ItemBean extends BaseItemBean<Item>{
 		case CHECKBOX:
 			String valueToCheck = null;
 			if(ServletUtils.isCheckBoxEnabled(this.value)) {
-				valueToCheck = this.getSaveProperty().getSelectedValue();
+				valueToCheck = this.getSaveProperty().getSelectedValue() != null ? this.getSaveProperty().getSelectedValue() : null;
 			} else {
-				valueToCheck = this.getSaveProperty().getUnselectedValue();
+				valueToCheck = this.getSaveProperty().getUnselectedValue() != null ? this.getSaveProperty().getUnselectedValue() :null;
 			}
 			
 			if(valueToCheck == null) {
 				valueToCheck = ServletUtils.isCheckBoxEnabled(this.value) ? "true" : "false";
 			}
+			
 			return valueToCheck;
 		case HIDDEN:
+			return this.getSaveProperty().isForce() ? this.getItem().getValue() : this.value;
 		case NUMBER:
 		case SELECT:
 		case TEXT:

@@ -142,6 +142,11 @@ public class ValidationEngine {
 					throw new ValidationException("Il nome delle properties ["+item.getProperty().getProperties()+"] indicato nella collection non e' dichiarato nella sezione collection della configurazione");
 			}
 			
+			// il force puo' essere utilizzato solo da elementi hidden
+			if(item.getProperty().isForce() && !item.getType().equals(ItemType.HIDDEN)) {
+				throw new ValidationException("L'attributo Force puo' essere utilizzato solo per gli items di tipo Hidden");
+			}
+			
 			switch(item.getType()){
 			case CHECKBOX:
 				validaCheckBox(item);
@@ -179,18 +184,25 @@ public class ValidationEngine {
 
 	private static void validaHidden(Item item) throws ValidationException{
 		Property property = item.getProperty();
+		
+		if(item.getValue() == null) {
+			throw new ValidationException("L'attributo Value e' obbligatorio per gli elementi di tipo Hidden");
+		}
+		
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
 			if(item.getValue().contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Value ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
+		
+		
 	}
 
 	private static void validaNumber(Item item) throws ValidationException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault().contains(property.getAppendSeparator()))
+			if(item.getDefault() != null && item.getDefault().contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 	}
@@ -199,7 +211,7 @@ public class ValidationEngine {
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault().contains(property.getAppendSeparator()))
+			if(item.getDefault() != null && item.getDefault().contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 		
@@ -212,7 +224,7 @@ public class ValidationEngine {
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault().contains(property.getAppendSeparator()))
+			if(item.getDefault() != null &&  item.getDefault().contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 	}
