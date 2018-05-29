@@ -14,6 +14,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
@@ -149,6 +150,20 @@ public class RepositoryGestioneStateful {
 	}
 	
 	
+	public static void addMessaggio(String idTransazione, Messaggio messaggio) throws TransactionStatefulNotSupportedException {
+		
+		checkGestioneAbilitata();
+		
+		StatefulObject s = new StatefulObject(messaggio.getProtocollo());
+		s.setIdTransazione(idTransazione);
+		s.setObject(messaggio);
+		s.setType(StatefulObjectType.MESSAGGIO);
+		
+		// OUT OF MEMORY PROBLEM 
+		//repository.add(s);
+		invokeGestoreTransazioniStateful(s,null);
+
+	}
 	
 	public static void addMsgDiagnostico(String idTransazione, MsgDiagnostico msgDiag) throws TransactionStatefulNotSupportedException {
 		

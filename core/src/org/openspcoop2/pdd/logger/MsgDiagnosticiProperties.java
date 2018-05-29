@@ -46,6 +46,26 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 
 public class MsgDiagnosticiProperties {	
 
+	/** Costanti */
+	
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE = "DYNAMIC_INFO_TYPE";
+	
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_VALUE = "DYNAMIC_INFO_VALUE";
+	
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR = "#_#";
+	
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = "###";
+	
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = " ";
+	
+	public final static String DIAGNOSTIC_TYPE_POLICY_CONTROLLO_TRAFFICO = "CT";
+	
+	public final static String NON_PRESENTE = "-";
+	
+	public static final String SEPARATOR = " ";
+	
+	
+	
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
 

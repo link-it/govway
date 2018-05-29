@@ -194,7 +194,11 @@ public final class CostantiDB {
     public final static String TRACCE_TABLE_FOR_ID = "tracce_init_seq";
     
     /*TRANSAZIONI*/
-    public static final String DUMP_TRANSAZIONI = "transazioni";
+    public static final String TRANSAZIONI = "transazioni";
+	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_1 = "INDEX_TR_FILTROD_REQ";
+	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
+	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
+	public final static String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
     
     /*EVENTI*/
     public static final String DUMP_EVENTI = "notifiche_eventi";

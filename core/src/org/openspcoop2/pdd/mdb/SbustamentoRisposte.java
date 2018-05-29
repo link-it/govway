@@ -43,7 +43,6 @@ import org.openspcoop2.pdd.core.EJBUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
-import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -831,7 +830,7 @@ public class SbustamentoRisposte extends GenericLib {
 						throw new Exception("GestoreFiltroDuplicati non registrato ("+gestoreFiltroDuplicatiType+")");
 					}
 					IFiltroDuplicati gestoreFiltroDuplicati = (IFiltroDuplicati) this.loader.newInstance(gestoreFiltroDuplicatiClass);
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONNECTION_PDD, ((OpenSPCoopState)openspcoopstate).getConnectionDB() );
+					pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPENSPCOOP_STATE, openspcoopstate );
 					gestoreFiltroDuplicati.init(pddContext);
 					if(gestoreFiltroDuplicati instanceof FiltroDuplicati){
 						((FiltroDuplicati)gestoreFiltroDuplicati).setHistoryBuste(historyBuste);
@@ -900,7 +899,7 @@ public class SbustamentoRisposte extends GenericLib {
 					return esito;
 				}
 				
-				pddContext.removeObject(org.openspcoop2.core.constants.Costanti.CONNECTION_PDD);
+				pddContext.removeObject(org.openspcoop2.core.constants.Costanti.OPENSPCOOP_STATE);
 			}
 			
 

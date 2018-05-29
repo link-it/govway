@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
@@ -29,6 +30,8 @@ public class Transaction {
 		}
 	}
 	
+	/** RequestInfo */
+	private RequestInfo requestInfo;
 	
 	/** urlInvocazione */
 	private String urlInvocazione;
@@ -99,6 +102,10 @@ public class Transaction {
 	
 
 	/** GET */
+	
+	public RequestInfo getRequestInfo() {
+		return this.requestInfo;
+	}
 	
 	public String getUrlInvocazione() {
 		return this.urlInvocazione;
@@ -214,6 +221,19 @@ public class Transaction {
 	
 	/** SET 
 	 * @throws TransactionDeletedException */
+	
+	public void setRequestInfo(RequestInfo requestInfo) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.deleted) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.requestInfo = requestInfo;
+			}
+		}else{
+			this.requestInfo = requestInfo;
+		}
+	}
 	
 	public void setUrlInvocazione(String urlInvocazione) throws TransactionDeletedException {
 		if(this.gestioneStateful){

@@ -15,6 +15,8 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoFinestra;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
+import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.CategoriaEventoControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
@@ -22,6 +24,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.DatiTempiRisposta;
 import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.RisultatoVerificaPolicy;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.date.DateManager;
@@ -35,7 +38,7 @@ public class PolicyVerifier {
 			ActivePolicy activePolicy,
 			IDUnivocoGroupByPolicy datiGroupBy, PdDContext pddContext,
 			MsgDiagnostico msgDiag, 
-			// RIMETTERE Transaction tr, 
+			Transaction tr, 
 			DatiTransazione datiTransazione, boolean isPddCongestionata, DatiTempiRisposta tempiRisposta,
 			List<Boolean> pddContext_policyApplicabile) throws Exception{
 				
@@ -575,23 +578,19 @@ public class PolicyVerifier {
 			if(rilevataViolazione){
 				if(risultatoVerificaPolicy.isWarningOnly()){
 					violazionePolicy_warningOnly = true;
-					/* // RIMETTERE
 					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
 							+"_"+
 							CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY.getValue()
 							+"_"+
 							activePolicy.getInstanceConfiguration().getIdActivePolicy());
-							*/
 				}
 				else{
 					violazionePolicy = true;
-					/* // RIMETTERE
 					tr.addEventoGestione(TipoEvento.RATE_LIMITING_POLICY.getValue()
 							+"_"+
 							CodiceEventoControlloTraffico.VIOLAZIONE.getValue()
 							+"_"+
 							activePolicy.getInstanceConfiguration().getIdActivePolicy());
-							*/
 				}
 				dataEventoPolicyViolated = DateManager.getDate();
 				

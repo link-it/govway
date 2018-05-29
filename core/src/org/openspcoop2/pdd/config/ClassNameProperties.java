@@ -860,6 +860,20 @@ public class ClassNameProperties {
 	
 	
 	/**
+	 * Ritorna una classe 'IRateLimiting' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getRateLimiting(String nome){
+		return this.getValue("org.openspcoop2.pdd.controlloTraffico.rateLimiting.", nome);
+	}
+	public String[] getRateLimiting() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.controlloTraffico.rateLimiting.");
+	}
+	
+	
+	
+	/**
 	 * Ritorna una classe estesa la cui interfaccia dipende da quella indicata nel primo, parametro
 	 *
 	 * 

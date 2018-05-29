@@ -117,6 +117,7 @@ public class TimerFileSystemRecoveryThread extends Thread{
 			
 			try{
 				
+				// Init
 				this.loggerTracciamentoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.TracciamentoOpenSPCoopProtocolAppender();
 				OpenspcoopAppender tracciamentoOpenSPCoopAppender = new OpenspcoopAppender();
 				tracciamentoOpenSPCoopAppender.setTipo("__timerFileSystemRecovery");
@@ -189,7 +190,7 @@ public class TimerFileSystemRecoveryThread extends Thread{
 				this.loggerDumpOpenSPCoopAppender.isAlive();
 				
 			}catch(Exception e){
-				throw new Exception("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
+				throw new Exception("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
 			} 
 			
 		}

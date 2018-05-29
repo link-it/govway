@@ -52,6 +52,11 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
+import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -146,10 +151,6 @@ public class ConfigurazionePdDManager {
 	
 	
 	/* ********  U T I L S  ******** */ 
-	
-	public org.openspcoop2.core.controllo_traffico.dao.IServiceManager getControlloTrafficoServiceManager(Logger log) throws DriverConfigurazioneException{
-		return this.configurazionePdDReader.getControlloTrafficoServiceManager(log);
-	}
 	
 	public void isAlive() throws CoreException{
 		this.configurazionePdDReader.isAlive();
@@ -916,6 +917,28 @@ public class ConfigurazionePdDManager {
 	
 	public List<IDServizioApplicativo> getAllIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getAllIdServiziApplicativi(filtroRicerca, this.getConnection());
+	}
+	
+	/* ******** CONTROLLO TRAFFICO ******** */
+	
+	public ConfigurazioneGenerale getConfigurazioneControlloTraffico() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazioneControlloTraffico(this.getConnection());
+	}
+	
+	public ElencoIdPolicyAttive getElencoIdPolicyAttive(boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getElencoIdPolicyAttive(this.getConnection(), useCache);
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getAttivazionePolicy(this.getConnection(), useCache, id);
+	}
+	
+	public ElencoIdPolicy getElencoIdPolicy(boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getElencoIdPolicy(this.getConnection(), useCache);
+	}
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getConfigurazionePolicy(this.getConnection(), useCache, id);
 	}
 	
 }

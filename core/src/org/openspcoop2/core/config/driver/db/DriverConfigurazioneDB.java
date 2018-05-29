@@ -201,9 +201,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	// Datasource per la connessione al DB
 	public DataSource datasource = null;
-	public DataSource getDatasource() {
-		return this.datasource;
-	}
 
 	// Connection passata al momento della creazione dell'oggetto
 	private Connection globalConnection = null;

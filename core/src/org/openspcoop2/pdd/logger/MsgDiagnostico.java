@@ -41,6 +41,11 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
+import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -788,6 +793,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -998,6 +1009,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1127,6 +1144,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1251,6 +1274,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1375,6 +1404,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato	
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1500,6 +1535,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1624,6 +1665,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1746,6 +1793,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					//	Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1869,6 +1922,12 @@ public class MsgDiagnostico {
 				}
 				
 				if(msgDiag.getIdTransazione()!=null) {
+					
+					// TransazioneContext
+					if(this.openspcoopProperties.isTransazioniSaveDiagnosticiInUniqueTransaction()) {
+						this.logMsgDiagnosticoInTransactionContext(msgDiag);
+					}
+					
 					// Msg Diagnostico personalizzato
 					for(int i=0; i<this.loggerMsgDiagnosticoOpenSPCoopAppender.size();i++){
 						try{
@@ -1932,7 +1991,32 @@ public class MsgDiagnostico {
 
 	
 	
-	
+	private void logMsgDiagnosticoInTransactionContext(org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico msgDiag) {
+		Exception exc = null;
+		boolean gestioneStateful = false;
+		try {
+			Transaction tr = TransactionContext.getTransaction(msgDiag.getIdTransazione(),false);
+			tr.addMsgDiagnostico(msgDiag);
+		}catch(TransactionDeletedException e){
+			gestioneStateful = true;
+		}catch(TransactionNotExistsException e){
+			gestioneStateful = true;
+		}catch(Exception e){
+			exc = e;
+		}
+		if(gestioneStateful){
+			try{
+				//System.out.println("@@@@@REPOSITORY@@@@@ LOG MSG DIAG ID TRANSAZIONE ["+idTransazione+"] ADD");
+				RepositoryGestioneStateful.addMsgDiagnostico(msgDiag.getIdTransazione(), msgDiag);
+			}catch(Exception e){
+				exc = e;
+			}
+		}
+		if(exc!=null) {
+			logError("Errore durante l'emissione del msg diagnostico nel contesto della transazione: "+exc.getMessage(),exc);
+			gestioneErroreDiagnostica(exc);
+		}
+	}
 	
 	
 	private org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico getMsgDiagnostico(Date gdo,int severitaLivelloOpenSPCoop2,String msg,String codiceDiagnostico){

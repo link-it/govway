@@ -12,37 +12,37 @@ public class GeneratoreMessaggiErrore {
 
 	
 	// identificativi diagnostici parziali per policy violate
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_SIMULTANEE = "interceptor.controlloTraffico.policy.violata.risorsaNumeroRichieste.simultaneo";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE = "interceptor.controlloTraffico.policy.violata.risorsaNumeroRichieste";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_OCCUPAZIONE_BANDA = "interceptor.controlloTraffico.policy.violata.risorsaOccupazioneBanda";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_COMPLESSIVO = "interceptor.controlloTraffico.policy.violata.risorsaTempoComplessivo";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_MEDIO = "interceptor.controlloTraffico.policy.violata.risorsaTempoMedio";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO = "interceptor.controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "interceptor.controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "interceptor.controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_SIMULTANEE = "controlloTraffico.policy.violata.risorsaNumeroRichieste.simultaneo";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE = "controlloTraffico.policy.violata.risorsaNumeroRichieste";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_OCCUPAZIONE_BANDA = "controlloTraffico.policy.violata.risorsaOccupazioneBanda";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_COMPLESSIVO = "controlloTraffico.policy.violata.risorsaTempoComplessivo";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_TEMPO_MEDIO = "controlloTraffico.policy.violata.risorsaTempoMedio";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccesso";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
 	
 	// identificativi diagnostici parziali per applicabilità policy
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "interceptor.controlloTraffico.policy.applicabilita.nonCongestionato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO = "interceptor.controlloTraffico.policy.applicabilita.controlloCongestioneDisabilitato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_RILEVATO = "interceptor.controlloTraffico.policy.applicabilita.degradoPrestazionale.rilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_NON_RILEVATO = "interceptor.controlloTraffico.policy.applicabilita.degradoPrestazionale.nonRilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_RILEVATO = "interceptor.controlloTraffico.policy.applicabilita.statoAllarme.rilevato";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_NON_RILEVATO = "interceptor.controlloTraffico.policy.applicabilita.statoAllarme.nonRilevato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO = "controlloTraffico.policy.applicabilita.controlloCongestioneDisabilitato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.rilevato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_DEGRADO_PRESTAZIONALE_NON_RILEVATO = "controlloTraffico.policy.applicabilita.degradoPrestazionale.nonRilevato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.rilevato";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_STATO_ALLARME_NON_RILEVATO = "controlloTraffico.policy.applicabilita.statoAllarme.nonRilevato";
 	
 	// identificativi diagnostici
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED = "interceptor.controlloTraffico.maxRequestsViolated";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY = "interceptor.controlloTraffico.maxRequestsViolatedWarningOnly";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_PDD_CONGESTIONATA = "interceptor.controlloTraffico.pddCongestionata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO = "interceptor.controlloTraffico.policy.controlloInCorso";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_SUCCESSO = "interceptor.controlloTraffico.policy.controlloTerminato.richiestaNonBloccata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE = "interceptor.controlloTraffico.policy.controlloTerminato.richiestaBloccata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA = "interceptor.controlloTraffico.policy.disabilitata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA = "interceptor.controlloTraffico.policy.filtrata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE = "interceptor.controlloTraffico.policy.nonApplicabile";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA = "interceptor.controlloTraffico.policy.violata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY = "interceptor.controlloTraffico.policy.violataWarningOnly";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA = "interceptor.controlloTraffico.policy.rispettata";
-	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE = "interceptor.controlloTraffico.policy.inErrore";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED = "controlloTraffico.maxRequestsViolated";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_MAXREQUESTS_VIOLATED_WARNING_ONLY = "controlloTraffico.maxRequestsViolatedWarningOnly";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_PDD_CONGESTIONATA = "controlloTraffico.pddCongestionata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_IN_CORSO = "controlloTraffico.policy.controlloInCorso";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_SUCCESSO = "controlloTraffico.policy.controlloTerminato.richiestaNonBloccata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE = "controlloTraffico.policy.controlloTerminato.richiestaBloccata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_DISABILITATA = "controlloTraffico.policy.disabilitata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_FILTRATA = "controlloTraffico.policy.filtrata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_NON_APPLICABILE = "controlloTraffico.policy.nonApplicabile";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA = "controlloTraffico.policy.violata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_VIOLATA_WARNING_ONLY = "controlloTraffico.policy.violataWarningOnly";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_RISPETTATA = "controlloTraffico.policy.rispettata";
+	public final static String MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_IN_ERRORE = "controlloTraffico.policy.inErrore";
 	
 	
 	

@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
-import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -82,11 +81,14 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
-import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
+import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
+import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -483,22 +485,6 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected org.openspcoop2.core.controllo_traffico.dao.IServiceManager getControlloTrafficoServiceManager(Logger log) throws DriverConfigurazioneException{
-		IDriverConfigurazioneGet driver = this.configurazionePdD.getDriverConfigurazionePdD();
-		if(driver instanceof DriverConfigurazioneDB) {
-			try {
-				return (org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(log).
-					getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
-							((DriverConfigurazioneDB)driver).getDatasource(),
-							log);
-			}catch(Exception e) {
-				throw new DriverConfigurazioneException(e.getMessage(),e);
-			}
-		}
-		else {
-			throw new DriverConfigurazioneException("Tipo di configurazione ["+driver.getClass().getName()+"] non supportata"); 
-		}
-	}
 
 
 
@@ -4713,6 +4699,29 @@ public class ConfigurazionePdDReader {
 	
 	public List<IDServizioApplicativo> getAllIdServiziApplicativi(FiltroRicercaServiziApplicativi filtroRicerca,Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getAllIdServiziApplicativi(filtroRicerca,connectionPdD);
+	}
+	
+	
+	/* ******** CONTROLLO TRAFFICO ******** */
+	
+	public ConfigurazioneGenerale getConfigurazioneControlloTraffico(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getConfigurazioneControlloTraffico(connectionPdD);
+	}
+	
+	public ElencoIdPolicyAttive getElencoIdPolicyAttive(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicyAttive(connectionPdD, useCache);
+	}
+	
+	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getAttivazionePolicy(connectionPdD, useCache, id);
+	}
+	
+	public ElencoIdPolicy getElencoIdPolicy(Connection connectionPdD, boolean useCache) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getElencoIdPolicy(connectionPdD, useCache);
+	}
+	
+	public ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, boolean useCache, String id) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getConfigurazionePolicy(connectionPdD, useCache, id);
 	}
 	
 }

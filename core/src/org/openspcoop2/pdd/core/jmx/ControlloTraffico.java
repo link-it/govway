@@ -447,7 +447,6 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 	
 	/* Variabili per la gestione JMX */
 	private Logger log;
-	private Logger logSql;
 	private GestoreControlloTraffico gestoreControlloTraffico;
 	private IGestorePolicyAttive gestorePolicyAttive;
 	
@@ -456,8 +455,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 
 		boolean force = true;
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(force);  // per gli errori
-		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
-
+		
 		this.refreshDati();
 		
 		this.cacheAbilitata = GestoreCacheControlloTraffico.isCacheAbilitata();
@@ -470,7 +468,7 @@ public class ControlloTraffico extends NotificationBroadcasterSupport implements
 		try{
 		
 			ConfigurazionePdDManager configPdDManager = ConfigurazionePdDManager.getInstance();
-			configurazioneGenerale = configPdDManager.getControlloTrafficoServiceManager(this.logSql).getConfigurazioneGeneraleServiceSearch().get();
+			configurazioneGenerale = configPdDManager.getConfigurazioneControlloTraffico();
 			
 			if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsEnabled()) {
 				if(configurazioneGenerale.getControlloTraffico().isControlloMaxThreadsWarningOnly()) {

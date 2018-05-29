@@ -19,6 +19,8 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
@@ -36,6 +38,7 @@ public class GestoreTransazioniStateful {
 	
 	private ITracciaProducer tracciamentoOpenSPCoopAppender = null;
 	private IDiagnosticProducer msgDiagnosticiOpenSPCoopAppender = null;
+	private IDumpProducer dumpOpenSPCoopAppender = null;
 	
 	public GestoreTransazioniStateful(Logger log,Logger logSql,
 			//String dataSource,
@@ -51,9 +54,10 @@ public class GestoreTransazioniStateful {
 		
 		try{
 			
+			// Init
 			this.tracciamentoOpenSPCoopAppender = new org.openspcoop2.pdd.logger.TracciamentoOpenSPCoopProtocolAppender();
 			OpenspcoopAppender tracciamentoOpenSPCoopAppender = new OpenspcoopAppender();
-			tracciamentoOpenSPCoopAppender.setTipo("__timerGestoreTransazioniStateful");
+			tracciamentoOpenSPCoopAppender.setTipo("__gestoreTransazioniStateful");
 			List<Property> tracciamentoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 
 			// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
@@ -79,7 +83,7 @@ public class GestoreTransazioniStateful {
 			// Init
 			this.msgDiagnosticiOpenSPCoopAppender = new org.openspcoop2.pdd.logger.MsgDiagnosticoOpenSPCoopProtocolAppender();
 			OpenspcoopAppender diagnosticoOpenSPCoopAppender = new OpenspcoopAppender();
-			diagnosticoOpenSPCoopAppender.setTipo("__timerGestoreTransazioniStateful");
+			diagnosticoOpenSPCoopAppender.setTipo("__gestoreTransazioniStateful");
 			List<Property> diagnosticoOpenSPCoopAppenderProperties = new ArrayList<Property>();
 
 			// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
@@ -98,6 +102,32 @@ public class GestoreTransazioniStateful {
 			
 		}catch(Exception e){
 			throw new Exception("Errore durante l'inizializzazione del DiagnosticoAppender: "+e.getMessage(),e);
+		} 
+		
+		try{
+			
+			// Init
+			this.dumpOpenSPCoopAppender = new org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender();
+			OpenspcoopAppender dumpOpenSPCoopAppender = new OpenspcoopAppender();
+			dumpOpenSPCoopAppender.setTipo("__gestoreTransazioniStateful");
+			List<Property> dumpOpenSPCoopAppenderProperties = new ArrayList<Property>();
+
+			// Verra poi utilizzata la connessione ottenuta ogni volta che il timer viene eseguito, infatti si usa usePdDConnection
+			OpenSPCoopAppenderUtilities.addParameters(this.logSql, dumpOpenSPCoopAppenderProperties, 
+					null, // nessun datasource
+					null, null, null, null,  // nessuna connection
+					this.tipoDatabase,
+					usePdDConnection, // viene usata la connessione della PdD
+					this.debug
+					);
+			OpenSPCoopAppenderUtilities.addCheckProperties(dumpOpenSPCoopAppenderProperties, false);
+
+			dumpOpenSPCoopAppender.setPropertyList(dumpOpenSPCoopAppenderProperties);
+			this.dumpOpenSPCoopAppender.initializeAppender(dumpOpenSPCoopAppender);
+			this.dumpOpenSPCoopAppender.isAlive();
+			
+		}catch(Exception e){
+			throw new Exception("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
 		} 
 
 	}
@@ -219,6 +249,14 @@ public class GestoreTransazioniStateful {
 			this.tracciamentoOpenSPCoopAppender.log(con, traccia);
 			if(this.debug)
 				this.log.debug(tipoGestione+"Traccia ("+traccia.getTipoMessaggio()+") inserita nel database");
+			
+			break;
+			
+		case MESSAGGIO:
+			
+			this.dumpOpenSPCoopAppender.dump(con,(Messaggio)so.getObject());		
+			if(this.debug)
+				this.log.debug(tipoGestione+"DumpMessaggio inserito nel database");
 			
 			break;
 			

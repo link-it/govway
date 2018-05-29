@@ -86,6 +86,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione.pd" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione.pa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali.engine" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.controllo_traffico.plugins" />
@@ -96,6 +97,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.statistics" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.notifier" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.notifier.engine" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.transazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.jmx" />

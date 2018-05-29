@@ -48,6 +48,11 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
+import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -284,25 +289,7 @@ public class Dump {
 				return; // viene gestito tramite l'handler notify
 			}
 		}
-		
-		Messaggio messaggio = new Messaggio();
-		messaggio.setTipoMessaggio(tipoMessaggio);
-		
-		messaggio.setGdo(DateManager.getDate());
-		
-		messaggio.setDominio(this.dominio);
-		messaggio.setTipoPdD(this.tipoPdD);
-		messaggio.setIdFunzione(this.idModulo);
-		
-		messaggio.setIdTransazione(this.idTransazione);
-		messaggio.setIdBusta(this.idMessaggio);
-		messaggio.setFruitore(this.fruitore);
-		messaggio.setServizio(this.servizio);
-		
-		if(this.protocolFactory!=null) {
-			messaggio.setProtocollo(this.protocolFactory.getProtocol());
-		}
-		
+				
 		boolean dumpHeaders = true; 
 		boolean dumpBody = true;
 		boolean dumpAttachments = true;
@@ -335,8 +322,33 @@ public class Dump {
 					dumpAttachments = StatoFunzionalita.ABILITATO.equals(this.dumpConfigurazione.getRispostaUscita().getAttachments());
 				}
 			}
+			if(!dumpHeaders && !dumpBody && !dumpAttachments) {
+				return; // disabilitato
+			}
 		}
 		boolean dumpMultipartHeaders = dumpHeaders;
+		
+		
+		
+		
+		
+		Messaggio messaggio = new Messaggio();
+		messaggio.setTipoMessaggio(tipoMessaggio);
+		
+		messaggio.setGdo(DateManager.getDate());
+		
+		messaggio.setDominio(this.dominio);
+		messaggio.setTipoPdD(this.tipoPdD);
+		messaggio.setIdFunzione(this.idModulo);
+		
+		messaggio.setIdTransazione(this.idTransazione);
+		messaggio.setIdBusta(this.idMessaggio);
+		messaggio.setFruitore(this.fruitore);
+		messaggio.setServizio(this.servizio);
+		
+		if(this.protocolFactory!=null) {
+			messaggio.setProtocollo(this.protocolFactory.getProtocol());
+		}
 		
 		
 		
@@ -515,7 +527,44 @@ public class Dump {
 		
 		
 		
-		
+		// TransazioneContext
+		if(this.properties.isTransazioniSaveDumpInUniqueTransaction()) {
+			Exception exc = null;
+			boolean gestioneStateful = false;
+			try {
+				Transaction tr = TransactionContext.getTransaction(this.idTransazione,false);
+				tr.addMessaggio(messaggio);
+			}catch(TransactionDeletedException e){
+				gestioneStateful = true;
+			}catch(TransactionNotExistsException e){
+				gestioneStateful = true;
+			}catch(Exception e){
+				exc = e;
+			}
+			if(gestioneStateful){
+				try{
+					//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
+					RepositoryGestioneStateful.addMessaggio(location, messaggio);
+				}catch(Exception e){
+					exc = e;
+				}
+			}
+			if(exc!=null) {
+				try{
+					// Registro l'errore sul file dump.log
+					this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+							") con identificativo di transazione ["+this.idTransazione+"]:"+exc.getMessage());
+				}catch(Exception eLog){}
+				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+						") con identificativo di transazione ["+this.idTransazione+"]: "+exc.getMessage(),exc);
+				try{
+					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
+					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
+					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+				}catch(Exception eMsg){}
+				gestioneErroreDump(exc);
+			}
+		}
 		
 		// Log4J
 		if(OpenSPCoop2Logger.loggerDumpAbilitato && !dumpBinario){

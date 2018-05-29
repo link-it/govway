@@ -2,6 +2,7 @@ package org.openspcoop2.web.monitor.transazioni.core;
 
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
 import org.openspcoop2.web.monitor.core.converter.EsitoConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -74,8 +75,8 @@ public class UtilityTransazioni {
 	private final static String ROUTER = "Router";
 	private final static String IM = "I.M.";
 
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = "###";
-	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = " ";
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR;
+	public final static String DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR = MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR;
 	
 	/**
 	 * Formatta una stringa contenente il riepilogo della transazione

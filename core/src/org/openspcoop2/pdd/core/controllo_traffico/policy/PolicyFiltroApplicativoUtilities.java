@@ -5,20 +5,19 @@ import java.util.Properties;
 
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
+import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
+import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
-import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_traffico.beans.ID;
-import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
-import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
-import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
+import org.slf4j.Logger;
 
 public class PolicyFiltroApplicativoUtilities {
 
@@ -89,10 +88,10 @@ public class PolicyFiltroApplicativoUtilities {
 			
 		case PLUGIN_BASED:
 			
-			String className = ClassNameProperties.getInstance().getExtended(ID.EXTENDED_CLASSNAME_PROPERTIES_CATEGORY, nome);
+			String className = ClassNameProperties.getInstance().getRateLimiting(nome);
 			if(className==null){
-				throw new Exception("Instance plugin ["+nome+"] error: il tipo non è stato registrato nel registro delle classi ('org.openspcoop2.pdd.extended."+
-						ID.EXTENDED_CLASSNAME_PROPERTIES_CATEGORY+"."+nome+"' non esiste)");
+				throw new Exception("Instance plugin ["+nome+"] error: il tipo non è stato registrato nel registro delle classi ('org.openspcoop2.pdd.controlloTraffico.rateLimiting."+
+						nome+"' non esiste)");
 			}
 			try{
 				Class<?> classPlugin = Class.forName(className);

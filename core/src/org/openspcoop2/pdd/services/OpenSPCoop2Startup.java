@@ -1454,13 +1454,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			if(propertiesReader.isControlloTrafficoEnabled()){
 							
 				Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(propertiesReader.isControlloTrafficoDebug());
-				Logger logControlloTrafficoSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(propertiesReader.isControlloTrafficoDebug());
 				
 				// Cache ControlloTraffico DatiStatistici
 				try{
-					ConfigurazioneGenerale configurazioneControlloTraffico = 
-							configurazionePdDManager.getControlloTrafficoServiceManager(logControlloTrafficoSql).
-							getConfigurazioneGeneraleServiceSearch().get();
+					ConfigurazioneGenerale configurazioneControlloTraffico = configurazionePdDManager.getConfigurazioneControlloTraffico();
 					if(configurazioneControlloTraffico.getCache()!=null && configurazioneControlloTraffico.getCache().isCache()){
 						GestoreCacheControlloTraffico.abilitaCache(configurazioneControlloTraffico.getCache().getSize(),
 								CacheAlgorithm.LRU.equals(configurazioneControlloTraffico.getCache().getAlgorithm()),

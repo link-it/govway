@@ -1183,7 +1183,7 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(model.equals(Transazione.model())){
-			return CostantiDB.DUMP_TRANSAZIONI;
+			return CostantiDB.TRANSAZIONI;
 		}
 		if(model.equals(Transazione.model().DUMP_MESSAGGIO)){
 			return CostantiDB.DUMP_MESSAGGI;

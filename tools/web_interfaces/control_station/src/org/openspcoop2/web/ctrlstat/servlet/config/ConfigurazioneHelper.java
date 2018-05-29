@@ -61,7 +61,6 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneRateLimiting;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaErogazione;
 import org.openspcoop2.core.controllo_traffico.TempiRispostaFruizione;
-import org.openspcoop2.core.controllo_traffico.beans.ID;
 import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
@@ -11244,7 +11243,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String resultReset = null;
 				String idAllPolicy = null;
 				try{
-					idAllPolicy = ConfigurazionePdD.prefixKey_getSingleExtendedInfoConfigurazione+	ID.ELENCO_ID_POLICY_ATTIVE_CONTROLLO_TRAFFICO;
+					idAllPolicy = ConfigurazionePdD._getKey_ElencoIdPolicyAttive();
 					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idAllPolicy);
 					this.log.debug("reset["+idAllPolicy+"] "+resultReset);
 				}catch(Exception e){
@@ -11258,7 +11257,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				String idPolicy = null;
 				String tmpIdPolicy = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_ID);
 				try{
-					idPolicy = ConfigurazionePdD.prefixKey_getSingleExtendedInfoConfigurazione+ ID.PREFIX_ID_POLICY_CONFIGURATA_CONTROLLO_TRAFFICO+	tmpIdPolicy;
+					idPolicy = ConfigurazionePdD._getKey_AttivazionePolicy(tmpIdPolicy);
 					resultReset = this.core.invokeJMXMethod(this.core.getGestoreRisorseJMX(alias),alias,JMXConstants.JMX_TYPE, CostantiPdD.JMX_CONFIGURAZIONE_PDD, JMXUtils.CACHE_METHOD_NAME_REMOVE_OBJECT, idPolicy);
 					this.log.debug("reset["+idPolicy+"] "+resultReset);
 				}catch(Exception e){

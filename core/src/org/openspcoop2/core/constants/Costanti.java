@@ -37,7 +37,7 @@ public class Costanti {
 	
 	 /** Contesto della Porta di Dominio */ 
 	public final static String ID_TRANSAZIONE = "ID";
-	public final static String CONNECTION_PDD = "CONNECTION_PDD";
+	public final static String OPENSPCOOP_STATE = "OPENSPCOOP_STATE";
 	public final static String PROTOCOL_NAME = "PROTOCOL_NAME";
 	public final static String PROTOCOL_WEB_CONTEXT = "PROTOCOL_WEB_CONTEXT";
 	public final static String INTEGRATION_MANAGER_ENGINE_AUTHORIZED = "INTEGRATION_MANAGER_ENGINE_DIRECT_INVOCATION";
@@ -59,9 +59,13 @@ public class Costanti {
 	public final static String ERRORE_AUTORIZZAZIONE = "ERRORE_AUTORIZZAZIONE";
 	public final static String URL_INVOCAZIONE = "URL_INVOCAZIONE";
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
+	public final static String CLIENT_IP_REMOTE_ADDRESS = "CLIENT_IP_REMOTE_ADDRESS";
+	public final static String CLIENT_IP_TRANSPORT_ADDRESS = "CLIENT_IP_TRANSPORT_ADDRESS";	
+	
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";
 	public final static String EXTENDED_INFO_TRANSAZIONE = "EXTENDED_INFO_TRANSAZIONE";
+	
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,
@@ -75,7 +79,9 @@ public class Costanti {
 			Costanti.ERRORE_AUTENTICAZIONE,
 			Costanti.ERRORE_AUTORIZZAZIONE,
 			Costanti.URL_INVOCAZIONE,
-			Costanti.CREDENZIALI_INVOCAZIONE};
+			Costanti.CREDENZIALI_INVOCAZIONE,
+			Costanti.CLIENT_IP_REMOTE_ADDRESS,
+			Costanti.CLIENT_IP_TRANSPORT_ADDRESS};
     
 	public final static String CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
 	public final static String CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION = "CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION";
