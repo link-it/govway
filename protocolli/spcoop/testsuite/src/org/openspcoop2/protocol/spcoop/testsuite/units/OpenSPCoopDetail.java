@@ -250,7 +250,7 @@ public class OpenSPCoopDetail {
 			Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 			
 			OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativiSOAP", 
+					dominio,TipoPdD.DELEGATA,"RicezioneContenutiApplicativi", 
 					eccezioni, dettagli);
 		}
 		else{
@@ -435,7 +435,7 @@ public class OpenSPCoopDetail {
 		// dati generali
 		IDSoggetto dominio = CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE;
 		String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErrato");
+		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
 		boolean equalsMatch = true;
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
@@ -619,7 +619,7 @@ public class OpenSPCoopDetail {
 		// dati generali
 		IDSoggetto dominio = CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE;
 		String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErratoConnectTimedOut");
+		String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
 		boolean equalsMatch = true;
 		
 		if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){

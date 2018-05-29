@@ -779,6 +779,15 @@ public class RicezioneContenutiApplicativiService {
 						statoServletResponse = 500;
 						descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 					}
+					else if(statoServletResponse==500) {
+						// in SOAP 500 deve essere associato con un fault
+						if(body!=null && SoapUtils.getFirstNotEmptyChildNode(body, false)!=null) {
+							statoServletResponse = 200;
+						}
+						else {
+							statoServletResponse = protocolFactory.createProtocolManager().getHttpReturnCodeEmptyResponseOneWay();
+						}
+					}
 				}
 				res.setStatus(statoServletResponse);
 				

@@ -22,6 +22,7 @@ package org.openspcoop2.message;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.util.Enumeration;
 
 import javax.mail.internet.ContentType;
@@ -397,6 +398,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			
 			int offset = 0;
+			InputStream messageInput = null;
 			
 			if(MultipartUtils.messageWithAttachment(byteMsg)){
 				
@@ -464,6 +466,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				msg = msg.replace(bodyOriginal, bodyOriginalImbustato);
 				byteMsg = msg.getBytes();
 				
+				messageInput = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
 			}
 			else{
 				
@@ -480,11 +483,21 @@ public abstract class OpenSPCoop2MessageFactory {
 				
 				// se presente <?xml
 				offset = readOffsetXmlInstruction(byteMsg, i, eraserXmlTag, offset, false);
+				InputStream messageInputXml = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
 				
+				ByteArrayInputStream binSoapOpen = null;
+				if(MessageType.SOAP_11.equals(messageType)){
+					binSoapOpen = new ByteArrayInputStream("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>".getBytes());
+				}
+				else {
+					binSoapOpen = new ByteArrayInputStream("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body>".getBytes());
+				}
+				ByteArrayInputStream binSoapClose = new ByteArrayInputStream("</SOAP-ENV:Body></SOAP-ENV:Envelope>".getBytes());
+				
+				// UNIRE GLI STREAM E LEVARE QUELLO SOTTO
+				InputStream startInput = new SequenceInputStream(binSoapOpen, messageInputXml);
+				messageInput = new SequenceInputStream(startInput, binSoapClose);
 			}
-			
-			InputStream messageInput = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
-			
 						
 			OpenSPCoop2MessageParseResult result = null;
 			if(context==null){

@@ -148,8 +148,11 @@ public class CostantiErroriIntegrazione {
 			"I bytes inviati al servizio di ricezione contenuti applicativi non sono utilizzabili per formare un messaggio SOAP tramite la funzionalità di imbustamento SOAP:";
 	
 	/** String che contiene un codice di errore OpenSPCoop2: ServizioNonInvocabile con l'azione specificata in msg*/
+	public final static String MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX =  
+			"L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: ";
 	public final static String MSG_423_SERVIZIO_CON_AZIONE_SCORRETTA =  
-			"L'azione richiesta tramite la porta delegata, e associata al servizio indicato, non risulta corretta: (azione:null) invocazione senza la definizione di una azione non permessa per l'accordo di servizio ";
+			MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX+"(azione:null) invocazione senza la definizione di una azione non permessa per l'accordo di servizio ";
+	
 	
 	/** String che contiene un codice di errore OpenSPCoop2: ServizioNonInvocabile con l'azione specificata in msg*/
 	public final static String MSG_424_ALLEGA_BODY =  

@@ -3904,7 +3904,8 @@
         <!-- ErroreApplicativoCNIPA provoca errore) -->
         <porta-delegata gestione-manifest="abilitato" nome="ErroreApplicativoCNIPA" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroFruitore" />
-            <servizio tipo="spc" nome="PROVOCO_ERRORE" />
+            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
+	    <azione nome="PROVOCO_ERRORE"/>
             <servizio-applicativo nome="erroreApplicativoAsSoapFaultDefault" />
             <servizio-applicativo nome="erroreApplicativoAsSoapFaultRidefinito" />
             <servizio-applicativo nome="erroreApplicativoAsSoapXmlDefault" />
@@ -7549,11 +7550,17 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapFaultSAConPrefixErrato" />
             <servizio-applicativo nome="FaultErrati_soapFaultSAConPrefixErrato" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSASenzaPrefix" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapFaultSASenzaPrefix" />
             <servizio-applicativo nome="FaultErrati_soapFaultSASenzaPrefix" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 

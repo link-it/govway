@@ -175,7 +175,9 @@ Le seguenti batterie verificano le informazioni inserite nei Details dalla Porta
 !!Pre-Requisito!! Entrambi i test richiedono che sull'host '127.0.2.2' nella porta '7777', se viene instaurata una connessione,
 		  questa viene lasciata sospesa in modo da causare un 'ConnectTimedOut'.
 		  Su sistema operativo 'Fedora', ad esempio, si puo' utilizzare il comando, in caso si abbia attivo il servizio 'iptables':
-	         'iptables -A INPUT -p tcp -d 127.0.2.2 --dport 7777 -j DROP'
+	         	'iptables -A INPUT -p tcp -d 127.0.2.2 --dport 7777 -j DROP'
+		  o su fedora più recenti:
+			'iptables -I INPUT 1 -p tcp -d 127.0.2.2 --destination-port 7777 -j DROP'
 - 'ErroreApplicativoCNIPA' verifica il detail eGov_IT_Ecc:MessaggioDiErroreApplicativo definito dal documento CNIPA 'Porta di Dominio'
 - 'OpenSPCoopDetail' verifica il detail dettaglio-eccezione aggiunto da openspcoop e definito dallo schema src/schemi/openspcoopDetail.xsd
 

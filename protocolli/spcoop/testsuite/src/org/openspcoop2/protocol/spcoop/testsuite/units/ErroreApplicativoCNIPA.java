@@ -154,9 +154,9 @@ public class ErroreApplicativoCNIPA {
 			
 			String actor = CostantiPdD.OPENSPCOOP2;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
-			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO);
-			String msg = CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO;
-			boolean equalsMatch = true;
+			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
+			String msg = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX;
+			boolean equalsMatch = false;
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
 				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
@@ -165,7 +165,7 @@ public class ErroreApplicativoCNIPA {
 			}
 			else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
 				actor = "ACTOR_RIDEFINITO";
-				codice = "PREFIX_PERSONALIZZATO_405";
+				codice = "PREFIX_PERSONALIZZATO_423";
 			}
 			
 			try {
@@ -188,7 +188,7 @@ public class ErroreApplicativoCNIPA {
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
-						idPorta,"RicezioneContenutiApplicativiSOAP", 
+						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);	
 				
@@ -199,7 +199,7 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 								
 				Utilities.verificaFaultIntegrazione(error, actor,
-						idPorta,"RicezioneContenutiApplicativiSOAP", 
+						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);				
 			}finally{
@@ -218,17 +218,10 @@ public class ErroreApplicativoCNIPA {
 			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 			err.setIntervalloInferiore(dataInizioTest);
 			err.setIntervalloSuperiore(dataFineTest);
-			err.setMsgErrore("La porta delegata invocata non esiste pd["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]: verificare i parametri di accesso utilizzati: [getSoggetto] Soggetto che possiede la porta delegata ["+portaDelegata+"] non esistente");
+			err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
 			//System.out.println("CHECK ["+err.getMsgErrore()+"]");
 			this.erroriAttesiOpenSPCoopCore.add(err);
 			
-			// implementazione su db
-			ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
-			err2.setIntervalloInferiore(dataInizioTest);
-			err2.setIntervalloSuperiore(dataFineTest);
-			err2.setMsgErrore("La porta delegata invocata non esiste pd["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PD/"+portaDelegata+"]: verificare i parametri di accesso utilizzati: [DriverConfigurazioneDB::getSoggetto] Soggetto associato alla porta delegata [PORTA_DELEGATA_NON_ESISTENTE] non esistente.");
-			//System.out.println("CHECK ["+err.getMsgErrore()+"]");
-			this.erroriAttesiOpenSPCoopCore.add(err2);
 		}	
 				
 		return response;
@@ -287,8 +280,8 @@ public class ErroreApplicativoCNIPA {
 			}
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
-			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO);
-			String msg = CostantiErroriIntegrazione.MSG_405_SERVIZIO_NON_TROVATO;
+			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_423_SERVIZIO_CON_AZIONE_SCORRETTA);
+			String msg = CostantiErroriIntegrazione.MSG_423_SERVIZIO_CON_AZIONE_NON_CORRETTA_PREFIX;
 			boolean equalsMatch = true;
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
@@ -297,7 +290,7 @@ public class ErroreApplicativoCNIPA {
 				equalsMatch = false;
 			}
 			else if("erroreApplicativoAsSoapFaultRidefinito".equals(username) || "erroreApplicativoAsXmlRidefinito".equals(username)){
-				codice = "PREFIX_PERSONALIZZATO_405";
+				codice = "PREFIX_PERSONALIZZATO_423";
 			}
 			
 			try {
@@ -336,15 +329,9 @@ public class ErroreApplicativoCNIPA {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("La porta delegata invocata non esiste pd["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PDtoSOAP/"+portaDelegata+"]: verificare i parametri di accesso utilizzati: [getSoggetto] Soggetto che possiede la porta delegata ["+portaDelegata+"] non esistente");
+		err.setMsgErrore("La porta invocata non esiste porta["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PDtoSOAP/"+portaDelegata+"]: verificare i parametri di accesso utilizzati");
 		this.erroriAttesiOpenSPCoopCore.add(err);
-		
-		// Errore db
-		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
-		err2.setIntervalloInferiore(dataInizioTest);
-		err2.setIntervalloSuperiore(dataFineTest);
-		err2.setMsgErrore("La porta delegata invocata non esiste pd["+portaDelegata+"] urlInvocazione[/openspcoop2/spcoop/PDtoSOAP/"+portaDelegata+"]: verificare i parametri di accesso utilizzati: [DriverConfigurazioneDB::getSoggetto] Soggetto associato alla porta delegata [PORTA_DELEGATA_NON_ESISTENTE] non esistente.");
-		this.erroriAttesiOpenSPCoopCore.add(err2);
+
 	}
 	
 	
@@ -435,7 +422,7 @@ public class ErroreApplicativoCNIPA {
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
-						idPorta,"RicezioneContenutiApplicativiSOAP", 
+						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);	
 				
@@ -446,7 +433,7 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(client.getCodiceStatoHTTP()==500);
 								
 				Utilities.verificaFaultIntegrazione(error, actor,
-						idPorta,"RicezioneContenutiApplicativiSOAP", 
+						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);				
 			}finally{
@@ -1176,7 +1163,7 @@ public class ErroreApplicativoCNIPA {
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1251,7 +1238,7 @@ public class ErroreApplicativoCNIPA {
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSOAPFaultIM"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultIM"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1325,7 +1312,7 @@ public class ErroreApplicativoCNIPA {
 				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSOAPFaultSenzaDetails"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SOAPFaultSenzaDetails"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();
@@ -1452,7 +1439,7 @@ public class ErroreApplicativoCNIPA {
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
 						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
-								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 
 			}finally{
@@ -1582,7 +1569,7 @@ public class ErroreApplicativoCNIPA {
 				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
 						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
-								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 
 			}finally{
@@ -1714,7 +1701,7 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(erroreCNIPA!=null);
 				Utilities.verificaErroreApplicativoCnipa(erroreCNIPA, "MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreSOAPFaultServer"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
 		
 			} catch (AxisFault error) {
 				
@@ -1797,7 +1784,7 @@ public class ErroreApplicativoCNIPA {
 			String actor = CostantiPdD.OPENSPCOOP2;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErrato");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
 			boolean equalsMatch = true;
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
@@ -1915,7 +1902,7 @@ public class ErroreApplicativoCNIPA {
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErrato");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErrato");
 			boolean equalsMatch = true;
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				codice = "PREFIX_PERSONALIZZATO_516";
@@ -2257,7 +2244,7 @@ public class ErroreApplicativoCNIPA {
 			String actor = CostantiPdD.OPENSPCOOP2;
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErratoConnectTimedOut");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
 			boolean equalsMatch = true;
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				actor = "ACTOR_RIDEFINITO";
@@ -2376,7 +2363,7 @@ public class ErroreApplicativoCNIPA {
 			
 			String idPorta = "MinisteroFruitoreSPCoopIT";
 			String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
-			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSoggettoConnettoreErratoConnectTimedOut");
+			String msg = CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "spc-SoggettoConnettoreErratoConnectTimedOut");
 			boolean equalsMatch = true;
 			if("erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore)){
 				codice = "PREFIX_PERSONALIZZATO_516";
