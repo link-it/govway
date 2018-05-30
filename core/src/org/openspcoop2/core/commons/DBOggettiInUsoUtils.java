@@ -359,9 +359,9 @@ public class DBOggettiInUsoUtils  {
 	// ***** SCOPE ******
 
 	// Lascio i metodi se servissero in futuro
-//	public static boolean isScopeConfigInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
-//		return _isScopeInUso(con,tipoDB,idScope,false,true,whereIsInUso);
-//	}
+	public static boolean isScopeConfigInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		return _isScopeInUso(con,tipoDB,idScope,false,true,whereIsInUso);
+	}
 //	public static boolean isScopeRegistryInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
 //		return _isScopeInUso(con,tipoDB,idScope,true,false,whereIsInUso);
 //	}
