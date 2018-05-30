@@ -67,6 +67,7 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -79,6 +80,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -2314,6 +2316,21 @@ public class ControlStationCore {
 
 						doSetDati = true;
 					}
+					
+					// Scope
+					if (oggetto instanceof Scope) {
+						Scope scope = (Scope) oggetto;
+						driver.getDriverRegistroServiziDB().createScope(scope);
+
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.add);
+						operazioneDaSmistare.setIDTable(scope.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
+
+						doSetDati = true;
+					}
 
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
@@ -2785,6 +2802,24 @@ public class ControlStationCore {
 						IDRuolo idRuoloOLD = ruolo.getOldIDRuoloForUpdate();
 						if(idRuoloOLD!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_RUOLO, idRuoloOLD.getNome());
+						}
+						doSetDati = true;
+					}
+					
+					// Scope
+					if (oggetto instanceof Scope) {
+						Scope scope = (Scope) oggetto;
+						driver.getDriverRegistroServiziDB().updateScope(scope);
+						// Chiedo la setDati
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.change);
+						operazioneDaSmistare.setIDTable(scope.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
+						IDScope idScopeOLD = scope.getOldIDScopeForUpdate();
+						if(idScopeOLD!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SCOPE, idScopeOLD.getNome());
 						}
 						doSetDati = true;
 					}
@@ -3281,6 +3316,19 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
+						operazioneDaSmistareList.add(operazioneDaSmistare);
+					}
+					
+					// Scope
+					if (oggetto instanceof Scope) {
+						Scope scope = (Scope) oggetto;
+						driver.getDriverRegistroServiziDB().deleteScope(scope);
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setIDTable(scope.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.scope);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SCOPE, scope.getNome());
 						operazioneDaSmistareList.add(operazioneDaSmistare);
 					}
 					
@@ -4223,6 +4271,7 @@ public class ControlStationCore {
 
 		// RegistroServizi
 
+		// Ruolo
 		else if (oggetto instanceof Ruolo) {
 			Ruolo r = (Ruolo) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
@@ -4230,6 +4279,18 @@ public class ControlStationCore {
 			if(Tipologia.CHANGE.equals(tipoOperazione)){
 				if(r.getOldIDRuoloForUpdate()!=null && r.getNome().equals(r.getOldIDRuoloForUpdate().getNome())==false){
 					msg+=":OLD<"+r.getOldIDRuoloForUpdate().getNome()+">";
+				}
+			}
+		}
+		
+		// Scope
+		else if (oggetto instanceof Scope) {
+			Scope r = (Scope) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			msg+=":<"+r.getNome()+">";
+			if(Tipologia.CHANGE.equals(tipoOperazione)){
+				if(r.getOldIDScopeForUpdate()!=null && r.getNome().equals(r.getOldIDScopeForUpdate().getNome())==false){
+					msg+=":OLD<"+r.getOldIDScopeForUpdate().getNome()+">";
 				}
 			}
 		}

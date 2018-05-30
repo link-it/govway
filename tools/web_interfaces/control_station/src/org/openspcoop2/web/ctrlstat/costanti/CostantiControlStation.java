@@ -140,6 +140,13 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ALL = "tutti";
 	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ANY = "almeno uno";
 	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
+	public final static String LABEL_PARAMETRO_SCOPE = "Nome";
+	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA = "Fonte";
+	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
+	public final static String LABEL_PARAMETRO_SCOPE_MATCH = "Ruoli Richiesti";
+	public final static String LABEL_PARAMETRO_SCOPE_MATCH_ALL = "tutti";
+	public final static String LABEL_PARAMETRO_SCOPE_MATCH_ANY = "almeno uno";
+	public final static String LABEL_PARAMETRO_SCOPE_CONTESTO = "Contesto";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Autenticazione";
 	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Autorizzazione";
@@ -396,6 +403,16 @@ public class CostantiControlStation {
 	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
 	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
 	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI = "";
+	public final static String SCOPE_TIPOLOGIA_LABEL_INTERNO = "Registro";
+	public final static String SCOPE_TIPOLOGIA_LABEL_ESTERNO = "Esterna";
+	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_SCOPE_CONTESTO_QUALSIASI = "";
+	public final static String SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "Erogazione";
+	public final static String SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "Fruizione";
+	public final static String LABEL_PARAMETRO_SCOPE_CONTESTO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_PROTOCOLLO_QUALSIASI = "";
 	

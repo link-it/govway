@@ -38,6 +38,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
@@ -85,6 +86,7 @@ public class GestoreAutorizzazioni {
 	Vector<String> servletAccordiCooperazione = null;
 	Vector<String> servletServizi = null;
 	Vector<String> servletRuoli = null;
+	Vector<String> servletScope = null;
 	Vector<String> servletPorteDelegate = null;
 	Vector<String> servletPorteApplicative = null;
 	Vector<String> servletServiziApplicativi = null;
@@ -109,6 +111,7 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiAccordiCooperazione = null;
 	PermessiUtente permessiServizi = null;
 	PermessiUtente permessiRuoli = null;
+	PermessiUtente permessiScope = null;
 	PermessiUtente permessiPorteDelegate = null;
 	PermessiUtente permessiPorteApplicative = null;
 	PermessiUtente permessiServiziApplicativi = null;
@@ -206,6 +209,13 @@ public class GestoreAutorizzazioni {
 		/** Permessi associati alla gestione dei ruoli */
 		this.permessiRuoli = new PermessiUtente();
 		this.permessiRuoli.setServizi(true);
+		
+		/** Gruppo di servlet che gestiscono gli scope */
+		this.servletScope = new Vector<String>();
+		this.servletScope.addAll(ScopeCostanti.SERVLET_SCOPE);
+		/** Permessi associati alla gestione degli scope */
+		this.permessiScope = new PermessiUtente();
+		this.permessiScope.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono le porte delegate */
 		this.servletPorteDelegate = new Vector<String>();
@@ -451,6 +461,8 @@ public class GestoreAutorizzazioni {
 			return this.permessiServizi.or(user.getPermessi());
 		}else if(this.servletRuoli.contains(nomeServlet)){
 			return this.permessiRuoli.or(user.getPermessi());
+		}else if(this.servletScope.contains(nomeServlet)){
+			return this.permessiScope.or(user.getPermessi());
 		}else if(this.servletPorteDelegate.contains(nomeServlet)){
 			return this.permessiPorteDelegate.or(user.getPermessi());
 		}else if(this.servletPorteApplicative.contains(nomeServlet)){

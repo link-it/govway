@@ -33,6 +33,7 @@ public enum TipoOggettoDaSmistare {
 
 	pdd,
 	ruolo,
+	scope,
 	mappingFruizionePD,
 	mappingErogazionePA,
 	soggetto,

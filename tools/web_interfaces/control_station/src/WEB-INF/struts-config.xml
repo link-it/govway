@@ -925,7 +925,32 @@
         </action>
 
 
+        <!-- Scope -->
 
+        <action path="/scopeAdd" type="org.openspcoop2.web.ctrlstat.servlet.scope.ScopeAdd"
+            scope="request" validate="true">
+            <forward name="scopeAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="scopeAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="scopeAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="scopeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/scopeList" type="org.openspcoop2.web.ctrlstat.servlet.scope.ScopeList"
+            scope="request" validate="true">
+            <forward name="scopeList" path="/jsplib/listElement.jsp"/>
+            <forward name="scopeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/scopeChange" type="org.openspcoop2.web.ctrlstat.servlet.scope.ScopeChange"
+            scope="request" validate="true">
+            <forward name="scopeChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="scopeChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="scopeChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="scopeError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/scopeDel" type="org.openspcoop2.web.ctrlstat.servlet.scope.ScopeDel"
+            scope="request" validate="true">
+            <forward name="scopeDel" path="/jsplib/listElement.jsp"/>
+            <forward name="scopeError" path="/jsplib/info.jsp"/>
+        </action>
         
 
 		<!--  Archivi -->

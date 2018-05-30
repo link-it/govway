@@ -57,7 +57,8 @@ public enum OperationsParameter {
 	MAPPING_ID_PORTA_DELEGATA("mIDPortaDelegata"), MAPPING_ID_PORTA_APPLICATIVA("mIDPortaApplicativa"), 
 	// Ruolo
 	NOME_RUOLO("NomeRuolo"), OLD_NOME_RUOLO("OldNomeRuolo"),
-
+	// Scope
+	NOME_SCOPE("NomeScope"), OLD_NOME_SCOPE("OldNomeScope"),
 	// ID Table
 	ID_TABLE("IDTable"),
 

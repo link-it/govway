@@ -84,6 +84,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
@@ -155,6 +156,8 @@ import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCore;
+import org.openspcoop2.web.ctrlstat.servlet.scope.ScopeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -237,6 +240,7 @@ public class ConsoleHelper {
 	protected OperazioniCore operazioniCore = null;
 	protected ProtocolPropertiesCore protocolPropertiesCore = null;
 	protected RuoliCore ruoliCore = null;
+	protected ScopeCore scopeCore = null;
 
 	protected AuditHelper auditHelper;
 	public AuditHelper getAuditHelper() {
@@ -345,6 +349,7 @@ public class ConsoleHelper {
 			this.operazioniCore = new OperazioniCore(this.core);
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 			this.ruoliCore = new RuoliCore(this.core);
+			this.scopeCore = new ScopeCore(this.core);
 			
 			this.auditHelper = new AuditHelper(request, pd, session);
 
@@ -979,9 +984,12 @@ public class ConsoleHelper {
 					}
 				}
 
-				// Ruoli
+				// Ruoli e Scope
 				if(pu.isServizi()){
 					if(this.core.isRegistroServiziLocale()){
+						// ruoli
+						totEntries +=1;
+						// scope
 						totEntries +=1;
 					}
 				}
@@ -1108,11 +1116,15 @@ public class ConsoleHelper {
 					
 				}
 				
-				// Ruoli
+				// Ruoli e Scopes
 				if(pu.isServizi()){
 					if(this.core.isRegistroServiziLocale()){
 						entries[index][0] = RuoliCostanti.LABEL_RUOLI;
 						entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
+						index++;
+						
+						entries[index][0] = ScopeCostanti.LABEL_SCOPES;
+						entries[index][1] = ScopeCostanti.SERVLET_NAME_SCOPE_LIST;
 						index++;
 					}
 				}
@@ -4196,6 +4208,64 @@ public class ConsoleHelper {
 			String label = CostantiControlStation.LABEL_PARAMETRO_RUOLO_CONTESTO;
 			
 			this.pd.addFilter(Filtri.FILTRO_RUOLO_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterScopeTipologia(String scopeTipologia, boolean postBack) throws Exception{
+		try {
+			String [] metodi = new String[2];
+			metodi[0] = "interno"; //RuoloTipologia.INTERNO.getValue();
+			metodi[1] = "esterno"; //RuoloTipologia.ESTERNO.getValue();
+			String [] metodiLabel = new String[2];
+			metodiLabel[0] = CostantiControlStation.SCOPE_TIPOLOGIA_LABEL_INTERNO;
+			metodiLabel[1] = CostantiControlStation.SCOPE_TIPOLOGIA_LABEL_ESTERNO;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = scopeTipologia != null ? scopeTipologia : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SCOPE_TIPOLOGIA_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_SCOPE_TIPOLOGIA;
+			
+			this.pd.addFilter(Filtri.FILTRO_SCOPE_TIPOLOGIA, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void addFilterScopeContesto(String scopeContesto, boolean postBack) throws Exception{
+		try {
+			String [] metodi = new String[2];
+			metodi[0] = ScopeContesto.PORTA_APPLICATIVA.getValue();
+			metodi[1] = ScopeContesto.PORTA_DELEGATA.getValue();
+			String [] metodiLabel = new String[2];
+			metodiLabel[0] = CostantiControlStation.SCOPE_CONTESTO_UTILIZZO_LABEL_EROGAZIONE;
+			metodiLabel[1] = CostantiControlStation.SCOPE_CONTESTO_UTILIZZO_LABEL_FRUIZIONE;
+			String [] values = new String[metodi.length + 1];
+			String [] labels = new String[metodi.length + 1];
+			labels[0] = CostantiControlStation.LABEL_PARAMETRO_SCOPE_CONTESTO_QUALSIASI;
+			values[0] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SCOPE_CONTESTO_QUALSIASI;
+			for (int i =0; i < metodi.length ; i ++) {
+				labels[i+1] = metodiLabel[i];
+				values[i+1] = metodi[i];
+			}
+			
+			String selectedValue = scopeContesto != null ? scopeContesto : CostantiControlStation.DEFAULT_VALUE_PARAMETRO_SCOPE_CONTESTO_QUALSIASI;
+			
+			String label = CostantiControlStation.LABEL_PARAMETRO_SCOPE_CONTESTO;
+			
+			this.pd.addFilter(Filtri.FILTRO_SCOPE_CONTESTO, label, selectedValue, values, labels, postBack, this.getSize());
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
