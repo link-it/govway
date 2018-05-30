@@ -24,6 +24,7 @@ package org.openspcoop2.web.ctrlstat.driver;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -175,6 +177,15 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
+			else if (o instanceof Scope) {
+				Scope s = (Scope) o;
+				String id = s.getNome();
+				if(this.prefix){
+					return "[Scope] "+ id;
+				}else{
+					return id;
+				}
+			}
 			else if(o instanceof AccordoCooperazione){
 				AccordoCooperazione ac = (AccordoCooperazione) o;
 				String id = this.idAccordoCooperazioneFactory.getUriFromAccordo(ac);
@@ -289,6 +300,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccessoConfigurazione){
 				return "ConfigurazioneAccessoDati";
+			}else if(o instanceof AccessoDatiAutenticazione){
+				return "ConfigurazioneAccessoDatiAutenticazione";
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return "ConfigurazioneAccessoDatiAutorizzazione";
 			}else if(o instanceof SystemProperties){
@@ -487,6 +500,18 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
+			else if (o instanceof Scope) {
+				Scope s = (Scope) o;
+				if(s.getOldIDScopeForUpdate()==null){
+					return null; // non lancio un errore
+				}
+				String id = s.getOldIDScopeForUpdate().getNome();
+				if(this.prefix){
+					return "[Scope] "+ id;
+				}else{
+					return id;
+				}
+			}
 			else if(o instanceof AccordoCooperazione){
 				AccordoCooperazione ac = (AccordoCooperazione) o;
 				IDAccordoCooperazione idOLD = ac.getOldIDAccordoForUpdate();
@@ -624,6 +649,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoConfigurazione){
 				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiAutenticazione){
+				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof SystemProperties){
@@ -741,6 +768,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getSimpleName());
 			oggetti.add(Ruolo.class.getSimpleName());
+			oggetti.add(Scope.class.getSimpleName());
 			oggetti.add(AccordoCooperazione.class.getSimpleName());
 			oggetti.add(AccordoServizioParteComune.class.getSimpleName());
 			oggetti.add(PortType.class.getSimpleName());
@@ -758,6 +786,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoRegistro.class.getSimpleName());
 			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getName());
 			oggetti.add(AccessoConfigurazione.class.getSimpleName());
+			oggetti.add(AccessoDatiAutenticazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
 			
@@ -795,6 +824,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getName());
 			oggetti.add(Ruolo.class.getName());
+			oggetti.add(Scope.class.getName());
 			oggetti.add(AccordoCooperazione.class.getName());
 			oggetti.add(AccordoServizioParteComune.class.getName());
 			oggetti.add(PortType.class.getName());

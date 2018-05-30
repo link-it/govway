@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -126,6 +127,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccessoConfigurazione){
 				return "ConfigurazioneAccessoDati";
+			}else if(o instanceof AccessoDatiAutenticazione){
+				return "ConfigurazioneAccessoDatiAutenticazione";
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return "ConfigurazioneAccessoDatiAutorizzazione";
 			}else if(o instanceof SystemProperties){
@@ -240,6 +243,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoConfigurazione){
 				return null; // oggetto non modificabile nei dati identificativi
+			}else if(o instanceof AccessoDatiAutenticazione){
+				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof AccessoDatiAutorizzazione){
 				return null; // oggetto non modificabile nei dati identificativi
 			}else if(o instanceof SystemProperties){
@@ -276,6 +281,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoRegistro.class.getSimpleName());
 			// non serve come simple name: oggetti.add(AccessoRegistroRegistro.class.getSimpleName());
 			oggetti.add(AccessoConfigurazione.class.getSimpleName());
+			oggetti.add(AccessoDatiAutenticazione.class.getSimpleName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getSimpleName());
 			oggetti.add(SystemProperties.class.getSimpleName());
 		}
@@ -290,6 +296,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccessoRegistro.class.getName());
 			oggetti.add(AccessoRegistroRegistro.class.getName());
 			oggetti.add(AccessoConfigurazione.class.getName());
+			oggetti.add(AccessoDatiAutenticazione.class.getName());
 			oggetti.add(AccessoDatiAutorizzazione.class.getName());
 			oggetti.add(SystemProperties.class.getName());
 		}

@@ -33,6 +33,8 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.serialization.IOException;
 
@@ -110,7 +112,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof PortaDominio){
+			}
+			else if(o instanceof PortaDominio){
 				PortaDominio p = (PortaDominio) o;
 				String id = p.getNome();
 				if(this.prefix){
@@ -118,7 +121,26 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof AccordoServizioParteSpecifica){
+			}
+			else if(o instanceof Ruolo){
+				Ruolo r = (Ruolo) o;
+				String id = r.getNome();
+				if(this.prefix){
+					return "[Ruolo] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof Scope){
+				Scope s = (Scope) o;
+				String id = s.getNome();
+				if(this.prefix){
+					return "[Scope] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica s = (AccordoServizioParteSpecifica) o;
 				String id = this.idServizioFactory.getUriFromAccordo(s);
 				if(this.prefix){
@@ -126,7 +148,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof Fruitore){
+			}
+			else if(o instanceof Fruitore){
 				Fruitore fr = (Fruitore) o;
 				String id = fr.getTipo()+"/"+fr.getNome();
 				if(fr.getIdServizio()!=null && fr.getIdServizio()>0)
@@ -136,7 +159,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof Soggetto){
+			}
+			else if(o instanceof Soggetto){
 				Soggetto s = (Soggetto) o;
 				String id = s.getTipo()+"/"+s.getNome();
 				if(this.prefix){
@@ -208,7 +232,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof Documento){
 				return null; // oggetto non modificabile nei dati identificativi
-			}else if(o instanceof PortaDominio){
+			}
+			else if(o instanceof PortaDominio){
 				PortaDominio p = (PortaDominio) o;
 				if(p.getOldNomeForUpdate()==null){
 					return null; // non lancio un errore
@@ -219,7 +244,32 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof AccordoServizioParteSpecifica){
+			}
+			else if(o instanceof Ruolo){
+				Ruolo r = (Ruolo) o;
+				if(r.getOldIDRuoloForUpdate()==null){
+					return null; // non lancio un errore
+				}
+				String id = r.getOldIDRuoloForUpdate().getNome();
+				if(this.prefix){
+					return "[Ruolo] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof Scope){
+				Scope s = (Scope) o;
+				if(s.getOldIDScopeForUpdate()==null){
+					return null; // non lancio un errore
+				}
+				String id = s.getOldIDScopeForUpdate().getNome();
+				if(this.prefix){
+					return "[Scope] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica as = (AccordoServizioParteSpecifica) o;
 				if(as.getOldIDServizioForUpdate()==null){
 					return null; // non lancio un errore
@@ -231,7 +281,8 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof Soggetto){
+			}
+			else if(o instanceof Soggetto){
 				Soggetto s = (Soggetto) o;
 				if(s.getOldIDSoggettoForUpdate()==null){
 					return null; // non lancio un errore
@@ -268,7 +319,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccordoServizioParteComune.class.getSimpleName());
 			oggetti.add(PortType.class.getSimpleName());
 			oggetti.add(Documento.class.getSimpleName());
+			oggetti.add(PortaDominio.class.getSimpleName());
+			oggetti.add(Ruolo.class.getSimpleName());
+			oggetti.add(Scope.class.getSimpleName());
 			oggetti.add(AccordoServizioParteSpecifica.class.getSimpleName());
+			oggetti.add(Fruitore.class.getSimpleName());
 			oggetti.add(Soggetto.class.getSimpleName());
 		}
 		else{
@@ -276,7 +331,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			oggetti.add(AccordoServizioParteComune.class.getName());
 			oggetti.add(PortType.class.getName());
 			oggetti.add(Documento.class.getName());
+			oggetti.add(PortaDominio.class.getName());
+			oggetti.add(Ruolo.class.getName());
+			oggetti.add(Scope.class.getName());
 			oggetti.add(AccordoServizioParteSpecifica.class.getName());
+			oggetti.add(Fruitore.class.getName());
 			oggetti.add(Soggetto.class.getName());
 		}
 		
