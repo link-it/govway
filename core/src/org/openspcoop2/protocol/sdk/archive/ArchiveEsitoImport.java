@@ -34,6 +34,8 @@ public class ArchiveEsitoImport {
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> pdd = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> ruoli = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> scope = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 		
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> soggetti = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
@@ -63,6 +65,10 @@ public class ArchiveEsitoImport {
 		return this.ruoli;
 	}
 
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getScope() {
+		return this.scope;
+	}
+	
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getSoggetti() {
 		return this.soggetti;
 	}

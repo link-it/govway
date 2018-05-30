@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -80,6 +81,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
@@ -179,6 +181,20 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getRuoli().add(detail);
+			}
+			
+			
+			// Scope
+			for (int i = 0; i < archive.getScope().size(); i++) {
+				ArchiveScope archiveScope = archive.getScope().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveScope);
+				try{
+					this.importScope(archiveScope, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getScope().add(detail);
 			}
 			
 			
@@ -633,7 +649,88 @@ public class ImporterArchiveUtils {
 			}
 		}			
 		catch(Exception e){
-			this.log.error("Errore durante l'import della porta di dominio ["+idRuolo+"]: "+e.getMessage(),e);
+			this.log.error("Errore durante l'import del ruolo ["+idRuolo+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	
+	
+	
+	public void importScope(ArchiveScope archiveScope,ArchiveEsitoImportDetail detail){
+		
+		IDScope idScope = archiveScope.getIdScope();
+		try{
+			
+			// --- check esistenza ---
+			if(this.updateAbilitato==false){
+				if(this.importerEngine.existsScope(idScope)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					return;
+				}
+			}
+			
+				
+			// --- check elementi riferiti ---
+			// non esistenti
+			
+			
+			// --- compatibilita' elementi riferiti ---
+			// non esistenti
+			
+			
+			// ---- visibilita' oggetto riferiti ---
+			// non esistenti
+			
+			
+			// --- set dati obbligatori nel db ----
+			
+			archiveScope.getScope().setSuperUser(this.userLogin);
+			
+			org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
+				impostaInformazioniRegistroDB_Scope(archiveScope.getScope());
+			
+			
+			// --- ora registrazione
+			archiveScope.getScope().setOraRegistrazione(DateManager.getDate());
+			
+			
+			// --- upload ---
+			boolean create = false;
+			if(this.importerEngine.existsScope(idScope)){
+				
+				org.openspcoop2.core.registry.Scope old = this.importerEngine.getScope(idScope);
+				archiveScope.getScope().setId(old.getId());
+				
+				// visibilita' oggetto stesso per update
+				if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+					if(this.userLogin.equals(old.getSuperUser())==false){
+						throw new Exception("Lo scope non è visibile/aggiornabile dall'utente collegato ("+this.userLogin+")");
+					}
+				}
+
+				// update
+				this.importerEngine.updateScope(archiveScope.getScope());
+				create = false;
+			}
+			// --- create ---
+			else{
+				this.importerEngine.createScope(archiveScope.getScope());
+				create = true;
+			}
+				
+
+			// --- info ---
+			if(create){
+				detail.setState(ArchiveStatoImport.CREATED);
+			}else{
+				detail.setState(ArchiveStatoImport.UPDATED);
+			}
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'import dello scope ["+idScope+"]: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
@@ -2041,6 +2138,14 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			if(archivePortaDelegata.getPortaDelegata().getScope()!=null && archivePortaDelegata.getPortaDelegata().getScope().sizeScopeList()>0){
+				for (int i = 0; i < archivePortaDelegata.getPortaDelegata().getScope().sizeScopeList(); i++) {
+					IDScope idScope = new IDScope(archivePortaDelegata.getPortaDelegata().getScope().getScope(i).getNome());
+					if(this.importerEngine.existsScope(idScope) == false ){
+						throw new Exception("Scope ["+idScope.getNome()+"] associato non esiste");
+					}	
+				}
+			}
 			
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2208,6 +2313,14 @@ public class ImporterArchiveUtils {
 					IDRuolo idRuolo = new IDRuolo(archivePortaApplicativa.getPortaApplicativa().getRuoli().getRuolo(i).getNome());
 					if(this.importerEngine.existsRuolo(idRuolo) == false ){
 						throw new Exception("Ruolo ["+idRuolo.getNome()+"] associato non esiste");
+					}	
+				}
+			}
+			if(archivePortaApplicativa.getPortaApplicativa().getScope()!=null && archivePortaApplicativa.getPortaApplicativa().getScope().sizeScopeList()>0){
+				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getScope().sizeScopeList(); i++) {
+					IDScope idScope = new IDScope(archivePortaApplicativa.getPortaApplicativa().getScope().getScope(i).getNome());
+					if(this.importerEngine.existsScope(idScope) == false ){
+						throw new Exception("Scope ["+idScope.getNome()+"] associato non esiste");
 					}	
 				}
 			}

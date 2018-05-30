@@ -19,64 +19,64 @@
  */
 package org.openspcoop2.protocol.sdk.archive;
 
-import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
- * ArchiveRuolo
+ * ArchiveScope
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
-public class ArchiveRuolo implements IArchiveObject {
+public class ArchiveScope implements IArchiveObject {
 
-	public static String buildKey(String nomeRuolo) throws ProtocolException{
+	public static String buildKey(String nomeScope) throws ProtocolException{
 		
-		if(nomeRuolo==null){
-			throw new ProtocolException("nomeRuolo non fornito");
+		if(nomeScope==null){
+			throw new ProtocolException("nomeScope non fornito");
 		}
 		
 		StringBuffer bf = new StringBuffer();
-		bf.append("Ruolo_");
-		bf.append(nomeRuolo);
+		bf.append("Scope_");
+		bf.append(nomeScope);
 		return bf.toString();
 	}
 	
 	@Override
 	public String key() throws ProtocolException {
-		return ArchiveRuolo.buildKey(this.idRuolo.getNome());
+		return ArchiveScope.buildKey(this.idScope.getNome());
 	}
 	
 	
 	
-	private IDRuolo idRuolo;
+	private IDScope idScope;
 
-	private org.openspcoop2.core.registry.Ruolo ruolo;
+	private org.openspcoop2.core.registry.Scope scope;
 	
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 
-	public ArchiveRuolo(org.openspcoop2.core.registry.Ruolo ruolo, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public ArchiveScope(org.openspcoop2.core.registry.Scope scope, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		
-		if(ruolo==null){
-			throw new ProtocolException("Ruolo non fornito");
+		if(scope==null){
+			throw new ProtocolException("Scope non fornito");
 		}
-		if(ruolo.getNome()==null){
-			throw new ProtocolException("Ruolo.nome non definito");
+		if(scope.getNome()==null){
+			throw new ProtocolException("Scope.nome non definito");
 		}
-		this.idRuolo = new IDRuolo(ruolo.getNome());
-		this.ruolo = ruolo;
+		this.idScope = new IDScope(scope.getNome());
+		this.scope = scope;
 		
 		this.idCorrelazione = idCorrelazione;
 		
 	}
 	
 	
-	public IDRuolo getIdRuolo() {
-		return this.idRuolo;
+	public IDScope getIdScope() {
+		return this.idScope;
 	}
-	public org.openspcoop2.core.registry.Ruolo getRuolo() {
-		return this.ruolo;
+	public org.openspcoop2.core.registry.Scope getScope() {
+		return this.scope;
 	}
 	
 	public ArchiveIdCorrelazione getIdCorrelazione() {

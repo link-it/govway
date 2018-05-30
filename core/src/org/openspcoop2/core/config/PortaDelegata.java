@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
@@ -94,6 +95,7 @@ import java.util.List;
   	"azione",
   	"servizioApplicativo",
   	"ruoli",
+  	"scope",
   	"gestioneToken",
   	"localForward",
   	"proprieta",
@@ -212,6 +214,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setRuoli(AutorizzazioneRuoli ruoli) {
     this.ruoli = ruoli;
+  }
+
+  public AutorizzazioneScope getScope() {
+    return this.scope;
+  }
+
+  public void setScope(AutorizzazioneScope scope) {
+    this.scope = scope;
   }
 
   public GestioneToken getGestioneToken() {
@@ -679,6 +689,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
+
+  @XmlElement(name="scope",required=false,nillable=false)
+  protected AutorizzazioneScope scope;
 
   @XmlElement(name="gestione-token",required=false,nillable=false)
   protected GestioneToken gestioneToken;

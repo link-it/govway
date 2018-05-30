@@ -93,6 +93,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_CORRELAZIONE = "pa_correlazione";
     public static final String PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA = "pa_correlazione_risposta";
     public static final String PORTE_APPLICATIVE_RUOLI = "pa_ruoli";
+    public static final String PORTE_APPLICATIVE_SCOPE = "pa_scope";
     public static final String PORTE_APPLICATIVE_SOGGETTI = "pa_soggetti";
     public static final String PORTE_APPLICATIVE_AZIONI = "pa_azioni";
     public static final String PORTE_DELEGATE = "porte_delegate";
@@ -105,6 +106,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_CORRELAZIONE = "pd_correlazione";
     public static final String PORTE_DELEGATE_CORRELAZIONE_RISPOSTA = "pd_correlazione_risposta";
     public static final String PORTE_DELEGATE_RUOLI = "pd_ruoli";
+    public static final String PORTE_DELEGATE_SCOPE = "pd_scope";
     public static final String PORTE_DELEGATE_AZIONI = "pd_azioni";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";

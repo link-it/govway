@@ -101,6 +101,7 @@ public final class Exporter extends Action {
 			
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 			String cascadeRuoli = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
+			String cascadeScope = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
 			String cascadeSoggetti = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 			String cascadeServiziApplicativi = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 			String cascadePorteDelegate = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
@@ -280,6 +281,9 @@ public final class Exporter extends Action {
 					if(cascadeConfig.isCascadeRuoli()){
 						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI+"="+ (ServletUtils.isCheckBoxEnabled(cascadeRuoli)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					}
+					if(cascadeConfig.isCascadeScope()){
+						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE+"="+ (ServletUtils.isCheckBoxEnabled(cascadeScope)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
+					}
 					if(cascadeConfig.isCascadeSoggetti()){
 						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI+"="+ (ServletUtils.isCheckBoxEnabled(cascadeSoggetti)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					}
@@ -342,6 +346,7 @@ public final class Exporter extends Action {
 					(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE.equals(postBackElementName) || ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO.equals(postBackElementName)) ){
 				cascadePdd = Costanti.CHECK_BOX_ENABLED;
 				cascadeRuoli = Costanti.CHECK_BOX_ENABLED;
+				cascadeScope = Costanti.CHECK_BOX_ENABLED;
 				cascadeSoggetti = Costanti.CHECK_BOX_ENABLED;
 				cascadeServiziApplicativi = Costanti.CHECK_BOX_ENABLED;
 				cascadePorteDelegate = Costanti.CHECK_BOX_ENABLED;
@@ -357,7 +362,7 @@ public final class Exporter extends Action {
 					exportModes, exportMode, 
 					archiveType, objToExport,
 					cascade,tipoConfigurazione,
-					cascadePdd,cascadeRuoli,cascadeSoggetti,
+					cascadePdd,cascadeRuoli,cascadeScope,cascadeSoggetti,
 					cascadeServiziApplicativi, cascadePorteDelegate, cascadePorteApplicative,
 					cascadeAccordiCooperazione, cascadeAccordiServizioParteComune, 
 					cascadeAccordiServizioComposto, 

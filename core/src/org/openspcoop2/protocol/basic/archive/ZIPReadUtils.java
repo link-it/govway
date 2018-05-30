@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -91,6 +92,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
@@ -424,6 +426,13 @@ public class ZIPReadUtils  {
 							byte[] xml = placeholder.replace(content);
 							bin = new ByteArrayInputStream(xml);
 							this.readRuolo(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+						}
+						
+						// ********** scope ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_SCOPE_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+							this.readScope(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 						}
 						
 						// ********** informationMissing ********************
@@ -1201,6 +1210,24 @@ public class ZIPReadUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (ruolo) non valida rispetto allo schema (RegistroServizi): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readScope(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			Scope scope = this.jaxbRegistryDeserializer.readScope(xml);
+			String key = ArchiveScope.buildKey(scope.getNome());
+			if(archivio.getScope().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di uno scope con key ["+key+"]");
+			}
+			archivio.getScope().add(key,new ArchiveScope(scope,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (scope) non valida rispetto allo schema (RegistroServizi): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

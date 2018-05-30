@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -344,6 +345,168 @@ public class DBOggettiInUsoUtils  {
 		return msg;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ***** SCOPE ******
+
+	// Lascio i metodi se servissero in futuro
+//	public static boolean isScopeConfigInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+//		return _isScopeInUso(con,tipoDB,idScope,false,true,whereIsInUso);
+//	}
+//	public static boolean isScopeRegistryInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+//		return _isScopeInUso(con,tipoDB,idScope,true,false,whereIsInUso);
+//	}
+	public static boolean isScopeInUso(Connection con, String tipoDB, IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		return _isScopeInUso(con,tipoDB,idScope,true,true,whereIsInUso);
+	}
+	private static boolean _isScopeInUso(Connection con, String tipoDB, IDScope idScope, boolean registry, boolean config, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		String nomeMetodo = "_isScopeInUso";
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		String queryString;
+
+		try {
+
+			//long idS = DBUtils.getIdScope(idScope, con, tipoDB);
+			
+			boolean isInUso = false;
+			
+			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
+			List<String> porte_delegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
+			
+			if (porte_applicative_list == null) {
+				porte_applicative_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
+			}
+			if (porte_delegate_list == null) {
+				porte_delegate_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
+			}
+			
+
+			// Controllo che il scope non sia in uso nelle porte applicative
+			if(config){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idScope.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome_porta");
+					porte_applicative_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
+			
+			// Controllo che il scope non sia in uso nelle porte applicative
+			if(config){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".scope = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idScope.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome_porta");
+					porte_delegate_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
+			
+			return isInUso;
+
+		} catch (Exception se) {
+			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			// Chiudo statement and resultset
+			try {
+				if (risultato != null) {
+					risultato.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	}
+
+
+	public static String toString(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
+		return toString(idScope, whereIsInUso, prefix, separator," non eliminabile perch&egrave; :");
+	}
+	public static String toString(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
+		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+		String msg = idScope.getNome() + intestazione+separator;
+		if(prefix==false){
+			msg = "";
+		}
+		for (ErrorsHandlerCostant key : keys) {
+			List<String> messages = whereIsInUso.get(key);
+
+			switch (key) {
+			case IN_USO_IN_PORTE_APPLICATIVE:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nelle Porte Applicative: " + messages.toString() + separator;
+				}
+				break;
+			case IN_USO_IN_PORTE_DELEGATE:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nelle Porte Delegate: " + messages.toString() + separator;
+				}
+				break;
+			default:
+				msg += "- utilizzato in oggetto non codificato ("+key+")"+separator;
+				break;
+			}
+
+		}// chiudo for
+
+		return msg;
+	}
+	
+	
+	
 	
 	
 	

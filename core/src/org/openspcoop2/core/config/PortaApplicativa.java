@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetti" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetti" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
@@ -96,6 +97,7 @@ import java.util.List;
   	"servizioApplicativo",
   	"soggetti",
   	"ruoli",
+  	"scope",
   	"gestioneToken",
   	"proprieta",
   	"mtomProcessor",
@@ -221,6 +223,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setRuoli(AutorizzazioneRuoli ruoli) {
     this.ruoli = ruoli;
+  }
+
+  public AutorizzazioneScope getScope() {
+    return this.scope;
+  }
+
+  public void setScope(AutorizzazioneScope scope) {
+    this.scope = scope;
   }
 
   public GestioneToken getGestioneToken() {
@@ -691,6 +701,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   @XmlElement(name="ruoli",required=false,nillable=false)
   protected AutorizzazioneRuoli ruoli;
+
+  @XmlElement(name="scope",required=false,nillable=false)
+  protected AutorizzazioneScope scope;
 
   @XmlElement(name="gestione-token",required=false,nillable=false)
   protected GestioneToken gestioneToken;

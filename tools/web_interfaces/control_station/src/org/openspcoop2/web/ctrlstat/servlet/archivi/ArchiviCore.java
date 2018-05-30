@@ -73,7 +73,10 @@ public class ArchiviCore extends ControlStationCore {
 		for (ExportMode exp : exportModes) {
 			if(exp.equals(exportMode)){
 				if(exp.getCascade()!=null &&
-						(exp.getCascade().isCascadePdd() || exp.getCascade().isCascadeSoggetti() ||
+						(exp.getCascade().isCascadePdd() || 
+								exp.getCascade().isCascadeRuoli() || 
+								exp.getCascade().isCascadeScope() || 
+								exp.getCascade().isCascadeSoggetti() ||
 								exp.getCascade().isCascadeServiziApplicativi() || 
 								exp.getCascade().isCascadePorteDelegate() ||
 								exp.getCascade().isCascadePorteApplicative() ||

@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
@@ -72,6 +73,9 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 	/** Autorizzazione Ruolo */
 	private IDRuolo idRuolo;
 	
+	/** Autorizzazione Scope */
+	private IDScope idScope;
+	
 	/** Autorizzazione ServizioApplicativo */
 	private String nomeServizioApplicativo;
 	
@@ -105,6 +109,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.idScope!=null)
+			bf.append(" [scope:"+this.idScope+"]");
 		if(this.nomeServizioApplicativo!=null)
 			bf.append(" [nomeServizioApplicativo:"+this.nomeServizioApplicativo+"]");
 		if(this.stato!=null)
@@ -199,6 +205,14 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	public void setIdRuolo(IDRuolo idRuolo) {
 		this.idRuolo = idRuolo;
+	}
+	
+	public IDScope getIdScope() {
+		return this.idScope;
+	}
+
+	public void setIdScope(IDScope idScope) {
+		this.idScope = idScope;
 	}
 	
 	public StatoFunzionalita getStato() {

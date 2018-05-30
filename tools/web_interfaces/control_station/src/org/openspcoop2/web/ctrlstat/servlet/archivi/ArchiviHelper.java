@@ -102,7 +102,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			List<ExportMode> exportModes,String exportMode,
 			ArchiveType servletSourceExport, String objToExport, 
 			String cascade,String configurazioneType,
-			String cascadePdd,String cascadeRuoli, String cascadeSoggetti,
+			String cascadePdd,String cascadeRuoli,String cascadeScope, String cascadeSoggetti,
 			String cascadeServiziApplicativi, String cascadePorteDelegate, String cascadePorteApplicative,
 			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni){
 		
@@ -221,6 +221,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.CHECKBOX);
 				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
 				de.setSelected(cascadeRuoli);
+				dati.addElement(de);
+			}
+			
+			if(cascadeConfig.isCascadeScope()){
+				de = new DataElement();
+				de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
+				de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE);
+				de.setType(DataElementType.CHECKBOX);
+				de.setPostBack(true); // serve solo a poter riesportare senza dover rientrare nella sezione configurazione una volta esportato
+				de.setSelected(cascadeScope);
 				dati.addElement(de);
 			}
 			

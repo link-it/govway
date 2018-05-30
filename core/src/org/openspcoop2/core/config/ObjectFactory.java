@@ -213,6 +213,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Scope }
+     */
+    public Scope createScope() {
+        return new Scope();
+    }
+
+    /**
      * Create an instance of {@link DumpConfigurazione }
      */
     public DumpConfigurazione createDumpConfigurazione() {
@@ -476,6 +483,13 @@ public class ObjectFactory {
      */
     public CorrelazioneApplicativa createCorrelazioneApplicativa() {
         return new CorrelazioneApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link AutorizzazioneScope }
+     */
+    public AutorizzazioneScope createAutorizzazioneScope() {
+        return new AutorizzazioneScope();
     }
 
     /**

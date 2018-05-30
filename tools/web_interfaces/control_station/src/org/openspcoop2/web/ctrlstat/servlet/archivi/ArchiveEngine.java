@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -132,6 +133,37 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, ruolo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	// --- SCOPE ---
+	
+	@Override
+	public void createScope(Scope scope) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, scope);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateScope(Scope scope) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, scope);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteScope(Scope scope) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, scope);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}

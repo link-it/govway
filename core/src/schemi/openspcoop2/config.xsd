@@ -137,6 +137,7 @@
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
+			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="gestione-token" type="gestione-token" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="local-forward" type="porta-delegata-local-forward" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
@@ -398,6 +399,7 @@
 			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="soggetti" type="porta-applicativa-autorizzazione-soggetti" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
+			<xsd:element name="scope" type="autorizzazione-scope" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="gestione-token" type="gestione-token" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0"/>
@@ -1131,6 +1133,19 @@
 		<xsd:attribute name="match" type="RuoloTipoMatch" use="optional" />
 	</xsd:complexType>
 	
+	<!-- Scope -->
+	<xsd:complexType name="scope">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Autorizzazione per Scope -->
+	<xsd:complexType name="autorizzazione-scope">
+		<xsd:sequence>
+			<xsd:element name="scope" type="scope" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="match" type="ScopeTipoMatch" use="optional" />
+	</xsd:complexType>
+	
 	<!-- Gestione Token -->
 	<xsd:complexType name="gestione-token">
 		<xsd:attribute name="policy" type="xsd:string" use="required" />
@@ -1615,6 +1630,12 @@
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:simpleType name="RuoloTipoMatch">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="all"/>
+			<xsd:enumeration value="any"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ScopeTipoMatch">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="all"/>
 			<xsd:enumeration value="any"/>

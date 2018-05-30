@@ -47,6 +47,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -59,11 +60,13 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -198,6 +201,53 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	// --- SCOPE ---
+	
+	public List<IDScope> getAllIdScope(FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.driverRegistroServizi.getAllIdScope(filtroRicerca);
+	}
+	
+	public Scope getScope(IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return this.driverRegistroServizi.getScope(idScope);
+	}
+	
+	public boolean existsScope(IDScope idScope) throws DriverRegistroServiziException {
+		return this.driverRegistroServizi.existsScope(idScope);
+	}
+	
+	public void createScope(Scope scope) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.createScope(scope);
+	}
+	
+	public void updateScope(Scope scope) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.updateScope(scope);
+	}
+	
+	public void deleteScope(Scope scope) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteScope(scope);
+	}
+	
+	public boolean isScopeInUso(IDScope idScope, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("archive.isScopeInUso");
+			return DBOggettiInUsoUtils.isScopeInUso(con, this.driverRegistroServizi.getTipoDB(), idScope, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+
 	
 		
 	

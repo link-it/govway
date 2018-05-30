@@ -191,6 +191,8 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_RUOLI_DIR = "ruoli";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_SCOPE_DIR = "scope";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR = "soggetti";
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_REGISTRO = "_soggettoRegistroServizi.xml"; // aggiungo _ inziale per ordine lessicografico con le proprieta di protocollo
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_CONFIG = "_soggettoConfigurazione.xml"; // aggiungo _ inziale per ordine lessicografico con le proprieta di protocollo

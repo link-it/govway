@@ -172,6 +172,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "tipoDump";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "cascadePdd";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI = "cascadeRuoli";
+	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE = "cascadeScope";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI = "cascadeSoggetti";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI = "cascadeServiziApplicativi";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE = "cascadePorteDelegate";
@@ -218,6 +219,7 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "Tipologia di salvataggio";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "Porte di Dominio";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI = "Ruoli";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SCOPE = "Scope";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE = "Porte Delegate";

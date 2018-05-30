@@ -133,6 +133,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link AutorizzazioneScope }
+     */
+    public AutorizzazioneScope createAutorizzazioneScope() {
+        return new AutorizzazioneScope();
+    }
+    
+    /**
      * Create an instance of {@link RispostaAsincrona }
      */
     public RispostaAsincrona createRispostaAsincrona() {

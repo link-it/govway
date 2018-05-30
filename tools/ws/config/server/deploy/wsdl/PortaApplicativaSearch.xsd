@@ -17,6 +17,7 @@
  			<xsd:element name="servizio" type="tns:porta-applicativa-servizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="azione" type="tns:porta-applicativa-azione" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ruoli" type="tns:autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="scope" type="tns:autorizzazione-scope" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="gestione-token" type="tns:gestione-token" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="mtom-processor" type="tns:mtom-processor" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
@@ -79,6 +80,13 @@
 	<xsd:complexType name="autorizzazione-ruoli">
 		<xsd:sequence>
  			<xsd:element name="match" type="api:RuoloTipoMatch" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="autorizzazione-scope" type="tns:autorizzazione-scope" />
+	<xsd:complexType name="autorizzazione-scope">
+		<xsd:sequence>
+ 			<xsd:element name="match" type="api:ScopeTipoMatch" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

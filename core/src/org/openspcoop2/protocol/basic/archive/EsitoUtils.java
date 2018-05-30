@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 
@@ -181,6 +182,7 @@ public class EsitoUtils {
 			bfEsito.append("\n");	
 		}
 		
+		
 		// Ruoli
 		if(archive.getRuoli().size()>0){
 			bfEsito.append("Ruoli (").append(archive.getRuoli().size()).append(")\n");
@@ -197,6 +199,26 @@ public class EsitoUtils {
 			bfEsito.append("\n");
 		}
 		if(archive.getRuoli().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		// Scope
+		if(archive.getScope().size()>0){
+			bfEsito.append("Scope (").append(archive.getScope().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getScope().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveScope = archive.getScope().get(i);
+				String nomeScope = ((ArchiveScope)archiveScope.getArchiveObject()).getIdScope().getNome();
+				bfEsito.append("\t- [").append(nomeScope).append("] ");
+				serializeStato(archiveScope, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getScope().size()>0){
 			bfEsito.append("\n");	
 		}
 		
@@ -582,6 +604,13 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archiveRuolo = archive.getRuoli().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchiveRuolo)archiveRuolo.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getRuoli().add(archiveRuolo);
+		}
+		
+		// Scope
+		for (int i = 0; i < archive.getScope().size(); i++) {
+			ArchiveEsitoImportDetail archiveScope = archive.getScope().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveScope)archiveScope.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getScope().add(archiveScope);
 		}
 		
 		// Soggetti

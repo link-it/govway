@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDSoggetto;
 
 /**
@@ -73,6 +74,9 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 	/** Autorizzazione Ruolo */
 	private IDRuolo idRuolo;
 	
+	/** Autorizzazione Scope */
+	private IDScope idScope;
+	
 	/** Autorizzazione Soggetto */
 	private IDSoggetto idSoggettoAutorizzato;
 	
@@ -105,6 +109,8 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 			bf.append(" [azione:"+this.azione+"]");
 		if(this.idRuolo!=null)
 			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.idScope!=null)
+			bf.append(" [ruolo:"+this.idScope+"]");
 		if(this.idSoggettoAutorizzato!=null)
 			bf.append(" [ruolo:"+this.idSoggettoAutorizzato+"]");
 		if(this.stato!=null)
@@ -196,6 +202,14 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	public void setIdRuolo(IDRuolo idRuolo) {
 		this.idRuolo = idRuolo;
+	}
+	
+	public IDScope getIdScope() {
+		return this.idScope;
+	}
+
+	public void setIdScope(IDScope idScope) {
+		this.idScope = idScope;
 	}
 	
 	public StatoFunzionalita getStato() {

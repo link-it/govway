@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.protocol.basic.Costanti;
@@ -72,6 +73,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
@@ -311,6 +313,19 @@ public class ZIPWriteUtils {
 					Ruolo ruolo = archiveRuolo.getRuolo();
 					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(ruolo);
 					write(zipOut, "Ruolo", archiveRuolo.getIdRuolo().getNome(), SerializationType.REGISTRY, ruolo);
+				}
+			}
+			
+			// scope
+			if(archive.getScope()!=null && archive.getScope().size()>0){
+				for (int i = 0; i < archive.getScope().size(); i++) {
+					ArchiveScope archiveScope = archive.getScope().get(i);
+					nomeFile = Costanti.OPENSPCOOP2_ARCHIVE_SCOPE_DIR+File.separatorChar+
+							ZIPUtils.convertNameToSistemaOperativoCompatible(archiveScope.getIdScope().getNome())+".xml";
+					zipOut.putNextEntry(new ZipEntry(rootPackageDir+nomeFile));
+					Scope scope = archiveScope.getScope();
+					this.cleanerOpenSPCoop2ExtensionsRegistry.clean(scope);
+					write(zipOut, "Scope", archiveScope.getIdScope().getNome(), SerializationType.REGISTRY, scope);
 				}
 			}
 			

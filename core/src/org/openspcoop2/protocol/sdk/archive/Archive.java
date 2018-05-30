@@ -36,6 +36,8 @@ public class Archive {
 	
 	private ArchiveSortedMap<ArchiveRuolo> ruoli = new ArchiveSortedMap<ArchiveRuolo>();
 	
+	private ArchiveSortedMap<ArchiveScope> scope = new ArchiveSortedMap<ArchiveScope>();
+	
 	private Openspcoop2 informationMissing;
 		
 	private ArchiveSortedMap<ArchiveSoggetto> soggetti = new ArchiveSortedMap<ArchiveSoggetto>();
@@ -75,6 +77,9 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchiveRuolo> getRuoli() {
 		return this.ruoli;
+	}
+	public ArchiveSortedMap<ArchiveScope> getScope() {
+		return this.scope;
 	}
 	public Openspcoop2 getInformationMissing() {
 		return this.informationMissing;

@@ -62,6 +62,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -751,6 +752,10 @@ public class XMLDataConverter {
 	}
 	
 	public static void impostaInformazioniRegistroDB_Ruolo(Ruolo ruolo) throws DriverRegistroServiziException{
+
+	}
+	
+	public static void impostaInformazioniRegistroDB_Scope(Scope scope) throws DriverRegistroServiziException{
 
 	}
 	

@@ -31,6 +31,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="scope" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-scope" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config/management}gestione-token" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-local-forward" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0" maxOccurs="1" />
@@ -76,6 +77,7 @@ import java.util.Date;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataServizio;
 import org.openspcoop2.core.config.ws.server.filter.beans.GestioneToken;
 import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneScope;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
@@ -93,6 +95,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "servizio",
     "azione",
     "ruoli",
+    "scope",
     "gestioneToken",
     "localForward",
     "mtomProcessor",
@@ -171,6 +174,18 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public AutorizzazioneRuoli getRuoli(){
 		return this.ruoli;
+	}
+	
+	
+	@XmlElement(name="scope",required=false,nillable=false)
+	private AutorizzazioneScope scope;
+	
+	public void setScope(AutorizzazioneScope scope){
+		this.scope = scope;
+	}
+	
+	public AutorizzazioneScope getScope(){
+		return this.scope;
 	}
 	
 	

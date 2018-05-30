@@ -46,6 +46,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new Field("soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
+		this.SCOPE = new org.openspcoop2.core.config.model.AutorizzazioneScopeModel(new Field("scope",org.openspcoop2.core.config.AutorizzazioneScope.class,"porta-applicativa",PortaApplicativa.class));
 		this.GESTIONE_TOKEN = new org.openspcoop2.core.config.model.GestioneTokenModel(new Field("gestione-token",org.openspcoop2.core.config.GestioneToken.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
@@ -90,6 +91,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.SOGGETTI = new org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel(new ComplexField(father,"soggetti",org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetti.class,"porta-applicativa",PortaApplicativa.class));
 		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
+		this.SCOPE = new org.openspcoop2.core.config.model.AutorizzazioneScopeModel(new ComplexField(father,"scope",org.openspcoop2.core.config.AutorizzazioneScope.class,"porta-applicativa",PortaApplicativa.class));
 		this.GESTIONE_TOKEN = new org.openspcoop2.core.config.model.GestioneTokenModel(new ComplexField(father,"gestione-token",org.openspcoop2.core.config.GestioneToken.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
@@ -137,6 +139,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.PortaApplicativaAutorizzazioneSoggettiModel SOGGETTI = null;
 	 
 	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
+	 
+	public org.openspcoop2.core.config.model.AutorizzazioneScopeModel SCOPE = null;
 	 
 	public org.openspcoop2.core.config.model.GestioneTokenModel GESTIONE_TOKEN = null;
 	 

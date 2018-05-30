@@ -35,6 +35,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -63,6 +65,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
@@ -432,6 +435,19 @@ public class DeleterArchiveUtils {
 				esito.getRuoli().add(detail);
 			}
 			
+			// Scope
+			for (int i = 0; i < archive.getScope().size(); i++) {
+				ArchiveScope archiveScope = archive.getScope().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveScope);
+				try{
+					this.deleteScope(archiveScope, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getScope().add(detail);
+			}
+			
 			// Pdd
 			for (int i = 0; i < archive.getPdd().size(); i++) {
 				ArchivePdd archivePdd = archive.getPdd().get(i);
@@ -665,6 +681,52 @@ public class DeleterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'eliminazione del ruolo ["+idRuolo+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	
+	public void deleteScope(ArchiveScope archiveScope,ArchiveEsitoImportDetail detail){
+		
+		IDScope idScope = archiveScope.getIdScope();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsScope(idScope)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// scope
+			Scope scopeReadFromDb = this.importerEngine.getScope(idScope);
+			if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+				if(this.userLogin.equals(scopeReadFromDb.getSuperUser())==false){
+					throw new Exception("Lo Scope ["+idScope+"] non è visibile/eliminabile dall'utente collegato ("+this.userLogin+")");
+				}
+			}
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isScopeInUso(idScope, whereIsInUso)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idScope, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteScope(archiveScope.getScope());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione dello scope ["+idScope+"]: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}

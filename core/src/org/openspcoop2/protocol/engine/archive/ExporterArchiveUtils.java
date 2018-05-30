@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -39,6 +40,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -51,6 +53,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -76,6 +79,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
 import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
@@ -154,6 +158,11 @@ public class ExporterArchiveUtils {
 		case RUOLO:
 			for (Object object : listObject) {
 				this.readRuolo(archive, (IDRuolo)object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case SCOPE:
+			for (Object object : listObject) {
+				this.readScope(archive, (IDScope)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case SOGGETTO:
@@ -261,6 +270,28 @@ public class ExporterArchiveUtils {
 					}
 					if(!found){
 						this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+			// aggiungo scope 'zombie'
+			FiltroRicercaScope filtroRicercaScope = new FiltroRicercaScope();
+			List<IDScope> idScopes = null;
+			try{
+				idScopes = this.archiveEngine.getAllIdScope(filtroRicercaScope);
+				for (IDScope idScope : idScopes) {
+					boolean found = false;
+					if(archive.getScope()!=null && archive.getScope().size()>0){
+						for (String idArchiveScope : archive.getScope().keys()) {
+							ArchiveScope archiveScope = archive.getScope().get(idArchiveScope);
+							if(archiveScope.getIdScope().equals(idScope)){
+								found = true;
+								break;
+							}
+						}
+					}
+					if(!found){
+						this.readScope(archive, idScope, cascadeConfig, false, ArchiveType.SCOPE);
 					}
 				}
 			}catch(DriverRegistroServiziNotFound notFound){}
@@ -444,6 +475,76 @@ public class ExporterArchiveUtils {
 		
 		
 	}
+	
+	
+	private void readScope(Archive archive, IDScope idScope, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
+		this.readScope(archive, idScope, cascadeConfig, true, provenienza);
+	}
+	private void readScope(Archive archive, IDScope idScope, ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
+		
+		String key = ArchiveScope.buildKey(idScope.getNome());
+		if(archive.getScope().containsKey(key)){
+			// gia gestito
+		}
+		else{
+			try{
+				if(cascadeConfig.isCascadeScope() || ArchiveType.SCOPE.equals(provenienza)){
+					
+					// add
+					org.openspcoop2.core.registry.Scope scope = this.archiveEngine.getScope(idScope);
+					ArchiveScope archiveScope = new ArchiveScope(scope, this.idCorrelazione);
+					archive.getScope().add(archiveScope);
+					
+					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
+					
+					// non vi sono oggetti che possiedono come figlio il scope
+					
+				}
+			}catch(Exception e){
+				throw new ProtocolException("(Scope "+idScope.getNome()+") "+e.getMessage(),e);
+			}
+		}
+		
+		
+		// *** cascade in avanti ***
+		
+		if(cascadeAvanti){
+		
+
+			// porteDelegate
+			
+			FiltroRicercaPorteDelegate filtroPorteDelegate = new FiltroRicercaPorteDelegate();
+			filtroPorteDelegate.setIdScope(idScope);
+			try{
+				List<IDPortaDelegata> idsPD = this.archiveEngine.getAllIdPorteDelegate(filtroPorteDelegate);
+				if(idsPD!=null && idsPD.size()>0){
+					for (IDPortaDelegata idPD : idsPD) {
+						this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.SCOPE);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}	
+			
+			
+			// porteApplicative
+			
+			FiltroRicercaPorteApplicative filtroPorteApplicative = new FiltroRicercaPorteApplicative();
+			filtroPorteApplicative.setIdScope(idScope);
+			try{
+				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroPorteApplicative);
+				if(idsPA!=null && idsPA.size()>0){
+					for (IDPortaApplicativa idPA : idsPA) {
+						this.readPortaApplicativa(archive, idPA, cascadeConfig, ArchiveType.SCOPE);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+
+			
+		}
+		
+		
+	}
+	
 	
 	
 	private void readSoggetto(Archive archive, IDSoggetto idSoggetto, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
@@ -1210,6 +1311,24 @@ public class ExporterArchiveUtils {
 							}catch(DriverRegistroServiziNotFound notFound){}	
 						}
 					}
+					
+					// scope
+					if(pd!=null && pd.getScope()!=null && 
+							pd.getScope().sizeScopeList()>0){
+						for (int i = 0; i < pd.getScope().sizeScopeList(); i++) {
+							Scope scope = pd.getScope().getScope(i);
+							FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+							filtroScope.setNome(scope.getNome());
+							try{
+								List<IDScope> idsScope = this.archiveEngine.getAllIdScope(filtroScope);
+								if(idsScope!=null && idsScope.size()>0){
+									for (IDScope idScope : idsScope) {
+										this.readScope(archive, idScope, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
+					}
 				}
 					
 			}catch(Exception e){
@@ -1322,6 +1441,24 @@ public class ExporterArchiveUtils {
 								if(idsRuoli!=null && idsRuoli.size()>0){
 									for (IDRuolo idRuolo : idsRuoli) {
 										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
+					}
+					
+					// scope
+					if(pa!=null && pa.getScope()!=null && 
+							pa.getScope().sizeScopeList()>0){
+						for (int i = 0; i < pa.getScope().sizeScopeList(); i++) {
+							Scope scope = pa.getScope().getScope(i);
+							FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+							filtroScope.setNome(scope.getNome());
+							try{
+								List<IDScope> idsScope = this.archiveEngine.getAllIdScope(filtroScope);
+								if(idsScope!=null && idsScope.size()>0){
+									for (IDScope idScope : idsScope) {
+										this.readScope(archive, idScope, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
 									}
 								}
 							}catch(DriverRegistroServiziNotFound notFound){}	

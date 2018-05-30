@@ -59,6 +59,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -75,6 +76,7 @@ import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.RouteGateway;
 import org.openspcoop2.core.config.Openspcoop2;
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -4446,6 +4448,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: autorizzazione-scope
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AutorizzazioneScope autorizzazioneScope) throws SerializerException {
+		this.objToXml(fileName, AutorizzazioneScope.class, autorizzazioneScope, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AutorizzazioneScope autorizzazioneScope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AutorizzazioneScope.class, autorizzazioneScope, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param file Xml file to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AutorizzazioneScope autorizzazioneScope) throws SerializerException {
+		this.objToXml(file, AutorizzazioneScope.class, autorizzazioneScope, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param file Xml file to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AutorizzazioneScope autorizzazioneScope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AutorizzazioneScope.class, autorizzazioneScope, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param out OutputStream to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AutorizzazioneScope autorizzazioneScope) throws SerializerException {
+		this.objToXml(out, AutorizzazioneScope.class, autorizzazioneScope, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param out OutputStream to serialize the object <var>autorizzazioneScope</var>
+	 * @param autorizzazioneScope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AutorizzazioneScope autorizzazioneScope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AutorizzazioneScope.class, autorizzazioneScope, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param autorizzazioneScope Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AutorizzazioneScope autorizzazioneScope) throws SerializerException {
+		return this.objToXml(AutorizzazioneScope.class, autorizzazioneScope, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param autorizzazioneScope Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AutorizzazioneScope autorizzazioneScope,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AutorizzazioneScope.class, autorizzazioneScope, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param autorizzazioneScope Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AutorizzazioneScope autorizzazioneScope) throws SerializerException {
+		return this.objToXml(AutorizzazioneScope.class, autorizzazioneScope, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>autorizzazioneScope</var> of type {@link org.openspcoop2.core.config.AutorizzazioneScope}
+	 * 
+	 * @param autorizzazioneScope Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AutorizzazioneScope autorizzazioneScope,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AutorizzazioneScope.class, autorizzazioneScope, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: porta-delegata-local-forward
 	 =================================================================================
 	*/
@@ -6328,6 +6448,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Configurazione configurazione,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Configurazione.class, configurazione, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: scope
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Scope scope) throws SerializerException {
+		this.objToXml(fileName, Scope.class, scope, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,Scope scope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, Scope.class, scope, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param file Xml file to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Scope scope) throws SerializerException {
+		this.objToXml(file, Scope.class, scope, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param file Xml file to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,Scope scope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, Scope.class, scope, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param out OutputStream to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Scope scope) throws SerializerException {
+		this.objToXml(out, Scope.class, scope, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param out OutputStream to serialize the object <var>scope</var>
+	 * @param scope Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,Scope scope,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, Scope.class, scope, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param scope Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Scope scope) throws SerializerException {
+		return this.objToXml(Scope.class, scope, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param scope Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(Scope scope,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Scope.class, scope, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param scope Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Scope scope) throws SerializerException {
+		return this.objToXml(Scope.class, scope, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>scope</var> of type {@link org.openspcoop2.core.config.Scope}
+	 * 
+	 * @param scope Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(Scope scope,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(Scope.class, scope, prettyPrint).toString();
 	}
 	
 	
