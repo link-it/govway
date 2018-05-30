@@ -57,7 +57,7 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
 
 //    private AbstractXMLUtils xmlUtils = null;
     private OpenSPCoop2SoapMessage message = null;
-    private SunEnvelopeIdResolver(OpenSPCoop2SoapMessage message) {
+    public SunEnvelopeIdResolver(OpenSPCoop2SoapMessage message) { // usato in org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor e org.openspcoop2.security.message.soapbox.ProcessSignedMessage tramite classLoader instance
     	this.message = message;
 //    	this.xmlUtils = XMLUtils.getInstance();
     }

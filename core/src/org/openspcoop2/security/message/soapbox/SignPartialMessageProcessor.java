@@ -51,6 +51,7 @@
  */
 package org.openspcoop2.security.message.soapbox;
 
+import java.lang.reflect.Constructor;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -80,7 +81,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolver;
+import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi;
 import com.sun.xml.wss.core.SignatureHeaderBlock;
 
 
@@ -283,7 +284,9 @@ public class SignPartialMessageProcessor implements Processor {
         }else{
         	try {
         		// Uso la reflection poiche' da java 9 la classe usata in SunEnvelopeIdResolver non esiste piu' e quindi la classe non viene compilata tra quelle di openspcoop (esclusa nel build)
-        		sigSUN.addResourceResolver((ResourceResolver) ClassLoaderUtilities.newInstance("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver",this.message));
+        		Class<?> c = ClassLoaderUtilities.forName("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver");
+        		Constructor<?> constructor = c.getConstructor(OpenSPCoop2SoapMessage.class);
+        		sigSUN.addResourceResolver((ResourceResolverSpi) constructor.newInstance(this.message.castAsSoap()));
         	}catch(Exception e) {
         		throw new SecurityFailureException(e.getMessage(),e);
         	}

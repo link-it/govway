@@ -4487,6 +4487,8 @@
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+		<soggetto tipo="spc" nome="Soggetto1"/>
+		<soggetto tipo="spc" nome="Soggetto2"/>
 	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="OnewayCompletamenteNullRisposta" stateless="abilitato">
@@ -4512,6 +4514,8 @@
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+		<soggetto tipo="spc" nome="Soggetto1"/>
+		<soggetto tipo="spc" nome="Soggetto2"/>
 	    </soggetti>
         </porta-applicativa>
         
@@ -6996,6 +7000,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Overhead" />
             <servizio-applicativo nome="TRACE_ECHO" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Sincrono -->
@@ -7003,6 +7010,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="Overhead" />
             <servizio-applicativo nome="TRACE_ECHO" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -7020,47 +7030,74 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFile" />
             <servizio-applicativo nome="serializeFile" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFileAndHeaders" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFileAndHeaders" />
             <servizio-applicativo nome="serializeFileAndHeaders" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeDynamicFile" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeDynamicFile" />
             <servizio-applicativo nome="serializeDynamicFile" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFile_sbustamentoSOAP" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFile_sbustamentoSOAP" />
             <servizio-applicativo nome="serializeFile_sbustamentoSOAP" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFile" />
             <servizio-applicativo nome="serializeAndReturnFile" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAndHeaders" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFileAndHeaders" />
             <servizio-applicativo nome="serializeAndReturnFileAndHeaders" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnDynamicFile" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnDynamicFile" />
             <servizio-applicativo nome="serializeAndReturnDynamicFile" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile_sbustamentoSOAP" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFile_sbustamentoSOAP" />
             <servizio-applicativo nome="serializeAndReturnFile_sbustamentoSOAP" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAsync" stateless="abilitato" integrazione="trasporto" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFileAsync" />
             <servizio-applicativo nome="serializeAndReturnFileAsync" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
         <!-- ConsegnaApplicativa con connettore di tipo JMS -->
@@ -7068,21 +7105,33 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnQueueJMS" />
             <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_sendBytesOnQueueJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendBytesOnQueueJMS" />
             <servizio-applicativo nome="PubbTestQueueAsBytes" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnTopicJMS" />
             <servizio-applicativo nome="PubbTestTopicAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_sendBytesOnTopicJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendBytesOnTopicJMS" />
             <servizio-applicativo nome="PubbTestTopicAsBytes" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Propagazione delle informazioni eGov al servizio applicativo -->
@@ -7090,6 +7139,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnQueue" />
             <servizio-applicativo nome="PubbTestQueueAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="tipoMittQUEUE" valore="tipoMittente" />
             <proprieta nome="mittQUEUE" valore="mittente" />
             <proprieta nome="tipoDestinatarioQUEUE" valore="tipoDestinatario" />
@@ -7103,6 +7155,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnTopic" />
             <servizio-applicativo nome="PubbTestTopicAsText" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <proprieta nome="tipoMittTOPIC" valore="tipoMittente" />
             <proprieta nome="mittTOPIC" valore="mittente" />
             <proprieta nome="tipoDestinatarioTOPIC" valore="tipoDestinatario" />
@@ -7118,11 +7173,17 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnQueueJMS_Sbustato" />
             <servizio-applicativo nome="PubbTestQueueAsTextSbustato" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS_sbustato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnTopicJMS_Sbustato" />
             <servizio-applicativo nome="PubbTestTopicAsTextSbustato" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -7131,6 +7192,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Sbustamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteConSbustamento" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Utilizzo del servizio di MessageBox offerto dall'Integration Manager -->
@@ -7159,6 +7223,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="GestioneErroreConnettore" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteGestioneErrore" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -7168,54 +7235,81 @@
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral">
             <servizio tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral">
             <servizio tipo="spc" nome="GestioneUtentiDocumentLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral">
             <servizio tipo="spc" nome="GestioneUtentiRPCLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiRPCLiteral" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded">
             <servizio tipo="spc" nome="GestioneUtentiRPCEncoded" />
             <servizio-applicativo nome="TestGestioneUtentiRPCEncoded" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations">
             <servizio tipo="spc" nome="GestioneUtentiOverloadedOperations" />
             <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido">
             <servizio tipo="spc" nome="GestioneUtentiStileIbrido" />
             <servizio-applicativo nome="TestGestioneUtentiStileIbrido" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
@@ -7225,54 +7319,81 @@
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiStileIbrido_ValidazioneOpenSPCoop" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
@@ -8072,11 +8193,17 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="autorizzazioneContenutoOK" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAutorizzazioneContenutoKO" autorizzazione-contenuto="esempioKO" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="autorizzazioneContenutoKO" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         
         
@@ -8092,11 +8219,17 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="xmlEncoding" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_XMLEncoding_stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="xmlEncodingStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8109,11 +8242,17 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapHeaderEmpty" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_TestSoapHeaderEmpty_stateful" stateless="disabilitato" integrazione="trasporto,urlBased">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapHeaderEmptyStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8141,6 +8280,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="saaj"/>
             <servizio-applicativo nome="SAAJ" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
@@ -8148,6 +8290,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="saaj"/>
             <servizio-applicativo nome="SAAJ" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
 
@@ -8156,6 +8301,9 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="httpCore"/>
             <servizio-applicativo nome="HTTPCORE" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
 
         <!-- Profilo Sincrono -->
@@ -8163,6 +8311,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="httpCore"/>
             <servizio-applicativo nome="HTTPCORE" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8175,37 +8326,58 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody"/>
             <servizio-applicativo nome="MalformazioneXMLBody" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_Body"/>
             <servizio-applicativo nome="MalformazioneXMLBody_Body" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_BodyFirstChild"/>
             <servizio-applicativo nome="MalformazioneXMLBody_BodyFirstChild" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_InsideBody"/>
             <servizio-applicativo nome="MalformazioneXMLBody_InsideBody" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_Body_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_Body" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_BodyFirstChild_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_BodyFirstChild" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_InsideBody_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_InsideBody" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8552,7 +8724,7 @@
 	<servizio-applicativo nome="serializeDynamicFile" > 
             <invocazione-servizio>
                 <connettore tipo="file" nome="serializeDynamicFile">
-                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
 		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/ONEWAY/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
 		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
@@ -8596,13 +8768,13 @@
 	<servizio-applicativo nome="serializeAndReturnDynamicFile" > 
             <invocazione-servizio>
                 <connettore tipo="file" nome="serializeAndReturnDynamicFile">
-                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
 		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
 		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
 		    <property nome="response" valore="abilitato" />
 		    <!-- echo -->
-		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOL_NAME}.xml" />
 		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
 		    <property nome="inputFileWaitTimeIfNotExists" valore="10000" />
                 </connettore>
@@ -9554,6 +9726,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataFirmata"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt Signature"/>
@@ -9618,6 +9793,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataCifrata"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature Encrypt"/>
@@ -9682,6 +9860,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrata"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt"/>
@@ -9727,6 +9908,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmata"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature"/>
@@ -9775,6 +9959,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataFirmataAttachments"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt Signature"/>
@@ -9839,6 +10026,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataCifrataAttachments"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature Encrypt"/>
@@ -9903,6 +10093,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataAttachments"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt"/>
@@ -9947,6 +10140,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachments"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature"/>
@@ -9994,6 +10190,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature"/>
@@ -10043,6 +10242,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <soggetti>
+		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
+	    </soggetti> 
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature"/>

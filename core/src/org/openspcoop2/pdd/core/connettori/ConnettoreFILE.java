@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -74,7 +73,6 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 	private boolean generateResponse = false;
 	private File inputFile = null;
 	private File inputFileHeaders = null;
-	private InputStream isInputFile = null;
 	private boolean inputFileDeleteAfterRead = false;
 	private Integer inputFileWaitTimeIfNotExists;
 	
@@ -371,6 +369,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			
+			// return code
+			this.codice = 200; // codice deve essere impostato prima delle invocazioni dei successivi metodi nel caso di gestione response, altrimenti cmq ho finito
 			
 
 			
@@ -441,9 +441,15 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 					}
 					
 				}
-				
-				
-				
+				if(this.tipoRisposta==null || "".equals(this.tipoRisposta)) {
+					this.tipoRisposta = contentTypeRichiesta;
+					if(this.propertiesTrasportoRisposta==null) {
+						this.propertiesTrasportoRisposta = new Properties();
+					}
+					this.propertiesTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, this.tipoRisposta);
+				}
+
+								
 				// Parametri di imbustamento
 				if(this.isSoap){
 					this.imbustamentoConAttachment = false;
@@ -461,6 +467,8 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				
 				// Gestione risposta
 				
+				this.isResponse = new FileInputStream(this.inputFile);
+								
 				this.normalizeInputStreamResponse();
 				
 				this.initCheckContentTypeConfiguration();
@@ -468,9 +476,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.debug){
 					this.dumpResponse();
 				}
-				
-				this.isInputFile = new FileInputStream(this.inputFile);
-				
+								
 				if(this.isRest){
 					
 					if(this.doRestResponse()==false){
@@ -486,16 +492,12 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 					
 				}
 				
-				
 			}
 
 
 			if(this.debug)
 				this.logger.info("Gestione consegna su file effettuata con successo",false);
-			
-			// return code
-			this.codice = 200;
-			
+						
 			return true;
 
 		}  catch(Exception e){ 
@@ -515,11 +517,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     	
 			// Gestione finale
     		
-	    	if(this.isInputFile!=null){
+	    	if(this.isResponse!=null){
 	    		if(this.debug && this.logger!=null)
 	    			this.logger.debug("Chiusura inputStream ["+this.inputFile.getAbsolutePath()+"] ...");
 	    		try{
-					this.isInputFile.close();
+					this.isResponse.close();
 					if(this.debug && this.logger!=null)
 		    			this.logger.debug("Chiusura inputStream ["+this.inputFile.getAbsolutePath()+"] effettuata con successo");
 	    		}catch(Exception e){
