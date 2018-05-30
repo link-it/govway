@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
@@ -7004,7 +7005,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		String filterScopeTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_TIPOLOGIA);
 		String scopeTipologia = null;
 		if(filterScopeTipologia!=null) {
-			scopeTipologia = filterScopeTipologia;
+//			scopeTipologia = filterScopeTipologia;
+			scopeTipologia = StringUtils.isNotEmpty(filterScopeTipologia) ? filterScopeTipologia : null;
 		}
 		
 		String filterScopeContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_CONTESTO);
