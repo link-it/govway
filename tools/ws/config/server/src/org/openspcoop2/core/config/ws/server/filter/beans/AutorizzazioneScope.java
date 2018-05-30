@@ -27,6 +27,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="autorizzazione-scope">
  *     &lt;sequence>
+ *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
  *         &lt;element name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
@@ -39,6 +40,7 @@ import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
 /**     
  * AutorizzazioneScope
@@ -50,12 +52,25 @@ import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "autorizzazione-scope", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
+    "stato",
     "match"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "autorizzazione-scope")
 public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@XmlElement(name="stato",required=false,nillable=false,defaultValue="disabilitato")
+	private StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	
+	public void setStato(StatoFunzionalita stato){
+		this.stato = stato;
+	}
+	
+	public StatoFunzionalita getStato(){
+		return this.stato;
+	}
+	
 	
 	@XmlElement(name="match",required=false,nillable=false)
 	private ScopeTipoMatch match;

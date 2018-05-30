@@ -84,6 +84,9 @@ CREATE TABLE porte_delegate
 	local_forward_pa VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	scope_stato VARCHAR(255),
+	-- all/any
+	scope_match VARCHAR(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
@@ -272,6 +275,24 @@ CREATE TABLE pd_ruoli
 
 -- index
 CREATE UNIQUE INDEX index_pd_ruoli_1 ON pd_ruoli (id_porta,ruolo);
+
+
+
+CREATE TABLE pd_scope
+(
+	id_porta BIGINT NOT NULL,
+	scope VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
+	-- unique constraints
+	CONSTRAINT unique_pd_scope_1 UNIQUE (id_porta,scope),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_scope PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pd_scope_1 ON pd_scope (id_porta,scope);
 
 
 

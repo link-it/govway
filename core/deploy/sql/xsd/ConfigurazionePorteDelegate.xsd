@@ -666,13 +666,24 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="scope_stato" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scope_stato"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica se l'autorizzazione per scope è abilitata]]></linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="scope_match" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scope_match"/>
-                                <linkit:sql-ddl-column-comment><![CDATA[Indica quali scope sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sugli scope (vedi colonna 'autorizzazione'):
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica quali scope sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sugli scope (vedi colonna 'scope_stato'):
 - 'all': tutti gli scope associati alla porta delegata (tramite tabella pd_scope) devono essere posseduti dal chiamante
 - 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno degli scope definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>

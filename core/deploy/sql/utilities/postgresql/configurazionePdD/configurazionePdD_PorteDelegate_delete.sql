@@ -1,4 +1,5 @@
 DELETE FROM pd_azioni;
+DELETE FROM pd_scope;
 DELETE FROM pd_ruoli;
 DELETE FROM pd_correlazione_risposta;
 DELETE FROM pd_correlazione;

@@ -12589,6 +12589,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("scope_stato");
 			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
@@ -12898,11 +12899,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				// ScopeMatch
+				String scopeStato = rs.getString("scope_stato");
 				String scopeMatch = rs.getString("scope_match");
-				if(scopeMatch!=null && !"".equals(scopeMatch)){
+				if( (scopeStato!=null && !"".equals(scopeStato)) || (scopeMatch!=null && !"".equals(scopeMatch)) ){
 					if(pa.getScope()==null){
 						pa.setScope(new AutorizzazioneScope());
 					}
+					pa.getScope().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(scopeStato));
 					pa.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
 				}
 				
@@ -13366,6 +13369,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("local_forward");
 			sqlQueryObject.addSelectField("local_forward_pa");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("scope_stato");
 			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
@@ -13681,11 +13685,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 				
 				// ScopeMatch
+				String scopeStato = rs.getString("scope_stato");
 				String scopeMatch = rs.getString("scope_match");
-				if(scopeMatch!=null && !"".equals(scopeMatch)){
+				if( (scopeStato!=null && !"".equals(scopeStato)) || (scopeMatch!=null && !"".equals(scopeMatch)) ){
 					if(pd.getScope()==null){
 						pd.setScope(new AutorizzazioneScope());
 					}
+					pd.getScope().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(scopeStato));
 					pd.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
 				}
 				

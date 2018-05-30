@@ -41,6 +41,7 @@ public class AutorizzazioneScopeModel extends AbstractModel<AutorizzazioneScope>
 		super();
 	
 		this.SCOPE = new org.openspcoop2.core.config.model.ScopeModel(new Field("scope",org.openspcoop2.core.config.Scope.class,"autorizzazione-scope",AutorizzazioneScope.class));
+		this.STATO = new Field("stato",java.lang.String.class,"autorizzazione-scope",AutorizzazioneScope.class);
 		this.MATCH = new Field("match",java.lang.String.class,"autorizzazione-scope",AutorizzazioneScope.class);
 	
 	}
@@ -50,6 +51,7 @@ public class AutorizzazioneScopeModel extends AbstractModel<AutorizzazioneScope>
 		super(father);
 	
 		this.SCOPE = new org.openspcoop2.core.config.model.ScopeModel(new ComplexField(father,"scope",org.openspcoop2.core.config.Scope.class,"autorizzazione-scope",AutorizzazioneScope.class));
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"autorizzazione-scope",AutorizzazioneScope.class);
 		this.MATCH = new ComplexField(father,"match",java.lang.String.class,"autorizzazione-scope",AutorizzazioneScope.class);
 	
 	}
@@ -57,6 +59,8 @@ public class AutorizzazioneScopeModel extends AbstractModel<AutorizzazioneScope>
 	
 
 	public org.openspcoop2.core.config.model.ScopeModel SCOPE = null;
+	 
+	public IField STATO = null;
 	 
 	public IField MATCH = null;
 	 

@@ -86,6 +86,9 @@ CREATE TABLE porte_delegate
 	local_forward_pa VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	scope_stato VARCHAR(255),
+	-- all/any
+	scope_match VARCHAR(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
@@ -286,6 +289,24 @@ CREATE TABLE pd_ruoli
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pd_scope start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pd_scope
+(
+	id_porta BIGINT NOT NULL,
+	scope VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pd_scope') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_scope_1 UNIQUE (id_porta,scope),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_scope PRIMARY KEY (id)
 );
 
 

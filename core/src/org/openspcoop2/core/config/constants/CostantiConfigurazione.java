@@ -116,13 +116,19 @@ public class CostantiConfigurazione {
     
     /** tipo di porta autorizzazione */
     public final static String AUTORIZZAZIONE_NONE = "none";
+    
     public final static String AUTORIZZAZIONE_AUTHENTICATED = "authenticated";
+    
     public final static String AUTORIZZAZIONE_ROLES = "roles";
     public final static String AUTORIZZAZIONE_INTERNAL_ROLES = "internalRoles";
     public final static String AUTORIZZAZIONE_EXTERNAL_ROLES = "externalRoles";
     public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_ROLES = "authenticatedOrRoles"; 
     public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_INTERNAL_ROLES = "authenticatedOrInternalRoles";
     public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_EXTERNAL_ROLES = "authenticatedOrExternalRoles";
+    
+    public final static String AUTORIZZAZIONE_SCOPES = "scopes";
+    
+    
     public final static String AUTORIZZAZIONE_XACML_POLICY = "xacmlPolicy";
     public final static String AUTORIZZAZIONE_INTERNAL_XACML_POLICY = "internalXacmlPolicy";
     public final static String AUTORIZZAZIONE_EXTERNAL_XACML_POLICY = "externalXacmlPolicy";

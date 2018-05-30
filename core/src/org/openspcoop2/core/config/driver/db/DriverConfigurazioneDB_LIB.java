@@ -1456,6 +1456,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("local_forward", "?");
 				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
@@ -1537,6 +1538,8 @@ public class DriverConfigurazioneDB_LIB {
 						aPD.getRuoli().getMatch().getValue() : null);
 				
 				// Scope
+				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getScope().getStato()) : null);
 				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 						aPD.getScope().getMatch().getValue() : null);
 				
@@ -1574,6 +1577,8 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),
 								(aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 										aPD.getRuoli().getMatch().getValue() : null),
+								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
+										aPD.getScope().getStato() : null),
 								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
@@ -2049,6 +2054,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("local_forward", "?");
 				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
@@ -2126,6 +2132,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
 				// Scope
+				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getStato()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPD.getScope().getStato()) : null);
 				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
 						aPD.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
@@ -3679,6 +3687,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("scope_stato", "?");
 				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
@@ -3758,6 +3767,8 @@ public class DriverConfigurazioneDB_LIB {
 						aPA.getRuoli().getMatch().getValue() : null);
 				
 				// Scope
+				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getScope().getStato()) : null);
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
 						aPA.getScope().getMatch().getValue() : null);
 				
@@ -4245,6 +4256,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("scope_stato", "?");
 				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
@@ -4330,6 +4342,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
 				// Scope
+				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getStato()!=null ? 
+						DriverConfigurazioneDB_LIB.getValue(aPA.getScope().getStato()) : null);
 				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
 						aPA.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata

@@ -75,6 +75,9 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	scope_stato VARCHAR(255),
+	-- all/any
+	scope_match VARCHAR(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
@@ -273,6 +276,24 @@ CREATE TABLE pa_ruoli
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_scope start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_scope
+(
+	id_porta BIGINT NOT NULL,
+	scope VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_scope') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_scope_1 UNIQUE (id_porta,scope),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_scope PRIMARY KEY (id)
 );
 
 

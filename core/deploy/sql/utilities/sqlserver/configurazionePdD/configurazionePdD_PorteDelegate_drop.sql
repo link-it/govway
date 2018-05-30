@@ -1,5 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX index_pd_azioni_1 ON pd_azioni ;
+-- DROP INDEX index_pd_scope_1 ON pd_scope ;
 -- DROP INDEX index_pd_ruoli_1 ON pd_ruoli ;
 -- DROP INDEX index_porte_delegate_1 ON porte_delegate ;
 -- DROP INDEX INDEX_PD_WSSRES ON pd_security_response ;
@@ -9,6 +10,7 @@
 -- DROP INDEX INDEX_PD_PROP ON pd_properties ;
 -- DROP INDEX INDEX_PD_SA ON porte_delegate_sa ;
 DROP TABLE pd_azioni;
+DROP TABLE pd_scope;
 DROP TABLE pd_ruoli;
 DROP TABLE pd_correlazione_risposta;
 DROP TABLE pd_correlazione;

@@ -1,5 +1,6 @@
 DELETE FROM pa_azioni;
 DELETE FROM pa_soggetti;
+DELETE FROM pa_scope;
 DELETE FROM pa_ruoli;
 DELETE FROM pa_correlazione_risposta;
 DELETE FROM pa_correlazione;

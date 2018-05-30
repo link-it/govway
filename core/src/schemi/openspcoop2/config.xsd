@@ -1143,6 +1143,7 @@
 		<xsd:sequence>
 			<xsd:element name="scope" type="scope" minOccurs="1" maxOccurs="unbounded"/>
 		</xsd:sequence>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="disabilitato" use="optional"/>
 		<xsd:attribute name="match" type="ScopeTipoMatch" use="optional" />
 	</xsd:complexType>
 	

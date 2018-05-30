@@ -73,6 +73,9 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR(255),
 	-- all/any
 	ruoli_match VARCHAR(255),
+	scope_stato VARCHAR(255),
+	-- all/any
+	scope_match VARCHAR(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR(255),
 	-- abilitato/disabilitato
@@ -259,6 +262,24 @@ CREATE TABLE pa_ruoli
 
 -- index
 CREATE UNIQUE INDEX index_pa_ruoli_1 ON pa_ruoli (id_porta,ruolo);
+
+
+
+CREATE TABLE pa_scope
+(
+	id_porta BIGINT NOT NULL,
+	scope VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_pa_scope_1 UNIQUE (id_porta,scope),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_scope PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_pa_scope_1 ON pa_scope (id_porta,scope);
 
 
 

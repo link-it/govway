@@ -86,6 +86,7 @@
 	<xsd:element name="autorizzazione-scope" type="tns:autorizzazione-scope" />
 	<xsd:complexType name="autorizzazione-scope">
 		<xsd:sequence>
+ 			<xsd:element name="stato" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="match" type="api:ScopeTipoMatch" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>

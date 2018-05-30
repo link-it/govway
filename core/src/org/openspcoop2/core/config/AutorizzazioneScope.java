@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}scope" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -102,6 +104,26 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBean im
     return this.scope.size();
   }
 
+  public void set_value_stato(String value) {
+    this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_stato() {
+    if(this.stato == null){
+    	return null;
+    }else{
+    	return this.stato.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getStato() {
+    return this.stato;
+  }
+
+  public void setStato(org.openspcoop2.core.config.constants.StatoFunzionalita stato) {
+    this.stato = stato;
+  }
+
   public void set_value_match(String value) {
     this.match = (ScopeTipoMatch) ScopeTipoMatch.toEnumConstantFromString(value);
   }
@@ -158,6 +180,12 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBean im
   public int sizeScope() {
   	return this.scope.size();
   }
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_stato;
+
+  @XmlAttribute(name="stato",required=false)
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_match;

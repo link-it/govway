@@ -75,6 +75,9 @@ CREATE TABLE porte_applicative
 	autorizzazione_contenuto VARCHAR2(255),
 	-- all/any
 	ruoli_match VARCHAR2(255),
+	scope_stato VARCHAR2(255),
+	-- all/any
+	scope_match VARCHAR2(255),
 	-- abilitato/disabilitato
 	ricerca_porta_azione_delegata VARCHAR2(255),
 	-- abilitato/disabilitato
@@ -385,6 +388,35 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pa_ruoli.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_scope MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_scope
+(
+	id_porta NUMBER NOT NULL,
+	scope VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_scope_1 UNIQUE (id_porta,scope),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_scope_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_scope PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_scope
+BEFORE
+insert on pa_scope
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_scope.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

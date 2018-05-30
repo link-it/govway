@@ -7,6 +7,7 @@
 -- DROP INDEX INDEX_PA_SA;
 DROP TABLE pa_azioni;
 DROP TABLE pa_soggetti;
+DROP TABLE pa_scope;
 DROP TABLE pa_ruoli;
 DROP TABLE pa_correlazione_risposta;
 DROP TABLE pa_correlazione;
@@ -19,6 +20,7 @@ DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;
 DROP SEQUENCE seq_pa_azioni;
 DROP SEQUENCE seq_pa_soggetti;
+DROP SEQUENCE seq_pa_scope;
 DROP SEQUENCE seq_pa_ruoli;
 DROP SEQUENCE seq_pa_correlazione_risposta;
 DROP SEQUENCE seq_pa_correlazione;
