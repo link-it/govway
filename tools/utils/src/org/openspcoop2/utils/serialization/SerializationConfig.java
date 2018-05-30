@@ -19,6 +19,7 @@ public class SerializationConfig {
 	private List<String> excludes;
 	private List<String> includes;
 	private DateFormat df;
+	private Boolean ignoreNullValues;
 	
 	public Filter getFilter() {
 		return this.filter;
@@ -49,5 +50,11 @@ public class SerializationConfig {
 	}
 	public void setIncludes(List<String> includes) {
 		this.includes = includes;
+	}
+	public Boolean getIgnoreNullValues() {
+		return this.ignoreNullValues;
+	}
+	public void setIgnoreNullValues(Boolean ignoreNullValues) {
+		this.ignoreNullValues = ignoreNullValues;
 	}
 }

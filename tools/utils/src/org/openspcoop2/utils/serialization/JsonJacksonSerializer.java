@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashSet;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -74,7 +75,10 @@ public class JsonJacksonSerializer implements ISerializer {
 				);
 
 		mapper.setDateFormat(config.getDf());		
-
+		
+		if(config.getIgnoreNullValues() == null || config.getIgnoreNullValues())
+			mapper.setSerializationInclusion(Include.NON_NULL);
+		
 		SimpleFilterProvider filters = new SimpleFilterProvider();
 		if((config.getFilter() != null && config.getFilter().sizeFiltersByName()>0) || config.getExcludes() != null) {
 			filters = filters.addFilter(DEFAULT, new JacksonSimpleBeanPropertyFilter(config, new JsonJacksonSerializer()));
