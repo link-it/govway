@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public class Messaggio implements Serializable{
 	private String protocollo;
 	
 	
-	// le restanti informazioni non vengono serializzate su database.
+	// le restanti informazioni non vengono serializzate su database o filesystem.
 	
 	private IDSoggetto dominio;
 	private TipoPdD tipoPdD;
@@ -158,6 +159,92 @@ public class Messaggio implements Serializable{
 		this.gdo = dumpMessaggio.getDumpTimestamp();
 		
 		this.protocollo = dumpMessaggio.getProtocollo();
+	}
+	
+	public DumpMessaggio toDumpMessaggio() {
+		
+		DumpMessaggio dumpMessaggio = new DumpMessaggio();
+		
+		dumpMessaggio.setTipoMessaggio(this.tipoMessaggio);
+		
+		dumpMessaggio.setContentType(this.contentType);
+		
+		dumpMessaggio.setBody(this.body);
+		if(this.bodyMultipartInfo!=null) {
+			dumpMessaggio.setMultipartContentId(this.bodyMultipartInfo.getContentId());
+			dumpMessaggio.setMultipartContentLocation(this.bodyMultipartInfo.getContentLocation());
+			dumpMessaggio.setMultipartContentType(this.bodyMultipartInfo.getContentType());
+			if(this.bodyMultipartInfo.getHeaders()!=null && this.bodyMultipartInfo.getHeaders().size()>0) {
+				Iterator<String> its = this.bodyMultipartInfo.getHeaders().keySet().iterator();
+				while (its.hasNext()) {
+					String key = (String) its.next();
+					String value = this.bodyMultipartInfo.getHeaders().get(key);
+					DumpMultipartHeader multipartHeader = new DumpMultipartHeader();
+					multipartHeader.setDumpTimestamp(this.gdo);
+					multipartHeader.setNome(key);
+					multipartHeader.setValore(value);
+					dumpMessaggio.addMultipartHeader(multipartHeader);
+				}
+			}
+		}
+		
+		if(this.attachments.size()>0) {
+			for (Attachment attachment : this.attachments) {
+				DumpAllegato dumpAllegato = new DumpAllegato();
+				dumpAllegato.setContentId(attachment.getContentId());
+				dumpAllegato.setContentLocation(attachment.getContentLocation());
+				dumpAllegato.setContentType(attachment.getContentType());
+				dumpAllegato.setAllegato(attachment.getContent());
+				dumpAllegato.setDumpTimestamp(this.gdo);
+				if(attachment.getHeaders()!=null && attachment.getHeaders().size()>0) {
+					Iterator<String> its = attachment.getHeaders().keySet().iterator();
+					while (its.hasNext()) {
+						String key = (String) its.next();
+						String value = attachment.getHeaders().get(key);
+						DumpHeaderAllegato dumpHeaderAllegato = new DumpHeaderAllegato();
+						dumpHeaderAllegato.setDumpTimestamp(this.gdo);
+						dumpHeaderAllegato.setNome(key);
+						dumpHeaderAllegato.setValore(value);
+						dumpAllegato.addHeader(dumpHeaderAllegato);
+					}
+				}
+				dumpMessaggio.addAllegato(dumpAllegato);
+			}
+		}
+		
+		if(this.headers.size()>0) {
+			Iterator<String> its = this.headers.keySet().iterator();
+			while (its.hasNext()) {
+				String key = (String) its.next();
+				String value = this.headers.get(key);
+				DumpHeaderTrasporto dumpHeaderTrasporto = new DumpHeaderTrasporto();
+				dumpHeaderTrasporto.setDumpTimestamp(this.gdo);
+				dumpHeaderTrasporto.setNome(key);
+				dumpHeaderTrasporto.setValore(value);
+				dumpMessaggio.addHeaderTrasporto(dumpHeaderTrasporto);
+			}
+		}
+		
+		if(this.contenuti.size()>0) {
+			Iterator<String> its = this.contenuti.keySet().iterator();
+			while (its.hasNext()) {
+				String key = (String) its.next();
+				String value = this.contenuti.get(key);
+				DumpContenuto dumpContenuto = new DumpContenuto();
+				dumpContenuto.setDumpTimestamp(this.gdo);
+				dumpContenuto.setNome(key);
+				dumpContenuto.setValore(value);
+				dumpMessaggio.addContenuto(dumpContenuto);
+			}
+		}
+		
+		dumpMessaggio.setIdTransazione(this.idTransazione);
+		
+		dumpMessaggio.setDumpTimestamp(this.gdo);
+		
+		dumpMessaggio.setProtocollo(this.protocollo);
+
+		return dumpMessaggio;
 	}
 	
 	

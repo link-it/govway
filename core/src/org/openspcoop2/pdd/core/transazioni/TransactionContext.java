@@ -49,36 +49,36 @@ public class TransactionContext {
 		return transactionContext.remove(id);
 	}
 	
-	private static Hashtable<String, String> mappingIDBustaIdTransazione = 
-		new Hashtable<String, String>();
-	
-	public static void saveMapping(String idBusta,boolean delegata,String idTransazione){
-		String key = idBusta;
-		if(delegata){
-			key = key+"_DELEGATA";
-		}else{
-			key = key+"_APPLICATIVA";
-		}
-		mappingIDBustaIdTransazione.put(key, idTransazione);
-	}
-	public static String getIdTransazione(String idBusta,boolean delegata){
-		String key = idBusta;
-		if(delegata){
-			key = key+"_DELEGATA";
-		}else{
-			key = key+"_APPLICATIVA";
-		}
-		return mappingIDBustaIdTransazione.get(key);
-	}
-	public static String removeIdTransazione(String idBusta,boolean delegata){
-		String key = idBusta;
-		if(delegata){
-			key = key+"_DELEGATA";
-		}else{
-			key = key+"_APPLICATIVA";
-		}
-		return mappingIDBustaIdTransazione.remove(key);
-	}
+//	private static Hashtable<String, String> mappingIDBustaIdTransazione = 
+//		new Hashtable<String, String>();
+//	
+//	public static void saveMapping(String idBusta,boolean delegata,String idTransazione){
+//		String key = idBusta;
+//		if(delegata){
+//			key = key+"_DELEGATA";
+//		}else{
+//			key = key+"_APPLICATIVA";
+//		}
+//		mappingIDBustaIdTransazione.put(key, idTransazione);
+//	}
+//	public static String getIdTransazione(String idBusta,boolean delegata){
+//		String key = idBusta;
+//		if(delegata){
+//			key = key+"_DELEGATA";
+//		}else{
+//			key = key+"_APPLICATIVA";
+//		}
+//		return mappingIDBustaIdTransazione.get(key);
+//	}
+//	public static String removeIdTransazione(String idBusta,boolean delegata){
+//		String key = idBusta;
+//		if(delegata){
+//			key = key+"_DELEGATA";
+//		}else{
+//			key = key+"_APPLICATIVA";
+//		}
+//		return mappingIDBustaIdTransazione.remove(key);
+//	}
 
 	
 	private static Vector<String> idBustaFiltroDuplicati = new Vector<String>();

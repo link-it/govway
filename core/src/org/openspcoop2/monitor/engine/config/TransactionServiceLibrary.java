@@ -453,12 +453,16 @@ public class TransactionServiceLibrary implements Serializable {
 	public boolean processResourcesBeforeSaveOnDatabase(Transazione transazione,
 			Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
-			DumpMessaggio dumpMessaggioRichiesta,DumpMessaggio dumpMessaggioRisposta,String stato,
+			DumpMessaggio dumpMessaggioRichiestaIngresso, DumpMessaggio dumpMessaggioRichiestaUscita,
+			DumpMessaggio dumpMessaggioRispostaIngresso, DumpMessaggio dumpMessaggioRispostaUscita, 
+			String stato,
 			Logger log, DAOFactory daoFactory) throws Exception{
 		return this.processResourcesBeforeSaveOnDatabase(transazione,
 				tracciaRichiesta,tracciaRisposta,
 				msgDiagnostici,
-				dumpMessaggioRichiesta, dumpMessaggioRisposta, stato, 
+				dumpMessaggioRichiestaIngresso, dumpMessaggioRichiestaUscita,
+				dumpMessaggioRispostaIngresso, dumpMessaggioRispostaUscita,
+				stato, 
 				this.mergeServiceActionTransactionLibrary_resources(),
 				this.mergeServiceActionTransactionLibrary_sdkPlugins(log),
 				log,daoFactory);
@@ -466,13 +470,17 @@ public class TransactionServiceLibrary implements Serializable {
 	public boolean processResourcesBeforeSaveOnDatabase(
 			Transazione transazione,Traccia tracciaRichiesta, Traccia tracciaRisposta,
 			List<MsgDiagnostico> msgDiagnostici,
-			DumpMessaggio dumpMessaggioRichiesta,DumpMessaggio dumpMessaggioRisposta,String stato, 
+			DumpMessaggio dumpMessaggioRichiestaIngresso, DumpMessaggio dumpMessaggioRichiestaUscita,
+			DumpMessaggio dumpMessaggioRispostaIngresso, DumpMessaggio dumpMessaggioRispostaUscita, 
+			String stato, 
 			List<ConfigurazioneTransazioneRisorsaContenuto> listRisorseContenuto,
 			List<ITransactionProcessing> listTransactionProcessing,
 			Logger log, DAOFactory daoFactory) throws Exception{
 
-		boolean updated = this.updateDumpMessaggio(dumpMessaggioRichiesta, listRisorseContenuto, stato) &&
-				this.updateDumpMessaggio(dumpMessaggioRisposta, listRisorseContenuto, stato);
+		boolean updated = this.updateDumpMessaggio(dumpMessaggioRichiestaIngresso, listRisorseContenuto, stato) &&
+				this.updateDumpMessaggio(dumpMessaggioRichiestaUscita, listRisorseContenuto, stato) &&
+				this.updateDumpMessaggio(dumpMessaggioRispostaIngresso, listRisorseContenuto, stato) &&
+				this.updateDumpMessaggio(dumpMessaggioRispostaUscita, listRisorseContenuto, stato);
 
 
 		// SDK
@@ -481,24 +489,40 @@ public class TransactionServiceLibrary implements Serializable {
 			Transaction transactionSDK = new Transaction(log,daoFactory,transazione, 
 					tracciaRichiesta, tracciaRisposta,
 					msgDiagnostici);
-			if(dumpMessaggioRichiesta!=null){
-				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRichiesta);
+			if(dumpMessaggioRichiestaIngresso!=null){
+				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRichiestaIngresso);
 			}
-			if(dumpMessaggioRisposta!=null){
-				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRisposta);
-			}			
+			if(dumpMessaggioRichiestaUscita!=null){
+				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRichiestaUscita);
+			}
+			if(dumpMessaggioRispostaIngresso!=null){
+				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRispostaIngresso);
+			}
+			if(dumpMessaggioRispostaUscita!=null){
+				TransactionManager.setContentResourcesInTransaction(transactionSDK, dumpMessaggioRispostaUscita);
+			}
 
 			for (ITransactionProcessing iTransactionProcessing : listTransactionProcessing) {
 				iTransactionProcessing.processRealTimeResourcesBeforeSaveOnDatabase(transactionSDK);
 			}
 
-			if(dumpMessaggioRichiesta!=null){
-				if (TransactionManager.updateResources(dumpMessaggioRichiesta, transactionSDK)){
+			if(dumpMessaggioRichiestaIngresso!=null){
+				if (TransactionManager.updateResources(dumpMessaggioRichiestaIngresso, transactionSDK)){
 					updated = true;
 				}
 			}
-			if(dumpMessaggioRisposta!=null){
-				if (TransactionManager.updateResources(dumpMessaggioRisposta, transactionSDK)){
+			if(dumpMessaggioRichiestaUscita!=null){
+				if (TransactionManager.updateResources(dumpMessaggioRichiestaUscita, transactionSDK)){
+					updated = true;
+				}
+			}
+			if(dumpMessaggioRispostaIngresso!=null){
+				if (TransactionManager.updateResources(dumpMessaggioRispostaIngresso, transactionSDK)){
+					updated = true;
+				}
+			}
+			if(dumpMessaggioRispostaUscita!=null){
+				if (TransactionManager.updateResources(dumpMessaggioRispostaUscita, transactionSDK)){
 					updated = true;
 				}
 			}

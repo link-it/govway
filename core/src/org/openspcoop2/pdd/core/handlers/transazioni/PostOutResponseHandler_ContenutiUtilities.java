@@ -1,5 +1,6 @@
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.IdDumpMessaggio;
@@ -33,64 +34,131 @@ public class PostOutResponseHandler_ContenutiUtilities {
 			List<MsgDiagnostico> msgDiagnostici,
 			IDumpMessaggioService dumpMessageService,
 			Vector<TransactionResource> risorse,
-			TransactionServiceLibrary transactionServiceLibrary) throws HandlerException{
-/*
+			TransactionServiceLibrary transactionServiceLibrary,
+			DAOFactory daoFactory) throws HandlerException{
+
 		try {
 
-			boolean updateRichiesta = false;
-			boolean updateRisposta = false;
-			DumpMessaggio dumpMessaggioRichiesta = null;
-			DumpMessaggio dumpMessaggioRisposta = null;
+			boolean updateRichiestaIngresso = false;
+			boolean updateRichiestaUscita = false;
+			boolean updateRispostaIngresso = false;
+			boolean updateRispostaUscita = false;
 			
-			IdDumpMessaggio idDumpMessaggioRichiesta = new IdDumpMessaggio();
-			idDumpMessaggioRichiesta.setIdTransazione(transactionDTO.getIdTransazione());
-			idDumpMessaggioRichiesta.setTipoMessaggio(TipoMessaggio.RICHIESTA);
+			DumpMessaggio dumpMessaggioRichiestaIngresso = null;
+			DumpMessaggio dumpMessaggioRichiestaUscita = null;
+			DumpMessaggio dumpMessaggioRispostaIngresso = null;
+			DumpMessaggio dumpMessaggioRispostaUscita = null;
 			
-			IdDumpMessaggio idDumpMessaggioRisposta = new IdDumpMessaggio();
-			idDumpMessaggioRisposta.setIdTransazione(transactionDTO.getIdTransazione());
-			idDumpMessaggioRisposta.setTipoMessaggio(TipoMessaggio.RISPOSTA);
+			IdDumpMessaggio idDumpMessaggioRichiestaIngresso = new IdDumpMessaggio();
+			idDumpMessaggioRichiestaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+			idDumpMessaggioRichiestaIngresso.setTipoMessaggio(TipoMessaggio.RICHIESTA_INGRESSO);
+			
+			IdDumpMessaggio idDumpMessaggioRichiestaUscita = new IdDumpMessaggio();
+			idDumpMessaggioRichiestaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+			idDumpMessaggioRichiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA);
+			
+			IdDumpMessaggio idDumpMessaggioRispostaIngresso = new IdDumpMessaggio();
+			idDumpMessaggioRispostaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+			idDumpMessaggioRispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO);
+			
+			IdDumpMessaggio idDumpMessaggioRispostaUscita = new IdDumpMessaggio();
+			idDumpMessaggioRispostaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+			idDumpMessaggioRispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA);
 			
 			
 
 			// ----------------------- Inserimento contenuti -------------------------
 			if(risorse!=null && risorse.size()>0){
 				
-				try{
-					dumpMessaggioRichiesta = dumpMessageService.get(idDumpMessaggioRichiesta);
-				}catch(NotFoundException notFound){}
-				try{
-					dumpMessaggioRisposta = dumpMessageService.get(idDumpMessaggioRisposta);
-				}catch(NotFoundException notFound){}
 				
 				for (TransactionResource risorsaCalcolata : risorse) {
 					
-					if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RICHIESTA.equals(risorsaCalcolata.getTipoMessaggio())){
-						if(dumpMessaggioRichiesta==null){
-							dumpMessaggioRichiesta = new DumpMessaggio();
-							dumpMessaggioRichiesta.setIdTransazione(transactionDTO.getIdTransazione());
-							dumpMessaggioRichiesta.setTipoMessaggio(TipoMessaggio.RICHIESTA);
-							dumpMessaggioRichiesta.setDumpTimestamp(DateManager.getDate());
+					if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RICHIESTA_INGRESSO.equals(risorsaCalcolata.getTipoMessaggio())){
+						
+						if(dumpMessaggioRichiestaIngresso==null) {
+							try{
+								dumpMessaggioRichiestaIngresso = dumpMessageService.get(idDumpMessaggioRichiestaIngresso);
+							}catch(NotFoundException notFound){}
+						}
+						
+						if(dumpMessaggioRichiestaIngresso==null){
+							dumpMessaggioRichiestaIngresso = new DumpMessaggio();
+							dumpMessaggioRichiestaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+							dumpMessaggioRichiestaIngresso.setTipoMessaggio(TipoMessaggio.RICHIESTA_INGRESSO);
+							dumpMessaggioRichiestaIngresso.setDumpTimestamp(DateManager.getDate());
 						}
 						DumpContenuto contenuto = 
 								TransactionContentUtils.createDumpContenuto(risorsaCalcolata.getNome(), 
 										risorsaCalcolata.getValore(), 
 										DateManager.getDate());
-						dumpMessaggioRichiesta.addContenuto(contenuto);
-						updateRichiesta = true;
+						dumpMessaggioRichiestaIngresso.addContenuto(contenuto);
+						updateRichiestaIngresso = true;
 					}
-					else{
-						if(dumpMessaggioRisposta==null){
-							dumpMessaggioRisposta = new DumpMessaggio();
-							dumpMessaggioRisposta.setIdTransazione(transactionDTO.getIdTransazione());
-							dumpMessaggioRisposta.setTipoMessaggio(TipoMessaggio.RISPOSTA);
-							dumpMessaggioRisposta.setDumpTimestamp(DateManager.getDate());
+					
+					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RICHIESTA_USCITA.equals(risorsaCalcolata.getTipoMessaggio())){
+						
+						if(dumpMessaggioRichiestaUscita==null) {
+							try{
+								dumpMessaggioRichiestaUscita = dumpMessageService.get(idDumpMessaggioRichiestaUscita);
+							}catch(NotFoundException notFound){}
+						}
+						
+						if(dumpMessaggioRichiestaUscita==null){
+							dumpMessaggioRichiestaUscita = new DumpMessaggio();
+							dumpMessaggioRichiestaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+							dumpMessaggioRichiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA);
+							dumpMessaggioRichiestaUscita.setDumpTimestamp(DateManager.getDate());
 						}
 						DumpContenuto contenuto = 
 								TransactionContentUtils.createDumpContenuto(risorsaCalcolata.getNome(), 
 										risorsaCalcolata.getValore(), 
 										DateManager.getDate());
-						dumpMessaggioRisposta.addContenuto(contenuto);
-						updateRisposta = true;
+						dumpMessaggioRichiestaUscita.addContenuto(contenuto);
+						updateRichiestaUscita = true;
+					}
+					
+					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RISPOSTA_INGRESSO.equals(risorsaCalcolata.getTipoMessaggio())){
+						
+						if(dumpMessaggioRispostaIngresso==null) {
+							try{
+								dumpMessaggioRispostaIngresso = dumpMessageService.get(idDumpMessaggioRispostaIngresso);
+							}catch(NotFoundException notFound){}
+						}
+						
+						if(dumpMessaggioRispostaIngresso==null){
+							dumpMessaggioRispostaIngresso = new DumpMessaggio();
+							dumpMessaggioRispostaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+							dumpMessaggioRispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO);
+							dumpMessaggioRispostaIngresso.setDumpTimestamp(DateManager.getDate());
+						}
+						DumpContenuto contenuto = 
+								TransactionContentUtils.createDumpContenuto(risorsaCalcolata.getNome(), 
+										risorsaCalcolata.getValore(), 
+										DateManager.getDate());
+						dumpMessaggioRispostaIngresso.addContenuto(contenuto);
+						updateRispostaIngresso = true;
+					}
+					
+					else if(org.openspcoop2.core.transazioni.constants.TipoMessaggio.RISPOSTA_USCITA.equals(risorsaCalcolata.getTipoMessaggio())){
+						
+						if(dumpMessaggioRispostaUscita==null) {
+							try{
+								dumpMessaggioRispostaUscita = dumpMessageService.get(idDumpMessaggioRispostaUscita);
+							}catch(NotFoundException notFound){}
+						}
+						
+						if(dumpMessaggioRispostaUscita==null){
+							dumpMessaggioRispostaUscita = new DumpMessaggio();
+							dumpMessaggioRispostaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+							dumpMessaggioRispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA);
+							dumpMessaggioRispostaUscita.setDumpTimestamp(DateManager.getDate());
+						}
+						DumpContenuto contenuto = 
+								TransactionContentUtils.createDumpContenuto(risorsaCalcolata.getNome(), 
+										risorsaCalcolata.getValore(), 
+										DateManager.getDate());
+						dumpMessaggioRispostaUscita.addContenuto(contenuto);
+						updateRispostaUscita = true;
 					}
 				}
 			}
@@ -99,18 +167,32 @@ public class PostOutResponseHandler_ContenutiUtilities {
 			
 			// ----------------------- SDK -------------------------
 				
-			if(dumpMessaggioRichiesta==null && transactionServiceLibrary!=null){
-				dumpMessaggioRichiesta = new DumpMessaggio();
-				dumpMessaggioRichiesta.setIdTransazione(transactionDTO.getIdTransazione());
-				dumpMessaggioRichiesta.setTipoMessaggio(TipoMessaggio.RICHIESTA);
-				dumpMessaggioRichiesta.setDumpTimestamp(DateManager.getDate());
+			if(dumpMessaggioRichiestaIngresso==null && transactionServiceLibrary!=null){
+				dumpMessaggioRichiestaIngresso = new DumpMessaggio();
+				dumpMessaggioRichiestaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+				dumpMessaggioRichiestaIngresso.setTipoMessaggio(TipoMessaggio.RICHIESTA_INGRESSO);
+				dumpMessaggioRichiestaIngresso.setDumpTimestamp(DateManager.getDate());
 			}
 			
-			if(dumpMessaggioRisposta==null && transactionServiceLibrary!=null){
-				dumpMessaggioRisposta = new DumpMessaggio();
-				dumpMessaggioRisposta.setIdTransazione(transactionDTO.getIdTransazione());
-				dumpMessaggioRisposta.setTipoMessaggio(TipoMessaggio.RISPOSTA);
-				dumpMessaggioRisposta.setDumpTimestamp(DateManager.getDate());
+			if(dumpMessaggioRichiestaUscita==null && transactionServiceLibrary!=null){
+				dumpMessaggioRichiestaUscita = new DumpMessaggio();
+				dumpMessaggioRichiestaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+				dumpMessaggioRichiestaUscita.setTipoMessaggio(TipoMessaggio.RICHIESTA_USCITA);
+				dumpMessaggioRichiestaUscita.setDumpTimestamp(DateManager.getDate());
+			}
+			
+			if(dumpMessaggioRispostaIngresso==null && transactionServiceLibrary!=null){
+				dumpMessaggioRispostaIngresso = new DumpMessaggio();
+				dumpMessaggioRispostaIngresso.setIdTransazione(transactionDTO.getIdTransazione());
+				dumpMessaggioRispostaIngresso.setTipoMessaggio(TipoMessaggio.RISPOSTA_INGRESSO);
+				dumpMessaggioRispostaIngresso.setDumpTimestamp(DateManager.getDate());
+			}
+			
+			if(dumpMessaggioRispostaUscita==null && transactionServiceLibrary!=null){
+				dumpMessaggioRispostaUscita = new DumpMessaggio();
+				dumpMessaggioRispostaUscita.setIdTransazione(transactionDTO.getIdTransazione());
+				dumpMessaggioRispostaUscita.setTipoMessaggio(TipoMessaggio.RISPOSTA_USCITA);
+				dumpMessaggioRispostaUscita.setDumpTimestamp(DateManager.getDate());
 			}
 			
 			boolean messaggioModificatoSDK = false;
@@ -118,7 +200,9 @@ public class PostOutResponseHandler_ContenutiUtilities {
 				messaggioModificatoSDK = transactionServiceLibrary.processResourcesBeforeSaveOnDatabase(transactionDTO,
 						tracciaRichiesta, tracciaRisposta,
 						msgDiagnostici,
-						dumpMessaggioRichiesta,dumpMessaggioRisposta,transactionDTO.getStato(),
+						dumpMessaggioRichiestaIngresso, dumpMessaggioRichiestaUscita,
+						dumpMessaggioRispostaIngresso, dumpMessaggioRispostaUscita, 
+						transactionDTO.getStato(),
 						this.logger,daoFactory);
 			}
 			
@@ -127,17 +211,23 @@ public class PostOutResponseHandler_ContenutiUtilities {
 			
 			// ----------------------- UPDATE -------------------------
 
-			if(updateRichiesta || messaggioModificatoSDK){
-				dumpMessageService.updateOrCreate(idDumpMessaggioRichiesta, dumpMessaggioRichiesta);
+			if(updateRichiestaIngresso || messaggioModificatoSDK){
+				dumpMessageService.updateOrCreate(idDumpMessaggioRichiestaIngresso, dumpMessaggioRichiestaIngresso);
+			}
+			if(updateRichiestaUscita || messaggioModificatoSDK){
+				dumpMessageService.updateOrCreate(idDumpMessaggioRichiestaUscita, dumpMessaggioRichiestaUscita);
 			}
 			
-			if(updateRisposta || messaggioModificatoSDK){
-				dumpMessageService.updateOrCreate(idDumpMessaggioRisposta, dumpMessaggioRisposta);
+			if(updateRispostaIngresso || messaggioModificatoSDK){
+				dumpMessageService.updateOrCreate(idDumpMessaggioRispostaIngresso, dumpMessaggioRispostaIngresso);
+			}
+			if(updateRispostaUscita || messaggioModificatoSDK){
+				dumpMessageService.updateOrCreate(idDumpMessaggioRispostaUscita, dumpMessaggioRispostaUscita);
 			}
 			
 		} catch (Exception e) {
 			throw new HandlerException("Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage(), e);
-		} */
+		} 
 	}
 	
 }

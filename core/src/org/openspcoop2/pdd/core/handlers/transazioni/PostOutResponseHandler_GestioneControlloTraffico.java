@@ -16,11 +16,11 @@ import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
 
-public class PostOutResponseHandler_GestioneControlloCongestione {
+public class PostOutResponseHandler_GestioneControlloTraffico {
 
-	public void process(Boolean controlloCongestioneMaxRequestThreadRegistrato, Logger logger, String idTransazione,
+	public void process(Boolean controlloTrafficoMaxRequestThreadRegistrato, Logger logger, String idTransazione,
 			Transazione transazioneDTO, PostOutResponseContext context){
-		if(controlloCongestioneMaxRequestThreadRegistrato!=null && controlloCongestioneMaxRequestThreadRegistrato){
+		if(controlloTrafficoMaxRequestThreadRegistrato!=null && controlloTrafficoMaxRequestThreadRegistrato){
 			// significa che sono entrato nel motore di anti-congestionamento
 			try {
 				
@@ -45,7 +45,7 @@ public class PostOutResponseHandler_GestioneControlloCongestione {
 			}
 		}
 		try {
-			Logger logCongestione = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
+			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
 			if(transazioneDTO!=null){
 			
 				Object objectId = context.getPddContext().removeObject(CostantiControlloTraffico.PDD_CONTEXT_LIST_UNIQUE_ID_POLICY);
@@ -83,14 +83,14 @@ public class PostOutResponseHandler_GestioneControlloCongestione {
 									try{
 										uniqueIdMap = uniqueIdsPolicies.get(i);
 										GestorePolicyAttive.getInstance().getActiveThreadsPolicy(uniqueIdMap).
-											registerStopRequest(logCongestione, groupByPolicies.get(i), misurazioniTransazione, incrementCounter.get(i));
+											registerStopRequest(logControlloTraffico, groupByPolicies.get(i), misurazioniTransazione, incrementCounter.get(i));
 									}catch(PolicyNotFoundException notFound){
-										logCongestione.debug("NotFoundException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",notFound);
+										logControlloTraffico.debug("NotFoundException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",notFound);
 									}catch(PolicyShutdownException shutdown){
-										logCongestione.debug("PolicyShutdownException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",shutdown);
+										logControlloTraffico.debug("PolicyShutdownException durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+")",shutdown);
 									}	
 									catch(Throwable error){
-										logCongestione.error("Errore durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+"): "+error.getMessage(),error);
+										logControlloTraffico.error("Errore durante la registrazione di terminazione del thread (policy inspection: "+uniqueIdMap+"): "+error.getMessage(),error);
 									}	
 								}
 							}									

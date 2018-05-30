@@ -70,6 +70,8 @@ import org.openspcoop2.pdd.core.handlers.PostOutResponseHandler;
 import org.openspcoop2.pdd.core.handlers.PreInRequestHandler;
 import org.openspcoop2.pdd.core.handlers.PreInResponseHandler;
 import org.openspcoop2.pdd.core.handlers.notifier.INotifierCallback;
+import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioDiagnosticiManager;
+import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioTracceManager;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
@@ -1550,6 +1552,12 @@ public class OpenSPCoop2Properties {
 					this.isTransazioniStatefulDebug();
 					this.getTransazioniStatefulTimerIntervalSeconds();
 				}
+				
+				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
+				this.isTransazioniRegistrazioneTracceHeaderRawEnabled();
+				this.isTransazioniRegistrazioneTracceDigestEnabled();
+				this._getTransazioniRegistrazioneTracceManager(className, loaderOpenSPCoop);
+				this._getTransazioniRegistrazioneDiagnosticiManager(className, loaderOpenSPCoop);
 			}
 			
 			// Eventi
@@ -14555,6 +14563,135 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getTransazioniStatefulTimerIntervalSeconds;
 	}
 	
+	
+	// Salvataggio
+	
+	private static Boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = null;
+	public boolean isTransazioniRegistrazioneTracceProtocolPropertiesEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled', viene utilizzato il default=false : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled;
+	}
+	
+	private static Boolean isTransazioniRegistrazioneTracceHeaderRawEnabled = null;
+	public boolean isTransazioniRegistrazioneTracceHeaderRawEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneTracceHeaderRawEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceHeaderRawEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled', viene utilizzato il default=false : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceHeaderRawEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneTracceHeaderRawEnabled;
+	}
+	
+	private static Boolean isTransazioniRegistrazioneTracceDigestEnabled = null;
+	public boolean isTransazioniRegistrazioneTracceDigestEnabled() {	
+		if(OpenSPCoop2Properties.isTransazioniRegistrazioneTracceDigestEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.digest.enabled");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled' non impostata, viene utilizzato il default=false");
+					name="false";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceDigestEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled', viene utilizzato il default=false : "+e.getMessage());
+				OpenSPCoop2Properties.isTransazioniRegistrazioneTracceDigestEnabled = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isTransazioniRegistrazioneTracceDigestEnabled;
+	}
+	
+	private static ISalvataggioTracceManager getTransazioniRegistrazioneTracceManager = null;
+	private static Boolean getTransazioniRegistrazioneTracceManager_read = null;
+	public ISalvataggioTracceManager getTransazioniRegistrazioneTracceManager() throws Exception {	
+		return OpenSPCoop2Properties.getTransazioniRegistrazioneTracceManager;
+	}
+	private ISalvataggioTracceManager _getTransazioniRegistrazioneTracceManager(ClassNameProperties className, Loader loader) throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniRegistrazioneTracceManager_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.salvataggio");
+				if(name!=null){
+					name = name.trim();
+					
+					String classe = className.getSalvataggioTracceManager(name);
+					if(classe == null) {
+						throw new Exception("Classe non trovata per il salvataggio delle tracce con tipo '"+name+"'");
+					}
+					
+					OpenSPCoop2Properties.getTransazioniRegistrazioneTracceManager = (ISalvataggioTracceManager) loader.newInstance(classe);
+				}
+				
+				getTransazioniRegistrazioneTracceManager_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.salvataggio': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniRegistrazioneTracceManager;
+	}
+	
+	private static ISalvataggioDiagnosticiManager getTransazioniRegistrazioneDiagnosticiManager = null;
+	private static Boolean getTransazioniRegistrazioneDiagnosticiManager_read = null;
+	public ISalvataggioDiagnosticiManager getTransazioniRegistrazioneDiagnosticiManager() throws Exception {	
+		return OpenSPCoop2Properties.getTransazioniRegistrazioneDiagnosticiManager;
+	}
+	private ISalvataggioDiagnosticiManager _getTransazioniRegistrazioneDiagnosticiManager(ClassNameProperties className, Loader loader) throws Exception {	
+		if(OpenSPCoop2Properties.getTransazioniRegistrazioneDiagnosticiManager_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio");
+				if(name!=null){
+					name = name.trim();
+					
+					String classe = className.getSalvataggioDiagnosticiManager(name);
+					if(classe == null) {
+						throw new Exception("Classe non trovata per il salvataggio dei diagnostici con tipo '"+name+"'");
+					}
+					
+					OpenSPCoop2Properties.getTransazioniRegistrazioneDiagnosticiManager = (ISalvataggioDiagnosticiManager) loader.newInstance(classe);
+				}
+				
+				getTransazioniRegistrazioneDiagnosticiManager_read = true;
+				
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.salvataggio': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getTransazioniRegistrazioneDiagnosticiManager;
+	}
 	
 	
 	

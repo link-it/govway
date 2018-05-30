@@ -41,18 +41,18 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class PostOutResponseHandler_TransazioneUtilities {
 
 	private Logger logger;
-	private boolean ottimizzazioneSimulazioneTracceRegistrazioneHeader;
-	private boolean ottimizzazioneSimulazioneTracceRegistrazioneDigest;
-	private boolean ottimizzazioneSimulazioneTracce;
+	private boolean transazioniRegistrazioneTracceHeaderRawEnabled;
+	private boolean transazioniRegistrazioneTracceDigestEnabled;
+	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
-			boolean ottimizzazioneSimulazioneTracceRegistrazioneHeader,
-			boolean ottimizzazioneSimulazioneTracceRegistrazioneDigest,
-			boolean ottimizzazioneSimulazioneTracce){
+			boolean transazioniRegistrazioneTracceHeaderRawEnabled,
+			boolean transazioniRegistrazioneTracceDigestEnabled,
+			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 		this.logger = log;
-		this.ottimizzazioneSimulazioneTracceRegistrazioneHeader = ottimizzazioneSimulazioneTracceRegistrazioneHeader;
-		this.ottimizzazioneSimulazioneTracceRegistrazioneDigest = ottimizzazioneSimulazioneTracceRegistrazioneDigest;
-		this.ottimizzazioneSimulazioneTracce = ottimizzazioneSimulazioneTracce;
+		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
+		this.transazioniRegistrazioneTracceDigestEnabled = transazioniRegistrazioneTracceDigestEnabled;
+		this.transazioniRegistrazioneTracceProtocolPropertiesEnabled = transazioniRegistrazioneTracceProtocolPropertiesEnabled;
 	}
 	
 	public Transazione fillTransaction(PostOutResponseContext context,
@@ -452,7 +452,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** info protocollo **
 			if(tracciaRichiesta!=null){
-				if(this.ottimizzazioneSimulazioneTracceRegistrazioneHeader){
+				if(this.transazioniRegistrazioneTracceHeaderRawEnabled){
 					if(tracciaRichiesta.getBustaAsString()!=null){
 						transactionDTO.setHeaderProtocolloRichiesta(tracciaRichiesta.getBustaAsString());
 					}
@@ -468,10 +468,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 				}
 				if(tracciaRichiesta.getBusta()!=null){
-					if(this.ottimizzazioneSimulazioneTracceRegistrazioneDigest){
+					if(this.transazioniRegistrazioneTracceDigestEnabled){
 						transactionDTO.setDigestRichiesta(tracciaRichiesta.getBusta().getDigest());
 					}
-					if(this.ottimizzazioneSimulazioneTracce){
+					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRichiesta.getBusta().sizeProperties()>0){
 							Hashtable<String, String> propertiesBusta = new Hashtable<String, String>();
 							String [] pNames = tracciaRichiesta.getBusta().getPropertiesNames();
@@ -495,7 +495,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 			}
 			if(tracciaRisposta!=null){				
-				if(this.ottimizzazioneSimulazioneTracceRegistrazioneHeader){
+				if(this.transazioniRegistrazioneTracceHeaderRawEnabled){
 					if(tracciaRisposta.getBustaAsString()!=null){
 						transactionDTO.setHeaderProtocolloRisposta(tracciaRisposta.getBustaAsString());
 					}
@@ -511,10 +511,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					}
 				}
 				if(tracciaRisposta.getBusta()!=null){
-					if(this.ottimizzazioneSimulazioneTracceRegistrazioneDigest){
+					if(this.transazioniRegistrazioneTracceDigestEnabled){
 						transactionDTO.setDigestRisposta(tracciaRisposta.getBusta().getDigest());
 					}
-					if(this.ottimizzazioneSimulazioneTracce){
+					if(this.transazioniRegistrazioneTracceProtocolPropertiesEnabled){
 						if(tracciaRisposta.getBusta().sizeProperties()>0){
 							Hashtable<String, String> propertiesBusta = new Hashtable<String, String>();
 							String [] pNames = tracciaRisposta.getBusta().getPropertiesNames();

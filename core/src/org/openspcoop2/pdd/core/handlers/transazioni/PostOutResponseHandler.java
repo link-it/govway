@@ -3,40 +3,44 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
-import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.handlers.HandlerException;
-import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
-import org.openspcoop2.protocol.engine.RequestInfo;
-import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
-import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
-import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
-import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
-import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
-import org.openspcoop2.protocol.utils.EsitiConfigUtils;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.DiagnosticColumnType;
 import org.openspcoop2.core.transazioni.dao.IDumpMessaggioService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.DBTransazioniManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.protocol.utils.EsitiConfigUtils;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.slf4j.Logger;
 
 public class PostOutResponseHandler extends LastPositionHandler implements  org.openspcoop2.pdd.core.handlers.PostOutResponseHandler{
 
@@ -72,12 +76,13 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private IDumpProducer dumpOpenSPCoopAppender = null;
 
 	/**
-	 * Informazioni simulazione tracce e diagnostici
+	 * Informazioni tracce e diagnostici
 	 */
-	private boolean ottimizzazioneSimulazioneTracce = false;
-	private boolean ottimizzazioneSimulazioneTracceRegistrazioneHeader = false;
-	private boolean ottimizzazioneSimulazioneTracceRegistrazioneDigest = false;
-	private boolean ottimizzazioneSimulazioneDiagnostici = false;
+	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled = false;
+	private boolean transazioniRegistrazioneTracceHeaderRawEnabled = false;
+	private boolean transazioniRegistrazioneTracceDigestEnabled = false;
+	private ISalvataggioTracceManager salvataggioTracceManager = null;
+	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
 
 	/**
 	 * Logger
@@ -240,22 +245,23 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				throw new HandlerException("Errore durante l'inizializzazione del DumpAppender: "+e.getMessage(),e);
 			} 
 
-// **FINIRE
-//
-//			// Configurazione Simulazioni tracce e diagnostici
-//			try{
-//
-//				// Indicazione se devo registrare tutte le tracce o solo quelle non ricostruibili
-//				this.ottimizzazioneSimulazioneTracce =  PddInterceptorConfig.isOttimizzazioniSimulazioneTracceAbilitato();
-//				this.ottimizzazioneSimulazioneTracceRegistrazioneHeader = PddInterceptorConfig.isOttimizzazioniSimulazioneTracceRegistrazioneHeaderAbilitato(); 
-//				this.ottimizzazioneSimulazioneTracceRegistrazioneDigest = PddInterceptorConfig.isOttimizzazioniSimulazioneTracceRegistrazioneDigestAbilitato(); 
-//				
-//				// Indicazione se devo registrare tutti i diagnostici o solo quelli non ricostruibili
-//				this.ottimizzazioneSimulazioneDiagnostici = PddInterceptorConfig.isOttimizzazioniSimulazioneMsgDiagnosticiAbilitato();
-//
-//			} catch (Exception e) {
-//				throw new HandlerException("Errore durante la lettura della configurazione della simulazione tracce/diagnostici: " + e.getLocalizedMessage(), e);
-//			}
+
+
+			// Configurazione tracce e diagnostici
+			try{
+
+				// Indicazione se devo registrare tutte le tracce o solo quelle non ricostruibili
+				this.transazioniRegistrazioneTracceProtocolPropertiesEnabled =  this.openspcoopProperties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
+				this.transazioniRegistrazioneTracceHeaderRawEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceHeaderRawEnabled();
+				this.transazioniRegistrazioneTracceDigestEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceDigestEnabled();
+				
+				// salvataggio
+				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
+				this.salvataggioDiagnosticiManager = this.openspcoopProperties.getTransazioniRegistrazioneDiagnosticiManager();
+
+			} catch (Exception e) {
+				throw new HandlerException("Errore durante la lettura della configurazione della registrazione di tracce/diagnostici: " + e.getLocalizedMessage(), e);
+			}
 
 			this.initialized = true;
 		}
@@ -346,500 +352,475 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 			this.log.error("Transazione ID["+idTransazione+"] errore durante la comprensione degli esiti da registrare: "+e.getMessage(),e);
 		}
 		
-		// **FINIRE	
+
 			
 		/* ---- Recupero dati della transazione dal contesto ----- */
-//		
-//		Boolean controlloCongestioneMaxRequestThreadRegistrato = null;
-//		if(InitHandler.controlloCongestioneAttivo){
-//			Object objControlloCongestioneMaxRequestThreadRegistrato = context.getPddContext().getObject(it.link.pdd.interceptor.Costanti.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO);
-//			if(objControlloCongestioneMaxRequestThreadRegistrato!=null){
-//				controlloCongestioneMaxRequestThreadRegistrato = (Boolean) objControlloCongestioneMaxRequestThreadRegistrato;
-//				//System.out.println("CHECK POST OUT ["+context.getTipoPorta().name()+"] controlloCongestioneMaxRequestViolated["+controlloCongestioneMaxRequestViolated+"] controllo["+PddInterceptorConfig.isControlloCongestioneTraceTransazioneMaxThreadsViolated()+"]");
-//			}		
-//		}
-//		
-//		Transaction transaction = TransactionContext.removeSPCoopTransaction(idTransazione);
-//		if (transaction==null)
-//			throw new HandlerException("Dati della transazione assenti");
-//		transaction.setDeleted();
-//
-//		if(transaction.getMsgDiagnosticoCorrelazione()!=null){
-//			String idBusta = transaction.getMsgDiagnosticoCorrelazione().getIdBusta();
-//			if(idBusta!=null){
-//				TransactionContext.removeIdTransazione(idBusta, transaction.getMsgDiagnosticoCorrelazione().isDelegata());
-//			}
-//		}
-//
-//		Transazione transazioneDTO = null;
-//		try{
-//		
-//			// NOTA: se l'integrazione e' null o l'indicazione se la gestione stateless e' null, significa che la PdD non e' ancora riuscita
-//			// a capire che tipo di gestione deve adottare. Queste transazioni devono essere sempre registrate perche' riguardano cooperazioni andate in errore all'inizio,
-//			// es. Porta Delegata non esistente, busta malformata....
-//			if(context.getIntegrazione()!=null && 
-//					context.getIntegrazione().isGestioneStateless()!=null &&
-//					!context.getIntegrazione().isGestioneStateless()){
-//				if(PddInterceptorConfig.isEnabledGestioneTransazioniStateful()==false){
-//					//if(this.debug)
-//					this.logger.error("["+idTransazione+"] Transazione non registrata, gestione stateful non abilitata");
-//					// NOTA: TODO thread che ripulisce header di trasporto o dump messaggi non associati a transazioni.
-//					// La risorsa viene rilasciata nel finally
-//					//this._releaseResources(transaction, idTransazione, context);
-//					return;
-//				}
-//			}
-//	
-//			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol());
-//			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null){
-//				idDominio = context.getProtocollo().getDominio();
-//			}
-//			else if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)){
-//				RequestInfo requestInfo = (RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
-//				if(requestInfo!=null){
-//					idDominio = requestInfo.getIdentitaPdD();
-//				}
-//			}
-//	
-//			String modulo = "PostOutResponsePddOE";
-//	
-//			ExceptionSerialzerFileSystem exceptionSerializerFileSystem = new ExceptionSerialzerFileSystem(this.logger);
-//	
-//			
-//			// ### Lettura dati Transazione ###
-//			
-//			boolean pddStateless = true;
-//			PostOutResponseHandler_TransazioneUtilities transazioneUtilities = null;
-//			HandlerException he = null;
-//			try{
-//				
-//				// Stateless
-////				if ( (context.getIntegrazione()==null) ||
-////						(context.getIntegrazione().isGestioneStateless()==null) ||
-////						(context.getIntegrazione().isGestioneStateless()==false) 
-////						){
-////					pddStateless = false;
-////				}
-//				// Cambio l'approccio per poter simulare anche gli errori nei diagnostici dove possibile
-//				// Tanto tutte le comunicazioni sono stateless a meno che non vengano tramutate in stateful
-//				if ( context.getIntegrazione()!=null && 
-//						context.getIntegrazione().isGestioneStateless()!=null &&
-//								!context.getIntegrazione().isGestioneStateless()){
+		
+		Boolean controlloCongestioneMaxRequestThreadRegistrato = null;
+		if(this.openspcoopProperties.isControlloTrafficoEnabled()){
+			Object objControlloCongestioneMaxRequestThreadRegistrato = context.getPddContext().getObject(CostantiControlloTraffico.PDD_CONTEXT_MAX_REQUEST_THREAD_REGISTRATO);
+			if(objControlloCongestioneMaxRequestThreadRegistrato!=null){
+				controlloCongestioneMaxRequestThreadRegistrato = (Boolean) objControlloCongestioneMaxRequestThreadRegistrato;
+				//System.out.println("CHECK POST OUT ["+context.getTipoPorta().name()+"] controlloCongestioneMaxRequestViolated["+controlloCongestioneMaxRequestViolated+"] controllo["+PddInterceptorConfig.isControlloCongestioneTraceTransazioneMaxThreadsViolated()+"]");
+			}		
+		}
+		
+		Transaction transaction = TransactionContext.removeTransaction(idTransazione);
+		if (transaction==null)
+			throw new HandlerException("Dati della transazione assenti");
+		transaction.setDeleted();
+
+
+		Transazione transazioneDTO = null;
+		try{
+		
+			// NOTA: se l'integrazione e' null o l'indicazione se la gestione stateless e' null, significa che la PdD non e' ancora riuscita
+			// a capire che tipo di gestione deve adottare. Queste transazioni devono essere sempre registrate perche' riguardano cooperazioni andate in errore all'inizio,
+			// es. Porta Delegata non esistente, busta malformata....
+			if(context.getIntegrazione()!=null && 
+					context.getIntegrazione().isGestioneStateless()!=null &&
+					!context.getIntegrazione().isGestioneStateless()){
+				if(this.openspcoopProperties.isTransazioniStatefulEnabled()==false){
+					//if(this.debug)
+					this.log.error("["+idTransazione+"] Transazione non registrata, gestione stateful non abilitata");
+					// NOTA: TODO thread che ripulisce header di trasporto o dump messaggi non associati a transazioni.
+					// La risorsa viene rilasciata nel finally
+					//this._releaseResources(transaction, idTransazione, context);
+					return;
+				}
+			}
+	
+			IDSoggetto idDominio = this.openspcoopProperties.getIdentitaPortaDefault(context.getProtocolFactory().getProtocol());
+			if(context.getProtocollo()!=null && context.getProtocollo().getDominio()!=null){
+				idDominio = context.getProtocollo().getDominio();
+			}
+			else if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)){
+				RequestInfo requestInfo = (RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
+				if(requestInfo!=null){
+					idDominio = requestInfo.getIdentitaPdD();
+				}
+			}
+	
+			String modulo = "PostOutResponsePddOE";
+	
+			ExceptionSerialzerFileSystem exceptionSerializerFileSystem = new ExceptionSerialzerFileSystem(this.log);
+	
+			
+			// ### Lettura dati Transazione ###
+			
+			boolean pddStateless = true;
+			PostOutResponseHandler_TransazioneUtilities transazioneUtilities = null;
+			HandlerException he = null;
+			try{
+				
+				// Stateless
+//				if ( (context.getIntegrazione()==null) ||
+//						(context.getIntegrazione().isGestioneStateless()==null) ||
+//						(context.getIntegrazione().isGestioneStateless()==false) 
+//						){
 //					pddStateless = false;
 //				}
-//				
-//				/* ---- Salvo informazioni sulla transazioni nell'oggetto transazioniDTO ----- */
-//				transazioneUtilities = new PostOutResponseHandler_TransazioneUtilities(this.logger, 
-//						this.ottimizzazioneSimulazioneTracceRegistrazioneHeader,
-//						this.ottimizzazioneSimulazioneTracceRegistrazioneDigest,
-//						this.ottimizzazioneSimulazioneTracce);
-//				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
-//							
-//			}catch (Throwable e) {
-//				try{
-//					exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceEmessePdD(transaction, idTransazione, null);
-//				} catch (Exception eClose) {}
-//				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
-//				String msg = "Errore durante la scrittura della transazione sul database (Lettura dati Transazione): " + e.getLocalizedMessage();
-//				this.logger.error("["+idTransazione+"] "+msg,e);
-//				he = new HandlerException(msg,e);
-//			}
-//			finally {	
-//
-//				// ### Gestione Controllo Congestione ###
-//				// Nota: il motivo del perchè viene effettuato qua la "remove"
-//				// 	     risiede nel fatto che la risposta al client è già stata data
-//				//	     però il "thread occupato" dal client non è ancora stato liberato per una nuova richiesta
-//				//		 Se la remove viene messa nel finally del try-catch sottostante prima della remove si "paga" 
-//				//	     i tempi di attesa dell'inserimento della transazione sul database
-//				if(InitHandler.controlloCongestioneAttivo){
-//					PostOutResponseHandler_GestioneControlloCongestione outHandler = new PostOutResponseHandler_GestioneControlloCongestione();
-//					outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.logger, idTransazione, transazioneDTO, context);
-//				}
-//				if(he!=null) {
-//					throw he;
-//				}
-//				else if(exitTransactionAfterRateLimitingRemoveThread){
-//					// La risorsa viene rilasciata nel finally
-//					//this.releaseResources(transaction, idTransazione, context);
-//					return;
-//				}
-//			}
-//			
-//			
-//			
-//			
-//			
-//			
-//			// ### Gestione Transazione ###
-//	
-//			boolean autoCommit = true;
-//			//Resource dbResource = null;
-//			Connection dbConn = null;
-//			boolean errore = false;
-//			try {
-//				
-//	
-//				/* ---- Recupero informazioni sulla modalita' di salvataggio delle tracce ----- */
-//	
-//				// TRACCIA RICHIESTA
-//				boolean registraTracciaRichiesta = true;
-//				InformazioniSalvataggioTraccia infoSalvataggioTracciaRichiesta = null;
-//				Traccia tracciaRichiesta = transaction.getTracciaRichiesta();
-//				if(this.ottimizzazioneSimulazioneTracce && pddStateless){
-//					infoSalvataggioTracciaRichiesta = 
-//							GestoreTraccia.getInformazioniSalvataggioTraccia(this.logger,transazioneDTO, tracciaRichiesta, 
-//									RuoloMessaggio.RICHIESTA,context.getProtocolFactory(),
-//									PddInterceptorConfig.isGenerazioneTransazioni_SimulazioneTracceFallita_truncErrorTo250Char());
-//					if(infoSalvataggioTracciaRichiesta.isPresente() && infoSalvataggioTracciaRichiesta.isRicostruibile()){
-//						registraTracciaRichiesta = false;
-//					}
-//				}
-//				if(this.debug){
-//					this.logger.debug("["+idTransazione+"] Emissione traccia richiesta: "+registraTracciaRichiesta);
-//					if(infoSalvataggioTracciaRichiesta!=null){
-//						this.logger.debug("["+idTransazione+"] Informazioni Salvataggio traccia richiesta: "+infoSalvataggioTracciaRichiesta.toString());
-//					}
-//				}
-//				else{
-//					if(infoSalvataggioTracciaRichiesta!=null){
-//						if(infoSalvataggioTracciaRichiesta.isPresente() && infoSalvataggioTracciaRichiesta.isRicostruibile()==false){
-//							this.logger.warn("["+idTransazione+"] Informazioni Salvataggio traccia richiesta non ricostruibile: "+infoSalvataggioTracciaRichiesta.toString());
-//						}
-//					}
-//				}
-//	
-//				// TRACCIA RISPOSTA
-//				boolean registraTracciaRisposta = true;
-//				InformazioniSalvataggioTraccia infoSalvataggioTracciaRisposta = null;
-//				Traccia tracciaRisposta = transaction.getTracciaRisposta();
-//				if(this.ottimizzazioneSimulazioneTracce && pddStateless){
-//					infoSalvataggioTracciaRisposta = 
-//							GestoreTraccia.getInformazioniSalvataggioTraccia(this.logger,transazioneDTO, tracciaRisposta, 
-//									RuoloMessaggio.RISPOSTA,context.getProtocolFactory(),
-//									PddInterceptorConfig.isGenerazioneTransazioni_SimulazioneTracceFallita_truncErrorTo250Char());
-//					if(infoSalvataggioTracciaRisposta.isPresente() && infoSalvataggioTracciaRisposta.isRicostruibile()){
-//						registraTracciaRisposta = false;
-//					}
-//				}
-//				if(this.debug){
-//					this.logger.debug("["+idTransazione+"] Emissione traccia riposta: "+registraTracciaRisposta);
-//					if(infoSalvataggioTracciaRisposta!=null){
-//						this.logger.debug("["+idTransazione+"] Informazioni Salvataggio traccia risposta: "+infoSalvataggioTracciaRisposta.toString());
-//					}
-//				}
-//				else{
-//					if(infoSalvataggioTracciaRisposta!=null){
-//						if(infoSalvataggioTracciaRisposta.isPresente() && infoSalvataggioTracciaRisposta.isRicostruibile()==false){
-//							this.logger.warn("["+idTransazione+"] Informazioni Salvataggio traccia risposta non ricostruibile: "+infoSalvataggioTracciaRisposta.toString());
-//						}
-//					}
-//				}
-//	
-//				// MESSAGGI DIAGNOSTICI
-//				boolean registrazioneMessaggiDiagnostici = true;
-//				InformazioniSalvataggioDiagnostici infoSalvataggioDiagnostici = null;
-//				if(this.ottimizzazioneSimulazioneDiagnostici && pddStateless){
-//					infoSalvataggioDiagnostici =
-//							GestoreDiagnostici.getInformazioniSalvataggioTraccia(this.logger,context, 
-//									transaction.getCodiceTrasportoRichiesta(), transaction.getTipoConnettore(),
-//									tracciaRichiesta, tracciaRisposta, transaction.getMsgDiagnostici(), transazioneDTO,
-//									PddInterceptorConfig.isGenerazioneTransazioni_SimulazioneDiagnosticiFallita_truncErrorTo250Char(),
-//									PddInterceptorConfig.isOttimizzazioniSimulazioneMsgDiagnosticiAbilitato_serializzazioneMessaggiNonRicostruibili());
-//					if(infoSalvataggioDiagnostici.isPresenti() && infoSalvataggioDiagnostici.isRicostruibili()){
-//						registrazioneMessaggiDiagnostici = false;
-//					}
-//				}
-//				if(this.debug){
-//					this.logger.debug("["+idTransazione+"] Emissione diagnostici: "+registrazioneMessaggiDiagnostici);
-//					if(infoSalvataggioDiagnostici!=null){
-//						this.logger.debug("["+idTransazione+"] Informazioni Salvataggio diagnostici: "+infoSalvataggioDiagnostici.toString());
-//					}
-//				}
-//				else{
-//					if(infoSalvataggioDiagnostici!=null){
-//						if(infoSalvataggioDiagnostici.isPresenti() && infoSalvataggioDiagnostici.isRicostruibili()==false){
-//							this.logger.warn("["+idTransazione+"] Informazioni Salvataggio diagnostici non ricostruibili: "+infoSalvataggioDiagnostici.toString());
-//						}
-//					}
-//				}
-//	
-//				
-//				// CONTENUTI
-//				boolean registrazioneRisorse = transaction.getTransactionServiceLibrary()!=null;
-//				
-//	
-//				// AUTO-COMMIT
-//				if(registraTracciaRichiesta || registraTracciaRisposta || registrazioneMessaggiDiagnostici || registrazioneRisorse){
-//					autoCommit = false; // devo registrare piu' informazioni oltre alla transazione
-//				}
-//				if(this.debug)
-//					this.logger.debug("["+idTransazione+"] AutoCommit: "+this.debug);
-//	
-//	
-//	
-//	
-//	
-//				/* ---- Connection/Service Manager ----- */
-//	
-//				if(this.debug)
-//					this.logger.debug("["+idTransazione+"] recupero jdbcServiceManager in corso ...");
-//	
-//				// Ottiene la connessione al db
-//				//dbResource = this.dbManager.getResource(idDominio, modulo, idTransazione);
-//				//dbConn = (Connection) dbResource.getResource();
-//				dbConn = PddInterceptorConfig.getConnectionRuntime(idDominio, modulo, idTransazione);
-//				if(autoCommit==false){
-//					dbConn.setAutoCommit(false);
-//				}
-//				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
-//						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) this.daoFactory.getServiceManager(DAO.TRANSAZIONI, dbConn, autoCommit,
-//								this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni);
-//				jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
-//				ITransazioneService transazioneService = jdbcServiceManager.getTransazioneService();
-//				if(this.debug)
-//					this.logger.debug("["+idTransazione+"] recupero jdbcServiceManager effettuato");
-//	
-//	
-//	
-//	
-//				/* ---- Inserimento dati transazione ----- */
-//	
-//				// Inserisco transazione
-//				if(this.debug)
-//					this.logger.debug("["+idTransazione+"] inserimento transazione in corso ...");
-//				
-//				// ** Simulazione dati tracce **
-//				if(infoSalvataggioTracciaRichiesta!=null){
-//					transazioneDTO.setTracciaRichiesta(infoSalvataggioTracciaRichiesta.convertToDBColumnValue());
-//				}
-//				if(infoSalvataggioTracciaRisposta!=null){
-//					transazioneDTO.setTracciaRisposta(infoSalvataggioTracciaRisposta.convertToDBColumnValue());
-//				}
-//				
-//				// ** Simulazione dati diagnostica **
-//				if(infoSalvataggioDiagnostici!=null){
-//					transazioneDTO.setDiagnostici(infoSalvataggioDiagnostici.convertToDBColumnValue(DiagnosticColumnType.META_INF));
-//					transazioneDTO.setDiagnosticiList1(infoSalvataggioDiagnostici.convertToDBColumnValue(DiagnosticColumnType.LIST1));
-//					transazioneDTO.setDiagnosticiList2(infoSalvataggioDiagnostici.convertToDBColumnValue(DiagnosticColumnType.LIST2));
-//					transazioneDTO.setDiagnosticiListExt(infoSalvataggioDiagnostici.convertToDBColumnValue(DiagnosticColumnType.LIST_EXT));
-//					transazioneDTO.setDiagnosticiExt(infoSalvataggioDiagnostici.convertToDBColumnValue(DiagnosticColumnType.EXT));
-//				}
-//				
-//				transazioneService.create(transazioneDTO);
-//				if(this.debug)
-//					this.logger.debug("["+idTransazione+"] inserita transazione");
-//	
-//	
-//	
-//	
-//	
-//				/* ---- Inserimento dati tracce ----- */
-//				if( registraTracciaRichiesta && tracciaRichiesta!=null){
-//					if(this.debug)
-//						this.logger.debug("["+idTransazione+"] registrazione traccia richiesta...");
-//					this.tracciamentoOpenSPCoopAppender.log(dbConn, tracciaRichiesta);
-//					if(this.debug)
-//						this.logger.debug("["+idTransazione+"] registrazione traccia richiesta completata");
-//				}	
-//				if( registraTracciaRisposta && tracciaRisposta!=null){
-//					if(this.debug)
-//						this.logger.debug("["+idTransazione+"] registrazione traccia risposta...");
-//					this.tracciamentoOpenSPCoopAppender.log(dbConn, tracciaRisposta);
-//					if(this.debug)
-//						this.logger.debug("["+idTransazione+"] registrazione traccia risposta completata");
-//				}	
-//	
-//	
-//	
-//	
-//	
-//	
-//				/* ---- Inserimento messaggi diagnostici ----- */
-//				if(registrazioneMessaggiDiagnostici){
-//					for(int i=0; i<transaction.sizeMsgDiagnostici(); i++){
-//						MsgDiagnostico msgDiagnostico = transaction.getMsgDiagnostico(i);
-//						if(msgDiagnostico.getIdSoggetto()==null){
-//							msgDiagnostico.setIdSoggetto(idDominio);
-//						}
-//						if(this.debug)
-//							this.logger.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] ...");
-//						this.msgDiagnosticiOpenSPCoopAppender.log(dbConn,msgDiagnostico);
-//						if(this.debug)
-//							this.logger.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
-//					}
-//					if(transaction.getMsgDiagnosticoCorrelazione()!=null){
-//						MsgDiagnosticoCorrelazione msgDiagCorrelazione = transaction.getMsgDiagnosticoCorrelazione();
-//						if(this.debug)
-//							this.logger.debug("["+idTransazione+"] registrazione informazioni di correlazione per i diagnostici ...");
-//						this.msgDiagnosticiOpenSPCoopAppender.logCorrelazione(dbConn,msgDiagCorrelazione);
-//						if(msgDiagCorrelazione.getServiziApplicativiList()!=null){
-//							for(int j=0; j<msgDiagCorrelazione.getServiziApplicativiList().size(); j++){
-//								MsgDiagnosticoCorrelazioneServizioApplicativo corr_sa = new MsgDiagnosticoCorrelazioneServizioApplicativo();
-//								corr_sa.setDelegata(msgDiagCorrelazione.isDelegata());
-//								corr_sa.setIdBusta(msgDiagCorrelazione.getIdBusta());
-//								corr_sa.setProtocollo(msgDiagCorrelazione.getProtocollo());
-//								corr_sa.setServizioApplicativo(msgDiagCorrelazione.getServiziApplicativiList().get(j));
-//								this.msgDiagnosticiOpenSPCoopAppender.logCorrelazioneServizioApplicativo(dbConn,
-//										corr_sa);
-//							}
-//						}
-//						if(msgDiagCorrelazione.getCorrelazioneApplicativaRisposta()!=null){
-//							MsgDiagnosticoCorrelazioneApplicativa corr = new MsgDiagnosticoCorrelazioneApplicativa();
-//							corr.setDelegata(msgDiagCorrelazione.isDelegata());
-//							corr.setIdBusta(msgDiagCorrelazione.getIdBusta());
-//							corr.setProtocollo(msgDiagCorrelazione.getProtocollo());
-//							corr.setCorrelazione(msgDiagCorrelazione.getCorrelazioneApplicativaRisposta());
-//							this.msgDiagnosticiOpenSPCoopAppender.logCorrelazioneApplicativaRisposta(dbConn,
-//									corr);
-//						}
-//						if(this.debug)
-//							this.logger.debug("["+idTransazione+"] registrazione informazioni di correlazione per i diagnostici completata");
-//					}
-//				}
-//	
-//	
-//				
-//				
-//				
-//				/* ---- Inserimento risorse contenuti (library personalizzata) ----- */
-//				if(registrazioneRisorse){
-//					IDumpMessaggioService dumpMessageService = jdbcServiceManager.getDumpMessaggioService();
-//					PostOutResponseHandler_ContenutiUtilities contenutiUtilities = new PostOutResponseHandler_ContenutiUtilities(this.logger);
-//					contenutiUtilities.insertContenuti(transazioneDTO, tracciaRichiesta, tracciaRisposta, transaction.getMsgDiagnostici(),
-//							dumpMessageService, transaction.getRisorse(), transaction.getTransactionServiceLibrary(), this.daoFactory);
-//				}
-//	
-//				
-//	
-//	
-//				// COMMIT
-//				if(autoCommit==false)
-//					dbConn.commit();
-//	
-//	
-//			} catch (SQLException sqlEx) {
-//				errore = true;
-//				try{
-//					if(autoCommit==false)
-//						dbConn.rollback();
-//				}catch(Exception eRollback){}
-//				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
-//				String msg = "Errore durante la scrittura della transazione sul database (sql): " + sqlEx.getLocalizedMessage();
-//				this.logger.error("["+idTransazione+"] "+msg,sqlEx);
-//				throw new HandlerException(msg,sqlEx);			
-//			}  catch (Throwable e) {
-//				errore = true;
-//				try{
-//					if(autoCommit==false)
-//						dbConn.rollback();
-//				}catch(Exception eRollback){}
-//				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
-//				String msg = "Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage();
-//				this.logger.error("["+idTransazione+"] "+msg,e);
-//				throw new HandlerException(msg,e);	
-//			} finally {
-//				
-//				// Ripristino Autocomit
-//				try {
-//					if(autoCommit==false)
-//						dbConn.setAutoCommit(true);
-//				} catch (Exception e) {}
-//									
-//				// Chiusura della connessione al database
-//				try {
-//					//this.dbManager.releaseResource(idDominio, modulo, dbResource);
-//					if(dbConn!=null){
-//						dbConn.close();
-//					}
-//				} catch (Exception e) {}
-//				
-//				// Registrazione su FileSystem informazioni se la gestione e' andata in errore
-//				if(errore){
-//					try {
-//						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceEmessePdD(transaction, idTransazione, transazioneDTO);
-//					} catch (Exception e) {}
-//					try {
-//						exceptionSerializerFileSystem.registrazioneFileSystem(transazioneDTO, idTransazione);
-//					} catch (Exception e) {}
-//				}
-//								
-//			}
-//			
-//		}finally{
-//
-//			this._releaseResources(transaction, idTransazione, context);
-//						
-//		}
+				// Cambio l'approccio per poter simulare anche gli errori nei diagnostici dove possibile
+				// Tanto tutte le comunicazioni sono stateless a meno che non vengano tramutate in stateful
+				if ( context.getIntegrazione()!=null && 
+						context.getIntegrazione().isGestioneStateless()!=null &&
+								!context.getIntegrazione().isGestioneStateless()){
+					pddStateless = false;
+				}
+				
+				/* ---- Salvo informazioni sulla transazioni nell'oggetto transazioniDTO ----- */
+				transazioneUtilities = new PostOutResponseHandler_TransazioneUtilities(this.log, 
+						this.transazioniRegistrazioneTracceHeaderRawEnabled,
+						this.transazioniRegistrazioneTracceDigestEnabled,
+						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled);
+				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+							
+			}catch (Throwable e) {
+				try{
+					exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, null);
+				} catch (Exception eClose) {}
+				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
+				String msg = "Errore durante la scrittura della transazione sul database (Lettura dati Transazione): " + e.getLocalizedMessage();
+				this.log.error("["+idTransazione+"] "+msg,e);
+				he = new HandlerException(msg,e);
+			}
+			finally {	
+
+				// ### Gestione Controllo Congestione ###
+				// Nota: il motivo del perchè viene effettuato qua la "remove"
+				// 	     risiede nel fatto che la risposta al client è già stata data
+				//	     però il "thread occupato" dal client non è ancora stato liberato per una nuova richiesta
+				//		 Se la remove viene messa nel finally del try-catch sottostante prima della remove si "paga" 
+				//	     i tempi di attesa dell'inserimento della transazione sul database
+				if(this.openspcoopProperties.isControlloTrafficoEnabled()){
+					PostOutResponseHandler_GestioneControlloTraffico outHandler = new PostOutResponseHandler_GestioneControlloTraffico();
+					outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, context);
+				}
+				if(he!=null) {
+					throw he;
+				}
+				else if(exitTransactionAfterRateLimitingRemoveThread){
+					// La risorsa viene rilasciata nel finally
+					//this.releaseResources(transaction, idTransazione, context);
+					return;
+				}
+			}
+			
+			
+			
+			
+			
+			
+			// ### Gestione Transazione ###
+	
+			boolean autoCommit = true;
+			DBTransazioniManager dbManager = null;
+	    	Resource resource = null;
+			Connection connection = null;
+			boolean errore = false;
+			try {
+				
+	
+				/* ---- Recupero informazioni sulla modalita' di salvataggio delle tracce ----- */
+	
+				// TRACCIA RICHIESTA
+				boolean registraTracciaRichiesta = true;
+				String informazioneTracciaRichiestaDaSalvare = null;
+				if(this.salvataggioTracceManager!=null) {
+					StatoSalvataggioTracce statoTracciaRichiesta =  
+							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRichiesta(this.log, context, transaction, transazioneDTO, pddStateless);
+					if(statoTracciaRichiesta!=null) {
+						registraTracciaRichiesta = (statoTracciaRichiesta.isCompresso()==false) && (statoTracciaRichiesta.isErrore()==false);
+						informazioneTracciaRichiestaDaSalvare = statoTracciaRichiesta.getInformazioneCompressa();
+					}
+					if(this.debug){
+						this.log.debug("["+idTransazione+"] Emissione traccia richiesta: "+registraTracciaRichiesta);
+						if(statoTracciaRichiesta!=null) {
+							this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia richiesta (compresso:"+statoTracciaRichiesta.isCompresso()+
+									" errore:"+statoTracciaRichiesta.isErrore()+"): "+statoTracciaRichiesta.getInformazione());
+						}
+					}
+					else{
+						if(statoTracciaRichiesta!=null && statoTracciaRichiesta.isErrore()){
+								this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia richiesta in errore: "+statoTracciaRichiesta.getInformazione());
+						}
+					}
+				}
+				
+				// TRACCIA RISPOSTA
+				boolean registraTracciaRisposta = true;
+				String informazioneTracciaRispostaDaSalvare = null;
+				if(this.salvataggioTracceManager!=null) {
+					StatoSalvataggioTracce statoTracciaRisposta =  
+							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRisposta(this.log, context, transaction, transazioneDTO, pddStateless);
+					if(statoTracciaRisposta!=null) {
+						registraTracciaRisposta = (statoTracciaRisposta.isCompresso()==false) && (statoTracciaRisposta.isErrore()==false);
+						informazioneTracciaRispostaDaSalvare = statoTracciaRisposta.getInformazioneCompressa();
+					}
+					if(this.debug){
+						this.log.debug("["+idTransazione+"] Emissione traccia risposta: "+registraTracciaRisposta);
+						if(statoTracciaRisposta!=null) {
+							this.log.debug("["+idTransazione+"] Informazioni Salvataggio traccia risposta (compresso:"+statoTracciaRisposta.isCompresso()+
+									" errore:"+statoTracciaRisposta.isErrore()+"): "+statoTracciaRisposta.getInformazione());
+						}
+					}
+					else{
+						if(statoTracciaRisposta!=null && statoTracciaRisposta.isErrore()){
+								this.log.warn("["+idTransazione+"] Informazioni Salvataggio traccia risposta in errore: "+statoTracciaRisposta.getInformazione());
+						}
+					}
+				}
+	
+				// MESSAGGI DIAGNOSTICI
+				boolean registrazioneMessaggiDiagnostici = true;
+				HashMap<DiagnosticColumnType, String> informazioniDiagnosticiDaSalvare = null;
+				if(this.salvataggioDiagnosticiManager!=null) {
+					StatoSalvataggioDiagnostici statoDiagnostici =  
+							this.salvataggioDiagnosticiManager.getInformazioniSalvataggioDiagnostici(this.log, context, transaction, transazioneDTO, pddStateless);
+					if(statoDiagnostici!=null) {
+						registrazioneMessaggiDiagnostici = (statoDiagnostici.isCompresso()==false) && (statoDiagnostici.isErrore()==false);
+						informazioniDiagnosticiDaSalvare = statoDiagnostici.getInformazioneCompressa();
+					}
+					if(this.debug){
+						this.log.debug("["+idTransazione+"] Emissione diagnostici: "+registrazioneMessaggiDiagnostici);
+						if(statoDiagnostici!=null) {
+							this.log.debug("["+idTransazione+"] Informazioni Salvataggio diagnostici (compresso:"+statoDiagnostici.isCompresso()+
+									" errore:"+statoDiagnostici.isErrore()+"): "+statoDiagnostici.getInformazione());
+						}
+					}
+					else{
+						if(statoDiagnostici!=null && statoDiagnostici.isErrore()){
+								this.log.warn("["+idTransazione+"] Informazioni Salvataggio diagnostici in errore: "+statoDiagnostici.getInformazione());
+						}
+					}
+				}
+	
+				
+				// CONTENUTI
+				boolean registrazioneRisorse = transaction.getTransactionServiceLibrary()!=null || transaction.sizeMessaggi()>0;
+				
+	
+				// AUTO-COMMIT
+				if(registraTracciaRichiesta || registraTracciaRisposta || registrazioneMessaggiDiagnostici || registrazioneRisorse){
+					autoCommit = false; // devo registrare piu' informazioni oltre alla transazione
+				}
+				if(this.debug)
+					this.logSql.debug("["+idTransazione+"] AutoCommit: "+this.debug);
+	
+	
+	
+	
+	
+				/* ---- Connection/Service Manager ----- */
+	
+				if(this.debug)
+					this.logSql.debug("["+idTransazione+"] recupero jdbcServiceManager in corso ...");
+	
+				// Ottiene la connessione al db
+				dbManager = DBTransazioniManager.getInstance();
+				resource = dbManager.getResource(idDominio, modulo, idTransazione);
+				if(resource==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				connection = (Connection) resource.getResource();
+				if(connection == null)
+					throw new Exception("Connessione non disponibile");	
+
+				if(autoCommit==false){
+					connection.setAutoCommit(false);
+				}
+				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
+						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) 
+						this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+								connection, autoCommit,
+								this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLoggerTransazioni);
+				jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
+				ITransazioneService transazioneService = jdbcServiceManager.getTransazioneService();
+				if(this.debug)
+					this.logSql.debug("["+idTransazione+"] recupero jdbcServiceManager effettuato");
+	
+	
+	
+	
+				/* ---- Inserimento dati transazione ----- */
+	
+				// Inserisco transazione
+				if(this.debug)
+					this.log.debug("["+idTransazione+"] inserimento transazione in corso ...");
+				
+				// ** dati tracce **
+				transazioneDTO.setTracciaRichiesta(informazioneTracciaRichiestaDaSalvare);
+				transazioneDTO.setTracciaRisposta(informazioneTracciaRispostaDaSalvare);
+				
+				// ** dati diagnostica **
+				if(informazioniDiagnosticiDaSalvare!=null){
+					transazioneDTO.setDiagnostici(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.META_INF));
+					transazioneDTO.setDiagnosticiList1(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST1));
+					transazioneDTO.setDiagnosticiList2(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST2));
+					transazioneDTO.setDiagnosticiListExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.LIST_EXT));
+					transazioneDTO.setDiagnosticiExt(informazioniDiagnosticiDaSalvare.get(DiagnosticColumnType.EXT));
+				}
+				
+				transazioneService.create(transazioneDTO);
+				if(this.debug)
+					this.log.debug("["+idTransazione+"] inserita transazione");
+	
+	
+	
+	
+	
+				/* ---- Inserimento dati tracce ----- */
+				
+				if( registraTracciaRichiesta && transaction.getTracciaRichiesta()!=null){
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione traccia richiesta...");
+					this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRichiesta());
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione traccia richiesta completata");
+				}	
+				if( registraTracciaRisposta && transaction.getTracciaRisposta()!=null){
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione traccia risposta...");
+					this.tracciamentoOpenSPCoopAppender.log(connection, transaction.getTracciaRisposta());
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione traccia risposta completata");
+				}	
+	
+	
+	
+	
+	
+	
+				/* ---- Inserimento messaggi diagnostici ----- */
+				
+				if(registrazioneMessaggiDiagnostici){
+					for(int i=0; i<transaction.sizeMsgDiagnostici(); i++){
+						MsgDiagnostico msgDiagnostico = transaction.getMsgDiagnostico(i);
+						if(msgDiagnostico.getIdSoggetto()==null){
+							msgDiagnostico.setIdSoggetto(idDominio);
+						}
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] ...");
+						this.msgDiagnosticiOpenSPCoopAppender.log(connection,msgDiagnostico);
+						if(this.debug)
+							this.log.debug("["+idTransazione+"] registrazione diagnostico con codice ["+msgDiagnostico.getCodice()+"] completata");
+					}
+				}
+	
+	
+				
+				
+				
+				/* ---- Inserimento dump ----- */
+				
+				for(int i=0; i<transaction.sizeMessaggi(); i++){
+					Messaggio messaggio = transaction.getMessaggio(i);
+					if(messaggio.getDominio()==null) {
+						messaggio.setDominio(idDominio);
+					}
+					if(messaggio.getTipoPdD()==null) {
+						messaggio.setTipoPdD(context.getTipoPorta());
+					}
+					if(messaggio.getIdFunzione()==null) {
+						messaggio.setIdFunzione(modulo);
+					}
+					if(messaggio.getIdBusta()==null) {
+						if(context.getProtocollo()!=null) {
+							messaggio.setIdBusta(context.getProtocollo().getIdRichiesta());
+						}
+					}
+					if(messaggio.getFruitore()==null) {
+						if(context.getProtocollo()!=null) {
+							messaggio.setFruitore(context.getProtocollo().getFruitore());
+						}
+					}
+					if(messaggio.getServizio()==null) {
+						if(context.getProtocollo()!=null) {
+							IDServizio idServizio = IDServizioFactory.getInstance().
+									getIDServizioFromValuesWithoutCheck(context.getProtocollo().getTipoServizio(), 
+											context.getProtocollo().getServizio(), 
+											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getTipo() : null, 
+											context.getProtocollo().getErogatore()!=null ? context.getProtocollo().getErogatore().getNome() : null,
+											context.getProtocollo().getVersioneServizio());
+							messaggio.setServizio(idServizio);
+						}
+					}
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
+					this.dumpOpenSPCoopAppender.dump(connection,messaggio);
+					if(this.debug)
+						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
+				}
+				
+				
+				
+				
+				
+				/* ---- Inserimento risorse contenuti (library personalizzata) ----- */
+				
+				if(registrazioneRisorse){
+					IDumpMessaggioService dumpMessageService = jdbcServiceManager.getDumpMessaggioService();
+					PostOutResponseHandler_ContenutiUtilities contenutiUtilities = new PostOutResponseHandler_ContenutiUtilities(this.log);
+					contenutiUtilities.insertContenuti(transazioneDTO, 
+							transaction.getTracciaRichiesta(), transaction.getTracciaRisposta(), 
+							transaction.getMsgDiagnostici(),
+							dumpMessageService, transaction.getRisorse(), transaction.getTransactionServiceLibrary(), this.daoFactory);
+				}
+	
+				
+	
+	
+				// COMMIT
+				if(autoCommit==false)
+					connection.commit();
+	
+	
+			} catch (SQLException sqlEx) {
+				errore = true;
+				try{
+					if(autoCommit==false)
+						connection.rollback();
+				}catch(Exception eRollback){}
+				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
+				String msg = "Errore durante la scrittura della transazione sul database (sql): " + sqlEx.getLocalizedMessage();
+				this.log.error("["+idTransazione+"] "+msg,sqlEx);
+				throw new HandlerException(msg,sqlEx);			
+			}  catch (Throwable e) {
+				errore = true;
+				try{
+					if(autoCommit==false)
+						connection.rollback();
+				}catch(Exception eRollback){}
+				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori
+				String msg = "Errore durante la scrittura della transazione sul database: " + e.getLocalizedMessage();
+				this.log.error("["+idTransazione+"] "+msg,e);
+				throw new HandlerException(msg,e);	
+			} finally {
+				
+				// Ripristino Autocomit
+				try {
+					if(autoCommit==false)
+						connection.setAutoCommit(true);
+				} catch (Exception e) {}
+									
+				// Chiusura della connessione al database
+				try {
+					//this.dbManager.releaseResource(idDominio, modulo, dbResource);
+					if(resource!=null)
+						dbManager.releaseResource(idDominio, modulo, resource);
+				} catch (Exception e) {}
+				
+				// Registrazione su FileSystem informazioni se la gestione e' andata in errore
+				if(errore){
+					try {
+						exceptionSerializerFileSystem.registrazioneFileSystemDiagnosticiTracceDumpEmessiPdD(transaction, idTransazione, transazioneDTO);
+					} catch (Exception e) {}
+					try {
+						exceptionSerializerFileSystem.registrazioneFileSystem(transazioneDTO, idTransazione);
+					} catch (Exception e) {}
+				}
+								
+			}
+			
+		}finally{
+
+			this._releaseResources(transaction, idTransazione, context);
+						
+		}
 	}
 
 	private void _releaseResources(Transaction transactionParam, String idTransazione, PostOutResponseContext context) {
-//		
-//		Transaction transaction = null;
-//		try {
-//			transaction = TransactionContext.removeSPCoopTransaction(idTransazione);
-//			if(transaction!=null) {
-//				transaction.setDeleted();
-//			}
-//			// altrimenti e' gia' stata eliminata
-//		} catch (Throwable e) {
-//			this.logger.error("["+idTransazione+"] Errore durante la rimozione della registrazione delle transazione",e);
-//		}
-//		
-//		String idBusta = null;
-//		Boolean isDelegata = null;
-//		if (transaction!=null) {
-//			if(transaction.getMsgDiagnosticoCorrelazione()!=null){
-//				idBusta = transaction.getMsgDiagnosticoCorrelazione().getIdBusta();
-//				isDelegata = transaction.getMsgDiagnosticoCorrelazione().isDelegata();
-//			}
-//		}
-//		else if (transactionParam!=null) {
-//			if(transactionParam.getMsgDiagnosticoCorrelazione()!=null){
-//				idBusta = transactionParam.getMsgDiagnosticoCorrelazione().getIdBusta();
-//				isDelegata = transactionParam.getMsgDiagnosticoCorrelazione().isDelegata();
-//			}
-//		}
-//		if(idBusta!=null){
-//			try {
-//				TransactionContext.removeIdTransazione(idBusta, isDelegata);
-//			} catch (Throwable e) {
-//				this.logger.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'associazione idTransazione - idBusta",e);
-//			}
-//		}
-//			
-//		/* ---- Elimino informazione per filtro duplicati ----- */
-//		if(context!=null && context.getProtocollo()!=null){
-//			if(context.getProtocollo().getIdRichiesta()!=null){
-//				try {
-//					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRichiesta());
-//				} catch (Throwable e) {
-//					this.logger.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'identificativo di protocollo della richiesta ["+context.getProtocollo().getIdRichiesta()+"]",e);
-//				}
-//			}
-//			if(context.getProtocollo().getIdRisposta()!=null){
-//				try {
-//					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRisposta());
-//				} catch (Throwable e) {
-//					this.logger.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'identificativo di protocollo della risposta ["+context.getProtocollo().getIdRisposta()+"]",e);
-//				}
-//			}
-//		}
-//		
-//	}
-//	
-//
-//	public String getClassNamePropertiesName(){
-//		return "org.openspcoop2.pdd.handler.post-out-response.pddOE";
-//	}
-//
-//	public String [] getOpenSPCoopPropertiesNames(){
-//		return new String [] {"org.openspcoop2.pdd.handler.post-out-response"};
-//	}
-//	public String [] getOpenSPCoopPropertiesValues(){
-//		return new String [] {"+,pddOE"};
+		
+		Transaction transaction = null;
+		try {
+			transaction = TransactionContext.removeTransaction(idTransazione);
+			if(transaction!=null) {
+				transaction.setDeleted();
+			}
+			// altrimenti e' gia' stata eliminata
+		} catch (Throwable e) {
+			this.log.error("["+idTransazione+"] Errore durante la rimozione della registrazione delle transazione",e);
+		}
+			
+		/* ---- Elimino informazione per filtro duplicati ----- */
+		if(context!=null && context.getProtocollo()!=null){
+			if(context.getProtocollo().getIdRichiesta()!=null){
+				try {
+					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRichiesta());
+				} catch (Throwable e) {
+					this.log.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'identificativo di protocollo della richiesta ["+context.getProtocollo().getIdRichiesta()+"]",e);
+				}
+			}
+			if(context.getProtocollo().getIdRisposta()!=null){
+				try {
+					TransactionContext.removeIdentificativoProtocollo(context.getProtocollo().getIdRisposta());
+				} catch (Throwable e) {
+					this.log.error("["+idTransazione+"] Errore durante la rimozione della registrazione dell'identificativo di protocollo della risposta ["+context.getProtocollo().getIdRisposta()+"]",e);
+				}
+			}
+		}
+		
 	}
-
-
+	
 	
 }

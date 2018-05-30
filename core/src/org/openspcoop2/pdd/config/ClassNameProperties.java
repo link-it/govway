@@ -858,6 +858,33 @@ public class ClassNameProperties {
 	
 	
 	
+	/**
+	 * Ritorna una classe 'ISalvataggioTracceManager' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getSalvataggioTracceManager(String nome){
+		return this.getValue("org.openspcoop2.pdd.transazioni.tracce.salvataggio.", nome);
+	}
+	public String[] getSalvataggioTracceManager() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.transazioni.tracce.salvataggio.");
+	}
+	
+	
+	
+	/**
+	 * Ritorna una classe 'ISalvataggioDiagnosticiManager' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getSalvataggioDiagnosticiManager(String nome){
+		return this.getValue("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio.", nome);
+	}
+	public String[] getSalvataggioDiagnosticiManager() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.pdd.transazioni.diagnostici.salvataggio.");
+	}
+	
+	
 	
 	/**
 	 * Ritorna una classe 'IRateLimiting' se questa e' stata precedentemente registrata
