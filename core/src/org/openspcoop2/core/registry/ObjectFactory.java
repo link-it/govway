@@ -136,6 +136,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Scope }
+     */
+    public Scope createScope() {
+        return new Scope();
+    }
+
+    /**
      * Create an instance of {@link ResourceResponse }
      */
     public ResourceResponse createResourceResponse() {
@@ -154,6 +161,13 @@ public class ObjectFactory {
      */
     public IdPortaDominio createIdPortaDominio() {
         return new IdPortaDominio();
+    }
+
+    /**
+     * Create an instance of {@link IdScope }
+     */
+    public IdScope createIdScope() {
+        return new IdScope();
     }
 
     /**

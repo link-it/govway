@@ -26,6 +26,7 @@ package org.openspcoop2.core.registry.driver;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -33,6 +34,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 
 
@@ -217,6 +219,48 @@ public interface IDriverRegistroServiziCRUD {
 	 * @throws DriverRegistroServiziException
 	 */
 	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una nuovo Scope
+	 * 
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	public void createScope(Scope scope) throws DriverRegistroServiziException;
+	
+	/**
+     * Verifica l'esistenza di un Scope
+     *
+     * @param idScope idScope del scope da verificare
+     * @return true se il scope esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+    public boolean existsScope(IDScope idScope) throws DriverRegistroServiziException;
+	
+	/**
+	 * Aggiorna il Scope con i nuovi valori.
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	public void updateScope(Scope scope) throws DriverRegistroServiziException;
+	
+	/**
+	 * Elimina un Scope
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	public void deleteScope(Scope scope) throws DriverRegistroServiziException;
 	
 	
 	

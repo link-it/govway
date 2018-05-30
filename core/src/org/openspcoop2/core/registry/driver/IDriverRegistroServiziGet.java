@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -39,6 +40,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 
 
@@ -206,7 +208,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Ruolo}, 
 	 * identificato grazie al parametro 
-	 * <var>nome</var> 
+	 * <var>idRuolo</var> 
 	 *
 	 * @param idRuolo Identificativo del ruolo
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Ruolo}.
@@ -225,6 +227,37 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 */
 	public List<IDRuolo> getAllIdRuoli(
 			FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	
+	
+	
+	
+	
+	
+	/* Scope */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Scope}, 
+	 * identificato grazie al parametro 
+	 * <var>idScope</var> 
+	 *
+	 * @param idScope Identificativo dello scope
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Scope}.
+	 * 
+	 */
+	public Scope getScope(
+			IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+
+	/**
+	 * Ritorna gli identificatori degli scope che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID degli scope trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	public List<IDScope> getAllIdScope(
+			FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
 	
 	

@@ -56,6 +56,7 @@ public final class CostantiDB {
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
     public static final String PDD = "pdd";
     public static final String RUOLI	= "ruoli";
+    public static final String SCOPE	= "scope";
     public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SERVIZI = "servizi";
     public static final String SERVIZI_AZIONI = "servizi_azioni";

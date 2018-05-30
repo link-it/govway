@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.all;
 
@@ -27,6 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
+import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 
 
@@ -45,8 +28,10 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
  *         &lt;element name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *         &lt;element name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" minOccurs="0"/&gt;
+ *         &lt;element name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" minOccurs="0"/&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="formato-specifica" type="{http://www.openspcoop2.org/core/registry}FormatoSpecifica" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
@@ -68,8 +53,10 @@ import org.openspcoop2.core.registry.constants.ServiceBinding;
     "statoPackage",
     "privato",
     "serviceBinding",
+    "messageType",
     "nome",
     "descrizione",
+    "formatoSpecifica",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "versione",
@@ -89,8 +76,14 @@ public class SearchFilterAccordoServizioParteComune {
     @XmlElement(name = "service-binding")
     @XmlSchemaType(name = "string")
     protected ServiceBinding serviceBinding;
+    @XmlElement(name = "message-type")
+    @XmlSchemaType(name = "string")
+    protected MessageType messageType;
     protected String nome;
     protected String descrizione;
+    @XmlElement(name = "formato-specifica")
+    @XmlSchemaType(name = "string")
+    protected FormatoSpecifica formatoSpecifica;
     @XmlElement(name = "ora-registrazione-min")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar oraRegistrazioneMin;
@@ -224,6 +217,30 @@ public class SearchFilterAccordoServizioParteComune {
     }
 
     /**
+     * Gets the value of the messageType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link MessageType }
+     *     
+     */
+    public MessageType getMessageType() {
+        return this.messageType;
+    }
+
+    /**
+     * Sets the value of the messageType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link MessageType }
+     *     
+     */
+    public void setMessageType(MessageType value) {
+        this.messageType = value;
+    }
+
+    /**
      * Gets the value of the nome property.
      * 
      * @return
@@ -269,6 +286,30 @@ public class SearchFilterAccordoServizioParteComune {
      */
     public void setDescrizione(String value) {
         this.descrizione = value;
+    }
+
+    /**
+     * Gets the value of the formatoSpecifica property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link FormatoSpecifica }
+     *     
+     */
+    public FormatoSpecifica getFormatoSpecifica() {
+        return this.formatoSpecifica;
+    }
+
+    /**
+     * Sets the value of the formatoSpecifica property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link FormatoSpecifica }
+     *     
+     */
+    public void setFormatoSpecifica(FormatoSpecifica value) {
+        this.formatoSpecifica = value;
     }
 
     /**

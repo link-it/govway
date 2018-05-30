@@ -42,6 +42,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DeleteAllScope }
+     */
+    public DeleteAllScope createDeleteAllScope() {
+        return new DeleteAllScope();
+    }
+    
+    /**
      * Create an instance of {@link DeleteRuolo }
      */
     public DeleteRuolo createDeleteRuolo() {
@@ -95,6 +102,13 @@ public class ObjectFactory {
      */
     public DeleteAllPortaDominioResponse createDeleteAllPortaDominioResponse() {
         return new DeleteAllPortaDominioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link GetScopeResponse }
+     */
+    public GetScopeResponse createGetScopeResponse() {
+        return new GetScopeResponse();
     }
     
     /**
@@ -224,6 +238,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteByIdScopeResponse }
+     */
+    public DeleteByIdScopeResponse createDeleteByIdScopeResponse() {
+        return new DeleteByIdScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link ExistsSoggettoResponse }
      */
     public ExistsSoggettoResponse createExistsSoggettoResponse() {
@@ -238,6 +259,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteByIdScope }
+     */
+    public DeleteByIdScope createDeleteByIdScope() {
+        return new DeleteByIdScope();
+    }
+    
+    /**
      * Create an instance of {@link InUseAccordoServizioParteSpecifica }
      */
     public InUseAccordoServizioParteSpecifica createInUseAccordoServizioParteSpecifica() {
@@ -249,6 +277,13 @@ public class ObjectFactory {
      */
     public DeleteByIdAccordoServizioParteComune createDeleteByIdAccordoServizioParteComune() {
         return new DeleteByIdAccordoServizioParteComune();
+    }
+    
+    /**
+     * Create an instance of {@link CountScope }
+     */
+    public CountScope createCountScope() {
+        return new CountScope();
     }
     
     /**
@@ -350,6 +385,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindScopeResponse }
+     */
+    public FindScopeResponse createFindScopeResponse() {
+        return new FindScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link CountAccordoServizioParteComune }
      */
     public CountAccordoServizioParteComune createCountAccordoServizioParteComune() {
@@ -406,6 +448,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CreateScopeResponse }
+     */
+    public CreateScopeResponse createCreateScopeResponse() {
+        return new CreateScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllAccordoCooperazione }
      */
     public FindAllAccordoCooperazione createFindAllAccordoCooperazione() {
@@ -441,6 +490,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link InUseScopeResponse }
+     */
+    public InUseScopeResponse createInUseScopeResponse() {
+        return new InUseScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAccordoServizioParteSpecifica }
      */
     public FindAccordoServizioParteSpecifica createFindAccordoServizioParteSpecifica() {
@@ -462,10 +518,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteAllByFilterScope }
+     */
+    public DeleteAllByFilterScope createDeleteAllByFilterScope() {
+        return new DeleteAllByFilterScope();
+    }
+    
+    /**
      * Create an instance of {@link UpdateAccordoCooperazioneResponse }
      */
     public UpdateAccordoCooperazioneResponse createUpdateAccordoCooperazioneResponse() {
         return new UpdateAccordoCooperazioneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteScopeResponse }
+     */
+    public DeleteScopeResponse createDeleteScopeResponse() {
+        return new DeleteScopeResponse();
     }
     
     /**
@@ -504,6 +574,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CountScopeResponse }
+     */
+    public CountScopeResponse createCountScopeResponse() {
+        return new CountScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllIdsRuolo }
      */
     public FindAllIdsRuolo createFindAllIdsRuolo() {
@@ -522,6 +599,13 @@ public class ObjectFactory {
      */
     public DeleteAllAccordoServizioParteComune createDeleteAllAccordoServizioParteComune() {
         return new DeleteAllAccordoServizioParteComune();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateScopeResponse }
+     */
+    public UpdateScopeResponse createUpdateScopeResponse() {
+        return new UpdateScopeResponse();
     }
     
     /**
@@ -567,6 +651,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UpdateOrCreateScopeResponse }
+     */
+    public UpdateOrCreateScopeResponse createUpdateOrCreateScopeResponse() {
+        return new UpdateOrCreateScopeResponse();
+    }
+    
+    /**
      * Create an instance of {@link UpdateOrCreateAccordoCooperazione }
      */
     public UpdateOrCreateAccordoCooperazione createUpdateOrCreateAccordoCooperazione() {
@@ -574,10 +665,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindAllIdsScope }
+     */
+    public FindAllIdsScope createFindAllIdsScope() {
+        return new FindAllIdsScope();
+    }
+    
+    /**
      * Create an instance of {@link GetAccordoServizioParteComuneResponse }
      */
     public GetAccordoServizioParteComuneResponse createGetAccordoServizioParteComuneResponse() {
         return new GetAccordoServizioParteComuneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindScope }
+     */
+    public FindScope createFindScope() {
+        return new FindScope();
     }
     
     /**
@@ -592,6 +697,27 @@ public class ObjectFactory {
      */
     public DeletePortaDominioResponse createDeletePortaDominioResponse() {
         return new DeletePortaDominioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllScope }
+     */
+    public FindAllScope createFindAllScope() {
+        return new FindAllScope();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateScope }
+     */
+    public UpdateScope createUpdateScope() {
+        return new UpdateScope();
+    }
+    
+    /**
+     * Create an instance of {@link ExistsScopeResponse }
+     */
+    public ExistsScopeResponse createExistsScopeResponse() {
+        return new ExistsScopeResponse();
     }
     
     /**
@@ -630,10 +756,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link InUseScope }
+     */
+    public InUseScope createInUseScope() {
+        return new InUseScope();
+    }
+    
+    /**
      * Create an instance of {@link FindAllAccordoServizioParteComuneResponse }
      */
     public FindAllAccordoServizioParteComuneResponse createFindAllAccordoServizioParteComuneResponse() {
         return new FindAllAccordoServizioParteComuneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsScopeResponse }
+     */
+    public FindAllIdsScopeResponse createFindAllIdsScopeResponse() {
+        return new FindAllIdsScopeResponse();
     }
     
     /**
@@ -662,6 +802,13 @@ public class ObjectFactory {
      */
     public GetAccordoServizioParteSpecifica createGetAccordoServizioParteSpecifica() {
         return new GetAccordoServizioParteSpecifica();
+    }
+    
+    /**
+     * Create an instance of {@link ExistsScope }
+     */
+    public ExistsScope createExistsScope() {
+        return new ExistsScope();
     }
     
     /**
@@ -753,6 +900,13 @@ public class ObjectFactory {
      */
     public DeleteAllByFilterAccordoServizioParteSpecifica createDeleteAllByFilterAccordoServizioParteSpecifica() {
         return new DeleteAllByFilterAccordoServizioParteSpecifica();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteScope }
+     */
+    public DeleteScope createDeleteScope() {
+        return new DeleteScope();
     }
     
     /**
@@ -851,6 +1005,13 @@ public class ObjectFactory {
      */
     public DeleteAllByFilterAccordoServizioParteComuneResponse createDeleteAllByFilterAccordoServizioParteComuneResponse() {
         return new DeleteAllByFilterAccordoServizioParteComuneResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllScopeResponse }
+     */
+    public FindAllScopeResponse createFindAllScopeResponse() {
+        return new FindAllScopeResponse();
     }
     
     /**
@@ -1043,6 +1204,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CreateScope }
+     */
+    public CreateScope createCreateScope() {
+        return new CreateScope();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllAccordoCooperazione }
      */
     public DeleteAllAccordoCooperazione createDeleteAllAccordoCooperazione() {
@@ -1078,6 +1246,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link GetScope }
+     */
+    public GetScope createGetScope() {
+        return new GetScope();
+    }
+    
+    /**
      * Create an instance of {@link CreateAccordoCooperazioneResponse }
      */
     public CreateAccordoCooperazioneResponse createCreateAccordoCooperazioneResponse() {
@@ -1096,6 +1271,27 @@ public class ObjectFactory {
      */
     public GetSoggettoResponse createGetSoggettoResponse() {
         return new GetSoggettoResponse();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateOrCreateScope }
+     */
+    public UpdateOrCreateScope createUpdateOrCreateScope() {
+        return new UpdateOrCreateScope();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllScopeResponse }
+     */
+    public DeleteAllScopeResponse createDeleteAllScopeResponse() {
+        return new DeleteAllScopeResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllByFilterScopeResponse }
+     */
+    public DeleteAllByFilterScopeResponse createDeleteAllByFilterScopeResponse() {
+        return new DeleteAllByFilterScopeResponse();
     }
     
     /**

@@ -17,6 +17,7 @@
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-comune"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="ruolo"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="scope"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
 			</xsd:sequence>
@@ -463,6 +464,35 @@
 		<!-- end-extensions -->
 	</xsd:complexType>
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- Scope -->
+	
+	<xsd:element name="scope" type="scope"/>
+	<xsd:complexType name="scope">
+		
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipologia" type="xsd:string" use="optional"/> <!-- caratteristica dello scope (es. policy di gestione) -->
+		<xsd:attribute name="nome-esterno" type="xsd:string" use="optional"/>
+		<xsd:attribute default="qualsiasi" name="contesto-utilizzo" type="ScopeContesto" use="optional"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			
+		</xsd:attribute>	
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
+	
 
 	
 	
@@ -862,6 +892,13 @@
 			<xsd:enumeration value="qualsiasi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="ScopeContesto">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="portaDelegata"/>
+			<xsd:enumeration value="portaApplicativa"/>
+			<xsd:enumeration value="qualsiasi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="CredenzialeTipo">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
@@ -947,6 +984,9 @@
 		<xsd:attribute default="1" name="versione" type="xsd:unsignedInt" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-scope">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	

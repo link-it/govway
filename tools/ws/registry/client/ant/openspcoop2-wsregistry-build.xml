@@ -43,6 +43,9 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.ruolo.all" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.ruolo.crud" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.ruolo.search" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.scope.all" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.scope.crud" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.scope.search" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.soggetto.all" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.soggetto.crud" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.registry.ws.client.soggetto.search" />

@@ -63,6 +63,7 @@ import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -96,6 +97,7 @@ import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
@@ -109,6 +111,7 @@ import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
@@ -126,6 +129,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -6381,6 +6385,814 @@ IDriverWS ,IMonitoraggioRisorsa{
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* Scope */
+
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Scope}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idScope Identificativo del scope
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Scope}.
+	 * 
+	 */
+	@Override
+	public Scope getScope(
+			IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		this.log.debug("richiesto getScope: " + idScope);
+		// conrollo consistenza
+		if (idScope == null)
+			throw new DriverRegistroServiziException("[getScope] Parametro idScope is null");
+		if (idScope.getNome()==null || idScope.getNome().trim().equals(""))
+			throw new DriverRegistroServiziException("[getScope] Parametro idScope.nome non e' definito");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getScope(nome)");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			String queryString = sqlQueryObject
+					.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setString(1, idScope.getNome());
+			rs = stm.executeQuery();
+			Scope scope = null;
+			if (rs.next()) {
+				scope = new Scope();
+				scope.setId(rs.getLong("id"));
+				scope.setNome(rs.getString("nome"));
+				scope.setDescrizione(rs.getString("descrizione"));
+				String tipologia = rs.getString("tipologia");
+				if(tipologia!=null){
+					scope.setTipologia(tipologia);
+				}
+				scope.setNomeEsterno(rs.getString("nome_esterno"));
+				String contesto_utilizzo = rs.getString("contesto_utilizzo");
+				if(contesto_utilizzo!=null){
+					scope.setContestoUtilizzo(ScopeContesto.toEnumConstant(contesto_utilizzo));
+				}
+				scope.setSuperUser(rs.getString("superuser"));
+
+				// Ora Registrazione
+				if(rs.getTimestamp("ora_registrazione")!=null){
+					scope.setOraRegistrazione(new Date(rs.getTimestamp("ora_registrazione").getTime()));
+				}
+
+			} else {
+				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getScope] rs.next non ha restituito valori con la seguente interrogazione :\n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(queryString, idScope.getNome()));
+			}
+
+			return scope;
+
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (SQLException se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getScope] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getScope] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public Scope getScope(
+			long idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		this.log.debug("richiesto getScope: " + idScope);
+		// conrollo consistenza
+		if (idScope <=0)
+			throw new DriverRegistroServiziException("[getScope] Parametro idScope non valido");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getScope(id)");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		IDScope idScopeObject = null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addWhereCondition("id = ?");
+			String queryString = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(queryString);
+			stm.setLong(1, idScope);
+			rs = stm.executeQuery();
+			if (rs.next()) {
+				idScopeObject = new IDScope(rs.getString("nome"));
+			} else {
+				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getScope] rs.next non ha restituito valori con la seguente interrogazione :\n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(queryString, idScope));
+			}
+
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (SQLException se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getScope] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getScope] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return this.getScope(idScopeObject);
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Scope che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei scope trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDScope> getAllIdScope(
+			FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		boolean filtroRicercaTipo = false;
+		if(filtroRicerca!=null){
+			filtroRicercaTipo = filtroRicerca.getTipologia()!=null;
+		}
+		List<String> listTipologia = null;
+		if(filtroRicercaTipo){
+			listTipologia = new ArrayList<>();
+			listTipologia.add(filtroRicerca.getTipologia());
+		}
+		
+		boolean filtroRicercaContesto = false;
+		if(filtroRicerca!=null){
+			filtroRicercaContesto = filtroRicerca.getContesto()!=null && !ScopeContesto.QUALSIASI.equals(filtroRicerca.getContesto());
+		}
+		List<String> listContesto = null;
+		if(filtroRicercaContesto){
+			listContesto = new ArrayList<>();
+			listContesto.add(ScopeContesto.QUALSIASI.getValue());
+			listContesto.add(filtroRicerca.getContesto().getValue());
+		}
+		
+		this.log.debug("getAllIdScope...");
+
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.getConnectionFromDatasource("getAllIdScope");
+			else
+				con = this.globalConnection;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+			sqlQueryObject.addSelectField("nome");
+			if(filtroRicerca!=null){
+				// Filtro By Data
+				if(filtroRicerca.getMinDate()!=null)
+					sqlQueryObject.addWhereCondition("ora_registrazione > ?");
+				if(filtroRicerca.getMaxDate()!=null)
+					sqlQueryObject.addWhereCondition("ora_registrazione < ?");
+				if(filtroRicerca.getNome()!=null)
+					sqlQueryObject.addWhereCondition("nome = ?");
+				if(filtroRicercaTipo){
+					sqlQueryObject.addWhereCondition(false,"tipologia = ?","tipologia = ?");
+				}
+				if(filtroRicercaContesto){
+					sqlQueryObject.addWhereCondition(false,"contesto_utilizzo = ?","contesto_utilizzo = ?");
+				}
+				sqlQueryObject.addOrderBy("nome");
+			}
+
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			this.log.debug("eseguo query : " + sqlQuery );
+			stm = con.prepareStatement(sqlQuery);
+			int indexStmt = 1;
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getMinDate()!=null){
+					this.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
+					indexStmt++;
+				}
+				if(filtroRicerca.getMaxDate()!=null){
+					this.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
+					indexStmt++;
+				}	
+				if(filtroRicerca.getNome()!=null){
+					this.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getNome());
+					indexStmt++;
+				}	
+				if(filtroRicercaTipo){
+					for (int i = 0; i < listTipologia.size(); i++) {
+						this.log.debug("tipo stmt.setString("+listTipologia.get(i)+")");
+						stm.setString(indexStmt, listTipologia.get(i));
+						indexStmt++;
+					}
+				}
+				if(filtroRicercaContesto){
+					for (int i = 0; i < listContesto.size(); i++) {
+						this.log.debug("contesto stmt.setString("+listContesto.get(i)+")");
+						stm.setString(indexStmt, listContesto.get(i));
+						indexStmt++;
+					}
+				}
+			}
+			rs = stm.executeQuery();
+			List<IDScope> nomiScope = new ArrayList<IDScope>();
+			while (rs.next()) {
+				nomiScope.add(new IDScope(rs.getString("nome")));
+			}
+			if(nomiScope.size()==0){
+				if(filtroRicerca!=null)
+					throw new DriverRegistroServiziNotFound("Scope non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+				else
+					throw new DriverRegistroServiziNotFound("Scope non trovati");
+			}else{
+				return nomiScope;
+			}
+		}catch(DriverRegistroServiziNotFound de){
+			throw de;
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException("getAllIdScope error",e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+	}
+
+
+
+	/**
+	 * Crea una nuovo Scope
+	 * 
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void createScope(Scope scope) throws DriverRegistroServiziException{
+		if (scope == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createScope] Parametro non valido.");
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("createScope");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDScope type = 1");
+			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.CREATE, scope, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::createScope] Errore durante la creazione del scope : " + qe.getMessage(), qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	/**
+     * Verifica l'esistenza di un Scope
+     *
+     * @param idScope idScope del scope da verificare
+     * @return true se il scope esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+    @Override
+	public boolean existsScope(IDScope idScope) throws DriverRegistroServiziException{
+		boolean exist = false;
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (idScope == null)
+			throw new DriverRegistroServiziException("Parametro non valido");
+
+		if (idScope.getNome()==null || idScope.getNome().equals(""))
+			throw new DriverRegistroServiziException("Parametro vuoto non valido");
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("existsScope");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, idScope.getNome());
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+
+		} catch (Exception e) {
+			exist = false;
+			this.log.error("Errore durante verifica esistenza scope: "+e.getMessage(), e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					con.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		return exist;
+	}
+
+    /**
+	 * Aggiorna il Scope con i nuovi valori.
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void updateScope(Scope scope) throws DriverRegistroServiziException{
+		if (scope == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateScope] Parametro non valido.");
+
+		PreparedStatement stm=null;
+		ResultSet rs=null;
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("updateScope");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+
+			this.log.debug("CRUDScope type = 2");
+			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.UPDATE, scope, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::updateScope] Errore durante l'aggiornamento del scope : " + qe.getMessage(),qe);
+		} finally {
+
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}	
+
+	/**
+	 * Elimina un Scope
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void deleteScope(Scope scope) throws DriverRegistroServiziException{
+		if (scope == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteScope] Parametro non valido.");
+
+		Connection con = null;
+		boolean error = false;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("deleteScope");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteScope] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			this.log.debug("CRUDScope type = 3");
+			DriverRegistroServiziDB_LIB.CRUDScope(CostantiDB.DELETE, scope, con);
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::deleteScope] Errore durante l'eliminazione del scope : " + qe.getMessage(),qe);
+		} finally {
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	public List<Scope> scopeList(String superuser, ISearch ricerca) throws DriverRegistroServiziException {
+		String nomeMetodo = "scopeList";
+		int idLista = Liste.SCOPE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		String filterScopeTipologia = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_TIPOLOGIA);
+		String scopeTipologia = null;
+		if(filterScopeTipologia!=null) {
+			scopeTipologia = filterScopeTipologia;
+		}
+		
+		String filterScopeContesto = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_SCOPE_CONTESTO);
+		org.openspcoop2.core.registry.constants.ScopeContesto scopeContesto = null;
+		if(filterScopeContesto!=null) {
+			scopeContesto = org.openspcoop2.core.registry.constants.ScopeContesto.toEnumConstant(filterScopeContesto);
+		}
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		ArrayList<Scope> lista = new ArrayList<Scope>();
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("scopeList");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<IDScope> listIdScope = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if (superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);	
+				if(scopeContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(scopeTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				if (superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(scopeContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(scopeTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			if (superuser!=null && (!superuser.equals(""))){
+				stmt.setString(index++, superuser);
+			}
+			if(scopeContesto!=null) {
+				stmt.setString(index++, scopeContesto.getValue());
+			}
+			if(scopeTipologia!=null) {
+				stmt.setString(index++, scopeTipologia);
+			}
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+				sqlQueryObject.addSelectField("nome");
+				if (superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				sqlQueryObject.addWhereLikeCondition("nome", search, true, true);
+				if(scopeContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(scopeTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+				sqlQueryObject.addSelectField("nome");
+				if (superuser!=null && (!superuser.equals("")))
+					sqlQueryObject.addWhereCondition("superuser = ?");
+				if(scopeContesto!=null) {
+					sqlQueryObject.addWhereCondition("contesto_utilizzo = ?");
+				}
+				if(scopeTipologia!=null) {
+					sqlQueryObject.addWhereCondition("tipologia = ?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			index = 1;
+			if (superuser!=null && (!superuser.equals(""))){
+				stmt.setString(index++, superuser);
+			}
+			if(scopeContesto!=null) {
+				stmt.setString(index++, scopeContesto.getValue());
+			}
+			if(scopeTipologia!=null) {
+				stmt.setString(index++, scopeTipologia);
+			}
+			risultato = stmt.executeQuery();
+
+			listIdScope = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdScope.add(new IDScope(risultato.getString("nome")));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		
+		if(listIdScope!=null){
+			for (IDScope idScope : listIdScope) {
+				try{
+					lista.add(this.getScope(idScope));
+				}catch(DriverRegistroServiziNotFound notFound){
+					// non può capitare
+					throw new DriverRegistroServiziException(notFound.getMessage(),notFound);
+				}
+			}
+		}
+		
+		return lista;
+	}
 	
 	
 	
@@ -14228,6 +15040,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SCOPE);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();

@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="porta-dominio" type="{http://www.openspcoop2.org/core/registry}porta-dominio" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/registry}ruolo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/registry}scope" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/registry}soggetto" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -60,6 +61,7 @@ import java.util.List;
   	"accordoServizioParteComune",
   	"portaDominio",
   	"ruolo",
+  	"scope",
   	"soggetto",
   	"connettore"
   }
@@ -179,6 +181,30 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   public int sizeRuoloList() {
     return this.ruolo.size();
+  }
+
+  public void addScope(Scope scope) {
+    this.scope.add(scope);
+  }
+
+  public Scope getScope(int index) {
+    return this.scope.get( index );
+  }
+
+  public Scope removeScope(int index) {
+    return this.scope.remove( index );
+  }
+
+  public List<Scope> getScopeList() {
+    return this.scope;
+  }
+
+  public void setScopeList(List<Scope> scope) {
+    this.scope=scope;
+  }
+
+  public int sizeScopeList() {
+    return this.scope.size();
   }
 
   public void addSoggetto(Soggetto soggetto) {
@@ -354,6 +380,36 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
   @Deprecated
   public int sizeRuolo() {
   	return this.ruolo.size();
+  }
+
+  @XmlElement(name="scope",required=true,nillable=false)
+  protected List<Scope> scope = new ArrayList<Scope>();
+
+  /**
+   * @deprecated Use method getScopeList
+   * @return List<Scope>
+  */
+  @Deprecated
+  public List<Scope> getScope() {
+  	return this.scope;
+  }
+
+  /**
+   * @deprecated Use method setScopeList
+   * @param scope List<Scope>
+  */
+  @Deprecated
+  public void setScope(List<Scope> scope) {
+  	this.scope=scope;
+  }
+
+  /**
+   * @deprecated Use method sizeScopeList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeScope() {
+  	return this.scope.size();
   }
 
   @XmlElement(name="soggetto",required=true,nillable=false)

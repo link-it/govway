@@ -329,6 +329,88 @@
 
 
 
+
+
+
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="All"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.all"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeAll_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/all"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="All"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.all"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeAll_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/all"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap12_Client.java"/>
+		</antcall>
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeSearch_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/search"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeSearch_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/search"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap12_Client.java"/>
+		</antcall>
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="CRUD"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.crud"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeCRUD_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/crud"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="CRUD"/>
+			<param name="stubClassEntity" value="Scope"/>
+			<param name="stubVariableEntity" value="scope"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.scope.crud"/>
+			<param name="stubWsdl" value="deploy/wsdl/ScopeCRUD_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/scope/crud"/>
+			<param name="stubJavaClassNameClient" value="Scope_ScopePortSoap12_Client.java"/>
+		</antcall>
+
+
+
+
 			
 
 			

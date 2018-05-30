@@ -42,6 +42,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -1720,6 +1721,145 @@ public class XMLLib{
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ---------------- GENERAZIONE XML SCOPE ------------------------- */
+	/**
+	 * Metodo che controlla se il scope risulta gia' registrato
+	 * 
+	 * @param nome Nome del scope da creare/modificare
+	 * @return true se il scope risulta registrato, false altrimenti.
+	 * 
+	 */   
+	public boolean existsScope(String nome)throws DriverRegistroServiziException{
+
+		try {
+			File fileXML = new File(this.pathPrefix + CostantiXMLRepository.SCOPE + File.separator + nome + ".xml");
+			if( (fileXML.exists()==false) ){
+				return false;
+			}else
+				return true;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca ("+CostantiXMLRepository.SCOPE+")  ["+nome+"]: "+e.getMessage(),e);
+		}
+
+	}
+
+	/**
+	 * Metodo che si occupa della generazione/modifica di un file XML a partire da un scope
+	 * Sono richiesti interattivamente i parametri che identificano il file XML da generare. 
+	 * 
+	 * @param nome Nome del scope da creare/modificare
+	 * @param scope Dati del scope da trasformare in XML.
+	 * 
+	 */   
+	public void createScope(String nome,Scope scope) throws DriverRegistroServiziException{
+
+
+		try {
+			String scopeDir = this.pathPrefix + CostantiXMLRepository.SCOPE + File.separator;
+			
+			// Controllo esistenza per modifica
+			String fileXML = scopeDir + nome + ".xml";
+			File fileXMLF = new File(fileXML);
+			if( fileXMLF.exists() ){
+				// richiesta modifica
+				// elimino vecchia definizione Porta di Dominio
+				try{
+					if(fileXMLF.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il scope ["+fileXMLF.getAbsolutePath()+"] non riuscita");
+					}
+				}catch(Exception io){
+					throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il scope ["+nome+ "] non riuscita: "+io.toString());
+				}	
+			}
+
+			// Definizione scope
+			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
+
+			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(scope);
+			registroXML.addScope(scope);
+			JaxbUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante l'elaborazione XML del scope  ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Metodo che si occupa dell'eliminazione del scope dal repository. 
+	 * 
+	 * @param nome Nome del scope da eliminare
+	 */   
+	public void deleteScope(String nome) throws DriverRegistroServiziException {
+
+		try {
+			String fileXML = this.pathPrefix + CostantiXMLRepository.SCOPE + File.separator + nome + ".xml";
+			
+			// Elimino scope
+			File scope = new File(fileXML);
+			if(scope.delete() == false){
+				throw new DriverRegistroServiziException("Eliminazione XML del scope ["+nome+"] non riuscta");
+			}
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLlib] Riscontrato errore durante l'eliminazione XML del scope ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Lista dei scope registrati
+	 * 
+	 * @return lista dei scope registrati
+	 * 
+	 */   
+	public Scope[] getScope()throws DriverRegistroServiziException{
+
+		Scope [] scopeRegistrate = null;
+		try {
+			File dir = new File(this.pathPrefix + CostantiXMLRepository.SCOPE);
+			if(dir.exists()==false)
+				return null;
+			File[] scope = dir.listFiles();
+			int numScope = 0;
+			if(scope!=null){
+				for(int i=0; i<scope.length;i++){
+					if(scope[i].isFile()){
+						numScope++;
+					}
+				}
+			}
+			if(numScope>0){
+				scopeRegistrate = new Scope[numScope];
+				for(int i=0,index=0; i<scope.length;i++){
+					if(scope[i].isFile()){
+						org.openspcoop2.core.registry.RegistroServizi r = 
+							(org.openspcoop2.core.registry.RegistroServizi)  JaxbUtils.xmlToObj(scope[i].getAbsolutePath(),
+									org.openspcoop2.core.registry.RegistroServizi.class);
+						scopeRegistrate[index] = r.getScope(0);
+						index++;
+					}
+				}
+			}
+			return scopeRegistrate;
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei scope: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	

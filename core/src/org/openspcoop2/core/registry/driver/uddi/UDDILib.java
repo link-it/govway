@@ -107,6 +107,8 @@ public class UDDILib
 	public static final String PORTA_DOMINIO_PREFIX = "PdD@";
 	public static final String RUOLO = "Ruolo";
 	public static final String RUOLO_PREFIX = "Ruolo@";
+	public static final String SCOPE = "Scope";
+	public static final String SCOPE_PREFIX = "Scope@";
 	public static final String ACCORDO_COOPERAZIONE = "AccordoCooperazione";
 	public static final String ACCORDO_COOPERAZIONE_PREFIX = "AccordoCooperazione@";
 	
@@ -1075,6 +1077,162 @@ public class UDDILib
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ******** M E T O D I   S C O P E   ******** */
+
+
+	
+	/**
+	 * Si occupa di recuperare il TModel che registra il scope con nome <var>nome</var>
+	 *
+	 * @param nome nome che identifica il scope
+	 * @return la TModel che registra il scope
+	 */
+	public TModel getScope(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nome);
+	}
+	
+	/**
+	 * Si occupa di recuperare le TModels che soddisfano il filtro
+	 *
+	 * @param urlRepository Url del Repository
+	 * @return una lista di TModel che registra i scope
+	 */
+	public TModel[] getScopes(String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModelByFilter(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX, urlRepository, false);
+	}
+	
+	/**
+	 * Si occupa di registrare come TModel un scope con nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il scope
+	 * @param url url del file XML associato al scope
+	 */	
+	public void createScope(String nome, String url) throws DriverRegistroServiziException{
+		this.createTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+ nome, url);
+	}
+
+	/**
+	 * Il metodo si occupa di verificare se nel registro e' regitrata una TModel identificata dal parametro
+	 *
+	 * @param nome Nome del scope
+	 * @return true se la TModel risulta registrata, false altrimenti
+	 * 
+	 */
+	public boolean existsScope(String nome) throws DriverRegistroServiziException{
+		
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.existsScope]: Alcuni parametri non definiti");
+		try{
+			TModel t = getTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nome);
+			if(t == null)
+				throw new Exception("TModel is null");
+		}catch(DriverRegistroServiziNotFound e){
+			return false;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		return true;	
+	}
+
+	/**
+	 * Si occupa di modificare il nome della TModel che registra il scope con nome <var>nomeOLD</var>
+	 *
+	 * @param nomeOLD vecchio nome che identifica il scope
+	 * @param nomeNEW nuovo nome che identifica il scope
+	 * @param url nuova url del file XML associato al scope
+	 */
+	public void updateScope(String nomeOLD,String nomeNEW,String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nomeOLD, UDDILib.SCOPE_PREFIX+nomeNEW, url);
+	}
+
+	/**
+	 * Il metodo si occupa di cancellare la TModel identificata dal parametro
+	 *
+	 * @param nome nome che identifica il scope
+	 */
+	public void deleteScope(String nome) throws DriverRegistroServiziException{
+		this.deleteTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nome);
+	}
+
+	/**
+	 * Il metodo si occupa di impostare la url del file XML della TModel
+	 *
+	 * @param nome Nome che identifica il scope
+	 * @param url url del file XML associato al scope
+	 */
+	public void updateUrlXmlScope(String nome, String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateUrlXmlTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nome, url);
+	}
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al scope
+	 * registrato con il nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il scope
+	 * @return la url dell'XML associato al scope
+	 * 
+	 */
+	public String getUrlXmlScope(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlScope]: Alcuni parametri non definiti");
+		try{
+			TModel tm = getTModel(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+nome);
+			return tm.getOverviewDoc().getOverviewURLString();
+		}catch(DriverRegistroServiziNotFound e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlScope]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al scope
+	 * registrata con il nome <var>nome</var>
+	 *
+	 * @param searchNome Nome che identifica il scope
+	 * @return la url dell'XML associato al scope
+	 * 
+	 */
+	public String[] getUrlXmlScope(String searchNome,String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		try{
+			TModel[] tm = null;
+			if(searchNome!=null){
+				tm = getTModelByFilter(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX+searchNome,urlRepository,true);
+			}else{
+				tm = getTModelByFilter(UDDILib.SCOPE, UDDILib.SCOPE_PREFIX,urlRepository,false);
+			}
+			
+			if(tm!=null){
+				String[] url = new String[tm.length];
+				for(int i=0; i<tm.length; i++){
+					url[i] = tm[i].getOverviewDoc().getOverviewURLString();
+				}
+				return url;
+			}else{
+				throw new DriverRegistroServiziNotFound("Scope (definizione XML) non trovate");
+			}
+		}
+		catch (DriverRegistroServiziNotFound e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlScope]: "+e.getMessage(),e);
+		}
+	}
 	
 	
 	

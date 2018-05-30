@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.IdPortaDominio;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.IdScope;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
@@ -46,6 +47,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.ResourceRepresentationXml;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
@@ -1022,6 +1024,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: id-scope
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdScope readIdScope(String fileName) throws DeserializerException {
+		return (IdScope) this.xmlToObj(fileName, IdScope.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdScope readIdScope(File file) throws DeserializerException {
+		return (IdScope) this.xmlToObj(file, IdScope.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdScope readIdScope(InputStream in) throws DeserializerException {
+		return (IdScope) this.xmlToObj(in, IdScope.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdScope readIdScope(byte[] in) throws DeserializerException {
+		return (IdScope) this.xmlToObj(in, IdScope.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdScope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdScope readIdScopeFromString(String in) throws DeserializerException {
+		return (IdScope) this.xmlToObj(in.getBytes(), IdScope.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: configurazione-servizio
 	 =================================================================================
 	*/
@@ -1646,6 +1711,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public RuoloSoggetto readRuoloSoggettoFromString(String in) throws DeserializerException {
 		return (RuoloSoggetto) this.xmlToObj(in.getBytes(), RuoloSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: scope
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.Scope}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Scope}
+	 * @return Object type {@link org.openspcoop2.core.registry.Scope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Scope readScope(String fileName) throws DeserializerException {
+		return (Scope) this.xmlToObj(fileName, Scope.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.Scope}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Scope}
+	 * @return Object type {@link org.openspcoop2.core.registry.Scope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Scope readScope(File file) throws DeserializerException {
+		return (Scope) this.xmlToObj(file, Scope.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.Scope}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Scope}
+	 * @return Object type {@link org.openspcoop2.core.registry.Scope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Scope readScope(InputStream in) throws DeserializerException {
+		return (Scope) this.xmlToObj(in, Scope.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.Scope}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Scope}
+	 * @return Object type {@link org.openspcoop2.core.registry.Scope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Scope readScope(byte[] in) throws DeserializerException {
+		return (Scope) this.xmlToObj(in, Scope.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.Scope}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Scope}
+	 * @return Object type {@link org.openspcoop2.core.registry.Scope}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Scope readScopeFromString(String in) throws DeserializerException {
+		return (Scope) this.xmlToObj(in.getBytes(), Scope.class);
 	}	
 	
 	

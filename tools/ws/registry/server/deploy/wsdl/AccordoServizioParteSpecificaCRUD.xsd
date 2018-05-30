@@ -74,6 +74,7 @@
 			<xsd:enumeration value="AccordoServizioParteComune"/>
 			<xsd:enumeration value="PortaDominio"/>
 			<xsd:enumeration value="Ruolo"/>
+			<xsd:enumeration value="Scope"/>
 			<xsd:enumeration value="Soggetto"/>
 			<xsd:enumeration value="AccordoServizioParteSpecifica"/>
 		</xsd:restriction>
@@ -84,6 +85,7 @@
 			<xsd:element ref="tns:wrapperIdAccordoServizioParteComune" />
 			<xsd:element ref="tns:wrapperIdPortaDominio" />
 			<xsd:element ref="tns:wrapperIdRuolo" />
+			<xsd:element ref="tns:wrapperIdScope" />
 			<xsd:element ref="tns:wrapperIdSoggetto" />
 			<xsd:element ref="tns:wrapperIdAccordoServizioParteSpecifica" />
 		</xsd:choice>
@@ -110,6 +112,12 @@
 	<xsd:complexType name="wrapperIdRuolo">
 		<xsd:sequence>
 			<xsd:element name="id" type="api:id-ruolo" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdScope" type="tns:wrapperIdScope"/>
+	<xsd:complexType name="wrapperIdScope">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-scope" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:element name="wrapperIdSoggetto" type="tns:wrapperIdSoggetto"/>

@@ -36,6 +36,8 @@ public class ModelFactory {
 	
 	public static RuoloModel RUOLO = new RuoloModel();
 	
+	public static ScopeModel SCOPE = new ScopeModel();
+	
 	public static SoggettoModel SOGGETTO = new SoggettoModel();
 	
 	public static AccordoServizioParteSpecificaModel ACCORDO_SERVIZIO_PARTE_SPECIFICA = new AccordoServizioParteSpecificaModel();

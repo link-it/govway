@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.ruolo.search;
 
@@ -47,9 +28,10 @@ public class ObjectFactory {
     private final static QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
     private final static QName _WrapperIdAccordoServizioParteComune_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteComune");
     private final static QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
+    private final static QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
+    private final static QName _WrapperIdScope_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdScope");
     private final static QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdSoggetto");
     private final static QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
-    private final static QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
     private final static QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
     private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
     private final static QName _RegistryMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-multiple-result-exception");
@@ -110,6 +92,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link WrapperIdRuolo }
+     * 
+     */
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
+    }
+
+    /**
+     * Create an instance of {@link WrapperIdScope }
+     * 
+     */
+    public WrapperIdScope createWrapperIdScope() {
+        return new WrapperIdScope();
+    }
+
+    /**
      * Create an instance of {@link WrapperIdSoggetto }
      * 
      */
@@ -123,14 +121,6 @@ public class ObjectFactory {
      */
     public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
         return new WrapperIdAccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link WrapperIdRuolo }
-     * 
-     */
-    public WrapperIdRuolo createWrapperIdRuolo() {
-        return new WrapperIdRuolo();
     }
 
     /**
@@ -346,6 +336,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdRuolo")
+    public JAXBElement<WrapperIdRuolo> createWrapperIdRuolo(WrapperIdRuolo value) {
+        return new JAXBElement<WrapperIdRuolo>(ObjectFactory._WrapperIdRuolo_QNAME, WrapperIdRuolo.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdScope }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdScope")
+    public JAXBElement<WrapperIdScope> createWrapperIdScope(WrapperIdScope value) {
+        return new JAXBElement<WrapperIdScope>(ObjectFactory._WrapperIdScope_QNAME, WrapperIdScope.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdSoggetto }{@code >}}
      * 
      */
@@ -361,15 +369,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoServizioParteSpecifica")
     public JAXBElement<WrapperIdAccordoServizioParteSpecifica> createWrapperIdAccordoServizioParteSpecifica(WrapperIdAccordoServizioParteSpecifica value) {
         return new JAXBElement<WrapperIdAccordoServizioParteSpecifica>(ObjectFactory._WrapperIdAccordoServizioParteSpecifica_QNAME, WrapperIdAccordoServizioParteSpecifica.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdRuolo")
-    public JAXBElement<WrapperIdRuolo> createWrapperIdRuolo(WrapperIdRuolo value) {
-        return new JAXBElement<WrapperIdRuolo>(ObjectFactory._WrapperIdRuolo_QNAME, WrapperIdRuolo.class, null, value);
     }
 
     /**

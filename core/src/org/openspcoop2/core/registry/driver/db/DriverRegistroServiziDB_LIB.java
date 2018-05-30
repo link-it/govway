@@ -47,6 +47,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
@@ -74,6 +75,7 @@ import org.openspcoop2.core.registry.ResourceRequest;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -90,6 +92,7 @@ import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -722,6 +725,193 @@ public class DriverRegistroServiziDB_LIB {
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException(
 					"[DriverControlStationDB_LIB::CRUDRuolo] Exception ["
+					+ se.getMessage() + "].",se);
+		} finally {
+
+			try {
+				updateStmt.close();
+				selectRS.close();
+				selectStmt.close();
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	public static void CRUDScope(int type, Scope scope, Connection con)
+			throws DriverRegistroServiziException {
+		if (scope == null) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDScope] Parametro non valido.");
+		}
+
+		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDScope] ID Scope non valido.");
+		}*/
+
+		String nome = scope.getNome();
+		String descrizione = scope.getDescrizione();
+		String scopeTipologia = scope.getTipologia();
+		String nomeEsterno = scope.getNomeEsterno();
+		ScopeContesto scopeContesto = scope.getContestoUtilizzo();
+
+		String superuser = scope.getSuperUser();
+
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+		PreparedStatement selectStmt = null;
+		String selectQuery = "";
+		ResultSet selectRS = null;
+		int n = 0;
+
+		try {
+
+			// preparo lo statement in base al tipo di operazione
+			switch (type) {
+			case CREATE:
+				// CREATE
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.SCOPE);
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("descrizione", "?");
+				sqlQueryObject.addInsertField("tipologia", "?");
+				sqlQueryObject.addInsertField("nome_esterno", "?");
+				sqlQueryObject.addInsertField("contesto_utilizzo", "?");
+				sqlQueryObject.addInsertField("superuser", "?");
+				if(scope.getOraRegistrazione()!=null)
+					sqlQueryObject.addInsertField("ora_registrazione", "?");
+
+				updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				int index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, scopeTipologia);
+				updateStmt.setString(index++, nomeEsterno);
+				updateStmt.setString(index++, scopeContesto!=null? scopeContesto.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(scope.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(scope.getOraRegistrazione().getTime()));
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+
+				updateStmt.close();
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope CREATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,scopeTipologia,
+								(scopeContesto!=null? scopeContesto.getValue() : null),superuser));
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PDD);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("nome = ?");
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setString(1, nome);
+
+				selectRS = selectStmt.executeQuery();
+				if (selectRS.next()) {
+					scope.setId(selectRS.getLong("id"));
+				}
+				selectRS.close();
+				selectStmt.close();
+				break;
+
+			case UPDATE:
+				// UPDATE1
+
+				String nomeScope = scope.getOldIDScopeForUpdate()!=null ? scope.getOldIDScopeForUpdate().getNome() : null;
+				if(nomeScope==null || "".equals(nomeScope))
+					nomeScope = scope.getNome();
+				
+				IDScope idS = new IDScope(nomeScope);
+				long idScope = DBUtils.getIdScope(idS, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idScope <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDScope(UPDATE)] Id Scope non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addUpdateTable(CostantiDB.SCOPE);
+				sqlQueryObject.addUpdateField("nome", "?");
+				sqlQueryObject.addUpdateField("descrizione", "?");
+				sqlQueryObject.addUpdateField("tipologia", "?");
+				sqlQueryObject.addUpdateField("nome_esterno", "?");
+				sqlQueryObject.addUpdateField("contesto_utilizzo", "?");
+				sqlQueryObject.addUpdateField("superuser", "?");
+				if(scope.getOraRegistrazione()!=null)
+					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLUpdate();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, scopeTipologia);
+				updateStmt.setString(index++, nomeEsterno);
+				updateStmt.setString(index++, scopeContesto!=null? scopeContesto.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(scope.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(scope.getOraRegistrazione().getTime()));
+	
+				updateStmt.setLong(index++, idScope);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope UPDATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,scopeTipologia,
+								(scopeContesto!=null? scopeContesto.getValue() : null),superuser,idScope));
+
+				break;
+
+			case DELETE:
+				// DELETE
+
+				idS = new IDScope(nome);
+				idScope = DBUtils.getIdScope(idS, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idScope <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDScope(DELETE)] Id Scope non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SCOPE);
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				updateStmt.setLong(1, idScope);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDScope DELETE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, idScope));
+
+				break;
+			}
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDScope] SQLException ["
+					+ se.getMessage() + "].",se);
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDScope] Exception ["
 					+ se.getMessage() + "].",se);
 		} finally {
 

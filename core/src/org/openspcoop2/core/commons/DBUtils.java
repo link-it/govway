@@ -35,6 +35,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
@@ -505,7 +506,7 @@ public class DBUtils {
 	{
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		long idPdD=-1;
+		long idRuoloLong=-1;
 		try
 		{
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
@@ -520,10 +521,54 @@ public class DBUtils {
 			rs=stm.executeQuery();
 
 			if(rs.next()){
-				idPdD = rs.getLong("id");
+				idRuoloLong = rs.getLong("id");
 			}
 
-			return idPdD;
+			return idRuoloLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	public static long getIdScope(IDScope idScope, Connection con, String tipoDB) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idScopeLong=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SCOPE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idScope.getNome());
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idScopeLong = rs.getLong("id");
+			}
+
+			return idScopeLong;
 
 		}catch (SQLException e) {
 			throw new CoreException(e);

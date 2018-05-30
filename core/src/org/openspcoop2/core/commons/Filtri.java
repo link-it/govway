@@ -57,6 +57,9 @@ public final class Filtri
 	public final static String FILTRO_RUOLO_TIPOLOGIA = "filtroRuoloTipologia";
 	public final static String FILTRO_RUOLO_CONTESTO = "filtroRuoloContesto";
 	
+	public final static String FILTRO_SCOPE_TIPOLOGIA = "filtroScopeTipologia";
+	public final static String FILTRO_SCOPE_CONTESTO = "filtroScopeContesto";
+	
 	public final static String FILTRO_UTENTE = "filtroUtente";
 	
 	public final static String FILTRO_AZIONE = "filtroAzione";

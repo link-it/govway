@@ -42,6 +42,7 @@
 				<xsd:element ref="accordo-servizio-parte-comune" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="porta-dominio" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="ruolo" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="scope" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="soggetto" maxOccurs="unbounded" minOccurs="0" />
 				<xsd:element ref="connettore" maxOccurs="unbounded" minOccurs="0" />
 			</xsd:sequence>
@@ -879,6 +880,59 @@
 		<!-- end-extensions -->
 	</xsd:complexType>
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- Scope -->
+	
+	<xsd:element name="scope" type="scope" />
+	<xsd:complexType name="scope">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-scope" >
+						<linkit:ws-interface crud="true" all="true" >
+							<linkit:ws-filter sortCondition="false"/>
+						</linkit:ws-interface>
+					</linkit:interface>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipologia" type="xsd:string" use="optional"/> <!-- caratteristica dello scope (es. policy di gestione) -->
+		<xsd:attribute name="nome-esterno" type="xsd:string" use="optional"/>
+		<xsd:attribute name="contesto-utilizzo" type="ScopeContesto" use="optional" default="qualsiasi"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>	
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
+	
 
 	
 	
@@ -1525,6 +1579,13 @@
 			<xsd:enumeration value="qualsiasi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="ScopeContesto">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="portaDelegata"/>
+			<xsd:enumeration value="portaApplicativa"/>
+			<xsd:enumeration value="qualsiasi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="CredenzialeTipo">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
@@ -1617,6 +1678,9 @@
 		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-scope">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	

@@ -100,6 +100,7 @@ public final class Liste
 	public final static int CONFIGURAZIONE_FRUIZIONE;
 	
 	public final static int	RUOLI;	
+	public final static int	SCOPE;	
 	public final static int	REGISTRI;
 	public final static int	ROUTING;
 	public final static int SYSTEM_PROPERTIES;
@@ -191,6 +192,7 @@ public final class Liste
     	CONFIGURAZIONE_EROGAZIONE = numeroListe ++;
     	CONFIGURAZIONE_FRUIZIONE = numeroListe ++;
     	RUOLI = numeroListe ++;	
+    	SCOPE = numeroListe ++;	
     	REGISTRI = numeroListe ++;
     	ROUTING = numeroListe ++;
     	SYSTEM_PROPERTIES = numeroListe ++;

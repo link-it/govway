@@ -83,5 +83,12 @@ public class ObjectFactory {
         return new SearchFilterRuolo();
     }
     
+    /**
+     * Create an instance of {@link SearchFilterScope }
+     */
+    public SearchFilterScope createSearchFilterScope() {
+        return new SearchFilterScope();
+    }
+    
 
 }

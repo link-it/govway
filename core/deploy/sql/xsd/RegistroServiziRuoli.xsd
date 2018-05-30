@@ -98,7 +98,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-ddl-column-comment><![CDATA[Indica il contesto dove è utilizzabile il ruolo:
-- 'portaDelegata': il ruolo è uti<linkit:sql-ddl-column-comment>lizzabile solamente per autorizzare l'utilizzo di una porta delegata
+- 'portaDelegata': il ruolo è utilizzabile solamente per autorizzare l'utilizzo di una porta delegata
 - 'portaApplicativa': il ruolo è utilizzabile solamente per autorizzare l'utilizzo di una porta applicativa
 - 'qualsiasi': il ruolo è utilizzabile per autorizzare l'utilizzo sia di una porta delegata che di una porta applicativa]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>

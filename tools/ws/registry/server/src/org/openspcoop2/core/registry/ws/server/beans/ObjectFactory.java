@@ -56,6 +56,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdScope }
+     */
+    public WrapperIdScope createWrapperIdScope() {
+        return new WrapperIdScope();
+    }
+    
+    /**
      * Create an instance of {@link InUseCondition }
      */
     public InUseCondition createInUseCondition() {

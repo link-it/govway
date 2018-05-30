@@ -92,6 +92,29 @@
 	</jaxws:endpoint>
 	
 	<jaxws:endpoint 
+		id="Scope_PortSoap11"
+		serviceName="ScopeSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Scope@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Scope/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Scope@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Scope_PortSoap12"
+		serviceName="ScopeSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Scope@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Scope/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Scope@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
 		id="Soggetto_PortSoap11"
 		serviceName="SoggettoSoap11Service"
 		implementor="org.openspcoop2.core.registry.ws.server.impl.Soggetto@IMPLEMENTOR@Impl_PortSoap11"

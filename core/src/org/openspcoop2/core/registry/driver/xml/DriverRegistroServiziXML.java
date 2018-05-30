@@ -42,6 +42,7 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -54,10 +55,12 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -70,6 +73,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -1058,6 +1062,122 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}catch(Exception e){
 			throw new DriverRegistroServiziException("getAllIdRuoli error",e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/* Scope */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Scope}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idScope Identificativo del scope
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Scope}.
+	 * 
+	 */
+	@Override
+	public Scope getScope(
+			IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		if(idScope==null || idScope.getNome()==null)
+			throw new DriverRegistroServiziException("[getScope] Parametro Non Valido");
+
+		refreshRegistroServiziXML();
+
+		for(int i=0; i<this.registro.sizeScopeList(); i++){
+			org.openspcoop2.core.registry.Scope scope = this.registro.getScope(i);
+			if (scope.getNome() != null) {
+				if (scope.getNome().equals(idScope.getNome())) {
+					return scope;
+				}
+			}
+		}
+
+		throw new DriverRegistroServiziNotFound("[getScope] Scope non trovato");
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Scope che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei scope trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDScope> getAllIdScope(
+			FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+
+			List<IDScope> idScope = new ArrayList<IDScope>();
+			for(int i=0; i<this.registro.sizeScopeList(); i++){
+				org.openspcoop2.core.registry.Scope scope = this.registro.getScope(i);
+				if(filtroRicerca!=null){
+					// Filtro By Data
+					if(filtroRicerca.getMinDate()!=null){
+						if(scope.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdScope](FiltroByMinDate) Scope ["+scope.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(scope.getOraRegistrazione().before(filtroRicerca.getMinDate())){
+							continue;
+						}
+					}
+					if(filtroRicerca.getMaxDate()!=null){
+						if(scope.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdScope](FiltroByMaxDate) Scope ["+scope.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(scope.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+							continue;
+						}
+					}
+					// Filtro By Nome
+					if(filtroRicerca.getNome()!=null){
+						if(scope.getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					// Filtro By Tipologia
+					if(filtroRicerca.getTipologia()!=null){
+						if(scope.getTipologia()==null){
+							continue;
+						}
+						if(scope.getTipologia().equals(filtroRicerca.getTipologia()) == false){
+							continue;
+						}
+					}
+					// Filtro By Contesto
+					if(filtroRicerca.getContesto()!=null && !ScopeContesto.QUALSIASI.equals(filtroRicerca.getContesto())){
+						if(scope.getContestoUtilizzo()==null){
+							continue;
+						}
+						if(!ScopeContesto.QUALSIASI.equals(scope.getContestoUtilizzo())){
+							if(scope.getContestoUtilizzo().equals(filtroRicerca.getContesto()) == false){
+								continue;
+							}
+						}
+					}
+				}
+				IDScope id = new IDScope(scope.getNome());
+				idScope.add(id);
+			}
+			if(idScope.size()==0){
+				if(filtroRicerca!=null){
+					throw new DriverRegistroServiziNotFound("Scope non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+				}else{
+					throw new DriverRegistroServiziNotFound("Scope non trovati");
+				}
+			}else{
+				return idScope;
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("getAllIdScope error",e);
 		}
 	}
 	

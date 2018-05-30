@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.constants.BindingUse;
 
 /**
@@ -56,6 +57,12 @@ public class CleanerOpenSPCoop2Extensions {
 	public void clean(Ruolo ruolo){
 
 		ruolo.setSuperUser(null);
+		
+	}
+	
+	public void clean(Scope scope){
+
+		scope.setSuperUser(null);
 		
 	}
 		

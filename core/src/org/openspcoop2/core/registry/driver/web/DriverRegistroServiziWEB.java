@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -52,12 +53,14 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -70,6 +73,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -1039,6 +1043,181 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw (DriverRegistroServiziNotFound)e;
 			else
 				throw new DriverRegistroServiziException("getAllIdRuoli error",e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/* Scope */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Scope}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idScope Identificativo del scope
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Scope}.
+	 * 
+	 */
+	@Override
+	public Scope getScope(
+			IDScope idScope) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		if(idScope==null || idScope.getNome()==null)
+			throw new DriverRegistroServiziException("[getScope] Parametro Non Valido");
+
+		org.openspcoop2.core.registry.Scope scopeRichiesto = null;
+
+		// Ottengo URL XML associata alla porta di dominio
+		String urlXMLPortaDominio = this.urlPrefix + CostantiXMLRepository.SCOPE + CostantiRegistroServizi.URL_SEPARATOR + idScope.getNome() + ".xml";	  
+
+		// Ottengo oggetto Soggetto
+		ByteArrayInputStream bin = null;
+		try{
+			byte[] fileXML = null;
+			try{
+				fileXML = HttpUtilities.requestHTTPFile(urlXMLPortaDominio);
+			}catch(UtilsException e){
+				// Controllo pre-esistenza dell'accordo
+				if( "404".equals(e.getMessage()) ){
+					throw new DriverRegistroServiziNotFound("[getScope] Scope richiesto non esiste: "+idScope.getNome());
+				} else
+					throw e;
+			}
+
+			/* --- Validazione XSD (ora che sono sicuro che non ho un 404) -- */
+			try{
+				this.validatoreRegistro.valida(urlXMLPortaDominio);  
+			}catch (Exception e) {
+				throw new DriverRegistroServiziException("[getScope] Riscontrato errore durante la validazione XSD del Registro dei Servizi XML di OpenSPCoop: "+e.getMessage(),e);
+			}
+
+			// parsing
+			bin = new ByteArrayInputStream(fileXML);
+			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializer = new org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer();
+			org.openspcoop2.core.registry.RegistroServizi rs = 
+				(org.openspcoop2.core.registry.RegistroServizi) deserializer.readRegistroServizi(bin);
+			if(rs.sizeScopeList()>0)
+				scopeRichiesto = rs.getScope(0);
+			bin.close();
+		}catch(DriverRegistroServiziNotFound e){
+			throw e;
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			try{
+				if(bin!=null)
+					bin.close();
+			} catch(Exception eis) {}
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("[getScope] Errore durante il parsing xml: "+e.getMessage(),e);
+		}
+
+		if(scopeRichiesto==null)
+			throw new DriverRegistroServiziNotFound("[getScope] Scope non trovato.");
+
+		return scopeRichiesto;
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Scope che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei scope trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDScope> getAllIdScope(
+			FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+
+			if(this.generatoreXML==null)
+				throw new DriverRegistroServiziException("[getAllIdScope] Gestore repository XML non istanziato. Necessario per l'implementazione di questo metodo.");
+
+			org.openspcoop2.core.registry.Scope[] scopeList = this.generatoreXML.getScope();
+			if(scopeList==null)
+				throw new DriverRegistroServiziNotFound("Scope non esistenti nel repository WEB");
+
+			// Esamina dei scope
+			List<IDScope> idScope = new ArrayList<IDScope>();
+			for(int i=0; i<scopeList.length; i++){
+
+				String scopeUrlXML = this.urlPrefix + CostantiXMLRepository.SCOPE + CostantiRegistroServizi.URL_SEPARATOR 
+						+ scopeList[i].getNome() + ".xml";	  
+
+
+				/* --- Validazione XSD -- */
+				try{
+					this.validatoreRegistro.valida(scopeUrlXML);  
+				}catch (Exception e) {
+					throw new DriverRegistroServiziException("[getAllIdScope] Riscontrato errore durante la validazione XSD ("+scopeUrlXML+"): "+e.getMessage(),e);
+				}
+
+				if(filtroRicerca!=null){
+					// Filtro By Data
+					if(filtroRicerca.getMinDate()!=null){
+						if(scopeList[i].getOraRegistrazione()==null){
+							this.log.debug("[getAllIdScope](FiltroByMinDate) Scope ["+scopeList[i].getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(scopeList[i].getOraRegistrazione().before(filtroRicerca.getMinDate())){
+							continue;
+						}
+					}
+					if(filtroRicerca.getMaxDate()!=null){
+						if(scopeList[i].getOraRegistrazione()==null){
+							this.log.debug("[getAllIdScope](FiltroByMaxDate) Scope ["+scopeList[i].getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(scopeList[i].getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+							continue;
+						}
+					}
+					// Filtro By Nome
+					if(filtroRicerca.getNome()!=null){
+						if(scopeList[i].getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					// Filtro By Tipologia
+					if(filtroRicerca.getTipologia()!=null){
+						if(scopeList[i].getTipologia()==null){
+							continue;
+						}
+						if(scopeList[i].getTipologia().equals(filtroRicerca.getTipologia()) == false){
+							continue;
+						}
+					}
+					// Filtro By Contesto
+					if(filtroRicerca.getContesto()!=null && !ScopeContesto.QUALSIASI.equals(filtroRicerca.getContesto())){
+						if(scopeList[i].getContestoUtilizzo()==null){
+							continue;
+						}
+						if(!ScopeContesto.QUALSIASI.equals(scopeList[i].getContestoUtilizzo())){
+							if(scopeList[i].getContestoUtilizzo().equals(filtroRicerca.getContesto()) == false){
+								continue;
+							}
+						}
+					}
+				}
+				IDScope id = new IDScope(scopeList[i].getNome());
+				idScope.add(id);
+			}
+			if(idScope.size()==0){
+				throw new DriverRegistroServiziNotFound("Scope non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			}else{
+				return idScope;
+			}
+		}catch(Exception e){
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("getAllIdScope error",e);
 		}
 	}
 	
@@ -2264,7 +2443,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	
 	
 	/**
-	 * Crea una nuovo Ruolo
+	 * Crea un nuovo Ruolo
 	 * 
 	 * @param ruolo
 	 * @throws DriverRegistroServiziException
@@ -2396,6 +2575,158 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 			throw new DriverRegistroServiziException("[deleteRuolo] Errore generatosi durante l'eliminazione del ruolo ["+ruolo.getNome()+"]: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	/**
+	 * Crea un nuovo Scope
+	 * 
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void createScope(Scope scope) throws DriverRegistroServiziException{
+		if( scope == null)
+			throw new DriverRegistroServiziException("[createScope] Parametro Non Valido");
+
+		try {
+
+			// Controllo elementi obbligatori
+			if( (scope.getNome() == null) ){
+				throw new DriverRegistroServiziException("Scope non completamente definita nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del scope
+			if( this.generatoreXML.existsScope(scope.getNome()) == true){
+				throw new DriverRegistroServiziException("Il Scope ["+scope.getNome()
+						+"] risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Generazione XML
+			this.generatoreXML.createScope(scope.getNome(),scope);
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[createScope] Errore generatosi durante la creazione di un nuovo scope ["+scope.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+     * Verifica l'esistenza di un Scope
+     *
+     * @param idScope idScope del scope da verificare
+     * @return true se il scope esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+	@Override
+	public boolean existsScope(IDScope idScope) throws DriverRegistroServiziException{
+		if( idScope == null || idScope.getNome()==null)
+			return false;
+
+		try{
+			return this.generatoreXML.existsScope(idScope.getNome());
+		}catch(Exception e){
+			this.log.error("[existsScope] Scope non trovato: "+e.getMessage());
+			return false;
+		}
+	}
+	
+	/**
+	 * Aggiorna il Scope con i nuovi valori.
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void updateScope(Scope scope) throws DriverRegistroServiziException{
+		if( scope == null)
+			throw new DriverRegistroServiziException("[updateScope] Parametro Non Valido");
+
+		IDScope idScopeOLD = null;
+		//idScopeOLD = scope.getOldIDScopeForUpdate();
+		//if(idScopeOLD==null)
+		idScopeOLD = new IDScope(scope.getNome());
+
+		try {
+
+			// Controllo  dell'accordo da Modificare
+			if(idScopeOLD==null || idScopeOLD.getNome()==null){
+				throw new DriverRegistroServiziException("Scope da modificare non definito");
+			}
+
+			// Controllo elementi obbligatori del scope modificato
+			if( (scope.getNome() == null) ){
+				throw new DriverRegistroServiziException("Scope modificato non completamente definito nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del scope da modificare
+			if( this.generatoreXML.existsScope(idScopeOLD.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Scope ["+idScopeOLD
+						+"] non risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Controllo non esistenza della nuova identita del scope (se da modificare)
+			IDScope idScopeNEW = new IDScope(scope.getNome());
+			if(idScopeOLD.equals(idScopeNEW) == false){
+				if( this.generatoreXML.existsScope(idScopeNEW.getNome()) == true){
+					throw new DriverRegistroServiziException("Il Scope ["+idScopeNEW
+							+"] risulta gia' inserita nel registro dei servizi.");
+				} 
+			}
+
+			// Ri-Generazione XML
+			this.generatoreXML.createScope(idScopeOLD.getNome(),scope);
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[updateScope] Errore generatosi durante la modifica della porta di dominio ["+idScopeOLD+"]: "+e,e);
+		}
+	}
+	
+	/**
+	 * Elimina un Scope
+	 *  
+	 * @param scope
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void deleteScope(Scope scope) throws DriverRegistroServiziException{
+		if( scope == null)
+			throw new DriverRegistroServiziException("[deleteScope] Parametro Non Valido");
+
+		try {
+			// Controllo id del scope da eliminare
+			if(scope.getNome()==null){
+				throw new DriverRegistroServiziException("Scope da eliminare non definito");
+			}
+
+			// Controllo pre-esistenza del scope da eliminare
+			if( this.generatoreXML.existsScope(scope.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Scope ["+scope.getNome()
+						+"] non risulta gia' inserito nel registro dei servizi.");
+			} 
+
+			// Delete from Repository
+			this.generatoreXML.deleteScope(scope.getNome());
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[deleteScope] Errore generatosi durante l'eliminazione del scope ["+scope.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
 	
 	
 	

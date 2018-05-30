@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2018 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.all;
 
@@ -27,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.openspcoop2.core.registry.constants.MessageType;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 
 
@@ -55,6 +37,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="versione-protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" minOccurs="0"/&gt;
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
@@ -83,6 +66,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
     "oraRegistrazioneMax",
     "versioneProtocollo",
     "descrizione",
+    "messageType",
     "orCondition",
     "limit",
     "offset"
@@ -118,6 +102,9 @@ public class SearchFilterAccordoServizioParteSpecifica {
     @XmlElement(name = "versione-protocollo")
     protected String versioneProtocollo;
     protected String descrizione;
+    @XmlElement(name = "message-type")
+    @XmlSchemaType(name = "string")
+    protected MessageType messageType;
     protected Boolean orCondition;
     protected BigInteger limit;
     protected BigInteger offset;
@@ -480,6 +467,30 @@ public class SearchFilterAccordoServizioParteSpecifica {
      */
     public void setDescrizione(String value) {
         this.descrizione = value;
+    }
+
+    /**
+     * Gets the value of the messageType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link MessageType }
+     *     
+     */
+    public MessageType getMessageType() {
+        return this.messageType;
+    }
+
+    /**
+     * Sets the value of the messageType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link MessageType }
+     *     
+     */
+    public void setMessageType(MessageType value) {
+        this.messageType = value;
     }
 
     /**
