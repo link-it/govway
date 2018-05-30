@@ -29,6 +29,7 @@
                                 <linkit:sql-table object-name="porte-applicative-correlazione" object-type="porte-applicative-correlazione"/>
                                 <linkit:sql-table object-name="porte-applicative-correlazione-risposta" object-type="porte-applicative-correlazione-risposta"/>
                                 <linkit:sql-table object-name="porte-applicative-ruoli" object-type="porte-applicative-ruoli"/>
+                                <linkit:sql-table object-name="porte-applicative-scope" object-type="porte-applicative-scope"/>
                                 <linkit:sql-table object-name="porte-applicative-soggetti" object-type="porte-applicative-soggetti"/>
                                 <linkit:sql-table object-name="porte-applicative-azioni" object-type="porte-applicative-azioni"/>
                             </linkit:sql-table-list>
@@ -631,6 +632,20 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="scope_match" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scope_match"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica quali scope sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sugli scope (vedi colonna 'autorizzazione'):
+- 'all': tutti gli scope associati alla porta applicativa (tramite tabella pa_scope) devono essere posseduti dal chiamante
+- 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno degli scope definiti sulla porta applicativa]]></linkit:sql-ddl-column-comment>
+                                <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="ricerca_porta_azione_delegata" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -1217,6 +1232,59 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ruolo"/>
                                 <linkit:sql-ddl-column-comment>Identificativo del ruolo associato alla porta [FK logica verso tabella ruoli(nome)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    
+    
+    <xsd:element name="porte-applicative-scope">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_scope"
+                        comment="Elenco di scope richiesti per la fruizione del servizio">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="scope" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="scope" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="scope"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dello scope associato alla porta [FK logica verso tabella scope(nome)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

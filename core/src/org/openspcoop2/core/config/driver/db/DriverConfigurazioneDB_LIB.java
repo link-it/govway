@@ -99,6 +99,7 @@ import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
@@ -1455,6 +1456,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("local_forward", "?");
 				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -1534,6 +1536,10 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
 				
+				// Scope
+				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
+						aPD.getScope().getMatch().getValue() : null);
+				
 				// Ricerca Porta Azione Delegata
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				
@@ -1568,6 +1574,8 @@ public class DriverConfigurazioneDB_LIB {
 								aPD.getAllegaBody(),aPD.getScartaBody(),aPD.getGestioneManifest(),aPD.getStateless(),aPD.getLocalForward(),
 								(aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 										aPD.getRuoli().getMatch().getValue() : null),
+								(aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
+										aPD.getScope().getMatch().getValue() : null),
 								aPD.getRicercaPortaAzioneDelegata(),
 								aPD.getStato(),
 								aPD.getIdAccordo(),aPD.getIdPortType()));
@@ -1851,6 +1859,28 @@ public class DriverConfigurazioneDB_LIB {
 				
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaDelegata[" + idPortaDelegata + "]");
 				
+				// Scope
+				n=0;
+				if(aPD.getScope()!=null && aPD.getScope().sizeScopeList()>0){
+					for (int j = 0; j < aPD.getScope().sizeScopeList(); j++) {
+						Scope scope = aPD.getScope().getScope(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("scope", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPD.getId());
+						stm.setString(2, scope.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
+				
 				// Azioni
 				n=0;
 				if(aPD.getAzione()!=null && aPD.getAzione().sizeAzioneDelegataList()>0){
@@ -2019,6 +2049,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("local_forward", "?");
 				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -2094,6 +2125,9 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPD!=null && aPD.getRuoli()!=null && aPD.getRuoli().getMatch()!=null ? 
 						aPD.getRuoli().getMatch().getValue() : null);
+				// Scope
+				stm.setString(index++, aPD!=null && aPD.getScope()!=null && aPD.getScope().getMatch()!=null ? 
+						aPD.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getRicercaPortaAzioneDelegata()) : null);
 				// Stato
@@ -2480,6 +2514,41 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// Scope
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
+				
+				n=0;
+				if(aPD.getScope()!=null && aPD.getScope().sizeScopeList()>0){
+					for (int j = 0; j < aPD.getScope().sizeScopeList(); j++) {
+						Scope scope = aPD.getScope().getScope(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("scope", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaDelegata);
+						stm.setString(2, scope.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaDelegata[" + idPortaDelegata + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaDelegata[" + idPortaDelegata + "]");
+				
+				
+				
 				
 				// Azioni
 				
@@ -2570,6 +2639,17 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Delegata "+idPortaDelegata);
+				
+				// scope
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Delegata "+idPortaDelegata);
 				
 				// mtom
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -3599,6 +3679,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("autorizzazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addInsertField("ruoli_match", "?");
+				sqlQueryObject.addInsertField("scope_match", "?");
 				sqlQueryObject.addInsertField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addInsertField("stato", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
@@ -3675,6 +3756,10 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				
+				// Scope
+				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
+						aPA.getScope().getMatch().getValue() : null);
 				
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
@@ -3965,6 +4050,29 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " ruoli alla PortaApplicativa[" + idPortaApplicativa + "]");
 				
 				
+				// Scope
+				n=0;
+				if(aPA.getScope()!=null && aPA.getScope().sizeScopeList()>0){
+					for (int j = 0; j < aPA.getScope().sizeScopeList(); j++) {
+						Scope scope = aPA.getScope().getScope(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("scope", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, aPA.getId());
+						stm.setString(2, scope.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
 				// Soggetti
 				n=0;
 				if(aPA.getSoggetti()!=null && aPA.getSoggetti().sizeSoggettoList()>0){
@@ -4137,6 +4245,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione_contenuto", "?");
 				sqlQueryObject.addUpdateField("ruoli_match", "?");
+				sqlQueryObject.addUpdateField("scope_match", "?");
 				sqlQueryObject.addUpdateField("ricerca_porta_azione_delegata", "?");
 				sqlQueryObject.addUpdateField("stato", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
@@ -4220,6 +4329,9 @@ public class DriverConfigurazioneDB_LIB {
 				// Ruoli
 				stm.setString(index++, aPA!=null && aPA.getRuoli()!=null && aPA.getRuoli().getMatch()!=null ? 
 						aPA.getRuoli().getMatch().getValue() : null);
+				// Scope
+				stm.setString(index++, aPA!=null && aPA.getScope()!=null && aPA.getScope().getMatch()!=null ? 
+						aPA.getScope().getMatch().getValue() : null);
 				// RicercaPortaAzioneDelegata
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getRicercaPortaAzioneDelegata()) : null);
 				// Stato
@@ -4597,6 +4709,41 @@ public class DriverConfigurazioneDB_LIB {
 				
 				
 				
+				// Scope
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				n=0;
+				if(aPA.getScope()!=null && aPA.getScope().sizeScopeList()>0){
+					for (int j = 0; j < aPA.getScope().sizeScopeList(); j++) {
+						Scope scope = aPA.getScope().getScope(j);
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("scope", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setString(2, scope.getNome());
+						stm.executeUpdate();
+						stm.close();
+						n++;
+						DriverConfigurazioneDB_LIB.log.debug("Aggiunto scope[" + scope.getNome() + "] alla PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " scope alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
+				
+				
 				// Soggetti
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -4736,6 +4883,17 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" ruoli associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				// scope
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" scope associati alla Porta Applicativa "+idPortaApplicativa);
 				
 				// mtom
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);

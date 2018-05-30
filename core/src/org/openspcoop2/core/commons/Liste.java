@@ -52,6 +52,7 @@ public final class Liste
 	public final static int PORTE_APPLICATIVE_MTOM_REQUEST;
 	public final static int PORTE_APPLICATIVE_MTOM_RESPONSE;
 	public final static int PORTE_APPLICATIVE_RUOLI;
+	public final static int PORTE_APPLICATIVE_SCOPE;
 	public final static int PORTE_APPLICATIVE_EXTENDED;
 	
 	public final static int PORTE_DELEGATE;
@@ -66,6 +67,7 @@ public final class Liste
 	public final static int PORTE_DELEGATE_MTOM_REQUEST;
 	public final static int PORTE_DELEGATE_MTOM_RESPONSE;
 	public final static int PORTE_DELEGATE_RUOLI;
+	public final static int PORTE_DELEGATE_SCOPE;
 	public final static int PORTE_DELEGATE_EXTENDED;
 	
 	public final static int SERVIZIO_APPLICATIVO;
@@ -150,6 +152,7 @@ public final class Liste
     	PORTE_APPLICATIVE_MTOM_REQUEST = numeroListe ++;
     	PORTE_APPLICATIVE_MTOM_RESPONSE = numeroListe ++;
     	PORTE_APPLICATIVE_RUOLI = numeroListe ++;
+    	PORTE_APPLICATIVE_SCOPE = numeroListe ++;
     	PORTE_APPLICATIVE_EXTENDED = numeroListe ++;
     	PORTE_DELEGATE = numeroListe ++;
     	PORTE_DELEGATE_BY_SOGGETTO= numeroListe ++;
@@ -163,6 +166,7 @@ public final class Liste
     	PORTE_DELEGATE_MTOM_REQUEST = numeroListe ++;
     	PORTE_DELEGATE_MTOM_RESPONSE = numeroListe ++;
     	PORTE_DELEGATE_RUOLI = numeroListe ++;
+    	PORTE_DELEGATE_SCOPE = numeroListe ++;
     	PORTE_DELEGATE_EXTENDED = numeroListe ++;
     	SERVIZIO_APPLICATIVO = numeroListe ++;
     	SERVIZI_APPLICATIVI_BY_SOGGETTO = numeroListe ++;

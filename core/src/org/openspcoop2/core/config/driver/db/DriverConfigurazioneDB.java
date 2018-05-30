@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
@@ -110,6 +111,7 @@ import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.Soggetto;
@@ -131,6 +133,7 @@ import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.config.constants.RicercaTipologiaErogazione;
 import org.openspcoop2.core.config.constants.RicercaTipologiaFruizione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
@@ -1751,6 +1754,159 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 	}
 	
 	
+	
+	public List<String> portaDelegataScopeList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaDelegataScopeList";
+		int idLista = Liste.PORTE_DELEGATE_SCOPE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<String> listIdScope = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".scope", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPD);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_SCOPE+".scope");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".scope", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_SCOPE+".scope");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_SCOPE+".scope");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_SCOPE+".scope");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPD);
+
+			risultato = stmt.executeQuery();
+
+			listIdScope = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdScope.add(risultato.getString(1));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listIdScope;
+	}
+	
+	
 
 	@Override
 	public IDPortaApplicativa getIDPortaApplicativa(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2916,6 +3072,157 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 		
 		return listIdRuoli;
+	}
+	
+	public List<String> portaApplicativaScopeList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaApplicativaScopeList";
+		int idLista = Liste.PORTE_APPLICATIVE_SCOPE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<String> listIdScope = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+
+			listIdScope = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdScope.add(risultato.getString(1));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listIdScope;
 	}
 
     @Override
@@ -12282,6 +12589,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
@@ -12589,6 +12897,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pa.getRuoli().setMatch(RuoloTipoMatch.toEnumConstant(ruoliMatch));
 				}
 				
+				// ScopeMatch
+				String scopeMatch = rs.getString("scope_match");
+				if(scopeMatch!=null && !"".equals(scopeMatch)){
+					if(pa.getScope()==null){
+						pa.setScope(new AutorizzazioneScope());
+					}
+					pa.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
+				}
+				
 				
 				rs.close();
 				stm.close();
@@ -12854,6 +13171,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
+				
+				// scope
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(pa.getScope()==null){
+						pa.setScope(new AutorizzazioneScope());
+					}
+					
+					Scope scope = new Scope();
+					scope.setNome(rs.getString("scope"));
+					pa.getScope().addScope(scope);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
 				// soggetti
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SOGGETTI);
@@ -13022,6 +13366,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("local_forward");
 			sqlQueryObject.addSelectField("local_forward_pa");
 			sqlQueryObject.addSelectField("ruoli_match");
+			sqlQueryObject.addSelectField("scope_match");
 			sqlQueryObject.addSelectField("ricerca_porta_azione_delegata");
 			sqlQueryObject.addSelectField("stato");
 			sqlQueryObject.addSelectField("id_accordo");
@@ -13335,6 +13680,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pd.getRuoli().setMatch(RuoloTipoMatch.toEnumConstant(ruoliMatch));
 				}
 				
+				// ScopeMatch
+				String scopeMatch = rs.getString("scope_match");
+				if(scopeMatch!=null && !"".equals(scopeMatch)){
+					if(pd.getScope()==null){
+						pd.setScope(new AutorizzazioneScope());
+					}
+					pd.getScope().setMatch(ScopeTipoMatch.toEnumConstant(scopeMatch));
+				}
+				
 				
 				rs.close();
 				stm.close();
@@ -13597,6 +13951,32 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				
 				
 				
+				// scope
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(pd.getScope()==null){
+						pd.setScope(new AutorizzazioneScope());
+					}
+					
+					Scope scope = new Scope();
+					scope.setNome(rs.getString("scope"));
+					pd.getScope().addScope(scope);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
 				// dump_config
 				DumpConfigurazione dumpConfig = DriverConfigurazioneDB_LIB.readDumpConfigurazione(con, pd.getId(), CostantiDB.DUMP_CONFIGURAZIONE_PROPRIETARIO_PD);
 				pd.setDump(dumpConfig);
@@ -13852,6 +14232,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			stmt.close();
 			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -13909,6 +14296,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SCOPE);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
@@ -17728,6 +18122,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 			}
 			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdScope()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SCOPE);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				}
+			}
+			if(filtroRicerca!=null){
 				if(filtroRicerca.getNomeServizioApplicativo()!=null){
 					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_SA);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -17770,6 +18170,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getIdScope()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_SCOPE+".scope = ?");
 				if(filtroRicerca.getNomeServizioApplicativo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");			
 				if(filtroRicerca.getStato()!=null)
@@ -17845,6 +18247,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getIdScope()!=null){
+					this.log.debug("scope stmt.setString("+filtroRicerca.getIdScope().getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getIdScope().getNome());
 					indexStmt++;
 				}
 				if(filtroRicerca.getNomeServizioApplicativo()!=null){
@@ -17958,6 +18365,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				}
 			}
 			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdScope()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SCOPE);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				}
+			}
+			if(filtroRicerca!=null){
 				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
 						(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
 						filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
@@ -18000,6 +18413,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta = ?");
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
+				if(filtroRicerca.getIdScope()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_SCOPE+".scope = ?");
 				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
 						(filtroRicerca.getIdSoggettoAutorizzato().getTipo()!=null || 
 						filtroRicerca.getIdSoggettoAutorizzato().getNome()!=null)){
@@ -18083,6 +18498,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getIdRuolo()!=null){
 					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getIdScope()!=null){
+					this.log.debug("scope stmt.setString("+filtroRicerca.getIdScope().getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getIdScope().getNome());
 					indexStmt++;
 				}
 				if(filtroRicerca.getIdSoggettoAutorizzato()!=null &&
