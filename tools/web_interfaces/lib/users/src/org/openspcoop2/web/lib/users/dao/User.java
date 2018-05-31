@@ -49,7 +49,8 @@ public class User implements Serializable {
 	private boolean permitInterfaceComplete = false;
 	private PermessiUtente permessi;
 	private List<String> protocolliSupportati;
-	private String protocolloSelezionato;
+	private String protocolloSelezionatoPddConsole;
+	private String protocolloSelezionatoPddMonitor;
 	private boolean permitMultiTenant = false;
 	private List<IDSoggetto> soggetti = new ArrayList<>();
 	private List<IDServizio> servizi = new ArrayList<>();
@@ -109,12 +110,19 @@ public class User implements Serializable {
 			this.protocolliSupportati.clear();
 	}
 
-	public String getProtocolloSelezionato() {
-		return this.protocolloSelezionato;
+	public String getProtocolloSelezionatoPddConsole() {
+		return this.protocolloSelezionatoPddConsole;
 	}
 
-	public void setProtocolloSelezionato(String protocolloSelezionato) {
-		this.protocolloSelezionato = protocolloSelezionato;
+	public void setProtocolloSelezionatoPddConsole(String protocolloSelezionatoPddConsole) {
+		this.protocolloSelezionatoPddConsole = protocolloSelezionatoPddConsole;
+	}
+	
+	public String getProtocolloSelezionatoPddMonitor() {
+		return this.protocolloSelezionatoPddMonitor;
+	}
+	public void setProtocolloSelezionatoPddMonitor(String protocolloSelezionatoPddMonitor) {
+		this.protocolloSelezionatoPddMonitor = protocolloSelezionatoPddMonitor;
 	}
 	
 	public boolean isPermitInterfaceComplete() {

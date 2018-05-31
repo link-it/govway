@@ -268,7 +268,7 @@ public class GeneralHelper {
 
 			if(protocolliDispondibili != null && protocolliDispondibili.size() > 1) {
 				// prelevo l'eventuale protocollo selezionato
-				String protocolloSelezionato = u.getProtocolloSelezionato();
+				String protocolloSelezionato = u.getProtocolloSelezionatoPddConsole();
 				
 				GeneralLink glModalitaCorrente = new GeneralLink();
  				String labelSelezionato = protocolloSelezionato == null ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(protocolloSelezionato);

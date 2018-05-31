@@ -107,6 +107,7 @@ public final class UtentiChange extends Action {
 
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+			String isReportistica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 			String isSistema = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -211,6 +212,7 @@ public final class UtentiChange extends Action {
 
 				isServizi = (isServizi==null) ? (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isServizi;
 				isDiagnostica = (isDiagnostica==null) ? (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isDiagnostica;
+				isReportistica = (isReportistica==null) ? (pu.isReportistica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isReportistica;
 				isSistema = (isSistema==null) ? (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isSistema;
 				isMessaggi = (isMessaggi==null) ? (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isMessaggi;
 				isUtenti = (isUtenti==null) ? (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED) : isUtenti;
@@ -236,7 +238,7 @@ public final class UtentiChange extends Action {
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
-						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
 
 				pd.setDati(dati);
@@ -267,7 +269,7 @@ public final class UtentiChange extends Action {
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
-						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, multiTenant, forceEnableMultitenant);
 
 				pd.setDati(dati);
@@ -409,7 +411,7 @@ public final class UtentiChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
-						isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp,modalitaScelte);
+						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi,  uws, paginaSuAccordi, uwp,modalitaScelte);
 
 				pd.setDati(dati);
 				pd.setMessage(msg,Costanti.MESSAGE_TYPE_INFO);
@@ -445,6 +447,13 @@ public final class UtentiChange extends Action {
 						puString = Permessi.DIAGNOSTICA.toString();
 					else
 						puString = puString+","+Permessi.DIAGNOSTICA.toString();
+				}
+				
+				if (isReportistica != null && ServletUtils.isCheckBoxEnabled(isReportistica)) {
+					if (puString.equals(""))
+						puString = Permessi.REPORTISTICA.toString();
+					else
+						puString = puString+","+Permessi.REPORTISTICA.toString();
 				}
 
 				if (isSistema != null && ServletUtils.isCheckBoxEnabled(isSistema)) {
@@ -485,7 +494,7 @@ public final class UtentiChange extends Action {
 				
 				user.clearProtocolliSupportati();
 				if(user.hasOnlyPermessiUtenti()) {
-					user.setProtocolloSelezionato(null); 
+					user.setProtocolloSelezionatoPddConsole(null); 
 					user.setInterfaceType(InterfaceType.STANDARD);
 				}
 				else {
@@ -496,9 +505,9 @@ public final class UtentiChange extends Action {
 							user.addProtocolloSupportato(protocolloName);
 						} 
 					}
-					if(user.getProtocolloSelezionato() != null) {
-						if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionato()))
-							user.setProtocolloSelezionato(null); 
+					if(user.getProtocolloSelezionatoPddConsole() != null) {
+						if(!user.getProtocolliSupportati().contains(user.getProtocolloSelezionatoPddConsole()))
+							user.setProtocolloSelezionatoPddConsole(null); 
 					}
 				}
 

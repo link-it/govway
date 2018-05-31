@@ -102,7 +102,9 @@ public class UtentiCostanti {
 	public final static String LABEL_CAMBIA_IDENTITA = "Cambia identità";
 	public final static String LABEL_ACCEDI = "Accedi";
 	public final static String LABEL_MODIFICA = "Modifica";
-	public final static String LABEL_MONITORAGGIO = "Diagnostica";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO_REPORTISTICA = "Monitoraggio/Reportistica";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO = "Monitoraggio";
+	public final static String LABEL_CONFIGURAZIONE_PDD_MONITOR_REPORTISTICA = "Reportistica";
 	public final static String LABEL_UTENTI_SERVIZI = "Servizi";
 	public final static String LABEL_UTENTI_SOGGETTI = "Soggetti";
 	public final static String LABEL_UTENTI_SOGGETTI_DISPONIBILI_ESAURITI = "Non esistono altri soggetti associabili all'utente";
@@ -120,6 +122,7 @@ public class UtentiCostanti {
 	public final static String PARAMETRO_UTENTI_TIPO_GUI = "tipo_gui";
 	public final static String PARAMETRO_UTENTI_IS_SERVIZI = "isServizi";
 	public final static String PARAMETRO_UTENTI_IS_DIAGNOSTICA = "isDiagnostica";
+	public final static String PARAMETRO_UTENTI_IS_REPORTISTICA = "isReportistica";
 	public final static String PARAMETRO_UTENTI_IS_SISTEMA = "isSistema";
 	public final static String PARAMETRO_UTENTI_IS_MESSAGGI = "isMessaggi";
 	public final static String PARAMETRO_UTENTI_IS_UTENTI = "isUtenti";
@@ -155,7 +158,8 @@ public class UtentiCostanti {
 	public final static String LABEL_PARAMETRO_UTENTI_CHANGE_PASSWORD = "Nuova Password";
 	public final static String LABEL_PARAMETRO_UTENTI_TIPO_GUI =  "Tipo";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_SERVIZI = "Servizi [S]";
-	public final static String LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA = "Diagnostica [D]";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA = "Monitoraggio [D]";
+	public final static String LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA = "Reportistica [R]";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_SISTEMA = "Sistema [C]";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_MESSAGGI = "Coda Messaggi [M]";
 	public final static String LABEL_PARAMETRO_UTENTI_IS_UTENTI = "Utenti [U]";

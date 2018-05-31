@@ -97,6 +97,7 @@ public final class UtentiAdd extends Action {
 			
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+			String isReportistica = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 			String isSistema = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -158,7 +159,7 @@ public final class UtentiAdd extends Action {
 				
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
-						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, multiTenant, forceEnableMultitenant);
 				
 				pd.setDati(dati);
@@ -187,7 +188,7 @@ public final class UtentiAdd extends Action {
 	
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,
-						isServizi,isDiagnostica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
+						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, multiTenant, forceEnableMultitenant);
 				
 				pd.setDati(dati);
@@ -214,6 +215,12 @@ public final class UtentiAdd extends Action {
 					puString = Permessi.DIAGNOSTICA.toString();
 				else
 					puString = puString+","+Permessi.DIAGNOSTICA.toString();
+			}
+			if (ServletUtils.isCheckBoxEnabled(isReportistica)) {
+				if (puString.equals(""))
+					puString = Permessi.REPORTISTICA.toString();
+				else
+					puString = puString+","+Permessi.REPORTISTICA.toString();
 			}
 			if (ServletUtils.isCheckBoxEnabled(isSistema)) {
 				if (puString.equals(""))

@@ -346,8 +346,11 @@ public class DriverUsersDB {
 				String protocolli =rs.getString("protocolli");
 				user.setProtocolliSupportatiFromString(protocolli);
 				
-				String protocollo =rs.getString("protocollo");
-				user.setProtocolloSelezionato(protocollo);
+				String protocollo_pddconsole =rs.getString("protocollo_pddconsole");
+				user.setProtocolloSelezionatoPddConsole(protocollo_pddconsole);
+				
+				String protocollo_pddmonitor =rs.getString("protocollo_pddmonitor");
+				user.setProtocolloSelezionatoPddMonitor(protocollo_pddmonitor);
 				
 				int multiTenant = rs.getInt("multi_tenant");
 				if(CostantiDB.TRUE == multiTenant) {
@@ -847,7 +850,8 @@ public class DriverUsersDB {
 			sqlQueryObject.addInsertField("interfaccia_completa", "?");
 			sqlQueryObject.addInsertField("permessi", "?");
 			sqlQueryObject.addInsertField("protocolli", "?");
-			sqlQueryObject.addInsertField("protocollo", "?");
+			sqlQueryObject.addInsertField("protocollo_pddconsole", "?");
+			sqlQueryObject.addInsertField("protocollo_pddmonitor", "?");
 			sqlQueryObject.addInsertField("multi_tenant", "?");
 			sqlQuery = sqlQueryObject.createSQLInsert();
 			stm = connectionDB.prepareStatement(sqlQuery);
@@ -858,7 +862,8 @@ public class DriverUsersDB {
 			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
-			stm.setString(index++, user.getProtocolloSelezionato());
+			stm.setString(index++, user.getProtocolloSelezionatoPddConsole());
+			stm.setString(index++, user.getProtocolloSelezionatoPddMonitor());
 			stm.setInt(index++, user.isPermitMultiTenant()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.executeUpdate();
 			stm.close();
@@ -929,7 +934,8 @@ public class DriverUsersDB {
 			sqlQueryObject.addUpdateField("interfaccia_completa", "?");
 			sqlQueryObject.addUpdateField("permessi", "?");
 			sqlQueryObject.addUpdateField("protocolli", "?");
-			sqlQueryObject.addUpdateField("protocollo", "?");
+			sqlQueryObject.addUpdateField("protocollo_pddconsole", "?");
+			sqlQueryObject.addUpdateField("protocollo_pddmonitor", "?");
 			sqlQueryObject.addUpdateField("multi_tenant", "?");
 			sqlQueryObject.addWhereCondition("login=?");
 			sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -940,7 +946,8 @@ public class DriverUsersDB {
 			stm.setInt(index++, user.isPermitInterfaceComplete()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++,user.getPermessi().toString());
 			stm.setString(index++, user.getProtocolliSupportatiAsString());
-			stm.setString(index++, user.getProtocolloSelezionato());
+			stm.setString(index++, user.getProtocolloSelezionatoPddConsole());
+			stm.setString(index++, user.getProtocolloSelezionatoPddMonitor());
 			stm.setInt(index++, user.isPermitMultiTenant()? CostantiDB.TRUE : CostantiDB.FALSE);
 			stm.setString(index++, user.getLogin());
 			stm.executeUpdate();
@@ -1715,6 +1722,108 @@ public class DriverUsersDB {
 			} catch (Exception e) {
 				// ignore exception
 			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	/**
+	 * Aggiorna il protocollo utilizzato dall'utente <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param protocollo Protocollo
+	 *               
+	 */
+	public void saveProtocolloUtilizzatoPddConsole(String login, String protocollo) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[saveProtocolloUtilizzatoPddConsole] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
+			sqlQueryObject.addUpdateField("protocollo_pddconsole", protocollo);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			stm.executeUpdate();
+			stm.close();
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddConsole] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddConsole] Exception: " + ex.getMessage(),ex);
+		} finally {
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try{
+				if(this.connection==null)
+					connectionDB.close();
+			}catch(Exception eClose){}
+		}
+	}
+	
+	/**
+	 * Aggiorna il protocollo utilizzato dall'utente <var>login</var>
+	 * 
+	 * @param login Identificatore di un utente
+	 * @param protocollo Protocollo
+	 *               
+	 */
+	public void saveProtocolloUtilizzatoPddMonitor(String login, String protocollo) throws DriverUsersDBException {
+		if (login == null)
+			throw new DriverUsersDBException("[saveProtocolloUtilizzatoPddMonitor] Parametri Non Validi");
+
+		Connection connectionDB = null;
+		PreparedStatement stm = null;
+		try {
+			// Get Connection
+			if(this.connection!=null)
+				connectionDB = this.connection;
+			else{
+				connectionDB = this.datasource.getConnection();
+				if(connectionDB==null)
+					throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+			}
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
+			sqlQueryObject.addUpdateField("protocollo_pddmonitor", protocollo);
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, login);
+			stm.executeUpdate();
+			stm.close();
+
+		} catch (SQLException se) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddMonitor] SqlException: " + se.getMessage(),se);
+		} catch (Exception ex) {
+			throw new DriverUsersDBException("[DriverUsersDB::saveProtocolloUtilizzatoPddMonitor] Exception: " + ex.getMessage(),ex);
+		} finally {
 			try {
 				stm.close();
 			} catch (Exception e) {

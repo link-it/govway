@@ -87,7 +87,7 @@ public class LoginHelper extends ConsoleHelper {
 			
 			// controllo modalita' associate all'utenza
 			if(trovato) {
-				if(this.hasOnlyPermessiDiagnostica(this.utentiCore.getUser(login))) {
+				if(this.hasOnlyPermessiDiagnosticaReportistica(this.utentiCore.getUser(login))) {
 					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
 					return false;
 				}
@@ -104,19 +104,20 @@ public class LoginHelper extends ConsoleHelper {
 		}
 	}
 	
-	private boolean hasOnlyPermessiDiagnostica(User user) throws Exception {
+	private boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
+		String isReportistica = (pu.isReportistica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isSistema = (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isMessaggi = (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isUtenti = (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isAuditing = (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		String isAccordiCooperazione = (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
 		
-		return this.hasOnlyPermessiDiagnostica(isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
+		return this.hasOnlyPermessiDiagnosticaReportistica(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
 
 	}
 }

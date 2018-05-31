@@ -10,7 +10,8 @@ CREATE TABLE users
 	interfaccia_completa NUMBER,
 	permessi VARCHAR2(255) NOT NULL,
 	protocolli CLOB,
-	protocollo VARCHAR2(255),
+	protocollo_pddconsole VARCHAR2(255),
+	protocollo_pddmonitor VARCHAR2(255),
 	multi_tenant NUMBER,
 	-- fk/pk columns
 	id NUMBER NOT NULL,

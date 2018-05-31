@@ -67,10 +67,24 @@ public class UtentiHelper extends ConsoleHelper {
 		super(request, pd, session);
 	}
 
-	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isSistema,String isMessaggi,
+	private boolean hasOnlyPermessiUtenti(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,
 			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
 		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
-				(!singlePdD || (singlePdD && ((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+				(
+						!singlePdD 
+						|| 
+						(
+								singlePdD 
+								&& 
+								(
+										(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
+								)
+								&& 
+								(
+										(isReportistica == null) || !ServletUtils.isCheckBoxEnabled(isReportistica)
+								)
+						)
+				) &&
 				((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
 				((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
 				((isUtenti != null) || ServletUtils.isCheckBoxEnabled(isUtenti)) &&
@@ -78,9 +92,21 @@ public class UtentiHelper extends ConsoleHelper {
 				((isAccordiCooperazione == null) || !ServletUtils.isCheckBoxEnabled(isAccordiCooperazione)));
 	}
 	
+	private String getLabelSezionePddMonitorSoggettiServizi(boolean isDiagnosticaEnabled, boolean isReportisticaEnabled) {
+		if(isDiagnosticaEnabled && isReportisticaEnabled) {
+			return UtentiCostanti.LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO_REPORTISTICA;
+		}
+		else if(isDiagnosticaEnabled) {
+			return UtentiCostanti.LABEL_CONFIGURAZIONE_PDD_MONITOR_MONITORAGGIO;
+		}
+		else {
+			return UtentiCostanti.LABEL_CONFIGURAZIONE_PDD_MONITOR_REPORTISTICA;
+		}
+	}
+	
 	public Vector<DataElement> addUtentiToDati(Vector<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
 			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
-			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
+			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway, String multiTenant, boolean forceEnableMultitenant) throws Exception{
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
@@ -89,6 +115,7 @@ public class UtentiHelper extends ConsoleHelper {
 				!ServletUtils.isCheckBoxEnabled(isServizi) &&
 				!ServletUtils.isCheckBoxEnabled(isAccordiCooperazione) &&
 				!ServletUtils.isCheckBoxEnabled(isDiagnostica) &&
+				!ServletUtils.isCheckBoxEnabled(isReportistica) &&
 				!ServletUtils.isCheckBoxEnabled(isSistema) &&
 				!ServletUtils.isCheckBoxEnabled(isMessaggi) &&
 				!ServletUtils.isCheckBoxEnabled(isAuditing);
@@ -162,19 +189,6 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		if (singlePdD) {
-			de.setType(DataElementType.CHECKBOX);
-			ServletUtils.setCheckBox(de, isDiagnostica);
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue("");
-		}
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		de.setPostBack(true);
-		dati.addElement(de);
-
-		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
 		de.setType(DataElementType.CHECKBOX);
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
@@ -190,6 +204,32 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setPostBack(true);
 		dati.addElement(de);
 
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		if (singlePdD) {
+			de.setType(DataElementType.CHECKBOX);
+			ServletUtils.setCheckBox(de, isDiagnostica);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
+		if (singlePdD) {
+			de.setType(DataElementType.CHECKBOX);
+			ServletUtils.setCheckBox(de, isReportistica);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue("");
+		}
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
+		de.setPostBack(true);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
 		de.setType(DataElementType.CHECKBOX);
@@ -265,9 +305,11 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		// se sono in modifica ed e' stato selezionato il diritto diagnostica mostro i link per la definizione di soggetti e servizi
-		if(ServletUtils.isCheckBoxEnabled(isDiagnostica) && TipoOperazione.CHANGE.equals(tipoOperazione)) {
+		boolean isDiagnosticaEnabled = ServletUtils.isCheckBoxEnabled(isDiagnostica);
+		boolean isReportisticaEnabled = ServletUtils.isCheckBoxEnabled(isReportistica);
+		if( (isDiagnosticaEnabled || isReportisticaEnabled) && TipoOperazione.CHANGE.equals(tipoOperazione)) {
 			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_MONITORAGGIO);
+			de.setLabel(getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled));
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
@@ -352,7 +394,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 	public void addChangeUtenteInfoToDati(Vector<DataElement> dati,
 			String nomesu,String changepwd,String pwsu,String confpwsu,InterfaceType interfaceType,
-			String isServizi,String isDiagnostica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
+			String isServizi,String isDiagnostica,String isReportistica, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
 			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway) throws Exception{ 
 
@@ -403,13 +445,6 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		de.setValue(isDiagnostica);
-		de.setType(DataElementType.HIDDEN);
-		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
-		dati.addElement(de);
-
-		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_SISTEMA);
 		de.setValue(isSistema);
 		de.setType(DataElementType.HIDDEN);
@@ -423,6 +458,20 @@ public class UtentiHelper extends ConsoleHelper {
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 		dati.addElement(de);
 
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		de.setValue(isDiagnostica);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_REPORTISTICA);
+		de.setValue(isReportistica);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_IS_UTENTI);
 		de.setValue(isUtenti);
@@ -698,6 +747,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String tipoGui = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
+			String isReportistica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_REPORTISTICA);
 			String isSistema = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SISTEMA);
 			String isMessaggi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_MESSAGGI);
 			String isUtenti = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_UTENTI);
@@ -766,6 +816,10 @@ public class UtentiHelper extends ConsoleHelper {
 			//			}
 			//			if (singlePdD.equals("true") && (isDiagnostica != null) && !isDiagnostica.equals("") && !isDiagnostica.equals("yes") && !isDiagnostica.equals("no")) {
 			//				this.pd.setMessage("Diagnostica dev'essere selezionato o deselezionato");
+			//				return false;
+			//			}
+			//			if (singlePdD.equals("true") && (isReportistica != null) && !isReportistica.equals("") && !isReportistica.equals("yes") && !isReportistica.equals("no")) {
+			//				this.pd.setMessage("Reportistica dev'essere selezionato o deselezionato");
 			//				return false;
 			//			}
 			//			if ((isSistema != null) && !isSistema.equals("") && !isSistema.equals("yes") && !isSistema.equals("no")) {
@@ -843,6 +897,9 @@ public class UtentiHelper extends ConsoleHelper {
 						}
 						
 						// Controlli su eventuali soggetti/servizi associati alle modalita' deselezionate
+						boolean isDiagnosticaEnabled = ServletUtils.isCheckBoxEnabled(isDiagnostica);
+						boolean isReportisticaEnabled = ServletUtils.isCheckBoxEnabled(isReportistica);
+						String labelConsoleMonitor = this.getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled);
 						for (String protocolloDaControllare : protocolliEliminati) {
 							// controllo servizi
 							if(user.getServizi().size() > 0) {
@@ -851,7 +908,7 @@ public class UtentiHelper extends ConsoleHelper {
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
 										this.pd.setMessage("L'utente " + nomesu 
 												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi appartenenti alla Modalit&agrave; '"
-												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 										return false;
 									}
 								}
@@ -863,7 +920,7 @@ public class UtentiHelper extends ConsoleHelper {
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
 										this.pd.setMessage("L'utente " + nomesu 
 												+ " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti appartenenti alla Modalit&agrave; '"
-												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+												+ this.getLabelProtocollo(protocolloDaControllare) +"' associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 										return false;
 									}
 								}
@@ -874,14 +931,22 @@ public class UtentiHelper extends ConsoleHelper {
 				
 				// Controlli su soggetti/servizi associati
 				//1. l'utente aveva un permesso di tipo 'D' e' stato eliminato, devo controllare che non abbia soggetti/servizi associati
-				if((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)){
+				if(
+						(isDiagnostica == null || !ServletUtils.isCheckBoxEnabled(isDiagnostica))
+						&&
+						(isReportistica == null || !ServletUtils.isCheckBoxEnabled(isReportistica))
+						){
+					
 					boolean oldDiagnostica = user.getPermessi().isDiagnostica();
-					if(oldDiagnostica && user.getServizi().size() > 0) {
-						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+					boolean oldReportistica = user.getPermessi().isReportistica();
+					String labelConsoleMonitor = this.getLabelSezionePddMonitorSoggettiServizi(oldDiagnostica, oldReportistica);
+						
+					if( (oldDiagnostica || oldReportistica) && user.getServizi().size() > 0) {
+						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei servizi associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 						return false;
 					}
-					if(oldDiagnostica && user.getSoggetti().size() > 0) {
-						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti associati per la funzionalit&agrave; di "+ UtentiCostanti.LABEL_MONITORAGGIO);
+					if( (oldDiagnostica || oldReportistica) && user.getSoggetti().size() > 0) {
+						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti associati per la funzionalit&agrave; di "+ labelConsoleMonitor);
 						return false;
 					}
 				}
@@ -922,7 +987,21 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Almeno un permesso dev'essere selezionato
 			if (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
-					(!singlePdD || (singlePdD && ((isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+					(
+							!singlePdD 
+							|| 
+							(
+									singlePdD 
+									&& 
+									(
+											(isDiagnostica == null) || !ServletUtils.isCheckBoxEnabled(isDiagnostica)
+									)
+									&& 
+									(
+											(isReportistica == null) || !ServletUtils.isCheckBoxEnabled(isReportistica)
+									)
+							)
+					) &&
 					((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
 					((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
 					((isUtenti == null) || !ServletUtils.isCheckBoxEnabled(isUtenti)) &&
@@ -942,7 +1021,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			
 			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
-			if(hasOnlyPermessiUtenti(isServizi, isDiagnostica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)==false) {
+			if(hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)==false) {
 							
 				if(!modalitaPresenti) {
 					this.pd.setMessage("Selezionare almeno una Modalit&agrave; Gateway");

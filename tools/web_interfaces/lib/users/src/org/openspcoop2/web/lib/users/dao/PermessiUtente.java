@@ -45,6 +45,8 @@ public class PermessiUtente implements Serializable {
 	private boolean servizi;
 	/** Permessi di visualizzazione della diagnostica */
 	private boolean diagnostica;
+	/** Permessi di visualizzazione della reportistica */
+	private boolean reportistica;
 	/** Permessi di visualizzazione del sistema */
 	private boolean sistema;
 	/** Permessi di visualizzazione del monitoraggio applicativo */
@@ -64,6 +66,8 @@ public class PermessiUtente implements Serializable {
 			bf.append(Permessi.SERVIZI.toString());
 		if(this.diagnostica)
 			bf.append(Permessi.DIAGNOSTICA.toString());
+		if(this.reportistica)
+			bf.append(Permessi.REPORTISTICA.toString());
 		if(this.sistema)
 			bf.append(Permessi.SISTEMA.toString());
 		if(this.codeMessaggi)
@@ -82,6 +86,7 @@ public class PermessiUtente implements Serializable {
 		p.setAuditing(true);
 		p.setCodeMessaggi(true);
 		p.setDiagnostica(true);
+		p.setReportistica(true);
 		p.setServizi(true);
 		p.setSistema(true);
 		p.setUtenti(true);
@@ -102,6 +107,13 @@ public class PermessiUtente implements Serializable {
 				if(bf.length()>0)
 					bf.append(separatore);
 				bf.append(Permessi.DIAGNOSTICA.toString());
+			}
+		}
+		if(maschera.reportistica){
+			if(this.reportistica){
+				if(bf.length()>0)
+					bf.append(separatore);
+				bf.append(Permessi.REPORTISTICA.toString());
 			}
 		}
 		if(maschera.sistema){
@@ -150,6 +162,9 @@ public class PermessiUtente implements Serializable {
 		if(value.contains(Permessi.DIAGNOSTICA.toString())){
 			permUtenti.setDiagnostica(true);
 		}
+		if(value.contains(Permessi.REPORTISTICA.toString())){
+			permUtenti.setReportistica(true);
+		}
 		if(value.contains(Permessi.SISTEMA.toString())){
 			permUtenti.setSistema(true);
 		}
@@ -195,6 +210,16 @@ public class PermessiUtente implements Serializable {
 
 	public void setDiagnostica(boolean diagnostica) {
 		this.diagnostica = diagnostica;
+	}
+	
+	
+	public boolean isReportistica() {
+		return this.reportistica;
+	}
+
+
+	public void setReportistica(boolean reportistica) {
+		this.reportistica = reportistica;
 	}
 
 
@@ -255,6 +280,11 @@ public class PermessiUtente implements Serializable {
 				ok = true;
 			}
 		}
+		if(this.isReportistica()){
+			if(permessi.isReportistica()){
+				ok = true;
+			}
+		}
 		if(this.isServizi()){
 			if(permessi.isServizi()){
 				ok = true;
@@ -291,6 +321,11 @@ public class PermessiUtente implements Serializable {
 		}
 		if(this.isDiagnostica()){
 			if(permessi.isDiagnostica()){
+				return false;
+			}
+		}
+		if(this.isReportistica()){
+			if(permessi.isReportistica()){
 				return false;
 			}
 		}

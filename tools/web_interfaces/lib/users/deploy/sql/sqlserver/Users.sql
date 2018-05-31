@@ -8,7 +8,8 @@ CREATE TABLE users
 	interfaccia_completa INT,
 	permessi VARCHAR(255) NOT NULL,
 	protocolli VARCHAR(max),
-	protocollo VARCHAR(255),
+	protocollo_pddconsole VARCHAR(255),
+	protocollo_pddmonitor VARCHAR(255),
 	multi_tenant INT,
 	-- fk/pk columns
 	id BIGINT IDENTITY,

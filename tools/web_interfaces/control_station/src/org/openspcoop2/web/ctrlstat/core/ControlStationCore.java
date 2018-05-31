@@ -4724,8 +4724,8 @@ public class ControlStationCore {
 			User u =ServletUtils.getUserFromSession(session);
 			
 			if(!ignoreProtocolloSelezionato) {
-				if(u.getProtocolloSelezionato()!=null) {
-					protocolliList.add(u.getProtocolloSelezionato());
+				if(u.getProtocolloSelezionatoPddConsole()!=null) {
+					protocolliList.add(u.getProtocolloSelezionatoPddConsole());
 					return protocolliList;
 				}
 			}

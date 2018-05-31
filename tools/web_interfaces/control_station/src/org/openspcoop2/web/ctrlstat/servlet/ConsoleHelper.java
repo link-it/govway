@@ -5318,10 +5318,24 @@ public class ConsoleHelper {
 		dati.addElement(de);
 	}
 	
-	public boolean hasOnlyPermessiDiagnostica(String isServizi,String isDiagnostica,String isSistema,String isMessaggi,
+	public boolean hasOnlyPermessiDiagnosticaReportistica(String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,
 			String isUtenti,String isAuditing, String isAccordiCooperazione,boolean singlePdD) {
 		return (((isServizi == null) || !ServletUtils.isCheckBoxEnabled(isServizi)) &&
-				(!singlePdD || (singlePdD && ((isDiagnostica == null) || ServletUtils.isCheckBoxEnabled(isDiagnostica)))) &&
+				(
+						!singlePdD 
+						|| 
+						(
+								singlePdD 
+								&& 
+								(
+										(isDiagnostica == null) || ServletUtils.isCheckBoxEnabled(isDiagnostica)
+								)
+								&& 
+								(
+										(isReportistica == null) || ServletUtils.isCheckBoxEnabled(isReportistica)
+								)
+						)
+				) &&
 				((isSistema == null) || !ServletUtils.isCheckBoxEnabled(isSistema)) &&
 				((isMessaggi == null) || !ServletUtils.isCheckBoxEnabled(isMessaggi)) &&
 				((isUtenti != null) || !ServletUtils.isCheckBoxEnabled(isUtenti)) &&

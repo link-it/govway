@@ -112,7 +112,7 @@ public final class UtenteChange extends Action {
 			
 			if(tipoModalita == null) {
 				// prelevo il vecchio valore del protocollo
-				protocolloSelezionatoUtente = user.getProtocolloSelezionato();
+				protocolloSelezionatoUtente = user.getProtocolloSelezionatoPddConsole();
 			} else {
 				// il caso all viene gestito impostando il valore del protocollo selezionato = null;
 				if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL))
@@ -195,7 +195,7 @@ public final class UtenteChange extends Action {
 					myS = utentiCore.getUser(userLogin);
 				}
 				myS.setInterfaceType(interfaceType);
-				myS.setProtocolloSelezionato(protocolloSelezionatoUtente);
+				myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
 				myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 				utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 
