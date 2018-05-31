@@ -62,6 +62,9 @@ import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicy;
 import org.openspcoop2.core.controllo_traffico.ElencoIdPolicyAttive;
+import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
+import org.openspcoop2.core.controllo_traffico.IdPolicy;
+import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -999,6 +1002,129 @@ public class ConfigurazionePdD  {
 		this.log.info(msg);
 		if(alogConsole!=null){
 			alogConsole.info(msg);
+		}
+		
+		// *** Controllo Traffico ***
+		
+		if(this.openspcoopProperties.isControlloTrafficoEnabled()) {
+		
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			try{
+				this.cache.remove(_getKey_ConfigurazioneControlloTraffico());
+				this.getConfigurazioneControlloTraffico(connectionPdD);
+			}
+			catch(DriverConfigurazioneNotFound notFound){}
+			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura della configurazione completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura delle policy configurate ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			ElencoIdPolicy elencoPolicyConfigurate = null;
+			try{
+				this.cache.remove(_getKey_ElencoIdPolicy());
+				elencoPolicyConfigurate = this.getElencoIdPolicy(connectionPdD, true);
+			}
+			catch(DriverConfigurazioneNotFound notFound){}
+			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			if(elencoPolicyConfigurate!=null && elencoPolicyConfigurate.sizeIdPolicyList()>0) {
+				
+				msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyConfigurate.sizeIdPolicyList()+" policy configurate ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IdPolicy idPolicy : elencoPolicyConfigurate.getIdPolicyList()) {
+				
+					try{
+						this.cache.remove(_getKey_ConfigurazionePolicy(idPolicy.getNome()));
+						this.getConfigurazionePolicy(connectionPdD, true, idPolicy.getNome());
+					}
+					catch(DriverConfigurazioneNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+				}
+				
+				msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyConfigurate.sizeIdPolicyList()+" policy configurate completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura delle policy configurate completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura delle policy attive ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			ElencoIdPolicyAttive elencoPolicyAttive = null;
+			try{
+				this.cache.remove(_getKey_ElencoIdPolicyAttive());
+				elencoPolicyAttive = this.getElencoIdPolicyAttive(connectionPdD, true);
+			}
+			catch(DriverConfigurazioneNotFound notFound){}
+			catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			if(elencoPolicyAttive!=null && elencoPolicyAttive.sizeIdActivePolicyList()>0) {
+				
+				msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyAttive.sizeIdActivePolicyList()+" policy attive ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IdActivePolicy idActivePolicy : elencoPolicyAttive.getIdActivePolicyList()) {
+				
+					try{
+						String id = UniqueIdentifierUtilities.getUniqueId(idActivePolicy);
+						this.cache.remove(_getKey_AttivazionePolicy(id));
+						this.getAttivazionePolicy(connectionPdD, true, id);
+					}
+					catch(DriverConfigurazioneNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+				}
+				
+				msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura di "+elencoPolicyAttive.sizeIdActivePolicyList()+" policy attive completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+			}
+			
+			msg = "[Prefill] Inizializzazione cache (ControlloTraffico), lettura delle policy attive completata";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
 		}
 	}
 	
