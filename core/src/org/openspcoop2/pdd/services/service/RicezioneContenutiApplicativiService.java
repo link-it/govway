@@ -768,9 +768,6 @@ public class RicezioneContenutiApplicativiService {
 				ServicesUtils.setContentType(responseMessage, res);
 				
 				// http status
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
-						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 				boolean consume = true;
 				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding()) ){
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
@@ -790,6 +787,12 @@ public class RicezioneContenutiApplicativiService {
 					}
 				}
 				res.setStatus(statoServletResponse);
+				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				
 				// contenuto
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
@@ -851,10 +854,14 @@ public class RicezioneContenutiApplicativiService {
 				}
 				res.setStatus(statoServletResponse);
 				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
+				
 				res.sendResponse(response);
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 			}
 			else{
 				if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
@@ -868,7 +875,9 @@ public class RicezioneContenutiApplicativiService {
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
 				// carico-vuoto gestito all'interno
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 			}
 		}catch(Throwable e){			
@@ -916,16 +925,20 @@ public class RicezioneContenutiApplicativiService {
 				ServicesUtils.setContentType(responseMessageError, res);
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
-						(pddContext!=null ? pddContext.getContext() : null));
 				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;
-						res.setStatus(500);
+						res.setStatus(statoServletResponse);
 						descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 					}
 				}
+				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
+						(pddContext!=null ? pddContext.getContext() : null));
 				
 				// contenuto
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato

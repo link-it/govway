@@ -130,7 +130,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		return tipoContext;
 	}
 	
-	private EsitoTransazione getEsitoGenerale(InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, String tipoContext) throws ProtocolException{
+	private EsitoTransazione getEsitoErroreGenerale(InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, String tipoContext) throws ProtocolException{
 		if(informazioniErroriInfrastrutturali.isRicevutoSoapFaultServerPortaDelegata()){
 			return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_SERVER, tipoContext);
 		}
@@ -172,13 +172,17 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	}
 	
 	@Override
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
+			int returnCode, ServiceBinding serviceBinding,	
+			OpenSPCoop2Message message,
 			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException {
-		return getEsito(transportRequestContext,message,null,informazioniErroriInfrastrutturali,context);
+		return getEsito(transportRequestContext,returnCode,serviceBinding,message,null,informazioniErroriInfrastrutturali,context);
 	}
 
 	@Override
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
+			int returnCode, ServiceBinding serviceBinding,	
+			OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
 			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context)
 			throws ProtocolException {
@@ -211,6 +215,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			else {
 				returnEsitoOk = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.OK, tipoContext);
 			}
+			
+			// Esito 4xx
+			EsitoTransazione esito4xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_4XX, tipoContext);
+			
+			// Esito 5xx
+			EsitoTransazione esito5xx = this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 			
 			// Devo riconoscere eventuali codifiche custom inserite nel contesto
 			if(context!=null){
@@ -273,6 +283,17 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_AUTORIZZAZIONE, tipoContext);
 			}
 			else if(body==null){
+				if(serviceBinding==null || ServiceBinding.SOAP.equals(serviceBinding)) {
+					if(returnCode>=200 && returnCode<=399) {
+						return returnEsitoOk;
+					}
+					else if(returnCode>=400 && returnCode<=499) {
+						return esito4xx;
+					}
+					else {
+						return esito5xx;
+					}
+				}
 				return returnEsitoOk; // oneway
 			}
 			else{
@@ -313,7 +334,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 						if(codice==null){
 							// CASO NON PREVISTO ???
-							return getEsitoGenerale(informazioniErroriInfrastrutturali, tipoContext);
+							return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
 						}
 						else{
 							String prefixFaultCode = erroreApplicativo.getFaultPrefixCode();
@@ -345,7 +366,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 									}else if(valueInt>=500 && valueInt<=599){
 										return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
 									}else{
-										return getEsitoGenerale(informazioniErroriInfrastrutturali, tipoContext);
+										return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
 									}
 								}catch(Throwable t){
 									String error = "Errore calcolato da codice["+codice+"] prefixOpv2["+prefixOpv2+"] prefixFaultCode["+
@@ -357,7 +378,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 										System.err.print(error);
 										t.printStackTrace(System.err);
 									}
-									return getEsitoGenerale(informazioniErroriInfrastrutturali, tipoContext);
+									return getEsitoErroreGenerale(informazioniErroriInfrastrutturali, tipoContext);
 								}
 							}else{
 								// EccezioneBusta

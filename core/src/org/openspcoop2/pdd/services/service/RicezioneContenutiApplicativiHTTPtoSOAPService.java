@@ -704,10 +704,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				
 				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())) {
-					
-					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-							(pddContext!=null ? pddContext.getContext() : null));
-					
+										
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
 					String contentTypeRisposta = null;
 					byte[] risposta = null;
@@ -744,7 +741,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							}
 						}
 					}
-					
+										
 					// transfer length
 					if(risposta!=null){
 						lengthOutResponse = risposta.length;
@@ -759,6 +756,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					if(contentTypeRisposta!=null){
 						res.setContentType(contentTypeRisposta);
 					}
+					
+					// esito calcolato prima del sendResponse, per non consumare il messaggio
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+							responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+							(pddContext!=null ? pddContext.getContext() : null));
 					
 					// contenuto
 					if(risposta!=null){
@@ -777,11 +780,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					ServicesUtils.setContentType(responseMessage, res);
 					
 					// http status
-					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
-							responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
-							(pddContext!=null ? pddContext.getContext() : null));
 					boolean consume = true;
 					res.setStatus(statoServletResponse);
+					
+					// esito calcolato prima del sendResponse, per non consumare il messaggio
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+							responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
+							(pddContext!=null ? pddContext.getContext() : null));
 					
 					// contenuto
 					Utilities.printFreeMemory("RicezioneContenutiApplicativiDirect - Pre scrittura risposta");
@@ -844,10 +850,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				res.setStatus(statoServletResponse);
 				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
+				
 				res.sendResponse(response);
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 			}			
 			else{
 				// httpstatus
@@ -861,7 +871,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				}
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 				// carico-vuoto
 			}
@@ -882,6 +894,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			try{
 				byte [] rispostaErrore = null;
 				List<Integer> returnCode = new ArrayList<Integer>();
+				InformazioniErroriInfrastrutturali informazioniErrori_error = null;
 				if( (responseMessage!=null && responseMessage.getParseException() != null) ||
 						(pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
 					ParseException parseException = null;
@@ -904,10 +917,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 							returnCode);
 					
-					InformazioniErroriInfrastrutturali informazioniErrori_error = new InformazioniErroriInfrastrutturali();
+					informazioniErrori_error = new InformazioniErroriInfrastrutturali();
 					informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
-					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),null, context.getProprietaErroreAppl(), informazioniErrori_error,
-							(pddContext!=null ? pddContext.getContext() : null));
 				} 
 				else{
 					rispostaErrore = this.generatoreErrore.buildAsByteArray(IntegrationError.INTERNAL_ERROR,
@@ -923,11 +934,18 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				
 				// httpstatus
 				//statoServletResponse = 500; // Nella servlet con sbustamento non devo ritornare 500
+				statoServletResponse = 200;
 				if(returnCode!=null && returnCode.size()>0){
-					res.setStatus(returnCode.get(0));
+					statoServletResponse = returnCode.get(0);
 				}
-				else{
-					res.setStatus(200);
+				res.setStatus(statoServletResponse);
+				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				if(informazioniErrori_error!=null) {
+					esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),
+							statoServletResponse, requestInfo.getIntegrationServiceBinding(),
+							null, context.getProprietaErroreAppl(), informazioniErrori_error,
+							(pddContext!=null ? pddContext.getContext() : null));
 				}
 				
 				// content type

@@ -782,8 +782,6 @@ public class RicezioneBusteService  {
     			ServicesUtils.setContentType(responseMessage, res);
 
 				// http status
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 				boolean consume = true;
 				if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding()) ){
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
@@ -803,6 +801,12 @@ public class RicezioneBusteService  {
 					}
 				}
 				res.setStatus(statoServletResponse);
+				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getProtocolServiceBinding(),
+						responseMessage, proprietaErroreAppl,informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 				
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -858,10 +862,14 @@ public class RicezioneBusteService  {
 				}
 				res.setStatus(statoServletResponse);
 				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getProtocolServiceBinding(),
+						responseMessage, proprietaErroreAppl,informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
+				
 				res.sendResponse(response);
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 			}
 			else{
 				if(responseMessage!=null && responseMessage.getForcedResponseCode()!=null) {
@@ -874,9 +882,11 @@ public class RicezioneBusteService  {
 				}
 				res.setStatus(statoServletResponse);
 				httpEmptyResponse = true;
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
-						(pddContext!=null ? pddContext.getContext() : null));
 				// carico-vuoto
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getProtocolServiceBinding(),
+						responseMessage, proprietaErroreAppl,informazioniErrori,
+						(pddContext!=null ? pddContext.getContext() : null));
 			}
 			
 		}catch(Throwable e){
@@ -921,16 +931,20 @@ public class RicezioneBusteService  {
     			ServicesUtils.setContentType(responseMessageError, res);
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
-				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessageError, proprietaErroreAppl, informazioniErrori_error,
-						(pddContext!=null ? pddContext.getContext() : null));
 				if(ServiceBinding.SOAP.equals(responseMessageError.getServiceBinding()) ){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;
-						res.setStatus(500);
+						res.setStatus(statoServletResponse);
 						descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
 					}
 				}
+				
+				// esito calcolato prima del sendResponse, per non consumare il messaggio
+				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
+						statoServletResponse, requestInfo.getProtocolServiceBinding(),
+						responseMessageError, proprietaErroreAppl, informazioniErrori_error,
+						(pddContext!=null ? pddContext.getContext() : null));
 				
 				// Il contentLenght, nel caso di TransferLengthModes.CONTENT_LENGTH e' gia' stato calcolato
 				// con una writeTo senza consume. Riuso il solito metodo per evitare differenze di serializzazione
@@ -941,7 +955,7 @@ public class RicezioneBusteService  {
 					//res.sendResponse(responseMessageError, true);
 					res.sendResponse(responseMessageError, false); // può essere usato nel post out response handler
 				}
-			
+							
 			}catch(Exception error){
 				
 				if(!erroreConnessioneClient){

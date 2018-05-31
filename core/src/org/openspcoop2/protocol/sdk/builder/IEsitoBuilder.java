@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.sdk.builder;
 import java.util.Hashtable;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -56,7 +57,9 @@ public interface IEsitoBuilder extends IComponentFactory {
 	 * @return Esito della transazione
 	 * @throws ProtocolException
 	 */
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, 
+			int returnCode, ServiceBinding serviceBinding,			
+			OpenSPCoop2Message message,
 			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException;
 		
 	/**
@@ -70,7 +73,9 @@ public interface IEsitoBuilder extends IComponentFactory {
 	 * @return Esito della transazione
 	 * @throws ProtocolException
 	 */
-	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext, OpenSPCoop2Message message,
+	public EsitoTransazione getEsito(TransportRequestContext transportRequestContext,
+			int returnCode, ServiceBinding serviceBinding,
+			OpenSPCoop2Message message,
 			ProprietaErroreApplicativo erroreApplicativo,
 			InformazioniErroriInfrastrutturali informazioniErroriInfrastrutturali, Hashtable<String, Object> context) throws ProtocolException;
 

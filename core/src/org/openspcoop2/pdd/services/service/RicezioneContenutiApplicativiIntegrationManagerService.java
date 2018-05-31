@@ -674,7 +674,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			//	IntepretazioneRisposta
 			if(msgResponse!=null){
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext,
+						200, requestInfo.getIntegrationServiceBinding(),
+						 msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
 						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));			
 												
@@ -735,7 +737,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						}
 					}finally{
 						// ricalcolo esito
-						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, 
+								500, requestInfo.getIntegrationServiceBinding(),
+								msgResponse, 
 								context.getProprietaErroreAppl(), informazioniErrori, 
 								(context.getPddContext()!=null ? context.getPddContext().getContext() : null));		
 					}
@@ -776,7 +780,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						}
 					}finally{
 						// ricalcolo esito
-						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+						esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, 
+								500, requestInfo.getIntegrationServiceBinding(),
+								msgResponse, 
 								context.getProprietaErroreAppl(), informazioniErrori, 
 								(context.getPddContext()!=null ?context.getPddContext().getContext() : null));		
 					}
@@ -795,7 +801,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				*/
 				msgReturn = new IntegrationManagerMessage();
 				
-				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, msgResponse, 
+				esito = protocolFactory.createEsitoBuilder().getEsito(urlProtocolContext, 
+						200, requestInfo.getIntegrationServiceBinding(),
+						msgResponse, 
 						context.getProprietaErroreAppl(), informazioniErrori, 
 						(context.getPddContext()!=null ? context.getPddContext().getContext() : null));	
 				// ok oneway

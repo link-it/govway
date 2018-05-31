@@ -65,7 +65,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	private static ConfigurazioneGenerale configurazioneGenerale = null;
-	protected ConfigurazioneGenerale getConfigurazioneControlloTraffico(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public ConfigurazioneGenerale getConfigurazioneControlloTraffico(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		if( this.configurazioneDinamica || ConfigurazionePdD_controlloTraffico.configurazioneGenerale==null){
 			ConnectionResource cr = null;
@@ -100,7 +100,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	protected ElencoIdPolicyAttive getElencoIdPolicyAttive(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public ElencoIdPolicyAttive getElencoIdPolicyAttive(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 				
 		ConnectionResource cr = null;
 		try{
@@ -140,7 +140,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	protected AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public AttivazionePolicy getAttivazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		ConnectionResource cr = null;
 		try{
@@ -174,7 +174,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	protected ElencoIdPolicy getElencoIdPolicy(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public ElencoIdPolicy getElencoIdPolicy(Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		ConnectionResource cr = null;
 		try{
@@ -214,7 +214,7 @@ public class ConfigurazionePdD_controlloTraffico {
 	
 	
 	
-	protected ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public ConfigurazionePolicy getConfigurazionePolicy(Connection connectionPdD, String id) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		ConnectionResource cr = null;
 		try{
