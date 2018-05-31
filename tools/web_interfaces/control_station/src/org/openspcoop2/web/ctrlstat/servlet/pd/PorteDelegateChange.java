@@ -247,6 +247,10 @@ public final class PorteDelegateChange extends Action {
 			if(pde.getRuoli()!=null){
 				numRuoli = pde.getRuoli().sizeRuoloList();
 			}
+			int numScope = 0;
+			if(pde.getScope()!=null){
+				numScope = pde.getScope().sizeScopeList();
+			}
 			String statoMessageSecurity  = pde.getStatoMessageSecurity() ;
 
 			// Stato MTOM
@@ -411,6 +415,19 @@ public final class PorteDelegateChange extends Action {
 				gestioneTokenIntrospection = "";
 				gestioneTokenUserInfo = "";
 				gestioneTokenTokenForward = "";
+			}
+			
+			String autorizzazioneScope = null;
+			String autorizzazioneScopeMatch = null;
+			
+			if(pde.getScope() != null) {
+				autorizzazioneScope =  pde.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+								
+				if(pde.getScope()!=null && pde.getScope().getMatch()!=null){
+					autorizzazioneScopeMatch = pde.getScope().getMatch().getValue();
+				}
+			} else {
+				autorizzazioneScope = "";
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -798,7 +815,9 @@ public final class PorteDelegateChange extends Action {
 						servS, as,serviceBinding,
 						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
-						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,
+						gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 				
@@ -953,7 +972,9 @@ public final class PorteDelegateChange extends Action {
 						servS, as,serviceBinding,
 						statoPorta,usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pde.getRicercaPortaAzioneDelegata()), 
-						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						(pde.getAzione()!=null ? pde.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,
+						gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, idFruizione, dati);
 

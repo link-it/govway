@@ -230,6 +230,10 @@ public final class PorteApplicativeChange extends Action {
 			if(pa.getRuoli()!=null){
 				numRuoli = pa.getRuoli().sizeRuoloList();
 			}
+			int numScope = 0;
+			if(pa.getScope()!=null){
+				numScope = pa.getScope().sizeScopeList();
+			}
 			
 			String[] servizioApplicativoList = null;
 			Long idSa = null;
@@ -419,6 +423,19 @@ public final class PorteApplicativeChange extends Action {
 				gestioneTokenIntrospection = "";
 				gestioneTokenUserInfo = "";
 				gestioneTokenTokenForward = "";
+			}
+			
+			String autorizzazioneScope = null;
+			String autorizzazioneScopeMatch = null;
+			
+			if(pa.getScope() != null) {
+				autorizzazioneScope =  pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+								
+				if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
+					autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
+				}
+			} else {
+				autorizzazioneScope = "";
 			}
 			
 			// se ho modificato il soggetto ricalcolo il servizio e il service binding
@@ -823,7 +840,8 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 
@@ -988,7 +1006,8 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 

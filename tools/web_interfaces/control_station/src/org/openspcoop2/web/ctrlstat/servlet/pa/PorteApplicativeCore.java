@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.GestioneToken;
@@ -39,8 +40,10 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -79,7 +82,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 	public void configureControlloAccessiPortaApplicativa(PortaApplicativa pa,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
-			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato) {
+			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch) {
 		pa.setAutenticazione(erogazioneAutenticazione);
 		if(erogazioneAutenticazioneOpzionale != null){
 			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
@@ -127,6 +130,31 @@ public class PorteApplicativeCore extends ControlStationCore {
 			soggetto.setTipo(idErogazioneSoggettoAutenticato.getTipo());
 			soggetto.setNome(idErogazioneSoggettoAutenticato.getNome()); 
 			pa.getSoggetti().addSoggetto(soggetto);
+		}
+		
+		if(ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneScope)) {
+			if(pa.getScope() == null)
+				pa.setScope(new AutorizzazioneScope());
+			
+			pa.getScope().setStato(StatoFunzionalita.ABILITATO); 
+		}
+		// scope
+		if(erogazioneScope!=null && !"".equals(erogazioneScope) && !"-".equals(erogazioneScope)){
+			if(pa.getScope() == null) {
+				pa.setScope(new AutorizzazioneScope());
+			}
+			Scope scope = new Scope();
+			scope.setNome(erogazioneScope);
+			pa.getScope().addScope(scope);
+		}
+		if(erogazioneAutorizzazioneScopeMatch!=null && !"".equals(erogazioneAutorizzazioneScopeMatch)){
+			ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(erogazioneAutorizzazioneScopeMatch);
+			if(scopeTipoMatch!=null){
+				if(pa.getScope()==null){
+					pa.setScope(new AutorizzazioneScope());
+				}
+				pa.getScope().setMatch(scopeTipoMatch);
+			}
 		}
 	}
 	
@@ -886,6 +914,28 @@ public class PorteApplicativeCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().portaApplicativaRuoliList(idPA, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public List<String> portaApplicativaScopeList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "portaApplicativaScopeList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().portaApplicativaScopeList(idPA, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

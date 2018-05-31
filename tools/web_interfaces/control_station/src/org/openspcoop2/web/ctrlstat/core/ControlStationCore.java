@@ -86,6 +86,7 @@ import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -4659,6 +4660,43 @@ public class ControlStationCore {
 		} catch (DriverRegistroServiziNotFound de) {
 			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
 			return new ArrayList<IDRuolo>();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<String> getAllScope(FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException {
+		List<String> returnList = new ArrayList<>();
+		List<IDScope> list = this.getAllIdScope(filtroRicerca);
+		for (IDScope idScope : list) {
+			returnList.add(idScope.getNome());
+		}
+		return returnList;
+	}
+	public List<IDScope> getAllIdScope(FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAllIdScope";
+		DriverControlStationDB driver = null;
+
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+	
+				return driver.getDriverRegistroServiziDB().getAllIdScope(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdScope(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			return new ArrayList<IDScope>();
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

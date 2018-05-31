@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
@@ -160,6 +162,9 @@ public final class PorteDelegateAdd extends Action {
 			String gestioneTokenUserInfo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			
 			if(sp == null) {
 				tiposp = "";
 				sp = "";
@@ -186,6 +191,7 @@ public final class PorteDelegateAdd extends Action {
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA =0;
 			int numRuoli =0;
+			int numScope = 0;
 			String statoMessageSecurity  = "";
 			String statoMTOM  = "";
 			int numCorrelazioneReq =0; 
@@ -486,6 +492,10 @@ public final class PorteDelegateAdd extends Action {
 					gestioneTokenUserInfo = "";
 					gestioneTokenTokenForward = "";
 				}
+				
+				if(autorizzazioneScope == null) {
+					autorizzazioneScope = "";
+				}
 
 				// i pattern sono i nomi
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.ADD, 
@@ -507,7 +517,8 @@ public final class PorteDelegateAdd extends Action {
 						servS,as,serviceBinding,
 						statoPorta,false,false,
 						false,null,
-						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 
@@ -555,8 +566,8 @@ public final class PorteDelegateAdd extends Action {
 						servS,as,serviceBinding,
 						statoPorta,false,false,
 						false,null,
-						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward
-						);
+						gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 
@@ -615,6 +626,21 @@ public final class PorteDelegateAdd extends Action {
 						portaDelegata.setRuoli(new AutorizzazioneRuoli());
 					}
 					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
+				}
+			}
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
+				if(portaDelegata.getScope() == null)
+					portaDelegata.setScope(new AutorizzazioneScope());
+				
+				portaDelegata.getScope().setStato(StatoFunzionalita.ABILITATO); 
+			}
+			if(autorizzazioneScopeMatch!=null && !"".equals(autorizzazioneScopeMatch)){
+				ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(autorizzazioneScopeMatch);
+				if(scopeTipoMatch!=null){
+					if(portaDelegata.getScope()==null){
+						portaDelegata.setScope(new AutorizzazioneScope());
+					}
+					portaDelegata.getScope().setMatch(scopeTipoMatch);
 				}
 			}
 			

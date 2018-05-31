@@ -669,39 +669,29 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 
 				if(gestioneFruitori) {
 					
 					if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
 							fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
-							true, true, null, null)==false){
+							true, true, null, null,gestioneToken, gestioneTokenPolicy, 
+							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 						return false;
 					}
-					
-					if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, true, null)) {
-						return false;
-					}
-		
 				}
 				else {
 				
 					if(this.controlloAccessiCheck(tipoOp, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, 
 							erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-							isSupportatoAutenticazione, false, null, null)==false){
+							isSupportatoAutenticazione, false, null, null,gestioneToken, gestioneTokenPolicy, 
+							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 						return false;
 					}
-					
-					if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-							gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, false, null)) {
-						return false;
-					}
-		
 				}
-				
-				
 			}
 			
 			
@@ -926,25 +916,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 				}
 				
-				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
-						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
-						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
-						true, true, null, null)==false){
-					return false;
-				}
-				
 				String gestioneToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 				String gestioneTokenPolicy = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 				String gestioneTokenValidazioneInput = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 				String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-
-				if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, true, null)) {
+				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+				
+				if(this.controlloAccessiCheck(tipoOp, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
+						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, 
+						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
+						true, true, null, null,gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 					return false;
 				}
-	
 			}
 
 			return true;
@@ -3312,7 +3299,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruizioneServizioApplicativo,String fruizioneRuolo,String fruizioneAutenticazione,String fruizioneAutenticazioneOpzionale, String fruizioneAutorizzazione,
 			String fruizioneAutorizzazioneAutenticati,String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
 			List<String> saList,String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception{
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch) throws Exception{
 
 		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
@@ -4086,6 +4074,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 		}
 		
+		boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput)); 
 
 		// Porta Applicativa e Servizio Applicativo Erogatore
 		if (tipoOp.equals(TipoOperazione.ADD) && !ServletUtils.isCheckBoxEnabled(servcorr) && generaPACheckSoggetto) {
@@ -4109,8 +4098,6 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo Accesso
 			
-			this.controlloAccessi(dati);
-			
 			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, 
@@ -4121,15 +4108,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
-					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
+					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
 		}
 		
 		if(tipoOp.equals(TipoOperazione.ADD) && gestioneFruitori) {
 			
 			// Controllo Accesso Fruizione
-			
-			this.controlloAccessi(dati);
 			
 			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
 		
@@ -4140,7 +4125,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 					fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 					fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
-					false, true, contaListe, true, false);
+					false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
 		}
 
@@ -4877,7 +4862,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			List<String> saList, ServiceBinding serviceBinding, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
 			String azioneConnettore, String azioneConnettoreIdPorta, String accessoDaAPSParametro, Integer parentPD,
 			String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch) throws Exception {
 		
 		boolean isRuoloNormale = !(correlato != null && correlato.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO));
 
@@ -4982,7 +4968,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 			if(isSoggettoGestitoPorta){
 				
-				this.controlloAccessi(dati);
+				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 				
 				this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
 				
@@ -4993,7 +4979,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 						fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 						fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
-						false, true, contaListe, true, false);
+						false, true, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
 	
 			}
 
@@ -5767,7 +5753,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String erogazioneRuolo, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
 			List<String> soggettiAutenticati,  List<String> soggettiAutenticatiLabel, String soggettoAutenticato,
 			String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope, String scope, String autorizzazioneScopeMatch) throws Exception {
 		
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -5849,9 +5836,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		if(!modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			// Controllo Accesso
-			
-			this.controlloAccessi(dati);
 			
 			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
 			
@@ -5862,7 +5848,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
 					erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch, 
-					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false);
+					false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
 		}
 		
 		
@@ -5934,25 +5920,22 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			
-			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, false, pa, ruoli)==false){
-				return false;
-			}
-			
 			String gestioneToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			String gestioneTokenPolicy = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 			String gestioneTokenValidazioneInput = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 			String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 			String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
-			if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, false, pa)) {
+			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 				return false;
 			}
- 
 		}
 		
 		return true;
@@ -6019,22 +6002,20 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 			}
 			
-			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, true, pd, ruoli)==false){
-				return false;
-			}
-			
 			String gestioneToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 			String gestioneTokenPolicy = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 			String gestioneTokenValidazioneInput = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 			String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 			String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+			String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 			
-			if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, true, pd)) {
+			if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+					autorizzazioneRuoliTipologia, ruoloMatch, 
+					isSupportatoAutenticazione, true, pd, ruoli,gestioneToken, gestioneTokenPolicy, 
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 				return false;
 			}
 		}
@@ -6053,7 +6034,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String fruizioneAutorizzazioneRuoli, String fruizioneRuolo, String fruizioneAutorizzazioneRuoliTipologia,
 			String fruizioneAutorizzazioneRuoliMatch, String fruizioneServizioApplicativo,
 			String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception{
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope,  String scope, String autorizzazioneScopeMatch) throws Exception{
 		
 		String tipologia = ServletUtils.getObjectFromSession(this.session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 		boolean gestioneFruitori = false;
@@ -6142,8 +6124,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			
-			this.controlloAccessi(dati);
-		
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
+			
 			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
@@ -6153,7 +6135,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 				fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
 				fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, 
-				false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, true, false);
+				false, erogazioneIsSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,null,0,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
 		}
 		
 		return dati;

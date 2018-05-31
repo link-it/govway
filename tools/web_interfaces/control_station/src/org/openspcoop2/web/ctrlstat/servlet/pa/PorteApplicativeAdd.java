@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -49,6 +50,7 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
@@ -175,6 +177,9 @@ public final class PorteApplicativeAdd extends Action {
 			String gestioneTokenUserInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -239,6 +244,7 @@ public final class PorteApplicativeAdd extends Action {
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA = 0;
 			int numRuoli =0;
+			int numScope = 0;
 			String statoMessageSecurity  =  "";
 			String statoMTOM  = "";
 			int numCorrelazioneReq =0; 
@@ -490,6 +496,10 @@ public final class PorteApplicativeAdd extends Action {
 					gestioneTokenUserInfo = "";
 					gestioneTokenTokenForward = "";
 				}
+				
+				if(autorizzazioneScope == null) {
+					autorizzazioneScope = "";
+				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, azioniListLabel,
@@ -503,7 +513,8 @@ public final class PorteApplicativeAdd extends Action {
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta, modeaz,  azid,  azione, forceWsdlBased,false,false,
-						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 
@@ -545,7 +556,8 @@ public final class PorteApplicativeAdd extends Action {
 						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
 						servS,as,serviceBinding,
 						statoPorta, modeaz,  azid, azione, forceWsdlBased, false,false,
-						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward);
+						false,null,gestioneToken,policyLabels, policyValues,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
 
@@ -596,6 +608,21 @@ public final class PorteApplicativeAdd extends Action {
 						pa.setRuoli(new AutorizzazioneRuoli());
 					}
 					pa.getRuoli().setMatch(tipoRuoloMatch);
+				}
+			}
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
+				if(pa.getScope() == null)
+					pa.setScope(new AutorizzazioneScope());
+				
+				pa.getScope().setStato(StatoFunzionalita.ABILITATO); 
+			}
+			if(autorizzazioneScopeMatch!=null && !"".equals(autorizzazioneScopeMatch)){
+				ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(autorizzazioneScopeMatch);
+				if(scopeTipoMatch!=null){
+					if(pa.getScope()==null){
+						pa.setScope(new AutorizzazioneScope());
+					}
+					pa.getScope().setMatch(scopeTipoMatch);
 				}
 			}
 			

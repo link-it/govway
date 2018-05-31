@@ -142,8 +142,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
 	public final static String LABEL_PARAMETRO_SCOPE = "Nome";
 	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA = "Fonte";
-	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
-	public final static String LABEL_PARAMETRO_SCOPE_MATCH = "Ruoli Richiesti";
+	public final static String LABEL_PARAMETRO_SCOPE_TIPOLOGIA_XACML_POLICY = "Fonte Scope";
+	public final static String LABEL_PARAMETRO_SCOPE_MATCH = "Scope Richiesti";
 	public final static String LABEL_PARAMETRO_SCOPE_MATCH_ALL = "tutti";
 	public final static String LABEL_PARAMETRO_SCOPE_MATCH_ANY = "almeno uno";
 	public final static String LABEL_PARAMETRO_SCOPE_CONTESTO = "Contesto";
@@ -158,6 +158,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Applicativi Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Soggetti Autenticati";
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "Scope";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Tipo";
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Regole";
@@ -229,6 +230,7 @@ public class CostantiControlStation {
 	public final static String LABEL_QUALSIASI = "Qualsiasi";
 	public final static String LABEL_DEFAULT = "Default";
 	public final static String LABEL_NESSUNO = "Nessuno";
+	public final static String LABEL_ABILITATO = "Abilitato";
 	
 	public final static String LABEL_DUMP = "Dump";
 	public final static String LABEL_REGISTRAZIONE_MESSAGGI = "Registrazione Messaggi";
@@ -296,6 +298,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_RUOLO = "ruolo";
 	public final static String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
 	public final static String PARAMETRO_RUOLO_MATCH = "ruoloMatch";
+	public final static String PARAMETRO_SCOPE = "scope";
+	public final static String PARAMETRO_SCOPE_MATCH = "scopeMatch";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE = "autenticazione";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM = "autenticazioneCustom";
 	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "autenticazioneOpzionale";
@@ -303,6 +307,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "autorizzazioneCustom";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE = "autorizzazioneAutenticazione";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "autorizzazioneRuoli";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE = "autorizzazioneScope";
 	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_SCADENZA_CORRELAZIONE_APPLICATIVA = "scadcorr";
 	public final static String PARAMETRO_APPLICA_MODIFICA = "applicaMod";
@@ -482,8 +487,11 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_LA_PORTA_CONTIENE_DEI_RUOLI_XX_CHE_NON_SONO_COMPATIBILI_CON_LA_NUOVA_FONTE_SCELTA = "La porta contiene gi&agrave; dei ruoli ({0}) che non sono compatibili con la nuova {1} ''{2}'' scelta.";
 	public static final String MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE_TRA_XX_E_YY = "Selezionare almeno una modalit&agrave; di autorizzazione tra ''{0}'' e ''{1}''";
 	public static final String MESSAGGIO_ERRORE_IL_RUOLO_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO = "Il ruolo ''{0}'' &egrave; gi&agrave; stato associata al soggetto";
+	public static final String MESSAGGIO_ERRORE_LO_SCOPE_XX_E_GIA_STATO_ASSOCIATA_AL_SOGGETTO = "Lo scope ''{0}'' &egrave; gi&agrave; stato associata al soggetto";
 	public static final String MESSAGGIO_ERRORE_NON_ESISTONO_RUOLI_ASSOCIABILI_AL_SOGGETTO = "Non esistono ruoli associabili al soggetto";
+	public static final String MESSAGGIO_ERRORE_NON_ESISTONO_SCOPE_ASSOCIABILI_AL_SOGGETTO = "Non esistono scope associabili al soggetto";
 	public static final String MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_RUOLI_ASSOCIABILI_AL_SOGGETTO = "Non esistono ulteriori ruoli associabili al soggetto";
+	public static final String MESSAGGIO_ERRORE_NON_ESISTONO_ULTERIORI_SCOPE_ASSOCIABILI_AL_SOGGETTO = "Non esistono ulteriori scope associabili al soggetto";
 	public static final String MESSAGGIO_ERRORE_IL_CAMPO_XX_DEVE_RISPETTARE_IL_PATTERN_YY = "Il campo {0} deve rispettare il seguente pattern: {1}";
 	public static final String MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_XX = "La propriet&agrave; di MTOM {0} &egrave; gi&agrave; stato associata alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_PROPRIETA_DI_MTOM_GIA_ASSOCIATA_ALLA_PORTA_DELEGATA_XX = "La propriet&agrave; di MTOM {0} &egrave; gi&agrave; stato associata alla porta delegata {1}";
@@ -497,6 +505,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_NON_PUO_ESSERE_VUOTA = "Deve essere selezionata una Azione";
 	public static final String MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE = "L'azione scelta &egrave; gi&agrave; presente";
 	public static final String MESSAGGIO_ERRORE_RUOLI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i ruoli associati";
+	public static final String MESSAGGIO_ERRORE_SCOPE_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare gli scope associati";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare gli applicativi associati";
 	public static final String MESSAGGIO_ERRORE_SOGGETTI_PRESENTI_AUTORIZZAZIONE_DISABILITATA = "Non &egrave; possibile disabilitare l'autorizzazione senza prima di eliminare i soggetti associati";
 	public static final String MESSAGGIO_ERRORE_APPLICATIVI_PRESENTI_AUTENTICAZIONE_MODIFICATA = "Non &egrave; possibile modificare l'autenticazione senza prima di eliminare gli applicativi associati";

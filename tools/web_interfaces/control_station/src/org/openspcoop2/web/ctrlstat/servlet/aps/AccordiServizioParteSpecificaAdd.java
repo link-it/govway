@@ -376,6 +376,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String gestioneTokenUserInfo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
 			
 
 			if(apsHelper.isMultipart()){
@@ -1278,6 +1281,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneTokenTokenForward = "";
 				}
 				
+				if(scope ==null || "".equals(scope))
+					scope = "-";
+				if(autorizzazioneScope ==null)
+					autorizzazioneScope = "";
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -1301,7 +1309,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
 						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+						saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneScope,scope,autorizzazioneScopeMatch);
 
 				// Controllo se richiedere il connettore
 				
@@ -1462,7 +1471,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
 						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+						saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneScope,scope,autorizzazioneScopeMatch);
 
 				if(!connettoreStatic) {
 					boolean forceEnableConnettore = false;
@@ -1654,7 +1664,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							soggettiFruitoriList, soggettiFruitoriListLabel, this.providerSoggettoFruitore, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
 							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-							saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+							saFruitoriList,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+							autorizzazioneScope,scope,autorizzazioneScopeMatch);
 
 					if(!connettoreStatic) {
 					
@@ -1767,7 +1778,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						this.erogazioneAutenticazione, this.erogazioneAutenticazioneOpzionale,
 						this.erogazioneAutorizzazione, this.erogazioneAutorizzazioneAutenticati, this.erogazioneAutorizzazioneRuoli, this.erogazioneAutorizzazioneRuoliTipologia, this.erogazioneAutorizzazioneRuoliMatch,
-						nomeServizioApplicativoErogatore, this.erogazioneRuolo,idSoggettoAutenticatoErogazione);
+						nomeServizioApplicativoErogatore, this.erogazioneRuolo,idSoggettoAutenticatoErogazione,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
 				
@@ -1794,7 +1805,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
 						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,
 						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						this.fruizioneServizioApplicativo, this.fruizioneRuolo);
+						this.fruizioneServizioApplicativo, this.fruizioneRuolo,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
 							

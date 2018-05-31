@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.GestioneToken;
@@ -37,8 +38,10 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.Ruolo;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -79,7 +82,7 @@ public class PorteDelegateCore extends ControlStationCore {
 	public void configureControlloAccessiPortaDelegata(PortaDelegata portaDelegata, 
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			String fruizioneServizioApplicativo, String fruizioneRuolo) {
+			String fruizioneServizioApplicativo, String fruizioneRuolo, String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch) {
 		
 		portaDelegata.setAutenticazione(fruizioneAutenticazione);
 		if(fruizioneAutenticazioneOpzionale != null){
@@ -120,6 +123,30 @@ public class PorteDelegateCore extends ControlStationCore {
 			portaDelegata.getRuoli().addRuolo(ruolo);
 		}
 		
+		if(ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneScope)) {
+			if(portaDelegata.getScope() == null)
+				portaDelegata.setScope(new AutorizzazioneScope());
+			
+			portaDelegata.getScope().setStato(StatoFunzionalita.ABILITATO); 
+		}
+		// scope
+		if(fruizioneScope!=null && !"".equals(fruizioneScope) && !"-".equals(fruizioneScope)){
+			if(portaDelegata.getScope() == null) {
+				portaDelegata.setScope(new AutorizzazioneScope());
+			}
+			Scope scope = new Scope();
+			scope.setNome(fruizioneScope);
+			portaDelegata.getScope().addScope(scope);
+		}
+		if(fruizioneAutorizzazioneScopeMatch!=null && !"".equals(fruizioneAutorizzazioneScopeMatch)){
+			ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(fruizioneAutorizzazioneScopeMatch);
+			if(scopeTipoMatch!=null){
+				if(portaDelegata.getScope()==null){
+					portaDelegata.setScope(new AutorizzazioneScope());
+				}
+				portaDelegata.getScope().setMatch(scopeTipoMatch);
+			}
+		}
 	}
 	
 	public void configureControlloAccessiGestioneToken (PortaDelegata portaDelegata, String gestioneToken, String gestioneTokenPolicy, String gestioneTokenValidazioneInput, 
@@ -680,6 +707,28 @@ public class PorteDelegateCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().portaDelegataRuoliList(idPD, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public List<String> portaDelegataScopeList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "portaDelegataScopeList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().portaDelegataScopeList(idPD, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

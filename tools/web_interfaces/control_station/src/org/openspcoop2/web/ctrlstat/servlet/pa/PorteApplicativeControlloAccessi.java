@@ -33,10 +33,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -124,6 +126,9 @@ public class PorteApplicativeControlloAccessi extends Action {
 			String gestioneTokenUserInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -145,6 +150,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 			int numRuoli = 0;
 			if(pa.getRuoli()!=null){
 				numRuoli = pa.getRuoli().sizeRuoloList();
+			}
+			int numScope = 0;
+			if(pa.getScope()!=null){
+				numScope = pa.getScope().sizeScopeList();
 			}
 			
 			Search searchForCount = new Search(true,1);
@@ -197,6 +206,13 @@ public class PorteApplicativeControlloAccessi extends Action {
 					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
 			Parameter urlAutorizzazioneRuoliParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST , urlParmsAutorizzazioneRuoli);
 			String urlAutorizzazioneRuoli = urlAutorizzazioneRuoliParam.getValue();
+			
+			Parameter[] urlParmsAutorizzazioneScope = { 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id)	,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS,idAsps) };
+			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST , urlParmsAutorizzazioneScope); 
+			String urlAutorizzazioneScope = urlAutorizzazioneScopeParam.getValue();
 			
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI;
 			
@@ -305,12 +321,26 @@ public class PorteApplicativeControlloAccessi extends Action {
 					}
 				}
 
+				if(autorizzazioneScope == null) {
+					if(pa.getScope() != null) {
+						autorizzazioneScope =  pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+					} else {
+						autorizzazioneScope = "";
+					}
+				}
+				
+				if(autorizzazioneScopeMatch == null) {
+					if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
+						autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
+					}
+				}
+				
+				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				porteApplicativeHelper.controlloAccessi(dati);
-
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 				
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
@@ -321,7 +351,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, false, false);
+						confPers, isSupportatoAutenticazione, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -339,23 +369,20 @@ public class PorteApplicativeControlloAccessi extends Action {
 			boolean isOk = porteApplicativeHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli);
+					isSupportatoAutenticazione, isPortaDelegata, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch);
 					
-			if(isOk) {
-				isOk = porteApplicativeHelper.controlloAccessiGestioneTokenCheck(TipoOperazione.OTHER, gestioneToken, gestioneTokenPolicy, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, isPortaDelegata, pa);
-			}
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				porteApplicativeHelper.controlloAccessi(dati);
-				
 				porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 				
 				porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
+
+				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteApplicativeHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,pa,
@@ -363,7 +390,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, false, false);
+						confPers, isSupportatoAutenticazione, contaListe, false, false,
+						autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 				
 				porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -406,6 +434,23 @@ public class PorteApplicativeControlloAccessi extends Action {
 					pa.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
+				if(pa.getScope() == null)
+					pa.setScope(new AutorizzazioneScope());
+				
+				pa.getScope().setStato(StatoFunzionalita.ABILITATO); 
+			}
+			if(autorizzazioneScopeMatch!=null && !"".equals(autorizzazioneScopeMatch)){
+				ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(autorizzazioneScopeMatch);
+				if(scopeTipoMatch!=null){
+					if(pa.getScope()==null){
+						pa.setScope(new AutorizzazioneScope());
+					}
+					pa.getScope().setMatch(scopeTipoMatch);
+				}
+			}
+			
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			if(pa.getGestioneToken() == null)
@@ -536,8 +581,22 @@ public class PorteApplicativeControlloAccessi extends Action {
 				gestioneTokenTokenForward = "";
 			}
 			
-			porteApplicativeHelper.controlloAccessi(dati);
+			if(autorizzazioneScope == null) {
+				if(pa.getScope() != null) {
+					autorizzazioneScope =  pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+				} else {
+					autorizzazioneScope = "";
+				}
+			}
 			
+			if(autorizzazioneScopeMatch == null) {
+				if(pa.getScope()!=null && pa.getScope().getMatch()!=null){
+					autorizzazioneScopeMatch = pa.getScope().getMatch().getValue();
+				}
+			}
+			
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
+
 			porteApplicativeHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 			
 			porteApplicativeHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, pa);
@@ -548,7 +607,8 @@ public class PorteApplicativeControlloAccessi extends Action {
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeSoggettiPA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
-					confPers, isSupportatoAutenticazione, contaListe, false, false);
+					confPers, isSupportatoAutenticazione, contaListe, false, false
+					,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
 			porteApplicativeHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			

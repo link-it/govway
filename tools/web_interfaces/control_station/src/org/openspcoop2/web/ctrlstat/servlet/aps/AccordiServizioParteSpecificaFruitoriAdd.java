@@ -221,6 +221,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			String gestioneTokenUserInfo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
+			
 			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -633,6 +637,10 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						gestioneTokenUserInfo = "";
 						gestioneTokenTokenForward = "";
 					}
+					if(scope ==null || "".equals(scope))
+						scope = "-";
+					if(autorizzazioneScope ==null)
+						autorizzazioneScope = "";
 	
 					// default
 					if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
@@ -683,7 +691,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
 							null, null, null, null,
-							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+							autorizzazioneScope,scope,autorizzazioneScopeMatch);
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -809,7 +818,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 						saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-						null, null, null, null,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+						null, null, null, null,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneScope,scope,autorizzazioneScopeMatch);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, 
 						dati,null
@@ -953,7 +963,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
 							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 							saList,apcCore.toMessageServiceBinding(as.getServiceBinding()), apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica()),
-							null, null, null, null,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+							null, null, null, null,gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+							autorizzazioneScope,scope,autorizzazioneScopeMatch);
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, dati,null
 							,null,null,null,null,null,null,null,null,null);
@@ -1046,7 +1057,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
 						this.fruizioneAutenticazione, this.fruizioneAutenticazioneOpzionale,
 						this.fruizioneAutorizzazione, this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
-						this.fruizioneServizioApplicativo, this.fruizioneRuolo);
+						this.fruizioneServizioApplicativo, this.fruizioneRuolo,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
 							

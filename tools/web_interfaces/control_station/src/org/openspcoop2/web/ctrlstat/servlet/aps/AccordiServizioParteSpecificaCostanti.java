@@ -264,6 +264,7 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String LABEL_PARAMETRO_APS_TIPO_FILE = "Tipo";
 	public final static String LABEL_PARAMETRO_APS_NOME_FILE = "Nome";
 	public final static String LABEL_PARAMETRO_APS_RUOLO = "Ruolo";
+	public final static String LABEL_PARAMETRO_APS_SCOPE = "Scope";
 	public final static String LABEL_PARAMETRO_APS_THE_FILE = "Documento";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO = LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE;//"API";
 	public final static String LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_NOME = "Nome";

@@ -32,10 +32,12 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -123,6 +125,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			String gestioneTokenUserInfo = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -143,6 +148,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			int numRuoli = 0;
 			if(portaDelegata.getRuoli()!=null){
 				numRuoli = portaDelegata.getRuoli().sizeRuoloList();
+			}
+			int numScope = 0;
+			if(portaDelegata.getScope()!=null){
+				numScope = portaDelegata.getScope().sizeScopeList();
 			}
 			
 			int sizeFruitori = 0; 
@@ -180,6 +189,10 @@ public class PorteDelegateControlloAccessi extends Action {
 			Parameter[] urlParmsAutorizzazioneRuoli = {  pId,pIdSoggetto,pIdAsps,pIdFrizione };
 			Parameter urlAutorizzazioneRuoliParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST , urlParmsAutorizzazioneRuoli);
 			String urlAutorizzazioneRuoli = urlAutorizzazioneRuoliParam.getValue();
+			
+			Parameter[] urlParmsAutorizzazioneScope = {  pId,pIdSoggetto,pIdAsps,pIdFrizione };
+			Parameter urlAutorizzazioneScopeParam = new Parameter("", PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SCOPE_LIST , urlParmsAutorizzazioneScope);
+			String urlAutorizzazioneScope = urlAutorizzazioneScopeParam.getValue();
 			
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI;
 			
@@ -287,17 +300,31 @@ public class PorteDelegateControlloAccessi extends Action {
 						gestioneTokenTokenForward = "";
 					}
 				}
+				
+				if(autorizzazioneScope == null) {
+					if(portaDelegata.getScope() != null) {
+						autorizzazioneScope =  portaDelegata.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+					} else {
+						autorizzazioneScope = "";
+					}
+				}
+				
+				if(autorizzazioneScopeMatch == null) {
+					if(portaDelegata.getScope()!=null && portaDelegata.getScope().getMatch()!=null){
+						autorizzazioneScopeMatch = portaDelegata.getScope().getMatch().getValue();
+					}
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				porteDelegateHelper.controlloAccessi(dati);
-				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 				
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+
+				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -305,7 +332,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
+						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -323,24 +350,21 @@ public class PorteDelegateControlloAccessi extends Action {
 			boolean isOk = porteDelegateHelper.controlloAccessiCheck(TipoOperazione.OTHER, autenticazione, autenticazioneOpzionale, 
 					autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
 					autorizzazioneRuoliTipologia, ruoloMatch, 
-					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli);
+					 isSupportatoAutenticazione, isPortaDelegata, portaDelegata, ruoli,gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch);
 			
-			if(isOk) {
-				isOk = porteDelegateHelper.controlloAccessiGestioneTokenCheck(TipoOperazione.OTHER, gestioneToken, gestioneTokenPolicy, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, isPortaDelegata, portaDelegata);
-			}		
 			if (!isOk) {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				porteDelegateHelper.controlloAccessi(dati);
-				
 				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 				
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
 						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+				
+				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
 				// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 				porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -348,7 +372,7 @@ public class PorteDelegateControlloAccessi extends Action {
 						autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 						autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 						autorizzazioneRuoliTipologia, ruoloMatch,
-						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
+						confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 				
 				porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 				
@@ -391,6 +415,22 @@ public class PorteDelegateControlloAccessi extends Action {
 					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
 				}
 			}
+			if(ServletUtils.isCheckBoxEnabled(autorizzazioneScope )) {
+				if(portaDelegata.getScope() == null)
+					portaDelegata.setScope(new AutorizzazioneScope());
+				
+				portaDelegata.getScope().setStato(StatoFunzionalita.ABILITATO); 
+			}
+			if(autorizzazioneScopeMatch!=null && !"".equals(autorizzazioneScopeMatch)){
+				ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant(autorizzazioneScopeMatch);
+				if(scopeTipoMatch!=null){
+					if(portaDelegata.getScope()==null){
+						portaDelegata.setScope(new AutorizzazioneScope());
+					}
+					portaDelegata.getScope().setMatch(scopeTipoMatch);
+				}
+			}
+			
 			portaDelegata.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			
 			if(portaDelegata.getGestioneToken() == null)
@@ -520,12 +560,26 @@ public class PorteDelegateControlloAccessi extends Action {
 				gestioneTokenTokenForward = "";
 			}
 			
-			porteDelegateHelper.controlloAccessi(dati);
+			if(autorizzazioneScope == null) {
+				if(portaDelegata.getScope() != null) {
+					autorizzazioneScope =  portaDelegata.getScope().getStato().equals(StatoFunzionalita.ABILITATO) ? Costanti.CHECK_BOX_ENABLED : ""; 
+				} else {
+					autorizzazioneScope = "";
+				}
+			}
+			
+			if(autorizzazioneScopeMatch == null) {
+				if(portaDelegata.getScope()!=null && portaDelegata.getScope().getMatch()!=null){
+					autorizzazioneScopeMatch = portaDelegata.getScope().getMatch().getValue();
+				}
+			}
 			
 			porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
 			
 			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+		
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
 			// Tipo operazione = CHANGE per evitare di aggiungere if, questa e' a tutti gli effetti una servlet di CHANGE
 			porteDelegateHelper.controlloAccessiAutorizzazione(dati, TipoOperazione.CHANGE, servletChiamante,portaDelegata,
@@ -533,7 +587,7 @@ public class PorteDelegateControlloAccessi extends Action {
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, sizeFruitori, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
-					confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false);
+					confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
 			porteDelegateHelper.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 			

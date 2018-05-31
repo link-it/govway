@@ -447,12 +447,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 			
 			if (TipoOperazione.ADD.equals(tipoOp)){
-				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-						autorizzazioneRuoliTipologia, ruoloMatch, 
-						isSupportatoAutenticazione, false, pa, ruoli)==false){
-					return false;
-				}
+				
 				
 				String gestioneToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 				String gestioneTokenPolicy = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
@@ -460,12 +455,16 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 				
-				if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, false, pa)) {
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+						autorizzazioneRuoliTipologia, ruoloMatch, 
+						isSupportatoAutenticazione, false, pa, ruoli,gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 					return false;
 				}
-	
 			}
 			
 			if (TipoOperazione.CHANGE.equals(tipoOp) && isSupportatoAutenticazione) {
@@ -902,7 +901,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String statoPorta, String modeaz, String azid, String patternAzione, String forceWsdlBased, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault,
 			boolean ricercaPortaAzioneDelegata, String nomePortaDelegante,
 			String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1474,24 +1474,25 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 		}else {
-			this.controlloAccessi(dati);
 			// Pintori 29/11/2017 Gestione Accessi spostata nella servlet PorteApplicativeControlloAccessi,  in ADD devo mostrare comunque la form.
+			
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			
 			this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
 			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneRuoli = null;
+			String urlAutorizzazioneScope = null;
 			String servletChiamante = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_ADD;
 			
+			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+
 			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante, null,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, 0, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null, 
 					autorizzazioneRuoliTipologia, ruoloMatch,
-					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false);
-			
-			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
-
+					confPers, isSupportatoAutenticazioneSoggetti, contaListe, false, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
 			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		}
@@ -3545,6 +3546,109 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					e.addElement(de);
+		
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteApplicativeScopeList(String nomePorta, ISearch ricerca, List<String> lista)
+			throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String id = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE,
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id), 
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps));
+
+			int idLista = Liste.PORTE_APPLICATIVE_SCOPE;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(id));
+			String idporta = pa.getNome();
+
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+			
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+
+						this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(pa);
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, 
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id),
+					new Parameter( PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg),
+					new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)));
+			
+			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG;
+			
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPagLista,null));
+			}
+			else{
+				lstParam.add(new Parameter(labelPagLista,
+						PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST,
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID,id),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO,idsogg),
+						new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps)
+						));
+				lstParam.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RISULTATI_RICERCA, null));
+
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE, search);
+			}
+
+			// setto le label delle colonne
+			String[] labels = {CostantiControlStation.LABEL_PARAMETRO_SCOPE };
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<String> it = lista.iterator();
+				while (it.hasNext()) {
+					String scope = it.next();
+		
+					Vector<DataElement> e = new Vector<DataElement>();
+		
+					DataElement de = new DataElement();
+					de.setValue(scope);
+					de.setIdToRemove(scope);
 					e.addElement(de);
 		
 					dati.addElement(e);

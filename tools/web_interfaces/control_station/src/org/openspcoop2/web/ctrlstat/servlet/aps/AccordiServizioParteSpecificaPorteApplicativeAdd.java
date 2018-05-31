@@ -166,6 +166,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String gestioneTokenUserInfo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
+			
 			Properties parametersPOST = null;
 			
 			String endpointtype = apsHelper.readEndPointType();
@@ -587,6 +591,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						gestioneTokenUserInfo = "";
 						gestioneTokenTokenForward = "";
 					}
+					if(scope ==null || "".equals(scope))
+						scope = "-";
+					if(autorizzazioneScope ==null)
+						autorizzazioneScope = "";
+					
 					// solo in modalita' nuova
 					if(initConnettore) {
 						tipoconn = "";
@@ -678,7 +687,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 							erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
-							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+							autorizzazioneScope,scope,autorizzazioneScopeMatch);
 					
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
@@ -751,7 +761,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
 						erogazioneAutorizzazioneRuoli, erogazioneRuolo, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,soggettiAutenticati,soggettiAutenticatiLabel,erogazioneSoggettoAutenticato,
-						gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+						gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,
+						autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -879,7 +890,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale,
 						erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, erogazioneAutorizzazioneRuoli, erogazioneAutorizzazioneRuoliTipologia, erogazioneAutorizzazioneRuoliMatch,
-						nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione);
+						nomeServizioApplicativoErogatore, erogazioneRuolo,idSoggettoAutenticatoErogazione,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				porteApplicativeCore.configureControlloAccessiGestioneToken(portaApplicativa, gestioneToken, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
 				

@@ -119,7 +119,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune aspc,ServiceBinding serviceBinding,
 			String statoPorta, boolean usataInConfigurazioni, boolean usataInConfigurazioneDefault,
 			boolean ricercaPortaAzioneDelegata, String nomePortaDelegante, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch) throws Exception {
 
 
 
@@ -693,15 +694,18 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 		}else {
-			this.controlloAccessi(dati);
+			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			
 			boolean isSupportatoAutenticazioneSoggetti = true; // sempre nelle porte delegate
 			Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 			
 			this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers , isSupportatoAutenticazioneSoggetti);
 			
+			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneRuoli = null;
+			String urlAutorizzazioneScope = null;
 			String servletChiamante = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_ADD;
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,
@@ -709,10 +713,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,
 					autorizzazioneRuoliTipologia, ruoloMatch,
-					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false);
+					confPers, isSupportatoAutenticazioneSoggetti, contaListe, true, false,autorizzazioneScope,urlAutorizzazioneScope,numScope,null,autorizzazioneScopeMatch,visualizzaSezioneScope);
 			
-			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
-			
+				
 			this.controlloAccessiAutorizzazioneContenuti(dati, autorizzazioneContenuti);
 		}
 		
@@ -1496,25 +1499,22 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			
 			if(tipoOp.equals(TipoOperazione.ADD)) {
-				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
-						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
-						autorizzazioneRuoliTipologia, ruoloMatch, 
-						true, true, null, ruoli)==false){
-					return false;
-				}
-				
 				String gestioneToken = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
 				String gestioneTokenPolicy = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
 				String gestioneTokenValidazioneInput = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 				String gestioneTokenIntrospection = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				String gestioneTokenUserInfo = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				String gestioneTokenTokenForward = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				String autorizzazioneScope = this.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+				String autorizzazioneScopeMatch = this.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
 				
-				if(!this.controlloAccessiGestioneTokenCheck(tipoOp, gestioneToken, gestioneTokenPolicy, 
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, true, null)) {
+				if(this.controlloAccessiCheck(tipoOp, autenticazione, autenticazioneOpzionale, 
+						autorizzazione, autorizzazioneAutenticati, autorizzazioneRuoli, 
+						autorizzazioneRuoliTipologia, ruoloMatch, 
+						true, true, null, ruoli,gestioneToken, gestioneTokenPolicy, 
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,autorizzazioneScopeMatch)==false){
 					return false;
 				}
-	
 			}
 
 			IDSoggetto idSoggettoFruitore = null; 
@@ -2273,6 +2273,114 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					DataElement de = new DataElement();
 					de.setValue(ruolo);
 					de.setIdToRemove(ruolo);
+					e.addElement(de);
+		
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void preparePorteDelegateScopeList(String nomePorta, ISearch ricerca, List<String> lista)
+			throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, this.session);
+			if(parentPD == null) parentPD = PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_NONE;
+			
+			String id = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String idsogg = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
+			String idAsps = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+			
+			String idFruizione = this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE);
+			if(idFruizione == null)
+				idFruizione = "";
+			
+			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
+			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS, idAsps);
+			Parameter pIdFrizione = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione);
+
+			ServletUtils.addListElementIntoSession(this.session, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_SCOPE, pId, pIdSoggetto, pIdAsps, pIdFrizione);
+
+			int idLista = Liste.PORTE_DELEGATE_SCOPE;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			PortaDelegata myPD = this.porteDelegateCore.getPortaDelegata(Integer.parseInt(id));
+			String idporta = myPD.getNome();
+
+			List<Parameter> lstParam = this.getTitoloPD(parentPD, idsogg, idAsps, idFruizione);
+			
+			String labelPerPorta = null;
+			if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+
+						this.porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(myPD);
+			}
+			else {
+				labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI_CONFIG_DI+idporta;
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, 
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, "" + myPD.getId()),
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_PORTA, myPD.getNome()),
+					new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, myPD.getIdSoggetto() + ""),
+					pIdAsps, new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_FRUIZIONE, idFruizione+ "")));
+			
+			String labelPagLista = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SCOPE_CONFIG;
+
+			Parameter pNomePorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME, idporta);
+
+			this.pd.setSearchLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE);
+			if(search.equals("")){
+				this.pd.setSearchDescription("");
+				lstParam.add(new Parameter(labelPagLista,null));
+			}
+			else{
+				lstParam.add(new Parameter(labelPagLista,
+						PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SCOPE_LIST, pId, pIdSoggetto, pNomePorta, pIdAsps, pIdFrizione	));
+				lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RISULTATI_RICERCA, null));
+
+			}
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				ServletUtils.enabledPageDataSearch(this.pd, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SCOPE, search);
+			}
+
+			// setto le label delle colonne
+			String[] labels = {CostantiControlStation.LABEL_PARAMETRO_SCOPE };
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<String> it = lista.iterator();
+				while (it.hasNext()) {
+					String scope = it.next();
+		
+					Vector<DataElement> e = new Vector<DataElement>();
+		
+					DataElement de = new DataElement();
+					de.setValue(scope);
+					de.setIdToRemove(scope);
 					e.addElement(de);
 		
 					dati.addElement(e);

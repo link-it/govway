@@ -50,7 +50,7 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "porteApplicativeServizioApplicativo";
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RUOLI = "porteApplicativeRuoli";
-	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SCOPE = "porteApplicativeScope";
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = "porteApplicativeCorrelazioneApplicativa";
 	public final static ForwardParams TIPO_OPERAZIONE_CORRELAZIONE_APPLICATIVA = ForwardParams.OTHER("");
@@ -152,6 +152,16 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST);
+	}
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_SCOPE+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_SCOPE = new Vector<String>();
+	static{
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_ADD);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_DELETE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SCOPE.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_SCOPE_LIST);
 	}
 
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA+".do";
@@ -390,6 +400,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO = "Connettore Ridefinito";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO_DI = "Connettore Ridefinito di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE = "Scope";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
@@ -399,6 +410,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTO_CONFIG = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_CONFIG = "Ruoli";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG_DI = "Scope di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SCOPE_CONFIG = "Scope";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Sicurezza Messaggio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_CONFIG_DI = "Sicurezza Messaggio di ";

@@ -158,6 +158,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String gestioneTokenUserInfo = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 			String gestioneTokenTokenForward = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 			
+			String autorizzazioneScope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+			String autorizzazioneScopeMatch = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+			String scope = apsHelper.getParameter(CostantiControlStation.PARAMETRO_SCOPE);
+			
 			Properties parametersPOST = null;
 			
 			String endpointtype = apsHelper.readEndPointType();
@@ -503,6 +507,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						gestioneTokenUserInfo = "";
 						gestioneTokenTokenForward = "";
 					}
+					if(scope ==null || "".equals(scope))
+						scope = "-";
+					if(autorizzazioneScope ==null)
+						autorizzazioneScope = "";
 					// solo in modalita' nuova
 					if(initConnettore) {
 						tipoconn = "";
@@ -594,7 +602,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 							fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
-							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+							gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -665,7 +673,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
 						fruizioneAutorizzazioneRuoli, fruizioneRuolo, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch, fruizioneServizioApplicativo,
-						gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
+						gestioneToken, policyLabels, policyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
@@ -772,7 +780,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 				porteDelegateCore.configureControlloAccessiPortaDelegata(portaDelegata, 
 						fruizioneAutenticazione, fruizioneAutenticazioneOpzionale,
 						fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch,
-						fruizioneServizioApplicativo, fruizioneRuolo);
+						fruizioneServizioApplicativo, fruizioneRuolo,autorizzazioneScope,scope,autorizzazioneScopeMatch);
 				
 				porteDelegateCore.configureControlloAccessiGestioneToken(portaDelegata, gestioneToken, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward);
 			}
