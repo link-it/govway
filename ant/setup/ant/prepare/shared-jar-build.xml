@@ -37,51 +37,61 @@
 		</antcall>
 		
 		<antcall target="build_openspcoop2_utils_jar" >
-	    	<param name="dist_utils" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist_utils" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="openspcoop2" value="${openspcoop2}"/>
 			<param name="src_utils" value="${src_utils}"/>
 	 	</antcall>
 		
 		<antcall target="build_openspcoop2_genericProject_jar" >
-	    	<param name="dist_genericProject" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist_genericProject" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="openspcoop2" value="${openspcoop2}"/>
 			<param name="src_genericProject" value="${src_genericProject}"/>
 	 	</antcall>
 				
 		<antcall target="build_openspcoop2_schemi_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>
 		<antcall target="build_openspcoop2_message_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>	
 		<antcall target="build_openspcoop2_core_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>	
 		<antcall target="build_openspcoop2_protocol-api_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+		<antcall target="build_openspcoop2_monitor-api_jar" >
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>
 		<antcall target="build_openspcoop2_security_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>	
 		<antcall target="build_openspcoop2_protocol_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src" value="${core}/src"/>
+	 	</antcall>
+		<antcall target="build_openspcoop2_monitor_jar" >
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>
 		<antcall target="build_openspcoop2_pdd_jar" >
-	    	<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
+	    		<param name="dist" value="${deploy_sw_openspcoop2_jars}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src" value="${core}/src"/>
 	 	</antcall>

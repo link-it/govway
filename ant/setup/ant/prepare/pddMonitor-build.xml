@@ -24,15 +24,8 @@
 	<target name="_buildPddMonitor">
 
 		<mkdir dir="${deploy_sw}/${TIPO_AS}/dist"/>
-		<antcall target="compile_openspcoop2_pddMonitor">
-			<param name="dist_pddMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
-			<param name="rootDir" value="${rootDir}"/>
-			<param name="src_pddMonitor" value="${src_pddMonitor}"/>
-			<param name="openspcoop2" value="${rootDir}"/>
-			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
-	 	</antcall>
-		<antcall target="war_openspcoop2_pddMonitor">
-	    	<param name="as" value="${TIPO_AS}" />
+		<antcall target="build_pddMonitor">
+		    	<param name="as" value="${TIPO_AS}" />
 			<param name="dist_pddMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_pddMonitor" value="${src_pddMonitor}"/>

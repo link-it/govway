@@ -300,7 +300,7 @@
 	
 
 	<!-- Creazione Plugins di ControlStation -->
-	<target name="plugins" description="Crea l'elenco dei jar/properties installati come plugins della pddMonitor">
+	<target name="plugins_pddMonitor" description="Crea l'elenco dei jar/properties installati come plugins della pddMonitor">
 		<!-- jar -->
 		<fileset dir="${plugins_pddMonitor}" id="plugins.jar">
 			<include name="**/*.jar" />
@@ -405,7 +405,7 @@
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_pddMonitor" depends="plugins,compile_dipendenze,compile_pddMonitor,-prepare,war_openspcoop2_pddMonitor" description="Crea la struttura del modulo WAR" >
+	<target name="build_pddMonitor" depends="plugins_pddMonitor,compile_dipendenze,compile_pddMonitor,-prepare,war_openspcoop2_pddMonitor" description="Crea la struttura del modulo WAR" >
 		<!-- Per wildfly devo fornire  il modulo jsf 1.2 da installare. -->
 		<if> 
 			<or>

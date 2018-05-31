@@ -59,6 +59,7 @@
 			<include name="commons/*"/>
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
+			<include name="faces/*"/>
 			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
 			<include name="javax/*"/>
@@ -78,6 +79,7 @@
 			<include name="stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 			<include name="swagger/*"/>
+			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
 		</fileset>

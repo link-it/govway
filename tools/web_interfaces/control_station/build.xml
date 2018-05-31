@@ -224,7 +224,7 @@
 	
 
 	<!-- Creazione Plugins di ControlStation -->
-	<target name="plugins" description="Crea l'elenco dei jar/properties installati come plugins della ControlStation">
+	<target name="plugins_pddConsole" description="Crea l'elenco dei jar/properties installati come plugins della ControlStation">
 		<!-- jar -->
 		<fileset dir="${plugins_pddConsole}" id="plugins.jar">
 			<include name="**/*.jar" />
@@ -265,7 +265,7 @@
 
 
 	<!-- Creazione del modulo .WAR -->
-	<target name="build_pddConsole" depends="plugins,compile_dipendenze,compile_pddConsole,war_openspcoop2_pddConsole" description="Crea la struttura del modulo WAR" />
+	<target name="build_pddConsole" depends="plugins_pddConsole,compile_dipendenze,compile_pddConsole,war_openspcoop2_pddConsole" description="Crea la struttura del modulo WAR" />
 	<target name="build_pddConsole_singlePdD">
 		<var name="singlePdD" value="true" />
 		<runtarget target="build_pddConsole" />
