@@ -28,6 +28,12 @@
             property="antinstaller_directory_lavoro_openspcoop" checkExists="false" />
         
         <comment displayText=""/>
+
+        <!-- <comment displayText="Directory di log" bold="true"/>  sotto come display c'era path -->
+        <directory defaultValue="/var/openspcoop2/log" defaultValueWin="C:\openspcoop2\log" displayText="Directory di log"
+            property="antinstaller_directory_log_openspcoop" checkExists="false" />
+        
+        <comment displayText=""/>
         
         <!-- <comment displayText="DB Platform" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="postgresql" property="antinstaller_tipo_database" displayText="DBMS">

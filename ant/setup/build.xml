@@ -57,6 +57,7 @@
 		
 		Informazioni preliminari
 			antinstaller_directory_lavoro_openspcoop=/var/openspcoop2
+			antinstaller_directory_log_openspcoop=/var/openspcoop2/log
 			antinstaller_tipo_database=postgresql
 			antinstaller_as=jboss5  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
 			
@@ -69,6 +70,12 @@
 			antinstaller_dbpassword=openspcoop
 			antinstaller_oracle_mode=SID/serviceName
 			
+		Utenze
+			antinstaller_pddconsole_username=amministratore
+			antinstaller_pddconsole_password=
+			antinstaller_pddmonitor_username=operatore
+			antinstaller_pddmonitor_password=
+
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
 			antinstaller_protocollo_spcoop=true
@@ -185,17 +192,25 @@
 			</then>
 		</if>
 		
-        <if>
-                <equals arg1="${antinstaller_directory_lavoro_openspcoop}" arg2="" />
-                <then>
-                        <echo message="Errore: deve essere specificata una directory di lavoro" />
-                        <fail message="Errore: deve essere specificata una directory di lavoro"/>
-                </then>
-        </if>
+		<if>
+		        <equals arg1="${antinstaller_directory_lavoro_openspcoop}" arg2="" />
+		        <then>
+		                <echo message="Errore: deve essere specificata una directory di lavoro" />
+		                <fail message="Errore: deve essere specificata una directory di lavoro"/>
+		        </then>
+		</if>
+
+		<if>
+		        <equals arg1="${antinstaller_directory_log_openspcoop}" arg2="" />
+		        <then>
+		                <echo message="Errore: deve essere specificata una directory di log" />
+		                <fail message="Errore: deve essere specificata una directory di log"/>
+		        </then>
+		</if>
 
 		
 		<!-- Impostazione slash per windows in stile unix -->
-	    <if>
+	    	<if>
 			<or>
 				<os family="windows"/>
 				<os family="dos"/>
@@ -203,13 +218,42 @@
 			<then>
 				<propertyregex property="work_dir" override="true" input="${antinstaller_directory_lavoro_openspcoop}" 
 					defaultValue="${antinstaller_directory_lavoro_openspcoop}" regexp="\\" replace="/" />
+				<propertyregex property="log_dir" override="true" input="${antinstaller_directory_log_openspcoop}" 
+					defaultValue="${antinstaller_directory_log_openspcoop}" regexp="\\" replace="/" />
 			</then>
-	    	<else>
-	    		<property name="work_dir" value="${antinstaller_directory_lavoro_openspcoop}"/>
-
-	    	</else>
+	    		<else>
+	    			<property name="work_dir" value="${antinstaller_directory_lavoro_openspcoop}"/>
+				<property name="log_dir" value="${antinstaller_directory_log_openspcoop}"/>
+	    		</else>
 		</if>	
+
+                <!-- Normalizzazione '/' -->
+                <if>
+                        <matches pattern=".*/$" string="${work_dir}" /> 
+                        <then>
+                                <echo message="Normalizzazione WorkDIR [${work_dir}]"/>
+                                <script language="javascript">
+                                        var w = project.getProperty("work_dir");
+                                        project.setProperty("work_dir", w.substring(0,w.length()-1));
+                                </script>
+                                <echo message="DOPO Normalizzazione WorkDIR [${work_dir}]"/>
+                        </then>
+                </if>
+                <if>
+                        <matches pattern=".*/$" string="${log_dir}" /> 
+                        <then>
+                                <echo message="Normalizzazione LogDIR [${log_dir}]"/>
+                                <script language="javascript">
+                                        var w = project.getProperty("log_dir");
+                                        project.setProperty("log_dir", w.substring(0,w.length()-1));
+                                </script>
+                                <echo message="DOPO Normalizzazione LogDIR [${log_dir}]"/>
+                        </then>
+                </if> 
 		
+		<!-- Impostazione workDir nei protocolli -->
+		<antcall target="setup_workDir_protocolli"/>
+
 		<!-- Impostazione AS4 -->
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}" />
@@ -220,6 +264,74 @@
 
 	</target>
 		
+	<target name="setup_workDir_protocolli" depends="_setup_workDir_protocolli"/>
+	<target name="_setup_workDir_protocolli">
+		
+		<!-- Impostazione Trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<antcall target="_setup_workDir_protocollo">
+					<param name="protocolName" value="trasparente"/>
+				</antcall>
+			</then>
+		</if>
+		<!-- Impostazione SPCoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<antcall target="_setup_workDir_protocollo">
+					<param name="protocolName" value="spcoop"/>
+				</antcall>
+			</then>
+		</if>
+		<!-- Impostazione AS4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<antcall target="_setup_workDir_protocollo">
+					<param name="protocolName" value="as4"/>
+				</antcall>
+			</then>
+		</if>
+		<!-- Impostazione SDI -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}" />
+			<then>
+				<antcall target="_setup_workDir_protocollo">
+					<param name="protocolName" value="sdi"/>
+				</antcall>
+			</then>
+		</if>
+
+	</target>
+	<target name="_setup_workDir_protocollo">
+		<!-- impostazione proprieta' in as4.properties -->
+		<fileset dir="${deploy_sw}" id="archiveProtocol.txt">
+		        <include name="openspcoop2_${protocolName}-protocol_*.jar"/>
+			<exclude name="openspcoop2_${protocolName}-protocol_*Stub_cxf.jar"/>
+		</fileset>
+		<pathconvert pathsep=" " property="archiveProtocol_name.txt" refid="archiveProtocol.txt">
+		        <map from="${deploy_sw}/" to=""/>
+		</pathconvert>
+		<!-- <echo message="FILE_NAME '${protocolName}' [${archiveProtocol_name.txt}]"/> -->
+		
+		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
+		<unzip src="${deploy_sw}/${archiveProtocol_name.txt}" dest="${tmp_cfg}/JAR_${protocolName}"/>
+		<concat destfile="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties" append="yes" >
+
+# ----- Personalizzazione Setup OpenSPCoop2 -------------
+		</concat>
+		<antcall target="set_property">
+			<param name="file" value="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties"/>
+			<param name="token" value="org.openspcoop2.protocol.${protocolName}.confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
+		<delete file="${deploy_sw}/${archiveProtocol_name.txt}"/>
+		<jar destfile="${deploy_sw}/${archiveProtocol_name.txt}" basedir="${tmp_cfg}/JAR_${protocolName}"/>
+		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
+	</target>
+
 	<target name="setup_as4" depends="_setup_as4"/>
 	<target name="_setup_as4">
 		<mkdir dir="${tmp_cfg}/as4"/>
@@ -234,7 +346,7 @@
 		<replace file="${tmp_cfg}/as4_local.properties" token="admin" value="${antinstaller_as4_jms_username}"/>
 		<replace file="${tmp_cfg}/as4_local.properties" token="123456" value="${antinstaller_as4_jms_password}"/>
 
-		<!-- impostazione workDir in as4.properties -->
+		<!-- impostazione proprieta' in as4.properties -->
                 <fileset dir="${deploy_sw}" id="archiveAS4.txt">
                         <include name="openspcoop2_as4-protocol_*.jar"/>
 			<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
@@ -265,11 +377,6 @@
 			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
 			<param name="token" value="org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"/>
 			<param name="value" value="${antinstaller_as4_tipo_database}"/>
-		</antcall>
-		<antcall target="set_property">
-			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
-			<param name="token" value="org.openspcoop2.protocol.as4.confDirectory"/>
-			<param name="value" value="${work_dir}"/>
 		</antcall>
 		<delete file="${deploy_sw}/${archiveAS4_name.txt}"/>
 		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>

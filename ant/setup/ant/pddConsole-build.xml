@@ -249,8 +249,8 @@
 		<!-- WORKING DIR -->
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="/var/openspcoop2/log/"/>
-			<param name="value" value="${work_dir}/log/"/>
+			<param name="token" value="/var/openspcoop2/log"/>
+			<param name="value" value="${log_dir}"/>
 		</antcall>
 		
 		<!-- TIPI DI LOG -->
@@ -277,8 +277,8 @@
 				<!-- WORKING DIR -->
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
-					<param name="token" value="/var/openspcoop2/log/"/>
-					<param name="value" value="${work_dir}/log/"/>
+					<param name="token" value="/var/openspcoop2/log"/>
+					<param name="value" value="${log_dir}"/>
 				</antcall>
 			</then>
 		</if>
