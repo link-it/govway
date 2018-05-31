@@ -268,4 +268,26 @@ public class UtentiCore extends ControlStationCore {
 		}
 
 	}
+	
+	public void salvaModalitaUserPddConsole(String login,String protocollo) throws DriverUsersDBException {
+		Connection con = null;
+		String nomeMetodo = "salvaModalitaUserPddConsole";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			driver.getDriverUsersDB().saveProtocolloUtilizzatoPddConsole(login, protocollo);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
+			throw new DriverUsersDBException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 }

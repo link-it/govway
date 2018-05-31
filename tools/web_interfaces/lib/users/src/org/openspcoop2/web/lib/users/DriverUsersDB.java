@@ -1759,12 +1759,13 @@ public class DriverUsersDB {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
-			sqlQueryObject.addUpdateField("protocollo_pddconsole", protocollo);
+			sqlQueryObject.addUpdateField("protocollo_pddconsole", "?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
+			String sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, login);
+			stm.setString(1, protocollo);
+			stm.setString(2, login);
 			stm.executeUpdate();
 			stm.close();
 
@@ -1810,12 +1811,13 @@ public class DriverUsersDB {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
-			sqlQueryObject.addUpdateField("protocollo_pddmonitor", protocollo);
+			sqlQueryObject.addUpdateField("protocollo_pddmonitor", "?");
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
 			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
+			String sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
-			stm.setString(1, login);
+			stm.setString(1, protocollo);
+			stm.setString(2, login);
 			stm.executeUpdate();
 			stm.close();
 

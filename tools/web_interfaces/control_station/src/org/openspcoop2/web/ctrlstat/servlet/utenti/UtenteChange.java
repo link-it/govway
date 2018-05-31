@@ -194,11 +194,17 @@ public final class UtenteChange extends Action {
 				if(myS==null){
 					myS = utentiCore.getUser(userLogin);
 				}
-				myS.setInterfaceType(interfaceType);
-				myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
-				myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
-				utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
-
+				
+				if(changeGui != null) {
+					myS.setInterfaceType(interfaceType);
+					myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
+					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
+				}
+				if(changeModalita != null) {
+					myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
+					utentiCore.salvaModalitaUserPddConsole(myS.getLogin(), protocolloSelezionatoUtente);
+				}
+				
 				LoginSessionUtilities.cleanLoginParametersSession(session);
 
 				ServletUtils.setUserIntoSession(session, myS); // update in sessione.
