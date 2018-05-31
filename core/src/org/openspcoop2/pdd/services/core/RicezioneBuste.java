@@ -1274,6 +1274,10 @@ public class RicezioneBuste {
 			this.msgContext.setTipoPorta(TipoPdD.ROUTER);
 		}
 		
+		// Context
+		this.msgContext.setIdentitaPdD(identitaPdD);
+		// GeneratoreErrore
+		this.generatoreErrore.updateDominio(identitaPdD);
 		// Raccolta dati Busta Ricevuta
 		parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
 		parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);

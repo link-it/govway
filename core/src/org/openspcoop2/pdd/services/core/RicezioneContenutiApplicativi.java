@@ -998,6 +998,8 @@ public class RicezioneContenutiApplicativi {
 		requestInfo.setIdentitaPdD(identitaPdD);
 		// anche il dominio per gli errori
 		this.msgContext.setProprietaErroreAppl(proprietaErroreAppl);
+		// GeneratoreErrore
+		this.generatoreErrore.updateDominio(identitaPdD);
 		this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
 	
 		

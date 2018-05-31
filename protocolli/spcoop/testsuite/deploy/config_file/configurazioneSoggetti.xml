@@ -4477,6 +4477,8 @@
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+		<soggetto tipo="spc" nome="Soggetto2"/>
+		<soggetto tipo="spc" nome="SoggettoNonAutenticato"/>
 	    </soggetti>
         </porta-applicativa>
         
@@ -4487,8 +4489,6 @@
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
-		<soggetto tipo="spc" nome="Soggetto1"/>
-		<soggetto tipo="spc" nome="Soggetto2"/>
 	    </soggetti>
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="OnewayCompletamenteNullRisposta" stateless="abilitato">
@@ -4516,6 +4516,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 		<soggetto tipo="spc" nome="Soggetto1"/>
 		<soggetto tipo="spc" nome="Soggetto2"/>
+		<soggetto tipo="spc" nome="SoggettoNonAutenticato"/>
 	    </soggetti>
         </porta-applicativa>
         
@@ -7931,6 +7932,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="gestioneManifestDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
@@ -7938,6 +7942,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAP" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono:MultipartRelatedMIME  --> 
@@ -7945,6 +7952,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPMultipartRelatedMIME" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: 
@@ -7953,6 +7963,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPWithAttachmentApplicationOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAP" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: 
@@ -7961,6 +7974,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPWithAttachmentCustomMimeType" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAPMimeType"/> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: XML --> 
@@ -7968,6 +7984,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAP" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAPOneWay" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: MultipartRelatedMIME  --> 
@@ -7975,6 +7994,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPMultipartRelatedMIME" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAPOneWay" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: 
@@ -7983,6 +8005,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPWithAttachmentApplicationOpenSPCoop" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAPOneWay" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: 
@@ -7991,6 +8016,9 @@
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPWithAttachmentCustomMimeType" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteTunnelSOAPOneWay" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita allegaBody -->
@@ -7998,6 +8026,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="allegaBody"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <!-- TestFunzionalita scartaBody -->
@@ -8005,6 +8036,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="scartaBody"/>
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8019,18 +8053,27 @@
             <servizio tipo="spc" nome="SoggettoReferente_Nome_Versione" />
             <azione nome="soggettoReferente_nome_versione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_SoggettoReferente_Nome">
             <servizio tipo="spc" nome="SoggettoReferente_Nome" />
             <azione nome="soggettoReferente_nome" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_Nome_Versione">
             <servizio tipo="spc" nome="Nome_Versione" />
             <azione nome="nome_versione" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -8044,6 +8087,9 @@
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="https_sil_consegna" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteHTTPS" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         
         
@@ -11344,18 +11390,23 @@
         </porta-delegata>
         
         <!-- AutenticazioneSIL -->
+        <!--
+	Il test non ha più senso, una credenziale è univoca totalmente nella base dati
         <porta-delegata gestione-manifest="abilitato" nome="https_sil_verify_test2" autenticazione="ssl" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="sil1HTTPS_test2" />
         </porta-delegata>
+	-->
         
         <!-- Autenticazione https -->
+	<!--
         <servizio-applicativo nome="sil1HTTPS_test2">
             <invocazione-porta >
                 <credenziali tipo="ssl" subject="/CN=sil1/ EMAILADDRESS=apoli@link.it/O=openspcoop.org/ OU=test/  L=Pisa/ ST=Italy/ C=IT" />
             </invocazione-porta>
         </servizio-applicativo>
+	-->
         
     </soggetto>
     

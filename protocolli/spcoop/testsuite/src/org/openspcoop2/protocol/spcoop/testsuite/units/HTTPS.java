@@ -115,9 +115,11 @@ public class HTTPS {
 	private static final String AUTORIZZAZIONE_IN_CORSO = AUTORIZZAZIONE_PREFIX+" ...";
 	private static final String AUTORIZZAZIONE_EFFETTUATA = AUTORIZZAZIONE_PREFIX+": autorizzato";
 	
-	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@--@SERVIZIO@:1--@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
-	private static final String NON_AUTORIZZATO = "Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
-	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: "+NON_AUTORIZZATO;
+	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@:@SERVIZIO@:1:@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ (versione:1) erogato da @DESTINATARIO@";
+	private static final String NON_AUTORIZZATO = "Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ (versione:1) erogato da @DESTINATARIO@";
+	private static final String _SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: "+NON_AUTORIZZATO;
+	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE = _SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA;
+			//+" (subject della porta di dominio che ha inviato la busta non presente (https attivo?, client-auth attivo?))";
 	
 	private static final String PDD_NON_DISPONIBILE = "Porta di Dominio del soggetto @DESTINATARIO@ non disponibile";
 	private static final String BAD_CERTIFICATE = "bad_certificate";
@@ -126,15 +128,17 @@ public class HTTPS {
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
 	
-	private static final String CREDENZIALI_NON_FORNITE = "Identificazione fallita, credenziali non fornite";
+	private static final String CREDENZIALI_NON_FORNITE = "Autenticazione fallita, credenziali non fornite";
 	//private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it ) : Credenziali fornite non corrette: subject[CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it]";
-	private static final String CREDENZIALI_NON_CORRETTE = "Identificazione fallita, credenziali fornite non corrette";
+	@SuppressWarnings("unused")
+	private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione fallita, credenziali fornite non corrette";
 	//private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: [CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) : Credenziali fornite non corrette";
 	private static final String AUTORIZZAZIONE_FALLITA = "Il servizio applicativo @SILNAME@ non risulta autorizzato a fruire del servizio richiesto";
 	//private static final String AUTORIZZAZIONE_FALLITA = "Autorizzazione non concessa al servizio applicativo [@SILNAME@] di utilizzare la porta delegata [@PD@]: Servizio non invocabile dal servizio applicativo @SILNAME@";
 	
 
-	private static final String SA_IDENTIFICATO = "Autenticazione [ssl] del servizio applicativo ( SSL-Subject 'CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) completata con successo";
+	private static final String AUTH_SSL_IN_CORSO = "Autenticazione [ssl] in corso ( SSL-Subject 'CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) ...";
+	private static final String AUTH_SSL_EFFETTUATA = "Autenticazione [ssl] effettuata con successo"; 
 	private static final String SA_RICONOSCIUTO = "Ricevuta richiesta di servizio dal Servizio Applicativo @SILNAME@ verso la porta delegata @PD@";
 	
 
@@ -321,7 +325,7 @@ public class HTTPS {
 				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -520,7 +524,7 @@ public class HTTPS {
 				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -639,7 +643,7 @@ public class HTTPS {
 				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE).equals(error.getFaultCode().getLocalPart()));
-				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+this.collaborazioneSPCoopBase.getDestinatario().getNome());
+				String msg2 = PDD_NON_DISPONIBILE.replace("@DESTINATARIO@", this.collaborazioneSPCoopBase.getDestinatario().getTipo()+"-"+this.collaborazioneSPCoopBase.getDestinatario().getNome());
 				Reporter.log("Controllo fault string ["+msg2+"]");
 				Assert.assertTrue(msg2.equals(error.getFaultString()));
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -796,15 +800,19 @@ public class HTTPS {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo actor code [OpenSPCoop]");
 				Assert.assertTrue(CostantiPdD.OPENSPCOOP2.equals(error.getFaultActor()));
-				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
 				
 				if(location!=null){
-					String msg2 = CREDENZIALI_NON_CORRETTE.replace("@SIL@", "sil3");
-					msg2 = msg2.replace("@SIL@", "sil3");
+					// cmq autenticazione ssl poich' ci sono credenziali ssl. Poi l'identificazione di un sa non porta a riconoscerne alcuno.
+					Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA)+"]");
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
+				
+					String msg2 = AUTORIZZAZIONE_FALLITA.replace("@SILNAME@", "Anonimo");
 					Reporter.log("Controllo fault string non corrette ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
 				}else{
+					Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA)+"]");
+					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
+										
 					String msg2 =  CREDENZIALI_NON_FORNITE;
 					Reporter.log("Controllo fault string non fornite ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
@@ -837,7 +845,7 @@ public class HTTPS {
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);
-		err2.setMsgErrore(CREDENZIALI_NON_CORRETTE);
+		err2.setMsgErrore( AUTORIZZAZIONE_FALLITA.replace("@SILNAME@", "Anonimo"));
 		this.erroriAttesiOpenSPCoopCore.add(err2);
 	}
 	
@@ -933,9 +941,10 @@ public class HTTPS {
 			
 			// Check msgDiag
 			if(dataMsg!=null){
-				String msg1 = SA_IDENTIFICATO.replace("@SIL@", "sil1");
-				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS");
-				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
+				String msg1 = AUTH_SSL_IN_CORSO.replace("@SIL@", "sil1");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL , msg1));
+				
+				msg1 = AUTH_SSL_EFFETTUATA;
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL , msg1));
 				
 				msg1 = SA_RICONOSCIUTO.replace("@SIL@", "sil1");
@@ -969,6 +978,10 @@ public class HTTPS {
 	/***
 	 * Test https con autenticazione client
 	 */
+	/*
+	 * Il test non ha più senso, una credenziale è univoca totalmente nella base dati, indipendentemente dal soggetto a cui appartiene il servizio applicativo
+	 */
+	/*
 	Date dataTestAutenticazioneSIL2 = null;
 	Repository repositoryHTTPSAutenticazioneSIL_Test2=new Repository();
 	private CooperazioneBaseInformazioni infoTestSil2 = CooperazioneSPCoopBase.getCooperazioneBaseInformazioni(CostantiTestSuite.SPCOOP_SOGGETTO_1,
@@ -1074,7 +1087,7 @@ public class HTTPS {
 			}
 		}
 	}
-	
+	*/
 	
 	
 	
@@ -1323,7 +1336,7 @@ public class HTTPS {
 					Reporter.log("Controllo fault code [EGOV_IT_201]");
 					Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 					
-					String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
+					String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
 					msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
 					msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 					msg2 = msg2.replace("_@AZIONE@", "");
@@ -1442,7 +1455,7 @@ public class HTTPS {
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
-				msg2 = msg2.replace("--@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
 				msg2 = msg2.replace("@PDD@", "");
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msg2+"]");
@@ -1520,7 +1533,7 @@ public class HTTPS {
 				Reporter.log("Controllo fault code [EGOV_IT_201]");
 				Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 				
-				String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getNome());
+				String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getMittente().getNome());
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("_@AZIONE@", "");
@@ -1632,7 +1645,7 @@ public class HTTPS {
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto2.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
-				msg2 = msg2.replace("--@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
 				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				String XML = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it])";
@@ -1674,10 +1687,13 @@ public class HTTPS {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopFruitoreSoggettoNonAutenticato = 
-		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggettoNonAutenticato, 
-				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
-				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
-
+			new CooperazioneBase(false,MessageType.SOAP_11,  this.infoFruitoreSoggettoNonAutenticato, 
+					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
+					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
+	/*
+	 * Possibilita di definire il client auth attivo sul fruitore non è piu supportato in openspcoop 3.0
+	 */
+	/*
 	Repository repositorySpoofingRilevatoTramiteFruitore=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".SPOOFING_RILEVATO_TRAMITE_FRUIZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void SpoofingRilevatoTramiteFruitore() throws TestSuiteException, IOException, Exception{
@@ -1718,7 +1734,7 @@ public class HTTPS {
 					Reporter.log("Controllo fault code [EGOV_IT_201]");
 					Assert.assertTrue("EGOV_IT_201".equals(error.getFaultCode().getLocalPart()));
 					
-					String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getNome());
+					String msg2 = SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA_SUBJECT_NON_PRESENTE.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getMittente().getNome());
 					msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getNome());
 					msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 					msg2 = msg2.replace("_@AZIONE@", "");
@@ -1832,7 +1848,7 @@ public class HTTPS {
 				msg2 = msg2.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggettoNonAutenticato.getDestinatario().getNome());
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
-				msg2 = msg2.replace("--@AZIONE@", "");
+				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
 				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				// Versione XML
@@ -1853,7 +1869,7 @@ public class HTTPS {
 			}
 		}
 	}
-	
+	*/
 	
 	
 	
@@ -1947,6 +1963,10 @@ public class HTTPS {
 	/***
 	 * Test autorizzazione SPCoop disabilitato nel fruitore disabilitato
 	 */
+	/*
+	 * Possibilita di definire il client auth non abilitato sul fruitore non è piu supportato in openspcoop 3.0
+	 */
+	/*
 	Repository repositoryHTTPSAutorizzazioneSPCoopDisabilitataTramiteFruizione=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_SPCOOP_DISABILITATA_TRAMITE_FRUZIONE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void httpsAutorizzazioneSPCoopDisabilitataTramiteFruizione() throws TestSuiteException, IOException, SOAPException{
@@ -2004,6 +2024,7 @@ public class HTTPS {
 			}
 		}
 	}
+	*/
 	
 	
 	
