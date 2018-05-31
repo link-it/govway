@@ -2,7 +2,7 @@
 <project name="prepare-setup-pddConsole" basedir=".">
 	
 	<description>
-        	PREPARE SETUP PDC CONSOLE
+        	PREPARE SETUP PDD CONSOLE
 	</description>
 
 	
@@ -10,10 +10,10 @@
 		
 		<if>
 			<not>
-				<available file="${loaderConsole}/local_env.xml"/>
+				<available file="${pddConsole}/local_env.xml"/>
 			</not>
 			<then>
-				<copy file="${loaderConsole}/local_env.xml.template" tofile="${loaderConsole}/local_env.xml" />
+				<copy file="${pddConsole}/local_env.xml.template" tofile="${pddConsole}/local_env.xml" />
 			</then>
 		</if>
 				

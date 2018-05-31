@@ -66,6 +66,12 @@
 	<property name="required_lib_pddConsole" value="${required_lib}"/>
 	<import file="${pddConsole}/build.xml"/>
 
+	<!-- PddMonitor -->
+	<property name="pddMonitor" value="${rootDir}/tools/web_interfaces/monitor/" />
+	<property name="src_pddMonitor" value="${pddMonitor}/src" />
+	<property name="required_lib_pddMonitor" value="${required_lib}"/>
+	<import file="${pddMonitor}/build.xml"/>
+
 	<!-- Loader -->
 	<property name="loaderConsole" value="${rootDir}/tools/web_interfaces/loader/" />
 	<property name="src_loaderConsole" value="${loaderConsole}/src" />

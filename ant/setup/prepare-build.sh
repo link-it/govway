@@ -10,6 +10,7 @@ ROOT=../../
 CORE=${ROOT}/core
 WEB_LIB=${ROOT}/tools/web_interfaces/lib
 PDD_CONSOLE=${ROOT}/tools/web_interfaces/control_station
+PDD_MONITOR=${ROOT}/tools/web_interfaces/monitor
 LOADER_CONSOLE=${ROOT}/tools/web_interfaces/loader
 TRASPARENTE_PROTOCOL=${ROOT}/protocolli/trasparente
 SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
@@ -52,6 +53,12 @@ fi
 if [ ! -f ${PDD_CONSOLE}/local_env.xml  ]
 then
         cp ${PDD_CONSOLE}/local_env.xml.template ${PDD_CONSOLE}/local_env.xml
+fi
+
+# Web PddMonitor
+if [ ! -f ${PDD_MONITOR}/local_env.xml  ]
+then
+	cp ${PDD_MONITOR}/local_env.xml.template ${PDD_MONITOR}/local_env.xml
 fi
 
 # Web LoaderConsole

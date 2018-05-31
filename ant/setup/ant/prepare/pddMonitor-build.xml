@@ -1,0 +1,77 @@
+
+<project name="prepare-setup-pddMonitor" basedir=".">
+	
+	<description>
+        	PREPARE SETUP PDD MONITOR
+	</description>
+
+	
+	<target name="prepare_pddMonitor_setup">
+		
+		<if>
+			<not>
+				<available file="${pddMonitor}/local_env.xml"/>
+			</not>
+			<then>
+				<copy file="${pddMonitor}/local_env.xml.template" tofile="${pddMonitor}/local_env.xml" />
+			</then>
+		</if>
+				
+		<foreach list="${application_server_version}" param="TIPO_AS" target="_buildPddMonitor" />
+		
+	</target>
+	
+	<target name="_buildPddMonitor">
+
+		<mkdir dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<antcall target="compile_openspcoop2_pddMonitor">
+			<param name="dist_pddMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_pddMonitor" value="${src_pddMonitor}"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+	 	</antcall>
+		<antcall target="war_openspcoop2_pddMonitor">
+	    	<param name="as" value="${TIPO_AS}" />
+			<param name="dist_pddMonitor" value="${deploy_sw}/${TIPO_AS}/dist"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_pddMonitor" value="${src_pddMonitor}"/>
+			<param name="commons_webcontent" value="${commons_webcontent}"/>
+			<param name="commons_temaConsole" value="${commons_temaConsole}"/>
+			<param name="commons_webcontent_properties" value="${commons_webcontent_properties}"/>
+			<param name="images" value="${pddMonitor}/deploy/images"/>
+			<param name="jsp" value="${pddMonitor}/deploy/jsp"/>
+			<param name="jsplib" value="${jsplib}"/>
+			<param name="js" value="${pddMonitor}/deploy/js"/>
+			<param name="jslib" value="${jslib}"/>
+			<param name="deploy.dir" value="${pddMonitor}/deploy"/>
+			<param name="cfg" value="${pddMonitor}/deploy/properties"/>
+			<param name="required_lib_pddMonitor" value="${required_lib_pddMonitor}"/>
+			<param name="printServerInfo" value="true"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="openspcoop2_jars" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="build_pddMonitor" value="build"/>
+			<param name="queue" value="${queue}"/>
+			<param name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins"/>
+	 	</antcall>
+	
+		<move file="${deploy_sw}/${TIPO_AS}/dist/pddMonitor.war" todir="${deploy_sw}/${TIPO_AS}"/>
+		
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
+		<delete dir="build" includeEmptyDirs="true"/>
+			
+		<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/pddMonitor.war" />
+		
+		<antcall target="read_jar">
+		    <param name="archiveFile" value="${archiveFile}"/>
+			<param name="as" value="${TIPO_AS}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+		
+	</target>
+	
+	
+</project>

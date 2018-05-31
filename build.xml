@@ -20,7 +20,7 @@
 	<property name="build" location="build" />
 	<property name="buildAPI" location="false" />
 	<property name="buildAsRelease" value="false" />
-	<property name="as" value="jboss7" />
+	<property name="as" value="wildfly10" />
 	<property name="debug" value="true" />
 
 		
@@ -93,6 +93,20 @@
 		</then>
 	</if>
 	<import file="${protocolli.sdi.dir}/build.xml" />
+
+	<!-- Protocollo AS4 -->
+	<property name="protocolli.as4.dir" location="protocolli/as4" />
+	<available file="${protocolli.as4.dir}/local_env.xml" property="as4_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${as4_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${protocolli.as4.dir}/local_env.xml.template" tofile="${protocolli.as4.dir}/local_env.xml"/>
+			<replace file="${protocolli.as4.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${protocolli.as4.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - Lib - Users -->
 	<property name="web.lib.users.dir" location="tools/web_interfaces/lib/users" />
@@ -167,6 +181,20 @@
 		</then>
 	</if>
 	<import file="${web.pddConsole.dir}/build.xml" />
+
+	<!-- Tools - WebInterfaces - pddMonitor -->
+	<property name="web.pddMonitor.dir" location="tools/web_interfaces/monitor" />
+	<available file="${web.pddMonitor.dir}/local_env.xml" property="web_pddMonitor_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${web_pddMonitor_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${web.pddMonitor.dir}/local_env.xml.template" tofile="${web.pddMonitor.dir}/local_env.xml"/>
+			<replace file="${web.pddMonitor.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${web.pddMonitor.dir}/build.xml" />
 	
 	<!-- Tools - WebInterfaces - pddLoader -->
 	<property name="web.pddLoader.dir" location="tools/web_interfaces/loader" />
@@ -273,6 +301,14 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 		</antcall>
+
+		<antcall target="compile_as4_plugin" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_as4" value="${protocolli.as4.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+		</antcall>
 		
 		<antcall target="compile_users" >
 			<param name="as" value="${as}"/>
@@ -313,6 +349,14 @@
 			<param name="as" value="${as}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_pddConsole" value="${web.pddConsole.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+		</antcall>
+
+		<antcall target="compile_openspcoop2_pddMonitor" >
+			<param name="as" value="${as}"/>
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_pddMonitor" value="${web.pddMonitor.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 		</antcall>
