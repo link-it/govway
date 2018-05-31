@@ -6610,7 +6610,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		boolean filtroRicercaTipo = false;
 		if(filtroRicerca!=null){
-			filtroRicercaTipo = filtroRicerca.getTipologia()!=null;
+			filtroRicercaTipo = StringUtils.isNotEmpty(filtroRicerca.getTipologia());
 		}
 		List<String> listTipologia = null;
 		if(filtroRicercaTipo){
