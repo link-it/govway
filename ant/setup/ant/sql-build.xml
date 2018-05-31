@@ -67,6 +67,7 @@
 			<param name="token" value="INSERT INTO users"/>
 			<param name="value" value="-- INSERT INTO users"/>
 		</antcall>
+
 		<concat destfile="${file}" append="yes" >
 			<header filtering="no" trimleading="yes">
 	
@@ -85,6 +86,26 @@
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@PDDCONSOLE_PASSWORD@"/>
 			<param name="value" value="${antinstaller_pddconsole_password_md5}"/>
+		</antcall>
+
+		<concat destfile="${file}" append="yes" >
+			<header filtering="no" trimleading="yes">
+	
+-- Utenza pddMonitor
+							      	
+			</header>					
+			<filelist dir="${tmp_sql}"
+				files="init_utenzaPddMonitor.sql"/>
+		</concat>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PDDMONITOR_USERNAME@"/>
+			<param name="value" value="${antinstaller_pddmonitor_username}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PDDMONITOR_PASSWORD@"/>
+			<param name="value" value="${antinstaller_pddmonitor_password_md5}"/>
 		</antcall>
 	</target>
 	

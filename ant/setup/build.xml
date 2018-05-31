@@ -625,7 +625,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
 		</antcall>
 		
-		<!-- password cifrata per l'utenza -->
+		<!-- password cifrata per l'utenza pddConsole -->
 		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddconsole_password_md5">
 			<arg value="${antinstaller_pddconsole_password}" />
 			<classpath>
@@ -635,6 +635,19 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			</classpath>
 		</java>
 		<copy file="${deploy_sql}/init_utenzaPddConsole.sql" tofile="${tmp_sql}/init_utenzaPddConsole.sql" overwrite="true"/>
+
+		<!-- password cifrata per l'utenza pddMonitor -->
+		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddmonitor_password_md5">
+			<arg value="${antinstaller_pddmonitor_password}" />
+			<classpath>
+				<path id="classpath_run">
+					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
+			   </path>				
+			</classpath>
+		</java>
+		<copy file="${deploy_sql}/init_utenzaPddMonitor.sql" tofile="${tmp_sql}/init_utenzaPddMonitor.sql" overwrite="true"/>
+
+		<!-- Registro modifiche delle utenze sul file SQL -->
 		<antcall target="sql_settings_users">
 		    <param name="file" value="${tmp_sql}/OpenSPCoop2.sql"/>
 		</antcall>
