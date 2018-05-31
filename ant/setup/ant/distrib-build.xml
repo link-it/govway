@@ -190,6 +190,34 @@
 				<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
 			</else>
 		</if>
+
+		<!-- *** Aggiunta dell'applicazione pddMonitor ***-->
+		<if>
+			<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+			<then>
+				<fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib" id="pddMonitor.jar">
+					<include name="*.jar"/>
+				</fileset>
+				<pathconvert pathsep=" " property="pddMonitor.classpath" refid="pddMonitor.jar">
+					<map from="${tmp_archivi}/pddMonitor.war/WEB-INF/lib/" to="lib/"/>
+				</pathconvert>
+				<var name="manifest.classpath.pddMonitor" value="${pddMonitor.classpath}" />	
+				<move todir="${dist}/archivi/OpenSPCoop2/lib" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib"/>
+				</move>
+				<move todir="${dist}/archivi/OpenSPCoop2/properties" overwrite="true">
+				    <fileset dir="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+				</move>
+				<war destfile="${dist}/archivi/OpenSPCoop2/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war">
+					<manifest>
+						<attribute name="Class-Path" value="${manifest.classpath.pddMonitor} properties/" />
+					</manifest>
+				</war>
+			</then>
+			<else>
+				<zip destfile="${dist}/archivi/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war"/>
+			</else>
+		</if>
 				
 		<!-- *** Aggiunta dell'applicazione pddLoader ***-->
 		<if>
@@ -223,6 +251,7 @@
 		<if>
 			<or>
 				<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+				<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
 				<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
 			</or>
 			<then>
@@ -241,6 +270,25 @@
 		</web>
 	</module>
 	<!-- End MODULE pddConsole -->
+		        				
+]]>
+		        		</concat>
+					</then>
+				</if>
+				<if>
+					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+					<then>
+		        		<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
+<![CDATA[
+
+	<!-- Start MODULE pddMonitor -->
+	<module>
+		<web>
+			<web-uri>pddMonitor.war</web-uri>
+			<context-root>pddMonitor</context-root>
+		</web>
+	</module>
+	<!-- End MODULE pddMonitor -->
 		        				
 ]]>
 		        		</concat>
@@ -286,6 +334,7 @@
 				</or>
 				<or>
 					<istrue value="${build_pddConsole_consoleIntegrataEAR}"/>
+					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
 					<istrue value="${build_pddLoader_consoleIntegrataEAR}"/>
 				</or>
 			</and>
@@ -308,6 +357,28 @@
         </exclusions>
     </sub-deployment>
 	<!-- End MODULE pddConsole -->
+								
+]]>
+						</concat>
+					</then>
+				</if>
+				<if>
+					<istrue value="${build_pddMonitor_consoleIntegrataEAR}"/>
+					<then>
+						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
+<![CDATA[
+
+	<!-- Start MODULE pddMonitor -->
+	<sub-deployment name="pddMonitor.war">
+        <exclusions>
+                <module name="org.apache.log4j"/>
+                <module name="org.slf4j" />
+                <module name="org.apache.commons.logging"/>
+                <module name="org.log4j"/>  
+                <module name="org.jboss.logging"/>
+        </exclusions>
+    </sub-deployment>
+	<!-- End MODULE pddMonitor -->
 								
 ]]>
 						</concat>
@@ -429,6 +500,7 @@
 			</then>
 		</if>
 		<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
+		<zip destfile="${dist}/archivi/pddMonitor.war" basedir="${tmp_archivi}/pddMonitor.war"/>
 		<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
 	</target>
 		

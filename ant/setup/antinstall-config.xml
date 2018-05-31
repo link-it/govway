@@ -145,15 +145,13 @@
 
  	<page name="utenzeConsole" type="input" displayText="Configurazione Utenze">
 
-		<comment displayText="Utente Amministratore (pddConsole)"/>
-		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username" regex="^[0-9A-Za-z]+$"/>
-		<validated property="antinstaller_pddconsole_password" displayText="Password" regex="^[^ ]+$" />
+		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore (pddConsole)" regex="^[0-9A-Za-z]+$"/>
+		<validated property="antinstaller_pddconsole_password" displayText="Password Amministratore" regex="^[^ ]+$" />
 
 		<comment displayText=""/>	
 		
-		<comment displayText="Utente Operatore (pddMonitor)"/>
-		<validated defaultValue="operatore" property="antinstaller_pddmonitor_username" displayText="Username" regex="^[0-9A-Za-z]+$"/>
-		<validated property="antinstaller_pddmonitor_password" displayText="Password" regex="^[^ ]+$" />
+		<validated defaultValue="operatore" property="antinstaller_pddmonitor_username" displayText="Username Operatore (pddMonitor)" regex="^[0-9A-Za-z]+$"/>
+		<validated property="antinstaller_pddmonitor_password" displayText="Password Operatore" regex="^[^ ]+$" />
 
 		<comment displayText=""/>	
 
@@ -297,6 +295,6 @@
     </page>
 
     <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_pddConsole,setup_loader,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_pddConsole,setup_pddMonitor,setup_loader,setup_backward_compatibility,setup_finished"/>
 
 </installer>

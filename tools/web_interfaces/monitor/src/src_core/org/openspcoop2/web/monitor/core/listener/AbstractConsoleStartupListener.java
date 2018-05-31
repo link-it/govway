@@ -11,9 +11,12 @@ import javax.servlet.ServletContextListener;
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
+import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -161,6 +164,12 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 
 		try {
 
+			boolean appendActualConfiguration = false;
+			String tmpAppendActualConfiguration = appProperties.getProperty("appendLog4j", false, true);
+			if(tmpAppendActualConfiguration!=null){
+				appendActualConfiguration = "true".equalsIgnoreCase(tmpAppendActualConfiguration.trim());
+			}
+			
 			this.setLogProperties(getStringInitParameter(ctx, "logProperties"));
 			this.setLocalLogProperties(getStringInitParameter(ctx, "localLogProperties"));
 			this.setLocalLogPropertyName(getStringInitParameter(ctx, "localLogPropertyName"));
@@ -170,8 +179,8 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			//System.out.println("INIT ["+getLocalDefaultLoggerName()+"]");
 			InputStream is = InitServlet.class
 					.getResourceAsStream(getLoggerProperties());
-			Properties prop = new Properties();
-			prop.load(is);
+			Properties loggerProperties = new Properties();
+			loggerProperties.load(is);
 
 			// effettuo eventuale ovverride delle properties
 			// leggo le properties eventualmente ridefinite
@@ -186,12 +195,34 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				while (proEnums.hasMoreElements()) {
 					String key = (String) proEnums.nextElement();
 					// effettuo l'ovverride
-					prop.put(key, overrideProp.getProperty(key));
+					loggerProperties.put(key, overrideProp.getProperty(key));
 				}
 			}
 
 			// inizializzo il logger
-			LoggerWrapperFactory.setLogConfiguration(prop);
+			if(appendActualConfiguration){
+				System.out.println("[PddMonitor] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+				int i=0;
+				int limit = 60;
+				while(OpenSPCoop2Startup.initialize==false && i<limit){
+					Utilities.sleep(1000);
+					i++;
+					if(i%10==0){
+						System.out.println("[PddMonitor] Attendo inizializzazione PdDOpenSPCoop ...");
+					}
+				}
+				
+				if(OpenSPCoop2Startup.initialize==false){
+					throw new UtilsException("[PddMonitor] Inizializzazione OpenSPCoop non rilevata");
+				}
+				
+				System.out.println("[PddMonitor] Configurazione Log4J ...");
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
+				System.out.println("[PddMonitor] Configurazione Log4J aggiunta");
+			}
+			else{
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			}
 
 		} catch (Exception e) {
 			String msgErrore = "Errore durante il caricamento del file di logging "

@@ -8,6 +8,7 @@
 	
 	<!-- Nella nuova versione lasciamo separate dal core della PdD gli archivi -->
 	<property name="build_pddConsole_consoleIntegrataEAR" value="false" />
+	<property name="build_pddMonitor_consoleIntegrataEAR" value="false" />
 	<property name="build_pddLoader_consoleIntegrataEAR" value="false" />
 
 </project>

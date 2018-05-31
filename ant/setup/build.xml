@@ -18,6 +18,7 @@
 	<import file="./ant/sql-build.xml" />
 	<import file="./ant/ds-build.xml" />
 	<import file="./ant/pddConsole-build.xml" />
+	<import file="./ant/pddMonitor-build.xml" />
 	<import file="./ant/loader-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/jar-build.xml" />
@@ -754,6 +755,8 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
 				</antcall>
+				<!-- pddMonitor (copio da loader) -->
+				<copy file="${tmp_ds}/pddLoader.xml" tofile="${tmp_ds}/pddMonitor.xml"/>
 
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
@@ -850,6 +853,84 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
 		    <param name="archiveFile" value="${tmp_archivi}/pddConsole.war"/>
+			<param name="as" value="${build_for_as}"/>
+			<param name="archiveType" value="WAR"/>
+		</antcall>
+	</target>
+
+	<target name="setup_pddMonitor" depends="_setup_pddMonitor"/>
+	<target name="_setup_pddMonitor">
+		<!-- unzip -->
+		<unzip src="${deploy_sw}/${build_for_as}/pddMonitor.war" dest="${tmp_archivi}/pddMonitor.war"/>
+		<!-- configuration -->
+		<antcall target="pddMonitor_monitor_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/monitor.properties"/>
+		</antcall>
+		<antcall target="pddMonitor_monitor_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/monitor.log4j2.properties"/>
+		</antcall>
+		<antcall target="pddMonitor_log4j_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/log4j2.properties"/>
+		</antcall>
+		<antcall target="pddMonitor_datasource_properties_settings">
+		    <param name="file" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes/daoFactory_local.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+			<param name="dir" value="${tmp_archivi}/pddMonitor.war/WEB-INF/classes"/>
+		    <param name="file" value="*.cfg"/>
+		</antcall>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- as4 -->
+		<if>
+			<istrue value="${antinstaller_protocollo_as4}" />
+			<then>
+				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				        <include name="openspcoop2_as4-protocol_*.jar"/>
+					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}"/>
+			<then>
+				<copy todir="${tmp_archivi}/pddMonitor.war/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_sdi-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- Ripristino jar -->
+		<antcall target="ripristina_jar">
+		    <param name="archiveFile" value="${tmp_archivi}/pddMonitor.war"/>
 			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
