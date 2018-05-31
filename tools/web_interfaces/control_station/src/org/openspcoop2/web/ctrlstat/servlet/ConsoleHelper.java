@@ -95,7 +95,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -4538,133 +4538,79 @@ public class ConsoleHelper {
 		}
 	}
 	
+	
+	// LABEL PROTOCOLLI
+	
 	public List<String> getLabelsProtocolli(List<String> protocolli) throws Exception{
-		if(protocolli==null || protocolli.size()<=0) {
-			return null;
-		}
-		List<String> l = new ArrayList<>();
-		for (String protocollo : protocolli) {
-			l.add(this.getLabelProtocollo(protocollo));
-		}
-		return l;
+		return NamingUtils.getLabelsProtocolli(protocolli);
 	}
 	
 	public String getLabelProtocollo(String protocollo) throws Exception{
-		return _getLabelProtocollo(protocollo);
+		return NamingUtils.getLabelProtocollo(protocollo);
 	}
 		
 	public static String _getLabelProtocollo(String protocollo) throws Exception{
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getLabel();
+		return NamingUtils.getLabelProtocollo(protocollo);
 	}
 	
 	public String getDescrizioneProtocollo(String protocollo) throws Exception{
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getDescription();
+		return NamingUtils.getDescrizioneProtocollo(protocollo);
 	}
 	
 	public String getWebSiteProtocollo(String protocollo) throws Exception{
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		return protocolFactoryManager.getProtocolFactoryByName(protocollo).getInformazioniProtocol().getWebSite();
+		return NamingUtils.getWebSiteProtocollo(protocollo);
 	}
 	
+	
+	// LABEL SOGGETTI
+	
 	public String getLabelNomeSoggetto(IDSoggetto idSoggetto) throws Exception{
-		return getLabelNomeSoggetto(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo()), 
-				idSoggetto.getTipo(), idSoggetto.getNome());
+		return NamingUtils.getLabelSoggetto(idSoggetto);
 	}
 	public String getLabelNomeSoggetto(String protocollo, IDSoggetto idSoggetto) throws Exception{
-		return getLabelNomeSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome());
+		return NamingUtils.getLabelSoggetto(protocollo, idSoggetto);
 	}
 	public String getLabelNomeSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
-		StringBuffer bf = new StringBuffer();
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {
-			IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
-			if(tipoSoggetto.equals(protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault())) {
-				bf.append(nomeSoggetto);
-			}
-			else{
-				bf.append(tipoSoggetto).append("/").append(nomeSoggetto);
-			}
-		}
-		else {
-			bf.append(nomeSoggetto);
-		}
-		return bf.toString();
+		return NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto);
 	}
+	
+	
+	// LABEL API
+	
 	public String getLabelIdAccordo(AccordoServizioParteComune as) throws Exception{
-		return this.getLabelIdAccordo(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()), 
-				this.idAccordoFactory.getIDAccordoFromAccordo(as));
+		return NamingUtils.getLabelAccordoServizioParteComune(as);
 	}
 	public String getLabelIdAccordo(String protocollo, IDAccordo idAccordo) throws Exception{
-		StringBuffer bf = new StringBuffer();
-		bf.append(idAccordo.getNome());
-		bf.append(":");
-		bf.append(idAccordo.getVersione());
-		if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
-			if(idAccordo.getSoggettoReferente()!=null){
-				bf.append(" (");
-				bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
-				bf.append(")");
-			}
-		}
-		return bf.toString();
+		return NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo);
 	}
+	
+	
+	// LABEL SERVIZI
+	
 	public String getLabelNomeServizio(String protocollo, String tipoServizio, String nomeServizio, Integer versioneInt) throws Exception{
-		
-		String versione = "";
-		if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoVersionamentoAccordiParteSpecifica()) {
-			versione = ":"+versioneInt;
-		}
-		
-		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
-		if(protocolFactoryManager._getServiceTypes().get(protocollo).size()>1) {
-			IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
-			if(tipoServizio.equals(protocolFactory.createProtocolConfiguration().getTipoServizioDefault(null))) {
-				return nomeServizio+versione;
-			}
-			else {
-				return tipoServizio+"/"+nomeServizio+versione;	
-			}
-		}
-		else {
-			return nomeServizio+versione;
-		}
+		return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneInt);
 	}
 	public String getLabelIdServizio(AccordoServizioParteSpecifica as) throws Exception{
-		return this.getLabelIdServizio(
-				this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore()), 
-				this.idServizioFactory.getIDServizioFromAccordo(as));
+		return NamingUtils.getLabelAccordoServizioParteSpecifica(as);
 	}
 	public String getLabelIdServizio(IDServizio idServizio) throws Exception{
-		return this.getLabelIdServizio(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo()), idServizio);
+		return NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
 	}
 	public String getLabelIdServizio(String protocollo, IDServizio idServizio) throws Exception{
-		StringBuffer bf = new StringBuffer();
-		bf.append(this.getLabelNomeServizio(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
-		bf.append(" (");
-		bf.append(this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome()));
-		bf.append(")");
-		return bf.toString();
+		return NamingUtils.getLabelAccordoServizioParteSpecifica(protocollo, idServizio);
 	}
+	
+	
+	// LABEL ACCORDI COOPERAZIONE
+	
 	public String getLabelIdAccordoCooperazione(AccordoCooperazione ac) throws Exception{
-		return this.getLabelIdAccordoCooperazione(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(ac.getSoggettoReferente().getTipo()), 
-				this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac));
+		return NamingUtils.getLabelAccordoCooperazione(ac);
 	}
 	public String getLabelIdAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
-		StringBuffer bf = new StringBuffer();
-		bf.append(idAccordo.getNome());
-		bf.append(":");
-		bf.append(idAccordo.getVersione());
-		//if(this.apcCore.isSupportatoSoggettoReferente(protocollo)) {
-		if(idAccordo.getSoggettoReferente()!=null){
-			bf.append(" (");
-			bf.append(this.getLabelNomeSoggetto(protocollo, idAccordo.getSoggettoReferente().getTipo(), idAccordo.getSoggettoReferente().getNome()));
-			bf.append(")");
-		}
-		//}
-		return bf.toString();
+		return NamingUtils.getLabelAccordoCooperazione(protocollo, idAccordo);
 	}
+	
+	
 	
 	// Validazione contenuti
 	
