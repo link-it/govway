@@ -249,7 +249,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(this.debug)
 			this.logger.debug("gestione WS/SOAP in corso ...");
-				
+		
+		String contentTypeTrasporto = this.tipoRisposta; // serve per funzionalità TunnelSOAP
+		
 		if(this.isResponse!=null){
 			
 			MessageType messageTypeResponse = null;
@@ -429,7 +431,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+this.mimeTypeAttachment;
 								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageTypeResponse,MessageRole.RESPONSE, 
 										cis,this.mimeTypeAttachment,
-										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),this.tipoRisposta, 
+										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),contentTypeTrasporto, 
 										this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 							}else{
 								if(this.debug)

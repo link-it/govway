@@ -524,7 +524,7 @@ public class TunnelSoapUtils {
 	 * @return msg Messaggio Soap imbustato
 	 * 
 	 */
-	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(MessageType messageType, MessageRole messageRole, byte [] body, String ns) throws MessageException, MessageNotSupportedException{
+	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(MessageType messageType, MessageRole messageRole, byte [] body, String contentTypeMessaggioOriginale, String ns) throws MessageException, MessageNotSupportedException{
 		
 		if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
 			throw MessageNotSupportedException.newMessageNotSupportedException(messageType);
@@ -532,7 +532,7 @@ public class TunnelSoapUtils {
 		
 		OpenSPCoop2Message risposta = null;
 		try{	    
-			risposta = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageType, messageRole, body,HttpConstants.CONTENT_TYPE_PLAIN,false, null, ns);
+			risposta = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageType, messageRole, body,HttpConstants.CONTENT_TYPE_PLAIN,false, contentTypeMessaggioOriginale, ns);
 			return risposta;
 		}
 		catch (MessageException e){
