@@ -143,7 +143,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_1+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -435,7 +435,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_2+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -723,7 +723,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_3+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 
 			}finally{
@@ -1198,7 +1198,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_5+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -1491,7 +1491,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_6+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -2013,7 +2013,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_8+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -2311,7 +2311,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_9+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();
@@ -2608,7 +2608,7 @@ public class UrlPrefixRewriter {
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_NOME_SOGGETTO_TEST_URL_PREFIX_REWRITER_10+"SPCoopIT",InoltroBuste.ID_MODULO, 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE), 
-						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+"-"+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
 				dbComponentFruitore.close();

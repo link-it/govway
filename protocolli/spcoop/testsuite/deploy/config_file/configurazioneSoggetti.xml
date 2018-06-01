@@ -4517,6 +4517,17 @@
 		<soggetto tipo="spc" nome="Soggetto1"/>
 		<soggetto tipo="spc" nome="Soggetto2"/>
 		<soggetto tipo="spc" nome="SoggettoNonAutenticato"/>
+
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter1"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter2"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter3"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter4"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter5"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter6"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter7"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter8"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter9"/>
+		<soggetto tipo="spc" nome="TestUrlPrefixRewriter10"/>
 	    </soggetti>
         </porta-applicativa>
         
@@ -11503,6 +11514,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11521,6 +11535,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter2">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11540,6 +11557,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter3">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11558,6 +11578,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter4">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11577,6 +11600,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter5">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11595,7 +11621,10 @@
         </porta-delegata>
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter6">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" />
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti> 
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11615,6 +11644,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter7">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11634,6 +11666,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter8">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11653,6 +11688,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter9">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>
@@ -11672,6 +11710,9 @@
         <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter10">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+	    <soggetti>
+		<soggetto tipo="spc" nome="MinisteroFruitore"/>
+	    </soggetti>
         </porta-applicativa>
         <servizio-applicativo nome="OpenSPCoop2TestSuite" >
             <invocazione-servizio>

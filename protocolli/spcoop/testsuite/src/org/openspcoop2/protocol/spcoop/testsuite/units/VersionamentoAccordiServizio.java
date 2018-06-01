@@ -232,37 +232,37 @@ public class VersionamentoAccordiServizio {
 	/***
 	 * Test per il profilo di collaborazione Sincrono per accordo ASComunicazioneVariazione:1.0
 	 */
-	Repository repositoryVersionamento3=new Repository();
-	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_NOME_VERSIONE"})
-	public void sincronoVersionamento3() throws TestSuiteException, Exception{
-		this.collaborazioneSPCoopBase.sincrono(this.repositoryVersionamento3,CostantiTestSuite.PORTA_DELEGATA_VERSIONAMENTO_NOME_VERSIONE,addIDUnivoco,false);
-	}
-	@DataProvider (name="sincronoVersionamento3")
-	public Object[][]testSincronoVersionamento3() throws Exception{
-		String id=this.repositoryVersionamento3.getNext();
-		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
-			try {
-				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return new Object[][]{
-				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
-				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
-		};
-	}
-	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_NOME_VERSIONE"},
-			dataProvider="sincronoVersionamento3",dependsOnMethods={"sincronoVersionamento3"})
-	public void testSincronoVersionamento3(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
-		try{
-			this.collaborazioneSPCoopBase.testSincrono(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VERSIONAMENTO_ACCORDI,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VERSIONAMENTO_ACCORDI_NOME_VERSIONE,
-					CostantiTestSuite.SPCOOP_NOME_AZIONE_VERSIONAMENTO_ACCORDI_NOME_VERSIONE, checkServizioApplicativo,null);
-		}catch(Exception e){
-			throw e;
-		}finally{
-			data.close();
-		}
-	}
+//	Repository repositoryVersionamento3=new Repository();
+//	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_NOME_VERSIONE"})
+//	public void sincronoVersionamento3() throws TestSuiteException, Exception{
+//		this.collaborazioneSPCoopBase.sincrono(this.repositoryVersionamento3,CostantiTestSuite.PORTA_DELEGATA_VERSIONAMENTO_NOME_VERSIONE,addIDUnivoco,false);
+//	}
+//	@DataProvider (name="sincronoVersionamento3")
+//	public Object[][]testSincronoVersionamento3() throws Exception{
+//		String id=this.repositoryVersionamento3.getNext();
+//		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+//			try {
+//				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return new Object[][]{
+//				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+//				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+//		};
+//	}
+//	@Test(groups={VersionamentoAccordiServizio.ID_GRUPPO,VersionamentoAccordiServizio.ID_GRUPPO+".SINCRONO_NOME_VERSIONE"},
+//			dataProvider="sincronoVersionamento3",dependsOnMethods={"sincronoVersionamento3"})
+//	public void testSincronoVersionamento3(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+//		try{
+//			this.collaborazioneSPCoopBase.testSincrono(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VERSIONAMENTO_ACCORDI,
+//					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VERSIONAMENTO_ACCORDI_NOME_VERSIONE,
+//					CostantiTestSuite.SPCOOP_NOME_AZIONE_VERSIONAMENTO_ACCORDI_NOME_VERSIONE, checkServizioApplicativo,null);
+//		}catch(Exception e){
+//			throw e;
+//		}finally{
+//			data.close();
+//		}
+//	}
 }
