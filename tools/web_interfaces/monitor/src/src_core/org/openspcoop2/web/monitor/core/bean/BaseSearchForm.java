@@ -34,6 +34,7 @@ import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -527,7 +528,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.tipologiaRicerca = null;
 	}
 
-	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException {
+	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException, UserInvalidException {
 
 		User u = getUser();
 		UserDetailsBean user = new UserDetailsBean();

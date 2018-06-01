@@ -9,6 +9,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 
@@ -38,13 +39,13 @@ public class UserDetailsBean implements Serializable {
 		this.authorities.add(new RuoloBean( UserDetailsBean.RUOLO_USER));
 		
 		try {
-			this.ruoloConfiguratoreEnabled = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).isAttivoLiveRuoloOperatore();
+			this.ruoloConfiguratoreEnabled = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).isRuoloConfiguratoreAttivo();
 		}catch(Exception e) {
 			
 		}
 	}
 
-	public void setUtente(User u) {
+	public void setUtente(User u) throws UserInvalidException{
 		this.username = u.getLogin();
 		this.password = u.getPassword();
 		
@@ -67,6 +68,10 @@ public class UserDetailsBean implements Serializable {
 		
 		if(permessi.isSistema() && this.ruoloConfiguratoreEnabled) {
 			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_CONFIGURATORE));
+		}
+		
+		if(this.authorities.size() == 1) {
+			throw new UserInvalidException("Utente non dispone di alcun ruolo necessario per accedere alla console");
 		}
 		
 		this.utente = u;

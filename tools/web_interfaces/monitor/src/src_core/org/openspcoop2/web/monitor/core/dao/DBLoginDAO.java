@@ -143,12 +143,7 @@ public class DBLoginDAO implements ILoginDAO {
 
 			User u = this.utenteDAO.getUser(username);
 
-			// check consistenza
-			PermessiUtente permessi = u.getPermessi();
-			if(!permessi.isDiagnostica() && !permessi.isSistema()) {
-				throw new UserInvalidException("Utente non dispone di alcun ruolo necessario per accedere alla console");
-			}
-
+			// check consistenza spostato dentro il metodo setutente
 			//			int foundSoggetti = u.getSoggetti() != null ? u.getSoggetti().size() : 0;
 			//			int foundServizi = u.getServizi() !=  null ? u.getServizi().size() : 0;
 			//			

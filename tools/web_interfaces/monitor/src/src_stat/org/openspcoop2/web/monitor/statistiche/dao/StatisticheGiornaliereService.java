@@ -65,6 +65,7 @@ import org.openspcoop2.web.monitor.core.datamodel.Res;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
@@ -2048,7 +2049,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			StatisticaGiornalieraModel model, boolean isPaginated, int start,
 			int limit) throws ExpressionNotImplementedException,
 			ExpressionException, ServiceException, NotImplementedException,
-			CoreException, NotFoundException, ProtocolException {
+			CoreException, NotFoundException, ProtocolException, UserInvalidException {
 
 		List<Index> forceIndexes = null;
 		try{

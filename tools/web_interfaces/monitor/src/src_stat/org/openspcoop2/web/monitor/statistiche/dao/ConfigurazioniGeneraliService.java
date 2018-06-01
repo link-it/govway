@@ -58,6 +58,7 @@ import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
@@ -161,6 +162,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (NotImplementedException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (CoreException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (UserInvalidException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -509,6 +512,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (CoreException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<ConfigurazioneGenerale>();
@@ -573,6 +578,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (ProtocolException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
 		return new ArrayList<ConfigurazioneGenerale>();
@@ -603,6 +610,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (NotImplementedException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (CoreException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (UserInvalidException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -814,7 +823,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	}
 
 	private IExpression createPDExpression(IServiceSearchWithId<?, ?> dao, ConfigurazioniGeneraliSearchForm searchForm, boolean count)
-			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException {
+			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException, UserInvalidException {
 		IExpression expr = dao.newExpression();
 
 		if(searchForm == null)
@@ -878,7 +887,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	}
 
 	private IExpression createPAExpression(IServiceSearchWithId<?, ?> dao, ConfigurazioniGeneraliSearchForm searchForm, boolean count) 
-			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException{
+			throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, CoreException, UserInvalidException{
 		IExpression expr = dao.newExpression();
 
 		if(searchForm == null)

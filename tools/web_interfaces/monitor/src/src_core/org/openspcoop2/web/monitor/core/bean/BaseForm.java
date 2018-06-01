@@ -23,6 +23,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 
 public class BaseForm implements Serializable {
@@ -176,7 +177,7 @@ public class BaseForm implements Serializable {
 
 	}
 	
-	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException {
+	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException, UserInvalidException { 
 
 		User u = getUser();
 		UserDetailsBean user = new UserDetailsBean();
