@@ -64,7 +64,7 @@ public class PreInRequestHandler extends FirstPositionHandler implements org.ope
 		// Creo Transazione
 		Transaction tr =  null;
 		try{
-			tr = TransactionContext.getTransaction(idTransazione,true);
+			tr = TransactionContext.getTransaction(idTransazione);
 		}catch(TransactionNotExistsException e){
 			throw new HandlerException(e);
 			// Non dovrebbe avvenire in questo handler

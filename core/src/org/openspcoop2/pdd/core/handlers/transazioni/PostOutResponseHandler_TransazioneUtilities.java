@@ -407,7 +407,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setNomeServizio(transaction.getRequestInfo().getIdServizio().getNome());
 				}
 			}
-			if(context.getProtocollo().getVersioneServizio()==null || context.getProtocollo().getVersioneServizio().intValue()<=0) {
+			if(context.getProtocollo()==null || context.getProtocollo().getVersioneServizio()==null || context.getProtocollo().getVersioneServizio().intValue()<=0) {
 				if(transaction!=null && transaction.getRequestInfo()!=null && transaction.getRequestInfo().getIdServizio()!=null) {
 					transactionDTO.setVersioneServizio(transaction.getRequestInfo().getIdServizio().getVersione());
 				}

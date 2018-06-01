@@ -120,6 +120,9 @@ public class Handlers {
 	}
 	
 	public void verificaInstallazioneHandler() throws TestSuiteException, Exception{
+		
+		System.out.println("VERIFICA INSTALLAZIONE HANDLER ...");
+		
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 		Date dataInizioTest = DateManager.getDate();
@@ -150,11 +153,13 @@ public class Handlers {
 			client.run();
 			
 		}catch (AxisFault error) {
+			//error.printStackTrace(System.err);
 			Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 			if(!Utilities.toString(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO).equals(error.getFaultCode().getLocalPart())){
 				throw new Exception("Archivio 'openspcoop2_spcoop-testsuite_*.jar' non sembra essere installato correttamente nella Porta di Dominio. L'archivio e' fondamentale per la riuscita del test. Errore avvenuto: ("+error.getFaultCode().getLocalPart()+") "+error.toString(),error);
 			}
-		}catch(Exception e){
+		}catch(Throwable e){
+			e.printStackTrace(System.err);
 			throw new Exception("Archivio 'openspcoop2_spcoop-testsuite_*.jar' non sembra essere installato correttamente nella Porta di Dominio. L'archivio e' fondamentale per la riuscita del test. Errore avvenuto: "+e.getMessage(),e);
 		}finally{
 			try{
@@ -172,10 +177,11 @@ public class Handlers {
 		try{
 			dataFruitore = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();
 			Reporter.log("Verifico msg diag per id: "+client.getIdMessaggio());
-			if(!dataFruitore.isTracedMessaggio(client.getIdMessaggio(), "Riscontrato errore durante la gestione del messaggio [inRequestProtocolHandlers[testsuite]]: "+org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_PREFISSO_ERRORE+": ERRORE RICHIESTO DA TESTSUITE HANDLER")){
+			if(!dataFruitore.isTracedMessaggio(client.getIdMessaggio(), "Riscontrato errore durante la gestione del messaggio [InRequestProtocolHandler [testsuite]]: "+org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_PREFISSO_ERRORE+": ERRORE RICHIESTO DA TESTSUITE HANDLER")){
 				throw new Exception("Archivio 'openspcoop2_spcoop-testsuite_*.jar' non sembra essere installato correttamente nella Porta di Dominio. L'archivio e' fondamentale per la riuscita del test");
 			}
 		}catch(Exception e){
+			e.printStackTrace(System.err);
 			throw e;
 		}finally{
 			try{
@@ -189,6 +195,8 @@ public class Handlers {
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("ERRORE RICHIESTO DA TESTSUITE HANDLER");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		System.out.println("VERIFICA COMPLETATA");
 	}
 	
 	
@@ -333,7 +341,9 @@ public class Handlers {
 		}
 		
 		try{
-			Assert.assertTrue(!data.isTracedMessaggioWithLike(id,org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_PREFISSO_ERRORE));
+			boolean v = data.isTracedMessaggioWithLike(id,org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_PREFISSO_ERRORE);
+			Reporter.log("SEARCH in id ["+id+"] messaggio like ["+org.openspcoop2.protocol.spcoop.testsuite.handler.Costanti.TEST_CONTEXT_PREFISSO_ERRORE+"]: "+v);
+			Assert.assertTrue(!v);
 		}catch(Exception e){
 			throw e;
 		}finally{

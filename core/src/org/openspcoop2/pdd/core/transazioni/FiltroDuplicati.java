@@ -90,7 +90,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 		if(TransactionContext.containsIdentificativoProtocollo(idBusta)){
 			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (CONTEXT)");
 			try{
-				TransactionContext.getTransaction(this.idTransazione,false).addIdProtocolloDuplicato(idBusta);
+				TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 			}catch(Exception e){
 				new ProtocolException(e);
 			}
@@ -102,7 +102,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 		if(esisteTransazione(protocolFactory,idBusta,idBusta)){
 			//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (DATABASE)");
 			try{
-				TransactionContext.getTransaction(this.idTransazione,false).addIdProtocolloDuplicato(idBusta);
+				TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 			}catch(Exception e){
 				new ProtocolException(e);
 			}
@@ -124,7 +124,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			if(e.getMessage()!=null && "DUPLICATA".equals(e.getMessage())){
 				//System.out.println("@@IS_DUPLICATA ["+idBusta+"] TRUE (ERRORE ECCEZIONE)");
 				try{
-					TransactionContext.getTransaction(this.idTransazione,false).addIdProtocolloDuplicato(idBusta);
+					TransactionContext.getTransaction(this.idTransazione).addIdProtocolloDuplicato(idBusta);
 				}catch(Exception eSetDuplicata){
 					new ProtocolException(eSetDuplicata);
 				}
@@ -282,14 +282,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			IBustaBuilder<?> protocolBustaBuilder = null;
 			if(this.openspcoop2State!=null) {
 				if(idBustaRichiesta!=null) {
-					protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRichiesta());
+					protocolBustaBuilder = protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRichiesta());
 				}
 				else {
-					protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRisposta());
+					protocolBustaBuilder = protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRisposta());
 				}
 			}
 			else {					
-				protocolFactory.createBustaBuilder(null);
+				protocolBustaBuilder = protocolFactory.createBustaBuilder(null);
 			}
 			
 			if(idBustaRichiesta==null && idBustaRisposta==null){
@@ -444,14 +444,14 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			IBustaBuilder<?> protocolBustaBuilder = null;
 			if(this.openspcoop2State!=null) {
 				if(richiesta) {
-					protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRichiesta());
+					protocolBustaBuilder = protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRichiesta());
 				}
 				else {
-					protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRisposta());
+					protocolBustaBuilder = protocolFactory.createBustaBuilder(this.openspcoop2State.getStatoRisposta());
 				}
 			}
 			else {					
-				protocolFactory.createBustaBuilder(null);
+				protocolBustaBuilder = protocolFactory.createBustaBuilder(null);
 			}
 			
 			if(idBusta==null){

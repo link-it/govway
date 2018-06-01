@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -56,6 +57,7 @@ import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -267,6 +269,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			pddContext = context.getPddContext();
 			
 			try{
+				if(openSPCoopProperties.isTransazioniEnabled()) {
+					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				}
+			}catch(Exception e){
+				logCore.error("Errore durante la creazione della transazione",e);
+			}
+			
+			try{
 				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");
 			}catch(Exception e){
 				logCore.error("Errore generazione diagnostico di ingresso",e);
@@ -401,7 +411,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(imbustamentoConAttachment){
 					tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+tipoAttachment;
 					requestMessage = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageTypeReq,MessageRole.REQUEST,inputBody,tipoAttachment,
-							MailcapActivationReader.existsDataContentHandler(tipoAttachment),req.getContentType(), openSPCoopProperties.getHeaderSoapActorIntegrazione());
+							MailcapActivationReader.existsDataContentHandler(tipoAttachment),req.getContentType(), openSPCoopProperties.getHeaderSoapActorIntegrazione());					
 					requestMessage.setTransportRequestContext(requestInfo.getProtocolContext());				
 				}else{
 					tipoLetturaRisposta = "Imbustamento messaggio in un messaggio SOAP";
@@ -417,6 +427,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					}
 					requestMessage = pr.getMessage_throwParseException();
 				}
+				
+				if(requestInfo.getProtocolContext().getParametersTrasporto()==null) {
+					requestInfo.getProtocolContext().setParametersTrasporto(new Properties());
+				}
+				requestInfo.getProtocolContext().removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				requestInfo.getProtocolContext().getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, requestMessage.getContentType());
+				requestInfo.setIntegrationRequestMessageType(requestMessage.getMessageType());
+				
 				Utilities.printFreeMemory("RicezioneContenutiApplicativiHTTPtoSOAP - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				requestMessage.addContextProperty(org.openspcoop2.core.constants.Costanti.REQUEST_INFO,requestInfo); // serve nelle comunicazione non stateless (es. riscontro salvato) per poterlo rispedire

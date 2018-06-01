@@ -453,12 +453,12 @@ public abstract class OpenSPCoop2MessageFactory {
 					contenutoBodyImbustato = 
 							"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>"+
 									bodyPulito+
-							"</SOAP-ENV:Body></SOAP-ENV:Envelope>";	
+							"</SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n";	
 				} else {
 					contenutoBodyImbustato = 
 							"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body>"+
 									bodyPulito+
-							"</SOAP-ENV:Body></SOAP-ENV:Envelope>";	
+							"</SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n";	
 				}
 				
 				// MessaggioImbustato

@@ -27,7 +27,7 @@ public class InRequestHandler extends FirstPositionHandler implements  org.opens
 		
 		try{
 		
-			Transaction tr = TransactionContext.getTransaction(idTransazione,false);
+			Transaction tr = TransactionContext.getTransaction(idTransazione);
 			
 			tr.setDataAccettazioneRichiesta(context.getDataAccettazioneRichiesta());
 			tr.setDataIngressoRichiesta(context.getDataElaborazioneMessaggio());

@@ -235,7 +235,7 @@ public class SOAPAction {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -404,7 +404,7 @@ public class SOAPAction {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -567,7 +567,7 @@ public class SOAPAction {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -729,7 +729,7 @@ public class SOAPAction {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 					
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();

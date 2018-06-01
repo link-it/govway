@@ -19,7 +19,22 @@ public class TransactionContext {
 	private static Hashtable<String, Transaction> transactionContext = 
 		new Hashtable<String, Transaction>();
 			
-	public static Transaction getTransaction(String id,boolean createIfNotExists) throws TransactionNotExistsException{
+	public static void createTransaction(String id) throws TransactionNotExistsException{
+		try{
+			if(gestioneStateful==null){
+				initGestioneStateful();
+			}
+		}catch(Exception e){
+			throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
+		}
+		Transaction transaction = new Transaction(gestioneStateful);
+		transactionContext.put(id, transaction);
+	}
+	
+	public static Transaction getTransaction(String id) throws TransactionNotExistsException{
+		return getTransaction(id, false);
+	}
+	private static Transaction getTransaction(String id,boolean createIfNotExists) throws TransactionNotExistsException{
 		//if(transactionContext==null){
 		//	System.out.println("TX IS NULL??");
 		//}
@@ -28,15 +43,7 @@ public class TransactionContext {
 		//System.out.println("TX get ("+id+") query fatta");
 		if(transaction==null){
 			if(createIfNotExists){
-				try{
-					if(gestioneStateful==null){
-						initGestioneStateful();
-					}
-				}catch(Exception e){
-					throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
-				}
-				transaction = new Transaction(gestioneStateful);
-				transactionContext.put(id, transaction);
+				createTransaction(id);
 			}
 			else{
 				throw new TransactionNotExistsException("Transaction con id ["+id+"] non esiste"); 

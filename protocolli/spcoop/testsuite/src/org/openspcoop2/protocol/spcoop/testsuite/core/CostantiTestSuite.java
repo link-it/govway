@@ -430,7 +430,7 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (AggiornamentoUtentiWrappedDocumentLiteral) */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL="PDValWSDL/AggiornamentoUtentiWrappedDocumentLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiDocumentLiteral) */
-	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL="PDValWSDL/GestioneUtentiRPCLiteral";
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL="PDValWSDL/GestioneUtentiDocumentLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiRPCLiteral) */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCL="PDValWSDL/GestioneUtentiRPCLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiRPCEncoded) */

@@ -28,7 +28,7 @@ public class InRequestProtocolHandler extends FirstPositionHandler implements  o
 		
 		try{
 		
-			Transaction tr = TransactionContext.getTransaction(idTransazione,false);
+			Transaction tr = TransactionContext.getTransaction(idTransazione);
 			
 			if(context.getConnettore()!=null){
 				Credenziali credenziali = context.getConnettore().getCredenziali();

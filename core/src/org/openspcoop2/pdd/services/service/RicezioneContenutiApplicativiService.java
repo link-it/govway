@@ -54,6 +54,7 @@ import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -271,6 +272,14 @@ public class RicezioneContenutiApplicativiService {
 			context.setProprietaErroreAppl(this.generatoreErrore.getProprietaErroreAppl());
 			msgDiag.setPddContext(context.getPddContext(), protocolFactory);
 			pddContext = context.getPddContext();
+			
+			try{
+				if(openSPCoopProperties.isTransazioniEnabled()) {
+					TransactionContext.createTransaction((String)pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+				}
+			}catch(Exception e){
+				logCore.error("Errore durante la creazione della transazione",e);
+			}
 			
 			try{
 				msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");

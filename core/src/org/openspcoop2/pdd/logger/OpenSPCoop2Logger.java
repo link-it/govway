@@ -797,6 +797,13 @@ public class OpenSPCoop2Logger {
 		if(protocol!=null)
 			showMsg.append("<").append(protocol).append(">");
 		
+		if(msgDiag.getIdTransazione()!=null) {
+			if(showMsg.length()>0){
+				showMsg.append(" ");
+			}
+			showMsg.append(msgDiag.getIdTransazione());
+		}
+		
 		if(OpenSPCoop2Logger.pddContextSerializer!=null){
 			Hashtable<String, String> contextSerializerParameters = OpenSPCoop2Logger.pddContextSerializer.getLoggerKeywords();
 			if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){

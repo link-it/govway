@@ -39,7 +39,7 @@ public class OutResponseHandler extends LastPositionHandler implements  org.open
 		Transaction tr = null;
 		try{
 		
-			tr = TransactionContext.getTransaction(idTransazione,false);
+			tr = TransactionContext.getTransaction(idTransazione);
 			
 			tr.setDataUscitaRisposta(context.getDataElaborazioneMessaggio());
 			//System.out.println("SET DATA ("+context.getDataElaborazioneMessaggio().toString()+")");

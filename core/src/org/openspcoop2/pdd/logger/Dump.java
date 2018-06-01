@@ -532,7 +532,7 @@ public class Dump {
 			Exception exc = null;
 			boolean gestioneStateful = false;
 			try {
-				Transaction tr = TransactionContext.getTransaction(this.idTransazione,false);
+				Transaction tr = TransactionContext.getTransaction(this.idTransazione);
 				tr.addMessaggio(messaggio);
 			}catch(TransactionDeletedException e){
 				gestioneStateful = true;

@@ -201,7 +201,7 @@ public class SOAPMessageScorretti {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_429_CONTENT_TYPE_NON_SUPPORTATO).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "Il valore dell'header HTTP Content-Type (application/soap+xml) non rientra tra quelli supportati dal protocollo (text/xml, multipart/related)";
+				String msgErrore = "Il valore dell'header HTTP Content-Type (application/soap+xml) non rientra tra quelli supportati dal protocollo (text/xml)";
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
 			}finally{
@@ -222,6 +222,8 @@ public class SOAPMessageScorretti {
 			SOAPMessageScorretti.ID_GRUPPO+".CONTENT_TYPE_NON_SUPPORTATO_PA"})
 	public void contentTypeNonSupportato_PA()throws TestSuiteException,SOAPException, Exception{
 
+		Date dataInizioTest = DateManager.getDate();
+		
 		// costruzione busta
 		java.io.ByteArrayInputStream bin =
 				new java.io.ByteArrayInputStream(getBusta());
@@ -231,7 +233,7 @@ public class SOAPMessageScorretti {
 		DatabaseComponent dbComponentErogatore = null;
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryHeaderDontUnderstandPA);
-			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore()+"/NOME_PA"); // il nome non è importante, ma serve indicare un nome di porta per evitare di rientrare nel caso di url * dove viene ritornato soap11 forzato
 			client.setContentType("application/soap+xml"); // ContentType per messaggi SOAP 1.2
 			client.connectToSoapEngine();
 			client.setMessage(msg);
@@ -267,7 +269,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -278,6 +280,14 @@ public class SOAPMessageScorretti {
 		}finally{
 			dbComponentErogatore.close();
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore("La porta invocata non esiste porta[NOME_PA] urlInvocazione[/openspcoop2/spcoop/PA/NOME_PA]: verificare i parametri di accesso utilizzati: Porta Applicativa [NOME_PA] non esistente");
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 
 
@@ -435,7 +445,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>());
 			}finally{
 				dbComponentErogatore.close();
@@ -498,8 +508,8 @@ public class SOAPMessageScorretti {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR)+"]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_430_SOAP_ENVELOPE_NAMESPACE_ERROR).equals(error.getFaultCode().getLocalPart()));
-				String msgErrore = "SOAP Envelope contiene un namespace (http://www.w3.org/2003/05/soap-envelope) diverso da quello atteso per messaggi SOAP 1.1 (http://schemas.xmlsoap.org/soap/envelope/)";
-				String msgErrore2 = "SOAP Envelope contiene un namespace (Impossibile recuperare il valore del namespace) diverso da quello atteso per messaggi SOAP 1.1 (http://schemas.xmlsoap.org/soap/envelope/)";
+				String msgErrore = "SOAP Envelope contiene un namespace (http://www.w3.org/2003/05/soap-envelope) diverso da quello atteso per messaggi Soap-1.1 (http://schemas.xmlsoap.org/soap/envelope/)";
+				String msgErrore2 = "SOAP Envelope contiene un namespace (Impossibile recuperare il valore del namespace) diverso da quello atteso per messaggi Soap-1.1 (http://schemas.xmlsoap.org/soap/envelope/)";
 				Reporter.log("Controllo fault string ["+error.getFaultString()+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()) || msgErrore2.equals(error.getFaultString()));
 			}finally{
@@ -589,7 +599,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); // vengono generati in caso di 5XX
 
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
-						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBusteSOAP", 
+						Utilities.testSuiteProperties.getIdentitaDefault(),TipoPdD.APPLICATIVA,"RicezioneBuste", 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
 
 			}finally{
@@ -648,8 +658,7 @@ public class SOAPMessageScorretti {
 		Object[][] params = new Object[14][4];
 		//Object[][] params = new Object[1][4];
 		int index = 0;
-
-
+		
 		{
 			// Chiusura SOAPBody non Effettuata
 			String xml = readFile(Utilities.testSuiteProperties.getSoap11FileName());
@@ -1036,7 +1045,9 @@ public class SOAPMessageScorretti {
 						for (String erroreParser : motivoErroreParser) {
 							try{
 								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
-										Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiHTTP", 
+										//Utilities.testSuiteProperties.getIdentitaDefault_dominio(),
+										CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),
+										"RicezioneContenutiApplicativiHTTP", 
 										Utilities.toString(codiceErroreIntegrazione), 
 										erroreParser, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);
 								match = true;
@@ -1931,7 +1942,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
-				identificativiFunzione[1] = "RicezioneBusteSOAP";
+				identificativiFunzione[1] = "RicezioneBuste";
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2036,7 +2047,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
-				identificativiFunzione[1] = "RicezioneBusteSOAP";
+				identificativiFunzione[1] = "RicezioneBuste";
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2140,7 +2151,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
 				String[] identificativiFunzione = new String[2];
 				identificativiFunzione[0] = "MinisteroErogatoreSPCoopIT";
-				identificativiFunzione[1] = "RicezioneBusteSOAP";
+				identificativiFunzione[1] = "RicezioneBuste";
 				OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2271,7 +2282,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error)); 
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
-                                identificativiFunzione[1] = "RicezioneBusteSOAP";
+                                identificativiFunzione[1] = "RicezioneBuste";
                                 OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2394,7 +2405,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
-                                identificativiFunzione[1] = "RicezioneBusteSOAP";
+                                identificativiFunzione[1] = "RicezioneBuste";
                                 OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2511,7 +2522,7 @@ public class SOAPMessageScorretti {
 				Assert.assertTrue(OpenSPCoopDetailsUtilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
                                 identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
-                                identificativiFunzione[1] = "RicezioneBusteSOAP";
+                                identificativiFunzione[1] = "RicezioneBuste";
                                 OpenSPCoopDetailsUtilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.testsuite.units.utils.OpenSPCoopDetail>(), false);
@@ -2816,7 +2827,7 @@ public class SOAPMessageScorretti {
 				if(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart())){
 					Reporter.log("Controllo fault code. Atteso ["+Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA)+"] - Trovato [" + error.getFaultCode().getLocalPart() + "]");
 					Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA).equals(error.getFaultCode().getLocalPart()));
-					String msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply (text/ERRATO_CT)";
+					String msgErrore = "Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: text/ERRATO_CT): Header Content-Type definito nell'http reply non è tra quelli conosciuti: text/xml";
 					Reporter.log("Controllo fault string. Trovato [" + error.getFaultString() + "]");
 					Assert.assertTrue(error.getFaultString().contains(msgErrore));
 				} else {
@@ -2834,7 +2845,7 @@ public class SOAPMessageScorretti {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Il valore dell'header HTTP Content-Type definito nell'http reply (text/ERRATO_CT)");
+		err.setMsgErrore("Non è stato possibile comprendere come trattare il messaggio ricevuto (Content-Type: text/ERRATO_CT)");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();

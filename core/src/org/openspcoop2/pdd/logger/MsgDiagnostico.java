@@ -1995,7 +1995,7 @@ public class MsgDiagnostico {
 		Exception exc = null;
 		boolean gestioneStateful = false;
 		try {
-			Transaction tr = TransactionContext.getTransaction(msgDiag.getIdTransazione(),false);
+			Transaction tr = TransactionContext.getTransaction(msgDiag.getIdTransazione());
 			tr.addMsgDiagnostico(msgDiag);
 		}catch(TransactionDeletedException e){
 			gestioneStateful = true;

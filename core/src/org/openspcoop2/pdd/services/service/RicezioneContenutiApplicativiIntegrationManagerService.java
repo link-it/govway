@@ -52,6 +52,7 @@ import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PreInRequestContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -251,6 +252,14 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		context.setTipoPorta(TipoPdD.DELEGATA);
 		msgDiag.setPddContext(context.getPddContext(), protocolFactory);
+		
+		try{
+			if(openSPCoopProperties.isTransazioniEnabled()) {
+				TransactionContext.createTransaction((String)context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+			}
+		}catch(Exception e){
+			logCore.error("Errore durante la creazione della transazione",e);
+		}
 		
 		try{
 			msgDiag.logPersonalizzato("ricezioneRichiesta.firstLog");

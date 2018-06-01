@@ -42,7 +42,7 @@ public class OutRequestHandler extends LastPositionHandler implements  org.opens
 		boolean gestioneStateful = false;
 		Transaction tr = null;
 		try{
-			tr = TransactionContext.getTransaction(idTransazione,false);
+			tr = TransactionContext.getTransaction(idTransazione);
 		}catch(TransactionNotExistsException e){
 			gestioneStateful = true;
 		}

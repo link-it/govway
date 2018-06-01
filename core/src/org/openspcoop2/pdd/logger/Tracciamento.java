@@ -752,7 +752,7 @@ public class Tracciamento {
 		Exception exc = null;
 		boolean gestioneStateful = false;
 		try {
-			Transaction tr = TransactionContext.getTransaction(traccia.getIdTransazione(),false);
+			Transaction tr = TransactionContext.getTransaction(traccia.getIdTransazione());
 			if(richiesta) {
 				tr.setTracciaRichiesta(traccia);
 			}

@@ -40,7 +40,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 		boolean gestioneStateful = false;
 		Transaction tr = null;
 		try{
-			tr = TransactionContext.getTransaction(idTransazione,false);
+			tr = TransactionContext.getTransaction(idTransazione);
 		}catch(TransactionNotExistsException e){
 			gestioneStateful = true;
 		}

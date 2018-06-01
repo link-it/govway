@@ -103,9 +103,6 @@ public class TunnelSoapUtils {
 				//System.out.println("MULTI ELEMENT: "+listNode.size());
 				bodyWithMultiRootElement = true;
 			}
-			else{
-				throw new Exception("Body non contiene nessun contenuto da allegare");
-			}
 			byte[] bodySbustato = TunnelSoapUtils.sbustamentoSOAPEnvelope(soapMessage.getSOAPPart().getEnvelope());
 			AttachmentPart ap = null;
 			if(bodyWithMultiRootElement){
