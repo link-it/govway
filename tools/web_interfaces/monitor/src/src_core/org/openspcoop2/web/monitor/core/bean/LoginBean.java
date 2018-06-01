@@ -1,5 +1,6 @@
 package org.openspcoop2.web.monitor.core.bean;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,13 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
@@ -43,6 +50,10 @@ public class LoginBean extends AbstractLoginBean {
 	private String logoHeaderLink = null;
 	private String title = null;
 	private boolean showExtendedInfo = false;
+
+	private String modalita = null;
+	private Boolean visualizzaMenuModalita = null;
+	private List<MenuModalitaItem> vociMenuModalita = null;
 
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -214,17 +225,19 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public int getColonneUserInfo() {
-		boolean admin = this.getLoggedUser().isAdmin();
-		boolean operatore = Utility.getLoggedUser().isOperatore();
+		if(this.colonneUserInfo == null) {
+			boolean admin = this.getLoggedUser().isAdmin();
+			boolean operatore = this.getLoggedUser().isOperatore();
 
-		//1 !applicationBean.amministratore && loginBean.loggedUser.sizeSoggetti==1
-		int v1 = (!admin && this.getLoggedUser().getSizeSoggetti() == 1) ? 1 : 0;
+			// visualizzazione icona stato
+			int v1 = (admin || operatore) ? 1 : 0;
 
-		//2 applicationBean.amministratore or applicationBean.operatore
-		int v2 = (admin || operatore) ? 1 : 0;
+			//2 visualizzazione modalita'
+			int v2 = this.isVisualizzaMenuModalita() ? 1 : 0;
 
-		this.colonneUserInfo = 1 + v1 + v2;
-
+			// numero colonne = profiloutente+modalita+statopdd
+			this.colonneUserInfo = 1 + v1 + v2;
+		}
 		return this.colonneUserInfo;
 	}
 
@@ -232,7 +245,7 @@ public class LoginBean extends AbstractLoginBean {
 		this.colonneUserInfo = colonneUserInfo;
 	}
 
-	private int colonneUserInfo = 0;
+	private Integer colonneUserInfo = null;
 
 	public String getLogoHeaderImage() {
 		return this.logoHeaderImage;
@@ -271,4 +284,177 @@ public class LoginBean extends AbstractLoginBean {
 	public void setShowExtendedInfo(boolean showExtendedInfo) {
 		this.showExtendedInfo = showExtendedInfo;
 	}
+
+	public String getModalita() {
+		if(this.modalita == null)
+			return "qualsiasi";
+		
+		return this.modalita;
+	}
+
+	public void setModalita(String modalita) {
+		this.modalita = modalita;
+		
+		if(this.modalita == "qualsiasi")
+			this.modalita = null;
+	}
+
+	public boolean isVisualizzaMenuModalita()  {
+		if(this.visualizzaMenuModalita == null) {
+			try {
+				List<String> listaNomiProtocolli = listaProtocolliDisponibilePerUtentePddMonitor();
+
+				this.visualizzaMenuModalita = listaNomiProtocolli.size() > 1;
+
+			}catch(Exception e) {
+				this.visualizzaMenuModalita = false;
+			}
+		}
+		return this.visualizzaMenuModalita;
+	}
+
+	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws ProtocolException {
+		String tipoNomeSoggettoLocale = null;
+		if (this.getUtente().getSoggetti().size() == 1) {
+			IDSoggetto s = this.getUtente().getSoggetti().get(0);
+			tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
+		}
+		List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
+
+		ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
+		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+
+		List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+		return listaNomiProtocolli;
+	}
+
+	public void setVisualizzaMenuModalita(boolean visualizzaMenuModalita) {
+		this.visualizzaMenuModalita = visualizzaMenuModalita;
+	}
+
+	public String cambiaModalita() {
+		this.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(this.modalita);
+		
+		try {
+			this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
+			this.vociMenuModalita = null;
+		} catch (NotFoundException | ServiceException e) {
+			String errorMessage = "Si e' verificato un errore durante il cambio della modalita', si prega di riprovare piu' tardi.";
+			this.log.error(e.getMessage(),e);
+			MessageUtils.addErrorMsg(errorMessage);
+		}
+		
+		return "modalita";
+	}
+
+	public String getLabelModalita() throws ProtocolException {
+		// prelevo l'eventuale protocollo selezionato
+		String labelSelezionato = "";
+		try {
+			labelSelezionato = this.modalita == null ? Costanti.LABEL_PARAMETRO_MODALITA_ALL : NamingUtils.getLabelProtocollo(this.modalita);
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+		return MessageFormat.format(Costanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato); 
+	}
+
+	public void setLabelModalita(String labelModalita) {
+	}
+
+	public List<MenuModalitaItem> getVociMenuModalita() {
+		if(this.vociMenuModalita == null) {
+			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+			try {
+				String tipoNomeSoggettoLocale = null;
+				if (this.getUtente().getSoggetti().size() == 1) {
+					IDSoggetto s = this.getUtente().getSoggetti().get(0);
+					tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
+				}
+				List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
+
+				ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+				MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+
+				List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+
+				if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
+					// prelevo l'eventuale protocollo selezionato
+					// popolo la tendina con i protocolli disponibili
+					for (String protocolloDisponibile : listaNomiProtocolli) {
+						String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+						
+						MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, NamingUtils.getLabelProtocollo(protocolloDisponibile), iconProt); 
+						this.vociMenuModalita.add(menuItem);
+					}
+
+					// seleziona tutti
+					MenuModalitaItem menuItem = new MenuModalitaItem("qualsiasi", Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+					this.vociMenuModalita.add(menuItem);
+				}
+
+			}catch(Exception e) {
+				this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+			}
+			
+		}
+		
+		
+		return this.vociMenuModalita;
+	}
+
+	public void setVociMenuModalita(List<MenuModalitaItem> vociMenuModalita) {
+	}	
+
+	public List<String> getProtocolliSelezionati() {
+		List<String> protocolliList = new ArrayList<String>();
+		try{
+			User utente = this.getUtente();
+			
+			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
+				protocolliList.add(utente.getProtocolloSelezionatoPddMonitor());
+				return protocolliList;
+			}
+			
+			if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
+				return utente.getProtocolliSupportati();
+			}
+			
+			
+			return this.listaProtocolliDisponibilePerUtentePddMonitor();
+
+		}catch (Exception e) {
+			this.log.error(e.getMessage(),e);
+			protocolliList = new ArrayList<String>();
+			return protocolliList;
+		}
+	}
+	
+	public List<InformazioniProtocollo> getListaInformazioniProtocollo() {
+		List<InformazioniProtocollo> listaInformazioniProtocollo = new ArrayList<InformazioniProtocollo>();
+		
+		List<String> protocolli = this.getProtocolliSelezionati();
+		
+		for (String protocollo : protocolli) {
+			try{
+				InformazioniProtocollo informazioniProtocollo = new InformazioniProtocollo();
+				String descrizioneProtocollo = NamingUtils.getDescrizioneProtocollo(protocollo);
+				String webSiteProtocollo = NamingUtils.getWebSiteProtocollo(protocollo);
+				String labelProtocollo = NamingUtils.getLabelProtocollo(protocollo);
+				
+				informazioniProtocollo.setDescrizioneProtocollo(descrizioneProtocollo);
+				informazioniProtocollo.setLabelProtocollo(labelProtocollo);
+				informazioniProtocollo.setWebSiteProtocollo(webSiteProtocollo);
+				
+				listaInformazioniProtocollo.add(informazioniProtocollo);
+			}catch (Exception e) {
+				this.log.error("Impossibilie caricare le informazioni del protocollo ["+protocollo+"]: " + e.getMessage(),e);
+			}
+		}
+				
+		return listaInformazioniProtocollo;
+	}
+
+	public void setListaInformazioniProtocollo(List<InformazioniProtocollo> listaInformazioniProtocollo) {
+	}
+
 }

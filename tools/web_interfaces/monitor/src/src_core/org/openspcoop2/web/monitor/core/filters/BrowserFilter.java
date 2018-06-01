@@ -212,21 +212,21 @@ public class BrowserFilter implements Filter {
 		
 		while (parameterNames.hasMoreElements()) {
 			String parName = (String) parameterNames.nextElement();
-			log.debug("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"].");
+			log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"].");
 			if(parName!= null && parName.endsWith(parametroSVG)){
 				svg = httpServletRequest.getParameter(parName);
-				log.debug("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"] Utilizzato per pilotare il disegno dei grafici.");
+				log.trace("Parametro ["+parName+"] con Valore ["+httpServletRequest.getParameter(parName)+"] Utilizzato per pilotare il disegno dei grafici.");
 				
 				// controllo solo nei form delle statistiche se sto nella schermata form non devo fare cambio di modalita' se navigo si.
 				if(parName.endsWith(parametroSVG_FORM_STATS)){
 					 String paramGeneraReport = getParamValue(httpServletRequest, parametroGeneraReport);
 					 String paramTipoReport = getParamValue(httpServletRequest, parametroTipoReport);
-					 log.debug("Caso speciale Form Statistiche: Parametro ["+parametroGeneraReport+"] con Valore ["+paramGeneraReport+"] Utilizzato per pilotare il disegno dei grafici.");
+					 log.trace("Caso speciale Form Statistiche: Parametro ["+parametroGeneraReport+"] con Valore ["+paramGeneraReport+"] Utilizzato per pilotare il disegno dei grafici.");
 					 if(StringUtils.isEmpty(paramGeneraReport))
 						 svg = null;
 					 else {
 						 if(StringUtils.isNotEmpty(paramTipoReport) && paramTipoReport.equals(parametroTipoReportTabella)){
-							 log.debug("Caso speciale Form Statistiche: Parametro ["+parametroTipoReport+"] con Valore ["+paramTipoReport+"] Visualizzazione del report in forma di tabella.");
+							 log.trace("Caso speciale Form Statistiche: Parametro ["+parametroTipoReport+"] con Valore ["+paramTipoReport+"] Visualizzazione del report in forma di tabella.");
 							 svg = null;
 						 }
 					 }
@@ -235,7 +235,7 @@ public class BrowserFilter implements Filter {
 				// attivo il controllo SVG solo se ho cliccato nel menu' esitiLive
 				if(parName.endsWith(parametroSVG_FORM_MENU)){
 					 String paramEsitiLive =  getParamValue(httpServletRequest, parametroEsitiLive);
-					 log.debug("Caso speciale Menu': Parametro ["+parametroEsitiLive+"] con Valore ["+paramEsitiLive+"] Utilizzato per pilotare il disegno dei grafici.");
+					 log.trace("Caso speciale Menu': Parametro ["+parametroEsitiLive+"] con Valore ["+paramEsitiLive+"] Utilizzato per pilotare il disegno dei grafici.");
 					 if(StringUtils.isEmpty(paramEsitiLive))
 						 svg = null;
 				}
@@ -244,7 +244,7 @@ public class BrowserFilter implements Filter {
 				if(parName.endsWith(parametroSVG_POLL_STATO)){
 					boolean thisResource = !Utils.isContentAuthorizationRequiredForThisResource(httpServletRequest, this.listaPagineNoIE8);
 					
-					log.debug("Caso speciale Menu': Parametro ["+parametroSVG_POLL_STATO+"] con Valore ["+thisResource+"] Utilizzato per pilotare il disegno dei grafici.");
+					log.trace("Caso speciale Menu': Parametro ["+parametroSVG_POLL_STATO+"] con Valore ["+thisResource+"] Utilizzato per pilotare il disegno dei grafici.");
 					if(!thisResource)
 						 svg = null;
 				}
@@ -257,7 +257,7 @@ public class BrowserFilter implements Filter {
 			svgLength = svg.length();
 		} 
 		
-		log.debug("Attivo controllo SVG ["+(svgLength > 0 ? "SI" : "NO" )+"]");
+		log.trace("Attivo controllo SVG ["+(svgLength > 0 ? "SI" : "NO" )+"]");
 		
 		return svgLength > 0;
 	}

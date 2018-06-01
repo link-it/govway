@@ -88,7 +88,7 @@ public abstract class AbstractLoginBean implements Serializable{
 		try {
 			if (this.loginDao.login(this.username, this.pwd)) {
 				this.utenteLoggato = this.loginDao.loadUserByUsername(this.username);
-				this.dettaglioUtente = this.loginDao.getUtente(this.utenteLoggato);
+				this.dettaglioUtente = this.utenteLoggato.getUtente();
 				this.loggedIn = true;
 				return "loginSuccess";
 			} else {

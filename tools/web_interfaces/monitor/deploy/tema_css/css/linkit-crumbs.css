@@ -5,6 +5,7 @@
 
 #crumbs ul, li{
 	list-style-type:none;
+	line-height: 240%;
 	padding:0;
 	margin:0;
 }

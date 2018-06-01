@@ -519,8 +519,8 @@ public class SummaryBean implements Serializable{
 				log.error("Errore durante la generazione del json: " + e.getMessage(),e);
 				return "";
 			}
-			String json = grafico != null ?  grafico.toString() : "";
-			log.debug(json); 
+			//String json = grafico != null ?  grafico.toString() : "";
+			//log.debug(json); 
 			
 			return grafico.toString();	
 		}
@@ -968,7 +968,7 @@ public class SummaryBean implements Serializable{
 		BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
 		this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
 
-		LoggerManager.getPddMonitorCoreLogger().debug("Usa grafici SVG ["+this.useGraficiSVG+"]");
+		LoggerManager.getPddMonitorCoreLogger().trace("Usa grafici SVG ["+this.useGraficiSVG+"]");
 
 
 		return this.useGraficiSVG;

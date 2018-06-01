@@ -140,11 +140,27 @@
 											
 											<h:panelGroup id="pgTitleDx">
 												<h:outputLabel id="cdLabel_stPdd" value="#{statusBean.labelStato}" rendered="#{statusBean.enable}"/>
-												<h:panelGrid columns="#{(applicationBean.amministratore or applicationBean.operatore) ? 2 : 1}">
+												<h:panelGrid columns="#{loginBean.colonneUserInfo}">
+													<c:if test="#{loginBean.visualizzaMenuModalita}">
+														<rich:dropDownMenu id="menuModalita" verticalOffset="15">
+											                <f:facet name="label"> 
+											                    <h:panelGroup>
+											                        <h:outputText value="#{loginBean.labelModalita}" styleClass="modalita"/>
+											                        <h:outputText styleClass="modalitaImg" value=""/>
+											                    </h:panelGroup>
+											                </f:facet>
+											                <c:forEach items="#{loginBean.vociMenuModalita}" var="voce">
+											                	<rich:menuItem submitMode="server" value="#{voce.label}" action="#{loginBean.cambiaModalita}" icon="#{voce.icon}">
+											                		<f:setPropertyActionListener value="#{voce.value}" target="#{loginBean.modalita}"></f:setPropertyActionListener>
+											              	  	</rich:menuItem>
+											                </c:forEach>
+											            </rich:dropDownMenu>
+										            </c:if>
+										            
 													<rich:dropDownMenu id="menuUtente" verticalOffset="15">
 										                <f:facet name="label"> 
 										                    <h:panelGroup>
-										                        <h:outputText value="#{loginBean.loggedUser.username}" styleClass="nomeUtente"/>
+										                        <h:outputText value="" styleClass="nomeUtente"/>
 										                        <h:outputText styleClass="nomeUtenteImg" value=""/>
 										                    </h:panelGroup>
 										                </f:facet>
@@ -224,31 +240,27 @@
 					</rich:layoutPanel>
 
 					<rich:layoutPanel id="body" position="center" >
-						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true">
-							<h:panelGroup layout="block" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'errors' : 'info'}" rendered="#{not empty facesContext.maximumSeverity}">
-								<h:panelGroup rendered="#{facesContext.maximumSeverity.ordinal>=2}">
-									<p>
-										<em>
-											<h:outputText value="Si sono verificati degli errori:"/>
-										</em>
-									</p>
-									<div class="errorsSpacer"/>
-								</h:panelGroup>
+						<a4j:outputPanel id="errorsPlaceHolder" ajaxRendered="true" layout="block" style="width: 50%;">
+							<h:panelGroup layout="block" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'messages-errors' : 'messages-info'}" rendered="#{not empty facesContext.maximumSeverity}">
+								<a4j:outputPanel layout="block" styleClass="messages-title">
+				  					<h:outputText value="&#160;&#160;" id="infoTitleIcon" styleClass="#{facesContext.maximumSeverity.ordinal>=2 ? 'messages-errors-title-icon' : 'messages-info-title-icon'}"/>
+				  					<h:outputText id="infoTitleMessage" value="#{facesContext.maximumSeverity.ordinal>=2 ? 'Messaggio di Errore' : 'Messaggio informativo'}" 
+				  						styleClass="messages-title-text"/>
+				  				</a4j:outputPanel>
 								<div class="errorsSpacer"/>
 								<rich:messages id="errorMessages">
 								</rich:messages>
 							</h:panelGroup>
 						</a4j:outputPanel>
-						<a4j:outputPanel id="infoPlaceHolder" ajaxRendered="#{not empty sessionScope.acclim}">
-							<h:panelGroup layout="block" styleClass="errors" rendered="#{not empty sessionScope.acclim}">
-								<h:panelGroup rendered="true">
-									<p>
-										<em>
-											<h:outputText value="#{sessionScope.acclim}"/>
-										</em>
-									</p>
-									<rich:spacer height="7px"/>
-								</h:panelGroup>
+						<a4j:outputPanel id="infoPlaceHolder" ajaxRendered="#{not empty sessionScope.acclim}" layout="block" style="width: 50%;">
+							<h:panelGroup layout="block" styleClass="messages-errors" rendered="#{not empty sessionScope.acclim}">
+								<a4j:outputPanel layout="block" styleClass="messages-title">
+				  					<h:outputText value="&#160;&#160;" id="infoTitleIcon2" styleClass="messages-errors-title-icon"/>
+				  					<h:outputText id="infoTitleMessage2" value="Messaggio di Errore" styleClass="messages-title-text"/>
+				  				</a4j:outputPanel>
+				  				<div class="messages-errors-text">
+				  					<h:outputText value="#{sessionScope.acclim}" id="messaggioAcclim"/>
+				  				</div>
 							</h:panelGroup>
 						</a4j:outputPanel>
 						<div>

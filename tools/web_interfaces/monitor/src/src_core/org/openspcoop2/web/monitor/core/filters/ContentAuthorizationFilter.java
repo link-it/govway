@@ -36,7 +36,7 @@ public class ContentAuthorizationFilter implements Filter {
 	private FilterConfig filterConfig = null;
 
 	// messaggio da visualizzare per l'utente
-	private static final String msgErrorePre = "Attenzione! L'utente ";
+	private static final String msgErrorePre = "L'utente ";
 
 	private static final String msgErrorePost = " non dispone delle autorizzazioni necessarie per visualizzare la pagina richiesta";
 
@@ -111,8 +111,13 @@ public class ContentAuthorizationFilter implements Filter {
 						// 2. Se ho passato il primo controllo,verifico che la risorsa sia disponibile per l'utente in base al ruolo di cui dispone
 						if(!effettuaRedirect)
 							effettuaRedirect = !ContentAuthorizationManager.getInstance().checkRuoloRichiestoPerLaRisorsa(ruoliUtente, urlRichiesta,applicationBean);
+						
+						if(effettuaRedirect) {
+							int i = 0;
+							int j =i++;
+						}
 
-						log.debug("[La risorsa richiesta " + (effettuaRedirect ? "non" : "") + " e' disponibile per l'utente.]");
+						log.debug("[La risorsa richiesta " + (effettuaRedirect ? "non " : "") + "e' disponibile per l'utente.]");
 					}
 					else{
 						// e' stata richiesta una risorsa protetta, ma non ho trovato il principal

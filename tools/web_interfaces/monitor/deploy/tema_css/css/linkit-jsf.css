@@ -23,7 +23,11 @@
 }
 
 #bodyWrapper_body {
-	padding:  0px 16px;
+	padding:  0px; 
+}
+
+#mainct {
+	padding: 0px 16px;
 }
 
 .rich-page {
@@ -414,32 +418,34 @@ span.nomeUtente {
 span.nomeUtenteImg {
 	vertical-align: middle;
 	cursor: pointer;
-	background-image: url(../images/tema_link/down_white.png) ! important;
+	background-image: url(../images/tema_link/face_20.png) ! important;
 	background-repeat: no-repeat;
 	background-position: center center;
-	width: 16px;
-    height: 16px;
-    padding: 0px 8px;
+	width: 20px;
+    height: 20px;
+    padding: 6px 12px 2px 12px;
 }
 
 #menuUtente {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
 	color: ${page.header.text.color};
-	min-width: 140px;
-	padding-right: 8px;
+/* 	min-width: 140px; */
+	padding-right: 16px;
+	cursor: pointer;
 }
 
 #menuUtente.rich-ddmenu-label-select {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 140px;
+/* 	min-width: 140px; */
 }
 
 #menuUtente_menu {
 	background-color: ${page.header.background.color};
 	border-color: ${page.header.background.color};
-	min-width: 140px;
+	min-width: 154px;
+	color: ${page.header.text.color};
 	padding-bottom: 12px;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 }
@@ -469,6 +475,77 @@ span.nomeUtenteImg {
 }
 
 #menuUtente_menu div.rich-menu-list-bg div.rich-menu-item-hover {
+	text-decoration: ${page.header.text.hover.decoration};
+	color: ${page.header.text.hover.color};
+	background-color: ${page.header.background.color};
+	padding: 5px 0px 5px 12px; 
+	border: none;
+}
+
+span.modalita {
+	padding-left: 4px;
+    padding-right: 4px;
+    font-size: 14px;
+}
+
+span.modalitaImg {
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: url(../images/tema_link/down_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 16px;
+    height: 16px;
+    padding: 0px 8px;
+}
+
+#menuModalita {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	color: ${page.header.text.color};
+	min-width: 184px;
+	padding-right: 8px;
+}
+
+#menuModalita.rich-ddmenu-label-select {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	min-width: 184px;
+}
+
+#menuModalita_menu {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	min-width: 184px;
+	padding-bottom: 12px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+}
+
+#menuModalita_menu div.rich-menu-list-bg {
+	background-color: ${page.header.background.color};
+	border-color: ${page.header.background.color};
+	background-image: none;
+	color: ${page.header.text.color};
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item {
+	color: ${page.header.text.color};
+	padding: 5px 0px 5px 12px; 
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-label{
+	padding: 12px;
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon {
+	margin: 0px;
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item span.rich-menu-item-icon img {
+/* 	display: none; */
+}
+
+#menuModalita_menu div.rich-menu-list-bg div.rich-menu-item-hover {
 	text-decoration: ${page.header.text.hover.decoration};
 	color: ${page.header.text.hover.color};
 	background-color: ${page.header.background.color};

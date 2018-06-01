@@ -17,7 +17,9 @@ public interface ILoginDAO extends Serializable{
 
 	public Soggetto getSoggetto(IdSoggetto idSog);
 	
-	public User getUtente(UserDetailsBean user);
+	public void salvaUtente(User user) throws NotFoundException, ServiceException;
+	
+	public void salvaModalita(User user) throws NotFoundException, ServiceException;
 	
 	public UserDetailsBean loadUserByUsername(String username) throws NotFoundException, ServiceException, UserInvalidException;
 }

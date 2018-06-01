@@ -9,16 +9,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.IdSoggetto;
+import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -440,6 +448,83 @@ public class Utility {
 					out.write(buffer, 0, bytesRead);
 				}
 			}
+		}
+	}
+	
+	public static List<String> getListaProtocolli(List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
+		List<String> listaNomiProtocolli = new  ArrayList<String>();
+
+		if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
+			List<String> tipiSoggetti = new ArrayList<String>();
+			for (Soggetto soggetto : listaSoggettiGestione) {
+				String tipoSoggetto = soggetto.getTipoSoggetto();
+
+				if(!tipiSoggetti.contains(tipoSoggetto))
+					tipiSoggetti.add(tipoSoggetto); 
+			}
+
+			for (String tipo : tipiSoggetti) {
+				String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
+				if(!listaNomiProtocolli.contains(protocolBySubjectType))
+					listaNomiProtocolli.add(protocolBySubjectType);
+			}
+
+		} else {
+			// Tutti i protocolli
+			Enumeration<String> keys = protocolFactories.keys();
+			while (keys.hasMoreElements()) {
+				String protocolKey = (String) keys.nextElement();
+				if(!listaNomiProtocolli.contains(protocolKey))
+					listaNomiProtocolli.add(protocolKey);
+			}
+		}
+		return listaNomiProtocolli;
+	}
+	
+	public static List<Soggetto> getSoggettiGestione(User u, String tipoNomeSoggettoLocale) {
+		List<Soggetto> soggetti = new ArrayList<Soggetto>();
+		// se il soggetto locale e' specificato allora ritorno solo quello
+		if (StringUtils.isNotEmpty(tipoNomeSoggettoLocale)) {
+
+			// nomi.add(this.soggettoLocale);
+			String tipo = Utility
+					.parseTipoSoggetto(tipoNomeSoggettoLocale);
+			String nome = Utility
+					.parseNomeSoggetto(tipoNomeSoggettoLocale);
+
+			for (IDSoggetto idSog : u.getSoggetti()) {
+				if (idSog.getTipo().equals(tipo)
+						&& idSog.getNome().equals(nome)) {
+					IdSoggetto idsog2 = new IdSoggetto();
+//					idsog2.setId(idSog.getId());
+					idsog2.setNome(idSog.getNome());
+					idsog2.setTipo(idSog.getTipo());
+					Soggetto soggetto = Utility.getSoggetto(idsog2);
+					soggetti.add(soggetto);
+					break;
+				}
+			}
+
+			return soggetti;
+		} else {
+			List<String> checkUnique = new ArrayList<String>();
+			for (IDSoggetto idSog : u.getSoggetti()) {
+
+				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
+				if(checkUnique.contains(tipoNome)==false){
+					IdSoggetto idsog2 = new IdSoggetto();
+//					idsog2.setId(idSog.getId());
+					idsog2.setNome(idSog.getNome());
+					idsog2.setTipo(idSog.getTipo());
+
+					Soggetto s = Utility.getSoggetto(idsog2);
+					soggetti.add(s);	
+
+					checkUnique.add(tipoNome);
+				}
+
+			}
+			return soggetti;
 		}
 	}
 }

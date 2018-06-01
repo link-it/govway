@@ -8,6 +8,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 
 public class UserDetailsBean implements Serializable {
@@ -29,10 +31,17 @@ public class UserDetailsBean implements Serializable {
 	private List<IDServizio> utenteServizioList;
 
 	private User utente;
+	private boolean ruoloConfiguratoreEnabled = false;
 	
 	public UserDetailsBean() {
 		this.authorities = new ArrayList<RuoloBean>();
 		this.authorities.add(new RuoloBean( UserDetailsBean.RUOLO_USER));
+		
+		try {
+			this.ruoloConfiguratoreEnabled = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).isAttivoLiveRuoloOperatore();
+		}catch(Exception e) {
+			
+		}
 	}
 
 	public void setUtente(User u) {
@@ -49,14 +58,14 @@ public class UserDetailsBean implements Serializable {
 		
 		PermessiUtente permessi = u.getPermessi();
 		
-		if(permessi.isDiagnostica()) {
+		if(permessi.isDiagnostica() || permessi.isReportistica()) {
 			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_OPERATORE));
 
 			if(admin)
 				this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_AMMINISTRATORE));
 		}
 		
-		if(permessi.isSistema()) {
+		if(permessi.isSistema() && this.ruoloConfiguratoreEnabled) {
 			this.authorities.add(new RuoloBean(UserDetailsBean.RUOLO_CONFIGURATORE));
 		}
 		

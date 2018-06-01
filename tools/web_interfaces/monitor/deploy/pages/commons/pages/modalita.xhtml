@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
+	<ui:param value="Passaggio alla Modalità Gateway selezionata effettuato con successo." name="title" />
+	<ui:define name="navbar">
+		<ul>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<style>
+			#crumbs {display: none;}
+		</style>
+		<table style="width:100%;">
+			<tbody>
+				<tr>
+					<td style="width: 50%;">
+						<div class="messages-info">
+				  			<div class="messages-title">
+				  				<h:outputText value="&#160;&#160;" id="modalitaInfoTitleIcon" styleClass="messages-info-title-icon"/>
+				  				<span class="messages-title-text">Passaggio alla Modalità Gateway selezionata effettuato con successo.</span>
+				  			</div>
+							<div class="messages-info-text">
+								<span>
+									<p>#{loginBean.modalita == 'qualsiasi' ? 'Modalità disponibili:' : 'Modalità attuale:'}</p>
+									<ul>
+									<c:forEach items="#{loginBean.listaInformazioniProtocollo}" var="protocollo">
+										<br/>
+										<li style="list-style-type:disc; margin-left:12px;">
+											<p >
+												<i>
+													<a href="#{protocollo.webSiteProtocollo}" target="_blank">#{protocollo.labelProtocollo}</a>
+												</i>
+											</p>
+											<p>#{protocollo.descrizioneProtocollo}</p>
+					              	  	</li>
+					                </c:forEach>
+									</ul>
+								</span>
+							</div>
+						</div>
+					</td>
+			  		<td style="width: 50%;">
+			  			<h:outputText value="&#160;&#160;"/>
+			  		</td>
+				</tr>
+			</tbody>
+		</table>
+	</ui:define>
+
+</ui:composition>

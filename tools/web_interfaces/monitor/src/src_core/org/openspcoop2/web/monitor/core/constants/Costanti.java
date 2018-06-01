@@ -2,6 +2,14 @@ package org.openspcoop2.web.monitor.core.constants;
 
 public class Costanti {
 
+	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = "Modalità: {0}";
+	
+	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Qualsiasi";
+	
+	public final static String ICONS_BASE = "/images/tema_link/" ;
+	
+	public final static String ICONA_MENU_UTENTE_CHECKED = ICONS_BASE +"checkbox_checked_white.png";
+	public final static String ICONA_MENU_UTENTE_UNCHECKED = ICONS_BASE + "checkbox_unchecked_white.png";
 	
 	public static final String dataSource = "dataSource";
 	

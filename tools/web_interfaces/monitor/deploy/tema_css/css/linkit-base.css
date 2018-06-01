@@ -27,6 +27,7 @@ img {
 p {
 	margin: .5em;
 	font-family: 'Roboto';
+	line-height: normal;
 }
 
 legend {
@@ -177,6 +178,10 @@ option:active  {
 	background-image: none !important;
 	width: 406px;
 	color: ${input.color};
+}
+
+ul {
+	line-height: normal;
 }
 
 

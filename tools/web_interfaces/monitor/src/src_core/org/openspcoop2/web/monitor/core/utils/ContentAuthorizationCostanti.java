@@ -28,6 +28,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/welcome.jsf",
 		"/commons/pages/about.jsf",
 		"/commons/pages/statoPdd.jsf",
+		"/commons/pages/modalita.jsf",
 
 		// Transazioni
 		"/transazioni/pages/list/transazioni.jsf",
@@ -55,6 +56,7 @@ public class ContentAuthorizationCostanti {
 		// welcome page
 		"/commons/pages/welcome.jsf",	
 		"/commons/pages/about.jsf",
+		"/commons/pages/modalita.jsf",
 			
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
@@ -64,6 +66,7 @@ public class ContentAuthorizationCostanti {
 	public static String[] listaPagineRuoloOperatore = {
 		"/commons/pages/statoPdd.jsf",
 		"/commons/pages/welcome.jsf",
+		"/commons/pages/modalita.jsf",
 			
 		// Monitoraggio
 		"/commons/pages/about.jsf",
@@ -112,6 +115,7 @@ public class ContentAuthorizationCostanti {
 		{"/commons/pages/statoPdd.jsf",ApplicationBean.FUNZIONALITA_STATUS_PDD},
 		{"/commons/pages/about.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 		{"/commons/pages/welcome.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
+		{"/commons/pages/modalita.jsf",ApplicationBean.FUNZIONALITA_GENERICHE},
 
 		// Monitoraggio
 		{"/transazioni/pages/list/transazioni.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},

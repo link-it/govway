@@ -76,6 +76,9 @@ public class ApplicationBean implements Serializable {
 	private transient LoginBean loginBean;
 	private Map<String, Boolean> funzionalita = new HashMap<String, Boolean>();
 	private Map<String, Boolean> roles = null;
+	
+	private boolean permessoTransazioni = false;
+	private boolean permessoStatistiche = false;
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private synchronized void initializeFunzionalita(PddMonitorProperties pddMonitorProperties) throws Exception{
@@ -145,6 +148,8 @@ public class ApplicationBean implements Serializable {
 			if (this.loginBean != null && this.loginBean.getLoggedUser() != null) {
 				UserDetailsBean u = this.loginBean.getLoggedUser();
 				this.roles = getRuoliUtente(u);
+				this.permessoStatistiche = u.getUtente().getPermessi().isReportistica();
+				this.permessoTransazioni = u.getUtente().getPermessi().isDiagnostica();
 			}
 		} catch (Exception e) {
 			ApplicationBean.log.error(e.getMessage(), e);
@@ -237,6 +242,9 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
+		
+		if(!this.permessoTransazioni)
+			return false;
 
 		// le transazioni sono visualizzabili dall' operatore
 		if (
@@ -260,6 +268,9 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
+		
+		if(!this.permessoTransazioni)
+			return false;
 
 		// le transazioni sono visualizzabili dall' operatore
 		if (
@@ -282,6 +293,9 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		if(this.roles!= null && this.roles.isEmpty())
+			return false;
+		
+		if(!this.permessoTransazioni)
 			return false;
 
 		// le ricerche sono visualizzabili dall' operatore
@@ -347,6 +361,9 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
+		
+		if(!this.permessoTransazioni)
+			return false;
 
 		/// sezione visibile solo all'operatore ed amministratore
 		if(this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)
@@ -372,6 +389,9 @@ public class ApplicationBean implements Serializable {
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
 
+		if(!this.permessoTransazioni)
+			return false;
+		
 		/// sezione visibile solo all'operatore ed amministratore
 		if(this.roles.get(ApplicationBean.RUOLO_AMMINISTRATORE)
 				&& this.funzionalita.get(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
@@ -450,6 +470,9 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
+		
+		if(!this.permessoTransazioni)
+			return false;
 
 		// le informazioni sono visualizzabili dall' operatore
 		if (
@@ -505,6 +528,9 @@ public class ApplicationBean implements Serializable {
 
 		if(this.roles!= null && this.roles.isEmpty())
 			return false;
+		
+		if(!this.permessoStatistiche)
+			return false;
 
 		// le statistiche sono visualizzabili dall' operatore
 		if (
@@ -527,6 +553,9 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		if(this.roles!= null && this.roles.isEmpty())
+			return false;
+		
+		if(!this.permessoStatistiche)
 			return false;
 
 		// le statistiche sono visualizzabili dall' operatore
@@ -551,6 +580,9 @@ public class ApplicationBean implements Serializable {
 			return false;
 
 		if(this.roles!= null && this.roles.isEmpty())
+			return false;
+		
+		if(!this.permessoStatistiche)
 			return false;
 
 		// le statistiche sono visualizzabili dall' amministratore

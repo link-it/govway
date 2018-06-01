@@ -57,17 +57,47 @@ div.errorsSpacer {
 	height: 4px;
 }
 
-div.errors {
-	margin: 0 40px 20px 40px;
+.rich-messages dt {
+	padding-bottom: 4px;
+}
+
+/* Messaggi */
+div.errors,
+div.messages-errors,
+div.messages-errors-sintetico {
+	margin: 0 40px 20px 0px;
 	padding: 10px 20px;
 	border: ${messages.error.border.color} 1px solid;
 	background-color: ${messages.error.background.color};
 	color: ${messages.error.color};
-	border-radius: 8px;
 }
 
-div.errors p {
-	margin: 0;
+div.errors a,
+div.messages-errors a,
+div.messages-errors-sintetico a {
+	cursor: pointer;
+	font-family: 'Roboto';
+	text-decoration: underline;
+	color: ${messages.error.color};
+}
+
+div.errors a:hover,
+div.messages-errors a:hover,
+div.messages-errors-sintetico a:hover{
+	color: ${messages.error.color};
+	text-decoration: none;
+}
+
+div.errors-text,
+div.messages-errors-text,
+div.messages-errors-sintetico-text {
+	padding: 8px 4px 8px 0px;
+}
+
+.errors p,
+.messages-errors-text p,
+.messages-errors-sintetico-text p {
+	margin: 0px;
 }
 
 div.errors p em {
@@ -77,17 +107,43 @@ div.errors p em {
 	font-weight: bold;
 }
 
-div.info {
-	margin: 0 40px 20px 40px;
+div.info,
+div.messages-info,
+div.messages-info-sintetico {
+	margin: 0 40px 20px 0px;
 	padding: 10px 20px;
 	border: ${messages.info.border.color} 1px solid;
 	background-color: ${messages.info.background.color};
 	color: ${messages.info.color};
-	border-radius: 8px;
 }
 
-div.info p {
-	margin: 0;
+div.info a,
+div.messages-info a,
+div.messages-info-sintetico a {
+	cursor: pointer;
+	font-family: 'Roboto';
+	text-decoration: underline;
+	color: ${messages.info.color};
+}
+
+div.info a:hover,
+div.messages-info a:hover,
+div.messages-info-sintetico a:hover {
+	color: ${a.hover.color};
+	text-decoration: none;
+}
+
+div.info-text,
+div.messages-info-text,
+div.messages-info-sintetico-text {
+	padding: 8px 4px 8px 0px;
+}
+
+div.info p,
+.messages-info-text p,
+.messages-info-sintetico-text p {
+	margin: 0px;
+	color: ${messages.info.color};
 }
 
 div.info p em {
@@ -97,8 +153,39 @@ div.info p em {
 	font-weight: bold;
 }
 
-.rich-messages dt {
-	padding-bottom: 4px;
+.messages-info-text ul,
+.messages-info-sintetico-text ul {
+	color: ${messages.info.color};
+}
+
+div.messages-title {
+	font-weight: bold;
+	padding: 8px 4px 8px 0px;
+}
+
+.messages-title-text{
+	font-size: 14px;
+	vertical-align: middle;
+}
+
+.messages-info-title-icon,
+.messages-info-sintetico-title-icon{
+	background-image: url(../images/tema_link/info_white.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
+}
+
+.messages-errors-title-icon,
+.messages-errors-sintetico-title-icon{
+	background-image: url(../images/tema_link/alarm_red.png) ! important;
+	background-repeat: no-repeat;
+	background-position: left center;
+	width: 20px;
+    height: 20px;
+    padding: 0px 8px 0px 10px;
 }
 
 div.form-container form p,div.form-container .display-form p{

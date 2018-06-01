@@ -99,28 +99,36 @@ public class DBLoginDAO implements ILoginDAO {
 	}
 
 	@Override
-	public User getUtente(UserDetailsBean user) {
-
+	public void salvaUtente(User user) throws NotFoundException, ServiceException {
 		try {
-			boolean existsUser = this.utenteDAO.existsUser(user.getUsername());
+			boolean existsUser = this.utenteDAO.existsUser(user.getLogin());
 
 			if(!existsUser)
-				throw new NotFoundException("Utente ["+user.getUsername()+"] non registrato");
-
-			User u = this.utenteDAO.getUser(user.getUsername());
-			Password passwordManager = new Password();
-			return passwordManager.checkPw(user.getPassword(), u.getPassword()) ? u
-					: null;
-
-		} catch (NotFoundException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
+				throw new NotFoundException("Utente ["+user.getLogin()+"] non registrato");
+			
+			this.utenteDAO.updateUser(user);
+			
 		} catch (DriverUsersDBException e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
 		}
-
-		return null;
 	}
+	
+	@Override
+	public void salvaModalita(User user) throws NotFoundException, ServiceException {
+		try {
+			boolean existsUser = this.utenteDAO.existsUser(user.getLogin());
 
+			if(!existsUser)
+				throw new NotFoundException("Utente ["+user.getLogin()+"] non registrato");
+
+			this.utenteDAO.saveProtocolloUtilizzatoPddMonitor(user.getLogin(), user.getProtocolloSelezionatoPddMonitor());
+		} catch (DriverUsersDBException e) {
+			DBLoginDAO.log.error(e.getMessage(), e);
+			throw new ServiceException(e);
+		}
+	}
+	
 	@Override
 	public UserDetailsBean loadUserByUsername(String username)
 			throws NotFoundException, ServiceException, UserInvalidException {

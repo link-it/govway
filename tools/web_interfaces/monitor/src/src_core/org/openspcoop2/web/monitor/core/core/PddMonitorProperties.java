@@ -699,6 +699,10 @@ public class PddMonitorProperties {
 		return this.appProperties.getProperty("utenti.passwordVerifier", false, true);
 	}
 	
+	public boolean isRuoloConfiguratoreAttivo() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("utenti.ruoloConfiguratore.enabled", true, true));
+	}
+	
 	// Gestore Filtri
 	
 	public boolean isGestoreFiltriEnabled() throws Exception{

@@ -11,9 +11,14 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
+import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
+import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -21,27 +26,19 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.MapReader;
-import org.richfaces.model.Ordering;
-
-import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
-import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
-import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.web.lib.users.dao.User;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMessaggio;
-import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
-import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
+import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.richfaces.model.Ordering;
+import org.slf4j.Logger;
 
 public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
@@ -601,54 +598,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	 * I nomi spcoop dei soggetti associati all'utente loggato
 	 */
 	public List<Soggetto> getSoggettiGestione() {
-		ArrayList<Soggetto> soggetti = new ArrayList<Soggetto>();
-
 		User u = getUser();
-
-		// se il soggetto locale e' specificato allora ritorno solo quello
-		if (StringUtils.isNotEmpty(this.tipoNomeSoggettoLocale)) {
-
-			// nomi.add(this.soggettoLocale);
-			String tipo = Utility
-					.parseTipoSoggetto(this.tipoNomeSoggettoLocale);
-			String nome = Utility
-					.parseNomeSoggetto(this.tipoNomeSoggettoLocale);
-
-			for (IDSoggetto idSog : u.getSoggetti()) {
-				if (idSog.getTipo().equals(tipo)
-						&& idSog.getNome().equals(nome)) {
-					IdSoggetto idsog2 = new IdSoggetto();
-//					idsog2.setId(idSog.getId());
-					idsog2.setNome(idSog.getNome());
-					idsog2.setTipo(idSog.getTipo());
-					Soggetto soggetto = Utility.getSoggetto(idsog2);
-					soggetti.add(soggetto);
-					break;
-				}
-			}
-
-			return soggetti;
-		} else {
-			List<String> checkUnique = new ArrayList<String>();
-			for (IDSoggetto idSog : u.getSoggetti()) {
-
-				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
-				if(checkUnique.contains(tipoNome)==false){
-					IdSoggetto idsog2 = new IdSoggetto();
-//					idsog2.setId(idSog.getId());
-					idsog2.setNome(idSog.getNome());
-					idsog2.setTipo(idSog.getTipo());
-
-					Soggetto s = Utility.getSoggetto(idsog2);
-					soggetti.add(s);	
-
-					checkUnique.add(tipoNome);
-				}
-
-			}
-			return soggetti;
-		}
-
+		return Utility.getSoggettiGestione(u,this.tipoNomeSoggettoLocale);
 	}
 
 	// public void setSoggettoGestione(String soggettoGestione) {
@@ -1201,32 +1152,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-			List<String> listaNomiProtocolli = new  ArrayList<String>();
-
-			if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
-				List<String> tipiSoggetti = new ArrayList<String>();
-				for (Soggetto soggetto : listaSoggettiGestione) {
-					String tipoSoggetto = soggetto.getTipoSoggetto();
-
-					if(!tipiSoggetti.contains(tipoSoggetto))
-						tipiSoggetti.add(tipoSoggetto); 
-				}
-
-				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
-					if(!listaNomiProtocolli.contains(protocolBySubjectType))
-						listaNomiProtocolli.add(protocolBySubjectType);
-				}
-
-			} else {
-				// Tutti i protocolli
-				Enumeration<String> keys = protocolFactories.keys();
-				while (keys.hasMoreElements()) {
-					String protocolKey = (String) keys.nextElement();
-					if(!listaNomiProtocolli.contains(protocolKey))
-						listaNomiProtocolli.add(protocolKey);
-				}
-			}
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
 
 			for (String protocolKey : listaNomiProtocolli) {
 				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
@@ -1240,6 +1166,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 		return this.protocolli;
 	}
+
 
 	public boolean isShowListaProtocolli(){
 		try {
