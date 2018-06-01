@@ -474,6 +474,36 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniDB = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoConnessioniJMS = null;
+		try{
+			statoConnessioniJMS = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al broker JMS (jmxResourcePdD): "+e.getMessage(),e);
+			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTransazioniId = null;
+		try{
+			statoTransazioniId = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+			statoTransazioniId = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String statoTransazioniIdProtocollo = null;
+		try{
+			statoTransazioniIdProtocollo = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+			statoTransazioniIdProtocollo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String statoConnessioniPD = null;
 		try{
 			statoConnessioniPD = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -494,16 +524,6 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		String statoConnessioniJMS = null;
-		try{
-			statoConnessioniJMS = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni al broker JMS (jmxResourcePdD): "+e.getMessage(),e);
-			statoConnessioniJMS = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
 		return infoStatoPorta.formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
 				statoServizioPA,statoServizioPA_abilitazioni,statoServizioPA_disabilitazioni,
@@ -514,7 +534,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
 				infoInternazionalizzazione, infoTimeZone, infoProtocolli,
-				statoConnessioniDB, statoConnessioniPD, statoConnessioniPA, statoConnessioniJMS,
+				statoConnessioniDB, statoConnessioniJMS,
+				statoTransazioniId, statoTransazioniIdProtocollo,
+				statoConnessioniPD, statoConnessioniPA, 
 				cacheArray);
 	}
 }

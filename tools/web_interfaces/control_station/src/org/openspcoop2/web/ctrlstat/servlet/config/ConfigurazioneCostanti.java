@@ -423,6 +423,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI = "Connessioni Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Database";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS = "Broker JMS";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI = "Transazioni Attive";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID = "Identificativi";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO = "Identificativi di Protocollo";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP = "Connessioni HTTP Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
@@ -599,6 +602,8 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "PrefillCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_DB = "connessioniDB";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_JMS = "connessioniJMS";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID = "transazioniID";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO = "transazioniIDProt";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
@@ -831,6 +836,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL = "Prefill Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ISTANZIATA = "Utilizzo";

@@ -1,6 +1,8 @@
 package org.openspcoop2.pdd.core.transazioni;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -18,6 +20,13 @@ public class TransactionContext {
 	
 	private static Hashtable<String, Transaction> transactionContext = 
 		new Hashtable<String, Transaction>();
+	
+	public static List<String> getTransactionKeys() {
+		// Lo clono per non incorrere in errori di modifica durante il runtime
+		List<String> keys = new ArrayList<>();
+		keys.addAll(transactionContext.keySet());
+		return keys;
+	}
 			
 	public static void createTransaction(String id) throws TransactionNotExistsException{
 		try{
@@ -56,39 +65,16 @@ public class TransactionContext {
 		return transactionContext.remove(id);
 	}
 	
-//	private static Hashtable<String, String> mappingIDBustaIdTransazione = 
-//		new Hashtable<String, String>();
-//	
-//	public static void saveMapping(String idBusta,boolean delegata,String idTransazione){
-//		String key = idBusta;
-//		if(delegata){
-//			key = key+"_DELEGATA";
-//		}else{
-//			key = key+"_APPLICATIVA";
-//		}
-//		mappingIDBustaIdTransazione.put(key, idTransazione);
-//	}
-//	public static String getIdTransazione(String idBusta,boolean delegata){
-//		String key = idBusta;
-//		if(delegata){
-//			key = key+"_DELEGATA";
-//		}else{
-//			key = key+"_APPLICATIVA";
-//		}
-//		return mappingIDBustaIdTransazione.get(key);
-//	}
-//	public static String removeIdTransazione(String idBusta,boolean delegata){
-//		String key = idBusta;
-//		if(delegata){
-//			key = key+"_DELEGATA";
-//		}else{
-//			key = key+"_APPLICATIVA";
-//		}
-//		return mappingIDBustaIdTransazione.remove(key);
-//	}
-
 	
 	private static Vector<String> idBustaFiltroDuplicati = new Vector<String>();
+	
+	public static List<String> getIdBustaKeys() {
+		// Lo clono per non incorrere in errori di modifica durante il runtime
+		List<String> keys = new ArrayList<>();
+		keys.addAll(idBustaFiltroDuplicati);
+		return keys;
+	}
+	
 	public static synchronized void registraIdentificativoProtocollo(String idBusta) throws Exception{
 		if(idBustaFiltroDuplicati.contains(idBusta)){
 			throw new Exception("DUPLICATA");

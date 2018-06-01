@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.jmx;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -46,6 +47,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -93,6 +95,8 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	public final static String GET_STATO_CACHES = "getStatoCache";
 	public final static String CONNESSIONI_ALLOCATE_DB_MANAGER = "getUsedDBConnections";
 	public final static String CONNESSIONI_ALLOCATE_QUEUE_MANAGER = "getUsedQueueConnections";
+	public final static String TRANSAZIONI_ATTIVE_ID = "getActiveTransactions";
+	public final static String TRANSAZIONI_ATTIVE_ID_PROTOCOLLO = "getActiveProtocolIds";
 	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PD = "getActivePDConnections";
 	public final static String CONNESSIONI_ALLOCATE_CONNETTORI_PA = "getActivePAConnections";
 	
@@ -301,6 +305,14 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			return this.getUsedQueueConnections();
 		}
 		
+		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID)){
+			return this.getTransazioniAttiveId();
+		}
+		
+		else if(actionName.equals(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO)){
+			return this.getTransazioniAttiveIdProtocollo();
+		}
+		
 		else if(actionName.equals(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD)){
 			return this.getActivePDConnections();
 		}
@@ -447,6 +459,20 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo getTransazioniAttiveOP 
+			= new MBeanOperationInfo(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID,"Transazioni attive sulla Porta",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo getTransazioniIdProtocolloAttiviOP 
+			= new MBeanOperationInfo(MonitoraggioRisorse.TRANSAZIONI_ATTIVE_ID_PROTOCOLLO,"Identificativi di Protocollo attivi sulla Porta",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
 		MBeanOperationInfo getActiveConnectionsPD_OP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.CONNESSIONI_ALLOCATE_CONNETTORI_PD,"Connessioni attive su cui e' in corso un inoltro di busta (PortaDelegata)",
 					null,
@@ -490,6 +516,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		// Lista operazioni
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getRisorseSistema_OP,getRisorseCache_OP,
 				getConnessioneAllocateDBManagerOP,getConnessioneAllocateQueueManagerOP,
+				getTransazioniAttiveOP, getTransazioniIdProtocolloAttiviOP,
 				getActiveConnectionsPD_OP,getActiveConnectionsPA_OP};
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -641,6 +668,44 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		bf.append(risorse.length+" risorse allocate: \n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
+		}
+		return bf.toString();
+	}
+	
+	public String getTransazioniAttiveId() {
+		List<String> risorse = null;
+		try{
+			risorse = TransactionContext.getTransactionKeys();
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+		if(risorse==null || risorse.size()<=0)
+			return "Nessuna transazione attiva";
+		
+		StringBuffer bf = new StringBuffer();
+		bf.append(risorse.size()+" transazioni attive: \n");
+		for(int i=0; i<risorse.size(); i++){
+			bf.append(risorse.get(i)+"\n");
+		}
+		return bf.toString();
+	}
+	
+	public String getTransazioniAttiveIdProtocollo() {
+		List<String> risorse = null;
+		try{
+			risorse = TransactionContext.getIdBustaKeys();
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+		if(risorse==null || risorse.size()<=0)
+			return "Nessuna transazione attiva";
+		
+		StringBuffer bf = new StringBuffer();
+		bf.append(risorse.size()+" id di protocollo attivi: \n");
+		for(int i=0; i<risorse.size(); i++){
+			bf.append(risorse.get(i)+"\n");
 		}
 		return bf.toString();
 	}

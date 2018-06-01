@@ -1,3 +1,12 @@
+2018-06-01  Andrea Poli <apoli@link.it>
+
+	* [GenericProject, Pdd, PddConsole, PddLoader, 
+	   Testsuite, TestsuiteProtocolloSDI, TestsuiteProtocolloSPCoop, TestsuiteProtocolloTrasparente, 
+	   Utils, WebServiceConfig, WebServiceDiagnostica, WebServiceMonitor, 
+	   WebServiceRegistry, WebServiceTracciamento, WebServiceTransazioni]
+	Aggiunta funzionalità OP-718
+	Aggiunto supporto per WildFly versioni 11 e 12
+
 2018-05-28  Giovanni Bussu <bussu@link.it>
 
 	* [Utils]

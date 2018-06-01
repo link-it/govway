@@ -749,6 +749,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = new Hashtable<String, String>();
@@ -909,6 +911,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.get(alias);
@@ -1420,6 +1428,8 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio = core.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive = core.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive = core.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA = core.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD = core.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD;
@@ -1755,6 +1765,8 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniDB.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniDB(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniJMS(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPD(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_connessioniPA.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_connessioniPA(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias));

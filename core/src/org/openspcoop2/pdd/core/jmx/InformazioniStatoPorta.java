@@ -52,7 +52,9 @@ public class InformazioniStatoPorta {
 				log4j_tracciamento, log4j_dump,
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
 				infoInternazionalizzazione, infoTimeZone,infoProtocolli,
-				null,null,null,null,
+				null,null,
+				null,null,
+				null,null,
 				cache);
 	}
 	
@@ -68,7 +70,9 @@ public class InformazioniStatoPorta {
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
 			String infoInternazionalizzazione, String infoTimeZone, String infoProtocolli,
-			String statoConnessioniDB, String statoConnessioniPD, String statoConnessioniPA, String statoConnessioniJMS,
+			String statoConnessioniDB, String statoConnessioniJMS,
+			String statoTransazioniId, String statoTransazioniIdProtocollo,
+			String statoConnessioniPD, String statoConnessioniPA, 
 			InformazioniStatoPortaCache ... cache){
 		
 		StringBuffer bf = new StringBuffer();
@@ -205,6 +209,36 @@ public class InformazioniStatoPorta {
 			bf.append("\n");
 		}
 		
+		if(statoConnessioniJMS!=null){
+			bf.append("================================\n");
+			bf.append("Connessioni Attive al Broker JMS\n");
+			bf.append("================================\n");
+			bf.append("\n");
+			bf.append(statoConnessioniJMS);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoTransazioniId!=null){
+			bf.append("=======================================\n");
+			bf.append("Identificativi delle Transazioni Attive\n");
+			bf.append("=======================================\n");
+			bf.append("\n");
+			bf.append(statoTransazioniId);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoTransazioniIdProtocollo!=null){
+			bf.append("=====================================================\n");
+			bf.append("Identificativi di Protocollo delle Transazioni Attive\n");
+			bf.append("=====================================================\n");
+			bf.append("\n");
+			bf.append(statoTransazioniIdProtocollo);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
 		if(statoConnessioniPD!=null){
 			bf.append("=========================================================\n");
 			bf.append("Connessioni HTTP Attive in uscita dal modulo InoltroBuste\n");
@@ -221,16 +255,6 @@ public class InformazioniStatoPorta {
 			bf.append("=========================================================================\n");
 			bf.append("\n");
 			bf.append(statoConnessioniPA);
-			bf.append("\n");
-			bf.append("\n");
-		}
-		
-		if(statoConnessioniJMS!=null){
-			bf.append("================================\n");
-			bf.append("Connessioni Attive al Broker JMS\n");
-			bf.append("================================\n");
-			bf.append("\n");
-			bf.append(statoConnessioniJMS);
 			bf.append("\n");
 			bf.append("\n");
 		}

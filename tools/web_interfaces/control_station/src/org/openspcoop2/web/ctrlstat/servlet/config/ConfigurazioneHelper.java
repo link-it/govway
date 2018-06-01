@@ -4839,6 +4839,80 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idTransazioniAttive(alias));
+			if(this.isErroreHttp(stato, "identificativi delle transazioni attive")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura degli identificativi delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaMonitoraggio(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_idProtocolloTransazioniAttive(alias));
+			if(this.isErroreHttp(stato, "identificativi di protocollo delle transazioni attive")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura degli identificativi di protocollo delle transazioni attive (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
+		
 		
 		
 		de = new DataElement();
