@@ -40,7 +40,9 @@ public class InformazioniStatoPorta {
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
-			String infoInternazionalizzazione, String infoTimeZone,  String infoProtocolli,
+			String infoInternazionalizzazione, String infoTimeZone,  
+			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
+			String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
 		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				statoServizioPD,statoServizioPD_abilitazioni,statoServizioPD_disabilitazioni,
@@ -51,7 +53,9 @@ public class InformazioniStatoPorta {
 				tracciamento, dumpApplicativo, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
-				infoInternazionalizzazione, infoTimeZone,infoProtocolli,
+				infoInternazionalizzazione, infoTimeZone,
+				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
+				infoProtocolli,
 				null,null,
 				null,null,
 				null,null,
@@ -69,7 +73,9 @@ public class InformazioniStatoPorta {
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
-			String infoInternazionalizzazione, String infoTimeZone, String infoProtocolli,
+			String infoInternazionalizzazione, String infoTimeZone, 
+			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
+			String infoProtocolli,
 			String statoConnessioniDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoConnessioniPD, String statoConnessioniPA, 
@@ -173,6 +179,30 @@ public class InformazioniStatoPorta {
 		bf.append("===================================\n");
 		bf.append("\n");
 		bf.append(infoTimeZone);
+		bf.append("\n");
+		bf.append("\n");
+		
+		bf.append("======================================\n");
+		bf.append("Informazioni Proprietà Java Networking\n");
+		bf.append("======================================\n");
+		bf.append("\n");
+		bf.append(infoProprietaJavaNetworking);
+		bf.append("\n");
+		bf.append("\n");
+		
+		bf.append("======================================================\n");
+		bf.append("Informazioni Altre Proprietà Java (escluso Networking)\n");
+		bf.append("======================================================\n");
+		bf.append("\n");
+		bf.append(infoProprietaJavaAltro);
+		bf.append("\n");
+		bf.append("\n");
+		
+		bf.append("==============================\n");
+		bf.append("Informazioni Proprietà Sistema\n");
+		bf.append("==============================\n");
+		bf.append("\n");
+		bf.append(infoProprietaSistema);
 		bf.append("\n");
 		bf.append("\n");
 		

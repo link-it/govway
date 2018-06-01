@@ -418,6 +418,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH = "Informazioni Cryptography (Key Length)";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "Informazioni Internazionalizzazione";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "Informazioni TimeZone";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET = "Informazioni Java Networking";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI = "Connessioni Attive";
@@ -595,6 +596,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH = "infoCrypto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "infoI18N_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "infoTimeZone_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET = "infoJavaNet_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "infoProtocollo_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";

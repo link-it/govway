@@ -3697,6 +3697,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 	}
 	
+	private DataElement newDataElementStyleRuntime() {
+		DataElement de = new DataElement();
+		de.setLabelStyleClass(Costanti.LABEL_MEDIUM_CSS_CLASS);
+		return de;
+	}
+	
 	public Vector<DataElement> addConfigurazioneSistema(Vector<DataElement> dati, String alias) throws Exception {
 	
 		
@@ -3704,19 +3710,19 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		DataElement de = new DataElement();
+		DataElement de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME);
 		dati.addElement(de);
 				
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setLabel(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(alias);
 		dati.addElement(de);
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT);
 		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_EXPORTER,
 				new Parameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER,alias));
@@ -3758,7 +3764,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		if(resetAllCaches){
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -3773,7 +3779,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 
 				
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -3794,7 +3800,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(versionePdD!=null){
 			versionePdD = StringEscapeUtils.escapeHtml(versionePdD);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
 		de.setValue(versionePdD);
 		de.setType(DataElementType.TEXT);
@@ -3819,7 +3825,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(versioneBaseDati!=null){
 			versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
 		de.setValue(versioneBaseDati);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -3846,7 +3852,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(confDir!=null){
 			confDir = StringEscapeUtils.escapeHtml(confDir);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
 		de.setValue(confDir);
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
@@ -3873,7 +3879,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(vendorJava!=null){
 			vendorJava = StringEscapeUtils.escapeHtml(vendorJava);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
 		de.setValue(vendorJava);
 		de.setType(DataElementType.TEXT);
@@ -3898,7 +3904,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(versioneJava!=null){
 			versioneJava = StringEscapeUtils.escapeHtml(versioneJava);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
 		de.setValue(versioneJava);
 		de.setType(DataElementType.TEXT);
@@ -3925,7 +3931,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if(messageFactory!=null){
 			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
 		}
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
 		de.setValue(messageFactory);
 		de.setType(DataElementType.TEXT);
@@ -3936,7 +3942,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setType(DataElementType.TITLE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI);
 		dati.addElement(de);
@@ -3948,7 +3954,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PD);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
@@ -3970,7 +3976,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_PA);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
@@ -3992,7 +3998,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = CostantiConfigurazione.ABILITATO.getValue().equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_SERVIZIO_IM);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
@@ -4011,7 +4017,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4025,7 +4031,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
 					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
 					LogLevels.LIVELLO_ALL};
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
 			de.setType(DataElementType.SELECT);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -4048,7 +4054,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					LogLevels.LIVELLO_INFO_PROTOCOL, LogLevels.LIVELLO_INFO_INTEGRATION,
 					LogLevels.LIVELLO_DEBUG_LOW, LogLevels.LIVELLO_DEBUG_MEDIUM, LogLevels.LIVELLO_DEBUG_HIGH,
 					LogLevels.LIVELLO_ALL};
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
@@ -4074,7 +4080,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
 			boolean enable = "true".equals(log4j_diagnostica);
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE);
@@ -4094,7 +4100,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
 			boolean enable = "true".equals(log4j_openspcoop);
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE);
@@ -4114,7 +4120,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
 			boolean enable = "true".equals(log4j_integrationManager);
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE);
@@ -4133,7 +4139,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4145,7 +4151,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
@@ -4173,7 +4179,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
@@ -4201,7 +4207,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE);
@@ -4224,7 +4230,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			boolean enable = "true".equals(value);
 			
 			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE);
@@ -4246,7 +4252,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
 			boolean enable = "true".equals(log4j_tracciamento);
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE);
@@ -4266,7 +4272,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
 			boolean enable = "true".equals(log4j_dump);
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE);
@@ -4283,7 +4289,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4315,7 +4321,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						value = infoDatabase[i].split(":")[1];
 					}
 					
-					de = new DataElement();
+					de = newDataElementStyleRuntime();
 					de.setLabel(label);
 					if(value!=null){
 						value = StringEscapeUtils.escapeHtml(value);
@@ -4333,7 +4339,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4365,7 +4371,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						value = infoSSL[i].split(":")[1];
 					}
 					
-					de = new DataElement();
+					de = newDataElementStyleRuntime();
 					de.setLabel(label);
 					if(value!=null){
 						value = StringEscapeUtils.escapeHtml(value);
@@ -4385,7 +4391,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(this.core.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength()){
 		
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
@@ -4417,7 +4423,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							value = infoCryptoKeyLength[i].split(":")[1];
 						}
 						
-						de = new DataElement();
+						de = newDataElementStyleRuntime();
 						de.setLabel(label);
 						if(value!=null){
 							value = StringEscapeUtils.escapeHtml(value);
@@ -4438,7 +4444,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4470,7 +4476,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						value = infoInternazionalizzazione[i].substring(infoInternazionalizzazione[i].indexOf(":")+1);
 					}
 					
-					de = new DataElement();
+					de = newDataElementStyleRuntime();
 					if(value==null || "".equals(value)){
 						value = label;
 						label = "Name";
@@ -4498,7 +4504,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4530,7 +4536,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						value = infoTimezone[i].substring(infoTimezone[i].indexOf(":")+1);
 					}
 					
-					de = new DataElement();
+					de = newDataElementStyleRuntime();
 					if(value==null || "".equals(value)){
 						value = label;
 						label = "Name";
@@ -4555,9 +4561,77 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoJavaNet = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(alias));
+			if(this.isErroreHttp(tmp, "informazioni Java Networking")){
+				// e' un errore
+				tmp = null;
+			}
+			infoJavaNet = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoJavaNet==null || infoJavaNet.length<=0){
+			addInformazioneNonDisponibile(dati, "");
+		}
+		else{
+			for (int i = 0; i < infoJavaNet.length; i++) {
+				
+				try{
+					if(infoJavaNet[i]==null || "".equals(infoJavaNet[i].trim())) {
+						continue;
+					}
+					
+					String label = infoJavaNet[i];
+					String value = "";
+					if(infoJavaNet[i].contains("=")){
+						label = infoJavaNet[i].split("=")[0];
+						value = infoJavaNet[i].substring(infoJavaNet[i].indexOf("=")+1);
+					}
+					
+					de = newDataElementStyleRuntime();
+					if(value==null || "".equals(value)){
+						if(label.startsWith("SecurityManager ")) {
+							String tmp = label;
+							label = "SecurityManager";
+							value = tmp.substring("SecurityManager ".length());
+						}
+						else {
+							value = label;
+							label = "Name";
+						}
+					}
+					de.setLabel(label);
+					if(value!=null){
+						value = StringEscapeUtils.escapeHtml(value);
+					}
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni di Java Networking (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
 		
 		
-		de = new DataElement();
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
@@ -4603,7 +4677,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				
 				addProtocollo = true;
 				
-				de = new DataElement();
+				de = newDataElementStyleRuntime();
 				de.setLabel(protocollo);
 				String value = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO+map.get(protocollo);
 				if(value!=null){
@@ -4615,7 +4689,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setSize(this.getSize());
 				dati.addElement(de);
 				
-//				de = new DataElement();
+//				de = newDataElementStyleLong();
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO);
 //				de.setValue(protocollo);
 //				de.setType(DataElementType.TEXT);
@@ -4623,7 +4697,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				de.setSize(this.getSize());
 //				dati.addElement(de);
 //				
-//				de = new DataElement();
+//				de = newDataElementStyleLong();
 //				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO);
 //				de.setValue(map.get(protocollo));
 //				de.setType(DataElementType.TEXT);
@@ -4642,14 +4716,14 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		caches = this.confCore.getJmxPdD_caches(alias);
 		if(caches!=null && caches.size()>0){
 			
-			de = new DataElement();
+			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CACHE);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
 			
 			for (String cache : caches) {
 			
-				de = new DataElement();
+				de = newDataElementStyleRuntime();
 				de.setLabel(cache);
 				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
@@ -4675,7 +4749,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 				if("abilitata".equals(stato)){
 					
-					de = new DataElement();
+					de = newDataElementStyleRuntime();
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET);
 					de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 							ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -4688,7 +4762,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					dati.addElement(de);
 					
 					if(this.confCore.getJmxPdD_caches_prefill(alias).contains(cache)){
-						de = new DataElement();
+						de = newDataElementStyleRuntime();
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_PREFILL);
 						de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SISTEMA_ADD+"?"+
 								ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER+"="+alias+
@@ -4703,7 +4777,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					
 				}
 				
-				de = new DataElement();
+				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO);
 				de.setValue(stato);
 				de.setType(DataElementType.TEXT);
@@ -4737,7 +4811,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								
 								if(ConfigurazioneCostanti.CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.contains(label)){
 								
-									de = new DataElement();
+									de = newDataElementStyleRuntime();
 									de.setLabel(label);
 									if(value!=null){
 										value = StringEscapeUtils.escapeHtml(value);
@@ -4763,12 +4837,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4787,7 +4861,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
@@ -4802,7 +4876,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4821,7 +4895,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
@@ -4839,12 +4913,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4863,7 +4937,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
@@ -4877,7 +4951,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setCols(80);
 		dati.addElement(de);
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4896,7 +4970,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
@@ -4915,13 +4989,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4940,7 +5014,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);
@@ -4956,7 +5030,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
@@ -4975,7 +5049,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		de = new DataElement();
+		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 		if(stato!=null){
 			stato = StringEscapeUtils.escapeHtml(stato);

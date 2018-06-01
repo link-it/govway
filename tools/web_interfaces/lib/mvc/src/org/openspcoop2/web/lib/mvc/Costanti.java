@@ -206,6 +206,7 @@ public class Costanti {
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
 	public final static String INPUT_CSS_CLASS = "inputLink";
+	public final static String LABEL_MEDIUM_CSS_CLASS = "labelMedium";
 	public final static String LABEL_LONG_CSS_CLASS = "labelLong";
 	
 }

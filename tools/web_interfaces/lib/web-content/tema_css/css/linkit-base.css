@@ -958,6 +958,10 @@ div.prop label em {
 	color: ${p.legend.color};
 }
 
+div.prop label.labelMedium{
+	width: 180px;
+}
+
 div.prop label.labelLong{
 	width: 220px;
 }

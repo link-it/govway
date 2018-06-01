@@ -414,6 +414,36 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			infoTimeZone = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String infoProprietaJavaNetworking = null;
+		try{
+			infoProprietaJavaNetworking = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà java di networking (jmxResourcePdD): "+e.getMessage(),e);
+			infoProprietaJavaNetworking = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String infoProprietaJavaAltro = null;
+		try{
+			infoProprietaJavaAltro = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà java (escluse quelle di networking) (jmxResourcePdD): "+e.getMessage(),e);
+			infoProprietaJavaAltro = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String infoProprietaSistema = null;
+		try{
+			infoProprietaSistema = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sulle proprietà di sistema (jmxResourcePdD): "+e.getMessage(),e);
+			infoProprietaSistema = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String infoProtocolli = null;
 		try{
 			infoProtocolli = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -533,7 +563,9 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
-				infoInternazionalizzazione, infoTimeZone, infoProtocolli,
+				infoInternazionalizzazione, infoTimeZone, 
+				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
+				infoProtocolli,
 				statoConnessioniDB, statoConnessioniJMS,
 				statoTransazioniId, statoTransazioniIdProtocollo,
 				statoConnessioniPD, statoConnessioniPA, 

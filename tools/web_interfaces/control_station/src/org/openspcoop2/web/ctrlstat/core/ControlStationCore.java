@@ -743,6 +743,10 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new Hashtable<String, String>();
@@ -893,6 +897,18 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.get(alias);
@@ -1422,6 +1438,10 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = core.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
@@ -1759,6 +1779,10 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaNetworking(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteProprietaJavaNetworking(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaJavaAltro(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniProprietaSistema(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));

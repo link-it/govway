@@ -189,18 +189,29 @@ public class ImbustamentoErrore  {
 	private Busta buildMessaggioErroreProtocollo(List<Eccezione> eccezioni,Busta busta,String id_busta,TipoOraRegistrazione tipoTempo) throws ProtocolException{	
 
 		// Scambio mitt con dest
+		boolean mittentePresente = busta.getMittente()!=null; // in alcuni protocollo puo' non esistere
 		String tipoDest = busta.getTipoMittente();
 		String dest = busta.getMittente();
 		String indTdest = busta.getIndirizzoMittente();
 		String codicePorta = busta.getIdentificativoPortaMittente();
+		
 		busta.setTipoMittente(busta.getTipoDestinatario());
 		busta.setMittente(busta.getDestinatario());
 		busta.setIndirizzoMittente(busta.getIndirizzoDestinatario());
 		busta.setIdentificativoPortaMittente(busta.getIdentificativoPortaDestinatario());
-		busta.setTipoDestinatario(tipoDest);
-		busta.setDestinatario(dest);
-		busta.setIndirizzoDestinatario(indTdest);
-		busta.setIdentificativoPortaDestinatario(codicePorta);
+		
+		if(mittentePresente) {
+			busta.setTipoDestinatario(tipoDest);
+			busta.setDestinatario(dest);
+			busta.setIndirizzoDestinatario(indTdest);
+			busta.setIdentificativoPortaDestinatario(codicePorta);
+		}
+		else {
+			busta.setTipoDestinatario(null);
+			busta.setDestinatario(null);
+			busta.setIndirizzoDestinatario(null);
+			busta.setIdentificativoPortaDestinatario(null);
+		}
 
 		// Verifico 'bonta' dei tipi
 		try {
@@ -211,7 +222,9 @@ public class ImbustamentoErrore  {
 			}
 		}
 		try {
-			this.protocolFactory.createTraduttore().toProtocolOrganizationType(busta.getTipoDestinatario());
+			if(busta.getTipoDestinatario()!=null) {
+				this.protocolFactory.createTraduttore().toProtocolOrganizationType(busta.getTipoDestinatario());
+			}
 		}catch(Exception e) {
 			if(this.protocolManager.isGenerazioneElementiNonValidabiliRispettoXSD()==false){
 				busta.setTipoDestinatario(this.protocolFactory.createProtocolConfiguration().getTipoSoggettoDefault());

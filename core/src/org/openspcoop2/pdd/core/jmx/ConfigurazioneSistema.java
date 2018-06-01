@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.crypto.Cipher;
@@ -94,6 +95,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE = "getInformazioniCompleteInternazionalizzazione";
 	public final static String INFORMAZIONI_TIMEZONE= "getInformazioniTimeZone";
 	public final static String INFORMAZIONI_COMPLETE_TIMEZONE = "getInformazioniCompleteTimeZone";
+	public final static String INFORMAZIONI_PROPRIETA_JAVA_NETWORKING= "getInformazioniProprietaJavaNetworking";
+	public final static String INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING= "getInformazioniCompleteProprietaJavaNetworking";
+	public final static String INFORMAZIONI_PROPRIETA_JAVA_ALTRO= "getInformazioniProprietaJavaAltro";
+	public final static String INFORMAZIONI_PROPRIETA_SISTEMA= "getInformazioniProprietaSistema";
 	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
@@ -227,6 +232,22 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return this.getInformazioniTimeZone(true);
 		}
 		
+		else if(actionName.equals(INFORMAZIONI_PROPRIETA_JAVA_NETWORKING)){
+			return this.getInformazioniProprietaJava(false, true,false);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING)){
+			return this.getInformazioniProprietaJava(true, true,false);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_PROPRIETA_JAVA_ALTRO)){
+			return this.getInformazioniProprietaJava(true, false, true);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_PROPRIETA_SISTEMA)){
+			return this.getInformazioniProprietaSistema();
+		}
+		
 		else if(actionName.equals(MESSAGE_FACTORY)){
 			return this.getMessageFactory();
 		}
@@ -341,6 +362,34 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_PROPRIETA_JAVA_NETWORKING
+		MBeanOperationInfo informazioniProprietaJavaNetworkingOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_JAVA_NETWORKING,"Visualizza le proprietà java riguardanti il networking",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING
+		MBeanOperationInfo informazioniCompleteProprietaJavaNetworkingOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_PROPRIETA_JAVA_NETWORKING,"Visualizza tutte le proprietà java riguardanti il networking",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_PROPRIETA_JAVA_ALTRO
+		MBeanOperationInfo informazioniProprietaJavaAltroOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_JAVA_ALTRO,"Visualizza le proprietà java escluse quelle riguardanti il networking",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_PROPRIETA_SISTEMA
+		MBeanOperationInfo informazioniProprietaSistemaOp = new MBeanOperationInfo(INFORMAZIONI_PROPRIETA_SISTEMA,"Visualizza le proprietà di sistema",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
 
 		// MESSAGE_FACTORY
 		MBeanOperationInfo messageFactoryOp = new MBeanOperationInfo(MESSAGE_FACTORY,"Visualizza la MessageFactory utilizzata dal prodotto",
@@ -378,6 +427,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,informazioniCompleteSSLOp,informazioniCRYPTOOp,
 				informazioniINTERNAZIONALIZZAZIONEOp,informazioniCompleteINTERNAZIONALIZZAZIONEOp,
 				informazioniTIMEZONEOp, informazioniCompleteTIMEZONEOp,
+				informazioniProprietaJavaNetworkingOp, informazioniCompleteProprietaJavaNetworkingOp, 
+				informazioniProprietaJavaAltroOp, informazioniProprietaSistemaOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -881,6 +932,127 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			
 			if(bf.length()<=0){
 				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	private boolean isNetworkProperties(boolean allNetwork, String key) {
+		boolean net = key.startsWith("java.net.") || 
+				key.startsWith("javax.net.") || 
+				key.startsWith("networkaddress.") ||
+				key.startsWith("http.") ||
+				key.startsWith("https.");
+		
+		if(allNetwork) {
+			return net 
+					|| 
+					(
+						key.startsWith("ftp.") ||
+						key.startsWith("socks") ||
+						key.startsWith("sun.net.") // implement specific
+					);  
+		}
+		else {
+			return net;
+		}
+				
+	}
+	
+	public String getInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork){
+		try{
+			StringBuffer bf = new StringBuffer();
+			
+			if(System.getSecurityManager()!=null) {
+				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
+			}
+			else {
+				bf.append("SecurityManager non attivo");
+			}
+			
+			Properties p = System.getProperties();
+			Iterator<Object> keys = p.keySet().iterator();
+			List<String> ll = new ArrayList<String>();
+			while (keys.hasNext()) {
+				Object o = keys.next();
+				if(!(o instanceof String)) {
+					continue;
+				}
+				String key = (String) o;
+				if(!includeNetwork && !includeNotNetwork) {
+					throw new Exception("Invocazione errata, almeno un parametro deve essere abilitato");
+				}
+				else if(includeNetwork && !includeNotNetwork) {
+					if(this.isNetworkProperties(allNetwork, key)) {
+						ll.add(key);
+					}
+				}
+				else if(includeNotNetwork && !includeNetwork) {
+					if(!this.isNetworkProperties(true, key)) {
+						ll.add(key);
+					}
+				}
+				else {
+					ll.add(key);
+				}
+			}
+			Collections.sort(ll);
+			if(ll.size()>0) {
+				bf.append("\n"); // Separo security manager
+			}
+			for (String key : ll) {
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append(key).append("=").append(p.get(key));
+			}
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili proprietà java");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getInformazioniProprietaSistema(){
+		try{
+			StringBuffer bf = new StringBuffer();
+			
+			if(System.getSecurityManager()!=null) {
+				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
+			}
+			else {
+				bf.append("SecurityManager non attivo");
+			}
+			
+			Map<String, String> map = System.getenv();
+			Iterator<String> keys = map.keySet().iterator();
+			List<String> ll = new ArrayList<String>();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				ll.add(key);
+			}
+			Collections.sort(ll);
+			if(ll.size()>0) {
+				bf.append("\n"); // Separo security manager
+			}
+			for (String key : ll) {
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append(key).append("=").append(map.get(key));
+			}
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili proprietà di sistema");
 			}else{
 				return bf.toString();
 			}
