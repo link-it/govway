@@ -980,6 +980,18 @@ p.note-ricerca {
     color: ${p.note.color};
 }
 
+p.note.labelMedium {
+	margin-left: 200px;
+    /* font-size: 90%; */
+    color: ${p.note.color};
+}
+
+p.note.labelLong {
+	margin-left: 240px;
+    /* font-size: 90%; */
+    color: ${p.note.color};
+}
+
 
 .campiObbligatori {
 	display: block;
@@ -1002,6 +1014,15 @@ p.note-ricerca {
 	padding: 16px 20px 12px 5px;
     margin-left: 166px;
 }
+
+.subtitle.labelMedium {
+    margin-left: 196px;
+}
+
+.subtitle.labelLong {
+    margin-left: 236px;
+}
+
 
 .subtitle span {
 	font-size: 12px;

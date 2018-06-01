@@ -162,7 +162,7 @@ for (int i = 0; i < dati.size(); i++) {
     		} else { // else title
     			if (type.equals("subtitle")){
     				%>
-        			<div class="subtitle">
+        			<div class="subtitle <%= labelStyleClass %>">
         				<span class="subtitle"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
         			</div>
         			<%
@@ -197,7 +197,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 		                			</div>
 	                				<% if(!deNote.equals("")){ %>
-							      		<p class="note"><%=deNote %></p>
+							      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 							      	<% } %>
 	                			</div>
 	                			<%
@@ -218,7 +218,7 @@ for (int i = 0; i < dati.size(); i++) {
 								    	}
 								      	%>
 								      	<% if(!deNote.equals("")){ %>
-								      		<p class="note"><%=deNote %></p>
+								      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 								      	<% } %>
 	                    			</div>
 	                    			<%
@@ -242,7 +242,7 @@ for (int i = 0; i < dati.size(); i++) {
 									    	}
 									      	%>
 									      	<% if(!deNote.equals("")){ %>
-									      		<p class="note"><%=deNote %></p>
+									      		<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      	<% } %>
 		                    			</div>
 		                    			<%
@@ -259,7 +259,7 @@ for (int i = 0; i < dati.size(); i++) {
 							   					}
 						     					%>
 						     					<% if(!deNote.equals("")){ %>
-									      			<p class="note"><%=deNote %></p>
+									      			<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      		<% } %>
 		                        			</div>
 		                        			<%
@@ -282,7 +282,7 @@ for (int i = 0; i < dati.size(); i++) {
 							     					}
 													%>
 							     					<% if(!deNote.equals("")){ %>
-									      				<p class="note"><%=deNote %></p>
+									      				<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      			<% } %>
 		                            			</div>
 		                            			<%
@@ -293,7 +293,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                				<label class="<%= labelStyleClass %>"><%=deLabel %></label>
 		                                				<input type="button" onClick="<%= de.getOnClick() %>" value="<%= de.getValue() %>">
 		                                				<% if(!deNote.equals("")){ %>
-									      					<p class="note"><%=deNote %></p>
+									      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      				<% } %>
 		                                			</div>
 		                                			<%
@@ -317,7 +317,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	      		}
 		                                    				%>
 		                                    				<% if(!deNote.equals("")){ %>
-									      						<p class="note"><%=deNote %></p>
+									      						<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      					<% } %>
 		                                    			</div>
 		                                    			<%
@@ -353,7 +353,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                               							}
 		                                        				%>
 		                                        				<% if(!deNote.equals("")){ %>
-									      							<p class="note"><%=deNote %></p>
+									      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      						<% } %>
 		                                        			</div>
 		                                        			<%
@@ -388,7 +388,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                               							}
 			                                        				%>
 			                                        				<% if(!deNote.equals("")){ %>
-										      							<p class="note"><%=deNote %></p>
+										      							<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      						<% } %>
 			                                        			</div>
 		                                        				<%
@@ -410,7 +410,7 @@ for (int i = 0; i < dati.size(); i++) {
 							   													</tr>
 							   												</table>
 								  										<% if(!deNote.equals("")){ %>
-										      								<p class="note"><%=deNote %></p>
+										      								<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      							<% } %>
 			                                            			</div>
 			                                            			<%
@@ -448,7 +448,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			}
 																	    	%>
 																	    	<% if(!deNote.equals("")){ %>
-										      									<p class="note"><%=deNote %></p>
+										      									<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 										      								<% } %>
 			                                                			</div>
 			                                                			<%
