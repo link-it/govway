@@ -9,97 +9,136 @@ package org.openspcoop2.monitor.engine.statistic;
  */
 public class StatisticsLibrary {
 
-	public static void generate(StatisticsConfig config,
+	private StatisticsConfig config;
+	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
+	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM;
+	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM;
+	private org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM;
+	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
+	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
+	
+	public StatisticsLibrary(StatisticsConfig config,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
 			org.openspcoop2.monitor.engine.config.base.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM){
+		this.config = config;
+		this.statisticheSM = statisticheSM;
+		this.transazioniSM = transazioniSM;
+		this.pluginsStatisticheSM = pluginsStatisticheSM;
+		this.pluginsBaseSM = pluginsBaseSM;
+		this.utilsSM = utilsSM;
+		this.pluginsTransazioniSM = pluginsTransazioniSM;
+	}
+	
+	public void generateStatisticaOraria(){
 		try{
 			
-			if(config.isStatisticheOrarie()){
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie ....");
+			if(this.config.isStatisticheOrarie()){
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie ....");
 				}
-				StatisticheOrarie sg = new StatisticheOrarie( config.getLogCore(), config.isDebug(), 
-						config.isGenerazioneStatisticheCustom(),
-						config.isAnalisiTransazioniCustom(),
-						config.getForceIndexConfig(),
-						statisticheSM, transazioniSM, 
-						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM );
-				sg.generaStatistiche( config.isStatisticheOrarie_gestioneUltimoIntervallo() );
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie  terminata");
-				}
-			}else{
-				if(config.isDebug()){
-					config.getLogCore().debug("Thread per generazione statistiche orarie disabilitato");
-				}
-			}
-			
-			if(config.isStatisticheGiornaliere()){
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere ....");
-				}
-				StatisticheGiornaliere sg = new StatisticheGiornaliere( config.getLogCore(), config.isDebug(), 
-						config.isGenerazioneStatisticheCustom(),
-						config.isAnalisiTransazioniCustom(),
-						config.getForceIndexConfig(),
-						statisticheSM, transazioniSM, 
-						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM );
-				sg.generaStatistiche( config.isStatisticheGiornaliere_gestioneUltimoIntervallo() );
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere  terminata");
+				StatisticheOrarie sg = new StatisticheOrarie( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isGenerazioneStatisticheCustom(),
+						this.config.isAnalisiTransazioniCustom(),
+						this.config.getForceIndexConfig(),
+						this.statisticheSM, this.transazioniSM, 
+						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
+				sg.generaStatistiche( this.config.isStatisticheOrarie_gestioneUltimoIntervallo() );
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie  terminata");
 				}
 			}else{
-				if(config.isDebug()){
-					config.getLogCore().debug("Thread per generazione statistiche giornaliere disabilitato");
-				}
-			}
-			
-			if(config.isStatisticheSettimanali()){
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali ....");
-				}
-				StatisticheSettimanali sg = new StatisticheSettimanali( config.getLogCore(), config.isDebug(), 
-						config.isGenerazioneStatisticheCustom(),
-						config.isAnalisiTransazioniCustom(),
-						config.getForceIndexConfig(),
-						statisticheSM, transazioniSM, 
-						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM );
-				sg.generaStatistiche( config.isStatisticheSettimanali_gestioneUltimoIntervallo() );
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali  terminata");
-				}
-			}else{
-				if(config.isDebug()){
-					config.getLogCore().debug("Thread per generazione statistiche settimanali disabilitato");
-				}
-			}
-			
-			if(config.isStatisticheMensili()){
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili ....");
-				}
-				StatisticheMensili sg = new StatisticheMensili( config.getLogCore(), config.isDebug(), 
-						config.isGenerazioneStatisticheCustom(),
-						config.isAnalisiTransazioniCustom(),
-						config.getForceIndexConfig(),
-						statisticheSM, transazioniSM, 
-						pluginsStatisticheSM, pluginsBaseSM, utilsSM, pluginsTransazioniSM );
-				sg.generaStatistiche( config.isStatisticheMensili_gestioneUltimoIntervallo() );
-				if(config.isDebug()){
-					config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili  terminata");
-				}
-			}else{
-				if(config.isDebug()){
-					config.getLogCore().debug("Thread per generazione statistiche mensili disabilitato");
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Thread per generazione statistiche orarie disabilitato");
 				}
 			}
 			
 		}catch(Exception e){
-			config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+		} 
+	}
+	
+	public void generateStatisticaGiornaliera(){
+		try{
+			
+			if(this.config.isStatisticheGiornaliere()){
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere ....");
+				}
+				StatisticheGiornaliere sg = new StatisticheGiornaliere( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isGenerazioneStatisticheCustom(),
+						this.config.isAnalisiTransazioniCustom(),
+						this.config.getForceIndexConfig(),
+						this.statisticheSM, this.transazioniSM, 
+						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
+				sg.generaStatistiche( this.config.isStatisticheGiornaliere_gestioneUltimoIntervallo() );
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere  terminata");
+				}
+			}else{
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Thread per generazione statistiche giornaliere disabilitato");
+				}
+			}
+			
+		}catch(Exception e){
+			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+		} 
+	}
+			
+	public void generateStatisticaSettimanale(){
+		try{
+			if(this.config.isStatisticheSettimanali()){
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali ....");
+				}
+				StatisticheSettimanali sg = new StatisticheSettimanali( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isGenerazioneStatisticheCustom(),
+						this.config.isAnalisiTransazioniCustom(),
+						this.config.getForceIndexConfig(),
+						this.statisticheSM, this.transazioniSM, 
+						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
+				sg.generaStatistiche( this.config.isStatisticheSettimanali_gestioneUltimoIntervallo() );
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali  terminata");
+				}
+			}else{
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Thread per generazione statistiche settimanali disabilitato");
+				}
+			}
+		}catch(Exception e){
+			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
+		} 
+	}
+			
+	public void generateStatisticaMensile(){
+		try{
+			if(this.config.isStatisticheMensili()){
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili ....");
+				}
+				StatisticheMensili sg = new StatisticheMensili( this.config.getLogCore(), this.config.isDebug(), 
+						this.config.isGenerazioneStatisticheCustom(),
+						this.config.isAnalisiTransazioniCustom(),
+						this.config.getForceIndexConfig(),
+						this.statisticheSM, this.transazioniSM, 
+						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
+				sg.generaStatistiche( this.config.isStatisticheMensili_gestioneUltimoIntervallo() );
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili  terminata");
+				}
+			}else{
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Thread per generazione statistiche mensili disabilitato");
+				}
+			}
+			
+		}catch(Exception e){
+			this.config.getLogCore().error("Errore durante la generazione delle statistiche: "+e.getMessage(),e);
 		} 
 	}
 	

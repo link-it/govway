@@ -140,6 +140,12 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per il Controllo del Traffico (sql) */
 	protected static Logger loggerOpenSPCoopControlloTrafficoSql = null;
 	protected static Logger loggerOpenSPCoopControlloTrafficoSqlError = null;
+	/**  Logger log4j utilizzato per le statistiche */
+	protected static Logger loggerOpenSPCoopStatistiche = null;
+	protected static Logger loggerOpenSPCoopStatisticheError = null;
+	/**  Logger log4j utilizzato per le statistiche */
+	protected static Logger loggerOpenSPCoopStatisticheSql = null;
+	protected static Logger loggerOpenSPCoopStatisticheSqlError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
 	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
@@ -503,6 +509,26 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError = LoggerWrapperFactory.getLogger("openspcoop2.controlloTraffico.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError==null)
 				throw new Exception("Logger openspcoop2.controlloTraffico.sql.error non trovato");
+			
+			// STATISTICHE LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistiche = LoggerWrapperFactory.getLogger("openspcoop2.statistiche");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatistiche==null)
+				throw new Exception("Logger openspcoop2.statistiche non trovato");
+			
+			// STATISTICHE LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError = LoggerWrapperFactory.getLogger("openspcoop2.statistiche.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError==null)
+				throw new Exception("Logger openspcoop2.statistiche.error non trovato");
+			
+			// STATISTICHE SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql = LoggerWrapperFactory.getLogger("openspcoop2.statistiche.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql==null)
+				throw new Exception("Logger openspcoop2.statistiche.sql non trovato");
+			
+			// STATISTICHE SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError = LoggerWrapperFactory.getLogger("openspcoop2.statistiche.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError==null)
+				throw new Exception("Logger openspcoop2.statistiche.sql.error non trovato");
 			
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
@@ -1008,6 +1034,24 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopControlloTrafficoSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopStatistiche(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopStatistiche;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopStatisticheSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError;
 		}
 	}
 	

@@ -123,9 +123,17 @@ public class TimerStatisticheThread extends Thread{
 		this.initResources();
 		
 		while(this.stop == false){
-						
-			StatisticsLibrary.generate(this.statisticsConfig, this.statisticheSM, this.transazioniSM, 
-					this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM);			
+					
+			StatisticsLibrary sLibrary = new StatisticsLibrary(this.statisticsConfig, this.statisticheSM, this.transazioniSM, 
+					this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM);
+			
+			sLibrary.generateStatisticaOraria();
+			
+			sLibrary.generateStatisticaGiornaliera();
+			
+			sLibrary.generateStatisticaSettimanale();
+			
+			sLibrary.generateStatisticaMensile();
 					
 			// CheckInterval
 			if(this.stop==false){

@@ -122,6 +122,7 @@ import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteThread;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
+import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -216,6 +217,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	
 	/** Timer FileSystemRecovery */
 	private TimerRepositoryStatefulThread threadRepositoryStateful = null;
+	
+	/** Timer per la generazione delle statistiche */
+	private TimerStatisticheThread threadGenerazioneStatistiche;
 	
 	/** indicazione se è un server j2ee */
 	private boolean serverJ2EE = false;
@@ -2082,6 +2086,27 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			/* ------------ Avvia il thread per la generazione delle statistiche  ------------ */
+			if(propertiesReader.isStatisticheGenerazioneEnabled()){
+				try{
+					OpenSPCoop2Startup.this.threadGenerazioneStatistiche = new TimerStatisticheThread();
+					OpenSPCoop2Startup.this.threadGenerazioneStatistiche.start();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerStatisticheThread.ID_MODULO+"'");
+				}
+			}else{
+				msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+				msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerStatisticheThread.ID_MODULO);
+				msgDiag.logPersonalizzato("disabilitato");
+				msgDiag.setPrefixMsgPersonalizzati(null);
+			}
+			
+			
+			
+			
+			
 			/* ------------ Avvia il thread per la gestione Stateful delle transazioni ------------ */
 			Logger forceLogTransazioniStateful = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniStateful(true);
 			try{
@@ -2335,6 +2360,23 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 		}catch(Throwable e){}
 
+		// Statistiche
+		try{
+			if(properties.isStatisticheGenerazioneEnabled()){
+				boolean debugStatistiche = properties.isStatisticheGenerazioneDebug();
+				Logger logStatistiche = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(debugStatistiche);
+				if(debugStatistiche)
+					logStatistiche.debug("Recupero thread per la generazione delle statistiche ...");
+				if(OpenSPCoop2Startup.this.threadGenerazioneStatistiche!=null){
+					OpenSPCoop2Startup.this.threadGenerazioneStatistiche.setStop(true);
+					if(debugStatistiche)
+						logStatistiche.debug("Richiesto stop al thread per la generazione delle statistiche");
+				}else{
+					throw new Exception("Thread per la generazione delle statistiche non trovato");
+				}	
+			}
+		}catch (Throwable e) {}
+		
 		// ExitHandler
 		try{
 			ExitContext context = new ExitContext();

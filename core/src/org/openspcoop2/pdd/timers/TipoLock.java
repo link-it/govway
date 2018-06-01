@@ -40,7 +40,9 @@ public enum TipoLock implements Serializable {
 	
 	GESTIONE_BUSTE_NON_RISCONTRATE ("BusteNonRiscontrate"), 
 	
-	GESTIONE_PULIZIA_MESSAGGI_ANOMALI ("PuliziaMessaggiAnomali"), 
+	GESTIONE_PULIZIA_MESSAGGI_ANOMALI ("PuliziaMessaggiAnomali"),
+	
+	GENERAZIONE_STATISTICHE ("GenerazioneStatistiche"), 
 	
 	CUSTOM ("Custom");
 	

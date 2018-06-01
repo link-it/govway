@@ -21,6 +21,11 @@
 			<param name="token" value="confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="forceIndex.repository"/>
+			<param name="value" value="${work_dir}/monitor.forceIndex.properties"/>
+		</antcall>
 		
 		<!-- 
 		  PROTOCOL DEFAULT

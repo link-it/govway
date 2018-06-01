@@ -453,6 +453,10 @@ public class CostantiPdD {
     public final static String KEY_TIMEOUT = "@TIMEOUT@";
     /** Costante che identifica una keyword per rappresentare un limit */
     public final static String KEY_LIMIT = "@LIMIT@";
+    /** Costante che identifica una keyword per rappresentare un tipo di statistica */
+    public final static String KEY_TIPO_STATISTICA = "@TIPO_STATISTICA@";
+    /** Costante che identifica una keyword per rappresentare un intervallo temporale */
+    public final static String KEY_TEMPO_GENERAZIONE = "@TEMPO_GENERAZIONE@";
     /** Costante che identifica il tipo di autorizzazione */
     public final static String KEY_TIPO_AUTORIZZAZIONE = "@TIPO_AUTORIZZAZIONE@";
     /** Costante che identifica il tipo di autorizzazione buste */

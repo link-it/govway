@@ -671,6 +671,7 @@ public class MsgDiagnosticiProperties {
 	public final static String MSG_DIAG_TIMER_MONITORAGGIO_RISORSE="timerMonitoraggioRisorse.";
 	public final static String MSG_DIAG_TIMER_THRESHOLD="timerThreshold.";
 	public final static String MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI="timerConsegnaContenutiApplicativi.";
+	public final static String MSG_DIAG_TIMER_STATISTICHE="timerStatistiche.";
 	public final static String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public final static String MSG_DIAG_ALL="all.";
 	private final static String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
@@ -1066,6 +1067,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI+"inoltroMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI+"precedenteEsecuzioneInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI+"precedenteEsecuzioneInCorso.stopTimer",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"avvioInCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"avvioEffettuato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"disabilitato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE+"generazioneStatistiche.effettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"pdd",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"IntegrationManager",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"erroreGenerico",
