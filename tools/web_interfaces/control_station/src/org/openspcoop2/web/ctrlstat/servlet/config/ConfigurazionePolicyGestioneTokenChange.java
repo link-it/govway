@@ -109,9 +109,13 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			
 			if(nome != null) { // la prima volta non sovrascrivo la configurazione con i valori letti dai parametri
 				confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
-			} 
+			} else {
+				// reset di eventuali configurazioni salvate in sessione
+				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+			}
 			
 			configurazioneBean.updateConfigurazione(configurazione);
+			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 			
 			// setto la barra del titolo
 			List<Parameter> lstParam = new ArrayList<Parameter>();
@@ -201,6 +205,9 @@ public class ConfigurazionePolicyGestioneTokenChange extends Action {
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
+			
+			// reset di eventuali configurazioni salvate in sessione
+			ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

@@ -102,6 +102,7 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE = "ConfigurazioniPersonalizzate";
 	public final static String SESSION_PARAMETRO_SAME_DB_WEBUI = "sameDBWebUI";
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";
+	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX;
 	
 	
 	/** LABEL GENERALI */

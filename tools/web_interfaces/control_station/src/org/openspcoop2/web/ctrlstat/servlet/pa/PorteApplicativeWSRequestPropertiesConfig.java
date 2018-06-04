@@ -107,9 +107,13 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 			
 			if(!first) { // la prima volta non sovrascrivo la configurazione con i valori letti dai parametri
 				porteApplicativeHelper.aggiornaConfigurazioneProperties(configurazioneBean);
-			} 
+			} else {
+				// reset di eventuali configurazioni salvate in sessione
+				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+			}
 			
 			configurazioneBean.updateConfigurazione(configurazione);
+			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 
 			Parameter pId = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
@@ -216,6 +220,7 @@ public class PorteApplicativeWSRequestPropertiesConfig  extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			configurazioneBean.updateConfigurazione(configurazione);
+			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 
 			dati = porteApplicativeHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 

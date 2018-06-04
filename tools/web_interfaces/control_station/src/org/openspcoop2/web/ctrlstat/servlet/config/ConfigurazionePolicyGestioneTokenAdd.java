@@ -112,6 +112,8 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			String[] propConfigPolicyGestioneTokenLabelList = propConfigPolicyGestioneTokenLabelListTmp.toArray(new String[propConfigPolicyGestioneTokenLabelListTmp.size()]);
 			String[] propConfigPolicyGestioneTokenList= propConfigPolicyGestioneTokenListTmp.toArray(new String[propConfigPolicyGestioneTokenListTmp.size()]);
 			
+			String postBackElementName = confHelper.getPostBackElementName();
+			
 			Config configurazione = null;
 			ConfigBean configurazioneBean = null;
 			if(tipo != null && !tipo.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
@@ -119,9 +121,15 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			
 				configurazioneBean = ReadPropertiesUtilities.leggiConfigurazione(configurazione, null);
 				
+				if(postBackElementName != null && postBackElementName.equals(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO)) {
+					// reset di eventuali configurazioni salvate in sessione
+					ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+				}
+				
 				confHelper.aggiornaConfigurazioneProperties(configurazioneBean);
 				
 				configurazioneBean.updateConfigurazione(configurazione);
+				ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 			}
 			
 			// setto la barra del titolo
@@ -213,6 +221,9 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			List<GenericProperties> lista = confCore.gestorePolicyTokenList(idLista, tipologia, ricerca);
 			
 			confHelper.prepareGestorePolicyTokenList(ricerca, lista, idLista); 
+			
+			// reset di eventuali configurazioni salvate in sessione
+			ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
 			
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

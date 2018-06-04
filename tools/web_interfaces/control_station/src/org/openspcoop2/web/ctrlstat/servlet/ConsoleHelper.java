@@ -5252,7 +5252,11 @@ public class ConsoleHelper {
 	/** Gestione Properties MVC */
 	
 	public void aggiornaConfigurazioneProperties(ConfigBean configurazione) throws Exception {
+		ConfigBean oldConfigurazione = ServletUtils.readConfigurazioneBeanFromSession(this.session, configurazione.getId());
+		
 		for (String key : configurazione.getListakeys()) {
+			Boolean oldItemVisible = oldConfigurazione != null ? oldConfigurazione.getItem(key).getVisible() : null;
+			configurazione.getItem(key).setOldVisible(oldItemVisible); 
 			configurazione.getItem(key).setValueFromRequest(this.getParameter(key)); 
 		}
 	}

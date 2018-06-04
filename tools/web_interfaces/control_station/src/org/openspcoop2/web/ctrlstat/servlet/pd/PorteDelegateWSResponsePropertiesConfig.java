@@ -111,9 +111,13 @@ public class PorteDelegateWSResponsePropertiesConfig  extends Action {
 			
 			if(!first) { // la prima volta non sovrascrivo la configurazione con i valori letti dai parametri
 				porteDelegateHelper.aggiornaConfigurazioneProperties(configurazioneBean);
-			} 
+			} else {
+				// reset di eventuali configurazioni salvate in sessione
+				ServletUtils.removeConfigurazioneBeanFromSession(session, configurazioneBean.getId());
+			}
 			
 			configurazioneBean.updateConfigurazione(configurazione);
+			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 
 			Parameter pId = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID, id);
 			Parameter pIdSoggetto = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, idsogg);
@@ -220,6 +224,7 @@ public class PorteDelegateWSResponsePropertiesConfig  extends Action {
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			configurazioneBean.updateConfigurazione(configurazione);
+			ServletUtils.saveConfigurazioneBeanIntoSession(session, configurazioneBean, configurazioneBean.getId());
 
 			dati = porteDelegateHelper.addPropertiesConfigToDati(tipoOperazione,dati, configName, configurazioneBean);
 
