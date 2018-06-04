@@ -88,8 +88,8 @@
 		<xsd:attribute name="default" type="xsd:string" use="optional"/>
 		<xsd:attribute name="defaultSelected" type="xsd:boolean" use="optional"/> <!-- per CheckBox -->
 		<xsd:attribute name="value" type="xsd:string" use="optional"/> <!-- hidden -->
-		<xsd:attribute name="min" type="xsd:int" use="optional"/> <!-- number -->
-		<xsd:attribute name="max" type="xsd:int" use="optional"/> <!-- number -->
+		<xsd:attribute name="min" type="xsd:unsignedInt" use="optional"/> <!-- number -->
+		<xsd:attribute name="max" type="xsd:unsignedInt" use="optional"/> <!-- number -->
 		<xsd:attribute name="validation" type="xsd:string" use="optional"/> <!-- RegularExpression for validation -->
 	</xsd:complexType>
 	

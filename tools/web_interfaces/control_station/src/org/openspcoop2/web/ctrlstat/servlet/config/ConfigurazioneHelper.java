@@ -11544,6 +11544,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setValues(propConfigPolicyGestioneTokenList);
 			de.setLabels(propConfigPolicyGestioneTokenLabelList);
 			de.setSelected(tipo); 
+			de.setRequired(true);
 		}else {
 			de.setType(DataElementType.TEXT);
 			de.setValue(tipo);

@@ -48,8 +48,8 @@ import java.io.Serializable;
  * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="defaultSelected" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
  * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
- * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
+ * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
+ * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
  * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -187,19 +187,19 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
     this.value = value;
   }
 
-  public int getMin() {
+  public java.lang.Integer getMin() {
     return this.min;
   }
 
-  public void setMin(int min) {
+  public void setMin(java.lang.Integer min) {
     this.min = min;
   }
 
-  public int getMax() {
+  public java.lang.Integer getMax() {
     return this.max;
   }
 
-  public void setMax(int max) {
+  public void setMax(java.lang.Integer max) {
     this.max = max;
   }
 
@@ -258,13 +258,13 @@ public class Item extends org.openspcoop2.utils.beans.BaseBean implements Serial
   @XmlAttribute(name="value",required=false)
   protected java.lang.String value;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="min",required=false)
-  protected int min;
+  protected java.lang.Integer min;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="max",required=false)
-  protected int max;
+  protected java.lang.Integer max;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="validation",required=false)

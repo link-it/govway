@@ -51,8 +51,8 @@ public class ItemModel extends AbstractModel<Item> {
 		this.DEFAULT = new Field("default",java.lang.String.class,"item",Item.class);
 		this.DEFAULT_SELECTED = new Field("defaultSelected",boolean.class,"item",Item.class);
 		this.VALUE = new Field("value",java.lang.String.class,"item",Item.class);
-		this.MIN = new Field("min",int.class,"item",Item.class);
-		this.MAX = new Field("max",int.class,"item",Item.class);
+		this.MIN = new Field("min",java.lang.Integer.class,"item",Item.class);
+		this.MAX = new Field("max",java.lang.Integer.class,"item",Item.class);
 		this.VALIDATION = new Field("validation",java.lang.String.class,"item",Item.class);
 	
 	}
@@ -72,8 +72,8 @@ public class ItemModel extends AbstractModel<Item> {
 		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"item",Item.class);
 		this.DEFAULT_SELECTED = new ComplexField(father,"defaultSelected",boolean.class,"item",Item.class);
 		this.VALUE = new ComplexField(father,"value",java.lang.String.class,"item",Item.class);
-		this.MIN = new ComplexField(father,"min",int.class,"item",Item.class);
-		this.MAX = new ComplexField(father,"max",int.class,"item",Item.class);
+		this.MIN = new ComplexField(father,"min",java.lang.Integer.class,"item",Item.class);
+		this.MAX = new ComplexField(father,"max",java.lang.Integer.class,"item",Item.class);
 		this.VALIDATION = new ComplexField(father,"validation",java.lang.String.class,"item",Item.class);
 	
 	}

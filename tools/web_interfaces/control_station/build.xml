@@ -282,7 +282,13 @@
 	<target name="build_onlyConfig" depends="build_pddConsole_onlyConfig"/>
 	<target name="clean" depends="clean_pddConsole"/>
 
-
+	<!-- Resources -->
+	<target name="build_resources_zip">
+		<mkdir dir="${dist_pddConsole}" />
+		<antcall target="war_openspcoop2_pddConsole_resources">
+		    <param name="build_pddConsole_resourceDIR" value="${dist_pddConsole}"/>
+		</antcall>
+	</target>
 
 	<!-- Script Sincronizzatore -->
 	<target name="sincronizzatore" depends="runSincronizzatore_openspcoop2_pddConsole" description="Esegue lo script di sincronizzazione"/>

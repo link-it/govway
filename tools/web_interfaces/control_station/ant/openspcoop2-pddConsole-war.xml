@@ -12,12 +12,18 @@
 	
 	<import file="../../../../ant/commons/utils.xml" />
 
+	<target name="war_openspcoop2_pddConsole_resources">	
+                <zip destfile="${build_pddConsole_resourceDIR}/messageSecurity.zip" basedir="deploy" includes="messageSecurity/**/*.xml" />
+                <zip destfile="${build_pddConsole_resourceDIR}/policyGestioneToken.zip" basedir="deploy" includes="policyGestioneToken/**/*.xml" />
+	</target>
+
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
 	<target name="war_openspcoop2_pddConsole" depends="css_openspcoop2_pddConsole">
 
 		<!-- Resources -->
-		<zip destfile="${build_pddConsole}/tmp/messageSecurity.zip" basedir="deploy" includes="messageSecurity/**/*.xml" />
-		<zip destfile="${build_pddConsole}/tmp/policyGestioneToken.zip" basedir="deploy" includes="policyGestioneToken/**/*.xml" />
+		<antcall target="war_openspcoop2_pddConsole_resources">
+		    <param name="build_pddConsole_resourceDIR" value="${build_pddConsole}/tmp"/>
+		</antcall>
 
 		<!-- Properties -->
 		<copy file="${cfg}/console.datasource.properties" todir="${build_pddConsole}/tmp" />
