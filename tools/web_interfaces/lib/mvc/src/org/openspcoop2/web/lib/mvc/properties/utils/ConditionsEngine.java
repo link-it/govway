@@ -206,8 +206,7 @@ public class ConditionsEngine {
 				for (int i= 0; i < section.getSubsectionList().size() ; i++) {
 					Subsection subSection  = section.getSubsectionList().get(i);
 					if(showSubsection(subSection,sectionIdx+ "_ss"+i,cbTmp,show)) {
-						allSubSectionHidden = false;
-						break;
+						allSubSectionHidden = allSubSectionHidden && false;
 					}
 				}
 			}

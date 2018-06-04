@@ -121,6 +121,7 @@ public class Costanti {
 	protected final static String SESSION_ATTRIBUTE_VALUE_SOGGETTO_VIRTUALE_YES ="yes";
 	protected final static String SESSION_ATTRIBUTE_GESTIONE_WSBL ="GestioneWSBL";
 	protected final static String SESSION_ATTRIBUTE_CONFIGURAZIONI_PERSONALIZZATE ="ConfigurazioniPersonalizzate";
+	public final static String SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX = "oldConfProp_";
 	
 	/** COOKIES **/
 	

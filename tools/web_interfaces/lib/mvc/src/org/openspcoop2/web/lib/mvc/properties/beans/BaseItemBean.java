@@ -40,6 +40,7 @@ public abstract class BaseItemBean<T> {
 	protected String name = null;
 	protected String value = null;
 	protected Boolean visible = null;
+	protected Boolean oldVisible = null;
 	
 	public BaseItemBean(T item) {
 		this(item, null);
@@ -89,6 +90,18 @@ public abstract class BaseItemBean<T> {
 	
 	public boolean isVisible() {
 		return this.visible != null && this.visible.booleanValue();
+	}
+	
+	public void setOldVisible(Boolean oldVisible) {
+		this.oldVisible = oldVisible;
+	}
+	
+	public Boolean getOldVisible() {
+		return this.oldVisible;
+	}
+	
+	public boolean isOldVisible() {
+		return this.oldVisible != null && this.oldVisible.booleanValue();
 	}
 	
 }

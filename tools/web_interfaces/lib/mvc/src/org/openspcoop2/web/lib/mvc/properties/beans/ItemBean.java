@@ -137,18 +137,37 @@ public class ItemBean extends BaseItemBean<Item>{
 
 	@Override
 	public void setValueFromRequest(String parameterValue) {
-		switch(this.getItem().getType()) {
-		case HIDDEN:
-			this.value = (parameterValue == null && this.getSaveProperty().isForce()) ? this.getItem().getValue() : parameterValue;
-			break;
-		case CHECKBOX:
-		case NUMBER:
-		case SELECT:
-		case TEXT:
-		default:
-			this.value = parameterValue;
-			break;
+		if(parameterValue == null && !this.isOldVisible()) {
+			switch(this.getItem().getType()) {
+			case CHECKBOX:
+				this.value = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+				break;
+			case HIDDEN:
+				this.value = this.getItem().getValue();
+				break;
+			case NUMBER:
+			case SELECT:
+			case TEXT:
+			default:
+				this.value = this.getItem().getDefault();
+				break;
+			}
 		}
+		else {
+			switch(this.getItem().getType()) {
+			case HIDDEN:
+				this.value = (parameterValue == null && this.getSaveProperty().isForce()) ? this.getItem().getValue() : parameterValue;
+				break;
+			case CHECKBOX:
+			case NUMBER:
+			case SELECT:
+			case TEXT:
+			default:
+				this.value = parameterValue;
+				break;
+			}
+		}
+		System.out.println("ITEM: ["+this.getName()+"] REQVALUE ["+parameterValue+"] NEW VALUE["+this.getValue()+"]");
 	}
 
 	@Override

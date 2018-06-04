@@ -60,6 +60,7 @@ public class ReadPropertiesUtilities {
 
 	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
 		ConfigBean configurazione = new ConfigBean();
+		configurazione.setId(config.getId());
 		
 		ValidationEngine.validateConfig(config);
 		

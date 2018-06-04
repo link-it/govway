@@ -300,6 +300,7 @@ public class ValidationEngine {
 	
 	public static ConfigBean getMetadata(Config config)  throws ValidationException{
 		ConfigBean cbTmp = new ConfigBean();
+		cbTmp.setId(config.getId());
 		
 		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
 		if(properties != null) {

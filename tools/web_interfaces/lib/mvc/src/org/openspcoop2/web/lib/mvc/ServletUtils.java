@@ -29,12 +29,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.slf4j.Logger;
 
 /**
  * ServletUtils
@@ -480,5 +481,22 @@ public class ServletUtils {
 				}
 			}
 		}
+	}
+	
+	public static void saveConfigurazioneBeanIntoSession(HttpSession session,ConfigBean configurazioneBean, String objectName){
+		session.setAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName, configurazioneBean);
+	}
+	
+	public static void removeConfigurazioneBeanFromSession(HttpSession session,String objectName){
+		session.removeAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX +  objectName);
+	}
+
+	public static ConfigBean readConfigurazioneBeanFromSession(HttpSession session, String objectName){
+		Object obj = session.getAttribute(Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);
+
+		if(obj == null)
+			return null;
+
+		return (ConfigBean) obj;
 	}
 }
