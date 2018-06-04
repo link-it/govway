@@ -24,12 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.core.mvc.properties.utils.Costanti;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.Subsection;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.utils.Costanti;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.ItemBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
@@ -59,9 +62,20 @@ public class ReadPropertiesUtilities {
 	}
 
 	public static ConfigBean leggiConfigurazione(Config config, Map<String, Properties> propertiesMap) throws Exception{
-		ConfigBean configurazione = new ConfigBean();
-		configurazione.setId(config.getId());
 		
+		IProvider provider = null;
+		if(StringUtils.isNotEmpty(config.getProvider())) {
+			try {
+				provider = (IProvider) ClassLoaderUtilities.newInstance(config.getProvider());
+			}catch(Exception e) {
+				throw new Exception("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
+			}
+		}
+		
+		ConfigBean configurazione = new ConfigBean(provider);
+		
+		configurazione.setId(config.getId());
+				
 		ValidationEngine.validateConfig(config);
 		
 		configurazione.getListaNomiProperties().addAll(getListaNomiProperties(config));
@@ -77,7 +91,7 @@ public class ReadPropertiesUtilities {
 	}
 
 	public static void addSectionBean(ConfigBean configurazione, Section section, String sectionIdx, Map<String, Properties> propertiesMap) throws Exception {
-		SectionBean sectionBean = new SectionBean(section,sectionIdx);
+		SectionBean sectionBean = new SectionBean(section,sectionIdx, configurazione.getProvider());
 		configurazione.addItem(sectionBean);
 		
 		// aggiungo gli item
@@ -97,7 +111,7 @@ public class ReadPropertiesUtilities {
 	}
 	
 	public static void addSubsectionBean(ConfigBean configurazione, Subsection subSection, String subsectionIdx, Map<String, Properties> propertiesMap) throws Exception {
-		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx);
+		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx, configurazione.getProvider());
 		configurazione.addItem(subsectionBean);
 		
 		// aggiungo gli item
@@ -110,7 +124,7 @@ public class ReadPropertiesUtilities {
 	
 	
 	public static void addItemBean(ConfigBean configurazione, Item item, Map<String, Properties> propertiesMap) throws Exception{
-		ItemBean itemBean = new ItemBean(item, item.getName()); 
+		ItemBean itemBean = new ItemBean(item, item.getName(), configurazione.getProvider()); 
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
 		String propertyValue = getPropertyValue(propertiesMap, name);

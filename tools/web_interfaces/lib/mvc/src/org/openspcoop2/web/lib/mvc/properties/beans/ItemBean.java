@@ -30,6 +30,8 @@ import org.openspcoop2.core.mvc.properties.ItemValue;
 import org.openspcoop2.core.mvc.properties.ItemValues;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -45,12 +47,12 @@ import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationExcep
  */
 public class ItemBean extends BaseItemBean<Item>{
 
-	public ItemBean(Item item, String name) {
-		super(item, name);
+	public ItemBean(Item item, String name, IProvider provider) {
+		super(item, name, provider);
 	}
 
 	@Override
-	public void init(String value) {
+	public void init(String value) throws ProviderException {
 //		Property saveProperty = this.getSaveProperty();
 
 		// caso value == null e non devo forzare con il valore letto dal db cerco un default
@@ -67,7 +69,15 @@ public class ItemBean extends BaseItemBean<Item>{
 			case SELECT:
 			case TEXT:
 			default:
-				this.value = this.getItem().getDefault();
+				if(StringUtils.isNotEmpty(this.getItem().getDefault())) {
+					this.value = this.getItem().getDefault();
+				}
+				else if(this.provider!=null) {
+					this.value = this.provider.getDefault(this.name);
+				}
+				else {
+					this.value = null;
+				}
 				break;
 			}
 		} else {
@@ -87,7 +97,7 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public DataElement toDataElement() {
+	public DataElement toDataElement() throws ProviderException {
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
@@ -116,11 +126,22 @@ public class ItemBean extends BaseItemBean<Item>{
 			List<String> valuesList = new ArrayList<String>();
 			List<String> labelsList = new ArrayList<String>();
 			ItemValues values = this.getItem().getValues();
-			for (ItemValue itemValue : values.getValueList()) {
-				valuesList.add(itemValue.getValue());
-				labelsList.add(itemValue.getLabel() != null ? itemValue.getLabel() : itemValue.getValue());
+			if(values!=null && values.sizeValueList()>0) {
+				for (ItemValue itemValue : values.getValueList()) {
+					valuesList.add(itemValue.getValue());
+					labelsList.add(itemValue.getLabel() != null ? itemValue.getLabel() : itemValue.getValue());
+				}
 			}
-
+			else if(this.provider!=null){
+				List<String> tmp = this.provider.getValues(this.name);
+				if(tmp!=null && tmp.size()>0) {
+					valuesList.addAll(tmp);
+				}
+				tmp = this.provider.getLabels(this.name);
+				if(tmp!=null && tmp.size()>0) {
+					labelsList.addAll(tmp);
+				}
+			}
 			de.setValues(valuesList);
 			de.setLabels(labelsList);
 			break;
@@ -136,7 +157,7 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
-	public void setValueFromRequest(String parameterValue) {
+	public void setValueFromRequest(String parameterValue) throws ProviderException {
 		if(parameterValue == null && !this.isOldVisible()) {
 			switch(this.getItem().getType()) {
 			case CHECKBOX:
@@ -149,7 +170,15 @@ public class ItemBean extends BaseItemBean<Item>{
 			case SELECT:
 			case TEXT:
 			default:
-				this.value = this.getItem().getDefault();
+				if(StringUtils.isNotEmpty(this.getItem().getDefault())) {
+					this.value = this.getItem().getDefault();
+				}
+				else if(this.provider!=null) {
+					this.value = this.provider.getDefault(this.name);
+				}
+				else {
+					this.value = null;
+				}
 				break;
 			}
 		}
@@ -167,7 +196,7 @@ public class ItemBean extends BaseItemBean<Item>{
 				break;
 			}
 		}
-		System.out.println("ITEM: ["+this.getName()+"] REQVALUE ["+parameterValue+"] NEW VALUE["+this.getValue()+"]");
+		//System.out.println("ITEM: ["+this.getName()+"] REQVALUE ["+parameterValue+"] NEW VALUE["+this.getValue()+"]");
 	}
 
 	@Override
@@ -237,6 +266,11 @@ public class ItemBean extends BaseItemBean<Item>{
 	}
 
 	@Override
+	public String getLabel() {
+		return this.item.getLabel();
+	}
+	
+	@Override
 	public void validate() throws UserInputValidationException {
 		String itemValue = this.getPropertyValue(); // valore della property
 		Property saveProperty = this.getSaveProperty();
@@ -244,7 +278,19 @@ public class ItemBean extends BaseItemBean<Item>{
 //		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"]...");  
 
 		// un elemento e' salvabile se non e' visible o e' da forzare 
-		boolean save = saveProperty != null && (saveProperty.isForce() || (this.isVisible() && !ItemType.HIDDEN.equals(this.getItemType())));
+		boolean save = 
+				(saveProperty != null) 
+				&& 
+				(saveProperty.isForce() 
+						|| 
+						(
+							this.isVisible()
+							// in teoria gli hidden visibili dovrebbe essere salvabili
+//							&& 
+//							!org.openspcoop2.core.mvc.properties.constants.ItemType.HIDDEN.equals(this.getItemType())
+						)
+				);
+		
 
 //		System.out.println("VALIDATE -> Item: Name ["+this.getName()+"] Value ["+itemValue+"] Validazione Abilitata ["+save+"]");  
 
@@ -253,7 +299,7 @@ public class ItemBean extends BaseItemBean<Item>{
 
 			// 1. Validazione campi obbligatori
 			if(this.getItem().isRequired() && StringUtils.isEmpty(itemValue)) {
-				throw new UserInputValidationException("Il Campo "+this.getName()+" &egrave; obbligatorio");
+				throw new UserInputValidationException("Il Campo "+this.getLabel()+" &egrave; obbligatorio");
 			}
 
 			// 2. validazione generica basata sul tipo
@@ -262,22 +308,34 @@ public class ItemBean extends BaseItemBean<Item>{
 				if(StringUtils.isNotEmpty(itemValue)) {
 					boolean numeric = NumberUtils.isParsable(itemValue);
 					if(!numeric)
-						throw new UserInputValidationException("Il Campo "+this.getName()+" non contiene un valore di tipo numerico");
+						throw new UserInputValidationException("Il Campo "+this.getLabel()+" non contiene un valore di tipo numerico");
 				}
 				break;
 			case SELECT:
 				if(StringUtils.isNotEmpty(itemValue)) {
 					ItemValues values = this.getItem().getValues();
 					boolean found = false;
-					for (ItemValue selectItemValue : values.getValueList()) {
-						if(selectItemValue.getValue().equals(itemValue)) {
-							found = true;
-							break;
+					if(values!=null && values.sizeValueList()>0) {
+						for (ItemValue selectItemValue : values.getValueList()) {
+							if(selectItemValue.getValue().equals(itemValue)) {
+								found = true;
+								break;
+							}
+						}
+					}
+					else {
+						try {
+							List<String> tmp = this.provider.getValues(this.name);
+							if(tmp.contains(itemValue)) {
+								found = true;
+							}
+						}catch(Exception e) {
+							throw new UserInputValidationException("Errore durante la validazione del Campo "+this.getLabel()+": "+e.getMessage(),e);
 						}
 					}
 
 					if(!found)
-						throw new UserInputValidationException("Il Campo "+this.getName()+" contiene un valore non previsto");
+						throw new UserInputValidationException("Il Campo "+this.getLabel()+" contiene un valore non previsto");
 				}
 				break;
 			case TEXT:
@@ -292,12 +350,12 @@ public class ItemBean extends BaseItemBean<Item>{
 					boolean match = RegularExpressionEngine.isMatch(itemValue, this.getItem().getValidation());
 
 					if(!match)
-						throw new UserInputValidationException("Il Campo "+this.getName()+" non rispetta il pattern di validazione previsto");
+						throw new UserInputValidationException("Il Campo "+this.getLabel()+" non rispetta il pattern di validazione previsto ("+this.getItem().getValidation()+")");
 
 				}catch(UserInputValidationException e) {
 					throw e;
 				}catch(Exception e) {
-					throw new UserInputValidationException("Impossibile validare il campo "+this.getName()+" secondo il pattern previsto nella configurazione",e);
+					throw new UserInputValidationException("Impossibile validare il campo "+this.getLabel()+" secondo il pattern previsto nella configurazione ("+this.getItem().getValidation()+")",e);
 				}
 			}
 		}

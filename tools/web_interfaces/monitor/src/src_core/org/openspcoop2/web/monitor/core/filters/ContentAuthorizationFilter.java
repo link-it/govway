@@ -112,11 +112,6 @@ public class ContentAuthorizationFilter implements Filter {
 						if(!effettuaRedirect)
 							effettuaRedirect = !ContentAuthorizationManager.getInstance().checkRuoloRichiestoPerLaRisorsa(ruoliUtente, urlRichiesta,applicationBean);
 						
-						if(effettuaRedirect) {
-							int i = 0;
-							int j =i++;
-						}
-
 						log.debug("[La risorsa richiesta " + (effettuaRedirect ? "non " : "") + "e' disponibile per l'utente.]");
 					}
 					else{

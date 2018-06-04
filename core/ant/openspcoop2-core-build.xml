@@ -451,6 +451,7 @@
 
 				<!-- org.openspcoop.2.core.mvc.properties -->	
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.mvc.properties,org.openspcoop2.core.mvc.properties.constants,org.openspcoop2.core.mvc.properties.models,org.openspcoop2.core.mvc.properties.utils,org.openspcoop2.core.mvc.properties.utils.serializer" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.core.mvc.properties.provider" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/core/mvc/properties"/>

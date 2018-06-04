@@ -24,6 +24,8 @@ import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationExcep
 import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 
 /***
  * 
@@ -36,38 +38,41 @@ import org.openspcoop2.core.mvc.properties.constants.ItemType;
 public abstract class BaseItemBean<T> {
 	
 	// elemento corrispondente all'interno del config (Section/SubSection/Item)
+	protected IProvider provider = null;	
 	protected T item = null;
 	protected String name = null;
 	protected String value = null;
 	protected Boolean visible = null;
 	protected Boolean oldVisible = null;
 	
-	public BaseItemBean(T item) {
-		this(item, null);
-	}
-	
-
-	public BaseItemBean(T item, String name) {
+	public BaseItemBean(T item, String name, IProvider provider) {
 		this.item = item;
 		this.name = name;
+		this.provider = provider;
 	}
+
+	public abstract DataElement toDataElement() throws ProviderException;
 	
-	public abstract DataElement toDataElement();
-	
-	public abstract void setValueFromRequest(String parameterValue);
+	public abstract void setValueFromRequest(String parameterValue)  throws ProviderException;
 	
 	public abstract Property getSaveProperty();
 	
 	public abstract String getPropertyValue();
 	
-	public abstract void init(String value);
+	public abstract void init(String value) throws ProviderException;
 	
 	public abstract Conditions getConditions();
 	
 	public abstract ItemType getItemType();
 	
+	public abstract String getLabel();
+	
 	public abstract void validate() throws UserInputValidationException;
 
+	public IProvider getProvider() {
+		return this.provider;
+	}
+	
 	public T getItem() {
 		return this.item;
 	}
@@ -75,7 +80,7 @@ public abstract class BaseItemBean<T> {
 	public String getName() {
 		return this.name;
 	}
-
+	
 	public String getValue() {
 		return this.value;
 	}

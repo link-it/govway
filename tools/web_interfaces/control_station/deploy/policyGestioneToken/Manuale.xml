@@ -1,18 +1,17 @@
-<config id="openspcoop" label="Configurazione Manuale" xmlns="http://www.openspcoop2.org/core/mvc/properties" validation="org.openspcoop2.web.ctrlstat.token.validator">
+<config id="openspcoop" label="Configurazione Manuale" xmlns="http://www.openspcoop2.org/core/mvc/properties" 
+	provider="org.openspcoop2.pdd.core.token.TokenProvider">
 
 	<properties>
 		<collection name="signaturePropRefId"/>
+		<collection name="encryptionPropRefId"/>
+		<collection name="verifySignaturePropRefId"/>
 		<collection name="decryptionPropRefId"/>
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
 	</properties>
 	
 	<section label="Informazioni Generali">
-		
-		<item type="hidden" name="policyName" value="Regione Toscana">
-			<property name="policy.name" force="true"/>
-		</item>
-		
+				
 		<subsection label="Token">
 		
 			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" required="true" reloadOnChange="true">
@@ -83,22 +82,14 @@
 		</subsection>
 		
 		<subsection label="Endpoint Token">
-		
+
 			<conditions>
 				<condition and="false">
 					<selected name="introspectionStato"/>
-					<selected name="userInfoStato"/>
+					<selected name="userInfoStato" />
 				</condition>
 			</conditions>
-		
-			<item type="checkbox" name="endpointHttps" label="Configurazione Https" defaultSelected="false" reloadOnChange="true">
-				<property name="policy.endpoint.https.stato" />
-			</item>	
-			
-			<item type="checkbox" name="endpointProxy" label="Proxy" defaultSelected="false" reloadOnChange="true">
-				<property name="policy.endpoint.proxy.stato" />
-			</item>	
-			
+
 			<item type="number" name="endpointConnectionTimeout" label="Connection Timeout" required="true" default="10000" min="1">
 				<property name="connectionTimeout" properties="endpointConfig" />
 			</item>
@@ -106,8 +97,16 @@
 				<property name="readConnectionTimeout" properties="endpointConfig" />
 			</item>
 		
-		</subsection>
+			<item type="checkbox" name="endpointHttps" label="Https" defaultSelected="false" reloadOnChange="true">
+				<property name="policy.endpoint.https.stato" />
+			</item>	
 			
+			<item type="checkbox" name="endpointProxy" label="Proxy" defaultSelected="false" reloadOnChange="true">
+				<property name="policy.endpoint.proxy.stato" />
+			</item>	
+			
+		</subsection>
+				
 	</section>
 
 	<section label="Validazione JWT">
@@ -129,16 +128,16 @@
 					<value value="pkcs12" label="PKCS12"/>
 					<value value="jceks" label="JCEKS"/>
 				</values>
-				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+				<property name="rs.security.keystore.type" properties="verifySignaturePropRefId" />
 			</item>
 			<item type="text" name="truststoreFile" label="File" required="true">
-			      	<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			      	<property name="rs.security.keystore.file" properties="verifySignaturePropRefId" />
 			</item>
 			<item type="text" name="truststorePassword" label="Password" required="true">
-			      	<property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			      	<property name="rs.security.keystore.password" properties="verifySignaturePropRefId" />
 			</item>
 			<item type="text" name="truststoreCertificateAlias" label="Alias Certificato" required="true">
-			      	<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			      	<property name="rs.security.keystore.alias" properties="verifySignaturePropRefId" />
 			</item>
 
 		</subsection>
@@ -183,34 +182,232 @@
 
 	</section>
 		
-	<section label="Configurazione HTTPS">
-	
+		
+	<section label="Token Introspection">
+		
 		<conditions>
 			<condition and="true">
-				<selected name="endpointHttps"/>
+				<selected name="introspectionStato"/>
+			</condition>
+		</conditions>
+
+		<item type="select" name="introspectionEndpointType" label="Tipo" default="oauth2" required="true">
+			<values>
+				<value value="oauth2" label="RFC 7662 - OAuth 2.0"/>
+				<value value="google" label="Google"/>
+				<value value="custom" label="Personalizzato"/>
+			</values>
+			<property name="policy.introspection.endpoint.type" />
+		</item>
+		<item type="text" name="introspectionEndpointURL" label="URL" required="true" default="http://">
+		      	<property name="policy.introspection.endpoint.url" />
+		</item>
+		
+		<item type="checkbox" name="introspectionEndpointBasic" label="Autenticazione Http Basic" defaultSelected="false" reloadOnChange="true">
+			<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
+			<conditions>
+				<condition not="true" and="true">
+					<selected name="introspectionEndpointBearer"/>
+				</condition>
+			</conditions>
+			-->
+			<property name="policy.introspection.endpoint.basic.stato" />
+		</item>
+		<item type="checkbox" name="introspectionEndpointBearer" label="Autenticazione Bearer" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition not="true" and="true">
+					<selected name="introspectionEndpointBasic"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.endpoint.bearer.stato" />
+		</item>
+		<item type="checkbox" name="introspectionEndpointHttps" label="Autenticazione Https" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.introspection.endpoint.https.stato" />
+		</item>
+		
+		<subsection label="Autenticazione Http Basic">
+			<conditions>
+				<condition and="true">
+					<selected name="introspectionEndpointBasic"/>
+				</condition>
+			</conditions>
+			<item type="text" name="introspectionEndpointBasicUsername" label="Username" required="true">
+			      	<property name="policy.introspection.endpoint.basic.username" />
+			</item>
+			<item type="text" name="introspectionEndpointPassword" label="Password" required="true">
+			      	<property name="policy.introspection.endpoint.basic.password" />
+			</item>
+		</subsection>
+		
+		<subsection label="Autenticazione Bearer">
+			<conditions>
+				<condition and="true">
+					<selected name="introspectionEndpointBearer"/>
+				</condition>
+			</conditions>
+			<item type="text" name="introspectionEndpointBearerToken" label="Token" required="true">
+			      	<property name="policy.introspection.endpoint.bearer.token" />
+			</item>
+		</subsection>
+
+	</section>
+	
+	<section label="OIDC - UserInfo">
+				
+		<conditions>
+			<condition and="true">
+				<selected name="userInfoStato"/>
 			</condition>
 		</conditions>
 	
-		<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" required="true">
-			<values>
-				<value value="jks" label="JKS"/>
-				<value value="pkcs12" label="PKCS12"/>
-				<value value="jceks" label="JCEKS"/>
-			</values>
-			<property name="trustStoreType" properties="sslConfig" />
+		<item type="text" name="userInfoEndpointURL" label="URL" required="true" default="http://">
+		      	<property name="policy.userInfo.endpoint.url" />
 		</item>
-		<item type="text" name="endpointHttpsTruststoreFile" label="File" required="true">
-		    <property name="trustStoreLocation" properties="sslConfig" />
+		<item type="checkbox" name="userInfoEndpointBasic" label="Autenticazione Http" defaultSelected="false" reloadOnChange="true">
+			<!--  non si puo' verificare una condizione successiva. Comunque selezionando basic, sparisce bearer.
+			<conditions>
+				<condition not="true" and="true">
+					<selected name="userInfoEndpointBearer"/>
+				</condition>
+			</conditions>
+			-->
+			<property name="policy.userInfo.endpoint.basic.stato" />
 		</item>
-		<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
-		      	<property name="trustStorePassword" properties="sslConfig" />
+		<item type="checkbox" name="userInfoEndpointBearer" label="Autenticazione Bearer" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition not="true" and="true">
+					<selected name="userInfoEndpointBasic"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.endpoint.bearer.stato" />
 		</item>
-		<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
-		      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+		<item type="checkbox" name="userInfoEndpointHttps" label="Autenticazione Https" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.userInfo.endpoint.https.stato" />
 		</item>
+		
+		<subsection label="Autenticazione Http">
+			<conditions>
+				<condition and="true">
+					<selected name="userInfoEndpointBasic"/>
+				</condition>
+			</conditions>
+			<item type="text" name="userInfoEndpointBasicUsername" label="Username" required="true">
+			      	<property name="policy.userInfo.endpoint.basic.username" />
+			</item>
+			<item type="text" name="userInfoEndpointPassword" label="Password" required="true">
+			      	<property name="policy.userInfo.endpoint.basic.password" />
+			</item>
+		</subsection>
+		
+		<subsection label="Autenticazione Bearer">
+			<conditions>
+				<condition and="true">
+					<selected name="userInfoEndpointBearer"/>
+				</condition>
+			</conditions>
+			<item type="text" name="userInfoEndpointBearerToken" label="Token" required="true">
+			      	<property name="policy.userInfo.endpoint.bearer.token" />
+			</item>
+		</subsection>
+
+	</section>
+	
+	<section label="Https">
+
+		<conditions>
+			<condition and="false">
+				<selected name="endpointHttps"/>
+				<selected name="introspectionEndpointHttps"/>
+				<selected name="userInfoEndpointHttps"/>
+			</condition>
+		</conditions>
+	
+		<item type="select" name="endpointHttpsTipologia" label="Tipologia" required="true">
+			<property name="sslType" properties="sslConfig" />
+		</item>
+		<item type="checkbox" name="endpointHttpsHostNameVerifier" label="Hostname Verifier" defaultSelected="true" >
+			<property name="hostnameVerifier" properties="sslConfig" />
+		</item>
+	
+	
+		<subsection label="Autenticazione Server">
+	
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="trustStoreType" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsTruststoreFile" label="File" required="true">
+			    <property name="trustStoreLocation" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsTruststorePassword" label="Password" required="true">
+			      	<property name="trustStorePassword" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsTruststoreAlgoritmo" label="Algoritmo" default="PKIX" required="true">
+			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Autenticazione Client">
+		
+			<conditions>
+				<condition and="false">
+					<selected name="introspectionEndpointHttps"/>
+					<selected name="userInfoEndpointHttps"/>
+				</condition>
+			</conditions>
+			
+			<item type="select" name="endpointHttpsClientMode" label="Dati Accesso al KeyStore" default="default" required="true" reloadOnChange="true">
+				<values>
+					<value value="default" label="Usa valore del TrustStore"/>
+					<value value="ridefinito" label="Ridefinisci"/>
+				</values>
+				<property name="policy.endpoint.ssl.mode" />
+			</item>
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="keyStoreType" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientKeystoreFile" label="File" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+			    <property name="keyStoreLocation" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientKeystorePassword" label="Password" required="true">
+				<conditions>
+					<condition and="true">
+						<equals name="endpointHttpsClientMode" value="ridefinito"/>
+					</condition>
+				</conditions>
+			    <property name="keyStorePassword" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<property name="keyPassword" properties="sslConfig" />
+			</item>
+			<item type="text" name="endpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
+				<property name="keyManagementAlgorithm" properties="sslConfig" />
+			</item>
+		
+		</subsection>
 		
 	</section>
-		
+			
 	<section label="Proxy">
 	
 		<conditions>
@@ -231,225 +428,7 @@
 		<item type="text" name="endpointProxyPassword" label="Password" required="false">
 			<property name="proxyPassword" properties="endpointConfig" />
 		</item>
-	</section>
 		
-	<section label="Token Introspection">
-		
-		<conditions>
-			<condition and="true">
-				<selected name="introspectionStato"/>
-			</condition>
-		</conditions>
-
-		<item type="select" name="introspectionEndpointType" label="Tipo" default="oauth2" required="true">
-			<values>
-				<value value="oauth2" label="RFC 7662 - OAuth 2.0"/>
-				<value value="google" label="Google"/>
-				<value value="custom" label="Personalizzato"/>
-			</values>
-			<property name="policy.introspection.endpoint.type" />
-		</item>
-		<item type="text" name="introspectionEndpointURL" label="URL" required="true">
-		      	<property name="policy.introspection.endpoint.url" />
-		</item>
-		
-		<subsection label="Autenticazione">
-			<item type="checkbox" name="introspectionEndpointBasic" label="Http" defaultSelected="false" reloadOnChange="true">
-				<property name="policy.introspection.endpoint.basic.stato" />
-			</item>
-			<item type="checkbox" name="introspectionEndpointBearer" label="Bearer Token" defaultSelected="false" reloadOnChange="true">
-				<property name="policy.introspection.endpoint.bearer.stato" />
-			</item>
-			<item type="checkbox" name="introspectionEndpointHttps" label="Https" defaultSelected="false" reloadOnChange="true">
-				<property name="policy.introspection.endpoint.https.stato" />
-			</item>
-		</subsection>
-		
-		<subsection label="Autenticazione Http">
-			<conditions>
-				<condition and="true">
-					<selected name="introspectionEndpointBasic"/>
-				</condition>
-			</conditions>
-			<item type="text" name="introspectionEndpointBasicUsername" label="Username" required="true">
-			      	<property name="policy.introspection.endpoint.basic.username" />
-			</item>
-			<item type="text" name="introspectionEndpointPassword" label="Password" required="true">
-			      	<property name="policy.introspection.endpoint.basic.password" />
-			</item>
-		</subsection>
-		
-		<subsection label="Autenticazione Bearer Token">
-			<conditions>
-				<condition and="true">
-					<selected name="introspectionEndpointBearer"/>
-				</condition>
-			</conditions>
-			<item type="text" name="introspectionEndpointBearerToken" label="Token" required="true">
-			      	<property name="policy.introspection.endpoint.bearer.token" />
-			</item>
-		</subsection>
-
-		<subsection label="Autenticazione Https">
-			<conditions>
-				<condition and="true">
-					<selected name="introspectionEndpointHttps"/>
-				</condition>
-			</conditions>
-
-			<item type="select" name="introspectionEndpointHttpsClientMode" label="Dati Accesso al KeyStore" default="jks" required="true" reloadOnChange="true">
-				<values>
-					<value value="default" label="Usa valore del TrustStore"/>
-					<value value="ridefinito" label="Ridefinisci"/>
-				</values>
-				<property name="policy.introspection.endpoint.ssl.mode" />
-			</item>
-			<item type="select" name="introspectionEndpointHttpsClientKeystoreType" label="Tipo" default="jks" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="introspectionEndpointHttpsClientMode" value="ridefinito"/>
-					</condition>
-				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
-				<property name="keyStoreType" properties="sslConfig" />
-			</item>
-			<item type="text" name="introspectionEndpointHttpsClientKeystoreFile" label="File" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="introspectionEndpointHttpsClientMode" value="ridefinito"/>
-					</condition>
-				</conditions>
-			    <property name="keyStoreLocation" properties="sslConfig" />
-			</item>
-			<item type="text" name="introspectionEndpointHttpsClientKeystorePassword" label="Password" required="true">
-			      	<property name="keyStorePassword" properties="sslConfig" />
-			</item>
-			<item type="text" name="introspectionEndpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
-			      	<property name="keyPassword" properties="sslConfig" />
-			</item>
-			<item type="text" name="introspectionEndpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
-			      	<property name="keyManagementAlgorithm" properties="sslConfig" />
-			</item>
-
-		</subsection>
-
-	</section>
-	
-	<section label="OIDC - UserInfo">
-				
-		<conditions>
-			<condition and="true">
-				<selected name="userInfoStato"/>
-			</condition>
-		</conditions>
-	
-		<item type="text" name="userInfoEndpointURL" label="URL" required="true">
-		      	<property name="policy.userInfo.endpoint.url" />
-		</item>
-		<item type="checkbox" name="userInfoEndpointAuth" label="Autenticazione Client" defaultSelected="false" reloadOnChange="true">
-			<property name="policy.userInfo.endpoint.auth.stato" />
-		</item>
-		<item type="checkbox" name="userInfoEndpointBasic" label="Autenticazione Http" defaultSelected="false" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointAuth"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.endpoint.basic.stato" />
-		</item>
-		<item type="checkbox" name="userInfoEndpointBearer" label="Autenticazione Bearer Token" defaultSelected="false" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointAuth"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.endpoint.bearer.stato" />
-		</item>
-		<item type="checkbox" name="userInfoEndpointHttps" label="Autenticazione Https" defaultSelected="false" reloadOnChange="true">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointAuth"/>
-				</condition>
-			</conditions>
-			<property name="policy.userInfo.endpoint.https.stato" />
-		</item>
-		
-		<subsection label="Autenticazione Http">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointBasic"/>
-				</condition>
-			</conditions>
-			<item type="text" name="userInfoEndpointBasicUsername" label="Username" required="true">
-			      	<property name="policy.userInfo.endpoint.basic.username" />
-			</item>
-			<item type="text" name="userInfoEndpointPassword" label="Password" required="true">
-			      	<property name="policy.userInfo.endpoint.basic.password" />
-			</item>
-		</subsection>
-		
-		<subsection label="Autenticazione Bearer Token">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointBearer"/>
-				</condition>
-			</conditions>
-			<item type="text" name="userInfoEndpointBearerToken" label="Token" required="true">
-			      	<property name="policy.userInfo.endpoint.bearer.token" />
-			</item>
-		</subsection>
-
-		<subsection label="Autenticazione Https">
-			<conditions>
-				<condition and="true">
-					<selected name="userInfoEndpointHttps"/>
-				</condition>
-			</conditions>
-
-			<item type="select" name="userInfoEndpointHttpsClientMode" label="Dati Accesso al KeyStore" default="jks" required="true" reloadOnChange="true">
-				<values>
-					<value value="default" label="Usa valore del TrustStore"/>
-					<value value="ridefinito" label="Ridefinisci"/>
-				</values>
-				<property name="policy.userInfo.endpoint.ssl.mode" />
-			</item>
-			<item type="select" name="userInfoEndpointHttpsClientKeystoreType" label="Tipo" default="jks" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="userInfoEndpointHttpsClientMode" value="ridefinito"/>
-					</condition>
-				</conditions>
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
-				</values>
-				<property name="keyStoreType" properties="sslConfig" />
-			</item>
-			<item type="text" name="userInfoEndpointHttpsClientKeystoreFile" label="File" required="true">
-				<conditions>
-					<condition and="true">
-						<equals name="userInfoEndpointHttpsClientMode" value="ridefinito"/>
-					</condition>
-				</conditions>
-			    <property name="keyStoreLocation" properties="sslConfig" />
-			</item>
-			<item type="text" name="userInfoEndpointHttpsClientKeystorePassword" label="Password" required="true">
-			      	<property name="keyStorePassword" properties="sslConfig" />
-			</item>
-			<item type="text" name="userInfoEndpointHttpsClientPasswordChiavePrivata" label="Password Chiave Privata" required="true">
-			      	<property name="keyPassword" properties="sslConfig" />
-			</item>
-			<item type="text" name="userInfoEndpointHttpsClientAlgoritmo" label="Algoritmo" default="SunX509" required="true">
-			      	<property name="keyManagementAlgorithm" properties="sslConfig" />
-			</item>
-
-		</subsection>
-
 	</section>
 
 	
@@ -461,9 +440,229 @@
 			</condition>
 		</conditions>
 		
-		<item type="checkbox" name="tokenForwtokenForwardTrasparente" label="Trasparente" defaultSelected="false" reloadOnChange="true">
-			<property name="policy.tokenForward.trasparente" />
+		<item type="checkbox" name="tokenForwardTrasparente" label="Originale" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.tokenForward.trasparente.stato" />
 		</item>
+		<item type="checkbox" name="tokenForwardInfoRaccolte" label="Informazioni Raccolte" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition and="false">
+					<selected name="introspectionStato"/>
+					<selected name="userInfoStato"/>
+				</condition>
+			</conditions>
+			<property name="policy.tokenForward.infoRaccolte.stato" />
+		</item>
+		
+		<subsection label="Originale">
+
+			<conditions>
+				<condition and="true">
+					<selected name="tokenForwardTrasparente" />
+				</condition>
+			</conditions>
+
+			<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="asReceived" required="true" reloadOnChange="true">
+				<values>
+					<value value="asReceived" label="Come è stato ricevuto"/>
+					<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
+					<value value="RFC6750_url" label="RFC 6750 - Bearer Token Usage (URI Query Parameter)"/>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.trasparente.mode" />
+			</item>
+			
+			<item type="text" name="tokenForwardTrasparenteModeSourceHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardTrasparenteMode" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.trasparente.mode.header" />
+			</item>
+			
+			<item type="text" name="tokenForwardTrasparenteModeSourceQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardTrasparenteMode" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.trasparente.mode.queryParameter" />
+			</item>
+			
+		</subsection>
+		
+		<subsection label="Informazioni Raccolte">
+		
+			<conditions>
+				<condition and="true">
+					<selected name="tokenForwardInfoRaccolte" />
+				</condition>
+			</conditions>
+	
+			<item type="select" name="tokenForwardInfoRaccolteMode" label="Modalità" default="op2header" required="true" reloadOnChange="true">
+				<values>
+					<value value="op2header" label="OpenSPCoop Headers"/>
+					<value value="jws" label="JWS"/>
+					<value value="jwe" label="JWE"/>
+					<value value="raw" label="JSON"/>
+				</values>
+				<property name="policy.tokenForward.infoRaccolte.mode" />
+			</item>
+			
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeBase64" label="Base64 Encoded" defaultSelected="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.base64" />
+			</item>
+
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSSignature" label="Signature Algorithm" required="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
+			</item>
+			
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEKeyAlgorithm" label="Key Algorithm" required="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.encryption.key.algorithm" properties="encryptionPropRefId" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentAlgorithm" label="Content Algorithm" required="true">
+				<conditions and="true">
+					<condition and="true">
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+					</condition>
+				</conditions>
+				<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
+			</item>
+			
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeIntrospection" label="Introspection" defaultSelected="true">
+				<conditions and="true">
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<selected name="userInfoStato"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.introspection" />
+			</item>
+			<item type="hidden" name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true">
+				<conditions not="true" and="true">
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<selected name="userInfoStato"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.introspection" />
+			</item>
+			
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeUserInfo" label="UserInfo" defaultSelected="true">
+				<conditions and="true">
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<selected name="userInfoStato"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.userInfo" />
+			</item>
+			<item type="hidden" name="tokenForwardInfoRaccolteModeUserInfoForce" value="true">
+				<conditions not="true" and="true">
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<selected name="userInfoStato"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.userInfo" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="JWS KeyStore">
+
+			<conditions and="true">
+				<condition and="true">
+					<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWSKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			      	<property name="rs.security.key.password" properties="signaturePropRefId" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="JWE TrustStore">
+
+			<conditions and="true">
+				<condition and="true">
+					<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentTruststoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststoreCertificateAlias" label="Alias Certificato" required="true">
+			      	<property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			</item>
+
+		</subsection>
 		
 	</section>
 

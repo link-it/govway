@@ -21,6 +21,7 @@ package org.openspcoop2.web.lib.mvc.properties.utils;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.Collection;
 import org.openspcoop2.core.mvc.properties.Condition;
 import org.openspcoop2.core.mvc.properties.Conditions;
@@ -39,6 +40,9 @@ import org.openspcoop2.web.lib.mvc.properties.beans.SectionBean;
 import org.openspcoop2.web.lib.mvc.properties.beans.SubsectionBean;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 /****
  * 
@@ -155,16 +159,16 @@ public class ValidationEngine {
 				validaHidden(item);
 				break;
 			case NUMBER:
-				validaNumber(item);
+				validaNumber(item,metadata);
 				break;
 			case SELECT:
-				validaSelect(item);
+				validaSelect(item,metadata);
 				break;
 			case TEXT:
-				validaText(item);
+				validaText(item,metadata);
 				break;
 			}
-		}catch(ValidationException e) {
+		}catch(Exception e) {
 			throw new ValidationException("Item ["+item.getName()+"] non valido: "+ e.getMessage());
 		}
 	}
@@ -198,33 +202,48 @@ public class ValidationEngine {
 		
 	}
 
-	private static void validaNumber(Item item) throws ValidationException{
+	private static String getDefault(Item item,ConfigBean metadata) throws ProviderException {
+		if(StringUtils.isNotEmpty(item.getDefault())) {
+			return item.getDefault();
+		}
+		else if(metadata.getProvider()!=null) {
+			return metadata.getProvider().getDefault(item.getName());
+		}
+		return null;
+	}
+	
+	private static void validaNumber(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault() != null && item.getDefault().contains(property.getAppendSeparator()))
+			String defaultValue = getDefault(item, metadata);
+			if(defaultValue != null && defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 	}
 
-	private static void validaSelect(Item item) throws ValidationException{
+	private static void validaSelect(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault() != null && item.getDefault().contains(property.getAppendSeparator()))
+			String defaultValue = getDefault(item, metadata);
+			if(defaultValue != null && defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 		
 		if(item.getValues() == null || item.getValues().sizeValueList() == 0) {
-			throw new ValidationException("E' necessario indicare una lista di Values per gli Item di tipo Select");
+			if(metadata.getProvider()==null || metadata.getProvider().getValues(item.getName())==null || metadata.getProvider().getValues(item.getName()).size()<=0) {
+				throw new ValidationException("E' necessario indicare una lista di Values, o definirli in un plugins, per gli Item di tipo Select");
+			}
 		}
 	}
 
-	private static void validaText(Item item) throws ValidationException{
+	private static void validaText(Item item,ConfigBean metadata) throws ValidationException, ProviderException{
 		Property property = item.getProperty();
 		// se e' una property di tipo append valido il separatore
 		if(property.isAppend()) {
-			if(item.getDefault() != null &&  item.getDefault().contains(property.getAppendSeparator()))
+			String defaultValue = getDefault(item, metadata);
+			if(defaultValue != null &&  defaultValue.contains(property.getAppendSeparator()))
 				throw new ValidationException("Il valore indicato per l'attributo Default ["+item.getValue()+"] contiene il separatore previsto per il salvataggio ["+property.getAppendSeparator()+"]");
 		}
 	}
@@ -299,7 +318,15 @@ public class ValidationEngine {
 	}
 	
 	public static ConfigBean getMetadata(Config config)  throws ValidationException{
-		ConfigBean cbTmp = new ConfigBean();
+		IProvider provider = null;
+		if(StringUtils.isNotEmpty(config.getProvider())) {
+			try {
+				provider = (IProvider) ClassLoaderUtilities.newInstance(config.getProvider());
+			}catch(Exception e) {
+				throw new ValidationException("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
+			}
+		}
+		ConfigBean cbTmp = new ConfigBean(provider);
 		cbTmp.setId(config.getId());
 		
 		org.openspcoop2.core.mvc.properties.Properties properties = config.getProperties();
@@ -321,12 +348,12 @@ public class ValidationEngine {
 	}
 	
 	private static void getMetadataSection(Section section, String sectionIdx,ConfigBean cbTmp) throws ValidationException{
-		SectionBean sectionBean = new SectionBean(section,sectionIdx);
+		SectionBean sectionBean = new SectionBean(section,sectionIdx, cbTmp.getProvider());
 		cbTmp.addItem(sectionBean);
 		
 		if(section.getItemList() != null) {
 			for (Item item : section.getItemList()) {
-				ItemBean itemBean = new ItemBean(item, item.getName()); 
+				ItemBean itemBean = new ItemBean(item, item.getName(), cbTmp.getProvider()); 
 				cbTmp.addItem(itemBean);
 			}
 		}
@@ -341,12 +368,12 @@ public class ValidationEngine {
 	}
 
 	private static void getMetadataSubsection(Subsection subSection, String subsectionIdx, ConfigBean cbTmp) throws ValidationException {
-		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx);
+		SubsectionBean subsectionBean = new SubsectionBean(subSection,subsectionIdx,cbTmp.getProvider());
 		cbTmp.addItem(subsectionBean);
 		
 		if(subSection.getItemList() != null) {
 			for (Item item : subSection.getItemList()) {
-				ItemBean itemBean = new ItemBean(item, item.getName()); 
+				ItemBean itemBean = new ItemBean(item, item.getName(),cbTmp.getProvider()); 
 				cbTmp.addItem(itemBean);
 			}
 		}

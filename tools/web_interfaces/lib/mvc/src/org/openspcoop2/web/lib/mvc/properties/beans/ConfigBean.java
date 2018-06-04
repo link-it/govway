@@ -31,10 +31,9 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Property;
-import org.openspcoop2.core.mvc.properties.constants.ItemType;
-import org.openspcoop2.core.mvc.properties.plugins.IPlugin;
-import org.openspcoop2.core.mvc.properties.plugins.PluginException;
-import org.openspcoop2.core.mvc.properties.plugins.PluginValidationException;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.web.lib.mvc.properties.exception.ConditionException;
 import org.openspcoop2.web.lib.mvc.properties.exception.UserInputValidationException;
 import org.openspcoop2.web.lib.mvc.properties.exception.ValidationException;
@@ -54,12 +53,14 @@ public class ConfigBean {
 	private List<String> listaKeysItem= null;
 	private Map<String, BaseItemBean<?>> mapItem = null;
 	private Map<String, List<BaseItemBean<?>>> mapPropertyItem = null;
+	private IProvider provider;
 
-	public ConfigBean() {
+	public ConfigBean(IProvider provider) {
 		this.listaNomiProperties = new ArrayList<String>();
 		this.listaKeysItem = new ArrayList<String>();
 		this.mapItem = new HashMap<String, BaseItemBean<?>>();
 		this.mapPropertyItem = new HashMap<String, List<BaseItemBean<?>>>();
+		this.provider = provider;
 	}
 
 	public void clear() {
@@ -89,6 +90,10 @@ public class ConfigBean {
 		}
 	}
 
+	public IProvider getProvider() {
+		return this.provider;
+	}
+	
 	public BaseItemBean<?> getItem(String name){
 		return this.mapItem.get(name);
 	}
@@ -116,7 +121,21 @@ public class ConfigBean {
 			String itemValue = item.getPropertyValue(); // valore della property
 
 			// un elemento e' salvabile se non e' visible o e' da forzare 
-			boolean save = saveProperty != null && (saveProperty.isForce() || (StringUtils.isNotEmpty(itemValue) && (item.isVisible() && !ItemType.HIDDEN.equals(item.getItemType()))));
+			boolean save = 
+					(saveProperty != null) 
+					&& 
+					(saveProperty.isForce() 
+							|| 
+							(
+								StringUtils.isNotEmpty(itemValue) 
+									&& 
+									(item.isVisible()
+											// in teoria gli hidden visibili dovrebbe essere salvabili
+//											&& 
+//											!org.openspcoop2.core.mvc.properties.constants.ItemType.HIDDEN.equals(item.getItemType())
+									)
+							)
+					);
 			
 //			System.out.println("SAVE -> Item: Name ["+item.getName()+"] Value ["+itemValue+"] Force: ["+(saveProperty != null ? saveProperty.isForce() : false)+"] VisibleAND!hidden: ["+(item.isVisible() && !ItemType.HIDDEN.equals(item.getItemType()))+"] SAVE: ["+save+"]");  
 			if(save) { // per ogni elemento salvabile
@@ -167,7 +186,7 @@ public class ConfigBean {
 		return map;
 	}
 
-	public void setValueFromRequest(String name, String parameterValue) {
+	public void setValueFromRequest(String name, String parameterValue) throws ProviderException {
 		this.getItem(name).setValueFromRequest(parameterValue);
 //		System.out.println("Item ["+name+"] Valore dalla request ["+parameterValue+"], Nuovo Valore ["+this.getItem(name).getValue()+"]");
 	}
@@ -196,17 +215,21 @@ public class ConfigBean {
 	}
 
 	public void validazioneInputUtente(Config config) throws UserInputValidationException, ClassNotFoundException, InstantiationException, IllegalAccessException, 
-		IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, PluginException, PluginValidationException {
+		IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ProviderException, ProviderValidationException {
 		List<BaseItemBean<?>> listaItem = this.getListaItem();
 
 		for (BaseItemBean<?> item : listaItem) {
 			item.validate();
 		}
 		
-		// TODO se definita chiamare la validazione prevista in config
-		if(StringUtils.isNotEmpty(config.getValidation())) {
-			IPlugin plugin = (IPlugin) ClassLoaderUtilities.newInstance(config.getValidation());
-			plugin.validate(this.getPropertiesMap());
+		IProvider provider = null;
+		if(StringUtils.isNotEmpty(config.getProvider())) {
+			try {
+				provider = (IProvider) ClassLoaderUtilities.newInstance(config.getProvider());
+			}catch(Exception e) {
+				throw new ProviderException("Errore durante l'istanziazione del provider ["+config.getProvider()+"]: "+e.getMessage(),e);
+			}
+			provider.validate(this.getPropertiesMap());
 		}
 	}
 

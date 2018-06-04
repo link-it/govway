@@ -52,7 +52,7 @@
 		<xsd:attribute name="label" type="xsd:string" use="required"/>
 		<xsd:attribute name="sortLabel" type="xsd:string" use="optional"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
-		<xsd:attribute name="validation" type="xsd:string" use="optional"/>
+		<xsd:attribute name="provider" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	
 	<xsd:complexType name="section">
@@ -105,7 +105,7 @@
 	
 	<xsd:complexType name="itemValues">		
 		<xsd:sequence>
-			<xsd:element name="value" type="itemValue" maxOccurs="unbounded"  minOccurs="2"/>
+			<xsd:element name="value" type="itemValue" maxOccurs="unbounded"  minOccurs="0"/>
 		</xsd:sequence>	
 	</xsd:complexType>
 	<xsd:complexType name="itemValue">		

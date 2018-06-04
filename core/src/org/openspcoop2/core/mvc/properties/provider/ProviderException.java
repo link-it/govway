@@ -21,37 +21,37 @@
 
 
 
-package org.openspcoop2.core.mvc.properties.plugins;
+package org.openspcoop2.core.mvc.properties.provider;
 
 import java.io.Serializable;
 
 /**
- * PluginValidationException
+ * PluginException
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author $Author: apoli $
  * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
 
-public class PluginValidationException extends Exception implements Serializable {
+public class ProviderException extends Exception implements Serializable {
 	/**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public PluginValidationException(String message, Throwable cause) {
+	public ProviderException(String message, Throwable cause) {
 		super(message, cause);
 	}
 	
-	public PluginValidationException(Throwable cause) {
+	public ProviderException(Throwable cause) {
 		super(cause);
 	}
 
-	public PluginValidationException() {
+	public ProviderException() {
 		super();
     }
 	
-	public PluginValidationException(String msg) {
+	public ProviderException(String msg) {
         super(msg);
     }
 }

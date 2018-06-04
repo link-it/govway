@@ -47,7 +47,7 @@ public class ConfigModel extends AbstractModel<Config> {
 		this.LABEL = new Field("label",java.lang.String.class,"config",Config.class);
 		this.SORT_LABEL = new Field("sortLabel",java.lang.String.class,"config",Config.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"config",Config.class);
-		this.VALIDATION = new Field("validation",java.lang.String.class,"config",Config.class);
+		this.PROVIDER = new Field("provider",java.lang.String.class,"config",Config.class);
 	
 	}
 	
@@ -62,7 +62,7 @@ public class ConfigModel extends AbstractModel<Config> {
 		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"config",Config.class);
 		this.SORT_LABEL = new ComplexField(father,"sortLabel",java.lang.String.class,"config",Config.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"config",Config.class);
-		this.VALIDATION = new ComplexField(father,"validation",java.lang.String.class,"config",Config.class);
+		this.PROVIDER = new ComplexField(father,"provider",java.lang.String.class,"config",Config.class);
 	
 	}
 	
@@ -82,7 +82,7 @@ public class ConfigModel extends AbstractModel<Config> {
 	 
 	public IField DESCRIZIONE = null;
 	 
-	public IField VALIDATION = null;
+	public IField PROVIDER = null;
 	 
 
 	@Override

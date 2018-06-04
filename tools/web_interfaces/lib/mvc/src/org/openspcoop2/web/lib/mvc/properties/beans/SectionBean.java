@@ -26,6 +26,7 @@ import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.Section;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
 
 /**
  *  Bean di tipo Section arricchito delle informazioni grafiche.
@@ -35,8 +36,8 @@ import org.openspcoop2.core.mvc.properties.constants.ItemType;
  */
 public class SectionBean extends BaseItemBean<Section>{
 
-	public SectionBean(Section section, String name) {
-		super(section, name);
+	public SectionBean(Section section, String name, IProvider provider) {
+		super(section, name, provider);
 	}
 
 	@Override
@@ -72,6 +73,12 @@ public class SectionBean extends BaseItemBean<Section>{
 	public ItemType getItemType() {
 		return null;
 	}
+	
+	@Override
+	public String getLabel() {
+		return this.item.getLabel();
+	}
+	
 	@Override
 	public void validate() throws UserInputValidationException {
 	}

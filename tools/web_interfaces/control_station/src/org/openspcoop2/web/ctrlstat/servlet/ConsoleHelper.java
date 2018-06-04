@@ -73,8 +73,8 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.Config;
-import org.openspcoop2.core.mvc.properties.plugins.PluginException;
-import org.openspcoop2.core.mvc.properties.plugins.PluginValidationException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderException;
+import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -5295,10 +5295,10 @@ public class ConsoleHelper {
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile caricare il plugin di validazione previsto dalla configurazione"); 
 			return false;		
-		} catch(PluginException e) {
+		} catch(ProviderException e) {
 			this.pd.setMessage("Si &egrave; verificato un errore durante la validazione dello Schema Sicurezza, impossibile utilizzare il plugin di validazione previsto dalla configurazione"); 
 			return false;
-		} catch(PluginValidationException e) {
+		} catch(ProviderValidationException e) {
 			this.pd.setMessage(e.getMessage());  
 			return false;
 		}

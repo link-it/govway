@@ -36,7 +36,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="itemValues">
  * 		&lt;sequence>
- * 			&lt;element name="value" type="{http://www.openspcoop2.org/core/mvc/properties}itemValue" minOccurs="2" maxOccurs="unbounded"/>
+ * 			&lt;element name="value" type="{http://www.openspcoop2.org/core/mvc/properties}itemValue" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>

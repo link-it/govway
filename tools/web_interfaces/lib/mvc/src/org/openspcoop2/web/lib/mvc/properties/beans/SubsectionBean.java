@@ -26,6 +26,7 @@ import org.openspcoop2.core.mvc.properties.Conditions;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.Subsection;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
+import org.openspcoop2.core.mvc.properties.provider.IProvider;
 
 /***
  * 
@@ -36,8 +37,8 @@ import org.openspcoop2.core.mvc.properties.constants.ItemType;
  */
 public class SubsectionBean extends BaseItemBean<Subsection>{
 
-	public SubsectionBean(Subsection section, String name) {
-		super(section, name);
+	public SubsectionBean(Subsection section, String name, IProvider provider) {
+		super(section, name, provider);
 	}
 
 	@Override
@@ -72,6 +73,11 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 	@Override
 	public ItemType getItemType() {
 		return null;
+	}
+
+	@Override
+	public String getLabel() {
+		return this.item.getLabel();
 	}
 	
 	@Override

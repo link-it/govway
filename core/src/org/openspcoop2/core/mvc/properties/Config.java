@@ -45,7 +45,7 @@ import java.util.List;
  * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="sortLabel" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -142,12 +142,12 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
     this.descrizione = descrizione;
   }
 
-  public java.lang.String getValidation() {
-    return this.validation;
+  public java.lang.String getProvider() {
+    return this.provider;
   }
 
-  public void setValidation(java.lang.String validation) {
-    this.validation = validation;
+  public void setProvider(java.lang.String provider) {
+    this.provider = provider;
   }
 
   private static final long serialVersionUID = 1L;
@@ -219,7 +219,7 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
   protected java.lang.String descrizione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="validation",required=false)
-  protected java.lang.String validation;
+  @XmlAttribute(name="provider",required=false)
+  protected java.lang.String provider;
 
 }
