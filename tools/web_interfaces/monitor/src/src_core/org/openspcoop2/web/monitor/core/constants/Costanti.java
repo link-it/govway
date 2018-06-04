@@ -5,6 +5,7 @@ public class Costanti {
 	public final static String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = "Modalità: {0}";
 	
 	public final static String LABEL_PARAMETRO_MODALITA_ALL = "Qualsiasi";
+	public final static String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";
 	
 	public final static String ICONS_BASE = "/images/tema_link/" ;
 	

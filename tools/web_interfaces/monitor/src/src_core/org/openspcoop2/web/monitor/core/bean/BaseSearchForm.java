@@ -2,7 +2,6 @@ package org.openspcoop2.web.monitor.core.bean;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -27,8 +27,10 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMessaggio;
+import org.openspcoop2.web.monitor.core.converter.AllConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -1129,6 +1131,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 
 	public String getProtocollo() {
+		if(!Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			this.setProtocollo(Utility.getLoginBean().getModalita()); 
+		}
+		
 		return this.protocollo;
 	}
 
@@ -1140,11 +1146,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.protocollo = null;
 	}
 
-	public List<SelectItem> getProtocolli() {
+	public List<SelectItem> getProtocolli() throws Exception {
 		//		if(this.protocolli == null)
 		this.protocolli = new ArrayList<SelectItem>();
 
-		this.protocolli.add(new SelectItem("*"));
+		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
 
 
 
@@ -1157,7 +1163,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 			for (String protocolKey : listaNomiProtocolli) {
 				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
-				this.protocolli.add(new SelectItem(protocollo.getProtocol()));
+				this.protocolli.add(new SelectItem(protocollo.getProtocol(),NamingUtils.getLabelProtocollo(protocollo.getProtocol())));
 			}
 
 		} catch (ProtocolException e) {
@@ -1178,34 +1184,22 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			// se c'e' installato un solo protocollo non visualizzo la select List.
 			if(numeroProtocolli == 1)
 				return false;
+			
+			
+			User utente = this.getUser();
+			
+			// utente ha selezionato una modalita'
+			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
+				return false;
+			}
+			
+			
+			if(utente.getProtocolliSupportati() ==null ||  utente.getProtocolliSupportati().size() <= 1) {
+				return false;
+			}
 
 			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
-			List<String> listaNomiProtocolli = new  ArrayList<String>();
-
-			if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
-				List<String> tipiSoggetti = new ArrayList<String>();
-				for (Soggetto soggetto : listaSoggettiGestione) {
-					String tipoSoggetto = soggetto.getTipoSoggetto();
-
-					if(!tipiSoggetti.contains(tipoSoggetto))
-						tipiSoggetti.add(tipoSoggetto); 
-				}
-
-				for (String tipo : tipiSoggetti) {
-					String protocolBySubjectType = pfManager.getProtocolByOrganizationType(tipo);
-					if(!listaNomiProtocolli.contains(protocolBySubjectType))
-						listaNomiProtocolli.add(protocolBySubjectType);
-				}
-
-			} else {
-				// Tutti i protocolli
-				Enumeration<String> keys = protocolFactories.keys();
-				while (keys.hasMoreElements()) {
-					String protocolKey = (String) keys.nextElement();
-					if(!listaNomiProtocolli.contains(protocolKey))
-						listaNomiProtocolli.add(protocolKey);
-				}
-			}
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
 
 			numeroProtocolli = listaNomiProtocolli.size();
 
@@ -1218,6 +1212,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		}  
 
 		return true;
+	}
+	
+	public boolean isSetFiltroProtocollo() {
+		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) &&
+				(this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
+		
+		return setFilter;
 	}
 
 	public void protocolloSelected(ActionEvent ae) {

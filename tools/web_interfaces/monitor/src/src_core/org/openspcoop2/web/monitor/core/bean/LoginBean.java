@@ -83,6 +83,8 @@ public class LoginBean extends AbstractLoginBean {
 
 	@Override
 	protected void init() {
+		super.init();
+		
 		if(this.isInitDao()){
 			this.setLoginDao(new DBLoginDAO());
 		}
@@ -287,7 +289,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	public String getModalita() {
 		if(this.modalita == null)
-			return "qualsiasi";
+			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 		
 		return this.modalita;
 	}
@@ -295,7 +297,7 @@ public class LoginBean extends AbstractLoginBean {
 	public void setModalita(String modalita) {
 		this.modalita = modalita;
 		
-		if(this.modalita == "qualsiasi")
+		if(this.modalita.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL))
 			this.modalita = null;
 	}
 
@@ -388,7 +390,7 @@ public class LoginBean extends AbstractLoginBean {
 					}
 
 					// seleziona tutti
-					MenuModalitaItem menuItem = new MenuModalitaItem("qualsiasi", Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+					MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
 					this.vociMenuModalita.add(menuItem);
 				}
 

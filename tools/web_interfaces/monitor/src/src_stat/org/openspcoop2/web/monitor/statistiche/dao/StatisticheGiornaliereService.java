@@ -985,7 +985,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.andamentoTemporaleSearch.getProtocollo()) && this.andamentoTemporaleSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+			//			if (StringUtils.isNotEmpty(this.andamentoTemporaleSearch.getProtocollo()) && this.andamentoTemporaleSearch.isShowListaProtocolli()) {
+					if (this.andamentoTemporaleSearch.isSetFiltroProtocollo()) {
 				//				expr.and().equals(model.PROTOCOLLO,	this.andamentoTemporaleSearch.getProtocollo());
 				protocollo = this.andamentoTemporaleSearch.getProtocollo();
 
@@ -1567,7 +1569,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Protocollo
 				String protocollo = null;
 				// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-				if (StringUtils.isNotEmpty(this.distribSoggettoSearch.getProtocollo()) && this.distribSoggettoSearch.isShowListaProtocolli()) {
+				// protocollo e' impostato anche scegliendo la modalita'
+//				if (StringUtils.isNotEmpty(this.distribSoggettoSearch.getProtocollo()) && this.distribSoggettoSearch.isShowListaProtocolli()) {
+				if (this.distribSoggettoSearch.isSetFiltroProtocollo()) {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
@@ -2088,7 +2092,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.distribSoggettoSearch.getProtocollo()) && this.distribSoggettoSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+			//			if (StringUtils.isNotEmpty(this.distribSoggettoSearch.getProtocollo()) && this.distribSoggettoSearch.isShowListaProtocolli()) {
+			if (this.distribSoggettoSearch.isSetFiltroProtocollo()) {
 				//				mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
@@ -3308,7 +3314,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.distribServizioSearch.getProtocollo()) && this.distribServizioSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+	//			if (StringUtils.isNotEmpty(this.distribServizioSearch.getProtocollo()) && this.distribServizioSearch.isShowListaProtocolli()) {
+			if (this.distribServizioSearch.isSetFiltroProtocollo()) {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribServizioSearch.getProtocollo());
 				protocollo = this.distribServizioSearch.getProtocollo();
 
@@ -3652,7 +3660,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.distribAzioneSearch.getProtocollo()) && this.distribAzioneSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+//				if (StringUtils.isNotEmpty(this.distribAzioneSearch.getProtocollo()) && this.distribAzioneSearch.isShowListaProtocolli()) {
+			if (this.distribAzioneSearch.isSetFiltroProtocollo()) {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribAzioneSearch.getProtocollo());
 				protocollo = this.distribAzioneSearch.getProtocollo();
 
@@ -4699,7 +4709,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.distribSaSearch.getProtocollo()) && this.distribSaSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+	//			if (StringUtils.isNotEmpty(this.distribSaSearch.getProtocollo()) && this.distribSaSearch.isShowListaProtocolli()) {
+			if (this.distribSaSearch.isSetFiltroProtocollo()) {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribSaSearch.getProtocollo());
 				protocollo = this.distribSaSearch.getProtocollo();
 
@@ -5794,7 +5806,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			// Protocollo
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-			if (StringUtils.isNotEmpty(this.statistichePersonalizzateSearch.getProtocollo()) && this.statistichePersonalizzateSearch.isShowListaProtocolli()) {
+			// protocollo e' impostato anche scegliendo la modalita'
+			//			if (StringUtils.isNotEmpty(this.statistichePersonalizzateSearch.getProtocollo()) && this.statistichePersonalizzateSearch.isShowListaProtocolli()) {
+			if (this.statistichePersonalizzateSearch.isSetFiltroProtocollo()) {
 				//				expr.and().equals(model.PROTOCOLLO,	this.statistichePersonalizzateSearch.getProtocollo());
 				protocollo = this.statistichePersonalizzateSearch.getProtocollo();
 

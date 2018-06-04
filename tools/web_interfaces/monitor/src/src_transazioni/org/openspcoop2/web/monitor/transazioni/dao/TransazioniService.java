@@ -2321,7 +2321,9 @@ public class TransazioniService implements ITransazioniService {
 		}
 		
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-		if (StringUtils.isNotEmpty(this.searchForm.getProtocollo()) && this.searchForm.isShowListaProtocolli()) {
+		// protocollo e' impostato anche scegliendo la modalita'
+//		if (StringUtils.isNotEmpty(this.searchForm.getProtocollo()) && this.searchForm.isShowListaProtocolli()) {
+		if (this.searchForm.isSetFiltroProtocollo()) {
 			filter.and().equals(Transazione.model().PROTOCOLLO,	this.searchForm.getProtocollo());
 		}
 

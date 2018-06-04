@@ -847,7 +847,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		// Protocollo
 		String protocollo = null;
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		// protocollo e' impostato anche scegliendo la modalita'
+//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		if (searchForm.isSetFiltroProtocollo()) {
 			protocollo = searchForm.getProtocollo();
 			impostaTipiCompatibiliConProtocollo(dao, PortaDelegata.model(), expr, protocollo);
 		}
@@ -908,7 +910,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		// Protocollo
 		String protocollo = null;
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
-		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		// protocollo e' impostato anche scegliendo la modalita'
+//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		if (searchForm.isSetFiltroProtocollo()) {
 			protocollo = searchForm.getProtocollo();
 			impostaTipiCompatibiliConProtocollo(dao, PortaApplicativa.model(), expr, protocollo);
 		}
