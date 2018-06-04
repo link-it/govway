@@ -451,6 +451,8 @@ public class CostantiControlStation {
 	
 	public final static String VALUE_PARAMETRO_PROPERTIES_MODE_DEFAULT = "default";
 	
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN = "gestionePolicyToken";
+	
 	/** OTHER */
 	public final static String IMAGES_DIR = "images";
 	public final static String CSS_DIR = "css";

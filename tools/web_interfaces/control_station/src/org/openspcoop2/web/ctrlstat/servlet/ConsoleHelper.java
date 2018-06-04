@@ -57,6 +57,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazioneRegola;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -95,6 +96,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -3159,7 +3161,7 @@ public class ConsoleHelper {
 	}
 	
 	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto) {
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto) throws Exception {
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TITLE); //SUBTITLE);
 		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
@@ -3189,42 +3191,69 @@ public class ConsoleHelper {
 			de.setRequired(true);
 			de.setPostBack(true);
 			dati.addElement(de);
-
-			// validazione input
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
-			de.setType(DataElementType.CHECKBOX);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
-			de.setSelected(gestioneTokenValidazioneInput);
-			de.setPostBack(true);
-			dati.addElement(de);
 			
-			// introspection
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
-			de.setType(DataElementType.CHECKBOX);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
-			de.setSelected(gestioneTokenIntrospection);
-			de.setPostBack(true);
-			dati.addElement(de);
+			if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+				
+				GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+				Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+				
+				// validazione input
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+				if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(gestioneTokenValidazioneInput);
+					de.setPostBack(true);
+				}else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				dati.addElement(de);
+				
+				// introspection
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+				if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(gestioneTokenIntrospection);
+					de.setPostBack(true);
+				}else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				dati.addElement(de);
+				
+				// userInfo
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+				if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(gestioneTokenUserInfo);
+					de.setPostBack(true);
+				}else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				dati.addElement(de);
+				
+				// token forward
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+				if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(gestioneTokenForward);
+					de.setPostBack(true);
+				}else {
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				dati.addElement(de);
 			
-			// userInfo
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-			de.setType(DataElementType.CHECKBOX);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-			de.setSelected(gestioneTokenUserInfo);
-			de.setPostBack(true);
-			dati.addElement(de);
-			
-			// token forward
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-			de.setType(DataElementType.CHECKBOX);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-			de.setSelected(gestioneTokenForward);
-			de.setPostBack(true);
-			dati.addElement(de);
+			}
 		}
 	}
 	
