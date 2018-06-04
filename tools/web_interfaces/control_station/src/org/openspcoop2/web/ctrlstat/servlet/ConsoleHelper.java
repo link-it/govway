@@ -3322,22 +3322,22 @@ public class ConsoleHelper {
 		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 		
 			boolean autorizzazione_autenticazione =  false;
-			
-			
-			de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
-			if(isPortaDelegata){
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
-			}
-			else{
-				String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
-				de.setLabel(labelSoggetti);
-			}
-			dati.addElement(de);
-			
-			
+						
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
 			
+				if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+					de = new DataElement();
+					de.setType(DataElementType.SUBTITLE);
+					if(isPortaDelegata){
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+					}
+					else{
+						String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
+						de.setLabel(labelSoggetti);
+					}
+					dati.addElement(de);
+				}
+				
 				autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
 				
 				de = new DataElement();

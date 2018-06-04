@@ -15,26 +15,13 @@ public class TokenProvider implements IProvider {
 	@Override
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		
-		Properties pDefault = mapProperties.get(org.openspcoop2.core.mvc.properties.utils.Costanti.NOME_MAPPA_PROPERTIES_DEFAULT);
+		Properties pDefault = TokenUtilities.getDefaultProperties(mapProperties);
 				
-		boolean validazione = false;
-		boolean introspection = false;
-		boolean userInfo = false;
-		boolean forward = false;
-		
-		if(pDefault.containsKey(Costanti.POLICY_VALIDAZIONE_STATO)) {
-			validazione = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_STATO));
-		}
-		if(pDefault.containsKey(Costanti.POLICY_INTROSPECTION_STATO)) {
-			introspection = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_INTROSPECTION_STATO));
-		}
-		if(pDefault.containsKey(Costanti.POLICY_USER_INFO_STATO)) {
-			userInfo = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_USER_INFO_STATO));
-		}
-		if(pDefault.containsKey(Costanti.POLICY_TOKEN_FORWARD_STATO)) {
-			forward = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_STATO));
-		}
-		
+		boolean validazione = TokenUtilities.isValidazioneEnabled(pDefault);
+		boolean introspection = TokenUtilities.isIntrospectionEnabled(pDefault);
+		boolean userInfo = TokenUtilities.isUserInfoEnabled(pDefault);
+		boolean forward = TokenUtilities.isTokenForwardEnabled(pDefault);
+				
 		if(!validazione &&  !introspection && !userInfo && !forward) {
 			throw new ProviderValidationException("Almeno una modalità di elaborazione del token deve essere selezionata");
 		}
@@ -57,31 +44,17 @@ public class TokenProvider implements IProvider {
 				
 		if(forward) {
 			
-			boolean forwardTrasparente = false;
-			boolean forwardInformazioniRaccolte = false;
-			
-			if(pDefault.containsKey(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO)) {
-				forwardTrasparente = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO));
-			}
-			if(pDefault.containsKey(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO)) {
-				forwardInformazioniRaccolte = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO));
-			}
-			
+			boolean forwardTrasparente = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO);
+			boolean forwardInformazioniRaccolte = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);
+
 			if(!forwardTrasparente && !forwardInformazioniRaccolte) {
 				throw new ProviderValidationException("Almeno una modalità di forward del token deve essere selezionata");
 			}
 			
 			if(forwardInformazioniRaccolte) {
-				boolean forwardIntrospection = false;
-				boolean forwardUserInfo = false;
-				
-				if(pDefault.containsKey(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION)) {
-					forwardIntrospection = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION));
-				}
-				if(pDefault.containsKey(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO)) {
-					forwardUserInfo = Boolean.valueOf(pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO));
-				}
-				
+				boolean forwardIntrospection = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);
+				boolean forwardUserInfo = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);
+								
 				if(!forwardIntrospection && !forwardUserInfo) {
 					throw new ProviderValidationException("Almeno una scelta tra 'Introspection' o tramite 'OIDC UserInfo' deve essere selezionata per inoltrare le informazioni raccolte all'applicativo erogatore.");
 				}
