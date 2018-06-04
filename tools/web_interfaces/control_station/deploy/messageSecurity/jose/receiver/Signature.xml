@@ -1,0 +1,97 @@
+<config id="messageSecurity.jose.receiver.signature" label="JWT Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+        <compatibility not="false" and="false">
+                <tags and="true">
+                        <tag>REST</tag>
+                        <tag>RESPONSE</tag>
+                        <tag>PD</tag>
+                </tags>
+                <tags and="true">
+                        <tag>REST</tag>
+                        <tag>REQUEST</tag>
+                        <tag>PA</tag>
+                </tags>
+        </compatibility>
+	
+	<properties>
+		<collection name="signaturePropRefId"/>
+	</properties>
+	
+	<section label="Verifier Signature">
+		
+		<item type="hidden" name="securityEngine" value="jose">
+			<property name="securityEngine" force="true"/>
+		</item>
+				
+		<item type="hidden" name="signatureAction" value="Signature">
+			<property name="Action" force="true"/>
+		</item>
+		
+		<item type="select" name="signatureMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
+			<values>
+				<value value="compatct" label="Compact"/>
+				<value value="selfContained" label="SelfContained"/>
+				<value value="detached" label="Detached"/>
+			</values>
+			<property name="signatureMode" />
+		</item>
+
+		<subsection label="Detached">
+		
+			<item type="select" name="detachedType" label="Tipo" default="header" required="true" reloadOnChange="true" >
+				<values>
+					<value value="header" label="Header HTTP"/>
+					<value value="url" label="URL Query Parameter"/>
+				</values>
+				<property name="detached.type" />
+			</item>
+			<item type="text" name="detachedHeader" label="Header Name" required="true">
+			    <conditions>
+                        <condition>
+                                <equals name="detachedType" value="header"/>
+                        </condition>
+                </conditions>
+		      	<property name="signatureDetachedHeader" />
+			</item>
+			<item type="text" name="detachedUrl" label="Header Name" required="true">
+			    <conditions>
+                        <condition>
+                                <equals name="detachedType" value="url"/>
+                        </condition>
+                </conditions>
+		      	<property name="signatureDetachedPropertyURL" />
+			</item>
+            <item type="checkbox" name="detachedBase64" label="Base64 Encoded" defaultSelected="true">
+                    <property name="signatureDetachedBase64"/>
+            </item>
+				
+		</subsection>
+				
+		<subsection label="TrustStore">
+
+			<item type="select" name="truststoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="truststoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="truststorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+			      	<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+
