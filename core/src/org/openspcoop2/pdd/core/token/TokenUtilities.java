@@ -20,21 +20,21 @@ public class TokenUtilities {
 	}
 	
 	public static boolean isIntrospectionEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-		return isValidazioneEnabled(getDefaultProperties(mapProperties));
+		return isIntrospectionEnabled(getDefaultProperties(mapProperties));
 	}
 	public static boolean isIntrospectionEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
 		return isEnabled(pDefault, Costanti.POLICY_INTROSPECTION_STATO);
 	}
 	
 	public static boolean isUserInfoEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-		return isValidazioneEnabled(getDefaultProperties(mapProperties));
+		return isUserInfoEnabled(getDefaultProperties(mapProperties));
 	}
 	public static boolean isUserInfoEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
 		return isEnabled(pDefault, Costanti.POLICY_USER_INFO_STATO);
 	}
 	
 	public static boolean isTokenForwardEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-		return isValidazioneEnabled(getDefaultProperties(mapProperties));
+		return isTokenForwardEnabled(getDefaultProperties(mapProperties));
 	}
 	public static boolean isTokenForwardEnabled(Properties pDefault) throws ProviderException, ProviderValidationException {
 		return isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_STATO);
