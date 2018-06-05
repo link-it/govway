@@ -178,7 +178,14 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 	}
 	
 	public String getFormUrlEncodedParameter(String key) {
-		return this.properties.getProperty(key);
+		String p = this.properties.getProperty(key);
+		if(p==null) {
+			p = this.properties.getProperty(key.toLowerCase());
+		}
+		if(p==null) {
+			p = this.properties.getProperty(key.toUpperCase());
+		}
+		return p;
 	}
 
 	public Enumeration<Object> getFormUrlEncodedParameterNames() {

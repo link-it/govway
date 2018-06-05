@@ -4,6 +4,9 @@ public class Costanti {
 
 	public final static String TIPOLOGIA = "gestionePolicyToken";
 	
+	public final static String POLICY_REALM = "policy.realm";
+	public final static String POLICY_GENERIC_ERROR = "policy.genericError";
+	
 	public final static String POLICY_TOKEN_SOURCE = "policy.token.source";
 	public final static String POLICY_TOKEN_SOURCE_RFC6750 = "RFC6750";
 	public final static String POLICY_TOKEN_SOURCE_RFC6750_HEADER = "RFC6750_header";
@@ -11,6 +14,9 @@ public class Costanti {
 	public final static String POLICY_TOKEN_SOURCE_RFC6750_URL = "RFC6750_url";
 	public final static String POLICY_TOKEN_SOURCE_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_SOURCE_CUSTOM_URL = "CUSTOM_url";
+	
+	public final static String POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME = "policy.token.source.header";
+	public final static String POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME = "policy.token.source.queryParameter";
 	
 	public final static String POLICY_STATO_ABILITATO = "true";
 	public final static String POLICY_STATO_DISABILITATO = "false";
@@ -32,6 +38,12 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION = "policy.tokenForward.infoRaccolte.introspection";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO = "policy.tokenForward.infoRaccolte.userInfo";
 	
+	
+	
+	// STANDARD
+	
+	public final static String RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN = "access_token";
+	public final static String RFC6750_FORM_PARAMETER_ACCESS_TOKEN = "access_token";
 	
 	// ELEMENTI SELECT
 	

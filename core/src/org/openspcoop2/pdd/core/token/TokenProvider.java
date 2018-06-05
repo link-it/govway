@@ -17,13 +17,34 @@ public class TokenProvider implements IProvider {
 	public void validate(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
 		
 		Properties pDefault = TokenUtilities.getDefaultProperties(mapProperties);
-				
+		
+		
+		// ***** TOKEN SOURCE *******
+		
 		String position = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE);
 		if(position==null) {
 			throw new ProviderValidationException("Non e' stata indicata la posizione del token");
 		}
-		if(!Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position)) {
-			//FINIRE VALIDAZIONE
+		if(!Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position) &&
+				!Costanti.POLICY_TOKEN_SOURCE_RFC6750_HEADER.equals(position) &&
+				!Costanti.POLICY_TOKEN_SOURCE_RFC6750_FORM.equals(position) && 
+				!Costanti.POLICY_TOKEN_SOURCE_RFC6750_URL.equals(position) &&
+				!Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER.equals(position) &&
+				!Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL.equals(position) ) {
+			throw new ProviderValidationException("La posizione del token indicata '"+position+"' non è supportata");
+		}
+		
+		if(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER.equals(position)) {
+			String headerName = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME);
+			if(headerName==null) {
+				throw new ProviderValidationException("Non e' stata indicata il nome dell'header http che deve contenere il token");
+			}
+		}
+		else if(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL.equals(position)) {
+			String pName = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME);
+			if(pName==null) {
+				throw new ProviderValidationException("Non e' stata indicata il nome della proprietà della URL che deve contenere il token");
+			}
 		}
 		
 		boolean validazione = TokenUtilities.isValidazioneEnabled(pDefault);
