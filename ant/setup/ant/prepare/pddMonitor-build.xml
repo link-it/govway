@@ -30,7 +30,7 @@
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_pddMonitor" value="${src_pddMonitor}"/>
 			<param name="commons_webcontent" value="${commons_webcontent}"/>
-			<param name="commons_temaConsole" value="${commons_temaConsole}"/>
+			<param name="commons_temaConsole" value="${pddMonitor}/deploy/tema_css"/>
 			<param name="commons_webcontent_properties" value="${commons_webcontent_properties}"/>
 			<param name="images" value="${pddMonitor}/deploy/images"/>
 			<param name="jsp" value="${pddMonitor}/deploy/jsp"/>
@@ -46,6 +46,7 @@
 			<param name="build_pddMonitor" value="build"/>
 			<param name="queue" value="${queue}"/>
 			<param name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins"/>
+			<param name="deploy_pddMonitor" value="${pddMonitor}/deploy"/>
 	 	</antcall>
 	
 		<move file="${deploy_sw}/${TIPO_AS}/dist/pddMonitor.war" todir="${deploy_sw}/${TIPO_AS}"/>
