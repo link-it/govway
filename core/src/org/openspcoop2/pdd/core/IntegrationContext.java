@@ -55,6 +55,11 @@ public class IntegrationContext {
 	private String tipoAutenticazione;
 	
 	/**
+	 * Tipo di gestione token utilizzato
+	 */
+	private String tipoGestioneToken;
+	
+	/**
 	 * Autenticazione opzionale
 	 */
 	private boolean autenticazioneOpzionale = false;
@@ -104,24 +109,32 @@ public class IntegrationContext {
 	 */
 	private IDPortaDelegata idPD;
 	
-	public String getTipoAutorizzazione() {
-		return this.tipoAutorizzazione;
-	}
-	public void setTipoAutorizzazione(String tipoAutorizzazione) {
-		this.tipoAutorizzazione = tipoAutorizzazione;
-	}
 	public String getTipoAutenticazione() {
 		return this.tipoAutenticazione;
 	}
 	public void setTipoAutenticazione(String tipoAutenticazione) {
 		this.tipoAutenticazione = tipoAutenticazione;
 	}
-	
+		
 	public boolean isAutenticazioneOpzionale() {
 		return this.autenticazioneOpzionale;
 	}
 	public void setAutenticazioneOpzionale(boolean autenticazioneOpzionale) {
 		this.autenticazioneOpzionale = autenticazioneOpzionale;
+	}
+	
+	public String getTipoGestioneToken() {
+		return this.tipoGestioneToken;
+	}
+	public void setTipoGestioneToken(String tipoGestioneToken) {
+		this.tipoGestioneToken = tipoGestioneToken;
+	}
+	
+	public String getTipoAutorizzazione() {
+		return this.tipoAutorizzazione;
+	}
+	public void setTipoAutorizzazione(String tipoAutorizzazione) {
+		this.tipoAutorizzazione = tipoAutorizzazione;
 	}
 	
 	public String getTipoAutorizzazioneContenuto() {

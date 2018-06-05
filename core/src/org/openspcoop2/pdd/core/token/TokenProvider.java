@@ -18,6 +18,14 @@ public class TokenProvider implements IProvider {
 		
 		Properties pDefault = TokenUtilities.getDefaultProperties(mapProperties);
 				
+		String position = pDefault.getProperty(Costanti.POLICY_TOKEN_SOURCE);
+		if(position==null) {
+			throw new ProviderValidationException("Non e' stata indicata la posizione del token");
+		}
+		if(!Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position)) {
+			//FINIRE VALIDAZIONE
+		}
+		
 		boolean validazione = TokenUtilities.isValidazioneEnabled(pDefault);
 		boolean introspection = TokenUtilities.isIntrospectionEnabled(pDefault);
 		boolean userInfo = TokenUtilities.isUserInfoEnabled(pDefault);

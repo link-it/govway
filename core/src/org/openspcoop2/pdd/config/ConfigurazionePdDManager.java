@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -71,6 +72,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -340,6 +342,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isAutenticazioneOpzionale(pd);
 	}
 	
+	public String getGestioneToken(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getGestioneToken(pd);
+	}
+	
+	public PolicyGestioneToken getPolicyGestioneToken(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getPolicyGestioneToken(this.getConnection(), pd);
+	}
+	
 	public String getAutorizzazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getAutorizzazione(pd);
 	}
@@ -530,6 +540,14 @@ public class ConfigurazionePdDManager {
 	
 	public boolean isAutenticazioneOpzionale(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.isAutenticazioneOpzionale(pa);
+	}
+	
+	public String getGestioneToken(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getGestioneToken(pa);
+	}
+	
+	public PolicyGestioneToken getPolicyGestioneToken(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getPolicyGestioneToken(this.getConnection(), pa);
 	}
 	
 	public String getAutorizzazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -878,6 +896,10 @@ public class ConfigurazionePdDManager {
 	
 	public void updateStatoServiziPdD(StatoServiziPdd servizi) throws DriverConfigurazioneException{
 		this.configurazionePdDReader.updateStatoServiziPdD(servizi);
+	}
+	
+	public GenericProperties getGenericProperties(String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getGenericProperties(this.getConnection(), tipologia, nome);
 	}
 	
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{

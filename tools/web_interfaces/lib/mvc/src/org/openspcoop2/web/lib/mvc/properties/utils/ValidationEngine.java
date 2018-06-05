@@ -55,14 +55,6 @@ public class ValidationEngine {
 	
 	
 
-	/***
-	 * 
-	 * 
-	 * 
-	 * @param config
-	 * @return
-	 * @throws Exception
-	 */
 	public static boolean validateConfig(Config config)  throws ValidationException{
 		
 		// controllo l'univocita' delle chiavi e le conservo per riutilizzarle per verificare 

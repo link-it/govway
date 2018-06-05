@@ -254,11 +254,35 @@
 		<!-- Impostazione workDir nei protocolli -->
 		<antcall target="setup_workDir_protocolli"/>
 
+		<!-- Impostazione Trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<antcall target="setup_trasparente"/>
+			</then>
+		</if>
+
+		<!-- Impostazione SPCoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<antcall target="setup_spcoop"/>
+			</then>
+		</if>
+
 		<!-- Impostazione AS4 -->
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<antcall target="setup_as4"/>
+			</then>
+		</if>
+
+		<!-- Impostazione SDI -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}" />
+			<then>
+				<antcall target="setup_sdi"/>
 			</then>
 		</if>
 
@@ -332,6 +356,17 @@
 		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
 	</target>
 
+	<target name="setup_trasparente" depends="_setup_trasparente"/>
+	<target name="_setup_trasparente">
+		<!-- per ora e' NOP -->
+		<!-- <copy file="${deploy_resources}/protocolli/trasparente/trasparente_local.properties" todir="${tmp_cfg}"/> -->
+	</target>
+
+	<target name="setup_spcoop" depends="_setup_spcoop"/>
+	<target name="_setup_spcoop">
+		<copy file="${deploy_resources}/protocolli/spcoop/spcoop_local.properties" todir="${tmp_cfg}"/>
+	</target>
+
 	<target name="setup_as4" depends="_setup_as4"/>
 	<target name="_setup_as4">
 		<mkdir dir="${tmp_cfg}/as4"/>
@@ -382,6 +417,12 @@
 		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
 		<delete dir="${tmp_cfg}/JAR_AS4"/>
 
+	</target>
+
+	<target name="setup_sdi" depends="_setup_sdi"/>
+	<target name="_setup_sdi">
+		<!-- per ora e' NOP -->
+		<!-- <copy file="${deploy_resources}/protocolli/sdi/sdi_local.properties" todir="${tmp_cfg}"/> -->
 	</target>
 
 	<target name="setup_pdd" depends="_setup_pdd"/>

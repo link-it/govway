@@ -1820,6 +1820,27 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		return list;
 	}
 	
+	@Override
+	public GenericProperties getGenericProperties(String tipologia, String name) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+		
+		if(this.openspcoop.getConfigurazione()==null)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione non trovata");
+		if(this.openspcoop.getConfigurazione().getGenericPropertiesList()==null || this.openspcoop.getConfigurazione().getGenericPropertiesList().size()<=0)
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti");
+		 
+		for (GenericProperties genericProperties : this.openspcoop.getConfigurazione().getGenericPropertiesList()) {
+			if(tipologia!=null && tipologia.equals(genericProperties.getTipologia())) {
+				if(genericProperties.getNome().equals(name)) {
+					return genericProperties;
+				}
+			}
+		}
+		
+		throw new DriverConfigurazioneNotFound("[getGenericProperties] Configurazione Generic Properties non presenti con tipologia '"+tipologia+"' e nome '"+name+"'");
+	}
+	
 
 	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 

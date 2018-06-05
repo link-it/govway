@@ -110,6 +110,8 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
+import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -1367,16 +1369,18 @@ public class RicezioneContenutiApplicativi {
 		
 		String tipoAutenticazione = null;
 		boolean autenticazioneOpzionale = false;
+		String tipoGestioneToken = null;
 		String tipoAutorizzazione = null;
 		String tipoAutorizzazioneContenuto = null;
 		try {
 			tipoAutenticazione = configurazionePdDReader.getAutenticazione(portaDelegata);
 			autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(portaDelegata);
+			tipoGestioneToken = configurazionePdDReader.getGestioneToken(portaDelegata);
 			tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(portaDelegata);
 			tipoAutorizzazioneContenuto = configurazionePdDReader.getAutorizzazioneContenuto(portaDelegata);
 		} catch (Exception e) {
-			msgDiag.logErroreGenerico(e, "letturaAutenticazioneAutorizzazione");
-			logCore.error(msgDiag.getMessaggio_replaceKeywords("identificazioneDinamicaServizioNonRiuscita"),e);
+			msgDiag.logErroreGenerico(e, "letturaAutenticazioneTokenAutorizzazione");
+			logCore.error(msgDiag.getMessaggio_replaceKeywords("letturaAutenticazioneTokenAutorizzazione"),e);
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
@@ -1936,6 +1940,147 @@ public class RicezioneContenutiApplicativi {
 		idServizioApplicativo.setNome(servizioApplicativo);
 		idServizioApplicativo.setIdSoggettoProprietario(soggettoFruitore);
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/* ------------ GestioneToken ------------- */
+		/*
+		msgDiag.mediumDebug("GestioneToken...");
+		this.msgContext.getIntegrazione().setTipoGestioneToken(tipoGestioneToken);
+		if(tipoGestioneToken!=null){
+			msgDiag.addKeyword(CostantiPdD.KEY_POLICY_GESTIONE_TOKEN, tipoAutenticazione);
+		}
+		if (tipoGestioneToken == null) {
+
+			msgDiag.logPersonalizzato("gestioneTokenDisabilitata");
+			
+		} else {
+
+			msgDiag.logPersonalizzato("gestioneTokenInCorso");
+			
+			ErroreIntegrazione errore = null;
+			Exception eAutenticazione = null;
+			try {
+				
+				PolicyGestioneToken policyGestioneToken = configurazionePdDReader.getPolicyGestioneToken(portaDelegata);
+				
+				org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata();
+				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setMessage(requestMessage);
+				datiInvocazione.setIdPD(identificativoPortaDelegata);
+				datiInvocazione.setPd(portaDelegata);		
+				datiInvocazione.setPolicyGestioneToken(policyGestioneToken);
+				
+				msgDiag.addKeyword(CostantiPdD.KEY_POLICY_POSIZIONE_TOKEN, tipoAutenticazione);
+				
+				token presente
+				
+				EsitoGestioneToken esito =
+						GestoreToken.verificaTokenPortaDelegata(tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
+				if(esito.getDetails()==null){
+					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+				}else{
+					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+				}
+				
+				if(esito.isClientAuthenticated() == false) {
+					errore = esito.getErroreIntegrazione();
+					eAutenticazione = esito.getEccezioneProcessamento();
+					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenziali.toString(true)); // Aggiungo la password se presente
+				}
+				else {
+					if(esito.isClientIdentified()) {
+						servizioApplicativo = esito.getIdServizioApplicativo().getNome();
+						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
+					}
+					else {
+						// l'errore puo' non esserci se l'autenticazione utilizzata non prevede una identificazione obbligatoria
+						errore = esito.getErroreIntegrazione();
+						eAutenticazione = esito.getEccezioneProcessamento();
+					}
+				}
+				
+				if(errore!=null) {
+					if(autenticazioneOpzionale==false){
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+					}
+				}
+				else {
+					msgDiag.logPersonalizzato("autenticazioneEffettuata");
+				}
+				
+			} catch (Exception e) {
+				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento("processo di autenticazione ["
+								+ tipoAutenticazione + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+				eAutenticazione = e;
+				logCore.error("processo di autenticazione ["
+						+ tipoAutenticazione + "] fallito, " + e.getMessage(),e);
+			}
+			if (errore != null) {
+				String descrizioneErrore = null;
+				try{
+					descrizioneErrore = errore.getDescrizione(protocolFactory);
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+				}catch(Exception e){
+					logCore.error("getDescrizione Error:"+e.getMessage(),e);
+				}
+				String errorMsg =  "Riscontrato errore durante il processo di Autenticazione per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
+				if(autenticazioneOpzionale){
+					msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita.opzionale");
+					if(eAutenticazione!=null){
+						logCore.debug(errorMsg,eAutenticazione);
+					}
+					else{
+						logCore.debug(errorMsg);
+					}
+				}
+				else{
+					msgDiag.logPersonalizzato("servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita");
+					if(eAutenticazione!=null){
+						logCore.error(errorMsg,eAutenticazione);
+					}
+					else{
+						logCore.error(errorMsg);
+					}
+				}
+				if(!autenticazioneOpzionale){
+					openspcoopstate.releaseResource();
+	
+					if (this.msgContext.isGestioneRisposta()) {
+						IntegrationError integrationError = null;
+						if(CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA.equals(errore.getCodiceErrore())){
+							integrationError = IntegrationError.NOT_FOUND;
+						}else{
+							integrationError = IntegrationError.INTERNAL_ERROR;
+						}
+						this.msgContext.setMessageResponse((this.generatoreErrore.build(integrationError,errore,
+								eAutenticazione,null)));
+					}
+					return;
+				}
+			}
+
+		}
+		*/
+		
+		
+		
+		
+		
+		
+		
+		
+		/* ------------ Autorizzazione ------------- */
+		
 		DatiInvocazionePortaDelegata datiInvocazione = new DatiInvocazionePortaDelegata();
 		datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 		datiInvocazione.setIdServizio(richiestaDelegata.getIdServizio());
@@ -1946,15 +2091,9 @@ public class RicezioneContenutiApplicativi {
 		datiInvocazione.setServizioApplicativo(sa);
 		
 		
-		
-
-		
-		
-		
-		
 		Utilities.printFreeMemory("RicezioneContenutiApplicativi - Autorizzazione del servizio applicativo...");
 		
-		/* ------------ Autorizzazione ------------- */
+
 		msgDiag.mediumDebug("Autorizzazione del servizio applicativo...");
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
 		if(tipoAutorizzazione!=null){

@@ -114,6 +114,9 @@
 		<!-- Cfg -->
 		<mkdir dir="${dist}/cfg"/>
 		<copy todir="${dist}/cfg">
+		    <fileset dir="${deploy_resources}/core" />
+		</copy>
+		<copy todir="${dist}/cfg">
 		    <fileset dir="${tmp_cfg}" />
 		</copy>
                 <fileset dir="${dist}/cfg" id="distCFG.txt">

@@ -78,7 +78,7 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 
 	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
 		List<String> lista = new ArrayList<String>();
-		String tmp = this.propertiesSonda.getProperty("pdd");
+		String tmp = this.propertiesSonda.getProperty("nodi");
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
 			for (int i = 0; i < split.length; i++) {
@@ -94,19 +94,19 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 		// Tutti in errore
 		if(tot_ok == 0){
 			if(this.listaStatus.size()==1)
-				return "La PdD non è funzionante";
+				return "Il Gateway non è funzionante";
 			else
-				return "Nessuna delle "+this.listaStatus.size()+" PdD è funzionante";
+				return "Nessuno dei "+this.listaStatus.size()+" nodi del Gateway è funzionante";
 		}else 
 			// parzialmente in errore
 			if(tot_ok< this.listaStatus.size()){
-				return  (this.listaStatus.size() - tot_ok) + " su " +this.listaStatus.size()+ " PdD non sono funzionanti";
+				return  (this.listaStatus.size() - tot_ok) + " su " +this.listaStatus.size()+ " nodi del Gateway non sono funzionanti";
 			}else {
 				// tutti ok
 				if(this.listaStatus.size()==1)
-					return "La PdD è funzionante";
+					return "Il Gateway è funzionante";
 				else
-					return "Le "+this.listaStatus.size()+" PdD sono funzionanti";
+					return "Tutti i "+this.listaStatus.size()+" nodi del Gateway sono funzionanti";
 			}
 	}
 

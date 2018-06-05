@@ -1,10 +1,15 @@
 package org.openspcoop2.pdd.core.token;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 
 public class TokenUtilities {
@@ -45,4 +50,98 @@ public class TokenUtilities {
 		return MultiPropertiesUtilities.isEnabled(p, propertyName);
 	}
 	
+	
+	public static PolicyGestioneToken convertTo(GenericProperties gp, GestioneToken gestioneToken) throws Exception { 
+	
+		PolicyGestioneToken policy = new PolicyGestioneToken();
+		policy.setName(gp.getNome());
+		policy.setDescrizione(gp.getDescrizione());
+		
+		HashMap<String, String> properties = new HashMap<>();
+		for (Property pConfig : gp.getPropertyList()) {
+			properties.put(pConfig.getNome(), pConfig.getValore());
+		}
+		Map<String, Properties> multiProperties = DBPropertiesUtils.toMultiMap(properties);
+		policy.setProperties(multiProperties);
+		
+		policy.setValidazioneJWT(false);
+		policy.setValidazioneJWT_warningOnly(false);
+		
+		policy.setIntrospection(false);
+		policy.setIntrospection_warningOnly(false);
+		
+		policy.setUserInfo(false);
+		policy.setUserInfo_warningOnly(false);
+		
+		policy.setForwardToken(false);
+		
+		if(gestioneToken!=null) {
+			
+			if(gestioneToken.getValidazione()!=null) {
+				switch (gestioneToken.getValidazione()) {
+				case ABILITATO:
+					policy.setValidazioneJWT(true);
+					policy.setValidazioneJWT_warningOnly(false);
+					break;
+				case WARNING_ONLY:
+					policy.setValidazioneJWT(true);
+					policy.setValidazioneJWT_warningOnly(true);
+					break;
+				case DISABILITATO:
+					policy.setValidazioneJWT(false);
+					policy.setValidazioneJWT_warningOnly(false);
+					break;
+				}
+			}
+			
+			if(gestioneToken.getIntrospection()!=null) {
+				switch (gestioneToken.getIntrospection()) {
+				case ABILITATO:
+					policy.setIntrospection(true);
+					policy.setIntrospection_warningOnly(false);
+					break;
+				case WARNING_ONLY:
+					policy.setIntrospection(true);
+					policy.setIntrospection_warningOnly(true);
+					break;
+				case DISABILITATO:
+					policy.setIntrospection(false);
+					policy.setIntrospection_warningOnly(false);
+					break;
+				}
+			}
+			
+			if(gestioneToken.getUserInfo()!=null) {
+				switch (gestioneToken.getUserInfo()) {
+				case ABILITATO:
+					policy.setUserInfo(true);
+					policy.setUserInfo_warningOnly(false);
+					break;
+				case WARNING_ONLY:
+					policy.setUserInfo(true);
+					policy.setUserInfo_warningOnly(true);
+					break;
+				case DISABILITATO:
+					policy.setUserInfo(false);
+					policy.setUserInfo_warningOnly(false);
+					break;
+				}
+			}
+			
+			if(gestioneToken.getForward()!=null) {
+				switch (gestioneToken.getForward()) {
+				case ABILITATO:
+					policy.setForwardToken(true);
+					break;
+				case DISABILITATO:
+					policy.setForwardToken(false);
+					break;
+				}
+			}
+			
+		}
+		
+		return policy;
+
+	}
 }

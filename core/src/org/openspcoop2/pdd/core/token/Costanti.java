@@ -2,7 +2,15 @@ package org.openspcoop2.pdd.core.token;
 
 public class Costanti {
 
-	public final static String POLICY_NAME = "policy.name";
+	public final static String TIPOLOGIA = "gestionePolicyToken";
+	
+	public final static String POLICY_TOKEN_SOURCE = "policy.token.source";
+	public final static String POLICY_TOKEN_SOURCE_RFC6750 = "RFC6750";
+	public final static String POLICY_TOKEN_SOURCE_RFC6750_HEADER = "RFC6750_header";
+	public final static String POLICY_TOKEN_SOURCE_RFC6750_FORM = "RFC6750_form";
+	public final static String POLICY_TOKEN_SOURCE_RFC6750_URL = "RFC6750_url";
+	public final static String POLICY_TOKEN_SOURCE_CUSTOM_HEADER = "CUSTOM_header";
+	public final static String POLICY_TOKEN_SOURCE_CUSTOM_URL = "CUSTOM_url";
 	
 	public final static String POLICY_STATO_ABILITATO = "true";
 	public final static String POLICY_STATO_DISABILITATO = "false";

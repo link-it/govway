@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
@@ -989,6 +990,22 @@ public class ConfigurazionePdD  {
 		}
 		catch(DriverConfigurazioneNotFound notFound){}
 		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
+		List<GenericProperties> listGenericProperties = null;
+		try{
+			listGenericProperties = this.driverConfigurazionePdD.getGenericProperties();
+		}catch(DriverConfigurazioneNotFound notFound){}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		if(listGenericProperties!=null && listGenericProperties.size()>0) {
+			for (GenericProperties genericProperties : listGenericProperties) {
+				try{
+					this.cache.remove(_getKey_getGenericProperties(genericProperties.getTipologia(), genericProperties.getNome()));
+					this.getGenericProperties(connectionPdD, genericProperties.getTipologia(), genericProperties.getNome());
+				}
+				catch(DriverConfigurazioneNotFound notFound){}
+				catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}	
+			}
+		}
 		
 		try{
 			this.cache.remove(_getKey_getConfigurazioneWithOnlyExtendedInfo());
@@ -2833,7 +2850,7 @@ public class ConfigurazionePdD  {
 			((DriverConfigurazioneDB)this.driverConfigurazionePdD).updateStatoServiziPdD(servizi);
 		}
 	} 
-
+	
 	public SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.driverConfigurazionePdD.getSystemPropertiesPdD();
 	}
@@ -2843,6 +2860,52 @@ public class ConfigurazionePdD  {
 		}
 	}
 
+	private String _getKey_getGenericProperties(String tipologia, String nome){
+		String key = "getGenericProperties";
+		key = key + "_"+tipologia;
+		key = key + "_"+nome;
+		return key;
+	}
+	public GenericProperties getGenericProperties(Connection connectionPdD,String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getGenericProperties(tipologia, nome);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((GenericProperties) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		GenericProperties gp = null;
+		if(this.cache!=null){
+			try{
+				gp = (GenericProperties) this.getObjectCache(key,"getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
+			}catch(DriverConfigurazioneException e){
+				throw e;
+			}
+		}else{
+			gp = (GenericProperties) this.getObject("getGenericProperties",connectionPdD,CONFIGURAZIONE_PORTA, tipologia, nome);
+		}
+
+		if(gp!=null){
+			return gp;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getGenericProperties] GestioneErrore non trovato");
+		}
+	} 
+	
 
 	private String _getKey_getConfigurazioneWithOnlyExtendedInfo(){
 		return "getConfigurazioneWithOnlyExtendedInfo";

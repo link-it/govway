@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.Dump;
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
@@ -106,6 +107,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
+import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -1343,6 +1346,40 @@ public class ConfigurazionePdDReader {
 			
 	}
 
+	protected String getGestioneToken(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		
+		if(pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null) {
+			return pd.getGestioneToken().getPolicy();
+		}
+		return null;
+	}
+	
+	protected PolicyGestioneToken getPolicyGestioneToken(Connection connectionPdD, PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		
+		if(pd.getGestioneToken()==null || pd.getGestioneToken().getPolicy()==null) {
+			throw new DriverConfigurazioneException("Porta Delegata senza una policy di gestione token");
+		}
+		
+		GenericProperties gp = this.getGenericProperties(connectionPdD, org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, pd.getGestioneToken().getPolicy());
+		
+		PolicyGestioneToken policy = null;
+		try {
+			policy = TokenUtilities.convertTo(gp, pd.getGestioneToken());
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		return policy;
+	}
+	
 	protected String getAutorizzazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if(pd==null){
@@ -1988,6 +2025,40 @@ public class ConfigurazionePdDReader {
 			
 	}
 
+	protected String getGestioneToken(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
+			return pa.getGestioneToken().getPolicy();
+		}
+		return null;
+	}
+	
+	protected PolicyGestioneToken getPolicyGestioneToken(Connection connectionPdD, PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getGestioneToken()==null || pa.getGestioneToken().getPolicy()==null) {
+			throw new DriverConfigurazioneException("Porta Applicativa senza una policy di gestione token");
+		}
+		
+		GenericProperties gp = this.getGenericProperties(connectionPdD, org.openspcoop2.pdd.core.token.Costanti.TIPOLOGIA, pa.getGestioneToken().getPolicy());
+		
+		PolicyGestioneToken policy = null;
+		try {
+			policy = TokenUtilities.convertTo(gp, pa.getGestioneToken());
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		return policy;
+	}
+	
 	protected String getAutorizzazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		
 		if(pa==null){
@@ -4567,7 +4638,11 @@ public class ConfigurazionePdDReader {
 
 
 
+	public GenericProperties getGenericProperties(Connection connectionPdD, String tipologia, String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	
+		return this.configurazionePdD.getGenericProperties(connectionPdD, tipologia, nome);
 
+	}
 
 
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{

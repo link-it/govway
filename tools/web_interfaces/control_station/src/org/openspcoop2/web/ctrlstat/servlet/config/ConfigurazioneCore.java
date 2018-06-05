@@ -948,7 +948,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverConfigurazioneDB().getGenericProperties(nome,tipologia);
+			return driver.getDriverConfigurazioneDB().getGenericProperties(tipologia,nome);
 		} catch (DriverConfigurazioneNotFound e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;

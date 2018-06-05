@@ -567,7 +567,7 @@ public class PddMonitorProperties {
 	
 	public List<String> getListaPdDMonitorate_StatusPdD() throws Exception{
 		List<String> lista = new ArrayList<String>();
-		String tmp = this.appProperties.getProperty("statoPdD.sonde.pddOE.pdd", this.isStatusPdDEnabled(), true);
+		String tmp = this.appProperties.getProperty("statoPdD.sonde.standard.nodi", this.isStatusPdDEnabled(), true);
 		if(tmp!=null && !"".equals(tmp)){
 			String[]split = tmp.split(",");
 			for (int i = 0; i < split.length; i++) {
@@ -578,7 +578,7 @@ public class PddMonitorProperties {
 	}
 
 	public String getUrlCheckStatusPdD(String namePdD) throws Exception{
-		return this.appProperties.getProperty("statoPdD.pdd."+namePdD+".url", this.isStatusPdDEnabled(), true);
+		return this.appProperties.getProperty("statoPdD.sonde.standard."+namePdD+".url", this.isStatusPdDEnabled(), true);
 	}
 	
 	public List<String> getListaSondePdd() throws Exception{

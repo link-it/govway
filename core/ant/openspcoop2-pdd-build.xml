@@ -104,6 +104,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.node" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.state" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.threshold" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.token" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.transazioni" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.logger" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.mdb" />

@@ -356,6 +356,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	public List<GenericProperties> getGenericProperties(String tipologia) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
+	 * Restituisce le proprieta' generiche di una tipologia utilizzate dalla PdD
+	 *
+	 * @return proprieta' generiche
+	 * 
+	 */
+	public GenericProperties getGenericProperties(String tipologia, String name) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
 	 * Restituisce la configurazione generale della Porta di Dominio 
 	 *
 	 * @return Configurazione
