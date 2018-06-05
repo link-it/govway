@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
+import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
@@ -491,10 +492,10 @@ public final class PorteApplicativeAdd extends Action {
 				if(gestioneToken == null) {
 					gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-					gestioneTokenValidazioneInput = "";
-					gestioneTokenIntrospection = "";
-					gestioneTokenUserInfo = "";
-					gestioneTokenTokenForward = "";
+					gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
+					gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
+					gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
+					gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 				}
 				
 				if(autorizzazioneScope == null) {
@@ -624,6 +625,23 @@ public final class PorteApplicativeAdd extends Action {
 					}
 					pa.getScope().setMatch(scopeTipoMatch);
 				}
+			}
+			
+			if(pa.getGestioneToken() == null)
+				pa.setGestioneToken(new GestioneToken());
+			
+			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				pa.getGestioneToken().setPolicy(gestioneTokenPolicy);
+				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
+				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
+				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
+				pa.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenTokenForward)); 
+			} else {
+				pa.getGestioneToken().setPolicy(null);
+				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
+				pa.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
 			}
 			
 			if (stateless!=null && !stateless.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT))

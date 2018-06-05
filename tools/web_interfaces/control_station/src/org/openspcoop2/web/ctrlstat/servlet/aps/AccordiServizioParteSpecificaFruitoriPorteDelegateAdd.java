@@ -502,10 +502,10 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					if(gestioneToken == null) {
 						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 						gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-						gestioneTokenValidazioneInput = "";
-						gestioneTokenIntrospection = "";
-						gestioneTokenUserInfo = "";
-						gestioneTokenTokenForward = "";
+						gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
+						gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
+						gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
+						gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 					}
 					if(scope ==null || "".equals(scope))
 						scope = "-";

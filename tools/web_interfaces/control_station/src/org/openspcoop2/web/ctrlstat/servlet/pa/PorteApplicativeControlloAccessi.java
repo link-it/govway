@@ -284,40 +284,40 @@ public class PorteApplicativeControlloAccessi extends Action {
 						}
 						
 						StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
-						if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-							gestioneTokenValidazioneInput = "";
+						if(validazione == null) {
+							gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 						}else { 
-							gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+							gestioneTokenValidazioneInput = validazione.getValue();
 						}
 						
 						StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
-						if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-							gestioneTokenIntrospection = "";
+						if(introspection == null) {
+							gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 						}else { 
-							gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+							gestioneTokenIntrospection = introspection.getValue();
 						}
 						
 						StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
-						if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-							gestioneTokenUserInfo = "";
+						if(userinfo == null) {
+							gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 						}else { 
-							gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+							gestioneTokenUserInfo = userinfo.getValue();
 						}
 						
 						StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
-						if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
-							gestioneTokenTokenForward = "";
+						if(tokenForward == null) {
+							gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 						}else { 
-							gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+							gestioneTokenTokenForward = tokenForward.getValue();
 						}
 					}
 					else {
 						gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 						gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-						gestioneTokenValidazioneInput = "";
-						gestioneTokenIntrospection = "";
-						gestioneTokenUserInfo = "";
-						gestioneTokenTokenForward = "";
+						gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
+						gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
+						gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
+						gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 					}
 				}
 
@@ -458,10 +458,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 			
 			if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 				pa.getGestioneToken().setPolicy(gestioneTokenPolicy);
-				pa.getGestioneToken().setValidazione(ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput) ? StatoFunzionalitaConWarning.ABILITATO : StatoFunzionalitaConWarning.DISABILITATO);
-				pa.getGestioneToken().setIntrospection(ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
-				pa.getGestioneToken().setUserInfo(ServletUtils.isCheckBoxEnabled(gestioneTokenUserInfo) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
-				pa.getGestioneToken().setForward(ServletUtils.isCheckBoxEnabled(gestioneTokenTokenForward) ? StatoFunzionalita.ABILITATO :StatoFunzionalita.DISABILITATO); 	
+				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
+				pa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
+				pa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
+				pa.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenTokenForward)); 
 			} else {
 				pa.getGestioneToken().setPolicy(null);
 				pa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
@@ -545,40 +545,40 @@ public class PorteApplicativeControlloAccessi extends Action {
 				}
 				
 				StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
-				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenValidazioneInput = "";
+				if(validazione == null) {
+					gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 				}else { 
-					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED;
+					gestioneTokenValidazioneInput = validazione.getValue();
 				}
 				
 				StatoFunzionalitaConWarning introspection = pa.getGestioneToken().getIntrospection();
-				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenIntrospection = "";
+				if(introspection == null) {
+					gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 				}else { 
-					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED;
+					gestioneTokenIntrospection = introspection.getValue();
 				}
 				
 				StatoFunzionalitaConWarning userinfo = pa.getGestioneToken().getUserInfo();
-				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenUserInfo = "";
+				if(userinfo == null) {
+					gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 				}else { 
-					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED;
+					gestioneTokenUserInfo = userinfo.getValue();
 				}
 				
 				StatoFunzionalita tokenForward = pa.getGestioneToken().getForward();
-				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
-					gestioneTokenTokenForward = "";
+				if(tokenForward == null) {
+					gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 				}else { 
-					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED;
+					gestioneTokenTokenForward = tokenForward.getValue();
 				}
 			}
 			else {
 				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-				gestioneTokenValidazioneInput = "";
-				gestioneTokenIntrospection = "";
-				gestioneTokenUserInfo = "";
-				gestioneTokenTokenForward = "";
+				gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
+				gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
+				gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
+				gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 			}
 			
 			if(autorizzazioneScope == null) {

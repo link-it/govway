@@ -381,40 +381,40 @@ public final class PorteDelegateChange extends Action {
 				}
 				
 				StatoFunzionalitaConWarning validazione = pde.getGestioneToken().getValidazione();
-				if(validazione == null || !validazione.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenValidazioneInput = "";
+				if(validazione == null) {
+					gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 				}else { 
-					gestioneTokenValidazioneInput = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+					gestioneTokenValidazioneInput = validazione.getValue();
 				}
 				
 				StatoFunzionalitaConWarning introspection = pde.getGestioneToken().getIntrospection();
-				if(introspection == null || !introspection.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenIntrospection = "";
+				if(introspection == null) {
+					gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 				}else { 
-					gestioneTokenIntrospection = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+					gestioneTokenIntrospection = introspection.getValue();
 				}
 				
 				StatoFunzionalitaConWarning userinfo = pde.getGestioneToken().getUserInfo();
-				if(userinfo == null || !userinfo.equals(StatoFunzionalitaConWarning.ABILITATO)) {
-					gestioneTokenUserInfo = "";
+				if(userinfo == null) {
+					gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 				}else { 
-					gestioneTokenUserInfo = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+					gestioneTokenUserInfo = userinfo.getValue();
 				}
 				
 				StatoFunzionalita tokenForward = pde.getGestioneToken().getForward();
-				if(tokenForward == null || !tokenForward.equals(StatoFunzionalita.ABILITATO)) {
-					gestioneTokenTokenForward = "";
+				if(tokenForward == null) {
+					gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 				}else { 
-					gestioneTokenTokenForward = Costanti.CHECK_BOX_ENABLED_ABILITATO;
+					gestioneTokenTokenForward = tokenForward.getValue();
 				}
 			}
 			else {
 				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
-				gestioneTokenValidazioneInput = "";
-				gestioneTokenIntrospection = "";
-				gestioneTokenUserInfo = "";
-				gestioneTokenTokenForward = "";
+				gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
+				gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
+				gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
+				gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
 			}
 			
 			String autorizzazioneScope = null;

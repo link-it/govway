@@ -156,10 +156,10 @@ public class PorteDelegateCore extends ControlStationCore {
 		
 		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
-			portaDelegata.getGestioneToken().setValidazione(ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput) ? StatoFunzionalitaConWarning.ABILITATO : StatoFunzionalitaConWarning.DISABILITATO);
-			portaDelegata.getGestioneToken().setIntrospection(ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
-			portaDelegata.getGestioneToken().setUserInfo(ServletUtils.isCheckBoxEnabled(gestioneTokenUserInfo) ? StatoFunzionalitaConWarning.ABILITATO :StatoFunzionalitaConWarning.DISABILITATO);
-			portaDelegata.getGestioneToken().setForward(ServletUtils.isCheckBoxEnabled(gestioneTokenForward) ? StatoFunzionalita.ABILITATO :StatoFunzionalita.DISABILITATO); 	
+			portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
+			portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
+			portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
+			portaDelegata.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenForward)); 
 		} else {
 			portaDelegata.getGestioneToken().setPolicy(null);
 			portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);

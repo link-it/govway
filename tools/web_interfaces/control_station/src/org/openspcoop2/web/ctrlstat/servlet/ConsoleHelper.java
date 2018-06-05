@@ -66,6 +66,7 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -3202,12 +3203,13 @@ public class ConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
 				if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
-					de.setType(DataElementType.CHECKBOX);
+					de.setType(DataElementType.SELECT);
+					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
 					de.setSelected(gestioneTokenValidazioneInput);
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue("");
+					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT);
 				}
 				dati.addElement(de);
 				
@@ -3216,12 +3218,13 @@ public class ConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
 				if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
-					de.setType(DataElementType.CHECKBOX);
+					de.setType(DataElementType.SELECT);
+					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
 					de.setSelected(gestioneTokenIntrospection);
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue("");
+					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION);
 				}
 				dati.addElement(de);
 				
@@ -3230,12 +3233,13 @@ public class ConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
 				if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
-					de.setType(DataElementType.CHECKBOX);
+					de.setType(DataElementType.SELECT);
+					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
 					de.setSelected(gestioneTokenUserInfo);
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue("");
+					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO);
 				}
 				dati.addElement(de);
 				
@@ -3244,15 +3248,15 @@ public class ConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
 				if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
-					de.setType(DataElementType.CHECKBOX);
+					de.setType(DataElementType.SELECT);
+					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
 					de.setSelected(gestioneTokenForward);
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue("");
+					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD);
 				}
 				dati.addElement(de);
-			
 			}
 		}
 	}
@@ -3827,10 +3831,10 @@ public class ConsoleHelper {
 				}
 				
 				
-				boolean validazioneInputB = ServletUtils.isCheckBoxEnabled(validazioneInput);
-				boolean introspectionB = ServletUtils.isCheckBoxEnabled(introspection);
-				boolean userInfoB = ServletUtils.isCheckBoxEnabled(userInfo);
-				boolean forwardB = ServletUtils.isCheckBoxEnabled(forward);
+				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean userInfoB = !userInfo.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
 				
 				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
 					StringBuffer sb = new StringBuffer();
