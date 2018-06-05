@@ -24,8 +24,12 @@ package org.openspcoop2.security.message;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
@@ -33,6 +37,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -200,7 +206,12 @@ public abstract class MessageSecurityContext{
 			
 			for (Enumeration<?> e = securityProperties.keys(); e.hasMoreElements();) {
 				String key = (String) e.nextElement();
-				String value = (String) securityProperties.get(key);
+				String value = null;
+				Object oValue = securityProperties.get(key);
+				if(oValue!=null && oValue instanceof String) {
+					value = (String) oValue;
+				}
+				
 				//System.out.println(key + " -> " + value );
 				// check actor
 				if(ConfigurationConstants.ACTOR.equals(key)){
@@ -232,7 +243,12 @@ public abstract class MessageSecurityContext{
 	 * @param secProperties
 	 */
     public void setIncomingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
-    	this.incomingProperties = secProperties;
+    	if(secProperties!=null && secProperties.size()>0) {
+    		this.incomingProperties = convertSecProperties(secProperties);
+    	}
+    	else {
+    		this.incomingProperties = secProperties;
+    	}
     	this.setActor(true);
     	this.readMessageSecurityEngine(true);
     	this.readSignatureEngine(true);
@@ -245,13 +261,67 @@ public abstract class MessageSecurityContext{
 	 * @param secProperties
 	 */
     public void setOutgoingProperties(Hashtable<String,Object> secProperties) throws SecurityException{
-    	this.outgoingProperties = secProperties;
+    	
+    	if(secProperties!=null && secProperties.size()>0) {
+    		this.outgoingProperties = convertSecProperties(secProperties);
+    	}
+    	else {
+    		this.outgoingProperties = secProperties;
+    	}
     	this.setActor(false);
     	this.readMessageSecurityEngine(false);
     	this.readSignatureEngine(false);
     }
     public Hashtable<String,Object> getOutgoingProperties() {
     	return this.outgoingProperties;
+    }
+    
+    private Hashtable<String,Object> convertSecProperties(Hashtable<String,Object> secProperties) throws SecurityException{
+    	
+    	try {
+    	
+	    	Map<String, String> map = new HashMap<>();
+	    	Enumeration<String> keys = secProperties.keys();
+	    	while (keys.hasMoreElements()) {
+				String key = (String) keys.nextElement();
+				Object value = secProperties.get(key);
+				String v = null;
+				if(value!=null && value instanceof String) {
+					v = (String) value;
+				}
+				map.put(key, v);
+			}
+	    	
+	    	Map<String, Properties> multiMap = DBPropertiesUtils.toMultiMap(map);
+	    	
+	    	Hashtable<String, Object> table = new Hashtable<>();
+	    	
+	    	Properties defaultProperties = MultiPropertiesUtilities.removeDefaultProperties(multiMap);
+	    	if(defaultProperties!=null && defaultProperties.size()>0) {
+	    		Iterator<?> it = defaultProperties.keySet().iterator();
+	    		while (it.hasNext()) {
+					Object oKey = (Object) it.next();
+					if(oKey instanceof String) {
+						String key = (String) oKey;
+						String value = null;
+						Object oValue = defaultProperties.get(key);
+						if(oValue!=null && oValue instanceof String) {
+							value = (String) oValue;
+						}
+						table.put(key, value);
+					}
+				}
+	    	}
+	    	
+	    	if(multiMap.size()>0) { // ho rimosso la mappa di default
+	    		table.putAll(multiMap);
+	    	}
+	    	
+	    	return table;
+	    	
+		}catch(Exception e) {
+			throw new SecurityException(e.getMessage(),e);
+		}
     }
     
     

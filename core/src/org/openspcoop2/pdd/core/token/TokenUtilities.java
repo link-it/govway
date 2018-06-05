@@ -5,11 +5,12 @@ import java.util.Properties;
 
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 
 public class TokenUtilities {
 
 	public static Properties getDefaultProperties(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
-		return mapProperties.get(org.openspcoop2.core.mvc.properties.utils.Costanti.NOME_MAPPA_PROPERTIES_DEFAULT);
+		return MultiPropertiesUtilities.getDefaultProperties(mapProperties);
 	}
 	
 	public static boolean isValidazioneEnabled(Map<String, Properties> mapProperties) throws ProviderException, ProviderValidationException {
@@ -40,12 +41,8 @@ public class TokenUtilities {
 		return isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_STATO);
 	}
 	
-	public static boolean isEnabled(Properties pDefault, String propertyName) throws ProviderException, ProviderValidationException {
-		boolean validazione = false;
-		if(pDefault.containsKey(propertyName)) {
-			validazione = Boolean.valueOf(pDefault.getProperty(propertyName));
-		}
-		return validazione;
+	public static boolean isEnabled(Properties p, String propertyName) throws ProviderException, ProviderValidationException {
+		return MultiPropertiesUtilities.isEnabled(p, propertyName);
 	}
 	
 }

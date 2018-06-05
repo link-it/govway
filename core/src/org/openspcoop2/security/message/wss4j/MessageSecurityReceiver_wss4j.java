@@ -219,8 +219,11 @@ public class MessageSecurityReceiver_wss4j extends AbstractSOAPMessageSecurityRe
 		if (wssIncomingProperties != null && wssIncomingProperties.size() > 0) {
 			for (Enumeration<?> e = wssIncomingProperties.keys(); e.hasMoreElements();) {
 				String key = (String) e.nextElement();
-				String value = (String) wssIncomingProperties.get(key);
-				
+				Object oValue = wssIncomingProperties.get(key);
+				String value = null;
+				if(oValue!=null && oValue instanceof String) {
+					value = (String) oValue;
+				}	
 				msgCtx.put(key, value);
 				interceptor.setProperty(key, value);
 			}

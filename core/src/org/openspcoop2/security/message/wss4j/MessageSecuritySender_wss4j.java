@@ -168,7 +168,11 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			
 			for (Enumeration<?> e = wssOutgoingProperties.keys(); e.hasMoreElements();) {
 				String key = (String) e.nextElement();
-				String value = (String) wssOutgoingProperties.get(key);
+				Object oValue = wssOutgoingProperties.get(key);
+				String value = null;
+				if(oValue!=null && oValue instanceof String) {
+					value = (String) oValue;
+				}
 				if (SecurityConstants.ENCRYPTION_USER.equals(key) && SecurityConstants.USE_REQ_SIG_CERT.equals(value)) {
 					// value = ...;
 				}

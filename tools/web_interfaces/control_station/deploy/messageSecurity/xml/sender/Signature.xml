@@ -1,5 +1,5 @@
-<config id="messageSecurity.jose.sender.signature" label="JWT Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
-	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+<config id="messageSecurity.xml.sender.signature" label="JWT Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.xml.SecurityProvider">
 
 	 <compatibility not="false" and="false">
          <tags and="true">
@@ -20,21 +20,12 @@
 	
 	<section label="Signature">
 		
-		<item type="hidden" name="securityEngine" value="jose">
+		<item type="hidden" name="securityEngine" value="xml">
 			<property name="securityEngine" force="true"/>
 		</item>
 				
 		<item type="hidden" name="signatureAction" value="Signature">
 			<property name="Action" force="true"/>
-		</item>
-		
-		<item type="select" name="signatureMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
-			<values>
-				<value value="compatct" label="Compact"/>
-				<value value="selfContained" label="SelfContained"/>
-				<value value="detached" label="Detached"/>
-			</values>
-			<property name="signatureMode" />
 		</item>
 		
 		<item type="select" name="signatureAlgorithm" label="Algorithm" required="true">

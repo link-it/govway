@@ -1,0 +1,95 @@
+<config id="messageSecurity.jose.sender.encrypt" label="JWT Encrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+
+	<compatibility not="false" and="false">
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>REQUEST</tag>
+                <tag>PD</tag>
+        </tags>
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>RESPONSE</tag>
+                <tag>PA</tag>
+        </tags>
+	</compatibility>
+	
+	<properties>
+		<collection name="encryptionPropRefId"/>
+	</properties>
+	
+	<section label="Encryption">
+		
+		<item type="hidden" name="securityEngine" value="jose">
+			<property name="securityEngine" force="true"/>
+		</item>
+				
+		<item type="hidden" name="encryptionAction" value="Encrypt">
+			<property name="Action" force="true"/>
+		</item>
+		
+		<item type="select" name="encryptionMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
+			<values>
+				<value value="compatct" label="Compact"/>
+				<value value="selfContained" label="SelfContained"/>
+				<!--  <value value="detached" label="Detached"/> -->
+			</values>
+			<property name="encryptionMode" />
+		</item>
+		
+		<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm" required="true">
+			<property name="rs.security.encryption.key.algorithm" properties="encryptionPropRefId" />
+		</item>
+		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm" required="true">
+			<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
+		</item>
+
+		<subsection label="KeyStore">
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+				<conditions>
+					<condition not="true">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+				<conditions>
+					<condition not="false">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+				<conditions>
+					<condition not="false">
+						<equals name="keystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

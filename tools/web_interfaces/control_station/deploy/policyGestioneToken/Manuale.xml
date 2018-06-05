@@ -126,7 +126,7 @@
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
 				<property name="rs.security.keystore.type" properties="verifySignaturePropRefId" />
 			</item>
@@ -617,7 +617,7 @@
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
@@ -636,7 +636,7 @@
 
 		</subsection>
 		
-		<subsection label="JWE TrustStore">
+		<subsection label="JWE KeyStore">
 
 			<conditions and="true">
 				<condition and="true">
@@ -644,7 +644,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentTruststoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" label="Tipo" default="jks" required="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -652,14 +652,35 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststoreFile" label="File" required="true">
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystoreFile" label="File" required="true">
 			      	<property name="rs.security.keystore.file" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststorePassword" label="Password" required="true">
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePassword" label="Password" required="true">
 			      	<property name="rs.security.keystore.password" properties="encryptionPropRefId" />
 			</item>
-			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentTruststoreCertificateAlias" label="Alias Certificato" required="true">
-			      	<property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystoreCertificateAlias" label="Alias Certificato" required="true">
+				<conditions>
+					<condition not="true">
+						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+				<conditions>
+					<condition not="false">
+						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.alias" properties="encryptionPropRefId" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeJWEContentKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+				<conditions>
+					<condition not="false">
+						<equals name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" value="jceks"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.key.password" properties="encryptionPropRefId" />
 			</item>
 
 		</subsection>

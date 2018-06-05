@@ -1,17 +1,17 @@
 <config id="messageSecurity.jose.receiver.signature" label="JWT Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
 
-        <compatibility not="false" and="false">
-                <tags and="true">
-                        <tag>REST</tag>
-                        <tag>RESPONSE</tag>
-                        <tag>PD</tag>
-                </tags>
-                <tags and="true">
-                        <tag>REST</tag>
-                        <tag>REQUEST</tag>
-                        <tag>PA</tag>
-                </tags>
-        </compatibility>
+	<compatibility not="false" and="false">
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>RESPONSE</tag>
+                <tag>PD</tag>
+        </tags>
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>REQUEST</tag>
+                <tag>PA</tag>
+        </tags>
+	</compatibility>
 	
 	<properties>
 		<collection name="signaturePropRefId"/>
@@ -73,7 +73,7 @@
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>

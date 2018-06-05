@@ -13,19 +13,19 @@
                 </tags>
         </compatibility>
 	
-	<section label="Configurazione WSSecurity">
+	<section label="Informazioni Generali">
 		
-		<subsection label="Informazioni Generali">
-
-			<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
-				<property name="actor" />
-			</item>
-			<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
-				<property name="mustUnderstand" />
-			</item>
-			
-		</subsection>
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>	
 		
+		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
+			<property name="actor" />
+		</item>
+		<item type="checkbox" name="mustUnderstand" label="MustUnderstand" defaultSelected="false">
+			<property name="mustUnderstand" />
+		</item>
+				
 		<subsection label="Timestamp">
 			<item type="number" name="timeToLive" label="TimeToLive" min="1" max="10000000">
 				<property name="timeToLive" />

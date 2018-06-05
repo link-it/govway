@@ -1,0 +1,70 @@
+<config id="messageSecurity.jose.receiver.encrypt" label="JWT Decrypt" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+	provider="org.openspcoop2.security.message.jose.SecurityProvider">
+
+	<compatibility not="false" and="false">
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>RESPONSE</tag>
+                <tag>PD</tag>
+        </tags>
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>REQUEST</tag>
+                <tag>PA</tag>
+        </tags>
+	</compatibility>
+	
+	<properties>
+		<collection name="decryptionPropRefId"/>
+	</properties>
+	
+	<section label="Encryption">
+		
+		<item type="hidden" name="securityEngine" value="jose">
+			<property name="securityEngine" force="true"/>
+		</item>
+				
+		<item type="hidden" name="encryptionAction" value="Decrypt">
+			<property name="Action" force="true"/>
+		</item>
+		
+		<item type="select" name="decryptionMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
+			<values>
+				<value value="compatct" label="Compact"/>
+				<value value="selfContained" label="SelfContained"/>
+				<!--  <value value="detached" label="Detached"/> -->
+			</values>
+			<property name="decryptionMode" />
+		</item>
+
+		<subsection label="KeyStore">
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<value value="jceks" label="JCEKS"/>
+				</values>
+				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			    <property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			    <property name="rs.security.key.password" properties="decryptionPropRefId" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

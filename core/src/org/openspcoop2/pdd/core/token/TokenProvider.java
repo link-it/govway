@@ -1,6 +1,5 @@
 package org.openspcoop2.pdd.core.token;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -8,6 +7,8 @@ import java.util.Properties;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.security.message.jose.JOSECostanti;
+import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 public class TokenProvider implements IProvider {
@@ -73,36 +74,40 @@ public class TokenProvider implements IProvider {
 			}
 			return tipologie;
 		}
-		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
-			List<String> l = new ArrayList<>();
-			org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.values();
-			for (int i = 0; i < tmp.length; i++) {
-				l.add(tmp[i].name());
+		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			SecurityProvider secProvider = new SecurityProvider();
+			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
+				return secProvider.getValues(JOSECostanti.ID_SIGNATURE_ALGORITHM);
 			}
-			return l;
-		}
-		else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
-			List<String> l = new ArrayList<>();
-			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.values();
-			for (int i = 0; i < tmp.length; i++) {
-				l.add(tmp[i].name());
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+				return secProvider.getValues(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
 			}
-			return l;
-		}
-		else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
-			List<String> l = new ArrayList<>();
-			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.values();
-			for (int i = 0; i < tmp.length; i++) {
-				l.add(tmp[i].name());
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+				return secProvider.getValues(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
 			}
-			return l;
 		}
 		return null;
 	}
 
 	@Override
 	public List<String> getLabels(String id) throws ProviderException {
-		return this.getValues(id);
+		if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			SecurityProvider secProvider = new SecurityProvider();
+			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
+				return secProvider.getLabels(JOSECostanti.ID_SIGNATURE_ALGORITHM);
+			}
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
+			}
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+				return secProvider.getLabels(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
+			}
+		}
+		return this.getValues(id); // torno uguale ai valori negli altri casi
 	}
 
 	@Override
@@ -110,14 +115,19 @@ public class TokenProvider implements IProvider {
 		if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			return SSLUtilities.getSafeDefaultProtocol();
 		}
-		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
-			return org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm.RS256.name();
-		}
-		else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
-			return org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.RSA_OAEP_256.name();
-		}
-		else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
-			return org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.A256GCM.name();
+		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id) ||
+				Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+			SecurityProvider secProvider = new SecurityProvider();
+			if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id)) {
+				return secProvider.getDefault(JOSECostanti.ID_SIGNATURE_ALGORITHM);
+			}
+			else if(Costanti.ID_JWS_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+				return secProvider.getDefault(JOSECostanti.ID_ENCRYPT_KEY_ALGORITHM);
+			}
+			else if(Costanti.ID_JWS_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
+				return secProvider.getDefault(JOSECostanti.ID_ENCRYPT_CONTENT_ALGORITHM);
+			}
 		}
 		return null;
 	}

@@ -19,6 +19,10 @@
 	
 	<section label="Informazioni Generali">
 		
+		<item type="hidden" name="securityEngine" value="wss4j">
+			<property name="securityEngine" force="true"/>
+		</item>
+		
 		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
 			<property name="actor" />
 		</item>
@@ -63,7 +67,7 @@
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
-					<value value="jceks" label="JCEKS"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
 				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
 			</item>
