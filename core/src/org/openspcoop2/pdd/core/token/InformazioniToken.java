@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
-import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 
@@ -21,7 +20,7 @@ public class InformazioniToken implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InformazioniToken(String rawResponse, ITokenParser tokenParser, TipologiaClaims tipologiaClaims) throws UtilsException {
+	public InformazioniToken(String rawResponse, ITokenParser tokenParser) throws UtilsException {
 		this.rawResponse = rawResponse;
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		if(jsonUtils.isJson(this.rawResponse)) {
@@ -31,7 +30,7 @@ public class InformazioniToken implements Serializable {
 				this.claims.putAll(readClaims);
 			}
 		}
-		tokenParser.init(this.rawResponse, this.claims, tipologiaClaims);
+		tokenParser.init(this.rawResponse, this.claims);
 	}
 	
 	// RawResponse

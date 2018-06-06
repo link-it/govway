@@ -6,6 +6,10 @@ import java.util.Properties;
 
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.token.parser.BasicTokenParser;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 
 public class PolicyGestioneToken implements Serializable {
 
@@ -185,6 +189,18 @@ public class PolicyGestioneToken implements Serializable {
 		}
 		return save;
 	}
+	public ITokenParser getValidazioneJWT_TokenParser() throws Exception {
+		ITokenParser parser = null;
+		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE));
+		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
+			String className = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
+			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+		}
+		else{
+			parser = new BasicTokenParser(tipologiaClaims);
+		}
+		return parser;
+	}
 	
 	public String getIntrospection_endpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_URL);
@@ -197,6 +213,18 @@ public class PolicyGestioneToken implements Serializable {
 		}
 		return save;
 	}
+	public ITokenParser getIntrospection_TokenParser() throws Exception {
+		ITokenParser parser = null;
+		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE));
+		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
+			String className = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
+			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+		}
+		else{
+			parser = new BasicTokenParser(tipologiaClaims);
+		}
+		return parser;
+	}
 	
 	public String getUserInfo_endpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_URL);
@@ -208,6 +236,18 @@ public class PolicyGestioneToken implements Serializable {
 			save = Boolean.valueOf(tmp);
 		}
 		return save;
+	}
+	public ITokenParser getUserInfo_TokenParser() throws Exception {
+		ITokenParser parser = null;
+		TipologiaClaims tipologiaClaims = TipologiaClaims.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_TYPE));
+		if(TipologiaClaims.CUSTOM.equals(tipologiaClaims)) {
+			String className = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
+			parser = (ITokenParser) ClassLoaderUtilities.newInstance(className);
+		}
+		else{
+			parser = new BasicTokenParser(tipologiaClaims);
+		}
+		return parser;
 	}
 	
 }

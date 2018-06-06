@@ -1520,6 +1520,9 @@ public class OpenSPCoop2Properties {
 			this.isValidazioneContenutiApplicativi_rpcLiteral_xsiType_ripulituraDopoValidazione();
 			this.isValidazioneContenutiApplicativi_checkSoapAction();
 			
+			// Gestione Token
+			this.getGestioneToken_iatTimeCheck_milliseconds();
+			
 			// Trasporto REST / SOAP
 			
 			this.getSOAPServicesUrlParametersForwardConfig();
@@ -13287,6 +13290,33 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_checkSoapAction;
+	}
+	
+	
+	/* ------------- Gestione Token ---------------------*/
+	
+	private static Boolean getGestioneToken_iatTimeCheck_milliseconds_read = null;
+	private static Integer getGestioneToken_iatTimeCheck_milliseconds = null;
+	public Integer getGestioneToken_iatTimeCheck_milliseconds() throws Exception{
+
+		if(OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.iat"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds = Integer.valueOf(value); // minuti
+					OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds = OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds * 60 * 1000;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.iat' non impostata, errore:"+e.getMessage());
+				throw e;
+			}
+			
+			OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds;
 	}
 
 	

@@ -1,5 +1,7 @@
 package org.openspcoop2.pdd.core.token;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +14,10 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -22,13 +26,12 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.security.JOSERepresentation;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GestoreToken {
 
@@ -470,7 +473,9 @@ public class GestoreToken {
     	}
 		
 		if(esitoGestioneToken.isValido()) {
-			_validazioneInformazioniToken(esitoGestioneToken);
+			// ricontrollo tutte le date
+			_validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+					datiInvocazione.getPolicyGestioneToken().isValidazioneJWT_saveErrorInCache());
 		}
 		
 		return esitoGestioneToken;
@@ -497,6 +502,8 @@ public class GestoreToken {
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
 			
+			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			
     		if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
     			// JWS Compact   			
     			JsonVerifySignature jsonCompactVerify = null;
@@ -504,7 +511,7 @@ public class GestoreToken {
     				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
     						JOSERepresentation.COMPACT);
     				if(jsonCompactVerify.verify(token)) {
-    				//	informazioniToken = new InformazioniToken(jsonCompactVerify.getDecodedPayload()); // todo1
+    					informazioniToken = new InformazioniToken(jsonCompactVerify.getDecodedPayload(),tokenParser);
     				}
     				else {
     					detailsError = "Token non valido";
@@ -521,7 +528,7 @@ public class GestoreToken {
     				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
     						JOSERepresentation.COMPACT);
     				jsonDecrypt.decrypt(token);
-    			//	informazioniToken = new InformazioniToken(jsonDecrypt.getDecodedPayload());
+    				informazioniToken = new InformazioniToken(jsonDecrypt.getDecodedPayload(),tokenParser);
     			}catch(Exception e) {
     				detailsError = "Token non valido: "+e.getMessage();
     				eProcess = e;
@@ -559,9 +566,6 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static void _validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken) {
-		// todo2
-	}
 	
 	
 	
@@ -600,6 +604,84 @@ public class GestoreToken {
 	
 	
 	// ********* UTILITIES INTERNE ****************** */
+	
+	private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
+	
+	private static void _validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws Exception {
+		
+		Date now = DateManager.getDate();
+		
+		if(esitoGestioneToken.isValido()) {			
+			if(esitoGestioneToken.getInformazioniToken().getExp()!=null) {				
+				/*
+				 *   The "exp" (expiration time) claim identifies the expiration time on
+   				 *   or after which the JWT MUST NOT be accepted for processing.  The
+   				 *   processing of the "exp" claim requires that the current date/time
+   				 *   MUST be before the expiration date/time listed in the "exp" claim.
+				 **/
+				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
+					esitoGestioneToken.setValido(false);
+					esitoGestioneToken.setDetails("Token expired");
+					esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  
+				}
+			}
+			
+		}
+			
+		if(esitoGestioneToken.isValido()) {
+			if(esitoGestioneToken.getInformazioniToken().getNbf()!=null) {				
+				/*
+				 *   The "nbf" (not before) claim identifies the time before which the JWT
+				 *   MUST NOT be accepted for processing.  The processing of the "nbf"
+				 *   claim requires that the current date/time MUST be after or equal to
+				 *   the not-before date/time listed in the "nbf" claim. 
+				 **/
+				if(!esitoGestioneToken.getInformazioniToken().getNbf().before(now)){
+					esitoGestioneToken.setValido(false);
+					SimpleDateFormat sdf = new SimpleDateFormat(format);
+					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
+					esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  
+				}
+			}
+		}
+		
+		if(esitoGestioneToken.isValido()) {
+			if(esitoGestioneToken.getInformazioniToken().getIat()!=null) {				
+				/*
+				 *   The "iat" (issued at) claim identifies the time at which the JWT was
+   				 *   issued.  This claim can be used to determine the age of the JWT.
+   				 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
+   				 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
+				 **/
+				Integer old = OpenSPCoop2Properties.getInstance().getGestioneToken_iatTimeCheck_milliseconds();
+				if(old!=null) {
+					Date oldMax = new Date((DateManager.getTimeMillis() - old.intValue()));
+					if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
+						esitoGestioneToken.setValido(false);
+						SimpleDateFormat sdf = new SimpleDateFormat(format);
+						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
+						esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+		    					esitoGestioneToken.getDetails()));  
+					}
+				}
+			}
+			
+		}
+		
+		if(esitoGestioneToken.isValido()==false) {
+			if(saveErrorInCache) {
+				esitoGestioneToken.setNoCache(false);
+			}
+			else {
+				esitoGestioneToken.setNoCache(true);
+			}
+		}
+	}
 	
 	private static String buildCacheKey(String funzione, boolean portaDelegata, String token) {
     	StringBuffer bf = new StringBuffer(funzione);

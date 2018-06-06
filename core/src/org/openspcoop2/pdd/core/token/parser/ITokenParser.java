@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface ITokenParser {
 
-	public void init(String raw, Map<String,String> claims, TipologiaClaims tipologiaParser);
+	public void init(String raw, Map<String,String> claims);
 	
 	// String representing the issuer of this token, as defined in JWT [RFC7519].
 	public String getIssuer();

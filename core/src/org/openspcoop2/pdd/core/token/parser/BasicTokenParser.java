@@ -11,11 +11,14 @@ public class BasicTokenParser implements ITokenParser {
 	protected Map<String, String> claims;
 	protected TipologiaClaims parser;
 	
+	public BasicTokenParser(TipologiaClaims parser) {
+		this.parser = parser;
+	}
+	
 	@Override
-	public void init(String raw, Map<String, String> claims, TipologiaClaims parser) {
+	public void init(String raw, Map<String, String> claims) {
 		this.raw = raw;
 		this.claims = claims;
-		this.parser = parser;
 	}
 
 	@Override

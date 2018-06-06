@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -84,9 +85,30 @@ public class TokenProvider implements IProvider {
 					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
 				}
 			}
+			
+			String parserType = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE);
+			if(parserType==null) {
+				throw new ProviderValidationException("Non è stato indicato il parser per i claims da utilizzare dopo la validazione JWT");
+			}
+			TipologiaClaims tipologiaClaims = null;
+			try {
+				tipologiaClaims = TipologiaClaims.valueOf(parserType);
+				if(tipologiaClaims==null) {
+					throw new Exception("Sconosciuto");
+				}
+			}catch(Exception e) {
+				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione JWT, sconosciuto");
+			}
+			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME);
+				if(parserTypeCustomClass==null) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione JWT");
+				}
+			}
 		}
 		
 		if(introspection) {
+			
 			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
 			if(url==null) {
 				throw new ProviderValidationException("Non e' stata fornita la url del servizio 'Introspection'");
@@ -96,6 +118,26 @@ public class TokenProvider implements IProvider {
 			}catch(Exception e){
 				throw new ProviderValidationException("La URL fornita per il servizio 'Introspection' non è valida: "+e.getMessage());
 			}	
+			
+			String parserType = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE);
+			if(parserType==null) {
+				throw new ProviderValidationException("Non è stato indicato il parser per i claims da utilizzare dopo la validazione tramite il servizio di Introspection");
+			}
+			TipologiaClaims tipologiaClaims = null;
+			try {
+				tipologiaClaims = TipologiaClaims.valueOf(parserType);
+				if(tipologiaClaims==null) {
+					throw new Exception("Sconosciuto");
+				}
+			}catch(Exception e) {
+				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di Introspection, sconosciuto");
+			}
+			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME);
+				if(parserTypeCustomClass==null) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione del servizio di Introspection");
+				}
+			}
 		}
 		
 		if(userInfo) {
@@ -108,6 +150,26 @@ public class TokenProvider implements IProvider {
 			}catch(Exception e){
 				throw new ProviderValidationException("La URL fornita per il servizio 'OIDC UserInfo' non è valida: "+e.getMessage());
 			}	
+			
+			String parserType = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_TYPE);
+			if(parserType==null) {
+				throw new ProviderValidationException("Non è stato indicato il parser per i claims da utilizzare dopo la validazione tramite il servizio di UserInfo");
+			}
+			TipologiaClaims tipologiaClaims = null;
+			try {
+				tipologiaClaims = TipologiaClaims.valueOf(parserType);
+				if(tipologiaClaims==null) {
+					throw new Exception("Sconosciuto");
+				}
+			}catch(Exception e) {
+				throw new ProviderValidationException("E' stato indicato un parser '"+parserType+"', per i claims da utilizzare dopo la validazione del servizio di UserInfo, sconosciuto");
+			}
+			if(TipologiaClaims.CUSTOM.equals(parserType)) {
+				String parserTypeCustomClass = pDefault.getProperty(Costanti.POLICY_USER_INFO_CLAIMS_PARSER_CLASS_NAME);
+				if(parserTypeCustomClass==null) {
+					throw new ProviderValidationException("Non è stata fornita la classe del parser dei claims personalizzato da utilizzare dopo la validazione del servizio di UserInfo");
+				}
+			}
 		}
 				
 		if(forward) {

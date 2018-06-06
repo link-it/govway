@@ -145,16 +145,37 @@
 
 	<section label="Validazione JWT">
 		
-		<!--  JWS -->
-		
 		<conditions>
 			<condition and="true">
 				<selected name="validazioneJwtStato"/>
-				<equals name="tokenType" value="jws"/>
 			</condition>
 		</conditions>
 		
+		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" required="true">
+			<values>
+				<value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/>
+				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
+				<value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/>
+				<value value="CUSTOM" label="Personalizzato"/>
+			</values>
+			<property name="policy.validazioneJWT.claimsParser" />
+		</item>
+		<item type="text" name="validazioneJwtParserCustom" label="ClassName" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneJWTParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.validazioneJWT.claimsParser.className" />
+		</item>
+		
 		<subsection label="TrustStore">
+
+			<conditions>
+				<condition and="true">
+					<equals name="tokenType" value="jws"/>
+				</condition>
+			</conditions>
 
 			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" required="true">
 				<values>
@@ -176,20 +197,13 @@
 
 		</subsection>
 
-	</section>
-	
-	<section label="Validazione JWT">
-		
-		<!--  JWE -->
-		
-		<conditions>
-			<condition and="true">
-				<selected name="validazioneJwtStato"/>
-				<equals name="tokenType" value="jwe"/>
-			</condition>
-		</conditions>
-	
 		<subsection label="KeyStore">
+		
+			<conditions>
+				<condition and="true">
+					<equals name="tokenType" value="jwe"/>
+				</condition>
+			</conditions>
 
 			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" required="true">
 				<values>
@@ -224,6 +238,24 @@
 				<selected name="introspectionStato"/>
 			</condition>
 		</conditions>
+
+		<item type="select" name="introspectionParserType" label="Claims Parser" default="INTROSPECTION_RESPONSE_RFC_7662" required="true">
+			<values>
+				<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
+				<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
+				<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
+				<value value="CUSTOM" label="Personalizzato"/>
+			</values>
+			<property name="policy.introspection.claimsParser" />
+		</item>
+		<item type="text" name="introspectionParserCustom" label="ClassName" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.introspection.claimsParser.className" />
+		</item>
 
 		<item type="select" name="introspectionEndpointType" label="Tipo" default="oauth2" required="true">
 			<values>
@@ -293,6 +325,24 @@
 				<selected name="userInfoStato"/>
 			</condition>
 		</conditions>
+	
+		<item type="select" name="userInfoParserType" label="Claims Parser" default="OIDC_ID_TOKEN" required="true">
+			<values>
+				<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> 
+				<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
+				<value value="OIDC_ID_TOKEN" label="OpenID Connect"/> 
+				<value value="CUSTOM" label="Personalizzato"/>
+			</values>
+			<property name="policy.userInfo.claimsParser" />
+		</item>
+		<item type="text" name="userInfoParserCustom" label="ClassName" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.userInfo.claimsParser.className" />
+		</item>
 	
 		<item type="text" name="userInfoEndpointURL" label="URL" required="true" default="http://">
 		      	<property name="policy.userInfo.endpoint.url" />
