@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
@@ -442,5 +443,21 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 		return null;
 	}
 	
-	
+	public StatisticType getTempo() {
+		StatisticType modalita = ((StatsSearchForm)this.search).getModalitaTemporale();
+
+		if (modalita == null)
+			return StatisticType.GIORNALIERA;
+		return modalita;
+	}
+
+	public String get_value_tempo() {
+		StatisticType modalita = ((StatsSearchForm)this.search).getModalitaTemporale();
+
+		if (modalita == null)
+			return StatisticType.GIORNALIERA.toString().toLowerCase();
+
+
+		return modalita.toString().toLowerCase();
+	}
 }

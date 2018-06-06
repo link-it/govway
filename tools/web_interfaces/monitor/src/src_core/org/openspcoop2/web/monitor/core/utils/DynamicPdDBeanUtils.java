@@ -20,14 +20,14 @@ import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
-import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -286,62 +286,6 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	/***
 	 * 
-	 * Restituisce l'elenco dei servizi associati al soggetto erogatore passato come parametro
-	 * 
-	 * La Mappa contiene
-	 * Nome Azione
-	 * 
-	 * @param tipoProtocollo
-	 * @param tipoServizio
-	 * @param nomeServizio
-	 * @param nomeAzione
-	 * @return Azioni del servizio
-	 */
-	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione){
-		List<Map<String, Object>>  list = new ArrayList<Map<String,Object>>();
-
-		this.log.debug("Get Lista Azioni from Servizio [Tipo: " + tipoServizio+ "], [Nome: " + nomeServizio + "]");
-		try{
-			list = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,nomeAzione);
-		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca Azioni from Servizio [Tipo: " + tipoServizio+ "], [Nome: " + nomeServizio + "]", e);
-		}
-		return list;
-	}
-
-
-
-	/***
-	 * 
-	 * Restituisce la lista delle select items  per le azioni
-	 * 
-	 * @param tipoProtocollo
-	 * @param tipoServizio
-	 * @param nomeServizio
-	 * @param nomeAzione
-	 * @return SelectItems delle azioni di un Servizio
-	 */
-	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione){
-		List<SelectItem> azioni = new ArrayList<SelectItem>();
-
-		try{
-			List<Map<String, Object>> list = this.findAzioniFromServizio(tipoProtocollo,tipoServizio,nomeServizio,nomeAzione);
-			for (Map<String,Object> azioneObj : list) {
-				String azione = (String) azioneObj.get("nome");
-				SelectItem item = new SelectItem(azione);
-				azioni.add(item);
-
-			}
-		}catch(Exception e){
-
-		}
-
-		return azioni;
-	}
-
-
-	/***
-	 * 
 	 * Restituisce l'elenco delle Azioni dell'Accordo di servizio passato come parametro
 	 * 
 	 * La Mappa contiene
@@ -356,18 +300,17 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param nomeAzione
 	 * @return Azioni dell'Accordo di servizio
 	 */
-	public List<Map<String, Object>> getAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione){
-		List<Map<String, Object>>  list = new ArrayList<Map<String,Object>>();
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio){
+		Map<String, String>  map = new HashMap<String, String>();
 
 		//		if(idAccordo != null && nomeServizio != null){
-		this.log.debug("Get Lista Azioni from Accordo Servizio [Accordo: " + (idAccordo != null ? idAccordo.getNome() : "Non specificato") + "], [nome Servizio: " + nomeServizio + "]");
+		this.log.debug("Get Lista Azioni from Servizio [nome: " + nomeServizio + "]");
 		try{
-			list = this.dynamicUtilsService.getAzioniFromAccordoServizio(tipoProtocollo,idAccordo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,nomeAzione);
+			map = this.dynamicUtilsService.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio);
 		}catch(Exception e){
-			this.log.error("Si e' verificato un errore durante la ricerca  Azioni per L'accordo [" + (idAccordo != null ? idAccordo.getNome() : "Null")+ "]",e);
-			//			}
+			this.log.error("Si e' verificato un errore durante la ricerca  Azioni per il servizio"+nomeServizio+ "]",e);
 		}
-		return list;
+		return map;
 	}
 
 	/***
@@ -378,38 +321,16 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param nomeServizio
 	 * @return Lista delle SelectItems per le Azioni trovate
 	 */
-	public List<SelectItem> getListaSelectItemsAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione){
+	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo, String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,Integer versioneServizio){
 		List<SelectItem> azioni = new ArrayList<SelectItem>();
 
 		try{
-			List<Map<String, Object>> list = this.getAzioniFromAccordoServizio(tipoProtocollo,idAccordo,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,nomeAzione);
-			for (Map<String,Object> azioneObj : list) {
-
-				String azione = (String) azioneObj.get("nome");
-
-				if(azione == null){
-					try {
-						azione = (String) azioneObj.get(JDBCUtilities.getAlias(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME));
-					} catch (ServiceException e) {
-						//						this.log.debug(e,e);
-					}
-				}
-
-				if(azione == null){
-					try {
-						azione = (String) azioneObj.get(JDBCUtilities.getAlias(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME));
-					} catch (ServiceException e) {
-						//						this.log.debug(e,e);
-					}
-				}
-
-				SelectItem item = new SelectItem(azione);
+			Map<String, String>  map = this.findAzioniFromServizio(tipoProtocollo,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio);
+			for (String azione : map.keySet()) {
+				SelectItem item = new SelectItem(azione,map.get(azione));
 				azioni.add(item);
-
 			}
-		}catch(Exception e){
-
-		}
+		}catch(Exception e){}
 
 		return azioni;
 	}
@@ -614,7 +535,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 			if(servizi2 != null && servizi2.size() > 0){
 				for (AccordoServizioParteSpecifica res : servizi2) {
 					boolean add= true;
-					String label= null;
+					String value= null;
 					// servizi.add(new
 					// SelectItem(servizio.getAccordo().getNome()+"@"+servizio.getNome()));
 					StringBuilder uri = new StringBuilder();
@@ -626,13 +547,17 @@ public class DynamicPdDBeanUtils implements Serializable {
 					if(tipoAsps != null)
 						uri.append(tipoAsps).append("/");
 
-					uri.append(nomeAsps);
+					uri.append(nomeAsps).append(":").append(res.getVersione());
+					
 
-					if(showErogatore ){
-						uri.append(" (").append(res.getIdErogatore().getTipo()).append("/").append(res.getIdErogatore().getNome()).append(")");
-					}
-
-					label = uri.toString();
+//					if(showErogatore ){
+					uri.append(" (").append(res.getIdErogatore().getTipo()).append("/").append(res.getIdErogatore().getNome()).append(")"); 
+//					}
+					
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getIdErogatore().getTipo(), res.getIdErogatore().getNome(), res.getVersione());
+					String label = tipoProtocollo != null ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+					
+					value = uri.toString();
 					//compongo la label e la imposto
 					if(soloOperativi){ // controllo se il soggetto e' associato ad una pdd operativa
 						String nomePddFromSoggetto = this.getServerFromSoggetto(res.getIdErogatore().getTipo(), res.getIdErogatore().getNome());
@@ -672,7 +597,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 					}
 
 					if(add)
-						servizi.add(new SelectItem(label));
+						servizi.add(new SelectItem(value, label)); 
 				}
 			}
 
@@ -693,12 +618,9 @@ public class DynamicPdDBeanUtils implements Serializable {
 		try{
 			if(listaSelectItem != null && listaSelectItem.size() > 0){
 				for (SelectItem selectItem : listaSelectItem) {
-					Object value = selectItem.getValue();
-					if(value instanceof String){
-						String label = (String) value;
-						lunghezza = getFontWidth(label,font);
-						lunghezzaToRet = Math.max(lunghezza, lunghezzaToRet);
-					}
+					String label = selectItem.getLabel() != null ? selectItem.getLabel() : (String) selectItem.getValue();
+					lunghezza = getFontWidth(label,font);
+					lunghezzaToRet = Math.max(lunghezza, lunghezzaToRet);
 				}
 			}
 		}catch(Throwable e){
@@ -775,8 +697,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 	}
 
 
-	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore){
-		return this.dynamicUtilsService.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio){
+		return this.dynamicUtilsService.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio);
 	}
 
 	
@@ -799,13 +721,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * @param permessiUtenteOperatore
 	 * @return Elenco porte delegate
 	 */
-	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
+	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore, Integer versioneServizio, String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
 		List<PortaDelegata>  list = new ArrayList<PortaDelegata>();
 
 		//		if(idAccordo != null && nomeServizio != null){
 		this.log.debug("findPorteDelegate [Accordo: " + (idAccordo != null ? idAccordo : "Non specificato") + "], [nome Servizio: " + nomeServizio + "], [nome Erogarore: " + nomeErogatore + "], [nome Fruitore: " + nomeFruitore + "]");
 		try{
-			list = this.dynamicUtilsService.findPorteDelegate(tipoProtocollo, idAccordo, tipoFruitore, nomeFruitore, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione,permessiUtenteOperatore);
+			list = this.dynamicUtilsService.findPorteDelegate(tipoProtocollo, idAccordo, tipoFruitore, nomeFruitore, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante la ricerca  findPorteDelegate [" + (idAccordo != null ? idAccordo  : "Non specificato") + "], [nome Servizio: " + nomeServizio + "], [nome Erogarore: " + nomeErogatore + "], [nome Fruitore: " + nomeFruitore + "]",e);
 			//			}
@@ -813,12 +735,12 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return list;
 	}
 
-	public List<SelectItem> getListaSelectItemsPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
+	public List<SelectItem> getListaSelectItemsPorteDelegate(String tipoProtocollo,String idAccordo,String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore, Integer versioneServizio,String nomeAzione,String tipoFruitore, String nomeFruitore, PermessiUtenteOperatore permessiUtenteOperatore){
 
 		List<SelectItem> servizi = new ArrayList<SelectItem>();
 
 		try{
-			List<PortaDelegata> listaPD = this.findPorteDelegate(tipoProtocollo, idAccordo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione, tipoFruitore, nomeFruitore,permessiUtenteOperatore);
+			List<PortaDelegata> listaPD = this.findPorteDelegate(tipoProtocollo, idAccordo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione, tipoFruitore, nomeFruitore,permessiUtenteOperatore);
 			if(listaPD != null && listaPD.size() > 0){
 				for (PortaDelegata pd : listaPD) {
 					String label = pd.getNome();

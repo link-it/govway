@@ -106,16 +106,16 @@ public class PermessiUtenteOperatore {
 	}
 
 	public IExpression toExpression(IExpressionConstructor exprConstructor,IField fieldIdentificativoPorta,
-			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio) throws CoreException{
+			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio) throws CoreException{
 		boolean includeTransazioniSenzaIdentificativoPorta = false;
 		// Oramai non ha più senso, tutte le transazioni vengono sempre valorizzate con un codice porta, al massimo contengono quello di default della PdD
 		// E' rimasta la condizione nel codice della query sottostante, ma non dovrebbe avere piu effetto.
 		return toExpression(exprConstructor, fieldIdentificativoPorta, 
-				fieldTipoSoggettoErogatore, fieldNomeSoggettoErogatore, fieldTipoServizio, fieldNomeServizio, 
+				fieldTipoSoggettoErogatore, fieldNomeSoggettoErogatore, fieldTipoServizio, fieldNomeServizio, fieldVersioneServizio,
 				includeTransazioniSenzaIdentificativoPorta);
 	}
 	public IExpression toExpression(IExpressionConstructor exprConstructor,IField fieldIdentificativoPorta,
-			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio,
+			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio,
 			boolean includeTransazioniSenzaIdentificativoPorta) throws CoreException{
 		try{
 			IExpression expr = exprConstructor.newExpression();
@@ -151,6 +151,8 @@ public class PermessiUtenteOperatore {
 					exprServ.equals(fieldTipoServizio, idServizio.getTipo());
 					exprServ.isNotNull(fieldNomeServizio);
 					exprServ.equals(fieldNomeServizio, idServizio.getNome());
+					exprServ.isNotNull(fieldVersioneServizio);
+					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
 					servizi.add(exprServ);
 				}
 				expr.or(servizi.toArray(new IExpression[1]));
@@ -165,7 +167,7 @@ public class PermessiUtenteOperatore {
 	public IExpression toExpressionAllarmi(IExpressionConstructor exprConstructor,
 			IField fieldIdentificativoPortaMittente,IField fieldTipoMittente,IField fieldMittente,
 			IField fieldIdentificativoPortaDestinatario,IField fieldTipoDestinatario,IField fieldDestinatario,
-			IField fieldTipoServizio,IField fieldNomeServizio ) throws CoreException{
+			IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio ) throws CoreException{
 		try{
 
 			IExpression expr = exprConstructor.newExpression();
@@ -262,6 +264,8 @@ public class PermessiUtenteOperatore {
 					exprServ.equals(fieldTipoServizio, idServizio.getTipo());
 					exprServ.isNotNull(fieldNomeServizio);
 					exprServ.equals(fieldNomeServizio, idServizio.getNome());
+					exprServ.isNotNull(fieldVersioneServizio);
+					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
 					servizi.add(exprServ);
 				}
 				expr.or(servizi.toArray(new IExpression[1]));
@@ -274,7 +278,7 @@ public class PermessiUtenteOperatore {
 	}
 
 	public IExpression toExpressionConfigurazioneServizi(IExpressionConstructor exprConstructor,IField fieldTipoSoggetto,IField fieldNomeSoggetto,
-			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio,
+			IField fieldTipoSoggettoErogatore,IField fieldNomeSoggettoErogatore,IField fieldTipoServizio,IField fieldNomeServizio, IField fieldVersioneServizio,
 			boolean setNotNull) throws CoreException{
 		try{
 			IExpression expr = exprConstructor.newExpression();
@@ -323,6 +327,10 @@ public class PermessiUtenteOperatore {
 						exprServ.isNotNull(fieldNomeServizio);
 					}
 					exprServ.equals(fieldNomeServizio, idServizio.getNome());
+					if(setNotNull){
+						exprServ.isNotNull(fieldVersioneServizio);
+					}
+					exprServ.equals(fieldVersioneServizio, idServizio.getVersione());
 					servizi.add(exprServ);
 				}
 				if(servizi.size()>0)
@@ -349,15 +357,15 @@ public class PermessiUtenteOperatore {
 			// L'invocazione serve solamente a verificare i permessi
 			// Poi gli oggetti ritornati DEVONO corrispondere esattamente ai permessi impostati sul database
 			@SuppressWarnings("unused")
-			PermessiUtenteOperatore soggLocale = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, tipoSoggettoLocale, nomeSoggettoLocale, null, null);
+			PermessiUtenteOperatore soggLocale = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, tipoSoggettoLocale, nomeSoggettoLocale, null, null,null);
 			@SuppressWarnings("unused")
-			PermessiUtenteOperatore servizio = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null);
+			PermessiUtenteOperatore servizio = PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null,null);
 			//			soggLocale.addPermessiServizi(servizio);
 			//			return soggLocale;
 			//			
 		}
 		//		else{
-		return PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null);
+		return PermessiUtenteOperatore.getPermessiUtenteOperatore(u, null, null, null, null,null);
 		//		}
 
 	}
@@ -365,7 +373,7 @@ public class PermessiUtenteOperatore {
 	@SuppressWarnings("deprecation")
 	public static PermessiUtenteOperatore getPermessiUtenteOperatore(UserDetailsBean u,
 			String tipoSoggettoLocale, String nomeSoggettoLocale, 
-			String tipoServizio, String nomeServizio)
+			String tipoServizio, String nomeServizio, Integer versioneServizio)
 					throws CoreException {
 
 		// Controllo sul soggetto indicato
@@ -400,7 +408,8 @@ public class PermessiUtenteOperatore {
 						if(idServizio.getSoggettoErogatore().getTipo().equals(tipoSoggettoLocale) &&
 								idServizio.getSoggettoErogatore().getNome().equals(nomeSoggettoLocale) &&
 								idServizio.getTipo().equals(tipoServizio) &&
-								idServizio.getNome().equals(nomeServizio)){		
+								idServizio.getNome().equals(nomeServizio) &&
+								idServizio.getVersione().intValue() == versioneServizio.intValue()){		
 							found = true;
 							break;
 						}
@@ -432,6 +441,7 @@ public class PermessiUtenteOperatore {
 				idServizio.setSoggettoErogatore(idSoggetto);
 				idServizio.setTipo(tipoServizio);
 				idServizio.setNome(nomeServizio); 
+				idServizio.setVersione(versioneServizio); 
 				permessi.addServizio(idServizio);
 			}
 			else{

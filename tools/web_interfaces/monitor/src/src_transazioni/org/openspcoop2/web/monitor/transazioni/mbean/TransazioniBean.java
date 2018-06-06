@@ -15,21 +15,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.slf4j.Logger;
-
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
-import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
-import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
+import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
+import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.dao.IUserService;
 import org.openspcoop2.web.monitor.core.dao.UserService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -40,6 +39,8 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.ColonnaExportManager;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
+import org.slf4j.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -109,25 +110,16 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			if(this.search==null || this.search.getNomeServizio()==null){
 				return this.stati;
 			}
+			
+			IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
+			
+			String nomeServizio = idServizio.getNome();
+			String tipoServizio = idServizio.getTipo();
+			String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+			String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+			Integer versioneServizio = idServizio.getVersione();
 
-			//			String uri = this.search.getNomeServizio().split(" \\(")[1]
-			//					.replace(")", "");
-			//			IDAccordo idAccordo = IDAccordoFactory.getInstance()
-			//					.getIDAccordoFromUri(uri);
-			String nomeServizio = this.search.getNomeServizio().split(" \\(")[0];
-
-			//			String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-			String tipoServizio = null;
-			// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-			tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-			nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-
-			String nomeErogatore = this.search.getNomeServizio().split(" \\(")[1]
-					.replace(")", "");
-			String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-			nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
 			Integer ver = idAccordoServizioParteComune.getVersione();
@@ -169,23 +161,16 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			if(this.search==null || this.search.getNomeServizio()==null){
 				return this.risorse;
 			}
-			//
-			//			String uri = this.search.getNomeServizio().split(" \\(")[1]
-			//					.replace(")", "");
-			//			IDAccordo idAccordo = IDAccordoFactory.getInstance()
-			//					.getIDAccordoFromUri(uri);
-			String nomeServizio = this.search.getNomeServizio().split(" \\(")[0];
-			String tipoServizio = null;
-			// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-			tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-			nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
+			
+			IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
+			
+			String nomeServizio = idServizio.getNome();
+			String tipoServizio = idServizio.getTipo();
+			String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+			String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+			Integer versioneServizio = idServizio.getVersione();
 
-			String nomeErogatore = this.search.getNomeServizio().split(" \\(")[1]
-					.replace(")", "");
-			String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-			nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+			AccordoServizioParteSpecifica aspsFromValues = this.dynamicUtils.getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
 			Integer ver = idAccordoServizioParteComune.getVersione();

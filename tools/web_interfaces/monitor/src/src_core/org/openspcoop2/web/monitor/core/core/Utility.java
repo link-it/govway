@@ -290,6 +290,16 @@ public class Utility {
 
 		return null;
 	}
+	
+	public static String getLoggedUtenteModalita() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getModalita();
+		}
+
+		return null;
+	}
 
 	public static String fileSizeConverter(Number bytes) {
 		MessageFormat mf = new MessageFormat("{0,number,#.##}");

@@ -11,9 +11,8 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
-import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -89,10 +88,10 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 
 	public List<SelectItem> getAzioni() {
-		return _getAzioni(this.showAccordoOnServizioLabel,this.showTipoServizioOnServizioLabel, this.showErogatoreOnServizioLabel);
+		return _getAzioni(this.showTipoServizioOnServizioLabel, this.showErogatoreOnServizioLabel);
 	}
 
-	protected List<SelectItem> _getAzioni(boolean showAccordo,boolean showTipoServizio, boolean showErogatore) {
+	protected List<SelectItem> _getAzioni(boolean showTipoServizio, boolean showErogatore) {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
@@ -106,41 +105,16 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		if(!this.azioniSelectItemsWidthCheck){
 			this.azioni = new ArrayList<SelectItem>();
 			try {
-				IDAccordo idAccordo = null;
-				//showAccordo ha la label nel formato AAAAA (URIACCORDO)
-				if(showAccordo){
-					// nome servizio nella forma nomeAccordo@nomeServizio
-					// nome servizio nella forma "nomeServizio (nomeAccordo)"
-					String uri = this.search.getNomeServizio().split(" \\(")[1]
-							.replace(")", "");
-					idAccordo = IDAccordoFactory.getInstance()
-							.getIDAccordoFromUri(uri);
-				}
-				String nomeServizio = this.search.getNomeServizio().split(" \\(")[0];
-				String tipoServizio = null;
-				// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-				if(showTipoServizio){
-					tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-					nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-				}
 				String tipoProtocollo = this.search.getProtocollo();
-				String nomeAzione = null;
-				String nomeErogatore = null;
-				String tipoErogatore = null;
-
-				if(showErogatore){
-					nomeErogatore = this.search.getNomeServizio().split(" \\(")[1]
-							.replace(")", "");
-					tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-					nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-				}
-
-
-				if(showAccordo)
-					this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromAccordoServizio(tipoProtocollo,idAccordo,tipoServizio, nomeServizio,tipoErogatore ,nomeErogatore ,nomeAzione);
-				else
-					this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,nomeAzione);
-
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
+				
+				String nomeServizio = idServizio.getNome();
+				String tipoServizio = idServizio.getTipo();
+				String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+				String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+				Integer versioneServizio = idServizio.getVersione();
+				
+				this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio);
 
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);

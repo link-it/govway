@@ -62,24 +62,6 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		this.search.initSearchListener(ae);
 	}
 	
-	public StatisticType getTempo() {
-		StatisticType modalita = ((StatsSearchForm)this.search).getModalitaTemporale();
-
-		if (modalita == null)
-			return StatisticType.GIORNALIERA;
-		return modalita;
-	}
-
-	public String get_value_tempo() {
-		StatisticType modalita = ((StatsSearchForm)this.search).getModalitaTemporale();
-
-		if (modalita == null)
-			return StatisticType.GIORNALIERA.toString().toLowerCase();
-
-
-		return modalita.toString().toLowerCase();
-	}
-
 	public String getXml() {
 		List<Res> list = null;
 		String xml = "";

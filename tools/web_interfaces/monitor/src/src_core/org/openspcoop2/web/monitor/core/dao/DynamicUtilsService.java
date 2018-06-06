@@ -1,23 +1,20 @@
 package org.openspcoop2.web.monitor.core.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
- 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Fruitore;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.IdPortaDominio;
 import org.openspcoop2.core.commons.search.IdServizioApplicativo;
 import org.openspcoop2.core.commons.search.IdSoggetto;
-import org.openspcoop2.core.commons.search.Operation;
 import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaApplicativaServizioApplicativo;
@@ -27,11 +24,9 @@ import org.openspcoop2.core.commons.search.PortaDominio;
 import org.openspcoop2.core.commons.search.ServizioApplicativo;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
-import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneAzioneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteSpecificaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IFruitoreServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IOperationServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortTypeServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
 import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
@@ -40,21 +35,19 @@ import org.openspcoop2.core.commons.search.dao.IServizioApplicativoServiceSearch
 import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteComuneServiceSearch;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCAccordoServizioParteSpecificaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
 import org.openspcoop2.core.commons.search.utils.ProjectInfo;
+import org.openspcoop2.core.commons.search.utils.RegistroCore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
-import org.openspcoop2.generic_project.beans.NullConstantField;
-import org.openspcoop2.generic_project.beans.Union;
-import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.exception.ExpressionException;
@@ -97,11 +90,9 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	private IAccordoServizioParteComuneServiceSearch aspcDAO = null;
 	private IAccordoServizioParteSpecificaServiceSearch aspsDAO = null;
 
-	private IOperationServiceSearch operationDAO  = null;
 	private IServizioApplicativoServiceSearch serviziApplicativiDAO = null;
 	private IPortTypeServiceSearch portTypeDAO = null;
 
-	private IAccordoServizioParteComuneAzioneServiceSearch accordiAzioniDAO = null;
 	private IFruitoreServiceSearch fruitoreSearchDAO;
 
 	private IPortaDominioServiceSearch pddDAO = null;
@@ -115,17 +106,14 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 		try{
 			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
 					.getInstance( log).getServiceManager(ProjectInfo.getInstance(), DynamicUtilsService.log);
-			this.soggettoDAO = this.utilsServiceManager
-					.getSoggettoServiceSearch();
+			this.soggettoDAO = this.utilsServiceManager.getSoggettoServiceSearch();
 
 			this.aspcDAO = this.utilsServiceManager.getAccordoServizioParteComuneServiceSearch();
 			this.aspsDAO = this.utilsServiceManager.getAccordoServizioParteSpecificaServiceSearch();
 
-			this.operationDAO = this.utilsServiceManager.getOperationServiceSearch();
 			this.serviziApplicativiDAO = this.utilsServiceManager.getServizioApplicativoServiceSearch();
 
 			this.portTypeDAO  = this.utilsServiceManager.getPortTypeServiceSearch();
-			this.accordiAzioniDAO = this.utilsServiceManager.getAccordoServizioParteComuneAzioneServiceSearch();
 
 			this.fruitoreSearchDAO = this.utilsServiceManager.getFruitoreServiceSearch();
 
@@ -934,330 +922,28 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 
 	@Override
-	public List<Map<String,Object>> getAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo ,String tipoServizio ,	String nomeServizio,String tipoErogatore ,	String nomeErogatore ,String nomeAzione) {
-		log
-		.debug("Get Lista Azioni from Accordo Servizio [Accordo: " + (idAccordo != null ? idAccordo.getNome() : "Tutti") + "], [nome Servizio: " + nomeServizio + "]");
-
-		IExpression expr = null;
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo ,String tipoServizio ,	String nomeServizio,String tipoErogatore ,	String nomeErogatore ,Integer versioneServizio) {
+		log.debug("Get Lista Azioni from Accordo Servizio [nome Servizio: " + nomeServizio + "]");
 
 		try {
-			expr = this.aspsDAO.newExpression();
-			if(StringUtils.isNotEmpty(nomeServizio ))
-				expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-			if(StringUtils.isNotEmpty(tipoServizio ))
-				expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
-			if(StringUtils.isNotEmpty(nomeErogatore ))
-				expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore).and();
-			if(StringUtils.isNotEmpty(tipoErogatore ))
-				expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoErogatore).and();
-
-			if(idAccordo != null){
-				if(idAccordo.getNome() != null)
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-
-				if(idAccordo.getVersione() != null)
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-				else
-					expr.isNull(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE);
-
-				if(idAccordo.getSoggettoReferente() != null){
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-					expr.equals(AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome());
-				} else {
-					CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-					expr.lessEquals(cf2, 0);
-				}
-			}
-
-			IPaginatedExpression pagExpr1 = this.aspsDAO.toPaginatedExpression(expr);
-			List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr1);
-			List<UnionExpression> lstUnionExpr = new ArrayList<UnionExpression>();
-			List<String> portTypePresenti = new ArrayList<String>();
-			boolean checkPt = false, checkAcAz = false;
-
-			if(lstAsps != null){
-				for(AccordoServizioParteSpecifica asps: lstAsps){ 
-
-					UnionExpression unionExpr2 = null;
-
-					IExpression expr2 = this.aspcDAO.newExpression();
-					if(idAccordo != null){
-						if(idAccordo.getNome() != null)
-							expr2.equals(AccordoServizioParteComune.model().NOME, idAccordo.getNome());
-
-						if(idAccordo.getVersione() != null)
-							expr2.equals(AccordoServizioParteComune.model().VERSIONE, idAccordo.getVersione());
-						else
-							expr2.isNull(AccordoServizioParteComune.model().VERSIONE);
-
-						if(idAccordo.getSoggettoReferente() != null){
-							expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-							expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, idAccordo.getSoggettoReferente().getNome());
-						} else{
-							CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-							expr2.lessEquals(cf2, 0);
-						}
-					} else {
-						// se l'accordo non e' stato specificato ricostruisco l'id a partire dalle chiavi dell'asps
-						IdAccordoServizioParteComune idAccordoServizioParteComune = asps.getIdAccordoServizioParteComune();
-						if(idAccordoServizioParteComune != null){
-							if(idAccordoServizioParteComune.getNome() != null)
-								expr2.equals(AccordoServizioParteComune.model().NOME, idAccordoServizioParteComune.getNome());
-
-							if(idAccordoServizioParteComune.getVersione() != null)
-								expr2.equals(AccordoServizioParteComune.model().VERSIONE, idAccordoServizioParteComune.getVersione());
-							else
-								expr2.isNull(AccordoServizioParteComune.model().VERSIONE);
-
-							if(idAccordoServizioParteComune.getIdSoggetto() != null){
-								expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, idAccordoServizioParteComune.getIdSoggetto().getTipo()).and();
-								expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, idAccordoServizioParteComune.getIdSoggetto().getNome());
-							} else{
-								CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-								expr2.lessEquals(cf2, 0);
-							}
-						}
-					}
-
-					if(tipoProtocollo != null)
-						expr2.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
-
-					if(asps.getPortType()!= null && !portTypePresenti.contains(asps.getPortType())){
-						checkPt = true;
-						portTypePresenti.add(asps.getPortType());
-						expr2.equals(AccordoServizioParteComune.model().PORT_TYPE.NOME, asps.getPortType());
-						if(nomeAzione != null)
-							expr2.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, nomeAzione);
-						expr2.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME);
-						unionExpr2 = new UnionExpression(expr2);
-						unionExpr2.addSelectField(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, "nome");
-					}
-					else{
-						checkAcAz = true;
-						expr2.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME);
-						if(nomeAzione != null)
-							expr2.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, nomeAzione);
-						unionExpr2 = new UnionExpression(expr2);
-						unionExpr2.addSelectField(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, "nome");
-					}
-					lstUnionExpr.add(unionExpr2);
-				}
-
-				// se ho trovato un accordo che ha sia port_type_azioni che accordi azioni faccio la union
-				if(lstUnionExpr.size() > 1){
-					UnionExpression[] elencoUnion = lstUnionExpr.toArray(new UnionExpression[lstUnionExpr.size()]);
-					Union union = new Union();
-					union.setSortOrder(SortOrder.ASC);
-					return this.aspcDAO.union(union, elencoUnion);
-				} else if(lstUnionExpr.size() == 1){
-					NullConstantField cfNull = new NullConstantField("costanteNull");
-
-					IPaginatedExpression pagExpr2 = this.aspcDAO.toPaginatedExpression(lstUnionExpr.get(0).getExpression());
-					if(checkPt){
-						return this.aspcDAO.select(pagExpr2, true, AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME,cfNull);
-					}
-					else if(checkAcAz){
-						return this.aspcDAO.select(pagExpr2, true, AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME,cfNull);
-					}
-				} else {
-					// no azioni
-					return new ArrayList<Map<String,Object>>();
-				}
-
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.debug(e.getMessage(), e);
+			Map<String, String> azioniConLabel = RegistroCore.getAzioniConLabel((JDBCServiceManager) this.utilsServiceManager, tipoProtocollo, tipoErogatore, nomeErogatore, tipoServizio, nomeServizio, versioneServizio);
+			
+			return azioniConLabel;
+ 
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} 
 
-
-		return new ArrayList<Map<String,Object>>();
+		return new HashMap<String, String>();
 
 	}
 
 	@Override
-	public int countAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio ,
-			String nomeServizio,String tipoErogatore ,	String nomeErogatore,String nomeAzione) {
+	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,
+			String nomeServizio,String tipoErogatore ,	String nomeErogatore,Integer versioneServizio) {
 		// Implementazione inefficiente
-		return this.getAzioniFromAccordoServizio(tipoProtocollo,idAccordo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,nomeAzione).size();
+		return this.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio).size();
 	}
-
-
-
-	@Override
-	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio,String nomeAzione) {
-
-		IPaginatedExpression portTypeAzioniExpr =null, accordiAzioniExpr = null;
-		try {
-			portTypeAzioniExpr = this.aspcDAO.newPaginatedExpression();
-			accordiAzioniExpr = this.aspcDAO.newPaginatedExpression();
-
-			portTypeAzioniExpr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME);
-			accordiAzioniExpr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME);
-
-			List<UnionExpression> lstUnionExpr = new ArrayList<UnionExpression>();
-
-			if (StringUtils.isNotBlank(nomeServizio)  && StringUtils.isNotBlank(tipoServizio) ){
-				IExpression expr = this.aspsDAO.newExpression();
-
-				expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and().equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio);
-
-				IPaginatedExpression pagExpr = this.aspsDAO.toPaginatedExpression(expr);
-
-				CustomField cf = new CustomField("idAccordo", Long.class, "id_accordo", "servizi");
-
-				List<Map<String, Object>> lstServ = this.aspsDAO.select(pagExpr, true, cf, AccordoServizioParteSpecifica.model().PORT_TYPE);
-
-				boolean checkPt = false, checkAcAz = false;
-				List<String> portTypePresenti = new ArrayList<String>();
-
-				for (Map<String, Object> map : lstServ) {
-
-					Object obj = map.get(AccordoServizioParteSpecifica.model().PORT_TYPE.getFieldName());
-
-					String portType = (obj instanceof String) ? (String) obj : null;
-
-					Long idAccordoLong = (Long) map.get("idAccordo");
-
-					// prelevo l'accordo di servizio parte comune
-					AccordoServizioParteComune aspc = null;
-					try{
-						aspc = ((JDBCAccordoServizioParteComuneServiceSearch)this.aspcDAO).get(idAccordoLong);
-
-						IdAccordoServizioParteComune idAccordo = ((JDBCAccordoServizioParteComuneServiceSearch)this.aspcDAO).convertToId(aspc);
-
-						IExpression expr2 = this.aspcDAO.newExpression();
-
-						if(idAccordo.getNome() != null)
-							expr2.equals(AccordoServizioParteComune.model().NOME, idAccordo.getNome());
-
-						if(idAccordo.getVersione() != null)
-							expr2.equals(AccordoServizioParteComune.model().VERSIONE, idAccordo.getVersione());
-						else
-							expr2.isNull(AccordoServizioParteComune.model().VERSIONE);
-
-						if(idAccordo.getIdSoggetto() != null){
-							expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, idAccordo.getIdSoggetto().getTipo()).and();
-							expr2.equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, idAccordo.getIdSoggetto().getNome());
-						} else{
-							CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-							expr2.lessEquals(cf2, 0);
-						}
-
-
-						UnionExpression unionExpr2 = null;
-						if(portType != null && !portTypePresenti.contains(portType)){
-							portTypePresenti.add(portType);
-							checkPt = true;
-							expr2.equals(AccordoServizioParteComune.model().PORT_TYPE.NOME, portType);
-
-							if(nomeAzione != null)
-								expr2.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, nomeAzione);
-
-							expr2.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME);
-							unionExpr2 = new UnionExpression(expr2);
-							unionExpr2.addSelectField(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, "nome");
-						}else {
-							checkAcAz = true;
-							//							expr2.isNull(AccordoServizioParteComune.model().PORT_TYPE.NOME);
-							if(nomeAzione != null)
-								expr2.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, nomeAzione);
-							expr2.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME);
-							unionExpr2 = new UnionExpression(expr2);
-							unionExpr2.addSelectField(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, "nome");
-						}
-
-						lstUnionExpr.add(unionExpr2);
-					}catch(NotFoundException e){
-						//donothing
-					}
-				}
-
-				// se ho trovato un accordo che ha sia port_type_azioni che accordi azioni faccio la union
-				if(lstUnionExpr.size() > 1){
-					UnionExpression[] elencoUnion = lstUnionExpr.toArray(new UnionExpression[lstUnionExpr.size()]);
-					Union union = new Union();
-					union.setSortOrder(SortOrder.ASC);
-					return this.aspcDAO.union(union, elencoUnion);
-				} else if(lstUnionExpr.size() == 1){
-					NullConstantField cfNull = new NullConstantField("costanteNull");
-
-					IPaginatedExpression pagExpr2 = this.aspcDAO.toPaginatedExpression(lstUnionExpr.get(0).getExpression());
-					if(checkPt){
-						AliasField aliasField = new AliasField(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, "nome");
-						return this.aspcDAO.select(pagExpr2, true, aliasField,cfNull);
-					}
-					else if(checkAcAz){
-						AliasField aliasField = new AliasField(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, "nome");
-						return this.aspcDAO.select(pagExpr2, true, aliasField,cfNull);
-					}
-				} else {
-					// no azioni
-					return new ArrayList<Map<String,Object>>();
-				}
-
-			}else{
-
-				portTypeAzioniExpr = this.aspcDAO.newPaginatedExpression();
-				accordiAzioniExpr = this.aspcDAO.newPaginatedExpression();
-
-				if(tipoProtocollo!= null){
-					portTypeAzioniExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
-					accordiAzioniExpr.and(DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(this.aspcDAO, AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoProtocollo));
-				}
-				if(nomeAzione != null){
-					portTypeAzioniExpr.equals(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, nomeAzione);
-					accordiAzioniExpr.equals(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, nomeAzione);
-				}
-
-				portTypeAzioniExpr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME);
-				accordiAzioniExpr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME);
-
-				UnionExpression portTypeAzioniUnionExpr = new UnionExpression(portTypeAzioniExpr);
-				portTypeAzioniUnionExpr.addSelectField(AccordoServizioParteComune.model().PORT_TYPE.OPERATION.NOME, "nome");
-
-				UnionExpression accordiAzioniUnionExpr = new UnionExpression(accordiAzioniExpr);
-				accordiAzioniUnionExpr.addSelectField(AccordoServizioParteComune.model().ACCORDO_SERVIZIO_PARTE_COMUNE_AZIONE.NOME, "nome");
-
-				Union union = new Union();
-
-				union.setSortOrder(SortOrder.ASC);
-
-				return this.aspcDAO.union(union, portTypeAzioniUnionExpr, accordiAzioniUnionExpr);
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.debug(e.getMessage(), e);
-		} catch (MultipleResultException e) {
-			log.error(e.getMessage(), e);
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-		return new ArrayList<Map<String, Object>>();
-
-	}
-
-	@Override
-	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio, String nomeServizio,String nomeAzione) {
-		return this.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,nomeAzione).size();
-	}
-
 
 	@Override
 	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto) {
@@ -1469,7 +1155,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 
 	@Override
-	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore){
+	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore,Integer versioneServizio){
 		log.debug("Get AccordoServizioParteSpecifica from Tipo/Nome Servizio [Tipo: "+ tipoServizio + "], [nome: " + nomeServizio + "]");
 
 		IExpression expr = null; 
@@ -1479,7 +1165,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.TIPO, tipoErogatore).and();
 			expr.equals(AccordoServizioParteSpecifica.model().ID_EROGATORE.NOME, nomeErogatore);
 			expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
-			expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio);
+			expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+			expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio);
 
 			return this.aspsDAO.find(expr);
 
@@ -1849,6 +1536,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 
 	public AccordoServizioParteSpecifica convertPortTypeName (String portTypeName){
+		// TODO controllare la versione 
 		try{
 
 			int idx = portTypeName.indexOf("(");
@@ -1896,154 +1584,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 
 		return null;
-	}
-
-
-	@Override
-	public List<Object> getAzioni(String tipoProtocollo,String uriAccordoServizio, String portTypeName,String nomeAzione) {
-
-		log.debug("getAzioni: UriAccordo: [" + uriAccordoServizio + "], PortType: [" + portTypeName + "]");
-		IExpression expr;
-		try {
-			if(uriAccordoServizio != null && portTypeName != null && !uriAccordoServizio.isEmpty()){
-
-				AccordoServizioParteSpecifica asps = this.convertPortTypeName(portTypeName);
-
-				if(asps != null){
-					if(asps.getPortType()!= null){
-						expr = this.operationDAO.newExpression();
-
-						expr.equals(Operation.model().ID_PORT_TYPE.NOME,  asps.getPortType());
-
-						expr.sortOrder(SortOrder.ASC).addOrder(Operation.model().NOME);
-						IPaginatedExpression pagExpr = this.operationDAO
-								.toPaginatedExpression(expr);
-
-						return this.operationDAO.select(pagExpr, true, Operation.model().NOME);
-					}
-					else{
-						expr = this.accordiAzioniDAO.newExpression();
-
-						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
-
-						if(idAccordo.getNome() != null){
-							expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-						}
-
-						if( idAccordo.getVersione() != null){
-							expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-						} 
-						else {
-							expr.isNull(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE);
-						}
-
-						if(idAccordo.getSoggettoReferente() != null){
-							if(idAccordo.getSoggettoReferente().getTipo() != null)
-								expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-
-							if(idAccordo.getSoggettoReferente().getNome() != null)
-								expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome()).and();
-						}
-						else {
-							CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-							expr.lessEquals(cf2, 0);
-						}
-
-						expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteComuneAzione.model().NOME);
-
-						IPaginatedExpression pagExpr = this.accordiAzioniDAO
-								.toPaginatedExpression(expr);
-
-						return this.accordiAzioniDAO.select(pagExpr, true, AccordoServizioParteComuneAzione.model().NOME);
-					}
-				}
-			}
-
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (DriverRegistroServiziException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotFoundException e) {
-			log.error(e.getMessage(), e);
-		}  
-
-		return new ArrayList<Object>();
-	}
-
-
-	@Override
-	public int countAzioni(String tipoProtocollo,String uriAccordoServizio, String portTypeName,String nomeAzione) {
-
-		log.debug("getAzioni: UriAccordo: [" + uriAccordoServizio + "], PortType: [" + portTypeName + "]");
-		IExpression expr;
-		NonNegativeNumber nnn =null;
-		try {
-			if(uriAccordoServizio != null && portTypeName != null && !uriAccordoServizio.isEmpty()){
-
-				AccordoServizioParteSpecifica asps = this.convertPortTypeName(portTypeName);
-
-				if(asps != null){
-					if(asps.getPortType()!= null){
-						expr = this.operationDAO.newExpression();
-
-						expr.equals(Operation.model().ID_PORT_TYPE.NOME,  asps.getPortType());
-						nnn = this.operationDAO.count(expr);
-					}
-					else{
-						expr = this.accordiAzioniDAO.newExpression();
-
-						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAccordoServizio);
-
-						if(idAccordo.getNome() != null){
-							expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome());
-						}
-
-						if( idAccordo.getVersione() != null){
-							expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione());
-						} 
-						else {
-							expr.isNull(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE);
-						}
-
-						if(idAccordo.getSoggettoReferente() != null){
-							if(idAccordo.getSoggettoReferente().getTipo() != null)
-								expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).and();
-
-							if(idAccordo.getSoggettoReferente().getNome() != null)
-								expr.equals(AccordoServizioParteComuneAzione.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome()).and();
-						}
-						else {
-							CustomField cf2 = new CustomField("idReferente", Integer.class, "id_referente", "accordi");
-							expr.lessEquals(cf2, 0);
-						}
-
-						nnn = this.accordiAzioniDAO.count(expr);
-					}
-				}
-			}
-
-
-			if(nnn != null){
-				return (int) nnn.longValue();
-			}
-		} catch (ServiceException e) {
-			log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionNotImplementedException e) {
-			log.error(e.getMessage(), e);
-		} catch (ExpressionException e) {
-			log.error(e.getMessage(), e);
-		} catch (DriverRegistroServiziException e) {
-			log.error(e.getMessage(), e);
-		}   
-		return 0;
 	}
 
 	@Override
@@ -2301,43 +1841,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				}
 
 			} else {
-				//				expr = this.fruitoreSearchDAO.newExpression();
-				//				if(tipoProtocollo!= null){
-				//					expr.and(this.getExpressionTipiSoggettiCompatibiliConProtocollo( this.fruitoreSearchDAO, Fruitore.model().ID_FRUITORE.TIPO, tipoProtocollo));
-				//				}
-				//				expr.ilike(Fruitore.model().ID_FRUITORE.NOME, input.toLowerCase(), LikeMode.ANYWHERE);
-				//				expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-				//
-				//				IPaginatedExpression pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-				//
-				//				pagExpr.offset(0).limit(LIMIT_SEARCH);
-				//
-				//				List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-				//
-				//				if(lstFruitori != null){
-				//					List<Soggetto> lstSog = new ArrayList<Soggetto>();
-				//					Set<Soggetto> setSog = new HashSet<Soggetto>();
-				//					List<String> soggettiGiaInseriti = new ArrayList<String>();
-				//
-				//					for (Fruitore fruitore : lstFruitori) {
-				//						IdSoggetto idFruitore = fruitore.getIdFruitore();
-				//						Soggetto s = this.soggettoDAO.get(idFruitore);
-				//
-				//						if(s != null){
-				//							String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-				//							if(soggettiGiaInseriti.contains(key)==false){
-				//								setSog.add(s);
-				//								soggettiGiaInseriti.add(key);
-				//							}
-				//						}
-				//					}
-				//
-				//					if(setSog.size() > 0)
-				//						lstSog.addAll(setSog);
-				//
-				//					return lstSog;
-				//				}
-
 				expr = this.soggettoDAO.newExpression();
 
 				expr.ilike(Soggetto.model().NOME_SOGGETTO,	input.toLowerCase(), LikeMode.ANYWHERE);
@@ -2373,7 +1876,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatoreAutoComplete(String tipoProtocollo,String tipoServizio ,String nomeServizio,
-			String uriAccordoServizio, String tipoErogatore, String nomeErogatore,   String input) {
+			String uriAccordoServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String input) {
 
 		IExpression expr;
 		try {
@@ -2424,6 +1927,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 				if(StringUtils.isNotEmpty(tipoServizio ))
 					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+				if(versioneServizio != null)
+					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -2511,6 +2016,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 					if(StringUtils.isNotEmpty(tipoServizio ))
 						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+					if(versioneServizio != null)
+						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -2604,43 +2111,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					pagExpr.offset(0).limit(LIMIT_SEARCH);
 
 					return this.soggettoDAO.findAll(pagExpr);
-
-//					expr = this.fruitoreSearchDAO.newExpression();
-//					expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-//					expr.ilike(Fruitore.model().ID_FRUITORE.NOME, input.toLowerCase(), LikeMode.ANYWHERE);
-//
-//					if(tipoProtocollo!= null){
-//						expr.and(this.getExpressionTipiSoggettiCompatibiliConProtocollo(this.fruitoreSearchDAO, Fruitore.model().ID_FRUITORE.TIPO, tipoProtocollo));
-//					}
-//					IPaginatedExpression pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-//
-//					pagExpr.offset(0).limit(LIMIT_SEARCH);
-//
-//					List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-//
-//					if(lstFruitori != null){
-//						List<Soggetto> lstSog = new ArrayList<Soggetto>();
-//						Set<Soggetto> setSog = new HashSet<Soggetto>();
-//						List<String> soggettiGiaInseriti = new ArrayList<String>();
-//
-//						for (Fruitore fruitore : lstFruitori) {
-//							Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-//
-//							if(s != null){
-//								String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-//								if(soggettiGiaInseriti.contains(key)==false){
-//									setSog.add(s);
-//									soggettiGiaInseriti.add(key);
-//								}
-//							}
-//						}
-//
-//						if(setSog.size() > 0)
-//							lstSog.addAll(setSog);
-//
-//						return lstSog;
-//					}
-
 				}
 			}
 		} catch (ServiceException e) {
@@ -2665,7 +2135,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 
 	@Override
-	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String tipoServizio ,String nomeServizio,String uriAccordoServizio, String tipoErogatore, String nomeErogatore) {
+	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String tipoServizio ,String nomeServizio, String uriAccordoServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio) {
 
 		IExpression expr;
 		try {
@@ -2710,6 +2180,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 				if(StringUtils.isNotEmpty(tipoServizio ))
 					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+				if(versioneServizio != null)
+					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -2797,6 +2269,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 					if(StringUtils.isNotEmpty(tipoServizio ))
 						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+					if(versioneServizio != null)
+						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -2879,8 +2353,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					// ne accordo ne erogatore specificati, faccio la find all
 					expr = this.soggettoDAO.newExpression();
 
-//					expr.ilike(Soggetto.model().NOME_SOGGETTO,	input.toLowerCase(), LikeMode.ANYWHERE);
-
 					expr.sortOrder(SortOrder.ASC).addOrder(Soggetto.model().TIPO_SOGGETTO).addOrder(Soggetto.model().NOME_SOGGETTO);
 
 					IPaginatedExpression pagExpr = this.soggettoDAO
@@ -2888,43 +2360,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					pagExpr.offset(0).limit(LIMIT_SEARCH);
 
 					return this.soggettoDAO.findAll(pagExpr);
-
-//					expr = this.fruitoreSearchDAO.newExpression();
-//					expr.sortOrder(SortOrder.ASC).addOrder(Fruitore.model().ID_FRUITORE.TIPO).addOrder(Fruitore.model().ID_FRUITORE.NOME);
-//
-//
-//					if(tipoProtocollo!= null){
-//						expr.and(this.getExpressionTipiSoggettiCompatibiliConProtocollo(this.fruitoreSearchDAO, Fruitore.model().ID_FRUITORE.TIPO, tipoProtocollo));
-//					}
-//					IPaginatedExpression pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
-//
-//					pagExpr.offset(0).limit(LIMIT_SEARCH);
-//
-//					List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
-//
-//					if(lstFruitori != null){
-//						List<Soggetto> lstSog = new ArrayList<Soggetto>();
-//						Set<Soggetto> setSog = new HashSet<Soggetto>();
-//						List<String> soggettiGiaInseriti = new ArrayList<String>();
-//
-//						for (Fruitore fruitore : lstFruitori) {
-//							Soggetto s = this.soggettoDAO.get(fruitore.getIdFruitore());
-//
-//							if(s != null){
-//								String key = s.getTipoSoggetto() + "/" + s.getNomeSoggetto();
-//								if(soggettiGiaInseriti.contains(key)==false){
-//									setSog.add(s);
-//									soggettiGiaInseriti.add(key);
-//								}
-//							}
-//						}
-//
-//						if(setSog.size() > 0)
-//							lstSog.addAll(setSog);
-//
-//						return lstSog;
-//					}
-
 				}
 			}
 		} catch (ServiceException e) {
@@ -2949,7 +2384,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 	}
 
 	@Override
-	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String tipoFruitore, String nomeFruitore) {
+	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, 
+			String tipoErogatore, String nomeErogatore, Integer versioneServizio, String tipoFruitore, String nomeFruitore) {
 
 		IExpression expr;
 		try {
@@ -2995,6 +2431,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 				if(StringUtils.isNotEmpty(tipoServizio ))
 					expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+				if(versioneServizio != null)
+					expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 				expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -3071,6 +2509,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 						expr.equals(AccordoServizioParteSpecifica.model().NOME, nomeServizio).and();
 					if(StringUtils.isNotEmpty(tipoServizio ))
 						expr.equals(AccordoServizioParteSpecifica.model().TIPO, tipoServizio).and();
+					if(versioneServizio != null)
+						expr.equals(AccordoServizioParteSpecifica.model().VERSIONE, versioneServizio).and();
 
 					expr.sortOrder(SortOrder.ASC).addOrder(AccordoServizioParteSpecifica.model().TIPO).addOrder(AccordoServizioParteSpecifica.model().NOME);
 
@@ -3250,13 +2690,13 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public List<ServizioApplicativo> findElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Servizi Applicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
 
 		try {
-			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione,permessiUtenteOperatore);
+			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione,permessiUtenteOperatore);
 
 			if(listaPorte != null && listaPorte.size() > 0){
 				for (PortaDelegata porta : listaPorte) {
@@ -3288,10 +2728,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public int countElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 		log.debug("countElencoServiziApplicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		try {
-			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione,permessiUtenteOperatore);
+			List<PortaDelegata> listaPorte = this.findPorteDelegate(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
 
 			int somma = 0;
 			if(listaPorte != null && listaPorte.size() > 0){
@@ -3310,13 +2750,13 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public List<ServizioApplicativo> findElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,
-			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Servizi Applicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
 
 		try {
-			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione,permessiUtenteOperatore);
+			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio, nomeAzione,permessiUtenteOperatore);
 
 			if(listaPorte != null && listaPorte.size() > 0){
 				for (PortaApplicativa porta : listaPorte) {
@@ -3348,10 +2788,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public int countElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 		log.debug("countElencoServiziApplicativi [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		try {
-			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, nomeAzione,permessiUtenteOperatore);
+			List<PortaApplicativa> listaPorte = this.findPorteApplicative(tipoProtocollo, uriAccordoServizio, tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio, nomeAzione,permessiUtenteOperatore);
 
 			int somma = 0;
 			if(listaPorte != null && listaPorte.size() > 0){
@@ -3370,7 +2810,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public List<PortaApplicativa> findPorteApplicative(String tipoProtocollo,String uriAccordoServizio,
-			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Porta Applicativa [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<PortaApplicativa> listaPorte = new ArrayList<PortaApplicativa>();
@@ -3382,7 +2822,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				IExpression permessi = 	permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaApplicativaDAO, 
 						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
 						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO,
+						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO, PortaApplicativa.model().VERSIONE_SERVIZIO,
 						false);
 				paExpr.and(permessi);
 			}
@@ -3400,8 +2840,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 							IdSoggetto idErogatore = servizio.getIdErogatore();
 							String nome = servizio.getNome();
 							String tipo = servizio.getTipo();
+							Integer versione = servizio.getVersione();
 							servizioExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nome).and()
 							.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipo).and()
+							.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versione).and()
 							.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, idErogatore.getNome())
 							.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, idErogatore.getTipo());
 							if(StringUtils.isNotEmpty(nomeErogatore ))
@@ -3432,6 +2874,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
 			if(StringUtils.isNotEmpty(tipoServizio ))
 				paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
+			if(versioneServizio != null)
+				paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
 			if(StringUtils.isNotEmpty(nomeErogatore ))
 				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
 			if(StringUtils.isNotEmpty(tipoErogatore ))
@@ -3471,7 +2915,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public int countPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 		log.debug("countPorteApplicative [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		try {
 			IExpression paExpr = this.portaApplicativaDAO.newExpression();
@@ -3480,7 +2924,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaApplicativaDAO, 
 						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
 						PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO,
+						PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO, PortaApplicativa.model().VERSIONE_SERVIZIO,
 						false);
 				paExpr.and(permessi);
 			}
@@ -3499,8 +2943,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 							IdSoggetto idErogatore = servizio.getIdErogatore();
 							String nome = servizio.getNome();
 							String tipo = servizio.getTipo();
+							Integer versione = servizio.getVersione();
 							servizioExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nome).and()
 							.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipo).and()
+							.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versione).and()
 							.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, idErogatore.getNome())
 							.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO, idErogatore.getTipo());
 							if(StringUtils.isNotEmpty(nomeErogatore ))
@@ -3528,6 +2974,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				paExpr.equals(PortaApplicativa.model().NOME_SERVIZIO, nomeServizio).and();
 			if(StringUtils.isNotEmpty(tipoServizio ))
 				paExpr.equals(PortaApplicativa.model().TIPO_SERVIZIO, tipoServizio).and();
+			if(versioneServizio != null)
+				paExpr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO, versioneServizio).and();
 			if(StringUtils.isNotEmpty(nomeErogatore ))
 				paExpr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeErogatore).and();
 			if(StringUtils.isNotEmpty(tipoErogatore ))
@@ -3566,7 +3014,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,
-			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 
 		log.debug("Get Lista Porta Delegate [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		List<PortaDelegata> listaPorte = new ArrayList<PortaDelegata>();
@@ -3578,7 +3026,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaDelegataDAO, 
 						PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
 						PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
-						PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO,
+						PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
 						false);
 				pdExpr.and(permessi);
 			}
@@ -3596,8 +3044,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 							IdSoggetto idErogatore = servizio.getIdErogatore();
 							String nome = servizio.getNome();
 							String tipo = servizio.getTipo();
+							Integer versione = servizio.getVersione();
 							servizioExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nome).and()
 							.equals(PortaDelegata.model().TIPO_SERVIZIO, tipo).and()
+							.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versione).and()
 							.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, idErogatore.getNome())
 							.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, idErogatore.getTipo());
 							if(StringUtils.isNotEmpty(nomeErogatore ))
@@ -3629,6 +3079,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				pdExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nomeServizio).and();
 			if(StringUtils.isNotEmpty(tipoServizio ))
 				pdExpr.equals(PortaDelegata.model().TIPO_SERVIZIO, tipoServizio).and();
+			if(versioneServizio != null)
+				pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
 			if(StringUtils.isNotEmpty(nomeErogatore ))
 				pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
 			if(StringUtils.isNotEmpty(tipoErogatore ))
@@ -3668,7 +3120,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	@Override
 	public int countPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio,
-			String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
+			String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore) {
 		log.debug("countPorteDelegate [Soggetto Erogatore : " + nomeErogatore	+ "]");
 		try {
 			IExpression pdExpr = this.portaDelegataDAO.newExpression();
@@ -3677,7 +3129,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				IExpression permessi = permessiUtenteOperatore.toExpressionConfigurazioneServizi(this.portaDelegataDAO, 
 					PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
 					PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
-					PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO,
+					PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
 					false);
 				pdExpr.and(permessi);
 			}
@@ -3696,8 +3148,10 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 							IdSoggetto idErogatore = servizio.getIdErogatore();
 							String nome = servizio.getNome();
 							String tipo = servizio.getTipo();
+							Integer versione = servizio.getVersione();
 							servizioExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nome).and()
 							.equals(PortaDelegata.model().TIPO_SERVIZIO, tipo).and()
+							.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versione).and()
 							.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, idErogatore.getNome())
 							.equals(PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, idErogatore.getTipo());
 							if(StringUtils.isNotEmpty(nomeErogatore ))
@@ -3725,6 +3179,8 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				pdExpr.equals(PortaDelegata.model().NOME_SERVIZIO, nomeServizio).and();
 			if(StringUtils.isNotEmpty(tipoServizio ))
 				pdExpr.equals(PortaDelegata.model().TIPO_SERVIZIO, tipoServizio).and();
+			if(versioneServizio != null)
+				pdExpr.equals(PortaDelegata.model().VERSIONE_SERVIZIO, versioneServizio).and();
 			if(StringUtils.isNotEmpty(nomeErogatore ))
 				pdExpr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE, nomeErogatore).and();
 			if(StringUtils.isNotEmpty(tipoErogatore ))

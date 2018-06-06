@@ -9,6 +9,17 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 
 public class ParseUtility {
 
+	public static String parseNomeServizio(String servizio) {
+		if (servizio == null)
+			return null;
+
+		String[] res = StringUtils.split(servizio, ":");
+		if (res.length > 0) {
+			return res[0];
+		}
+		return null;
+	}
+	
 	public static Integer parseVersione(String servizio) {
 		if (servizio == null)
 			return null;
@@ -68,7 +79,9 @@ public class ParseUtility {
 
 			tipoServizio = ParseUtility.parseTipoSoggetto(tipoNomeServizio);
 			nomeServizio = ParseUtility.parseNomeSoggetto(tipoNomeServizio);
+			
 			versioneServizio = ParseUtility.parseVersione(nomeServizio);
+			nomeServizio = ParseUtility.parseNomeServizio(nomeServizio);
 
 		} else { // soggetto
 			tipoSoggetto= ParseUtility.parseTipoSoggetto(input);
@@ -115,8 +128,9 @@ public class ParseUtility {
 
 			tipoServizio = ParseUtility.parseTipoSoggetto(tipoNomeServizio);
 			nomeServizio = ParseUtility.parseNomeSoggetto(tipoNomeServizio);
-			versioneServizio = ParseUtility.parseVersione(nomeServizio);
 
+			versioneServizio = ParseUtility.parseVersione(nomeServizio);
+			nomeServizio = ParseUtility.parseNomeServizio(nomeServizio);
 		} else { 
 			// entrambe info servizio e soggetto obbligatorie nella forma servizio (soggetto)
 			throw new CoreException("Input format ["+input+"] errato; atteso input nella forma 'tipo/nomeServizio (tipo/nomeSoggetto)'");

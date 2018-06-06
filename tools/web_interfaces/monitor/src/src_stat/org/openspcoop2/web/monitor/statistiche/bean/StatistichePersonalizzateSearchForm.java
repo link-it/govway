@@ -17,24 +17,20 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.TipiDatabase;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.condition.StatisticsContext;
 import org.openspcoop2.monitor.sdk.constants.CRUDType;
@@ -43,14 +39,17 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Statistiche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticaPersonalizzataService;
 import org.openspcoop2.web.monitor.statistiche.mbean.StatsPersonalizzateBean;
+import org.slf4j.Logger;
 
 public class StatistichePersonalizzateSearchForm extends StatsSearchForm
 implements StatisticsContext{
@@ -158,9 +157,9 @@ implements StatisticsContext{
 			IDAccordo idAccordo =  null;
 			Statistiche r =  null;
 			if(this.getNomeServizio() != null){
-				String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-				nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(this.getNomeServizio());
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				String nomeServizio = idServizio.getNome();
+				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 				nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio; 
 
 				idAccordo = getIDAccordoFromAsps(aspsFromValues);
@@ -256,9 +255,9 @@ implements StatisticsContext{
 			IDAccordo idAccordo =  null;
 			Statistiche r = null;
 			if(this.getNomeServizio() != null){
-				String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-				nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(this.getNomeServizio());
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				String nomeServizio = idServizio.getNome();
+				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 				nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 				idAccordo = getIDAccordoFromAsps(aspsFromValues);
 
@@ -459,8 +458,7 @@ implements StatisticsContext{
 	
 	@Override
 	public Integer getVersioneServizio() {
-		// TODO capire come valorizzare
-		return null;
+		return this.estraiVersioneServizioDalServizio();
 	}
 
 	@Override
@@ -518,13 +516,13 @@ implements StatisticsContext{
 			for (StatisticType statisticType : listaStatisticTypes) {
 				switch (statisticType) {
 				case GIORNALIERA:
-					res.add(new SelectItem("giornaliera", "Giornaliero"));
+					res.add(new SelectItem("giornaliera", "Giornaliera"));
 					break;
 				case MENSILE:
 					res.add(new SelectItem("mensile", "Mensile"));
 					break;
 				case ORARIA: 
-					res.add(new SelectItem("oraria", "Orario"));
+					res.add(new SelectItem("oraria", "Oraria"));
 					break;
 				case  SETTIMANALE: 
 					res.add(new SelectItem("settimanale", "Settimanale"));
@@ -532,8 +530,8 @@ implements StatisticsContext{
 				}
 			}
 		} else {
-			res.add(new SelectItem("oraria", "Orario"));
-			res.add(new SelectItem("giornaliera", "Giornaliero"));
+			res.add(new SelectItem("oraria", "Oraria"));
+			res.add(new SelectItem("giornaliera", "Giornaliera"));
 			res.add(new SelectItem("settimanale", "Settimanale"));
 			res.add(new SelectItem("mensile", "Mensile"));
 		}
@@ -584,12 +582,9 @@ implements StatisticsContext{
 				String nomeServizio = (String) value;
 				this.setNomeServizio(nomeServizio);
 				if(this.getNomeServizio() != null){
-					// simulo servizio selected
-					//this.servizioSelected(null);
-
-					nomeServizio = this.getNomeServizio().split(" \\(")[0];
-					nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-					AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(this.getNomeServizio());
+					IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+					nomeServizio = idServizio.getNome();
+					AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 					String nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 
 					IDAccordo idAccordo = getIDAccordoFromAsps(aspsFromValues);
@@ -625,9 +620,9 @@ implements StatisticsContext{
 			boolean valid = true;
 			try{
 				if(this.getNomeServizio() != null){
-					String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-					nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-					AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(this.getNomeServizio());
+					IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+					String nomeServizio = idServizio.getNome();
+					AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 					nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 					idAccordo = getIDAccordoFromAsps(aspsFromValues);
 					s = leggiStatistiche(idAccordo,nomeServizioKey).get(nomeServizioKey);
@@ -715,31 +710,7 @@ implements StatisticsContext{
 	public StatsPersonalizzateBean getmBean() {
 		return this.mBean;
 	}
-
-	public AccordoServizioParteSpecifica getAspsFromNomeServizio(String nomeServizioOrig){
-		AccordoServizioParteSpecifica aspsFromValues =  null;
-		if(nomeServizioOrig == null)
-			return aspsFromValues;
-
-		String nomeServizio = nomeServizioOrig.split(" \\(")[0];
-		String tipoServizio = null;
-		// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-		tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-		nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-
-		String nomeErogatore = nomeServizioOrig.split(" \\(")[1]
-				.replace(")", "");
-		String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-		nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-		try{
-			aspsFromValues = DynamicPdDBeanUtils.getInstance(log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
-		}catch(Exception e){
-			StatistichePersonalizzateSearchForm.log.error(e.getMessage(), e);
-		}
-		return aspsFromValues;
-	}
-
+	
 	private IDAccordo getIDAccordoFromAsps(AccordoServizioParteSpecifica aspsFromValues)
 			throws DriverRegistroServiziException {
 		IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();

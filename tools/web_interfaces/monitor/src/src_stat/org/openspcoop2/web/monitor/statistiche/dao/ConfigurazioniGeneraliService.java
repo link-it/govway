@@ -260,7 +260,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String nomeSoggetto =  null;
 
 		String tipoProtocollo = this.search.getProtocollo();
-
+		
 
 		try {
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
@@ -310,9 +310,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 							boolean existsPermessoServizio = false;
 							if(!existsPermessoSoggetto){
 								if(user.getSizeServizio()>0){
-									for (IDServizio utenteSoggetto : user.getUtenteServizioList()) {
-										AccordoServizioParteSpecifica asps = this.dynamicService.getAspsFromValues(utenteSoggetto.getTipo(), utenteSoggetto.getNome(),
-												utenteSoggetto.getSoggettoErogatore().getTipo(), utenteSoggetto.getSoggettoErogatore().getNome());
+									for (IDServizio idServizio : user.getUtenteServizioList()) {
+										AccordoServizioParteSpecifica asps = this.dynamicService.getAspsFromValues(idServizio.getTipo(), idServizio.getNome(),
+												idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome(), idServizio.getVersione());
 
 										IdAccordoServizioParteComune idAccordoServizioParteComune = asps.getIdAccordoServizioParteComune();
 
@@ -357,6 +357,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String nomeServizio = null, tipoServizio = null;
 		String nomeErogatore= null;
 		String tipoErogatore = null;
+		Integer versioneServizio = null;
 		ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_AZIONI_LABEL); 
 		int count = 0; 
 		try { 
@@ -367,8 +368,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
-
-				count =   this.dynamicService.countAzioniFromAccordoServizio(tipoProtocollo, null, tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,null);
+				versioneServizio = idServizio.getVersione();
+				count =   this.dynamicService.countAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio);
 			}
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle azioni: " + e.getMessage(),e);
@@ -388,6 +389,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String tipoProtocollo = this.search.getProtocollo();
 		String nomeServizio = null, tipoServizio = null;
 		String nomeErogatore = null, tipoErogatore = null;
+		Integer versioneServizio = null;
 		ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_ASPS_LABEL); 
 		int count = 0;
 		try {
@@ -402,6 +404,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+				versioneServizio = idServizio.getVersione();
 			}else {
 				if(this.getSearch().getTipoNomeSoggettoLocale()!=null && 
 						!StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
@@ -413,7 +416,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count = this.dynamicService.countPorteApplicative(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,null, this.search.getPermessiUtenteOperatore());
+			count = this.dynamicService.countPorteApplicative(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,null, this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli accordi servizio parte specifica: " + e.getMessage(),e);
 		}
@@ -432,6 +435,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String tipoProtocollo =this.search.getProtocollo();
 		String nomeServizio = null, tipoServizio = null;
 		String nomeErogatore = null , tipoErogatore = null;
+		Integer versioneServizio = null;
 		ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_FRUIZIONI_SERVIZIO_LABEL); 
 		int count = 0;
 		try { 
@@ -443,7 +447,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				tipoServizio = idServizio.getTipo();
 				nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
-
+				versioneServizio = idServizio.getVersione();
 
 			}else {
 				if(this.getSearch().getTipoNomeSoggettoLocale()!=null && 
@@ -456,7 +460,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				}
 			}
 
-			count =   this.dynamicService.countPorteDelegate(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,null, this.search.getPermessiUtenteOperatore());
+			count =   this.dynamicService.countPorteDelegate(tipoProtocollo,null,tipoSoggetto,nomeSoggetto,tipoServizio,nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,null, this.search.getPermessiUtenteOperatore());
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero delle fruizioni servizio: " + e.getMessage(),e);
 		}
@@ -834,12 +838,13 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		expr.isNotNull(PortaDelegata.model().NOME_SOGGETTO_EROGATORE);
 		expr.isNotNull(PortaDelegata.model().TIPO_SERVIZIO);
 		expr.isNotNull(PortaDelegata.model().NOME_SERVIZIO);
+		expr.isNotNull(PortaDelegata.model().VERSIONE_SERVIZIO);
 
 		if(searchForm.getPermessiUtenteOperatore()!=null){
 			IExpression permessi = searchForm.getPermessiUtenteOperatore().toExpressionConfigurazioneServizi(dao, 
 					PortaDelegata.model().ID_SOGGETTO.TIPO, PortaDelegata.model().ID_SOGGETTO.NOME, 
 					PortaDelegata.model().TIPO_SOGGETTO_EROGATORE, PortaDelegata.model().NOME_SOGGETTO_EROGATORE, 
-					PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO,
+					PortaDelegata.model().TIPO_SERVIZIO, PortaDelegata.model().NOME_SERVIZIO, PortaDelegata.model().VERSIONE_SERVIZIO,
 					false);
 			expr.and(permessi);
 		}
@@ -873,6 +878,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			expr.equals(PortaDelegata.model().NOME_SOGGETTO_EROGATORE,idServizio.getSoggettoErogatore().getNome());
 			expr.equals(PortaDelegata.model().TIPO_SERVIZIO,idServizio.getTipo());
 			expr.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
+			expr.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
 		}
 
 		if(!count) {
@@ -883,6 +889,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			expr.addOrder(PortaDelegata.model().NOME_SOGGETTO_EROGATORE);
 			expr.addOrder(PortaDelegata.model().TIPO_SERVIZIO);
 			expr.addOrder(PortaDelegata.model().NOME_SERVIZIO);
+			expr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO);
 			expr.addOrder(PortaDelegata.model().NOME_AZIONE);
 		}
 		return expr;
@@ -897,12 +904,13 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 		expr.isNotNull(PortaApplicativa.model().TIPO_SERVIZIO);
 		expr.isNotNull(PortaApplicativa.model().NOME_SERVIZIO);
+		expr.isNotNull(PortaApplicativa.model().VERSIONE_SERVIZIO);
 
 		if(searchForm.getPermessiUtenteOperatore()!=null){
 			IExpression permessi = searchForm.getPermessiUtenteOperatore().toExpressionConfigurazioneServizi(dao, 
 					PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
 					PortaApplicativa.model().ID_SOGGETTO.TIPO, PortaApplicativa.model().ID_SOGGETTO.NOME, 
-					PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO,
+					PortaApplicativa.model().TIPO_SERVIZIO, PortaApplicativa.model().NOME_SERVIZIO,PortaApplicativa.model().VERSIONE_SERVIZIO,
 					false);
 			expr.and(permessi);
 		}
@@ -936,6 +944,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 			expr.equals(PortaApplicativa.model().TIPO_SERVIZIO,idServizio.getTipo());
 			expr.equals(PortaApplicativa.model().NOME_SERVIZIO,idServizio.getNome());
+			expr.equals(PortaApplicativa.model().VERSIONE_SERVIZIO,idServizio.getVersione());
 			if(setSoggettoProprietario==false){
 				expr.equals(PortaApplicativa.model().ID_SOGGETTO.TIPO,idServizio.getSoggettoErogatore().getTipo());
 				expr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
@@ -948,6 +957,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			expr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME);
 			expr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO);
 			expr.addOrder(PortaApplicativa.model().NOME_SERVIZIO);
+			expr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO);
 			expr.addOrder(PortaApplicativa.model().NOME_AZIONE);
 		}
 

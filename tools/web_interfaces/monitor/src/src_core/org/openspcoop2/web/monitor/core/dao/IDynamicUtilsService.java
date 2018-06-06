@@ -183,24 +183,23 @@ public interface IDynamicUtilsService {
 	 * 
 	 * Restituisce l'elenco delle azioni corrispondenti al servizio selezionato
 	 * 
-	 * @param idAccordo
 	 * @param nomeServizio
 	 * @return Azione dell'Accordo trovate
 	 */
-	public List<Map<String, Object>> getAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio ,String nomeServizio,String tipoErogatore ,	String nomeErogatore, String nomeAzione);
+	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio,String tipoErogatore , String nomeErogatore, Integer versioneServizio);
 	
-	public int countAzioniFromAccordoServizio(String tipoProtocollo,IDAccordo idAccordo,String tipoServizio ,String nomeServizio,String tipoErogatore ,	String nomeErogatore, String nomeAzione);
-	/****
-	 * 
-	 * Restituisce l'elenco delle azioni corrispondenti al servizio selezionato
-	 * 
-	 * @param tipoServizio
-	 * @param nomeServizio
-	 * @return Azione del Servizio trovate
-	 */
-	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione) ;
-	
-	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione) ;
+	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio,String tipoErogatore , String nomeErogatore, Integer versioneServizio);
+//	/****
+//	 * 
+//	 * Restituisce l'elenco delle azioni corrispondenti al servizio selezionato
+//	 * 
+//	 * @param tipoServizio
+//	 * @param nomeServizio
+//	 * @return Azione del Servizio trovate
+//	 */
+//	public List<Map<String, Object>> findAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione) ;
+//	
+//	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio, String nomeAzione) ;
 	/***
 	 * 
 	 * Restituisce il port type associato al servizio passato come parametro
@@ -240,9 +239,6 @@ public interface IDynamicUtilsService {
 	
 	public List<Soggetto> getSoggettiFruitoreAutoComplete(String tipoProtocollo,String uriAccordoServizio  , String input);
 	
-	public List<Object> getAzioni(String tipoProtocollo,String uriAccordoServizio ,String portTypeName, String nomeAzione);
-	public int countAzioni(String tipoProtocollo,String uriAccordoServizio ,String portTypeName, String nomeAzione);
-	
 	/***
 	 * Restituisce i fruitori relativi all'accordo passato come parametro, erogato dal soggetto passato come parametro.
 	 * 
@@ -251,26 +247,26 @@ public interface IDynamicUtilsService {
 	 * @param nomeErogatore
 	 * @return Soggetti fruitori trovati
 	 */
-	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore);
-	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String tipoFruitore, String nomeFruitore);
+	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio);
+	public int countSoggettiFruitoreFromAccordoServizioErogatoreAndFruitore(String tipoProtocollo,String uriAccordoServizio, String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String tipoFruitore, String nomeFruitore);
 	
 	public int countFruizioniSoggetto(String tipoProtocollo,String tipoSoggetto, String nomeSoggetto);
 	
 	
-	public List<ServizioApplicativo> findElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public int countElencoServiziApplicativiFruitore(String tipoProtocollo,String tipoSoggetto ,String uriAccordoServizio,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public List<ServizioApplicativo> findElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public int countElencoServiziApplicativiErogatore(String tipoProtocollo,String tipoSoggetto ,String uriAccordoServizio,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<ServizioApplicativo> findElencoServiziApplicativiFruitore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countElencoServiziApplicativiFruitore(String tipoProtocollo,String tipoSoggetto ,String uriAccordoServizio,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<ServizioApplicativo> findElencoServiziApplicativiErogatore(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countElencoServiziApplicativiErogatore(String tipoProtocollo,String tipoSoggetto ,String uriAccordoServizio,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
 	
-	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public int countPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<PortaDelegata> findPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countPorteDelegate(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
 	
-	public List<PortaApplicativa> findPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public int countPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
-	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatoreAutoComplete(String tipoProtocollo, String tipoServizio, String nomeServizio, String uriAccordoServizio, String tipoErogatore, String nomeErogatore, String input);
+	public List<PortaApplicativa> findPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public int countPorteApplicative(String tipoProtocollo,String uriAccordoServizio,String tipoSoggetto ,String nomeSoggetto,String tipoServizio ,String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String nomeAzione, PermessiUtenteOperatore permessiUtenteOperatore);
+	public List<Soggetto> getSoggettiFruitoreFromAccordoServizioAndErogatoreAutoComplete(String tipoProtocollo, String tipoServizio, String nomeServizio, String uriAccordoServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio, String input);
 	
 	
-	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore);
+	public AccordoServizioParteSpecifica getAspsFromValues(String tipoServizio, String nomeServizio, String tipoErogatore, String nomeErogatore, Integer versioneServizio);
 	public AccordoServizioParteSpecifica getAspsFromId(long idServizio);
 
 }

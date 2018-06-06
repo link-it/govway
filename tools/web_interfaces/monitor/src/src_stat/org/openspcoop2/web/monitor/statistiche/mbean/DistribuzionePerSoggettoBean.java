@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -46,13 +47,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		this.setChartId("distribuzioneSoggetto");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setStatisticheGiornaliereService(
 			IStatisticheGiornaliere statisticheGiornaliereService) {
 		this.service =  (IService<T, Integer>) statisticheGiornaliereService;
 	}
-	
+
 	public void initSearchListenerRemoto(ActionEvent ae){
 		this.search.initSearchListener(ae);
 		((StatsSearchForm)this.search).setDistribuzionePerSoggettoRemota(true);
@@ -61,7 +62,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		this.search.initSearchListener(ae);
 		((StatsSearchForm)this.search).setDistribuzionePerSoggettoRemota(false);
 	}
-	
+
 	public String getXml() {	
 		List<ResDistribuzione> list;
 		this.setVisualizzaComandiExport(false);
@@ -72,7 +73,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
+
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
 		switch (tipoReport) {
@@ -85,13 +86,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
 
 		return xml;
 	}
-	
+
 	public String getJson(){
 		JSONObject grafico = null;
 		List<ResDistribuzione> list;
@@ -103,9 +104,9 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
+
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
-		
+
 		switch (tipoReport) {
 		case BAR_CHART:
 			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel() , this.getSlice());
@@ -116,32 +117,43 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
-		
+
 		String json = grafico != null ?  grafico.toString() : "";
 		log.debug(json); 
 		return json ;
 	}
-	
+
 	@Override
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
 			return this.getJson();
-		
+
 		return this.getXml();
 	}
 
 	public String getCaption(){
-		String res = null;
+		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		
+		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+			res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		}
 		if(((StatsSearchForm)this.search).isDistribuzionePerSoggettoRemota()){
-			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL + CostantiGrafici.WHITE_SPACE;
+			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
 		}
 		else{
-			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL + CostantiGrafici.WHITE_SPACE;
+			res = CostantiGrafici.DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
 		}
-
 		return res;
 	}
 
@@ -149,12 +161,12 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 		StringBuffer caption = new StringBuffer(
 				captionText);
-//		if(StringUtils.isNotBlank(this.search.getNomeServizio())){
-//			caption.append("per il Servizio "+this.search.getNomeServizio());
-//		}
-//		if(StringUtils.isNotBlank(this.search.getNomeAzione())){
-//			caption.append(", azione "+this.search.getNomeAzione());
-//		}
+		//		if(StringUtils.isNotBlank(this.search.getNomeServizio())){
+		//			caption.append("per il Servizio "+this.search.getNomeServizio());
+		//		}
+		//		if(StringUtils.isNotBlank(this.search.getNomeAzione())){
+		//			caption.append(", azione "+this.search.getNomeAzione());
+		//		}
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
@@ -163,7 +175,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 				caption.append(MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, this.formatDate(this.search.getDataInizio(),false), this.formatDate(this.search.getDataFine(),false)));
 			}
 		}
-		
+
 		return caption.toString();
 	}
 
@@ -243,7 +255,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -253,15 +265,15 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SOGGETTO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -338,7 +350,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -348,15 +360,15 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SOGGETTO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -386,7 +398,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 		return null;
 	}
-	
+
 	@Override
 	public String esportaPdf() {
 		try{
@@ -425,7 +437,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 				throw e;
 			}
 		}
-		
+
 		try {	
 
 			HttpServletResponse response = null;
@@ -433,7 +445,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -443,15 +455,15 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SOGGETTO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -462,7 +474,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
-			
+
 			if(useFaceContext){
 				context.responseComplete();
 			}
@@ -481,7 +493,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 		return null;
 	}
-	
+
 	@Override
 	public String getExportFilename() {
 		if(((StatsSearchForm)this.search).isDistribuzionePerSoggettoRemota())

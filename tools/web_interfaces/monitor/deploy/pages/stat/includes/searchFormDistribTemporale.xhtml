@@ -33,17 +33,6 @@
 		<ui:param name="sf_showAzioni" value="#{true}" />
  	</ui:include>
 	<a4j:outputPanel layout="block" id="altriCriteri">
-		<link:prop label="Statistiche ">
- 			<rich:comboBox id="visualizzaStatisticheCombo" value="#{search._value_modalitaTemporale}" defaultLabel="Seleziona Tipo Visualizzazione"
-				converter="selectItemConverter"  width="412" enableManualInput="false">
-	 			<f:selectItem itemLabel="Orarie" itemValue="oraria"/>
-	 			<f:selectItem itemLabel="Giornaliere" itemValue="giornaliera"/>
-	 			<f:selectItem itemLabel="Settimanali" itemValue="settimanale"/>
-	 			<f:selectItem itemLabel="Mensili" itemValue="mensile"/>
-	 			<a4j:support event="onselect" actionListener="#{search.modalitaTemporaleListener}" reRender="periodoCtr"/>
-	 		</rich:comboBox>
- 		</link:prop>
-	
  		<link:prop label="Visualizza per ">
  			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{search._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
 					enableManualInput="false" width="412" converter="selectItemConverter">

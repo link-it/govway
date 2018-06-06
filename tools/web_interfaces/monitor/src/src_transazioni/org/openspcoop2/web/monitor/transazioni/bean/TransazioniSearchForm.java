@@ -16,19 +16,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.TipiDatabase;
-import org.richfaces.model.Ordering;
-
 import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.dynamic.DynamicFactory;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicValidator;
 import org.openspcoop2.monitor.sdk.condition.Context;
@@ -38,8 +33,9 @@ import org.openspcoop2.monitor.sdk.constants.SearchType;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.exceptions.ValidationException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
-import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
@@ -47,11 +43,14 @@ import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
+import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
+import org.richfaces.model.Ordering;
+import org.slf4j.Logger;
 
 public class TransazioniSearchForm extends BaseSearchForm implements
 Context, Cloneable {
@@ -209,22 +208,12 @@ Context, Cloneable {
 	private Hashtable<String, Ricerche> leggiRicerche() {
 
 		try {
-			if (this.tabellaRicerchePersonalizzate != null
-					&& this.tabellaRicerchePersonalizzate.size() > 0)
+			if (this.tabellaRicerchePersonalizzate != null && this.tabellaRicerchePersonalizzate.size() > 0)
 				return this.tabellaRicerchePersonalizzate;
-
-			String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-			String tipoServizio = null;
-			// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-			tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-			nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-
-			String nomeErogatore = this.getNomeServizio().split(" \\(")[1]
-					.replace(")", "");
-			String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-			nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-			AccordoServizioParteSpecifica aspsFromValues = DynamicPdDBeanUtils.getInstance( log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+			
+			IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+			String nomeServizio = idServizio.getNome();
+			AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 
 			IdAccordoServizioParteComune idAccordoServizioParteComune = aspsFromValues.getIdAccordoServizioParteComune();
 			Integer ver = idAccordoServizioParteComune.getVersione();
@@ -250,8 +239,7 @@ Context, Cloneable {
 
 			String nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 
-			List<ConfigurazioneRicerca> l = this.transazioniService.getRicercheByValues(
-					idAccordo, nomeServizioKey, this.getNomeAzione());
+			List<ConfigurazioneRicerca> l = this.transazioniService.getRicercheByValues(idAccordo, nomeServizioKey, this.getNomeAzione());
 
 			Ricerche ricerche = new Ricerche();
 			if (l != null && l.size() > 0) {
@@ -389,25 +377,10 @@ Context, Cloneable {
 				this.setRicerchePersonalizzate(null);
 
 				this.setFiltro(null);
-
-				// nome servizio nella forma "nomeServizio (nomeAccordo)"
-				// String uri =
-				// this.getNomeServizio().split(" \\(")[1].replace("\\)","");
-				// IDAccordo idAccordo = IDAccordo.getIDAccordoFromUri(uri);
-				// String nomeAccordo = idAccordo.getNome();
-
-				String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-				String tipoServizio = null;
-				// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-				tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-				nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-
-				String nomeErogatore = this.getNomeServizio().split(" \\(")[1]
-						.replace(")", "");
-				String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-				nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-				AccordoServizioParteSpecifica aspsFromValues = DynamicPdDBeanUtils.getInstance( log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+				
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				String nomeServizio = idServizio.getNome();
+				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
 
 				String nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 
@@ -452,18 +425,11 @@ Context, Cloneable {
 			// IDAccordo idAccordo = IDAccordo.getIDAccordoFromUri(uri);
 			// String nomeAccordo = idAccordo.getNome();
 			if(this.isRicerchePersonalizzateAttive()){
-				String nomeServizio = this.getNomeServizio().split(" \\(")[0];
-				String tipoServizio = null;
-				// showTipoSoggetto e' true allora la label e' di tipo TIPO/NOME
-				tipoServizio = Utility.parseTipoSoggetto(nomeServizio);
-				nomeServizio = Utility.parseNomeSoggetto(nomeServizio);
-
-				String nomeErogatore = this.getNomeServizio().split(" \\(")[1]
-						.replace(")", "");
-				String tipoErogatore  = Utility.parseTipoSoggetto(nomeErogatore);
-				nomeErogatore = Utility.parseNomeSoggetto(nomeErogatore); 
-
-				AccordoServizioParteSpecifica aspsFromValues = DynamicPdDBeanUtils.getInstance( log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore);
+				
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				String nomeServizio = idServizio.getNome();
+				AccordoServizioParteSpecifica aspsFromValues = this.getAspsFromNomeServizio(idServizio);
+				
 				String nomeServizioKey = aspsFromValues.getPortType() != null ? aspsFromValues.getPortType() : nomeServizio;
 
 				Ricerche r = leggiRicerche().get(nomeServizioKey);
@@ -752,8 +718,7 @@ Context, Cloneable {
 	
 	@Override
 	public Integer getVersioneServizio() {
-		// TODO capire come valorizzare
-		return null;
+		return this.estraiVersioneServizioDalServizio();
 	}
 
 	@Override

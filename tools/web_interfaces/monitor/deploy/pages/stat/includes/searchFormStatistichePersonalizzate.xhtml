@@ -16,6 +16,14 @@
 				<div class="subtitle">
 					<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
 				</div>
+				
+		 		<link:prop label="Unità di tempo">
+		 			<rich:comboBox id="unitaTempo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Unità di Tempo"
+							converter="selectItemConverter"  width="412" enableManualInput="false">
+			 			<f:selectItems value="#{sf_bean.intervalliTemporali}"/>
+			 			<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.modalitaTemporaleListener}" reRender="periodoCtr"/>
+					</rich:comboBox>
+		 		</link:prop>
 			
 				<link:prop label="Periodo" labelId="labelPeriodoCombo">
 					<rich:comboBox id="periodoCombo" value="#{sf_periodo}" defaultLabel="Seleziona Periodo"
@@ -85,7 +93,7 @@
 							
 				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 					<link:prop label="Protocollo">
-						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="allConverter" 
+						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
 							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
 							<f:selectItems value="#{sf_bean.protocolli}"/>
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl"/>
@@ -269,9 +277,9 @@
 				<c:if test="#{sf_showServizi}">
 					<link:prop label="Servizio" required="true">
 						<rich:comboBox value="#{sf_servizio}" listWidth="#{sf_mbean.serviziSelectItemsWidth}" id="servizioCombo2"
-							defaultLabel="Selezione Servizio" directInputSuggestions="true"
+							defaultLabel="Selezione Servizio" directInputSuggestions="true" converter="selectItemConverter"
 							width="412" require="true" label="Servizio" enableManualInput="false" >
-							<f:selectItem itemValue="--"/>
+							<f:selectItem itemValue="--" itemLabel="--" />
 							<f:selectItems value="#{sf_servizi}" />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
 						</rich:comboBox>
@@ -281,10 +289,10 @@
 		
 					<c:if test="#{sf_showAzioni}">
 						<link:prop label="Azione">
-							<rich:comboBox id="azCombo" value="#{sf_nomeAzione}"
+							<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter"
 								defaultLabel="Selezione Azione" directInputSuggestions="true"
 								width="412" enableManualInput="false" >
-								<f:selectItem itemValue="--"/>
+								<f:selectItem itemValue="--" itemLabel="--" />
 								<f:selectItems value="#{sf_azioni}"/>
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
 							</rich:comboBox>
@@ -359,14 +367,6 @@
 					</link:prop>
 				</a4j:outputPanel>
 							
-		 		<link:prop label="Unità di tempo">
-		 			<rich:comboBox id="unitaTempo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Unità di Tempo"
-							converter="selectItemConverter"  width="412" enableManualInput="false">
-			 			<f:selectItems value="#{sf_bean.intervalliTemporali}"/>
-			 			<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.modalitaTemporaleListener}" reRender="periodoCtr"/>
-					</rich:comboBox>
-		 		</link:prop>
-				
 				<link:prop label="Visualizza per ">
 		 			<rich:comboBox id="tipoVisualizzazioneCombo" value="#{sf_bean._value_tipoVisualizzazione}" defaultLabel="Seleziona Tipo di Visualizzazione"
 							enableManualInput="false" width="412" converter="selectItemConverter">

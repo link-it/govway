@@ -559,17 +559,19 @@ public class SummaryBean implements Serializable{
 		String nomeSoggettoLocale = null;
 		String tipoServizio = null;
 		String nomeServizio = null;
+		Integer versioneServizio = null;
 		if(this.soggettoLocale!=null && !StringUtils.isEmpty(this.soggettoLocale) && !"--".equals(this.soggettoLocale)){
 			IDServizio idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
 			tipoSoggettoLocale = idServizio.getSoggettoErogatore().getTipo();
 			nomeSoggettoLocale = idServizio.getSoggettoErogatore().getNome();
+			versioneServizio = idServizio.getVersione();
 			tipoServizio = idServizio.getTipo(); // possono essere null
 			nomeServizio = idServizio.getNome(); // possono essere null
 		}
 		
 		return PermessiUtenteOperatore.getPermessiUtenteOperatore(loggedUser, 
 				tipoSoggettoLocale,nomeSoggettoLocale, 
-				tipoServizio, nomeServizio);
+				tipoServizio, nomeServizio,versioneServizio);
 		
 	}
 

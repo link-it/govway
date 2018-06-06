@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -47,7 +48,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		this.setChartId("distribuzioneServizio");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setStatisticheGiornaliereService(
 			IStatisticheGiornaliere statisticheGiornaliereService) {
@@ -64,8 +65,8 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
-		
+
+
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
 		switch (tipoReport) {
@@ -78,13 +79,13 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
 
 		return xml;
 	}
-	
+
 	public String getJson(){
 		JSONObject grafico = null;
 		List<ResDistribuzione> list;
@@ -96,9 +97,9 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
+
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
-		
+
 		switch (tipoReport) {
 		case BAR_CHART:
 			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel() , this.getSlice());
@@ -109,26 +110,37 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
-		
+
 		String json = grafico != null ?  grafico.toString() : "";
 		log.debug(json); 
 		return json ;
 	}
-	
+
 	@Override
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
 			return this.getJson();
-		
+
 		return this.getXml();
 	}
 
 	public String getCaption() {
-		String res = CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_LABEL + CostantiGrafici.WHITE_SPACE;
-
+		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+			res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		}
+		res+= CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
 		return res;
 	}
 
@@ -136,12 +148,12 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 		StringBuffer caption = new StringBuffer(
 				captionText);
-//		if (StringUtils.isNotBlank(this.search.getNomeServizio())) {
-//			caption.append("per il Servizio " + this.search.getNomeServizio());
-//		}
-//		if (StringUtils.isNotBlank(this.search.getNomeAzione())) {
-//			caption.append(", azione " + this.search.getNomeAzione());
-//		}
+		//		if (StringUtils.isNotBlank(this.search.getNomeServizio())) {
+		//			caption.append("per il Servizio " + this.search.getNomeServizio());
+		//		}
+		//		if (StringUtils.isNotBlank(this.search.getNomeAzione())) {
+		//			caption.append(", azione " + this.search.getNomeAzione());
+		//		}
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
@@ -187,7 +199,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	public String getSommaColumnHeader(){
 		return StatsUtils.sommaColumnHeader((StatsSearchForm)this.search, "Transazioni");
 	}
-	
+
 	@Override
 	public String esportaCsv() {
 		try{
@@ -234,7 +246,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -244,15 +256,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -329,7 +341,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -339,15 +351,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -358,7 +370,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaXls(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
-			
+
 			if(useFaceContext){
 				context.responseComplete();
 			}
@@ -377,7 +389,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 		return null;
 	}
-	
+
 	@Override
 	public String esportaPdf() {
 		try{
@@ -416,7 +428,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 				throw e;
 			}
 		}
-		
+
 		try {	
 
 			HttpServletResponse response = null;
@@ -424,7 +436,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -434,15 +446,15 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -453,7 +465,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 			// scrittura del report sullo stream
 			ExportUtils.esportaPdf(response.getOutputStream(),report,titoloReport,headerLabel,tipoVisualizzazione,tipiBanda, tipiLatenza,((StatsSearchForm)this.search).getTipoStatistica());
-			
+
 			if(useFaceContext){
 				context.responseComplete();
 			}
@@ -472,7 +484,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 		return null;
 	}
-	
+
 	@Override
 	public String getExportFilename() {
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_FILE_NAME;

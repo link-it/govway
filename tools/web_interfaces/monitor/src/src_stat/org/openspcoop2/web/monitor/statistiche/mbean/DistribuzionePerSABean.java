@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -46,7 +47,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		this.setChartId("distribuzioneSA");
 		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void setStatisticheGiornaliereService(
 			IStatisticheGiornaliere statisticheGiornaliereService) {
@@ -76,13 +77,13 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
-		 
+
 		return xml;
 	}
-	
+
 	public String getJson(){
 		JSONObject grafico = null;
 		List<ResDistribuzione> list;
@@ -94,9 +95,9 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
+
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
-		
+
 		switch (tipoReport) {
 		case BAR_CHART:
 			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice());
@@ -107,26 +108,37 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		default:
 			break;
 		}
-		
+
 		if(list != null && list.size() > 0)
 			this.setVisualizzaComandiExport(true);
-		
+
 		String json = grafico != null ?  grafico.toString() : "";
 		log.debug(json); 
 		return json ;
 	}
-	
+
 	@Override
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
 			return this.getJson();
-		
+
 		return this.getXml();
 	}
 
 	public String getCaption() {
-		String res = CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL + CostantiGrafici.WHITE_SPACE;
-
+		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+			res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else {
+			res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		}
+		res+= CostantiGrafici.DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
 		return res;
 	}
 
@@ -134,10 +146,10 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 		StringBuffer caption = new StringBuffer(
 				captionText);
-//		if (StringUtils.isNotBlank(this.search.getServizioApplicativo())) {
-//			caption.append("per il Servizio Applicativo"
-//					+ this.search.getServizioApplicativo());
-//		}
+		//		if (StringUtils.isNotBlank(this.search.getServizioApplicativo())) {
+		//			caption.append("per il Servizio Applicativo"
+		//					+ this.search.getServizioApplicativo());
+		//		}
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
@@ -185,7 +197,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	public String getSommaColumnHeader(){
 		return StatsUtils.sommaColumnHeader((StatsSearchForm)this.search, CostantiGrafici.TRANSAZIONI_LABEL);
 	}
-	
+
 	@Override
 	public String esportaCsv() {
 		try{
@@ -232,7 +244,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -242,15 +254,15 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -327,7 +339,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -337,15 +349,15 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -375,7 +387,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 		return null;
 	}
-	
+
 	@Override
 	public String esportaPdf() {
 		try{
@@ -414,7 +426,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 				throw e;
 			}
 		}
-		
+
 		try {	
 
 			HttpServletResponse response = null;
@@ -422,7 +434,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			if(useFaceContext){
 				// We must get first our context
 				context = FacesContext.getCurrentInstance();
-	
+
 				// Then we have to get the Response where to write our file
 				response = (HttpServletResponse) context
 						.getExternalContext().getResponse();
@@ -432,15 +444,15 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 			}
 
 			response.reset();
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, filename);
-			
+
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
 			String headerLabel = CostantiGrafici.SERVIZIO_APPLICATIVO_LABEL;
-			
+
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
 			tipiBanda.add(((StatsSearchForm)this.search).getTipoBanda());
@@ -470,7 +482,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 		return null;
 	}
-	
+
 	@Override
 	public String getExportFilename() {
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_APPLICATIVO_FILE_NAME;

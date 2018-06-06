@@ -110,6 +110,13 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
 	public static final String ANDAMENTO_TEMPORALE_LABEL = "Distribuzione Temporale";
+	
+	public static final String DISTRIBUZIONE_PREFIX = "Distribuzione";
+	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX = "per Azione";
+	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "per Servizio Applicativo";
+	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX = "per Servizio";
+	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX = "per Soggetto Locale";
+	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX = "per Soggetto Remoto";
 
 	
 	public static final String ORARIA_LABEL = "Oraria";

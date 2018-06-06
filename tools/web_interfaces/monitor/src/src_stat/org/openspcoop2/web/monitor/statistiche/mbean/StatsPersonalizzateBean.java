@@ -72,6 +72,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		}
 	}
 
+	@Override
 	public StatisticType getTempo() {
 		return ((StatistichePersonalizzateSearchForm) this.search).getModalitaTemporale() == null ? StatisticType.GIORNALIERA
 				: ((StatistichePersonalizzateSearchForm) this.search).getModalitaTemporale();
@@ -221,6 +222,18 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		if (this.search != null && this.search.getStatisticaSelezionata() != null) {
 			res = this.search.getStatisticaSelezionata().getLabel();
 		}
+//		res += CostantiGrafici.WHITE_SPACE;
+//		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+//				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+//		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+//				res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+//		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+//			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+//		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+//			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+//		} else {
+//				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+//		}
 
 		return StringEscapeUtils.escapeXml(res);
 	}

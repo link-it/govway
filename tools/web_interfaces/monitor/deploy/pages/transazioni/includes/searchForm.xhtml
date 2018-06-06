@@ -232,10 +232,10 @@
 				
 				<a4j:outputPanel layout="block" id="servizioComboCtr">
 					<link:prop label="Servizio" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
-						<rich:comboBox id="servizioCombo" value="#{sf_servizio}"
+						<rich:comboBox id="servizioCombo" value="#{sf_servizio}" converter="selectItemConverter"
 							defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
 							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-							<f:selectItem itemValue="--"/>
+							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_servizi}"  />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,ctr-ricerca-personal,azComboCtr" limitToList="true"/>
 						</rich:comboBox>
@@ -245,10 +245,10 @@
 				
 				<a4j:outputPanel layout="block" id="azComboCtr">
 					<link:prop label="Azione" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio}">
-						<rich:comboBox id="azCombo" value="#{sf_nomeAzione}"
+						<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter"
 							defaultLabel="Selezione Azione" directInputSuggestions="true"
 							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-							<f:selectItem itemValue="--"/>
+							<f:selectItem itemValue="--"  itemLabel="--" />
 							<f:selectItems value="#{sf_azioni}"/>
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl, ctr-ricerca-personal" limitToList="true"/>
 						</rich:comboBox>

@@ -154,8 +154,8 @@
 								<link:prop label="Servizio">
 									<rich:comboBox value="#{configurazioniGeneraliSearchForm.nomeServizio}" id="servizioCombo2" enableManualInput="false"
 										defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{configurazioniGeneraliBean.serviziSelectItemsWidth}"
-										width="412">
-										<f:selectItem itemValue="--"/>
+										converter="selectItemConverter" width="412">
+										<f:selectItem itemValue="--" itemLabel="--"/>
 										<f:selectItems value="#{configurazioniGeneraliBean.servizi}" />
 										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.servizioSelected}" reRender="searchPnl"/>
 									</rich:comboBox>

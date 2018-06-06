@@ -11,7 +11,9 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
@@ -30,7 +32,6 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMessaggio;
-import org.openspcoop2.web.monitor.core.converter.AllConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -263,7 +264,22 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 			this.sortOrder = SortOrder.DESC;
 			this.sortField = null;
-			this.protocollo = null;
+			
+			IProtocolFactory<?> protocolFactory = null;
+			String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+			
+			if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
+				try {
+					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+				}catch(Exception e) {
+					User user = this.getUser();
+					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(user.getProtocolliSupportati().get(0));
+				}
+			} else {
+				protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
+			}
+			
+			this.protocollo = protocolFactory.getProtocol();
 
 			this.modalitaRicercaStorico = default_modalitaRicercaStorico;
 
@@ -398,86 +414,124 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public String estraiNomeServizioDalServizio() {
 		if(this.nomeServizio!=null){
-			if(this.nomeServizio.contains(" ")){
-				String [] tmp = this.nomeServizio.split(" ");
-				if(tmp!=null && tmp.length>0){
-					String tipoNomeServizio = tmp[0].trim();
-					if(tipoNomeServizio.contains("/")){
-						tmp = tipoNomeServizio.split("/");
-						if(tmp!=null && tmp.length>1){
-							return tmp[1].trim();
-						}
-					}
-				}
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.nomeServizio);
+				return  idServizio.getNome();
+			}catch(Exception e) {
+				return null;
 			}
+//			if(this.nomeServizio.contains(" ")){
+//				String [] tmp = this.nomeServizio.split(" ");
+//				if(tmp!=null && tmp.length>0){
+//					String tipoNomeServizio = tmp[0].trim();
+//					if(tipoNomeServizio.contains("/")){
+//						tmp = tipoNomeServizio.split("/");
+//						if(tmp!=null && tmp.length>1){
+//							return tmp[1].trim();
+//						}
+//					}
+//				}
+//			}
 		}
 		return null;
 	}
 	public String estraiTipoServizioDalServizio() {
 		if(this.nomeServizio!=null){
-			if(this.nomeServizio.contains(" ")){
-				String [] tmp = this.nomeServizio.split(" ");
-				if(tmp!=null && tmp.length>0){
-					String tipoNomeServizio = tmp[0].trim();
-					if(tipoNomeServizio.contains("/")){
-						tmp = tipoNomeServizio.split("/");
-						if(tmp!=null && tmp.length>1){
-							return tmp[0].trim();
-						}
-					}
-				}
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.nomeServizio);
+				return  idServizio.getTipo();
+			}catch(Exception e) {
+				return null;
 			}
+//			if(this.nomeServizio.contains(" ")){
+//				String [] tmp = this.nomeServizio.split(" ");
+//				if(tmp!=null && tmp.length>0){
+//					String tipoNomeServizio = tmp[0].trim();
+//					if(tipoNomeServizio.contains("/")){
+//						tmp = tipoNomeServizio.split("/");
+//						if(tmp!=null && tmp.length>1){
+//							return tmp[0].trim();
+//						}
+//					}
+//				}
+//			}
 		}
 		return null;
 	}
 
 	public String estraiNomeSoggettoDalServizio() {
 		if(this.nomeServizio!=null){
-			if(this.nomeServizio.contains(" ")){
-				String [] tmp = this.nomeServizio.split(" ");
-				if(tmp!=null && tmp.length>0){
-					String tipoNomeSoggetto = tmp[1].trim();
-					if(tipoNomeSoggetto.startsWith("(")){
-						tipoNomeSoggetto = tipoNomeSoggetto.substring(1);
-					}
-					if(tipoNomeSoggetto.endsWith(")")){
-						tipoNomeSoggetto = tipoNomeSoggetto.substring(0,(tipoNomeSoggetto.length()-1));
-					}
-					if(tipoNomeSoggetto.contains("/")){
-						tmp = tipoNomeSoggetto.split("/");
-						if(tmp!=null && tmp.length>1){
-							return tmp[1].trim();
-						}
-					}
-				}
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.nomeServizio);
+				return  idServizio.getSoggettoErogatore()  != null ? idServizio.getSoggettoErogatore().getNome() : null;
+			}catch(Exception e) {
+				return null;
 			}
+//			if(this.nomeServizio.contains(" ")){
+//				String [] tmp = this.nomeServizio.split(" ");
+//				if(tmp!=null && tmp.length>0){
+//					String tipoNomeSoggetto = tmp[1].trim();
+//					if(tipoNomeSoggetto.startsWith("(")){
+//						tipoNomeSoggetto = tipoNomeSoggetto.substring(1);
+//					}
+//					if(tipoNomeSoggetto.endsWith(")")){
+//						tipoNomeSoggetto = tipoNomeSoggetto.substring(0,(tipoNomeSoggetto.length()-1));
+//					}
+//					if(tipoNomeSoggetto.contains("/")){
+//						tmp = tipoNomeSoggetto.split("/");
+//						if(tmp!=null && tmp.length>1){
+//							return tmp[1].trim();
+//						}
+//					}
+//				}
+//			}
 		}
 		return null;
 	}
 
 	public String estraiTipoSoggettoDalServizio() {
 		if(this.nomeServizio!=null){
-			if(this.nomeServizio.contains(" ")){
-				String [] tmp = this.nomeServizio.split(" ");
-				if(tmp!=null && tmp.length>0){
-					String tipoNomeSoggetto = tmp[1].trim();
-					if(tipoNomeSoggetto.startsWith("(")){
-						tipoNomeSoggetto = tipoNomeSoggetto.substring(1);
-					}
-					if(tipoNomeSoggetto.endsWith(")")){
-						tipoNomeSoggetto = tipoNomeSoggetto.substring(0,(tipoNomeSoggetto.length()-1));
-					}
-					if(tipoNomeSoggetto.contains("/")){
-						tmp = tipoNomeSoggetto.split("/");
-						if(tmp!=null && tmp.length>1){
-							return tmp[0].trim();
-						}
-					}
-				}
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.nomeServizio);
+				return  idServizio.getSoggettoErogatore()  != null ? idServizio.getSoggettoErogatore().getTipo() : null;
+			}catch(Exception e) {
+				return null;
+			}
+//			
+//			if(this.nomeServizio.contains(" ")){
+//				String [] tmp = this.nomeServizio.split(" ");
+//				if(tmp!=null && tmp.length>0){
+//					String tipoNomeSoggetto = tmp[1].trim();
+//					if(tipoNomeSoggetto.startsWith("(")){
+//						tipoNomeSoggetto = tipoNomeSoggetto.substring(1);
+//					}
+//					if(tipoNomeSoggetto.endsWith(")")){
+//						tipoNomeSoggetto = tipoNomeSoggetto.substring(0,(tipoNomeSoggetto.length()-1));
+//					}
+//					if(tipoNomeSoggetto.contains("/")){
+//						tmp = tipoNomeSoggetto.split("/");
+//						if(tmp!=null && tmp.length>1){
+//							return tmp[0].trim();
+//						}
+//					}
+//				}
+//			}
+		}
+		return null;
+	}
+	
+	public Integer estraiVersioneServizioDalServizio() {
+		if(this.nomeServizio!=null){
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.nomeServizio);
+				return  idServizio.getVersione();
+			}catch(Exception e) {
+				return null;
 			}
 		}
 		return null;
 	}
+
 
 
 	public String getNomeServizio() {
@@ -1149,11 +1203,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public List<SelectItem> getProtocolli() throws Exception {
 		//		if(this.protocolli == null)
 		this.protocolli = new ArrayList<SelectItem>();
-
-		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
-
-
-
+//		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
 		try {
 			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
@@ -1326,4 +1376,35 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.aggiornaNuovaDataRicerca();
 	}
 
+	public AccordoServizioParteSpecifica getAspsFromNomeServizio(String nomeServizioOrig){
+		if(nomeServizioOrig == null)
+			return null;
+		
+		try{
+			IDServizio idServizio = Utility.parseServizioSoggetto(nomeServizioOrig);
+			return getAspsFromNomeServizio(idServizio);
+		}catch(Exception e){
+			BaseSearchForm.log.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	public AccordoServizioParteSpecifica getAspsFromNomeServizio(IDServizio idServizio){
+		AccordoServizioParteSpecifica aspsFromValues =  null;
+		if(idServizio == null)
+			return aspsFromValues;
+		
+		try{
+			String nomeServizio = idServizio.getNome();
+			String tipoServizio = idServizio.getTipo();
+			String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+			String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+			Integer versioneServizio = idServizio.getVersione();
+	
+			aspsFromValues = DynamicPdDBeanUtils.getInstance(log).getAspsFromValues(tipoServizio, nomeServizio, tipoErogatore, nomeErogatore,versioneServizio);
+		}catch(Exception e){
+			BaseSearchForm.log.error(e.getMessage(), e);
+		}
+		return aspsFromValues;
+	}
 }

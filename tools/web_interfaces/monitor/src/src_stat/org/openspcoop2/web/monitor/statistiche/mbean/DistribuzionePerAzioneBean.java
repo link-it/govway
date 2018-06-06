@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -128,8 +129,19 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	}
 
 	public String getCaption() {
-		String res = CostantiGrafici.DISTRIBUZIONE_PER_AZIONE_LABEL + CostantiGrafici.WHITE_SPACE;
-
+		String res = CostantiGrafici.DISTRIBUZIONE_PREFIX + CostantiGrafici.WHITE_SPACE;
+		if (StatisticType.GIORNALIERA.equals(this.getTempo())) {
+				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.ORARIA.equals(this.getTempo())) {
+				res += CostantiGrafici.ORARIA_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.MENSILE.equals(this.getTempo())) {
+			res += CostantiGrafici.MENSILE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else if (StatisticType.SETTIMANALE.equals(this.getTempo())) {
+			res += CostantiGrafici.SETTIMANALE_LABEL + CostantiGrafici.WHITE_SPACE;
+		} else {
+				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
+		}
+		res+= CostantiGrafici.DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX + CostantiGrafici.WHITE_SPACE;
 		return res;
 	}
 

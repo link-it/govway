@@ -654,7 +654,7 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprOk.and(permessi);
 			}
 			
@@ -665,7 +665,7 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprFaultApplicativo.and(permessi);
 			}
 
@@ -676,7 +676,7 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprKo.and(permessi);
 			}
 
@@ -777,7 +777,7 @@ public class TransazioniService implements ITransazioniService {
 					}
 				}
 				List<Map<String, Object>> list = this.transazioniSearchDAO.select(expr, Transazione.model().TIPO_SOGGETTO_EROGATORE,Transazione.model().NOME_SOGGETTO_EROGATORE,
-					Transazione.model().TIPO_SERVIZIO,Transazione.model().NOME_SERVIZIO,Transazione.model().AZIONE,Transazione.model().STATO);
+					Transazione.model().TIPO_SERVIZIO,Transazione.model().NOME_SERVIZIO,Transazione.model().VERSIONE_SERVIZIO,Transazione.model().AZIONE,Transazione.model().STATO);
 				if(list!=null && list.size()>0){
 					Map<String, Object> map = list.get(0);
 					String tipoSoggettoErogatore = this.readObjectInMap(Transazione.model().TIPO_SOGGETTO_EROGATORE, map);
@@ -786,12 +786,14 @@ public class TransazioniService implements ITransazioniService {
 					String nomeServizio = this.readObjectInMap(Transazione.model().NOME_SERVIZIO, map);
 					String azione = this.readObjectInMap(Transazione.model().AZIONE, map);
 					statoTransazione = this.readObjectInMap(Transazione.model().STATO, map);
+					String v = this.readObjectInMap(Transazione.model().VERSIONE_SERVIZIO, map);
 					if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null){
 						idServizio = new IDServizio();
 						idServizio.setTipo(tipoServizio);
 						idServizio.setNome(nomeServizio);
 						idServizio.setSoggettoErogatore(new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore));
 						idServizio.setAzione(azione);
+						idServizio.setVersione(Integer.parseInt(v)); 
 					}
 				}
 			} catch (NotFoundException e) {
@@ -848,14 +850,8 @@ public class TransazioniService implements ITransazioniService {
 			
 			// ignore
 		} catch (Exception e) {
-			this.log.error(
-					"Impossibile recuperare DumpMessaggio con idTransazione: "
-							+ idTransazione + " e tipo: "
-							+ tipoMessaggio.toString(), e);
-			throw new Exception(
-					"Impossibile recuperare DumpMessaggio con idTransazione: "
-							+ idTransazione + " e tipo: "
-							+ tipoMessaggio.toString(), e);
+			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + " e tipo: "	+ tipoMessaggio.toString(), e);
+			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + " e tipo: " + tipoMessaggio.toString(), e);
 		}
 		return null;
 	}
@@ -866,8 +862,7 @@ public class TransazioniService implements ITransazioniService {
 
 		try {
 
-			this.log.debug("Get allegati Messaggio [idDump: "
-					+ idDump + "]");
+			this.log.debug("Get allegati Messaggio [idDump: " + idDump + "]");
 			
 			if(idDump==virtualIdRequest || idDump==virtualIdResponse){
 				throw new NotFoundException("Id Dump negative, possibile virtual message");
@@ -877,8 +872,7 @@ public class TransazioniService implements ITransazioniService {
 			// this.em.createQuery("select d from DumpAllegato d where d.dumpMessaggio.id=:id_dump")
 			// .setParameter("id_dump", idDump)
 			// .getResultList();
-			DumpMessaggio mes = ((IDBDumpMessaggioServiceSearch) this.dumpMessaggioSearchDAO)
-					.get(idDump);
+			DumpMessaggio mes = ((IDBDumpMessaggioServiceSearch) this.dumpMessaggioSearchDAO).get(idDump);
 
 			this.updateMessageWithSdk(mes);
 			
@@ -1411,7 +1405,7 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprOk.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprOk, Transazione.model().ESITO_CONTESTO, esitoContesto);
@@ -1423,7 +1417,7 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprFault.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprFault, Transazione.model().ESITO_CONTESTO, esitoContesto);
@@ -1435,10 +1429,17 @@ public class TransazioniService implements ITransazioniService {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				exprKo.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprKo, Transazione.model().ESITO_CONTESTO, esitoContesto);
+			
+			String modalita = Utility.getLoggedUtenteModalita();
+			if(StringUtils.isNotEmpty(modalita) && !modalita.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+				exprOk.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+				exprFault.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+				exprKo.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+			}
 			
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
@@ -2055,7 +2056,7 @@ public class TransazioniService implements ITransazioniService {
 			if(this.searchForm.getPermessiUtenteOperatore()!=null){
 				IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				filter.and(permessi);
 				addAnd = true;
 			}
@@ -2094,7 +2095,7 @@ public class TransazioniService implements ITransazioniService {
 			if(this.searchForm.getPermessiUtenteOperatore()!=null){
 				IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				filter.and(permessi);
 				addAnd = true;
 			}
@@ -2131,7 +2132,7 @@ public class TransazioniService implements ITransazioniService {
 			if(this.searchForm.getPermessiUtenteOperatore()!=null){
 				IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
 						Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
-						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO);
+						Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
 				filter.and(permessi);
 			}
 			
@@ -2169,7 +2170,8 @@ public class TransazioniService implements ITransazioniService {
 					equals(Transazione.model().TIPO_SOGGETTO_EROGATORE,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(Transazione.model().NOME_SOGGETTO_EROGATORE,	idServizio.getSoggettoErogatore().getNome()).
 					equals(Transazione.model().TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(Transazione.model().NOME_SERVIZIO,	idServizio.getNome());
+					equals(Transazione.model().NOME_SERVIZIO,	idServizio.getNome()).
+					equals(Transazione.model().VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 				// criteri ricerca personalizzati in caso di servizio impostato
 				// if(filtro!=null){

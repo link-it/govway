@@ -16,6 +16,17 @@
 				<div class="subtitle">
 					<h:outputText id="idTemporale" value="Filtro Temporale" styleClass="subtitle"/>
 				</div>
+				
+				<link:prop label="Unità di tempo">
+		 			<rich:comboBox id="visualizzaStatisticheCombo" value="#{sf_bean._value_modalitaTemporale}" defaultLabel="Seleziona Tipo Visualizzazione"
+						converter="selectItemConverter"  width="412" enableManualInput="false">
+			 			<f:selectItem itemLabel="Oraria" itemValue="oraria"/>
+			 			<f:selectItem itemLabel="Giornaliera" itemValue="giornaliera"/>
+			 			<f:selectItem itemLabel="Settimanale" itemValue="settimanale"/>
+			 			<f:selectItem itemLabel="Mensile" itemValue="mensile"/>
+			 			<a4j:support event="onselect" actionListener="#{sf_bean.modalitaTemporaleListener}" reRender="periodoCtr"/>
+			 		</rich:comboBox>
+		 		</link:prop>
 			
 				<link:prop label="Periodo" labelId="labelPeriodoCombo">
 					<rich:comboBox id="periodoCombo" value="#{sf_periodo}" defaultLabel="Seleziona Periodo"
@@ -85,7 +96,7 @@
 			
 				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 					<link:prop label="Protocollo">
-						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="allConverter" 
+						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
 							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
 							<f:selectItems value="#{sf_bean.protocolli}"/>
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -275,10 +286,10 @@
 				
 				<c:if test="#{sf_showServizi}">
 					<link:prop label="Servizio">
-						<rich:comboBox value="#{sf_servizio}" id="servizioCombo2" enableManualInput="false"
+						<rich:comboBox value="#{sf_servizio}" id="servizioCombo2" enableManualInput="false" converter="selectItemConverter"
 							defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
 							width="412">
-							<f:selectItem itemValue="--"/>
+							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_servizi}" />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl"/>
 						</rich:comboBox>
@@ -289,9 +300,9 @@
 					<c:if test="#{sf_showAzioni}">
 						<link:prop label="Azione">
 							<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" enableManualInput="false"
-								defaultLabel="Selezione Azione" directInputSuggestions="true"
+								defaultLabel="Selezione Azione" directInputSuggestions="true" converter="selectItemConverter"
 								width="412">
-								<f:selectItem itemValue="--"/>
+								<f:selectItem itemValue="--" itemLabel="--" />
 								<f:selectItems value="#{sf_azioni}"/>
 								<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
 							</rich:comboBox>

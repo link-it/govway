@@ -9,9 +9,23 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatisticaMensile;
+import org.openspcoop2.core.statistiche.StatisticaOraria;
+import org.openspcoop2.core.statistiche.StatisticaSettimanale;
+import org.openspcoop2.core.statistiche.constants.TipoBanda;
+import org.openspcoop2.core.statistiche.constants.TipoLatenza;
+import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.core.statistiche.dao.IStatisticaGiornalieraServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaMensileServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaOrariaServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
+import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
+import org.openspcoop2.core.statistiche.model.StatisticaModel;
 import org.openspcoop2.generic_project.beans.ConstantField;
 import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
@@ -31,32 +45,14 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.Index;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
-import org.openspcoop2.core.statistiche.StatisticaMensile;
-import org.openspcoop2.core.statistiche.StatisticaOraria;
-import org.openspcoop2.core.statistiche.StatisticaSettimanale;
-import org.openspcoop2.core.statistiche.constants.TipoBanda;
-import org.openspcoop2.core.statistiche.constants.TipoLatenza;
-import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
-import org.openspcoop2.core.statistiche.dao.IStatisticaGiornalieraServiceSearch;
-import org.openspcoop2.core.statistiche.dao.IStatisticaMensileServiceSearch;
-import org.openspcoop2.core.statistiche.dao.IStatisticaOrariaServiceSearch;
-import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
-import org.openspcoop2.core.statistiche.model.StatisticaContenutiModel;
-import org.openspcoop2.core.statistiche.model.StatisticaGiornalieraModel;
-import org.openspcoop2.core.statistiche.model.StatisticaModel;
-import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.condition.FilterImpl;
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.monitor.engine.statistic.StatisticByResource;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
-import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -68,9 +64,11 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatistichePersonalizzateSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.utils.StatsUtils;
+import org.slf4j.Logger;
 
 public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
@@ -999,7 +997,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.andamentoTemporaleSearch.getPermessiUtenteOperatore()!=null){
 				IExpression permessi = this.andamentoTemporaleSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 						model.TIPO_DESTINATARIO,model.DESTINATARIO,
-						model.TIPO_SERVIZIO,model.SERVIZIO);
+						model.TIPO_SERVIZIO,model.SERVIZIO,model.VERSIONE_SERVIZIO);
 				expr.and(permessi);
 			}
 			
@@ -1323,7 +1321,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
 						model.TIPO_DESTINATARIO, model.DESTINATARIO, 
-						model.TIPO_SERVIZIO, model.SERVIZIO);
+						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprOk.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprOk, model.ESITO_CONTESTO, esitoContesto);
@@ -1336,7 +1334,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
 						model.TIPO_DESTINATARIO, model.DESTINATARIO, 
-						model.TIPO_SERVIZIO, model.SERVIZIO);
+						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprFault.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprFault, model.ESITO_CONTESTO, esitoContesto);
@@ -1349,12 +1347,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if (permessiUtente != null) {
 				IExpression permessi = permessiUtente.toExpression(dao, model.ID_PORTA, 
 						model.TIPO_DESTINATARIO, model.DESTINATARIO, 
-						model.TIPO_SERVIZIO, model.SERVIZIO);
+						model.TIPO_SERVIZIO, model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				exprKo.and(permessi);
 			}
 			this.esitoUtils.setExpressionContesto(exprKo, model.ESITO_CONTESTO, esitoContesto);
 			exprKo.addGroupBy(model.DATA);
 
+			String modalita = Utility.getLoggedUtenteModalita();
+			
+			if(StringUtils.isNotEmpty(modalita) && !modalita.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			
+				impostaTipiCompatibiliConProtocollo(dao, model, exprOk, modalita);
+				impostaTipiCompatibiliConProtocollo(dao, model, exprFault, modalita);
+				impostaTipiCompatibiliConProtocollo(dao, model, exprKo, modalita);
+				
+			}
 
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
@@ -1460,7 +1467,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 		try {
 			this.distribSoggettoSearch.getSoggettoLocale();
-			Long countValue = this.countDistribuzioneSoggetto( this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model());
+			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			Long countValue = this.countDistribuzioneSoggetto( dao,model);
 			return countValue != null ? countValue.intValue() : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -1474,7 +1503,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto() throws ServiceException{
 		try {
 			this.distribSoggettoSearch.getSoggettoLocale();
-			return this.executeDistribuzioneSoggetto(this.statGiornaliereSearchDAO, StatisticaGiornaliera.model(), false, -1, -1);
+			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			return this.executeDistribuzioneSoggetto( dao,model, false, -1, -1);
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -1502,7 +1553,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	public List<ResDistribuzione> findAllDistribuzioneSoggetto(int start,int limit)  throws ServiceException{
 		try {
 			this.distribSoggettoSearch.getSoggettoLocale();
-			return this.executeDistribuzioneSoggetto(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true, start, limit);
+			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			return this.executeDistribuzioneSoggetto(dao,model, true, start, limit);
 
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -1527,9 +1600,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return new ArrayList<ResDistribuzione>();
 	}
 
-	private Long countDistribuzioneSoggetto(
-			IStatisticaGiornalieraServiceSearch dao,
-			StatisticaGiornalieraModel model) throws ServiceException {
+	private Long countDistribuzioneSoggetto(IServiceSearchWithoutId<?> dao, StatisticaModel model) throws ServiceException {
 
 		StatisticheGiornaliereService.log
 		.debug("creo  Expression per distribuzione Soggetto!");
@@ -1557,12 +1628,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 
 				//tipo porta
-				mitExpr.equals(model.STATISTICA_BASE.TIPO_PORTA,
+				mitExpr.equals(model.TIPO_PORTA,
 						"applicativa");
 
 
 				// Data
-				mitExpr.and().between(model.STATISTICA_BASE.DATA,
+				mitExpr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1575,15 +1646,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, mitExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo);
 
 				}
 
 				// permessi utente operatore
 				if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-							model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-							model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+							model.TIPO_DESTINATARIO,model.DESTINATARIO,
+							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 					mitExpr.and(permessi);
 				}
 
@@ -1593,13 +1664,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					mitExpr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+					mitExpr.and().equals(model.ID_PORTA, idPorta);
 				}
 				
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					mitExpr.and().equals(model.STATISTICA_BASE.AZIONE,
+					mitExpr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1608,10 +1679,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
 					mitExpr.and().
-						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1620,7 +1691,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
-						model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
 
@@ -1634,9 +1705,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						se.equals(model.TIPO_DESTINATARIO,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+						se.and().equals(model.DESTINATARIO,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -1647,11 +1718,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// DESTINATARIO
 				IExpression destExpr = dao.newExpression();
 
-				destExpr.equals(model.STATISTICA_BASE.TIPO_PORTA,
+				destExpr.equals(model.TIPO_PORTA,
 						"delegata");
 
 				// Data
-				destExpr.and().between(model.STATISTICA_BASE.DATA,
+				destExpr.and().between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1662,15 +1733,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, destExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo);
 
 				}
 
 				// permessi utente operatore
 				if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-							model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-							model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+							model.TIPO_DESTINATARIO,model.DESTINATARIO,
+							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 					destExpr.and(permessi);
 				}
 				
@@ -1680,13 +1751,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					destExpr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+					destExpr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					destExpr.and().equals(model.STATISTICA_BASE.AZIONE,
+					destExpr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1695,10 +1766,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
 					destExpr.and().
-						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1707,7 +1778,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
-						model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
 
@@ -1721,9 +1792,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+						se.equals(model.TIPO_MITTENTE,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.MITTENTE,
+						se.and().equals(model.MITTENTE,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -1731,15 +1802,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					destExpr.or(orSoggetti);
 				}
 
-				mitExpr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				mitExpr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				mitExpr.addGroupBy(model.TIPO_MITTENTE);
+				mitExpr.addGroupBy(model.MITTENTE);
 
-				destExpr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				destExpr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				destExpr.addGroupBy(model.TIPO_DESTINATARIO);
+				destExpr.addGroupBy(model.DESTINATARIO);
 
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -1750,16 +1821,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				UnionExpression mitUnionExpr = new UnionExpression(mitExpr);
 				mitUnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_MITTENTE, "tipo_soggetto");
-				mitUnionExpr.addSelectField(model.STATISTICA_BASE.MITTENTE,
+						model.TIPO_MITTENTE, "tipo_soggetto");
+				mitUnionExpr.addSelectField(model.MITTENTE,
 						"soggetto");
 
 				UnionExpression destUnionExpr = new UnionExpression(destExpr);
 				destUnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						model.TIPO_DESTINATARIO,
 						"tipo_soggetto");
 				destUnionExpr.addSelectField(
-						model.STATISTICA_BASE.DESTINATARIO, "soggetto");
+						model.DESTINATARIO, "soggetto");
 
 				Union union = new Union();
 				union.setUnionAll(true);
@@ -1783,7 +1854,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IExpression mitExpr = dao.newExpression();
 
 				// Data
-				mitExpr.between(model.STATISTICA_BASE.DATA,
+				mitExpr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1794,18 +1865,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, mitExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, mitExpr, protocollo);
 
 				}
 
-				mitExpr.and().equals(model.STATISTICA_BASE.TIPO_PORTA,
+				mitExpr.and().equals(model.TIPO_PORTA,
 						"applicativa");
 
 				// permessi utente operatore
 				if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-							model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-							model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+							model.TIPO_DESTINATARIO,model.DESTINATARIO,
+							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 					mitExpr.and(permessi);
 				}
 				
@@ -1815,13 +1886,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					mitExpr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+					mitExpr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					mitExpr.and().equals(model.STATISTICA_BASE.AZIONE,
+					mitExpr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1830,10 +1901,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
 					mitExpr.and().
-						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1842,7 +1913,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
-						model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
 
@@ -1856,9 +1927,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						se.equals(model.TIPO_DESTINATARIO,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+						se.and().equals(model.DESTINATARIO,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -1866,10 +1937,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					mitExpr.or(orSoggetti);
 				}
 
-				mitExpr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				mitExpr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				mitExpr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				mitExpr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				mitExpr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				mitExpr.addGroupBy(model.TIPO_MITTENTE);
+				mitExpr.addGroupBy(model.MITTENTE);
 
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -1879,15 +1950,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				UnionExpression mitUnionExpr = new UnionExpression(mitExpr);
 				mitUnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_MITTENTE, "tipo_soggetto");
-				mitUnionExpr.addSelectField(model.STATISTICA_BASE.MITTENTE,
+						model.TIPO_MITTENTE, "tipo_soggetto");
+				mitUnionExpr.addSelectField(model.MITTENTE,
 						"soggetto");
 
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.MITTENTE.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
 
 				Union union = new Union();
 				union.setUnionAll(true);
@@ -1906,7 +1977,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IExpression destExpr = dao.newExpression();
 
 				// Data
-				destExpr.between(model.STATISTICA_BASE.DATA,
+				destExpr.between(model.DATA,
 						this.distribSoggettoSearch.getDataInizio(),
 						this.distribSoggettoSearch.getDataFine());
 
@@ -1917,18 +1988,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					//					destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 					protocollo = this.distribSoggettoSearch.getProtocollo();
 
-					impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, destExpr, protocollo);
+					impostaTipiCompatibiliConProtocollo(dao, model, destExpr, protocollo);
 
 				}
 
-				destExpr.and().equals(model.STATISTICA_BASE.TIPO_PORTA,
+				destExpr.and().equals(model.TIPO_PORTA,
 						"delegata");
 
 				// permessi utente operatore
 				if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-							model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-							model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+					IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+							model.TIPO_DESTINATARIO,model.DESTINATARIO,
+							model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 					destExpr.and(permessi);
 				}
 				
@@ -1938,13 +2009,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-					destExpr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+					destExpr.and().equals(model.ID_PORTA, idPorta);
 				}
 
 				// azione
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch
 						.getNomeAzione()))
-					destExpr.and().equals(model.STATISTICA_BASE.AZIONE,
+					destExpr.and().equals(model.AZIONE,
 							this.distribSoggettoSearch.getNomeAzione());
 
 				// nome servizio
@@ -1953,10 +2024,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 					
 					destExpr.and().
-						equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-						equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-						equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+						equals(model.SERVIZIO,	idServizio.getNome());
 
 				}
 
@@ -1965,7 +2036,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
-						model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
 
@@ -1979,9 +2050,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+						se.equals(model.TIPO_MITTENTE,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.MITTENTE,
+						se.and().equals(model.MITTENTE,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -1989,10 +2060,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					destExpr.or(orSoggetti);
 				}
 
-				destExpr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				destExpr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				destExpr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				destExpr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				destExpr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				destExpr.addGroupBy(model.TIPO_DESTINATARIO);
+				destExpr.addGroupBy(model.DESTINATARIO);
 
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -2002,16 +2073,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				UnionExpression destUnionExpr = new UnionExpression(destExpr);
 				destUnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						model.TIPO_DESTINATARIO,
 						"tipo_soggetto");
 				destUnionExpr.addSelectField(
-						model.STATISTICA_BASE.DESTINATARIO, "soggetto");
+						model.DESTINATARIO, "soggetto");
 
 				// Espressione finta per usare l'ordinamento
 				IExpression fakeExpr = dao.newExpression();
 				UnionExpression unionExprFake = new UnionExpression(fakeExpr);
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.DESTINATARIO.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
 
 				Union union = new Union();
 				union.setUnionAll(true);
@@ -2049,8 +2120,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	}
 
 	private List<ResDistribuzione> executeDistribuzioneSoggetto(
-			IStatisticaGiornalieraServiceSearch dao,
-			StatisticaGiornalieraModel model, boolean isPaginated, int start,
+			IServiceSearchWithoutId<?> dao,
+			StatisticaModel model, boolean isPaginated, int start,
 			int limit) throws ExpressionNotImplementedException,
 			ExpressionException, ServiceException, NotImplementedException,
 			CoreException, NotFoundException, ProtocolException, UserInvalidException {
@@ -2081,11 +2152,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression erogazione_portaApplicativa_Expr = dao.newExpression();
 
 			//tipo porta
-			erogazione_portaApplicativa_Expr.equals(model.STATISTICA_BASE.TIPO_PORTA,
+			erogazione_portaApplicativa_Expr.equals(model.TIPO_PORTA,
 					"applicativa");
 
 			// Data
-			erogazione_portaApplicativa_Expr.and().between(model.STATISTICA_BASE.DATA,
+			erogazione_portaApplicativa_Expr.and().between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
 
@@ -2098,15 +2169,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, erogazione_portaApplicativa_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo);
 
 			}
 
 			// permessi utente operatore
 			if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				erogazione_portaApplicativa_Expr.and(permessi);
 			}
 			
@@ -2116,13 +2187,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				erogazione_portaApplicativa_Expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				erogazione_portaApplicativa_Expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// azione
 			if (StringUtils.isNotBlank(this.distribSoggettoSearch
 					.getNomeAzione()))
-				erogazione_portaApplicativa_Expr.and().equals(model.STATISTICA_BASE.AZIONE,
+				erogazione_portaApplicativa_Expr.and().equals(model.AZIONE,
 						this.distribSoggettoSearch.getNomeAzione());
 
 			// nome servizio
@@ -2131,10 +2202,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 				
 				erogazione_portaApplicativa_Expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2143,7 +2214,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -2157,9 +2228,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				int i = 0;
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					IExpression se = dao.newExpression();
-					se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					se.equals(model.TIPO_DESTINATARIO,
 							soggetto.getTipoSoggetto());
-					se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					se.and().equals(model.DESTINATARIO,
 							soggetto.getNomeSoggetto());
 					orSoggetti[i] = se;
 					i++;
@@ -2170,8 +2241,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
 				// il mittente puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
-					erogazione_portaApplicativa_Expr.and().equals(	model.STATISTICA_BASE.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
-					erogazione_portaApplicativa_Expr.and().equals(	model.STATISTICA_BASE.MITTENTE, this.distribSoggettoSearch.getTrafficoPerSoggetto());
+					erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
+					erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getTrafficoPerSoggetto());
 				}
 			}
 
@@ -2179,9 +2250,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression fruizione_portaDelegata_Expr = dao.newExpression();
 
 
-			fruizione_portaDelegata_Expr.equals(model.STATISTICA_BASE.TIPO_PORTA, "delegata");
+			fruizione_portaDelegata_Expr.equals(model.TIPO_PORTA, "delegata");
 			// Data
-			fruizione_portaDelegata_Expr.and().between(model.STATISTICA_BASE.DATA,
+			fruizione_portaDelegata_Expr.and().between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
 
@@ -2192,15 +2263,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, fruizione_portaDelegata_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo);
 
 			}
 
 			// permessi utente operatore
 			if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				fruizione_portaDelegata_Expr.and(permessi);
 			}
 			
@@ -2210,13 +2281,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				fruizione_portaDelegata_Expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				fruizione_portaDelegata_Expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// azione
 			if (StringUtils.isNotBlank(this.distribSoggettoSearch
 					.getNomeAzione()))
-				fruizione_portaDelegata_Expr.and().equals(model.STATISTICA_BASE.AZIONE,
+				fruizione_portaDelegata_Expr.and().equals(model.AZIONE,
 						this.distribSoggettoSearch.getNomeAzione());
 
 			// nome servizio
@@ -2225,10 +2296,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 				
 				fruizione_portaDelegata_Expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2237,7 +2308,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -2251,9 +2322,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				int i = 0;
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					IExpression se = dao.newExpression();
-					se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					se.equals(model.TIPO_MITTENTE,
 							soggetto.getTipoSoggetto());
-					se.and().equals(model.STATISTICA_BASE.MITTENTE,
+					se.and().equals(model.MITTENTE,
 							soggetto.getNomeSoggetto());
 					orSoggetti[i] = se;
 					i++;
@@ -2264,34 +2335,34 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getTrafficoPerSoggetto())) {
-					fruizione_portaDelegata_Expr.and().equals(	model.STATISTICA_BASE.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
-					fruizione_portaDelegata_Expr.and().equals(	model.STATISTICA_BASE.DESTINATARIO, this.distribSoggettoSearch.getTrafficoPerSoggetto());
+					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoTrafficoPerSoggetto());
+					fruizione_portaDelegata_Expr.and().equals(	model.DESTINATARIO, this.distribSoggettoSearch.getTrafficoPerSoggetto());
 				}
 			}
 
 			// UNION
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+				fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 			}
 			else{
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
 			if(forceIndexes!=null && forceIndexes.size()>0){
@@ -2303,29 +2374,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.TIPO_MITTENTE,
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_MITTENTE,
 						"tipo_soggetto");
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.MITTENTE,
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.MITTENTE,
 						"soggetto");
 			}
 			else{
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.TIPO_DESTINATARIO,
 						"tipo_soggetto");
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.DESTINATARIO,
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DESTINATARIO,
 						"soggetto");
 			}
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_DESTINATARIO, "tipo_soggetto");
-				fruizione_portaDelegata_UnionExpr.addSelectField(model.STATISTICA_BASE.DESTINATARIO,
+						model.TIPO_DESTINATARIO, "tipo_soggetto");
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.DESTINATARIO,
 						"soggetto");
 			}
 			else{
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_MITTENTE, "tipo_soggetto");
-				fruizione_portaDelegata_UnionExpr.addSelectField(model.STATISTICA_BASE.MITTENTE,
+						model.TIPO_MITTENTE, "tipo_soggetto");
+				fruizione_portaDelegata_UnionExpr.addSelectField(model.MITTENTE,
 						"soggetto");
 			}
 
@@ -2348,26 +2419,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					break;
 				}
@@ -2377,10 +2448,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-						model.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-						model.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				break;
 
@@ -2393,35 +2464,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_PORTA);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_PORTA);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					break;
 				case LATENZA_SERVIZIO:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_SERVIZIO);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_SERVIZIO);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					break;
 
 				case LATENZA_TOTALE:
 				default:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_TOTALE);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_TOTALE);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					break;
 				}
@@ -2476,7 +2547,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression erogazione_portaApplicativa_Expr = dao.newExpression();
 
 			// Data
-			erogazione_portaApplicativa_Expr.between(model.STATISTICA_BASE.DATA,
+			erogazione_portaApplicativa_Expr.between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
 
@@ -2487,18 +2558,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				mitExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, erogazione_portaApplicativa_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, erogazione_portaApplicativa_Expr, protocollo);
 
 			}
 
-			erogazione_portaApplicativa_Expr.and().equals(model.STATISTICA_BASE.TIPO_PORTA,
+			erogazione_portaApplicativa_Expr.and().equals(model.TIPO_PORTA,
 					"applicativa");
 
 			// permessi utente operatore
 			if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				erogazione_portaApplicativa_Expr.and(permessi);
 			}
 			
@@ -2508,13 +2579,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				erogazione_portaApplicativa_Expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				erogazione_portaApplicativa_Expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// azione
 			if (StringUtils.isNotBlank(this.distribSoggettoSearch
 					.getNomeAzione()))
-				erogazione_portaApplicativa_Expr.and().equals(model.STATISTICA_BASE.AZIONE,
+				erogazione_portaApplicativa_Expr.and().equals(model.AZIONE,
 						this.distribSoggettoSearch.getNomeAzione());
 
 			// nome servizio
@@ -2523,10 +2594,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 				
 				erogazione_portaApplicativa_Expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2535,7 +2606,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -2550,9 +2621,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				int i = 0;
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					IExpression se = dao.newExpression();
-					se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					se.equals(model.TIPO_DESTINATARIO,
 							soggetto.getTipoSoggetto());
-					se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					se.and().equals(model.DESTINATARIO,
 							soggetto.getNomeSoggetto());
 					orSoggetti[i] = se;
 					i++;
@@ -2563,22 +2634,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
 				// il mittente puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeMittente())) {
-					erogazione_portaApplicativa_Expr.and().equals(	model.STATISTICA_BASE.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoMittente());
-					erogazione_portaApplicativa_Expr.and().equals(	model.STATISTICA_BASE.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
+					erogazione_portaApplicativa_Expr.and().equals(	model.TIPO_MITTENTE,	this.distribSoggettoSearch.getTipoMittente());
+					erogazione_portaApplicativa_Expr.and().equals(	model.MITTENTE, this.distribSoggettoSearch.getNomeMittente());
 				}
 			}
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_MITTENTE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.MITTENTE);
 			}
 			else{
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				erogazione_portaApplicativa_Expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				erogazione_portaApplicativa_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+				erogazione_portaApplicativa_Expr.addGroupBy(model.DESTINATARIO);
 			}
 
 			if(forceIndexes!=null && forceIndexes.size()>0){
@@ -2588,20 +2659,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			//			erogazione_portaApplicativa_Expr.sortOrder(SortOrder.ASC);
-			//			erogazione_portaApplicativa_Expr.addOrder(model.STATISTICA_BASE.TIPO_MITTENTE);
-			//			erogazione_portaApplicativa_Expr.addOrder(model.STATISTICA_BASE.MITTENTE);
+			//			erogazione_portaApplicativa_Expr.addOrder(model.TIPO_MITTENTE);
+			//			erogazione_portaApplicativa_Expr.addOrder(model.MITTENTE);
 
 			UnionExpression erogazione_portaApplicativa_UnionExpr = new UnionExpression(erogazione_portaApplicativa_Expr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				erogazione_portaApplicativa_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_MITTENTE, "tipo_soggetto");
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.MITTENTE,
+						model.TIPO_MITTENTE, "tipo_soggetto");
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.MITTENTE,
 						"soggetto");
 			}
 			else{
 				erogazione_portaApplicativa_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_DESTINATARIO, "tipo_soggetto");
-				erogazione_portaApplicativa_UnionExpr.addSelectField(model.STATISTICA_BASE.DESTINATARIO,
+						model.TIPO_DESTINATARIO, "tipo_soggetto");
+				erogazione_portaApplicativa_UnionExpr.addSelectField(model.DESTINATARIO,
 						"soggetto");
 			}
 
@@ -2609,12 +2680,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.MITTENTE.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
 			}
 			else{
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.DESTINATARIO.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
 			}
 
 			Union union = new Union();
@@ -2636,24 +2707,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva", 
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna", 
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna", 
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				}
 				break;
@@ -2662,10 +2733,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-						model.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				break;
 
@@ -2678,35 +2749,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_PORTA);
+					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.STATISTICA_BASE.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					break;
 				case LATENZA_SERVIZIO:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_SERVIZIO);
+					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.STATISTICA_BASE.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					break;
 
 				case LATENZA_TOTALE:
 				default:
-					erogazione_portaApplicativa_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
+					erogazione_portaApplicativa_Expr.isNotNull(model.LATENZA_TOTALE);
+					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), model.STATISTICA_BASE.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					break;
 				}
@@ -2752,7 +2823,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression fruizione_portaDelegata_Expr = dao.newExpression();
 
 			// Data
-			fruizione_portaDelegata_Expr.between(model.STATISTICA_BASE.DATA,
+			fruizione_portaDelegata_Expr.between(model.DATA,
 					this.distribSoggettoSearch.getDataInizio(),
 					this.distribSoggettoSearch.getDataFine());
 
@@ -2764,17 +2835,17 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				destExpr.and().equals(model.PROTOCOLLO,	this.distribSoggettoSearch.getProtocollo());
 				protocollo = this.distribSoggettoSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, fruizione_portaDelegata_Expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, fruizione_portaDelegata_Expr, protocollo);
 
 			}
 
-			fruizione_portaDelegata_Expr.and().equals(model.STATISTICA_BASE.TIPO_PORTA, "delegata");
+			fruizione_portaDelegata_Expr.and().equals(model.TIPO_PORTA, "delegata");
 
 			// permessi utente operatore
 			if(this.distribSoggettoSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribSoggettoSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				fruizione_portaDelegata_Expr.and(permessi);
 			}
 			
@@ -2784,13 +2855,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribSoggettoSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSoggettoSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				fruizione_portaDelegata_Expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				fruizione_portaDelegata_Expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// azione
 			if (StringUtils.isNotBlank(this.distribSoggettoSearch
 					.getNomeAzione()))
-				fruizione_portaDelegata_Expr.and().equals(model.STATISTICA_BASE.AZIONE,
+				fruizione_portaDelegata_Expr.and().equals(model.AZIONE,
 						this.distribSoggettoSearch.getNomeAzione());
 
 			// nome servizio
@@ -2799,10 +2870,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSoggettoSearch.getNomeServizio());
 				
 				fruizione_portaDelegata_Expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -2811,7 +2882,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -2825,9 +2896,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				int i = 0;
 				for (Soggetto soggetto : listaSoggettiGestione) {
 					IExpression se = dao.newExpression();
-					se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					se.equals(model.TIPO_MITTENTE,
 							soggetto.getTipoSoggetto());
-					se.and().equals(model.STATISTICA_BASE.MITTENTE,
+					se.and().equals(model.MITTENTE,
 							soggetto.getNomeSoggetto());
 					orSoggetti[i] = se;
 					i++;
@@ -2838,22 +2909,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()==false){
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSoggettoSearch.getNomeDestinatario())) {
-					fruizione_portaDelegata_Expr.and().equals(	model.STATISTICA_BASE.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
-					fruizione_portaDelegata_Expr.and().equals(	model.STATISTICA_BASE.DESTINATARIO, this.distribSoggettoSearch.getNomeDestinatario());
+					fruizione_portaDelegata_Expr.and().equals(	model.TIPO_DESTINATARIO,	this.distribSoggettoSearch.getTipoDestinatario());
+					fruizione_portaDelegata_Expr.and().equals(	model.DESTINATARIO, this.distribSoggettoSearch.getNomeDestinatario());
 				}
 			}
 
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				fruizione_portaDelegata_Expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_DESTINATARIO);
+				fruizione_portaDelegata_Expr.addGroupBy(model.DESTINATARIO);
 			}
 			else{
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				fruizione_portaDelegata_Expr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				fruizione_portaDelegata_Expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.TIPO_MITTENTE);
+				fruizione_portaDelegata_Expr.addGroupBy(model.MITTENTE);
 			}
 
 			if(forceIndexes!=null && forceIndexes.size()>0){
@@ -2863,35 +2934,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			
 			//			fruizione_portaDelegata_Expr.sortOrder(SortOrder.ASC);
-			//			fruizione_portaDelegata_Expr.addOrder(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-			//			fruizione_portaDelegata_Expr.addOrder(model.STATISTICA_BASE.DESTINATARIO);
+			//			fruizione_portaDelegata_Expr.addOrder(model.TIPO_DESTINATARIO);
+			//			fruizione_portaDelegata_Expr.addOrder(model.DESTINATARIO);
 
 			UnionExpression fruizione_portaDelegata_UnionExpr = new UnionExpression(fruizione_portaDelegata_Expr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						model.TIPO_DESTINATARIO,
 						"tipo_soggetto");
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.DESTINATARIO, "soggetto");
+						model.DESTINATARIO, "soggetto");
 			}
 			else{
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.TIPO_MITTENTE,
+						model.TIPO_MITTENTE,
 						"tipo_soggetto");
 				fruizione_portaDelegata_UnionExpr.addSelectField(
-						model.STATISTICA_BASE.MITTENTE, "soggetto");
+						model.MITTENTE, "soggetto");
 			}
 
 			// Espressione finta per usare l'ordinamento
 			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			if(this.distribSoggettoSearch.isDistribuzionePerSoggettoRemota()){
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.DESTINATARIO.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_DESTINATARIO.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.DESTINATARIO.getFieldType()), "soggetto");
 			}
 			else{
-				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.STATISTICA_BASE.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
-				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.STATISTICA_BASE.MITTENTE.getFieldType()), "soggetto");
+				unionExprFake.addSelectField(new ConstantField("tipo_soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,	model.TIPO_MITTENTE.getFieldType()), "tipo_soggetto");
+				unionExprFake.addSelectField(new ConstantField("soggetto", StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.MITTENTE.getFieldType()), "soggetto");
 			}
 
 			Union union = new Union();
@@ -2913,26 +2984,26 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM,
 							"dato"));
 					break;
 				case INTERNA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM,
 							"dato"));
 					break;
 				case ESTERNA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM,
 							"dato"));
 					break;
 				}
@@ -2942,10 +3013,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-						model.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				break;
 
@@ -2958,35 +3029,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_PORTA);
+					fakeExpr.isNotNull(model.LATENZA_PORTA);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.STATISTICA_BASE.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					break;
 				case LATENZA_SERVIZIO:
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_SERVIZIO);
+					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.STATISTICA_BASE.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					break;
 
 				case LATENZA_TOTALE:
 				default:
-					fakeExpr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
-					fruizione_portaDelegata_Expr.isNotNull(model.STATISTICA_BASE.LATENZA_TOTALE);
+					fakeExpr.isNotNull(model.LATENZA_TOTALE);
+					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
-							new Integer(1), model.STATISTICA_BASE.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
-							model.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					break;
 				}
@@ -3042,17 +3113,38 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneServizio() throws ServiceException {
 		try {
+			StatisticType tipologia = this.distribSoggettoSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
 
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model, this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			IExpression gByExpr = createDistribuzioneServizioExpression(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true);
+			IExpression gByExpr = createDistribuzioneServizioExpression(dao,model, true);
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
 				for (Index index : forceIndexes) {
@@ -3060,7 +3152,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
-			NonNegativeNumber nnn = this.statGiornaliereSearchDAO.count(gByExpr);
+			NonNegativeNumber nnn = dao.count(gByExpr);
 
 			return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
 		} catch (ServiceException e) {
@@ -3090,20 +3182,41 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private List<ResDistribuzione> executeDistribuzioneServizio(Integer start, Integer limit) throws ServiceException {
 		try {
+			
+			StatisticType tipologia = this.distribServizioSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
 
-			StatisticaGiornalieraModel statGiornalieraModel = StatisticaGiornaliera.model();
-			IExpression gByExpr = this.createDistribuzioneServizioExpression(this.statGiornaliereSearchDAO,	statGiornalieraModel, false);
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			
+			IExpression gByExpr = this.createDistribuzioneServizioExpression(dao, model, false);
 
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.DESTINATARIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model, this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -3120,22 +3233,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO, aliasFieldTipoServizio);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.SERVIZIO, aliasFieldServizio);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.DESTINATARIO, aliasFieldDestinatario);
+			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
+			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
+			unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
+			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
 
 			// Espressione finta per usare l'ordinamento
-			IExpression fakeExpr = this.statGiornaliereSearchDAO.newExpression();
+			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
+					model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.SERVIZIO.getFieldType()), aliasFieldServizio);
+					model.SERVIZIO.getFieldType()), aliasFieldServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
+					model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
-					statGiornalieraModel.STATISTICA_BASE.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
+					model.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
@@ -3160,24 +3273,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				}
 				break;
@@ -3186,10 +3299,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), statGiornalieraModel.STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				unionExpr.addSelectFunctionField(new FunctionField(
-						statGiornalieraModel.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				break;
 
@@ -3202,35 +3315,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA);
+					fakeExpr.isNotNull(model.LATENZA_PORTA);
+					gByExpr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					break;
 				case LATENZA_SERVIZIO:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO);
+					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
+					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					break;
 
 				case LATENZA_TOTALE:
 				default:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE);
+					fakeExpr.isNotNull(model.LATENZA_TOTALE);
+					gByExpr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					break;
 				}
@@ -3245,7 +3358,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = this.statGiornaliereSearchDAO.union(union, unionExpr, unionExprFake);
+			List<Map<String, Object>> list = dao.union(union, unionExpr, unionExprFake);
 
 			if (list != null) {
 
@@ -3292,14 +3405,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return new ArrayList<ResDistribuzione>();
 	}
 
-	private IExpression createDistribuzioneServizioExpression(IStatisticaGiornalieraServiceSearch dao, StatisticaGiornalieraModel model, boolean isCount) throws ServiceException {
+	private IExpression createDistribuzioneServizioExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log
-		.debug("creo Expression per distribuzione Servizio!");
+		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Servizio!");
 
-		List<Soggetto> listaSoggettiGestione = this.distribServizioSearch
-				.getSoggettiGestione();
+		List<Soggetto> listaSoggettiGestione = this.distribServizioSearch.getSoggettiGestione();
 
 		try {
 
@@ -3307,7 +3418,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			expr = dao.newExpression();
 			// Data
-			expr.between(model.STATISTICA_BASE.DATA,
+			expr.between(model.DATA,
 					this.distribServizioSearch.getDataInizio(),
 					this.distribServizioSearch.getDataFine());
 
@@ -3320,15 +3431,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribServizioSearch.getProtocollo());
 				protocollo = this.distribServizioSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
 
 			}
 
 			// permessi utente operatore
 			if(this.distribServizioSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribServizioSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribServizioSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				expr.and(permessi);
 			}
 			
@@ -3338,7 +3449,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribServizioSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribServizioSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// esito
@@ -3346,7 +3457,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribServizioSearch.getEsitoDettaglio(),
 					this.distribServizioSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribServizioSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -3395,16 +3506,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -3414,14 +3525,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						e2.or(orSoggetti2);
 					}
 
-					e1.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.and().equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.and().equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 
 					// OR
@@ -3432,14 +3543,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// puo succedero solo in caso admin)
 					expr.and();
 
-					e1.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 					// OR
 					expr.or(e1, e2);
@@ -3457,16 +3568,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -3485,7 +3596,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			} else if ("ingresso".equals(this.distribServizioSearch
 					.getTipologiaRicerca())) {
 				// EROGAZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -3498,9 +3609,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						se.equals(model.TIPO_DESTINATARIO,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+						se.and().equals(model.DESTINATARIO,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -3511,15 +3622,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribServizioSearch
 						.getNomeMittente())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribServizioSearch.getTipoMittente());
-					expr.and().equals(model.STATISTICA_BASE.MITTENTE,
+					expr.and().equals(model.MITTENTE,
 							this.distribServizioSearch.getNomeMittente());
 				}
 
 			} else {
 				// FRUIZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"applicativa");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -3532,9 +3643,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+						se.equals(model.TIPO_MITTENTE,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.MITTENTE,
+						se.and().equals(model.MITTENTE,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -3545,22 +3656,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribServizioSearch
 						.getNomeDestinatario())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					expr.and().equals(model.TIPO_DESTINATARIO,
 							this.distribServizioSearch.getTipoDestinatario());
-					expr.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					expr.and().equals(model.DESTINATARIO,
 							this.distribServizioSearch.getNomeDestinatario());
 				}
 			}
 
-			expr.notEquals(model.STATISTICA_BASE.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.STATISTICA_BASE.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.TIPO_SERVIZIO);
-			expr.addGroupBy(model.STATISTICA_BASE.SERVIZIO);
+			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.TIPO_SERVIZIO);
+			expr.addGroupBy(model.SERVIZIO);
 			
-			expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-			expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+			expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.TIPO_DESTINATARIO);
+			expr.addGroupBy(model.DESTINATARIO);
 
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -3596,17 +3707,38 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneAzione() throws ServiceException {
 		try {
+			StatisticType tipologia = this.distribAzioneSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
 
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
+						this.convertForceIndexList(model, 
 								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
 			
-			IExpression gByExpr = createDistribuzioneAzioneExpression(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true);
+			IExpression gByExpr = createDistribuzioneAzioneExpression(dao,	model, true);
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
 				for (Index index : forceIndexes) {
@@ -3614,7 +3746,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 			}
 			
-			NonNegativeNumber nnn = this.statGiornaliereSearchDAO.count(gByExpr);
+			NonNegativeNumber nnn = dao.count(gByExpr);
 
 			return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
 		} catch (ServiceException e) {
@@ -3637,15 +3769,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return this.executeDistribuzioneAzione(start, limit);
 	}
 
-	private IExpression createDistribuzioneAzioneExpression(IStatisticaGiornalieraServiceSearch dao,
-			StatisticaGiornalieraModel model, boolean isCount) throws ServiceException {
+	private IExpression createDistribuzioneAzioneExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount) throws ServiceException {
 		IExpression expr = null;
 
-		StatisticheGiornaliereService.log
-		.debug("creo Expression per distribuzione Azione!");
+		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione Azione!");
 
-		List<Soggetto> listaSoggettiGestione = this.distribAzioneSearch
-				.getSoggettiGestione();
+		List<Soggetto> listaSoggettiGestione = this.distribAzioneSearch.getSoggettiGestione();
 
 		try {
 
@@ -3653,7 +3782,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			expr = dao.newExpression();
 			// Data
-			expr.between(model.STATISTICA_BASE.DATA,
+			expr.between(model.DATA,
 					this.distribAzioneSearch.getDataInizio(),
 					this.distribAzioneSearch.getDataFine());
 
@@ -3666,15 +3795,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribAzioneSearch.getProtocollo());
 				protocollo = this.distribAzioneSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
 
 			}
 
 			// permessi utente operatore
 			if(this.distribAzioneSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribAzioneSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribAzioneSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				expr.and(permessi);
 			}
 			
@@ -3684,7 +3813,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribAzioneSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribAzioneSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// esito
@@ -3692,7 +3821,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribAzioneSearch.getEsitoDettaglio(),
 					this.distribAzioneSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribAzioneSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -3741,16 +3870,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -3760,14 +3889,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						e2.or(orSoggetti2);
 					}
 
-					e1.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.and().equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.and().equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 
 					// OR
@@ -3778,14 +3907,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// puo succedero solo in caso admin)
 					expr.and();
 
-					e1.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 					// OR
 					expr.or(e1, e2);
@@ -3803,16 +3932,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -3831,7 +3960,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			} else if ("ingresso".equals(this.distribAzioneSearch
 					.getTipologiaRicerca())) {
 				// EROGAZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -3844,9 +3973,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						se.equals(model.TIPO_DESTINATARIO,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+						se.and().equals(model.DESTINATARIO,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -3857,15 +3986,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribAzioneSearch
 						.getNomeMittente())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribAzioneSearch.getTipoMittente());
-					expr.and().equals(model.STATISTICA_BASE.MITTENTE,
+					expr.and().equals(model.MITTENTE,
 							this.distribAzioneSearch.getNomeMittente());
 				}
 
 			} else {
 				// FRUIZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"applicativa");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -3878,9 +4007,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+						se.equals(model.TIPO_MITTENTE,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.MITTENTE,
+						se.and().equals(model.MITTENTE,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -3891,9 +4020,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribAzioneSearch
 						.getNomeDestinatario())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					expr.and().equals(model.TIPO_DESTINATARIO,
 							this.distribAzioneSearch.getTipoDestinatario());
-					expr.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					expr.and().equals(model.DESTINATARIO,
 							this.distribAzioneSearch.getNomeDestinatario());
 				}
 			}
@@ -3904,25 +4033,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribAzioneSearch.getNomeServizio());
 				
 				expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}  
 			
-			expr.notEquals(model.STATISTICA_BASE.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.AZIONE);
+			expr.notEquals(model.AZIONE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.AZIONE);
 
-			expr.notEquals(model.STATISTICA_BASE.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.STATISTICA_BASE.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.TIPO_SERVIZIO);
-			expr.addGroupBy(model.STATISTICA_BASE.SERVIZIO);
+			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.TIPO_SERVIZIO);
+			expr.addGroupBy(model.SERVIZIO);
 			
-			expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-			expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+			expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.TIPO_DESTINATARIO);
+			expr.addGroupBy(model.DESTINATARIO);
 			
 			
 
@@ -3949,20 +4078,41 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	private List<ResDistribuzione> executeDistribuzioneAzione(Integer start, Integer limit) throws ServiceException {
 		try {
+			StatisticType tipologia = this.distribAzioneSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
 
-			StatisticaGiornalieraModel statGiornalieraModel = StatisticaGiornaliera.model();
-			IExpression gByExpr = this.createDistribuzioneAzioneExpression(this.statGiornaliereSearchDAO,	statGiornalieraModel, false);
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			
+			IExpression gByExpr = this.createDistribuzioneAzioneExpression(dao,	model, false);
 
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.AZIONE);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.SERVIZIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO);
-			gByExpr.sortOrder(SortOrder.ASC).addOrder(statGiornalieraModel.STATISTICA_BASE.DESTINATARIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
+						this.convertForceIndexList(model, 
 								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneAzioneGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
@@ -3981,25 +4131,25 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.AZIONE,		aliasFieldAzione);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO, aliasFieldTipoServizio);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.SERVIZIO, aliasFieldServizio);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
-			unionExpr.addSelectField(statGiornalieraModel.STATISTICA_BASE.DESTINATARIO, aliasFieldDestinatario);
+			unionExpr.addSelectField(model.AZIONE,		aliasFieldAzione);
+			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
+			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
+			unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
+			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
 
 			// Espressione finta per usare l'ordinamento
-			IExpression fakeExpr = this.statGiornaliereSearchDAO.newExpression();
+			IExpression fakeExpr = dao.newExpression();
 			UnionExpression unionExprFake = new UnionExpression(fakeExpr);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldAzione, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.AZIONE.getFieldType()), aliasFieldAzione);			
+					model.AZIONE.getFieldType()), aliasFieldAzione);			
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
+					model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.SERVIZIO.getFieldType()), aliasFieldServizio);
+					model.SERVIZIO.getFieldType()), aliasFieldServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
-					statGiornalieraModel.STATISTICA_BASE.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
+					model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
-					statGiornalieraModel.STATISTICA_BASE.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
+					model.DESTINATARIO.getFieldType()), aliasFieldDestinatario);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
@@ -4028,24 +4178,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				case INTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				case ESTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), statGiornalieraModel.STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				}
 				break;
@@ -4054,10 +4204,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
 				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), statGiornalieraModel.STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
+						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
 
 				unionExpr.addSelectFunctionField(new FunctionField(
-						statGiornalieraModel.STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+						model.NUMERO_TRANSAZIONI, Function.SUM,
 						datoParamAliasName));
 				break;
 
@@ -4070,35 +4220,35 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA);
+					fakeExpr.isNotNull(model.LATENZA_PORTA);
+					gByExpr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_PORTA,
+							model.LATENZA_PORTA,
 							Function.AVG, datoParamAliasName));
 					break;
 				case LATENZA_SERVIZIO:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO);
+					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
+					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_SERVIZIO,
+							model.LATENZA_SERVIZIO,
 							Function.AVG, datoParamAliasName));
 					break;
 
 				case LATENZA_TOTALE:
 				default:
-					fakeExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE);
-					gByExpr.isNotNull(statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE);
+					fakeExpr.isNotNull(model.LATENZA_TOTALE);
+					gByExpr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
-							statGiornalieraModel.STATISTICA_BASE.LATENZA_TOTALE,
+							model.LATENZA_TOTALE,
 							Function.AVG, datoParamAliasName));
 					break;
 				}
@@ -4113,7 +4263,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = this.statGiornaliereSearchDAO.union(union, unionExpr, unionExprFake);
+			List<Map<String, Object>> list = dao.union(union, unionExpr, unionExprFake);
 
 			if (list != null) {
 
@@ -4177,7 +4327,29 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllDistribuzioneServizioApplicativo() throws ServiceException{
 		try {
+			StatisticType tipologia = this.distribSaSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
 
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
+			
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
 			boolean forceFruizione = false;
@@ -4197,7 +4369,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
+						this.convertForceIndexList(model, 
 								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoCount(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
@@ -4207,8 +4379,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				int count = 0;
 				if(forceErogazione){
-					IExpression expr = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true,
-							forceErogazione, false);
+					IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, forceErogazione, false);
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4216,13 +4387,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					NonNegativeNumber nnn = this.statGiornaliereSearchDAO.count(expr);
+					NonNegativeNumber nnn = dao.count(expr);
 					int valoreLetto = nnn != null ? new Long(nnn.longValue()).intValue() : 0;
 					count = count + valoreLetto;
 				}
 				if(forceFruizione){
-					IExpression expr = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true,
-							false, forceFruizione);
+					IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, false, forceFruizione);
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4230,7 +4400,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					NonNegativeNumber nnn = this.statGiornaliereSearchDAO.count(expr);
+					NonNegativeNumber nnn = dao.count(expr);
 					int valoreLetto = nnn != null ? new Long(nnn.longValue()).intValue() : 0;
 					count = count + valoreLetto;
 				}
@@ -4239,8 +4409,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			else{
 				// Lascio else solo se si vuole tornare indietro come soluzione
-				IExpression expr = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO,	StatisticaGiornaliera.model(), true,
-						false, false);
+				IExpression expr = createDistribuzioneServizioApplicativoExpression(dao, model, true, false, false);
 				
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -4248,7 +4417,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 				
-				NonNegativeNumber nnn = this.statGiornaliereSearchDAO.count(expr);
+				NonNegativeNumber nnn = dao.count(expr);
 				return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
 			}
 		} catch (ServiceException e) {
@@ -4280,6 +4449,28 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		
 
 		try {
+			StatisticType tipologia = this.distribSaSearch.getModalitaTemporale();
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+
+			switch (tipologia) {
+			case GIORNALIERA:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = this.statGiornaliereSearchDAO;
+				break;
+			case MENSILE:
+				model = StatisticaMensile.model().STATISTICA_BASE;
+				dao = this.statMensileSearchDAO;
+				break;
+			case ORARIA:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = this.statOrariaSearchDAO;
+				break;
+			case SETTIMANALE:
+				model = StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = this.statSettimanaleSearchDAO;
+				break;
+			}
 			
 			// Fix introdotto per gestire il soggetto proprietario
 			boolean forceErogazione = false;
@@ -4300,8 +4491,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<Index> forceIndexes = null;
 			try{
 				forceIndexes = 
-						this.convertForceIndexList(StatisticaGiornaliera.model(), 
-								this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
+						this.convertForceIndexList(model,	this.pddMonitorProperties.getStatisticheForceIndexDistribuzioneServizioApplicativoGroupBy(this.pddMonitorProperties.getExternalForceIndexRepository()));
 			}catch(Exception e){
 				throw new ServiceException(e.getMessage(),e);
 			}
@@ -4312,11 +4502,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			IExpression fakeExpr = null;
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
-					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO, StatisticaGiornaliera.model(),false,
+					gByExprErogazione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							forceErogazione,false);	
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO);
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_DESTINATARIO);
-					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.DESTINATARIO);
+					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
+					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
+					gByExprErogazione.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4325,11 +4515,11 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 				}
 				if(forceFruizione){
-					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO, StatisticaGiornaliera.model(),false,
+					gByExprFruizione = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 							false,forceFruizione);	
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO);
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE);
-					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.MITTENTE);
+					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
+					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.TIPO_MITTENTE);
+					gByExprFruizione.sortOrder(SortOrder.ASC).addOrder(model.MITTENTE);
 					
 					if(forceIndexes!=null && forceIndexes.size()>0){
 						for (Index index : forceIndexes) {
@@ -4340,9 +4530,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			else{
 				// Lascio else solo se si vuole tornare indietro come soluzione
-				gByExpr = createDistribuzioneServizioApplicativoExpression(this.statGiornaliereSearchDAO, StatisticaGiornaliera.model(),false,
+				gByExpr = createDistribuzioneServizioApplicativoExpression(dao,model,false,
 						false, false);	
-				gByExpr.sortOrder(SortOrder.ASC).addOrder(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO);
+				gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO_APPLICATIVO);
 				
 				if(forceIndexes!=null && forceIndexes.size()>0){
 					for (Index index : forceIndexes) {
@@ -4362,18 +4552,18 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(forceErogazione || forceFruizione){
 				if(forceErogazione){
 					unionExprErogatore = new UnionExpression(gByExprErogazione);
-					unionExprErogatore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
-					unionExprErogatore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
-					unionExprErogatore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.DESTINATARIO, aliasFieldSoggetto);
+					unionExprErogatore.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+					unionExprErogatore.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoSoggetto);
+					unionExprErogatore.addSelectField(model.DESTINATARIO, aliasFieldSoggetto);
 					unionExprErogatore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, 
 							"Erogatore", String.class), 
 							aliasFieldRuoloSoggetto);
 				}
 				if(forceFruizione){
 					unionExprFruitore = new UnionExpression(gByExprFruizione);
-					unionExprFruitore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
-					unionExprFruitore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.TIPO_MITTENTE, aliasFieldTipoSoggetto);
-					unionExprFruitore.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.MITTENTE, aliasFieldSoggetto);
+					unionExprFruitore.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+					unionExprFruitore.addSelectField(model.TIPO_MITTENTE, aliasFieldTipoSoggetto);
+					unionExprFruitore.addSelectField(model.MITTENTE, aliasFieldSoggetto);
 					unionExprFruitore.addSelectField(new ConstantField(aliasFieldRuoloSoggetto, 
 							"Fruitore", String.class), 
 							aliasFieldRuoloSoggetto);
@@ -4383,7 +4573,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr = this.statGiornaliereSearchDAO.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldServizioApplicativo, 
-							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()), 
+							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.SERVIZIO_APPLICATIVO.getFieldType()), 
 							aliasFieldServizioApplicativo);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldTipoSoggetto, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, String.class), 
@@ -4400,13 +4590,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// Lascio else solo se si vuole tornare indietro come soluzione
 				
 				unionExpr = new UnionExpression(gByExpr);
-				unionExpr.addSelectField(StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
+				unionExpr.addSelectField(model.SERVIZIO_APPLICATIVO, aliasFieldServizioApplicativo);
 				
 				// Espressione finta per usare l'ordinamento
 				fakeExpr = this.statGiornaliereSearchDAO.newExpression();
 				unionExprFake = new UnionExpression(fakeExpr);
 				unionExprFake.addSelectField(new ConstantField(aliasFieldServizioApplicativo, 
-						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, StatisticaGiornaliera.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()), 
+						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, model.SERVIZIO_APPLICATIVO.getFieldType()), 
 						aliasFieldServizioApplicativo);
 
 			}
@@ -4456,64 +4646,64 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				case COMPLESSIVA:
 					if(unionExprErogatore!=null){
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+								model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+								model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
+								model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-								new Integer(0), StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
+								new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				case INTERNA:
 					if(unionExprErogatore!=null){
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+								model.DIMENSIONI_BYTES_BANDA_INTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+								model.DIMENSIONI_BYTES_BANDA_INTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA,
+								model.DIMENSIONI_BYTES_BANDA_INTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-								new Integer(0), StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+								new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				case ESTERNA:
 					if(unionExprErogatore!=null){
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+								model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+								model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExpr!=null){
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA,
+								model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 								Function.SUM, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-								new Integer(0), StatisticaGiornaliera.model().STATISTICA_BASE.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+								new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				}
@@ -4525,22 +4715,22 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				
 				if(unionExprErogatore!=null){
 					unionExprErogatore.addSelectFunctionField(new FunctionField(
-							StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+							model.NUMERO_TRANSAZIONI, Function.SUM,
 							datoParamAliasName));
 				}
 				if(unionExprFruitore!=null){
 					unionExprFruitore.addSelectFunctionField(new FunctionField(
-							StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+							model.NUMERO_TRANSAZIONI, Function.SUM,
 							datoParamAliasName));
 				}
 				if(unionExpr!=null){
 					unionExpr.addSelectFunctionField(new FunctionField(
-							StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI, Function.SUM,
+							model.NUMERO_TRANSAZIONI, Function.SUM,
 							datoParamAliasName));
 				}
 				if(unionExprFake!=null){
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni", 
-							new Integer(0), StatisticaGiornaliera.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
+							new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
 				}
 				break;
 
@@ -4554,79 +4744,79 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoLatenza) {
 				case LATENZA_PORTA:
 					if(unionExprErogatore!=null){
-						gByExprErogazione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA);
+						gByExprErogazione.isNotNull(model.LATENZA_PORTA);
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA,
+								model.LATENZA_PORTA,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
-						gByExprFruizione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA);
+						gByExprFruizione.isNotNull(model.LATENZA_PORTA);
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA,
+								model.LATENZA_PORTA,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExpr!=null){
-						gByExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA);
+						gByExpr.isNotNull(model.LATENZA_PORTA);
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA,
+								model.LATENZA_PORTA,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
-						fakeExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA);
+						fakeExpr.isNotNull(model.LATENZA_PORTA);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-								new Integer(1), StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+								new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 				case LATENZA_SERVIZIO:
 					if(unionExprErogatore!=null){
-						gByExprErogazione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO);
+						gByExprErogazione.isNotNull(model.LATENZA_SERVIZIO);
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO,
+								model.LATENZA_SERVIZIO,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
-						gByExprFruizione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO);
+						gByExprFruizione.isNotNull(model.LATENZA_SERVIZIO);
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO,
+								model.LATENZA_SERVIZIO,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExpr!=null){
-						gByExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO);
+						gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO,
+								model.LATENZA_SERVIZIO,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
-						fakeExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO);
+						fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
-								new Integer(1), StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+								new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 
 				case LATENZA_TOTALE:
 				default:
 					if(unionExprErogatore!=null){
-						gByExprErogazione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE);
+						gByExprErogazione.isNotNull(model.LATENZA_TOTALE);
 						unionExprErogatore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE,
+								model.LATENZA_TOTALE,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFruitore!=null){
-						gByExprFruizione.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE);
+						gByExprFruizione.isNotNull(model.LATENZA_TOTALE);
 						unionExprFruitore.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE,
+								model.LATENZA_TOTALE,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExpr!=null){
-						gByExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE);
+						gByExpr.isNotNull(model.LATENZA_TOTALE);
 						unionExpr.addSelectFunctionField(new FunctionField(
-								StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE,
+								model.LATENZA_TOTALE,
 								Function.AVG, datoParamAliasName));
 					}
 					if(unionExprFake!=null){
-						fakeExpr.isNotNull(StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE);
+						fakeExpr.isNotNull(model.LATENZA_TOTALE);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-								new Integer(1), StatisticaGiornaliera.model().STATISTICA_BASE.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+								new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 				}
@@ -4641,7 +4831,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(start != null)
 				union.setLimit(limit);
 
-			List<Map<String, Object>> list = this.statGiornaliereSearchDAO.union(union, uExpressions);
+			List<Map<String, Object>> list = dao.union(union, uExpressions);
 
 			if (list != null) {
 
@@ -4690,21 +4880,20 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		return new ArrayList<ResDistribuzione>();
 	}
 
-	private IExpression createDistribuzioneServizioApplicativoExpression(IStatisticaGiornalieraServiceSearch dao, StatisticaGiornalieraModel model, boolean isCount,
+	private IExpression createDistribuzioneServizioApplicativoExpression(IServiceSearchWithoutId<?> dao, StatisticaModel model, boolean isCount,
 			boolean forceErogazione, boolean forceFruizione) throws ServiceException{
 		IExpression expr = null;
 
 		StatisticheGiornaliereService.log.debug("creo Expression per distribuzione sa!");
 
-		List<Soggetto> listaSoggettiGestione = this.distribSaSearch
-				.getSoggettiGestione();
+		List<Soggetto> listaSoggettiGestione = this.distribSaSearch.getSoggettiGestione();
 
 		try {
 			this.distribSaSearch.getSoggettoLocale();
 
 			expr = dao.newExpression();
 			// Data
-			expr.between(model.STATISTICA_BASE.DATA, this.distribSaSearch.getDataInizio(),	this.distribSaSearch.getDataFine());
+			expr.between(model.DATA, this.distribSaSearch.getDataInizio(),	this.distribSaSearch.getDataFine());
 
 			// Protocollo
 			String protocollo = null;
@@ -4715,15 +4904,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				//				expr.and().equals(model.PROTOCOLLO,	this.distribSaSearch.getProtocollo());
 				protocollo = this.distribSaSearch.getProtocollo();
 
-				impostaTipiCompatibiliConProtocollo(dao, model.STATISTICA_BASE, expr, protocollo);
+				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
 
 			}
 
 			// permessi utente operatore
 			if(this.distribSaSearch.getPermessiUtenteOperatore()!=null){
-				IExpression permessi = this.distribSaSearch.getPermessiUtenteOperatore().toExpression(dao, model.STATISTICA_BASE.ID_PORTA, 
-						model.STATISTICA_BASE.TIPO_DESTINATARIO,model.STATISTICA_BASE.DESTINATARIO,
-						model.STATISTICA_BASE.TIPO_SERVIZIO,model.STATISTICA_BASE.SERVIZIO);
+				IExpression permessi = this.distribSaSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
+						model.TIPO_DESTINATARIO,model.DESTINATARIO,
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				expr.and(permessi);
 			}
 			
@@ -4733,12 +4922,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				String tipoSoggettoLocale = this.distribSaSearch.getTipoSoggettoLocale();
 				String nomeSoggettoLocale = this.distribSaSearch.getSoggettoLocale();
 				String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
-				expr.and().equals(model.STATISTICA_BASE.ID_PORTA, idPorta);
+				expr.and().equals(model.ID_PORTA, idPorta);
 			}
 
 			// azione
 			if (StringUtils.isNotBlank(this.distribSaSearch.getNomeAzione()))
-				expr.and().equals(model.STATISTICA_BASE.AZIONE,	this.distribSaSearch.getNomeAzione());
+				expr.and().equals(model.AZIONE,	this.distribSaSearch.getNomeAzione());
 
 			// nome servizio
 			if (StringUtils.isNotBlank(this.distribSaSearch.getNomeServizio())){
@@ -4746,10 +4935,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				IDServizio idServizio = ParseUtility.parseServizioSoggetto(this.distribSaSearch.getNomeServizio());
 				
 				expr.and().
-					equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
-					equals(model.STATISTICA_BASE.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
-					equals(model.STATISTICA_BASE.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.STATISTICA_BASE.SERVIZIO,	idServizio.getNome());
+					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
+					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
+					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
+					equals(model.SERVIZIO,	idServizio.getNome());
 
 			}
 
@@ -4758,7 +4947,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSaSearch.getEsitoDettaglio(),
 					this.distribSaSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSaSearch.getEsitoContesto(),
-					model.STATISTICA_BASE.ESITO, model.STATISTICA_BASE.ESITO_CONTESTO,
+					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
 
@@ -4810,16 +4999,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -4829,14 +5018,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						e2.or(orSoggetti2);
 					}
 
-					e1.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.and().equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.and().equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 
 					// OR
@@ -4847,14 +5036,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					// puo succedero solo in caso admin)
 					expr.and();
 
-					e1.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					e1.equals(model.TIPO_DESTINATARIO,
 							tipoTrafficoSoggetto);
-					e1.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					e1.and().equals(model.DESTINATARIO,
 							nomeTrafficoSoggetto);
 
-					e2.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					e2.equals(model.TIPO_MITTENTE,
 							tipoTrafficoSoggetto);
-					e2.and().equals(model.STATISTICA_BASE.MITTENTE,
+					e2.and().equals(model.MITTENTE,
 							nomeTrafficoSoggetto);
 					// OR
 					expr.or(e1, e2);
@@ -4872,16 +5061,16 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						for (Soggetto sog : listaSoggettiGestione) {
 							IExpression se = dao.newExpression();
 							IExpression se2 = dao.newExpression();
-							se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+							se.equals(model.TIPO_MITTENTE,
 									sog.getTipoSoggetto());
-							se.and().equals(model.STATISTICA_BASE.MITTENTE,
+							se.and().equals(model.MITTENTE,
 									sog.getNomeSoggetto());
 							orSoggetti[i] = se;
 
-							se2.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+							se2.equals(model.TIPO_DESTINATARIO,
 									sog.getTipoSoggetto());
 							se2.and().equals(
-									model.STATISTICA_BASE.DESTINATARIO,
+									model.DESTINATARIO,
 									sog.getNomeSoggetto());
 							orSoggetti2[i] = se2;
 
@@ -4899,7 +5088,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			} else if ( forceErogazione || "ingresso".equals(this.distribSaSearch.getTipologiaRicerca())) {
 				// EROGAZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"delegata");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -4912,9 +5101,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+						se.equals(model.TIPO_DESTINATARIO,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+						se.and().equals(model.DESTINATARIO,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -4925,15 +5114,15 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSaSearch
 						.getNomeMittente())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+					expr.and().equals(model.TIPO_MITTENTE,
 							this.distribSaSearch.getTipoMittente());
-					expr.and().equals(model.STATISTICA_BASE.MITTENTE,
+					expr.and().equals(model.MITTENTE,
 							this.distribSaSearch.getNomeMittente());
 				}
 
 			} else {
 				// FRUIZIONE
-				expr.and().notEquals(model.STATISTICA_BASE.TIPO_PORTA,
+				expr.and().notEquals(model.TIPO_PORTA,
 						"applicativa");
 
 				// il mittente e' l'utente loggato (sempre presente se non
@@ -4946,9 +5135,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					int i = 0;
 					for (Soggetto soggetto : listaSoggettiGestione) {
 						IExpression se = dao.newExpression();
-						se.equals(model.STATISTICA_BASE.TIPO_MITTENTE,
+						se.equals(model.TIPO_MITTENTE,
 								soggetto.getTipoSoggetto());
-						se.and().equals(model.STATISTICA_BASE.MITTENTE,
+						se.and().equals(model.MITTENTE,
 								soggetto.getNomeSoggetto());
 						orSoggetti[i] = se;
 						i++;
@@ -4959,27 +5148,27 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				// il destinatario puo nn essere specificato
 				if (StringUtils.isNotBlank(this.distribSaSearch
 						.getNomeDestinatario())) {
-					expr.and().equals(model.STATISTICA_BASE.TIPO_DESTINATARIO,
+					expr.and().equals(model.TIPO_DESTINATARIO,
 							this.distribSaSearch.getTipoDestinatario());
-					expr.and().equals(model.STATISTICA_BASE.DESTINATARIO,
+					expr.and().equals(model.DESTINATARIO,
 							this.distribSaSearch.getNomeDestinatario());
 				}
 			}
 
-			expr.notEquals(model.STATISTICA_BASE.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-			expr.addGroupBy(model.STATISTICA_BASE.SERVIZIO_APPLICATIVO);
+			expr.notEquals(model.SERVIZIO_APPLICATIVO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.addGroupBy(model.SERVIZIO_APPLICATIVO);
 
 			if(forceErogazione){
-				expr.notEquals(model.STATISTICA_BASE.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.notEquals(model.STATISTICA_BASE.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.addGroupBy(model.STATISTICA_BASE.TIPO_DESTINATARIO);
-				expr.addGroupBy(model.STATISTICA_BASE.DESTINATARIO);
+				expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.addGroupBy(model.TIPO_DESTINATARIO);
+				expr.addGroupBy(model.DESTINATARIO);
 			}
 			if(forceFruizione){
-				expr.notEquals(model.STATISTICA_BASE.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.notEquals(model.STATISTICA_BASE.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
-				expr.addGroupBy(model.STATISTICA_BASE.TIPO_MITTENTE);
-				expr.addGroupBy(model.STATISTICA_BASE.MITTENTE);
+				expr.notEquals(model.TIPO_MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.notEquals(model.MITTENTE, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+				expr.addGroupBy(model.TIPO_MITTENTE);
+				expr.addGroupBy(model.MITTENTE);
 			}
 			
 		} catch (ServiceException e) {
@@ -5820,7 +6009,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(this.statistichePersonalizzateSearch.getPermessiUtenteOperatore()!=null){
 				IExpression permessi = this.statistichePersonalizzateSearch.getPermessiUtenteOperatore().toExpression(dao, model.ID_PORTA, 
 						model.TIPO_DESTINATARIO,model.DESTINATARIO,
-						model.TIPO_SERVIZIO,model.SERVIZIO);
+						model.TIPO_SERVIZIO,model.SERVIZIO, model.VERSIONE_SERVIZIO);
 				expr.and(permessi);
 			}
 			
