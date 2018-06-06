@@ -320,7 +320,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 										if(idAccordoServizioParteComune.getIdSoggetto().getTipo().equals(accordoServizioParteComune.getIdReferente().getTipo()) &&
 												idAccordoServizioParteComune.getIdSoggetto().getNome().equals(accordoServizioParteComune.getIdReferente().getNome()) &&
 												idAccordoServizioParteComune.getVersione().equals(accordoServizioParteComune.getVersione()) &&
-												idAccordoServizioParteComune.getNome().equals(accordoServizioParteComune.getNome())){
+												idAccordoServizioParteComune.getNome().equals(accordoServizioParteComune.getNome()) ){
 											existsPermessoServizio = true;
 											break;
 										}
@@ -742,6 +742,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		idServizio.setTipo(dettaglioPA.getPortaApplicativa().getTipoServizio());
 		idServizio.setNome(dettaglioPA.getPortaApplicativa().getNomeServizio());
 		idServizio.setAzione(dettaglioPA.getPortaApplicativa().getNomeAzione());
+		idServizio.setVersione(dettaglioPA.getPortaApplicativa().getVersioneServizio());
 		identificativiErogazione.setIdServizio(idServizio);
 		idPA.setIdentificativiErogazione(identificativiErogazione );
 		dettaglioPA.setPortaApplicativaOp2(this.driverConfigDB.getPortaApplicativa(idPA));

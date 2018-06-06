@@ -75,6 +75,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
 
 	private static final String FALSA_UNION_DEFAULT_VALUE = "gbyfake";
+	private static final Integer FALSA_UNION_DEFAULT_VALUE_VERSIONE = 1;
 
 	private StatsSearchForm andamentoTemporaleSearch;
 	private StatsSearchForm distribSoggettoSearch;
@@ -374,30 +375,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			List<FunctionField> listaFunzioni = new ArrayList<FunctionField>();
 			TipoVisualizzazione tipoVisualizzazione = this.andamentoTemporaleSearch.getTipoVisualizzazione();
 			switch (tipoVisualizzazione) {
-			case DIMENSIONE_TRANSAZIONI:
-				isBanda = true;
-				if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
-					TipoBanda tipoBanda = this.andamentoTemporaleSearch.getTipoBanda();
-					switch (tipoBanda) {
-					case COMPLESSIVA:
-						listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM, "somma_banda_complessiva"));
-						isBanda_complessiva = true;
-						break;
-					case INTERNA:
-						listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM, "somma_banda_interna"));
-						isBanda_interna = true;
-						break;
-					case ESTERNA:
-					default:
-						listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM, "somma_banda_esterna"));
-						isBanda_esterna = true;
-						break;
-					}
-				}
-				else{
-					List<TipoBanda> tipiBanda = this.andamentoTemporaleSearch.getTipiBandaImpostati();
-
-					for (TipoBanda tipoBanda : tipiBanda) {
+				case DIMENSIONE_TRANSAZIONI:
+					isBanda = true;
+					if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
+						TipoBanda tipoBanda = this.andamentoTemporaleSearch.getTipoBanda();
 						switch (tipoBanda) {
 						case COMPLESSIVA:
 							listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM, "somma_banda_complessiva"));
@@ -406,7 +387,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						case INTERNA:
 							listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM, "somma_banda_interna"));
 							isBanda_interna = true;
-							break;	
+							break;
 						case ESTERNA:
 						default:
 							listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM, "somma_banda_esterna"));
@@ -414,40 +395,37 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							break;
 						}
 					}
-				}
-				break;
-
-			case NUMERO_TRANSAZIONI:
-				listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma"));
-				break;
-
-			case TEMPO_MEDIO_RISPOSTA:{
-				isLatenza = true;
-				if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
-					TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
-					switch (tipoLatenza) {
-					case LATENZA_PORTA:
-						gByExpr.isNotNull(model.LATENZA_PORTA);
-						listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
-						isLatenza_porta = true;
-						break;
-					case LATENZA_SERVIZIO:
-						gByExpr.isNotNull(model.LATENZA_SERVIZIO);
-						listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
-						isLatenza_servizio = true;
-						break;
-					case LATENZA_TOTALE:
-					default:
-						gByExpr.isNotNull(model.LATENZA_TOTALE);
-						listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
-						isLatenza_totale = true;
-						break;
+					else{
+						List<TipoBanda> tipiBanda = this.andamentoTemporaleSearch.getTipiBandaImpostati();
+	
+						for (TipoBanda tipoBanda : tipiBanda) {
+							switch (tipoBanda) {
+							case COMPLESSIVA:
+								listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM, "somma_banda_complessiva"));
+								isBanda_complessiva = true;
+								break;
+							case INTERNA:
+								listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM, "somma_banda_interna"));
+								isBanda_interna = true;
+								break;	
+							case ESTERNA:
+							default:
+								listaFunzioni.add(new  FunctionField(model.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM, "somma_banda_esterna"));
+								isBanda_esterna = true;
+								break;
+							}
+						}
 					}
-				}
-				else{
-					List<TipoLatenza> tipiLatenza = this.andamentoTemporaleSearch.getTipiLatenzaImpostati();
-
-					for (TipoLatenza tipoLatenza : tipiLatenza) {
+					break;
+	
+				case NUMERO_TRANSAZIONI:
+					listaFunzioni.add(new FunctionField(model.NUMERO_TRANSAZIONI,Function.SUM, "somma"));
+					break;
+	
+				case TEMPO_MEDIO_RISPOSTA:{
+					isLatenza = true;
+					if(this.andamentoTemporaleSearch.isAndamentoTemporalePerEsiti()){
+						TipoLatenza tipoLatenza = this.andamentoTemporaleSearch.getTipoLatenza();
 						switch (tipoLatenza) {
 						case LATENZA_PORTA:
 							gByExpr.isNotNull(model.LATENZA_PORTA);
@@ -458,7 +436,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 							listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
 							isLatenza_servizio = true;
-							break;	
+							break;
 						case LATENZA_TOTALE:
 						default:
 							gByExpr.isNotNull(model.LATENZA_TOTALE);
@@ -467,8 +445,31 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							break;
 						}
 					}
+					else{
+						List<TipoLatenza> tipiLatenza = this.andamentoTemporaleSearch.getTipiLatenzaImpostati();
+	
+						for (TipoLatenza tipoLatenza : tipiLatenza) {
+							switch (tipoLatenza) {
+							case LATENZA_PORTA:
+								gByExpr.isNotNull(model.LATENZA_PORTA);
+								listaFunzioni.add(new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza_porta"));
+								isLatenza_porta = true;
+								break;
+							case LATENZA_SERVIZIO:
+								gByExpr.isNotNull(model.LATENZA_SERVIZIO);
+								listaFunzioni.add(new FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza_servizio"));
+								isLatenza_servizio = true;
+								break;	
+							case LATENZA_TOTALE:
+							default:
+								gByExpr.isNotNull(model.LATENZA_TOTALE);
+								listaFunzioni.add(new  FunctionField(model.LATENZA_TOTALE, 	Function.AVG, "somma_latenza_totale"));
+								isLatenza_totale = true;
+								break;
+							}
+						}
+					}
 				}
-			}
 			}
 
 			List<Map<String, Object>> list = null;
@@ -972,9 +973,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			// Data
 			if(date==null){
-				expr.between(model.DATA,
-						this.andamentoTemporaleSearch.getDataInizio(),
-						this.andamentoTemporaleSearch.getDataFine());
+				expr.between(model.DATA, this.andamentoTemporaleSearch.getDataInizio(),	this.andamentoTemporaleSearch.getDataFine());
 			}
 			else{
 				expr.equals(model.DATA,date);
@@ -984,13 +983,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String protocollo = null;
 			// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
 			// protocollo e' impostato anche scegliendo la modalita'
-			//			if (StringUtils.isNotEmpty(this.andamentoTemporaleSearch.getProtocollo()) && this.andamentoTemporaleSearch.isShowListaProtocolli()) {
-					if (this.andamentoTemporaleSearch.isSetFiltroProtocollo()) {
-				//				expr.and().equals(model.PROTOCOLLO,	this.andamentoTemporaleSearch.getProtocollo());
+			if (this.andamentoTemporaleSearch.isSetFiltroProtocollo()) {
 				protocollo = this.andamentoTemporaleSearch.getProtocollo();
-
 				impostaTipiCompatibiliConProtocollo(dao, model, expr, protocollo);
-
 			}
 
 			// permessi utente operatore
@@ -1025,7 +1020,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			} 
 
@@ -1271,8 +1267,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	// ********** ESITI LIVE ******************
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,
-			String periodo, String esitoContesto) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto) {
 
 		// StringBuffer pezzoIdPorta = new StringBuffer();
 		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1682,7 +1677,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.SERVIZIO,	idServizio.getNome());
+						equals(model.SERVIZIO,	idServizio.getNome()).
+						equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 				}
 
@@ -1769,7 +1765,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.SERVIZIO,	idServizio.getNome());
+						equals(model.SERVIZIO,	idServizio.getNome()).
+						equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 				}
 
@@ -1904,7 +1901,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.SERVIZIO,	idServizio.getNome());
+						equals(model.SERVIZIO,	idServizio.getNome()).
+						equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 				}
 
@@ -2027,7 +2025,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 						equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 						equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-						equals(model.SERVIZIO,	idServizio.getNome());
+						equals(model.SERVIZIO,	idServizio.getNome()).
+						equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 				}
 
@@ -2205,7 +2204,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 
@@ -2299,7 +2299,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 
@@ -2597,7 +2598,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 
@@ -2873,7 +2875,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 
@@ -3210,6 +3213,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.VERSIONE_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 
@@ -3230,11 +3234,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			UnionExpression unionExpr = new UnionExpression(gByExpr);
 			String aliasFieldTipoServizio = "tipo_servizio";
 			String aliasFieldServizio = "servizio";
+			String aliasFieldVersioneServizio = "versione_servizio";
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
 			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
 			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
+			unionExpr.addSelectField(model.VERSIONE_SERVIZIO, aliasFieldVersioneServizio);
 			unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
 			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
 
@@ -3245,6 +3251,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.SERVIZIO.getFieldType()), aliasFieldServizio);
+			unionExprFake.addSelectField(new ConstantField(aliasFieldVersioneServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_VERSIONE,
+					model.VERSIONE_SERVIZIO.getFieldType()), aliasFieldVersioneServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
@@ -3254,10 +3262,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.setUnionAll(true);
 			union.addField(aliasFieldTipoServizio);
 			union.addField(aliasFieldServizio);
+			union.addField(aliasFieldVersioneServizio);
 			union.addField(aliasFieldTipoDestinatario);
 			union.addField(aliasFieldDestinatario);
 			union.addGroupBy(aliasFieldTipoServizio);
 			union.addGroupBy(aliasFieldServizio);
+			union.addGroupBy(aliasFieldVersioneServizio);
 			union.addGroupBy(aliasFieldTipoDestinatario);
 			union.addGroupBy(aliasFieldDestinatario);
 
@@ -3367,7 +3377,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 					ResDistribuzione r = new ResDistribuzione();
 					r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
-							+ ((String) row.get(aliasFieldServizio)));
+							+ ((String) row.get(aliasFieldServizio)) + ":"
+							+ ((Integer) row.get(aliasFieldVersioneServizio)));
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 							+ ((String) row.get(aliasFieldDestinatario)));
@@ -3665,8 +3676,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.VERSIONE_SERVIZIO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.TIPO_SERVIZIO);
 			expr.addGroupBy(model.SERVIZIO);
+			expr.addGroupBy(model.VERSIONE_SERVIZIO);
 			
 			expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4036,7 +4049,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO, idServizio.getVersione()); 
 
 			}  
 			
@@ -4045,8 +4059,10 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 			expr.notEquals(model.TIPO_SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.SERVIZIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
+			expr.notEquals(model.VERSIONE_SERVIZIO, Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
 			expr.addGroupBy(model.TIPO_SERVIZIO);
 			expr.addGroupBy(model.SERVIZIO);
+			expr.addGroupBy(model.VERSIONE_SERVIZIO);
 			
 			expr.notEquals(model.TIPO_DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 			expr.notEquals(model.DESTINATARIO, Costanti.INFORMAZIONE_NON_DISPONIBILE);
@@ -4106,6 +4122,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.AZIONE);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.SERVIZIO);
+			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.VERSIONE_SERVIZIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.TIPO_DESTINATARIO);
 			gByExpr.sortOrder(SortOrder.ASC).addOrder(model.DESTINATARIO);
 
@@ -4128,12 +4145,14 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			String aliasFieldAzione = "azione";
 			String aliasFieldTipoServizio = "tipo_servizio";
 			String aliasFieldServizio = "servizio";
+			String aliasFieldVersioneServizio = "versione_servizio";
 			String aliasFieldTipoDestinatario = "tipo_destinatario";
 			String aliasFieldDestinatario = "destinatario";
 			
 			unionExpr.addSelectField(model.AZIONE,		aliasFieldAzione);
 			unionExpr.addSelectField(model.TIPO_SERVIZIO, aliasFieldTipoServizio);
 			unionExpr.addSelectField(model.SERVIZIO, aliasFieldServizio);
+			unionExpr.addSelectField(model.VERSIONE_SERVIZIO, aliasFieldVersioneServizio);
 			unionExpr.addSelectField(model.TIPO_DESTINATARIO, aliasFieldTipoDestinatario);
 			unionExpr.addSelectField(model.DESTINATARIO, aliasFieldDestinatario);
 
@@ -4146,6 +4165,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					model.TIPO_SERVIZIO.getFieldType()), aliasFieldTipoServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.SERVIZIO.getFieldType()), aliasFieldServizio);
+			unionExprFake.addSelectField(new ConstantField(aliasFieldVersioneServizio, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE_VERSIONE,
+					model.VERSIONE_SERVIZIO.getFieldType()), aliasFieldVersioneServizio);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldTipoDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
 					model.TIPO_DESTINATARIO.getFieldType()), aliasFieldTipoDestinatario);
 			unionExprFake.addSelectField(new ConstantField(aliasFieldDestinatario, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, 
@@ -4156,11 +4177,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			union.addField(aliasFieldAzione);
 			union.addField(aliasFieldTipoServizio);
 			union.addField(aliasFieldServizio);
+			union.addField(aliasFieldVersioneServizio);
 			union.addField(aliasFieldTipoDestinatario);
 			union.addField(aliasFieldDestinatario);
 			union.addGroupBy(aliasFieldAzione);
 			union.addGroupBy(aliasFieldTipoServizio);
 			union.addGroupBy(aliasFieldServizio);
+			union.addGroupBy(aliasFieldVersioneServizio);
 			union.addGroupBy(aliasFieldTipoDestinatario);
 			union.addGroupBy(aliasFieldDestinatario);
 
@@ -4274,7 +4297,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					r.setRisultato(((String) row.get(aliasFieldAzione)));
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoServizio)) + "/"
-							+ ((String) row.get(aliasFieldServizio)));
+							+ ((String) row.get(aliasFieldServizio)) + ":"
+									+ ((Integer) row.get(aliasFieldVersioneServizio)));
 					
 					r.getParentMap().put("1",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 							+ ((String) row.get(aliasFieldDestinatario)));
@@ -4938,7 +4962,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 
@@ -6037,7 +6062,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					equals(model.TIPO_DESTINATARIO,	idServizio.getSoggettoErogatore().getTipo()).
 					equals(model.DESTINATARIO,	idServizio.getSoggettoErogatore().getNome()).
 					equals(model.TIPO_SERVIZIO,	idServizio.getTipo()).
-					equals(model.SERVIZIO,	idServizio.getNome());
+					equals(model.SERVIZIO,	idServizio.getNome()).
+					equals(model.VERSIONE_SERVIZIO,	idServizio.getVersione());
 
 			}
 

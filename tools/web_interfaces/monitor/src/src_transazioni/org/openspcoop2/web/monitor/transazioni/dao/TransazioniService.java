@@ -191,15 +191,6 @@ public class TransazioniService implements ITransazioniService {
 		}
 		return null;
 	}
-	
-	//	public void setService(IAdvancedServiceManager service) {
-	//		try {
-	//			// this.service = service.getAdvancedTransazioneServiceSearch();
-	//			// // this.dumpService = service.getDumpMessaggioServiceSearch();
-	//		} catch (Exception e) {
-	//			this.log.error(e.getMessage(), e);
-	//		}
-	//	}
 
 	public TransazioniService() {
 		this.log =  LoggerManager.getPddMonitorSqlLogger();
@@ -393,13 +384,11 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<TransazioneBean> findAll(int start, int limit,
-			SortOrder sortOrder) {
+	public List<TransazioneBean> findAll(int start, int limit, SortOrder sortOrder) {
 		return findAll(start, limit, sortOrder, null); 
 	}
 	@Override
-	public List<TransazioneBean> findAll(int start, int limit,
-			SortOrder sortOrder, String sortField) {
+	public List<TransazioneBean> findAll(int start, int limit, SortOrder sortOrder, String sortField) {
 
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
@@ -692,6 +681,13 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
+			String modalita = Utility.getLoggedUtenteModalita();
+			if(StringUtils.isNotEmpty(modalita) && !modalita.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+				exprOk.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+				exprFaultApplicativo.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+				exprKo.and().equals(Transazione.model().PROTOCOLLO,	modalita);
+			}
+			
 			NonNegativeNumber nnnOk = this.transazioniSearchDAO.count(exprOk);
 			NonNegativeNumber nnnFaultApplicativo = this.transazioniSearchDAO.count(exprFaultApplicativo);
 			NonNegativeNumber nnnKo = this.transazioniSearchDAO.count(exprKo);
@@ -824,13 +820,10 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	@Override
-	public DumpMessaggio getDumpMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio) throws Exception {
+	public DumpMessaggio getDumpMessaggio(String idTransazione, TipoMessaggio tipoMessaggio) throws Exception {
 
 		try {
-			this.log.debug("Get Dump Messaggio [id transazione: "
-					+ idTransazione + "],[ tipomessaggio: "
-					+ tipoMessaggio.toString() + "]");
+			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
 			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
@@ -857,8 +850,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 
@@ -919,12 +911,10 @@ public class TransazioniService implements ITransazioniService {
 	}
 		
 	@Override
-	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,
-			TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,	TipoMessaggio tipoMessaggio, Long idDump) {
 		try {
 
-			this.log.debug("Get Contenuti specifici [idDump: "
-					+ idDump + "]");
+			this.log.debug("Get Contenuti specifici [idDump: "	+ idDump + "]");
 			
 			if(idDump==virtualIdRequest || idDump==virtualIdResponse){
 				throw new NotFoundException("Id Dump negative, possibile virtual message");
@@ -1055,13 +1045,10 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio) {
+	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, TipoMessaggio tipoMessaggio) {
 
 		this.log
-		.info("Has Info Header Trasporto Available [id transazione: "
-				+ idTransazione + "],[ tipomessaggio: "
-				+ tipoMessaggio.toString() + "]");
+		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 		try {
 
 			// Long l =
@@ -1131,13 +1118,11 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione,
-			TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 
-			this.log.debug("Get Header Trasporto [idDump: "
-					+ idDump + "]");
+			this.log.debug("Get Header Trasporto [idDump: "	+ idDump + "]");
 			// return
 			// this.em.createQuery("select d from DumpHeaderTrasporto d where d.dumpMessaggio.id=:id_dump")
 			// .setParameter("id_dump", idDump)
@@ -1186,8 +1171,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<TransazioneBean> findAllDuplicati(String idTransazione,
-			String idEgov, boolean isRisposta, int start, int limit) {
+	public List<TransazioneBean> findAllDuplicati(String idTransazione, String idEgov, boolean isRisposta, int start, int limit) {
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
 
@@ -1259,13 +1243,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public TransazioneBean findTransazioneOriginale(String idTransazioneDuplicata,
-			String idEgov, boolean isRisposta) {
+	public TransazioneBean findTransazioneOriginale(String idTransazioneDuplicata,	String idEgov, boolean isRisposta) {
 
-		this.log
-		.info("Find Transazione Originale [id transazione duplicata: "
-				+ idTransazioneDuplicata + "],[ idEgov: " + idEgov
-				+ "], [isRisposta: " + isRisposta + "]");
+		this.log.info("Find Transazione Originale [id transazione duplicata: "	+ idTransazioneDuplicata + "],[ idEgov: " + idEgov + "], [isRisposta: " + isRisposta + "]");
 		try {
 
 			// String query =
@@ -1327,12 +1307,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public int countAllDuplicati(String idTransazione, String idEgov,
-			boolean isRisposta) {
+	public int countAllDuplicati(String idTransazione, String idEgov,	boolean isRisposta) {
 
-		this.log.debug("Count All Duplicati [id transazione: "
-				+ idTransazione + "],[ idEgov: " + idEgov + "], [isRisposta: "
-				+ isRisposta + "]");
+		this.log.debug("Count All Duplicati [id transazione: "	+ idTransazione + "],[ idEgov: " + idEgov + "], [isRisposta: "	+ isRisposta + "]");
 		try {
 
 			// Query q =
@@ -1533,8 +1510,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<ConfigurazioneRicerca> getRicercheByValues(IDAccordo idAccordo,
-			String nomeServizio, String nomeAzione) {
+	public List<ConfigurazioneRicerca> getRicercheByValues(IDAccordo idAccordo,	String nomeServizio, String nomeAzione) {
 
 		this.log.debug("Find ricerche by Values[id Accordo: " + idAccordo + "],[ nomeAzione: " + nomeAzione + "], [nomeServizio: " + nomeServizio + "]"); 
 		try {
@@ -1563,12 +1539,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<Parameter<?>> instanceParameters(ConfigurazioneRicerca configurazioneRicerca, Context context)
-			throws SearchException {
+	public List<Parameter<?>> instanceParameters(ConfigurazioneRicerca configurazioneRicerca, Context context)	throws SearchException {
 
-		this.log
-		.info("Find Parametri By Ricerca ID [id Ricerca: " + configurazioneRicerca.getIdConfigurazioneRicerca()
-				+ "],[ className: " + configurazioneRicerca.getPlugin().getClassName() + "]");
+		this.log.info("Find Parametri By Ricerca ID [id Ricerca: " + configurazioneRicerca.getIdConfigurazioneRicerca()	+ "],[ className: " + configurazioneRicerca.getPlugin().getClassName() + "]");
 		try {
 			
 			List<Parameter<?>> res = null;
@@ -1597,12 +1570,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<ConfigurazioneTransazioneStato> getStatiByValues(
-			IDAccordo idAccordo, String nomeServizio, String azione) {
+	public List<ConfigurazioneTransazioneStato> getStatiByValues(IDAccordo idAccordo, String nomeServizio, String azione) {
 
-		this.log.debug("get Stati By Values [idAccord: "
-				+ idAccordo + "],[ nomeAzione: " + azione
-				+ "], [nomeServizio: " + nomeServizio + "]");
+		this.log.debug("get Stati By Values [idAccord: " + idAccordo + "],[ nomeAzione: " + azione	+ "], [nomeServizio: " + nomeServizio + "]");
 		try {
 			if (idAccordo == null || nomeServizio == null) {
 				this.log
@@ -1760,13 +1730,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<ConfigurazioneTransazioneRisorsaContenuto> getRisorseContenutoByValues(
-			IDAccordo idAccordo, String nomeServizio, String nomeAzione,
-			String nomeStato) {
+	public List<ConfigurazioneTransazioneRisorsaContenuto> getRisorseContenutoByValues(IDAccordo idAccordo, String nomeServizio, String nomeAzione,	String nomeStato) {
 		if (idAccordo == null || nomeServizio == null) {
-			this.log
-			.error("Impossibile recuperare gli stati: idAccordo e/o nomeServizio non forniti.");
-
+			this.log.error("Impossibile recuperare gli stati: idAccordo e/o nomeServizio non forniti.");
 			return null;
 		}
 
@@ -2172,18 +2138,6 @@ public class TransazioniService implements ITransazioniService {
 					equals(Transazione.model().TIPO_SERVIZIO,	idServizio.getTipo()).
 					equals(Transazione.model().NOME_SERVIZIO,	idServizio.getNome()).
 					equals(Transazione.model().VERSIONE_SERVIZIO,	idServizio.getVersione());
-
-				// criteri ricerca personalizzati in caso di servizio impostato
-				// if(filtro!=null){
-				//
-				// sb.append("AND ");
-				// sb.append(filtro.getSqlJoins());
-				//
-				// sb.append(" AND ");
-				// sb.append(filtro.getSqlConditions());
-				// sb.append(" ");
-				//
-				// }
 			}
 
 			if(ricerca!=null && ModalitaRicercaTransazioni.ID_APPLICATIVO.equals(ricerca) ){
