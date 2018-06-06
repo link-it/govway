@@ -406,6 +406,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHN = "Cache (Dati di Autenticazione)";
 	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_TOKEN = "Cache (Gestione dei Token)";
+	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime Porta di Dominio";
@@ -580,6 +582,12 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN = "algoritmocacheAuthn";
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN = "idlecacheAuthn";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN = "lifecacheAuthn";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_TOKEN = "statocacheToken";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_TOKEN = "dimensionecacheToken";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_TOKEN = "algoritmocacheToken";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_TOKEN = "idlecacheToken";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_TOKEN = "lifecacheToken";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";

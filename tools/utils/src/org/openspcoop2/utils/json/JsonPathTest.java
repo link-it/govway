@@ -25,7 +25,7 @@ public class JsonPathTest {
 
 		String pattern = "$.store.book[*]";
 		JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-		JSONUtils jsonUtils = new JSONUtils();
+		JSONUtils jsonUtils = JSONUtils.getInstance();
 		String name = "file.json";
 		
 

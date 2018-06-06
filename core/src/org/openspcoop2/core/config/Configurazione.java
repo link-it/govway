@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocolli" type="{http://www.openspcoop2.org/core/config}configurazione-protocolli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -75,6 +76,7 @@ import java.util.List;
   	"accessoConfigurazione",
   	"accessoDatiAutorizzazione",
   	"accessoDatiAutenticazione",
+  	"accessoDatiGestioneToken",
   	"protocolli",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
@@ -175,6 +177,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiAutenticazione) {
     this.accessoDatiAutenticazione = accessoDatiAutenticazione;
+  }
+
+  public AccessoDatiGestioneToken getAccessoDatiGestioneToken() {
+    return this.accessoDatiGestioneToken;
+  }
+
+  public void setAccessoDatiGestioneToken(AccessoDatiGestioneToken accessoDatiGestioneToken) {
+    this.accessoDatiGestioneToken = accessoDatiGestioneToken;
   }
 
   public ConfigurazioneProtocolli getProtocolli() {
@@ -376,6 +386,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-dati-autenticazione",required=false,nillable=false)
   protected AccessoDatiAutenticazione accessoDatiAutenticazione;
+
+  @XmlElement(name="accesso-dati-gestione-token",required=false,nillable=false)
+  protected AccessoDatiGestioneToken accessoDatiGestioneToken;
 
   @XmlElement(name="protocolli",required=false,nillable=false)
   protected ConfigurazioneProtocolli protocolli;

@@ -45,6 +45,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_CONFIGURAZIONE = new org.openspcoop2.core.config.model.AccessoConfigurazioneModel(new Field("accesso-configurazione",org.openspcoop2.core.config.AccessoConfigurazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new Field("accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new Field("accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new Field("accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new Field("protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new Field("validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
@@ -72,6 +73,7 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 		this.ACCESSO_CONFIGURAZIONE = new org.openspcoop2.core.config.model.AccessoConfigurazioneModel(new ComplexField(father,"accesso-configurazione",org.openspcoop2.core.config.AccessoConfigurazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTORIZZAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel(new ComplexField(father,"accesso-dati-autorizzazione",org.openspcoop2.core.config.AccessoDatiAutorizzazione.class,"configurazione",Configurazione.class));
 		this.ACCESSO_DATI_AUTENTICAZIONE = new org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel(new ComplexField(father,"accesso-dati-autenticazione",org.openspcoop2.core.config.AccessoDatiAutenticazione.class,"configurazione",Configurazione.class));
+		this.ACCESSO_DATI_GESTIONE_TOKEN = new org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel(new ComplexField(father,"accesso-dati-gestione-token",org.openspcoop2.core.config.AccessoDatiGestioneToken.class,"configurazione",Configurazione.class));
 		this.PROTOCOLLI = new org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel(new ComplexField(father,"protocolli",org.openspcoop2.core.config.ConfigurazioneProtocolli.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_BUSTE = new org.openspcoop2.core.config.model.ValidazioneBusteModel(new ComplexField(father,"validazione-buste",org.openspcoop2.core.config.ValidazioneBuste.class,"configurazione",Configurazione.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"configurazione",Configurazione.class));
@@ -101,6 +103,8 @@ public class ConfigurazioneModel extends AbstractModel<Configurazione> {
 	public org.openspcoop2.core.config.model.AccessoDatiAutorizzazioneModel ACCESSO_DATI_AUTORIZZAZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.AccessoDatiAutenticazioneModel ACCESSO_DATI_AUTENTICAZIONE = null;
+	 
+	public org.openspcoop2.core.config.model.AccessoDatiGestioneTokenModel ACCESSO_DATI_GESTIONE_TOKEN = null;
 	 
 	public org.openspcoop2.core.config.model.ConfigurazioneProtocolliModel PROTOCOLLI = null;
 	 

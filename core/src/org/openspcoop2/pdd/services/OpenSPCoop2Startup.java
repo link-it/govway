@@ -46,6 +46,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -987,6 +988,58 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Inizializzazione GestoreToken --------------*/
+			try{
+				AccessoDatiGestioneToken datiGestioneToken = configurazionePdDManager.getAccessoDatiGestioneToken();
+				if(datiGestioneToken!=null && datiGestioneToken.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(datiGestioneToken.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(datiGestioneToken.getCache().getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+					
+					String algoritmo = null;
+					if(datiGestioneToken.getCache().getAlgoritmo()!=null){
+						algoritmo = datiGestioneToken.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(datiGestioneToken.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(datiGestioneToken.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(datiGestioneToken.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(datiGestioneToken.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+
+					GestoreAutenticazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreAutenticazione.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Autenticazione");
+				return;
+			}
+			
+			
+			
+			
+			
+			
 			
 			/* ----------- Inizializzazione Gestore Risorse JMX (le risorse jmx vengono registrate in seguito) ------------ */
 			try{
@@ -1594,6 +1647,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - dati di autenticazione");
 				}
+				// MBean GestioneToken
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanGestioneToken();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - dati di gestione dei token");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -1672,6 +1731,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_autenticazioneDati.setStatoCache(infoAutenticazioneDati.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autenticazioneDati);
+			
+			org.openspcoop2.pdd.core.jmx.EngineGestioneToken infoGestioneTokenDati = new org.openspcoop2.pdd.core.jmx.EngineGestioneToken();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_gestioneTokenDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_TOKEN, infoGestioneTokenDati.isCacheAbilitata());
+			if(infoGestioneTokenDati.isCacheAbilitata()){
+				informazioniStatoPortaCache_gestioneTokenDati.setStatoCache(infoGestioneTokenDati.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestioneTokenDati);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());

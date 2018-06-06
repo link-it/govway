@@ -949,20 +949,28 @@ public abstract class AbstractStatistiche {
 
 		Statistica statisticaBase = new Statistica();
 
-		statisticaBase.setAzione(stat.getAzione());
 		statisticaBase.setData(stat.getData());
+		
+		statisticaBase.setTipoPorta(org.openspcoop2.core.statistiche.constants.TipoPorta.toEnumConstant(stat.getTipoPorta().getTipo()));
+		statisticaBase.setIdPorta(stat.getIdPorta());
+		
+		statisticaBase.setTipoMittente(stat.getMittente().getTipo());
+		statisticaBase.setMittente(stat.getMittente().getNome());
+		
+		statisticaBase.setTipoDestinatario(stat.getDestinatario().getTipo());
 		statisticaBase.setDestinatario(stat.getDestinatario().getNome());
+		
+		statisticaBase.setTipoServizio(stat.getTipoServizio());
+		statisticaBase.setServizio(stat.getServizio());
+		statisticaBase.setVersioneServizio(stat.getVersioneServizio());
+		
+		statisticaBase.setAzione(stat.getAzione());
+		
+		statisticaBase.setServizioApplicativo(stat.getServizioApplicativo());
+		
 		statisticaBase.setEsito(stat.getEsito());
 		statisticaBase.setEsitoContesto(stat.getEsitoContesto());
-		statisticaBase.setIdPorta(stat.getIdPorta());
-		statisticaBase.setMittente(stat.getMittente().getNome());
-		statisticaBase.setServizio(stat.getServizio());
-		statisticaBase.setServizioApplicativo(stat.getServizioApplicativo());
-		statisticaBase.setTipoDestinatario(stat.getDestinatario().getTipo());
-		statisticaBase.setTipoMittente(stat.getMittente().getTipo());
-		statisticaBase.setTipoPorta(org.openspcoop2.core.statistiche.constants.TipoPorta.toEnumConstant(stat.getTipoPorta().getTipo()));
-		statisticaBase.setTipoServizio(stat.getTipoServizio());
-
+		
 		statisticaBase.setNumeroTransazioni((int)stat.getRichieste());
 		
 		statisticaBase.setDimensioniBytesBandaComplessiva(stat.getBytesBandaTotale());

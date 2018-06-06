@@ -28,6 +28,7 @@ import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.MtomProcessorFlow;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
@@ -559,6 +560,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public AccessoConfigurazione readAccessoConfigurazioneFromString(String in) throws DeserializerException {
 		return (AccessoConfigurazione) this.xmlToObj(in.getBytes(), AccessoConfigurazione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-gestione-token
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiGestioneToken readAccessoDatiGestioneToken(String fileName) throws DeserializerException {
+		return (AccessoDatiGestioneToken) this.xmlToObj(fileName, AccessoDatiGestioneToken.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiGestioneToken readAccessoDatiGestioneToken(File file) throws DeserializerException {
+		return (AccessoDatiGestioneToken) this.xmlToObj(file, AccessoDatiGestioneToken.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiGestioneToken readAccessoDatiGestioneToken(InputStream in) throws DeserializerException {
+		return (AccessoDatiGestioneToken) this.xmlToObj(in, AccessoDatiGestioneToken.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiGestioneToken readAccessoDatiGestioneToken(byte[] in) throws DeserializerException {
+		return (AccessoDatiGestioneToken) this.xmlToObj(in, AccessoDatiGestioneToken.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiGestioneToken}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiGestioneToken readAccessoDatiGestioneTokenFromString(String in) throws DeserializerException {
+		return (AccessoDatiGestioneToken) this.xmlToObj(in.getBytes(), AccessoDatiGestioneToken.class);
 	}	
 	
 	

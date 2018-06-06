@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.openspcoop2.pdd.core.token.parser.ITokenParser;
+import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class InformazioniToken implements Serializable {
 
@@ -12,6 +20,19 @@ public class InformazioniToken implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public InformazioniToken(String rawResponse, ITokenParser tokenParser, TipologiaClaims tipologiaClaims) throws UtilsException {
+		this.rawResponse = rawResponse;
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		if(jsonUtils.isJson(this.rawResponse)) {
+			JsonNode root = jsonUtils.getAsNode(this.rawResponse);
+			Map<String, String> readClaims = jsonUtils.convertToSimpleMap(root);
+			if(readClaims!=null && readClaims.size()>0) {
+				this.claims.putAll(readClaims);
+			}
+		}
+		tokenParser.init(this.rawResponse, this.claims, tipologiaClaims);
+	}
 	
 	// RawResponse
 	private String rawResponse;
@@ -53,7 +74,7 @@ public class InformazioniToken implements Serializable {
 	private List<String> scopes = new ArrayList<>();
 	
 	// Claims
-	private HashMap<String,String> claims = new HashMap<String,String>();
+	private Map<String,String> claims = new HashMap<String,String>();
 
 	
 	public String getIss() {
@@ -136,11 +157,11 @@ public class InformazioniToken implements Serializable {
 		this.scopes = scopes;
 	}
 
-	public HashMap<String, String> getClaims() {
+	public Map<String, String> getClaims() {
 		return this.claims;
 	}
 
-	public void setClaims(HashMap<String, String> claims) {
+	public void setClaims(Map<String, String> claims) {
 		this.claims = claims;
 	}
 	

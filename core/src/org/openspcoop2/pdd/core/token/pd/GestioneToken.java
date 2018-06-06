@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.token.pd;
 
+import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -40,9 +41,7 @@ public class GestioneToken {
 	
     public EsitoPresenzaTokenPortaDelegata verificaPresenzaToken(DatiInvocazionePortaDelegata datiInvocazione) throws TokenException{
 
-    	EsitoPresenzaTokenPortaDelegata esito = new EsitoPresenzaTokenPortaDelegata();
-    	
-    	GestoreToken.verificaPosizioneToken(datiInvocazione, esito);
+    	EsitoPresenzaTokenPortaDelegata esito = (EsitoPresenzaTokenPortaDelegata) GestoreToken.verificaPosizioneToken(datiInvocazione, true);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -53,6 +52,66 @@ public class GestioneToken {
     	
     }
     
+    public EsitoGestioneTokenPortaDelegata validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException { 	
+    	try {
+    	
+    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(datiInvocazione, token, true);
+    		
+        	if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}  	
+    }
+    
+    public EsitoGestioneTokenPortaDelegata introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+    	try {
+        	
+    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(datiInvocazione, token, true);
+    		
+    		if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+	
+	public EsitoGestioneTokenPortaDelegata userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+		try {
+        	
+			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(datiInvocazione, token, true);
+    		
+			if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+    					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+	
+	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken) throws TokenException {
+		try {
+        	
+    		GestoreToken.forwardToken(datiInvocazione, esitoPresenzaToken, true);
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
   
 }
 

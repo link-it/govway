@@ -1,8 +1,13 @@
 package org.openspcoop2.pdd.core.token;
 
+import org.openspcoop2.security.message.constants.SecurityConstants;
+
 public class Costanti {
 
 	public final static String TIPOLOGIA = "gestionePolicyToken";
+	
+	
+	// Policy id
 	
 	public final static String POLICY_REALM = "policy.realm";
 	public final static String POLICY_GENERIC_ERROR = "policy.genericError";
@@ -25,18 +30,25 @@ public class Costanti {
 	public final static String POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME = "policy.token.source.header";
 	public final static String POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME = "policy.token.source.queryParameter";
 	
+	public final static String POLICY_TOKEN_TYPE = "policy.token.type";
+	public final static String POLICY_TOKEN_TYPE_OPAQUE = "opaque";
+	public final static String POLICY_TOKEN_TYPE_JWS = "jws";
+	public final static String POLICY_TOKEN_TYPE_JWE = "jwe";
+	
 	public final static String POLICY_STATO_ABILITATO = "true";
 	public final static String POLICY_STATO_DISABILITATO = "false";
 	
 	public final static String POLICY_VALIDAZIONE_STATO = "policy.validazioneJWT.stato";
-	public final static String POLICY_VALIDAZIONE_TIPO = "policy.validazioneJWT.tipo";
-	public final static String POLICY_VALIDAZIONE_TIPO_JWS = "JWS";
-	public final static String POLICY_VALIDAZIONE_TIPO_JWE = "JWE";
-	
+	public final static String POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE = "policy.validazioneJWT.saveErrorInCache";
+	public final static String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID;
+	public final static String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
+
 	public final static String POLICY_INTROSPECTION_STATO = "policy.introspection.stato";
+	public final static String POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE = "policy.introspection.saveErrorInCache";
 	public final static String POLICY_INTROSPECTION_URL = "policy.introspection.endpoint.url";
 	
 	public final static String POLICY_USER_INFO_STATO = "policy.userInfo.stato";
+	public final static String POLICY_USER_INFO_SAVE_ERROR_IN_CACHE = "policy.userInfo.saveErrorInCache";
 	public final static String POLICY_USER_INFO_URL = "policy.userInfo.endpoint.url";
 	
 	public final static String POLICY_TOKEN_FORWARD_STATO = "policy.tokenForward.stato";

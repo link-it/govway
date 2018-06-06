@@ -118,6 +118,8 @@ public class StatisticsUtils {
 			setCondition(expr, tipoServizio, Transazione.model().TIPO_SERVIZIO);
 			String nomeServizio = stat.getServizio();
 			setCondition(expr, nomeServizio, Transazione.model().NOME_SERVIZIO);
+			Integer versioneServizio = stat.getVersioneServizio();
+			setCondition(expr, versioneServizio, Transazione.model().VERSIONE_SERVIZIO);
 			String azione = stat.getAzione();
 			setCondition(expr, azione, Transazione.model().AZIONE);
 			
@@ -153,6 +155,7 @@ public class StatisticsUtils {
 //			expr.isNotNull(Transazione.model().NOME_SOGGETTO_EROGATORE);
 //			expr.isNotNull(Transazione.model().TIPO_SERVIZIO);
 //			expr.isNotNull(Transazione.model().NOME_SERVIZIO);
+//			expr.isNotNull(Transazione.model().VERSIONE_SERVIZIO);
 		}
 		
 		if(setNotNullDate){
@@ -185,6 +188,7 @@ public class StatisticsUtils {
 		expr.addGroupBy(Transazione.model().NOME_SOGGETTO_EROGATORE);
 		expr.addGroupBy(Transazione.model().TIPO_SERVIZIO);
 		expr.addGroupBy(Transazione.model().NOME_SERVIZIO);
+		expr.addGroupBy(Transazione.model().VERSIONE_SERVIZIO);
 		expr.addGroupBy(Transazione.model().AZIONE);
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
 			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
@@ -217,6 +221,15 @@ public class StatisticsUtils {
 	private static void setCondition(IExpression expr, String value,IField field) throws ExpressionNotImplementedException, ExpressionException{
 		if(value==null || "".equals(value) || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(value)){
 			expr.isNull(field);
+		}
+		else{
+			expr.equals(field,value);
+		}
+	}
+	
+	private static void setCondition(IExpression expr, Integer value,IField field) throws ExpressionNotImplementedException, ExpressionException{
+		if(value==null || "".equals(value) || value.intValue() == Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE){
+			expr.equals(field,Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
 		}
 		else{
 			expr.equals(field,value);
@@ -323,6 +336,13 @@ public class StatisticsUtils {
 											getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row)));
 		stat.setTipoServizio(getValueFromMap(Transazione.model().TIPO_SERVIZIO,row));
 		stat.setServizio(getValueFromMap(Transazione.model().NOME_SERVIZIO,row));
+		String v = getValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row);
+		if(v==null || "".equals(v) || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(v)) {
+			stat.setVersioneServizio(Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+		}
+		else {
+			stat.setVersioneServizio(Integer.valueOf(v));
+		}
 		stat.setAzione(getValueFromMap(Transazione.model().AZIONE,row));
 		
 		stat.setEsito((Integer)row.get(Transazione.model().ESITO.getFieldName()));

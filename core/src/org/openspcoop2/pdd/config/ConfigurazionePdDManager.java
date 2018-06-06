@@ -30,6 +30,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -760,6 +761,10 @@ public class ConfigurazionePdDManager {
 	
 	public AccessoDatiAutenticazione getAccessoDatiAutenticazione(){
 		return this.configurazionePdDReader.getAccessoDatiAutenticazione(this.getConnection());
+	}
+	
+	public AccessoDatiGestioneToken getAccessoDatiGestioneToken(){
+		return this.configurazionePdDReader.getAccessoDatiGestioneToken(this.getConnection());
 	}
 	
 	public StatoFunzionalitaConWarning getTipoValidazione(String implementazionePdDSoggetto){

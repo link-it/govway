@@ -38,6 +38,7 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.GenericProperties;
@@ -1688,6 +1689,25 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 	}
 
+	
+	/**
+	 * Restituisce l'accesso ai dati di gestione token
+	 *
+	 * @return AccessoDatiGestioneToken
+	 * 
+	 */
+	@Override
+	public AccessoDatiGestioneToken getAccessoDatiGestioneToken() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoDatiGestioneToken()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiGestioneToken] Informazioni di accesso ai dati di gestione dei token non trovati");
+		
+		return this.openspcoop.getConfigurazione().getAccessoDatiGestioneToken();
+		
+	}
+	
 	
 	/**
 	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di cooperazione

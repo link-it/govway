@@ -112,6 +112,46 @@ public class PolicyGestioneToken implements Serializable {
 		return genericError;
 	}
 	
+	public String getLabelAzioniGestioneToken() {
+		StringBuffer bf = new StringBuffer();
+		if(this.isValidazioneJWT() || this.isIntrospection() || this.isUserInfo()) {
+			bf.append("Validazione ");
+			boolean first = true;
+			if(this.isValidazioneJWT()) {
+				bf.append("JWT");
+				first = false;
+			}
+			if(this.isIntrospection()) {
+				if(!first) {
+					bf.append(",");
+				}
+				bf.append("Introspection");
+				first = false;
+			}
+			if(this.isUserInfo()) {
+				if(!first) {
+					bf.append(",");
+				}
+				bf.append("UserInfo");
+				first = false;
+			}
+			return bf.toString();
+		}
+		else {
+			return "";
+		}
+	}
+	
+	public String getLabelTipoToken() {
+		String tokenType = this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
+		if(Costanti.POLICY_TOKEN_TYPE_OPAQUE.equals(tokenType)) {
+			return "Opaco";
+		}
+		else {
+			return tokenType.toUpperCase();
+		}
+	}
+	
 	public String getLabelPosizioneToken() {
 		String position = this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE);
 		if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position)) {
@@ -135,6 +175,39 @@ public class PolicyGestioneToken implements Serializable {
 					this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME));
 		}
 		return "Sconosciuto"; // non dovrebbe mai succedere, esiste la validazione
+	}
+	
+	public boolean isValidazioneJWT_saveErrorInCache() throws ProviderException, ProviderValidationException{
+		boolean save = false;
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE);
+		if(tmp!=null) {
+			save = Boolean.valueOf(tmp);
+		}
+		return save;
+	}
+	
+	public String getIntrospection_endpoint() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_URL);
+	}
+	public boolean isIntrospection_saveErrorInCache() throws ProviderException, ProviderValidationException{
+		boolean save = false;
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE);
+		if(tmp!=null) {
+			save = Boolean.valueOf(tmp);
+		}
+		return save;
+	}
+	
+	public String getUserInfo_endpoint() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_URL);
+	}
+	public boolean isUserInfo_saveErrorInCache() throws ProviderException, ProviderValidationException{
+		boolean save = false;
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_SAVE_ERROR_IN_CACHE);
+		if(tmp!=null) {
+			save = Boolean.valueOf(tmp);
+		}
+		return save;
 	}
 	
 }

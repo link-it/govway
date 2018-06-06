@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.token.pa;
 
+import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
@@ -39,9 +40,7 @@ public class GestioneToken {
 	
     public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) throws TokenException{
 
-    	EsitoPresenzaTokenPortaApplicativa esito = new EsitoPresenzaTokenPortaApplicativa();
-    	
-    	GestoreToken.verificaPosizioneToken(datiInvocazione, esito);
+    	EsitoPresenzaTokenPortaApplicativa esito = (EsitoPresenzaTokenPortaApplicativa) GestoreToken.verificaPosizioneToken(datiInvocazione, false);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -51,6 +50,62 @@ public class GestioneToken {
     	
     }
     
-  
+    public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {   	
+    	try {
+    	
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(datiInvocazione, token, false);
+    		
+        	if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	} 	
+    }
+    
+    public EsitoGestioneTokenPortaApplicativa introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+    	try {
+        	
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(datiInvocazione, token, false);
+    		
+        	if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+	
+	public EsitoGestioneTokenPortaApplicativa userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
+		try {
+        	
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(datiInvocazione, token, false);
+    		
+        	if(esito.getEccezioneProcessamento()!=null) {
+        		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+        	}
+        	
+        	return esito;
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
+	
+	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken) throws TokenException {
+		try {
+        	
+    		GestoreToken.forwardToken(datiInvocazione, esitoPresenzaToken, false);
+    		
+    	}catch(Exception e) {
+    		throw new TokenException(e.getMessage(),e); // errore di processamento
+    	}
+	}
 }
 

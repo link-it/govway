@@ -4,7 +4,7 @@
 	<properties>
 		<collection name="signaturePropRefId"/>
 		<collection name="encryptionPropRefId"/>
-		<collection name="verifySignaturePropRefId"/>
+		<collection name="signatureVerificationPropRefId"/>
 		<collection name="decryptionPropRefId"/>
 		<collection name="endpointConfig"/>
 		<collection name="sslConfig"/>
@@ -76,13 +76,37 @@
 				</conditions>
 				<property name="policy.validazioneJWT.stato" />
 			</item>
+			<item type="hidden" name="validazioneJwtSaveErrorInCache" value="false">
+				<conditions>
+					<condition and="false">
+						<selected name="validazioneJwtStato" />
+					</condition>
+				</conditions>
+				<property name="policy.validazioneJWT.saveErrorInCache"/>
+			</item>
 			
 			<item type="checkbox" name="introspectionStato" label="Token Introspection" defaultSelected="false" reloadOnChange="true">
 				<property name="policy.introspection.stato" />
+			</item>			
+			<item type="hidden" name="introspectionSaveErrorInCache" value="false">
+				<conditions>
+					<condition and="false">
+						<selected name="introspectionStato" />
+					</condition>
+				</conditions>
+				<property name="policy.introspection.saveErrorInCache"/>
 			</item>
 			
 			<item type="checkbox" name="userInfoStato" label="OIDC - UserInfo" defaultSelected="false" reloadOnChange="true">
 				<property name="policy.userInfo.stato" />
+			</item>
+			<item type="hidden" name="userInfoSaveErrorInCache" value="false">
+				<conditions>
+					<condition and="false">
+						<selected name="userInfoStato" />
+					</condition>
+				</conditions>
+				<property name="policy.userInfo.saveErrorInCache"/>
 			</item>
 			
 			<item type="checkbox" name="tokenForwardStato" label="Token Forward" defaultSelected="false" reloadOnChange="true">
@@ -129,25 +153,25 @@
 				<equals name="tokenType" value="jws"/>
 			</condition>
 		</conditions>
-	
+		
 		<subsection label="TrustStore">
 
-			<item type="select" name="truststoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" required="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
 					<!--  <value value="jceks" label="JCEKS"/> -->
 				</values>
-				<property name="rs.security.keystore.type" properties="verifySignaturePropRefId" />
+				<property name="rs.security.keystore.type" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="truststoreFile" label="File" required="true">
-			      	<property name="rs.security.keystore.file" properties="verifySignaturePropRefId" />
+			<item type="text" name="validazioneJwtTruststoreFile" label="File" required="true">
+			      	<property name="rs.security.keystore.file" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="truststorePassword" label="Password" required="true">
-			      	<property name="rs.security.keystore.password" properties="verifySignaturePropRefId" />
+			<item type="text" name="validazioneJwtTruststorePassword" label="Password" required="true">
+			      	<property name="rs.security.keystore.password" properties="signatureVerificationPropRefId" />
 			</item>
-			<item type="text" name="truststoreCertificateAlias" label="Alias Certificato" required="true">
-			      	<property name="rs.security.keystore.alias" properties="verifySignaturePropRefId" />
+			<item type="text" name="validazioneJwtTruststoreCertificateAlias" label="Alias Certificato" required="true">
+			      	<property name="rs.security.keystore.alias" properties="signatureVerificationPropRefId" />
 			</item>
 
 		</subsection>
@@ -167,7 +191,7 @@
 	
 		<subsection label="KeyStore">
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" required="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -175,16 +199,16 @@
 				</values>
 				<property name="rs.security.keystore.type" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
+			<item type="text" name="validazioneJwtKeystoreFile" label="File" required="true">
 			      	<property name="rs.security.keystore.file" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
+			<item type="text" name="validazioneJwtKeystorePassword" label="Password" required="true">
 			      	<property name="rs.security.keystore.password" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			<item type="text" name="validazioneJwtKeystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
 			      	<property name="rs.security.keystore.alias" properties="decryptionPropRefId" />
 			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			<item type="text" name="validazioneJwtKeystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
 			      	<property name="rs.security.key.password" properties="decryptionPropRefId" />
 			</item>
 

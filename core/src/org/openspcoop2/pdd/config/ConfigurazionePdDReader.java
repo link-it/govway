@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Connettore;
@@ -3241,6 +3242,45 @@ public class ConfigurazionePdDReader {
 		*/
 		
 		return ConfigurazionePdDReader.accessoDatiAutenticazione;
+	}
+	
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di gestione dei token
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiGestioneToken accessoDatiGestioneToken = null;
+	private static Boolean accessoDatiGestioneTokenLetto = false;
+	protected AccessoDatiGestioneToken getAccessoDatiGestioneToken(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiGestioneTokenLetto==false){
+			AccessoDatiGestioneToken tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiGestioneToken(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoDatiGestioneToken (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoDatiGestioneToken",e);
+			}
+
+			ConfigurazionePdDReader.accessoDatiGestioneToken = tmp;
+			ConfigurazionePdDReader.accessoDatiGestioneTokenLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoDatiGestioneToken.getCache()==null){
+			System.out.println("ACCESSO_DATI_TOKEN CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_TOKEN CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_TOKEN CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiGestioneToken.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_TOKEN CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiGestioneToken.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_TOKEN CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiGestioneToken.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_TOKEN CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiGestioneToken.getCache().getItemLifeSecond());
+		}
+		*/
+		
+		return ConfigurazionePdDReader.accessoDatiGestioneToken;
 	}
 	
 	/**

@@ -605,6 +605,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoDatiGestioneToken }
+     */
+    public AccessoDatiGestioneToken createAccessoDatiGestioneToken() {
+        return new AccessoDatiGestioneToken();
+    }
+
+    /**
      * Create an instance of {@link Attachments }
      */
     public Attachments createAttachments() {

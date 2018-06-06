@@ -271,6 +271,8 @@ public class CostantiPdD {
     public static final String JMX_AUTORIZZAZIONE = "DatiAutorizzazione";
     /** MBean per l'Autenticazione */
     public static final String JMX_AUTENTICAZIONE = "DatiAutenticazione";
+    /** MBean per la gestione dei token */
+    public static final String JMX_TOKEN = "GestioneToken";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */
@@ -466,11 +468,21 @@ public class CostantiPdD {
     /** Costante che identifica il tipo di autenticazione */
     public final static String KEY_TIPO_AUTENTICAZIONE = "@TIPO_AUTENTICAZIONE@";
     /** Costante che identifica la policy di gestione token */
-    public final static String KEY_POLICY_GESTIONE_TOKEN = "@POLICY_GESTIONE_TOKEN@";
+    public final static String KEY_TOKEN_POLICY_GESTIONE = "@TOKEN_POLICY_GESTIONE@";
+    /** Costante che identifica il tipo di token */
+    public final static String KEY_TOKEN_TIPO = "@TOKEN_TIPO@";
+    /** Costante che identifica le azioni intraprese sul token */
+    public final static String KEY_TOKEN_POLICY_AZIONI = "@TOKEN_POLICY_AZIONI@";
     /** Costante che identifica la posizione del token */
-    public final static String KEY_POLICY_POSIZIONE_TOKEN = "@POSIZIONE_TOKEN@";
+    public final static String KEY_TOKEN_POSIZIONE = "@TOKEN_POSIZIONE@";
     /** Costante che identifica il token */
-    public final static String KEY_POLICY_TOKEN = "@TOKEN@";
+    public final static String KEY_TOKEN = "@TOKEN@";
+    /** Costante che identifica le informazioni sul token */
+    public final static String KEY_TOKEN_INFO = "@TOKEN_INFO@";
+    /** Costante che identifica l'endpoint del servizio di introspection */
+    public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION = "@TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION@";
+    /** Costante che identifica l'endpoint del servizio di userInfo */
+    public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO = "@TOKEN_ENDPOINT_SERVIZIO_USER_INFO@";
     /** Costante che identifica il tipo di validazione contenuti */
     public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
     /** Costante che identifica dettagli ulteriori sulla validazione contenuti */

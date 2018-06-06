@@ -47,6 +47,16 @@ public class TokenProvider implements IProvider {
 			}
 		}
 		
+		String tokenType = pDefault.getProperty(Costanti.POLICY_TOKEN_TYPE);
+		if(tokenType==null) {
+			throw new ProviderValidationException("Non e' stata indicato il tipo del token");
+		}
+		if(!Costanti.POLICY_TOKEN_TYPE_OPAQUE.equals(tokenType) &&
+				!Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) &&
+				!Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+			throw new ProviderValidationException("Il tipo di token indicato '"+tokenType+"' non è supportato");
+		}
+		
 		boolean validazione = TokenUtilities.isValidazioneEnabled(pDefault);
 		boolean introspection = TokenUtilities.isIntrospectionEnabled(pDefault);
 		boolean userInfo = TokenUtilities.isUserInfoEnabled(pDefault);
@@ -56,15 +66,43 @@ public class TokenProvider implements IProvider {
 			throw new ProviderValidationException("Almeno una modalità di elaborazione del token deve essere selezionata");
 		}
 		
+		if(validazione) {
+			if(!Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType) &&
+					!Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+				throw new ProviderValidationException("Il tipo di token indicato '"+tokenType+"' non è utilizzabile con una validazione JWT");
+			}
+			
+			if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
+				Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID);
+				if(p==null || p.size()<=0) {
+					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWS");
+				}
+			}
+			else if(Costanti.POLICY_TOKEN_TYPE_JWE.equals(tokenType)) {
+				Properties p = mapProperties.get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID);
+				if(p==null || p.size()<=0) {
+					throw new ProviderValidationException("Non è stata fornita una configurazione per effettuare la validazione JWE");
+				}
+			}
+		}
+		
 		if(introspection) {
+			String url = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL);
+			if(url==null) {
+				throw new ProviderValidationException("Non e' stata fornita la url del servizio 'Introspection'");
+			}
 			try{
-				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_INTROSPECTION_URL));
+				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
 			}catch(Exception e){
 				throw new ProviderValidationException("La URL fornita per il servizio 'Introspection' non è valida: "+e.getMessage());
 			}	
 		}
 		
 		if(userInfo) {
+			String url = pDefault.getProperty(Costanti.POLICY_USER_INFO_URL);
+			if(url==null) {
+				throw new ProviderValidationException("Non e' stata fornita la url del servizio 'OIDC UserInfo'");
+			}
 			try{
 				org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(pDefault.getProperty(Costanti.POLICY_USER_INFO_URL));
 			}catch(Exception e){

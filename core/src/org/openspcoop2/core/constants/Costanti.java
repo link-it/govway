@@ -63,6 +63,11 @@ public class Costanti {
 	public final static String CLIENT_IP_REMOTE_ADDRESS = "CLIENT_IP_REMOTE_ADDRESS";
 	public final static String CLIENT_IP_TRANSPORT_ADDRESS = "CLIENT_IP_TRANSPORT_ADDRESS";	
 	
+	public final static String TOKEN_POSIZIONE = "TOKEN_POSIZIONE";
+	public final static String TOKEN_ESITO_VALIDAZIONE = "TOKEN_ESITO_VALIDAZIONE";
+	public final static String TOKEN_ESITO_INTROSPECTION = "TOKEN_ESITO_INTROSPECTION";
+	public final static String TOKEN_ESITO_USER_INFO = "TOKEN_ESITO_USER_INFO";
+	
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";
 	public final static String EXTENDED_INFO_TRANSAZIONE = "EXTENDED_INFO_TRANSAZIONE";
@@ -78,6 +83,7 @@ public class Costanti {
 			Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO,
 			Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO,
 			Costanti.ERRORE_AUTENTICAZIONE,
+			Costanti.ERRORE_TOKEN,
 			Costanti.ERRORE_AUTORIZZAZIONE,
 			Costanti.URL_INVOCAZIONE,
 			Costanti.CREDENZIALI_INVOCAZIONE,

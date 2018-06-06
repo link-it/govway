@@ -44,6 +44,7 @@ import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
@@ -6465,6 +6466,7 @@ public class DriverConfigurazioneDB_LIB {
 		AccessoConfigurazione aConfig = config.getAccessoConfigurazione();
 		AccessoDatiAutorizzazione aDatiAuthz = config.getAccessoDatiAutorizzazione();
 		AccessoDatiAutenticazione aDatiAuthn = config.getAccessoDatiAutenticazione();
+		AccessoDatiGestioneToken aDatiGestioneToken = config.getAccessoDatiGestioneToken();
 		Attachments att = config.getAttachments();
 
 		String utilizzoIndTelematico = null;
@@ -6572,6 +6574,24 @@ public class DriverConfigurazioneDB_LIB {
 			authn_idleCache = authn_cache.getItemIdleTime();
 			authn_lifeCache = authn_cache.getItemLifeSecond();
 		}
+		
+		Cache token_cache = null;
+		String token_dimensioneCache = null;
+		String token_algoritmoCache = null;
+		String token_idleCache = null;
+		String token_lifeCache = null;
+		String token_statoCache = null;
+		if(aDatiGestioneToken !=null){
+			token_cache = aDatiGestioneToken.getCache();
+
+		}
+		token_statoCache = (token_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (token_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			token_dimensioneCache = token_cache.getDimensione();
+			token_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(token_cache.getAlgoritmo());
+			token_idleCache = token_cache.getItemIdleTime();
+			token_lifeCache = token_cache.getItemLifeSecond();
+		}
 
 		Tracciamento t = config.getTracciamento();
 		String tracciamentoBuste = null;
@@ -6667,6 +6687,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("authn_algoritmocache", "?");
 				sqlQueryObject.addInsertField("authn_idlecache", "?");
 				sqlQueryObject.addInsertField("authn_lifecache", "?");
+				// gestione token cache
+				sqlQueryObject.addInsertField("token_statocache", "?");
+				sqlQueryObject.addInsertField("token_dimensionecache", "?");
+				sqlQueryObject.addInsertField("token_algoritmocache", "?");
+				sqlQueryObject.addInsertField("token_idlecache", "?");
+				sqlQueryObject.addInsertField("token_lifecache", "?");
 				
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -6717,6 +6743,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, authn_algoritmoCache);
 				updateStmt.setString(index++, authn_idleCache);
 				updateStmt.setString(index++, authn_lifeCache);
+				// token cache
+				updateStmt.setString(index++, token_statoCache);
+				updateStmt.setString(index++, token_dimensioneCache);
+				updateStmt.setString(index++, token_algoritmoCache);
+				updateStmt.setString(index++, token_idleCache);
+				updateStmt.setString(index++, token_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -6732,7 +6764,8 @@ public class DriverConfigurazioneDB_LIB {
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
-								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache));
+								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
+								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -7088,6 +7121,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("authn_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("authn_idlecache", "?");
 				sqlQueryObject.addUpdateField("authn_lifecache", "?");
+				// token cache
+				sqlQueryObject.addUpdateField("token_statocache", "?");
+				sqlQueryObject.addUpdateField("token_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("token_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("token_idlecache", "?");
+				sqlQueryObject.addUpdateField("token_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -7138,6 +7177,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, authn_algoritmoCache);
 				updateStmt.setString(index++, authn_idleCache);
 				updateStmt.setString(index++, authn_lifeCache);
+				// token cache
+				updateStmt.setString(index++, token_statoCache);
+				updateStmt.setString(index++, token_dimensioneCache);
+				updateStmt.setString(index++, token_algoritmoCache);
+				updateStmt.setString(index++, token_idleCache);
+				updateStmt.setString(index++, token_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -7154,7 +7199,8 @@ public class DriverConfigurazioneDB_LIB {
 								registro_statoCache, registro_dimensioneCache, registro_algoritmoCache, registro_idleCache, registro_lifeCache,
 								config_statoCache, config_dimensioneCache, config_algoritmoCache, config_idleCache, config_lifeCache,
 								authz_statoCache, authz_dimensioneCache, authz_algoritmoCache, authz_idleCache, authz_lifeCache,
-								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache));
+								authn_statoCache, authn_dimensioneCache, authn_algoritmoCache, authn_idleCache, authn_lifeCache,
+								token_statoCache, token_dimensioneCache, token_algoritmoCache, token_idleCache, token_lifeCache));
 
 				n = updateStmt.executeUpdate();
 				updateStmt.close();

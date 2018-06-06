@@ -53,7 +53,7 @@ public class JsonPathExpressionEngine {
 
 	private static JSONUtils jsonUtils;
 	public static synchronized JSONUtils getJsonUtils() throws UtilsException {
-		if(jsonUtils == null) jsonUtils = new JSONUtils();
+		if(jsonUtils == null) jsonUtils = JSONUtils.getInstance();
 		return jsonUtils;
 	}
 	

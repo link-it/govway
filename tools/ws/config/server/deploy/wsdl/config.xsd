@@ -625,6 +625,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-configurazione" type="accesso-configurazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="protocolli" type="configurazione-protocolli"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
@@ -727,6 +728,13 @@
 	
 	<!-- Informazioni per l'autenticazione -->
 	<xsd:complexType name="accesso-dati-autenticazione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Informazioni per l'accesso dati di gestione token -->
+	<xsd:complexType name="accesso-dati-gestione-token">
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>
