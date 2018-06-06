@@ -22,9 +22,13 @@ package org.openspcoop2.core.commons.search.utils;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.openspcoop2.core.commons.ProtocolFactoryReflectionUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComuneAzione;
@@ -250,10 +254,14 @@ public class RegistroCore {
 	}
 	public static List<String> getAzioni(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore,	String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
-		 List<String> list = new ArrayList<String>();
-		 list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio).keySet());
+		List<String> list = new ArrayList<String>();
+		list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio).keySet());
 		 
-		 return list;
+		if(list!=null && list.size()>0){
+			Collections.sort(list);
+		}
+		 
+		return list;
 	}
 	
 	public static Map<String,String> getAzioniConLabel(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
@@ -262,7 +270,26 @@ public class RegistroCore {
 			protocolli = new ArrayList<>();
 			protocolli.add(protocollo);
 		}
-		return _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio); 
+		Map<String,String> mapAzioni = _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio);
+		
+		//convert map to a List
+		List<Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(mapAzioni.entrySet());
+
+		//sorting the list with a comparator
+		Collections.sort(list, new Comparator<Entry<String, String>>() {
+			@Override
+			public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		//convert sortedMap back to Map
+		Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+		for (Entry<String, String> entry : list) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		return sortedMap;
 	}
 	
 	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
@@ -389,7 +416,7 @@ public class RegistroCore {
 							String label = httpmethod + " " + path;
 							if(list.contains(az)==false){
 								list.add(az);
-								mapAzioni.put(label,az); 
+								mapAzioni.put(az,label); 
 							}
 						}
 					}
@@ -460,14 +487,14 @@ public class RegistroCore {
 			}
 		}
 		
-		if(list!=null && list.size()>0){
-			Collections.sort(list);
-		}
-		
 		Map<String,String> mapAzioniReturn = new HashMap<String,String>();
 		
-		for (String key : list) {
-			mapAzioniReturn.put(key, mapAzioni.get(key));
+		if(list!=null && list.size()>0){
+			Collections.sort(list);
+			
+			for (String key : list) {
+				mapAzioniReturn.put(key, mapAzioni.get(key));
+			}
 		}
 		
 		return mapAzioniReturn;
