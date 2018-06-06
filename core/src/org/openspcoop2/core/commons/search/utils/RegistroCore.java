@@ -22,6 +22,7 @@ package org.openspcoop2.core.commons.search.utils;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -249,12 +250,25 @@ public class RegistroCore {
 	}
 	public static List<String> getAzioni(JDBCServiceManager manager, List<String> protocolli, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore,	String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
+		 List<String> list = new ArrayList<String>();
+		 list.addAll(_getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio).keySet());
+		 
+		 return list;
+	}
+	
+	public static Map<String,String> getAzioniConLabel(JDBCServiceManager manager, String protocollo, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		return _getAzioni(manager, protocolli, tipoSoggettoErogatore, nomeSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio); 
+	}
+	
+	public static Map<String,String> _getAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws Exception{
 		
 		List<String> list = new ArrayList<String>();
-			
-//			if(tipoServizio==null || nomeServizio==null){
-//				return list;
-//			}
+		Map<String,String> mapAzioni = new HashMap<String,String>();
 			
 		// Localizzo Accordi di Servizio Parte Comune dalle Parti Specifiche
 		List<IdPortType> idPortTypes = new ArrayList<IdPortType>();
@@ -349,8 +363,7 @@ public class RegistroCore {
 				
 				ServiceBinding serviceBinding = ServiceBinding.valueOf(idPortType.getIdAccordoServizioParteComune().getServiceBinding().toUpperCase());
 				
-				if(ServiceBinding.REST.equals(serviceBinding)) {
-					
+				if(ServiceBinding.REST.equals(serviceBinding)) { 
 					IResourceServiceSearch aspcResourceServiceSearch = manager.getResourceServiceSearch();
 					IPaginatedExpression pagResources = aspcResourceServiceSearch.newPaginatedExpression();
 					pagResources.and();
@@ -364,15 +377,19 @@ public class RegistroCore {
 						pagResources.equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, 
 								idPortType.getIdAccordoServizioParteComune().getIdSoggetto().getNome());
 					}
-					List<Object> resultAzioni = null;
+					List<Map<String, Object>> resultAzioni = null;
 					try{
-						resultAzioni = aspcResourceServiceSearch.select(pagResources, true, Resource.model().NOME);
+						resultAzioni = aspcResourceServiceSearch.select(pagResources, true, Resource.model().NOME, Resource.model().HTTP_METHOD, Resource.model().PATH);
 					}catch(NotFoundException notFound){}
 					if(resultAzioni!=null && resultAzioni.size()>0){
-						for (Object azione : resultAzioni) {
-							String az = (String) azione;
+						for (Map<String, Object> azione : resultAzioni) {
+							String az = (String) azione.get(Resource.model().NOME.getFieldName());
+							String httpmethod = (String) azione.get(Resource.model().HTTP_METHOD.getFieldName());
+							String path = (String) azione.get(Resource.model().PATH.getFieldName());
+							String label = httpmethod + " " + path;
 							if(list.contains(az)==false){
 								list.add(az);
+								mapAzioni.put(label,az); 
 							}
 						}
 					}
@@ -404,6 +421,7 @@ public class RegistroCore {
 								String az = (String) azione;
 								if(list.contains(az)==false){
 									list.add(az);
+									mapAzioni.put(az, az); 
 								}
 							}
 						}
@@ -432,6 +450,7 @@ public class RegistroCore {
 								String az = (String) azione;
 								if(list.contains(az)==false){
 									list.add(az);
+									mapAzioni.put(az, az); 
 								}
 							}
 						}
@@ -445,7 +464,13 @@ public class RegistroCore {
 			Collections.sort(list);
 		}
 		
-		return list;
+		Map<String,String> mapAzioniReturn = new HashMap<String,String>();
+		
+		for (String key : list) {
+			mapAzioniReturn.put(key, mapAzioni.get(key));
+		}
+		
+		return mapAzioniReturn;
 	}
 	
 	public static List<IDServizioApplicativo> getServiziApplicativiErogatori(JDBCServiceManager manager, String protocollo, 
