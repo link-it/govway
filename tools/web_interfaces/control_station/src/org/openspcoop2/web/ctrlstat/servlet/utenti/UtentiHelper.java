@@ -1218,6 +1218,7 @@ public class UtentiHelper extends ConsoleHelper {
 					e.addElement(de);
 					
 					// multi-tenant
+					de = new DataElement();
 					if(mySU.hasOnlyPermessiUtenti()) {
 						de.setValue("-");
 					}
