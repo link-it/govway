@@ -95,7 +95,7 @@
 				</link:prop>
 			
 				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
-					<link:prop label="Protocollo">
+					<link:prop label="Modalità">
 						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
 							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false" >
 							<f:selectItems value="#{sf_bean.protocolli}"/>
