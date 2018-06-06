@@ -20,12 +20,11 @@
 
 
 
-package org.openspcoop2.pdd.core.token.pd;
+package org.openspcoop2.pdd.core.token.pa;
 
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
-import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 
 /**
  * Classe che implementala gestione token
@@ -38,15 +37,14 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 public class GestioneToken {
 
 	
-    public EsitoPresenzaTokenPortaDelegata verificaPresenzaToken(DatiInvocazionePortaDelegata datiInvocazione) throws TokenException{
+    public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) throws TokenException{
 
-    	EsitoPresenzaTokenPortaDelegata esito = new EsitoPresenzaTokenPortaDelegata();
+    	EsitoPresenzaTokenPortaApplicativa esito = new EsitoPresenzaTokenPortaApplicativa();
     	
     	GestoreToken.verificaPosizioneToken(datiInvocazione, esito);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+    		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
     	}
     	
     	return esito;

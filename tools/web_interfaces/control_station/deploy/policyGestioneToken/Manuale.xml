@@ -11,6 +11,16 @@
 	</properties>
 	
 	<section label="Informazioni Generali">
+		
+		<!--
+		Se non definito viene preso il nome della policy creata  
+		<item type="hidden" name="policyRealm" value="ValoreREALM">
+			<property name="policy.realm" force="true"/>
+		</item>
+		-->
+		<item type="hidden" name="policyGenericError" value="true">
+			<property name="policy.genericError" force="true"/>
+		</item>
 				
 		<subsection label="Token">
 		

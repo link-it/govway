@@ -825,12 +825,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			}
 			else if(responseMessage!=null && responseMessage.getForcedResponse()!=null) {
 				byte[]response = responseMessage.getForcedResponse().getContent();
-				if(response==null) {
-					throw new Exception("Trovata configurazione 'forcedResponse' senza una vera risposta");
+//				if(response==null) {
+//					throw new Exception("Trovata configurazione 'forcedResponse' senza una vera risposta");
+//				}
+				if(response!=null) {
+					lengthOutResponse = response.length;
 				}
-				lengthOutResponse = response.length;
 			
-				if(response.length<1024) {
+				if(response!=null && response.length<1024) {
 					// Se il messaggio non è troppo grande lo aggiungo al diagnostico
 					try {
 						descrizioneSoapFault = "("+new String(response)+")";
@@ -854,7 +856,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			    	}	
 				}
 				
-				res.setContentType(responseMessage.getForcedResponse().getContentType());
+				if(responseMessage.getForcedResponse().getContentType()!=null) {
+					res.setContentType(responseMessage.getForcedResponse().getContentType());
+				}
 				
 				if(responseMessage.getForcedResponse().getResponseCode()!=null) {
 					try{
@@ -874,7 +878,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						responseMessage, context.getProprietaErroreAppl(),informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 				
-				res.sendResponse(response);
+				if(response!=null) {
+					res.sendResponse(response);
+				}
 				
 			}			
 			else{

@@ -26,7 +26,8 @@ public class GestoreToken {
 		
 		esitoPresenzaToken.setPresente(false);
 		try{
-    		Properties properties = datiInvocazione.getPolicyGestioneToken().getDefaultProperties();
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		Properties properties = policyGestioneToken.getDefaultProperties();
     		String source = properties.getProperty(Costanti.POLICY_TOKEN_SOURCE);
     		
     		String detailsError = null;
@@ -140,8 +141,8 @@ public class GestoreToken {
 				else {
 					esitoPresenzaToken.setDetails("Token non individuato tramite la configurazione indicata");	
 				}
-    			
-    			
+    			esitoPresenzaToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_request, policyGestioneToken.getRealm(), 
+    					policyGestioneToken.isGenericError(), esitoPresenzaToken.getDetails()));   			
     		}
     		
     	}catch(Exception e){
@@ -152,9 +153,8 @@ public class GestoreToken {
 	}
 	
 	
-	private OpenSPCoop2Message buildErrorMessage(WWW_Authenticate_ErrorCode errorCode, String realm, boolean genericError, String error) {
+	public static OpenSPCoop2Message buildErrorMessage(WWW_Authenticate_ErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
 		
-		// AGGIUNGERE IL REALM tra le PROPRIETA
 		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
 		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
 		forcedResponseMessage.setContent(null); // vuoto
@@ -171,15 +171,34 @@ public class GestoreToken {
 		switch (errorCode) {
 		case invalid_request:
 			forcedResponseMessage.setResponseCode("400");
+			if(genericError) {
+				bf.append("The request is missing a required token parameter");
+			}
 			break;
 		case invalid_token:
 			forcedResponseMessage.setResponseCode("401");
+			if(genericError) {
+				bf.append("Token invalid");
+			}
 			break;
 		case insufficient_scope:
 			forcedResponseMessage.setResponseCode("403");
+			if(genericError) {
+				bf.append("The request requires higher privileges than provided by the access token");
+			}
 			break;
 		}
 		bf.append("\"");
+		if(scope!=null && scope.length>0) {
+			bf.append(", scope=\"");
+			for (int i = 0; i < scope.length; i++) {
+				if(i>0) {
+					bf.append(",");
+				}
+				bf.append(scope[i]);	
+			}
+			bf.append("\"");
+		}
 		
 		forcedResponseMessage.setHeaders(new Properties());
 		forcedResponseMessage.getHeaders().put(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, bf.toString());

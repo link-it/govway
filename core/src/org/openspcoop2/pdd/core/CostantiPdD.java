@@ -469,6 +469,8 @@ public class CostantiPdD {
     public final static String KEY_POLICY_GESTIONE_TOKEN = "@POLICY_GESTIONE_TOKEN@";
     /** Costante che identifica la posizione del token */
     public final static String KEY_POLICY_POSIZIONE_TOKEN = "@POSIZIONE_TOKEN@";
+    /** Costante che identifica il token */
+    public final static String KEY_POLICY_TOKEN = "@TOKEN@";
     /** Costante che identifica il tipo di validazione contenuti */
     public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
     /** Costante che identifica dettagli ulteriori sulla validazione contenuti */

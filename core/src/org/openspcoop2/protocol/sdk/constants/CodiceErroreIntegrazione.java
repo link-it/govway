@@ -161,6 +161,8 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_558_HANDLER_IN_PROTOCOL_REQUEST(558),
     /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento situazione anomala di messaggio senza fault ricevuto insieme ad un errore di trasporto, 559*/
     CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO(559),
+    /** String che contiene un codice di errore OpenSPCoop: ErroreProcessamento situazione anomala durante la gestione token, 560*/
+    CODICE_560_GESTIONE_TOKEN(560),
     
     /** Codice di Errore Custom, 5XX*/
     CODICE_5XX_CUSTOM(5),
@@ -416,6 +418,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 557: return CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR;
 				case 558: return CodiceErroreIntegrazione.CODICE_558_HANDLER_IN_PROTOCOL_REQUEST;
 				case 559: return CodiceErroreIntegrazione.CODICE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO;
+				case 560: return CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN;
 				
 				case 5: return CodiceErroreIntegrazione.CODICE_5XX_CUSTOM;
 			default:
