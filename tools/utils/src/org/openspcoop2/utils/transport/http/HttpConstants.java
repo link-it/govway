@@ -92,7 +92,8 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_TEXT_XML = CONTENT_TYPE_SOAP_1_1;
 	public final static String CONTENT_TYPE_JSON = MimeTypeConstants.MEDIA_TYPE_JSON;
 	public final static String CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP = MimeTypeConstants.MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
-	public final static String CONTENT_TYPE_X_DOWNLOAD = "application/x-download";
+	public final static String CONTENT_TYPE_X_DOWNLOAD = MimeTypeConstants.MEDIA_TYPE_X_DOWNLOAD;
+	public final static String CONTENT_TYPE_X_WWW_FORM_URLENCODED = MimeTypeConstants.MEDIA_TYPE_X_WWW_FORM_URLENCODED;
 	
 	/** Content Type, Parameter */
 	public final static String CONTENT_TYPE_PARAMETER_CHARSET = "charset";

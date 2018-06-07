@@ -96,6 +96,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Loader loader */
 	protected Loader loader = null;
 	
+	/** Errore generato con un prefisso del connettore */
+	protected boolean generateErrorWithConnectorPrefix = true;
+	
 	/** Identificativo Modulo */
 	protected String idModulo = null;
 	

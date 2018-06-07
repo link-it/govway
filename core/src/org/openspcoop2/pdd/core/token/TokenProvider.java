@@ -1,5 +1,6 @@
 package org.openspcoop2.pdd.core.token;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -10,6 +11,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.pdd.core.token.parser.TipologiaClaims;
 import org.openspcoop2.security.message.jose.JOSECostanti;
 import org.openspcoop2.security.message.jose.SecurityProvider;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 public class TokenProvider implements IProvider {
@@ -194,7 +196,16 @@ public class TokenProvider implements IProvider {
 
 	@Override
 	public List<String> getValues(String id) throws ProviderException {
-		if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
+		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
+				Costanti.ID_USER_INFO_HTTP_METHOD.equals(id)) {
+			List<String> methodsList = new ArrayList<>();
+			HttpRequestMethod [] methods = HttpRequestMethod.values();
+			for (int i = 0; i < methods.length; i++) {
+				methodsList.add(methods[i].name());
+			}
+			return methodsList;
+		}
+		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			List<String> tipologie = null;
 			try{
 				tipologie = SSLUtilities.getSSLSupportedProtocols();
@@ -241,7 +252,11 @@ public class TokenProvider implements IProvider {
 
 	@Override
 	public String getDefault(String id) throws ProviderException {
-		if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
+		if(Costanti.ID_INTROSPECTION_HTTP_METHOD.equals(id) ||
+				Costanti.ID_USER_INFO_HTTP_METHOD.equals(id)) {
+			return HttpRequestMethod.GET.name();
+		}
+		else if(Costanti.ID_TIPOLOGIA_HTTPS.equals(id)) {
 			return SSLUtilities.getSafeDefaultProtocol();
 		}
 		else if(Costanti.ID_JWS_SIGNATURE_ALGORITHM.equals(id) ||

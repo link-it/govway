@@ -862,8 +862,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.errore = "Errore avvenuto durante la consegna HTTP: "+this.readExceptionMessageFromException(e);
-			this.logger.error("Errore avvenuto durante la consegna HTTP: "+this.readExceptionMessageFromException(e),e);
+			String msgErrore = this.readExceptionMessageFromException(e);
+			if(this.generateErrorWithConnectorPrefix) {
+				this.errore = "Errore avvenuto durante la consegna HTTP: "+msgErrore;
+			}
+			else {
+				this.errore = msgErrore;
+			}
+			this.logger.error("Errore avvenuto durante la consegna HTTP: "+msgErrore,e);
 			return false;
 		} 
 	}
@@ -925,7 +931,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     }
     private void buildLocation() throws ConnettoreException {
     	this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
-		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location,
+		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
+				this.connettoreHttps ? TipiConnettore.HTTPS.toString() : TipiConnettore.HTTP.toString(), 
+				this.propertiesUrlBased, this.location,
 				this.getProtocolFactory(), this.idModulo);
     }
     

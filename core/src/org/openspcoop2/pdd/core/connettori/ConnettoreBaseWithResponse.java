@@ -228,8 +228,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			
 			if( premature == false ){
 				this.eccezioneProcessamento = e;
-				this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e);
-				this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e),e);
+				this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
+				this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
 				if(result2XX){
 					return false;
 				}
@@ -388,8 +388,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							
 							if( premature == false ){
 								this.eccezioneProcessamento = e;
-								this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e);
-								this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e),e);
+								this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
+								this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
 								if(result2XX){
 									return false;
 								}
@@ -397,14 +397,6 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						}
 					}
 					
-					// Check eventuale 'xml instruction presente nel body' 
-					/*try{
-						this.checkXMLInstructionTargetMachine();
-					}catch(Exception e){
-						this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction): " + e.getMessage();
-						this.log.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta, check xml instruction)",e);
-						return false;
-					}*/
 				}else{
 					InputStream isParam = null;
 					if(this.contentLength>=0){
@@ -489,8 +481,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					
 					if( premature == false ){
 						this.eccezioneProcessamento = e;
-						this.errore = "Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e);
-						this.logger.error("Errore avvenuto durante la consegna HTTP (lettura risposta): " + this.readExceptionMessageFromException(e),e);
+						this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
+						this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
 						if(result2XX){
 							return false;
 						}
@@ -498,8 +490,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				}
 			}catch(Exception e){
 				this.eccezioneProcessamento = e;
-				this.errore = "Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+"): " + this.readExceptionMessageFromException(e);
-				this.logger.error("Errore avvenuto durante la consegna HTTP ("+tipoLetturaRisposta+")",e);
+				String msgErrore = this.readExceptionMessageFromException(e);
+				this.errore = "Errore avvenuto durante il processamento della risposta ("+tipoLetturaRisposta+"): " + msgErrore;
+				this.logger.error("Errore avvenuto durante il processamento della risposta ("+tipoLetturaRisposta+"): " + msgErrore,e);
 				return false;
 			}
 
@@ -518,8 +511,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				}
 			}catch(Exception e){
 				this.eccezioneProcessamento = e;
-				this.errore = "Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + this.readExceptionMessageFromException(e);
-				this.logger.error("Errore avvenuto durante la consegna HTTP (salvataggio risposta): " + this.readExceptionMessageFromException(e),e);
+				this.errore = "Errore avvenuto durante il salvataggio della risposta: " + this.readExceptionMessageFromException(e);
+				this.logger.error("Errore avvenuto durante il salvataggio della risposta: " + this.readExceptionMessageFromException(e),e);
 				return false;
 			}
 

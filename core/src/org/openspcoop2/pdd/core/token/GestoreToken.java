@@ -2,19 +2,29 @@ package org.openspcoop2.pdd.core.token;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
+import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
@@ -30,7 +40,9 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.security.JOSERepresentation;
 import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonVerifySignature;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 public class GestoreToken {
@@ -400,7 +412,7 @@ public class GestoreToken {
 				else {
 					esitoPresenzaToken.setDetails("Token non individuato tramite la configurazione indicata");	
 				}
-    			esitoPresenzaToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_request, policyGestioneToken.getRealm(), 
+    			esitoPresenzaToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_request, policyGestioneToken.getRealm(), 
     					policyGestioneToken.isGenericError(), esitoPresenzaToken.getDetails()));   			
     		}
     		
@@ -554,7 +566,7 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non validao");	
 				}
-    			esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
     					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
     		}
     		
@@ -574,7 +586,149 @@ public class GestoreToken {
 	// ********* INTROSPECTION TOKEN ****************** */
 	
 	public static EsitoGestioneToken introspectionToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
-		throw new Exception("Not Implemented");
+		EsitoGestioneToken esitoGestioneToken = null;
+		
+		if(GestoreToken.cacheToken==null){
+			esitoGestioneToken = _introspectionToken(datiInvocazione, token, portaDelegata);
+		}
+    	else{
+    		String funzione = "Introspection";
+    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+
+			synchronized (GestoreToken.cacheToken) {
+
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+						esitoGestioneToken.setInCache(true);
+					}else if(response.getException()!=null){
+						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				// Effettuo la query
+				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+				esitoGestioneToken = _introspectionToken(datiInvocazione, token, portaDelegata);
+					
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				if(esitoGestioneToken!=null){
+					esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+					if(!esitoGestioneToken.isNoCache()){
+						GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+						try{	
+							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+							responseCache.setObject(esitoGestioneToken);
+							GestoreToken.cacheToken.put(keyCache,responseCache);
+						}catch(UtilsException e){
+							GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+						}
+					}
+				}else{
+					throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+				}
+			}
+    	}
+		
+		if(esitoGestioneToken.isValido()) {
+			// ricontrollo tutte le date
+			_validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+					datiInvocazione.getPolicyGestioneToken().isIntrospection_saveErrorInCache());
+		}
+		
+		return esitoGestioneToken;
+	}
+	
+	private static EsitoGestioneToken _introspectionToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+		EsitoGestioneToken esitoGestioneToken = null;
+		if(portaDelegata) {
+			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
+		}
+		else {
+			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
+		}
+		
+		esitoGestioneToken.setValido(false);
+		esitoGestioneToken.setToken(token);
+		
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		Properties properties = policyGestioneToken.getDefaultProperties();
+    		
+    		String detailsError = null;
+			InformazioniToken informazioniToken = null;
+			Exception eProcess = null;
+			
+			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			
+    		if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
+    			// JWS Compact   			
+    			JsonVerifySignature jsonCompactVerify = null;
+    			try {
+    				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
+    						JOSERepresentation.COMPACT);
+    				if(jsonCompactVerify.verify(token)) {
+    					informazioniToken = new InformazioniToken(jsonCompactVerify.getDecodedPayload(),tokenParser);
+    				}
+    				else {
+    					detailsError = "Token non valido";
+    				}
+    			}catch(Exception e) {
+    				detailsError = "Token non valido: "+e.getMessage();
+    				eProcess = e;
+    			}
+    		}
+    		else {
+    			// JWE Compact
+    			JsonDecrypt jsonDecrypt = null;
+    			try {
+    				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
+    						JOSERepresentation.COMPACT);
+    				jsonDecrypt.decrypt(token);
+    				informazioniToken = new InformazioniToken(jsonDecrypt.getDecodedPayload(),tokenParser);
+    			}catch(Exception e) {
+    				detailsError = "Token non valido: "+e.getMessage();
+    				eProcess = e;
+    			}
+    		}
+    		  		
+    		if(informazioniToken!=null) {
+    			esitoGestioneToken.setValido(true);
+    			esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			esitoGestioneToken.setNoCache(false);
+			}
+    		else {
+    			if(policyGestioneToken.isValidazioneJWT_saveErrorInCache()) {
+    				esitoGestioneToken.setNoCache(false);
+    			}
+    			else {
+    				esitoGestioneToken.setNoCache(true);
+    			}
+    			esitoGestioneToken.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoGestioneToken.setDetails(detailsError);	
+				}
+				else {
+					esitoGestioneToken.setDetails("Token non validao");	
+				}
+    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
+    		}
+    		
+		}catch(Exception e){
+			esitoGestioneToken.setDetails(e.getMessage());
+			esitoGestioneToken.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoGestioneToken;
 	}
 	
 	
@@ -622,7 +776,7 @@ public class GestoreToken {
 				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
 					esitoGestioneToken.setValido(false);
 					esitoGestioneToken.setDetails("Token expired");
-					esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 	    					esitoGestioneToken.getDetails()));  
 				}
@@ -642,7 +796,7 @@ public class GestoreToken {
 					esitoGestioneToken.setValido(false);
 					SimpleDateFormat sdf = new SimpleDateFormat(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
-					esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 	    					esitoGestioneToken.getDetails()));  
 				}
@@ -664,7 +818,7 @@ public class GestoreToken {
 						esitoGestioneToken.setValido(false);
 						SimpleDateFormat sdf = new SimpleDateFormat(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
-						esitoGestioneToken.setErrorMessage(buildErrorMessage(WWW_Authenticate_ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 		    					esitoGestioneToken.getDetails()));  
 					}
@@ -697,83 +851,210 @@ public class GestoreToken {
     	return bf.toString();
     }
 	
-	public static OpenSPCoop2Message buildErrorMessage(WWW_Authenticate_ErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
+	private static void http(PolicyGestioneToken policyGestioneToken, boolean introspection, String token) throws Exception {
 		
-		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
-		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
-		forcedResponseMessage.setContent(null); // vuoto
-		forcedResponseMessage.setContentType(null); // vuoto
-		StringBuffer bf = new StringBuffer(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
-		bf.append("realm=\"");
-		bf.append(realm);
-		bf.append("\", error=\"");
-		bf.append(errorCode.name());
-		bf.append("\", error_description=\"");
-		if(genericError==false) {
-			bf.append(error);
-		}
-		switch (errorCode) {
-		case invalid_request:
-			forcedResponseMessage.setResponseCode("400");
-			if(genericError) {
-				bf.append("The request is missing a required token parameter");
-			}
-			break;
-		case invalid_token:
-			forcedResponseMessage.setResponseCode("401");
-			if(genericError) {
-				bf.append("Token invalid");
-			}
-			break;
-		case insufficient_scope:
-			forcedResponseMessage.setResponseCode("403");
-			if(genericError) {
-				bf.append("The request requires higher privileges than provided by the access token");
-			}
-			break;
-		}
-		bf.append("\"");
-		if(scope!=null && scope.length>0) {
-			bf.append(", scope=\"");
-			for (int i = 0; i < scope.length; i++) {
-				if(i>0) {
-					bf.append(",");
-				}
-				bf.append(scope[i]);	
-			}
-			bf.append("\"");
+		// *** Raccola Parametri ***
+		
+		String endpoint = null;
+		if(introspection) {
+			endpoint = policyGestioneToken.getIntrospection_endpoint();
+		}else {
+			endpoint = policyGestioneToken.getUserInfo_endpoint();
 		}
 		
-		forcedResponseMessage.setHeaders(new Properties());
-		forcedResponseMessage.getHeaders().put(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, bf.toString());
-		errorMessage.forceResponse(forcedResponseMessage);
+		TipoTokenRequest tipoTokenRequest = null;
+		String positionTokenName = null;
+		if(introspection) {
+			tipoTokenRequest = policyGestioneToken.getIntrospection_tipoTokenRequest();
+		}else {
+			tipoTokenRequest = policyGestioneToken.getUserInfo_tipoTokenRequest();
+		}
+		switch (tipoTokenRequest) {
+		case authorization:
+			break;
+		case header:
+			if(introspection) {
+				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_headerName();
+			}else {
+				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_headerName();
+			}
+			break;
+		case url:
+			if(introspection) {
+				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_urlPropertyName();
+			}else {
+				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_urlPropertyName();
+			}
+			break;
+		case form:
+			if(introspection) {
+				positionTokenName = policyGestioneToken.getIntrospection_tipoTokenRequest_formPropertyName();
+			}else {
+				positionTokenName = policyGestioneToken.getUserInfo_tipoTokenRequest_formPropertyName();
+			}
+			break;
+		}
 		
-		return errorMessage;
+		String contentType = null;
+		if(introspection) {
+			contentType = policyGestioneToken.getIntrospection_contentType();
+		}else {
+			contentType = policyGestioneToken.getUserInfo_contentType();
+		}
+		
+		HttpRequestMethod httpMethod = null;
+		if(introspection) {
+			httpMethod = policyGestioneToken.getIntrospection_httpMethod();
+		}else {
+			httpMethod = policyGestioneToken.getUserInfo_httpMethod();
+		}
+		
+		
+		// Nell'endpoint config ci finisce i timeout e la configurazione proxy
+		Properties endpointConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_CONFIG);
+		
+		boolean https = policyGestioneToken.isEndpointHttps();
+		boolean httpsClient = false;
+		Properties sslConfig = null;
+		Properties sslClientConfig = null;
+		if(https) {
+			sslConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CONFIG);
+			if(introspection) {
+				httpsClient = policyGestioneToken.isIntrospection_httpsAuthentication();
+			}else {
+				httpsClient = policyGestioneToken.isUserInfo_httpsAuthentication();
+			}
+			if(httpsClient) {
+				sslClientConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+			}
+		}
+		
+		boolean basic = false;
+		String username = null;
+		String password = null;
+		if(introspection) {
+			basic = policyGestioneToken.isIntrospection_basicAuthentication();
+		}else {
+			basic = policyGestioneToken.isUserInfo_basicAuthentication();
+		}
+		if(basic) {
+			if(introspection) {
+				username = policyGestioneToken.getIntrospection_basicAuthentication_username();
+				password = policyGestioneToken.getIntrospection_basicAuthentication_password();
+			}
+			else {
+				username = policyGestioneToken.getUserInfo_basicAuthentication_username();
+				password = policyGestioneToken.getUserInfo_basicAuthentication_password();
+			}
+		}
+		
+		boolean bearer = false;
+		String bearerToken = null;
+		if(introspection) {
+			bearer = policyGestioneToken.isIntrospection_bearerAuthentication();
+		}else {
+			bearer = policyGestioneToken.isUserInfo_bearerAuthentication();
+		}
+		if(bearer) {
+			if(introspection) {
+				bearerToken = policyGestioneToken.getIntrospection_beareAuthentication_token();
+			}
+			else {
+				bearerToken = policyGestioneToken.getUserInfo_beareAuthentication_token();
+			}
+		}
+		
+		
+		
+		// *** Definizione Connettore ***
+		
+		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
+		IConnettore connettore = null;
+		if(https) {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
+			connettore = new ConnettoreHTTP();
+		}
+		else {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
+			connettore = new ConnettoreHTTPS();
+		}
+		
+		if(basic){
+			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(username);
+			credenziali.setPassword(password);
+			connettoreMsg.setCredenziali(credenziali);
+		}
+		
+		connettoreMsg.setConnectorProperties(new java.util.Hashtable<String,String>());
+		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
+		addProperties(connettoreMsg, endpointConfig);
+		if(https) {
+			addProperties(connettoreMsg, sslConfig);
+			if(httpsClient) {
+				addProperties(connettoreMsg, sslClientConfig);
+			}
+		}
+		
+		byte[] content = null;
+		
+		TransportRequestContext transportRequestContext = new TransportRequestContext();
+		transportRequestContext.setRequestType(httpMethod.name());
+		transportRequestContext.setParametersTrasporto(new Properties());
+		if(bearer) {
+			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+		}
+		if(contentType!=null) {
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentType);
+		}
+		switch (tipoTokenRequest) {
+		case authorization:
+			transportRequestContext.removeParameterTrasporto(HttpConstants.AUTHORIZATION);
+			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+token;
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
+			break;
+		case header:
+			transportRequestContext.getParametersTrasporto().put(positionTokenName, token);
+			break;
+		case url:
+			transportRequestContext.setParametersFormBased(new Properties());
+			transportRequestContext.getParametersFormBased().put(positionTokenName, token);
+			break;
+		case form:
+			transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
+			content = (positionTokenName+"="+token).getBytes();
+			break;
+		}
+		
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);;
+		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
+		connettoreMsg.setRequestMessage(msg);
+		
+		boolean send = connettore.send(connettoreMsg);
+		if(send==false) {
+			throw new Exception("Errore di connessione");
+		}
+		
+//		AGGANCIARE TUTTI I PARAMETRI POI ANCHE ALLA VALIDAZIONE
+//	
+//		Realizzare una specifica su come fornire il token ????
+//				header HTTP / ContentType / HttpMethod / parametro
+		
 	}
 	
-	
-}
-
-enum WWW_Authenticate_ErrorCode {
-	
-	 invalid_request,
-//     The request is missing a required parameter, includes an
-//     unsupported parameter or parameter value, repeats the same
-//     parameter, uses more than one method for including an access
-//     token, or is otherwise malformed.  The resource server SHOULD
-//     respond with the HTTP 400 (Bad Request) status code.
-
-	 invalid_token,
-//     The access token provided is expired, revoked, malformed, or
-//     invalid for other reasons.  The resource SHOULD respond with
-//     the HTTP 401 (Unauthorized) status code.  The client MAY
-//     request a new access token and retry the protected resource
-//     request.
-
-	 insufficient_scope;
-//     The request requires higher privileges than provided by the
-//     access token.  The resource server SHOULD respond with the HTTP
-//     403 (Forbidden) status code and MAY include the "scope"
-//     attribute with the scope necessary to access the protected
-//     resource.
+	private static void addProperties(ConnettoreMsg connettoreMsg, Properties p) {
+		if(p!=null && p.size()>0) {
+			Enumeration<?> en = p.propertyNames();
+			while (en.hasMoreElements()) {
+				Object oKey = (Object) en.nextElement();
+				if(oKey!=null) {
+					String key = (String) oKey;
+					String value = p.getProperty(key);
+					connettoreMsg.getConnectorProperties().put(key,value);
+				}
+			}
+		}
+	}
 }
