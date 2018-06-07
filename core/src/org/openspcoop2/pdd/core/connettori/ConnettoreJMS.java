@@ -557,8 +557,14 @@ public class ConnettoreJMS extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore avvenuto durante la consegna JMS",e);
-			this.errore = "Errore avvenuto durante la consegna JMS: "+this.readExceptionMessageFromException(e);
+			String msgErrore = this.readExceptionMessageFromException(e);
+			if(this.generateErrorWithConnectorPrefix) {
+				this.errore = "Errore avvenuto durante la consegna JMS: "+msgErrore;
+			}
+			else {
+				this.errore = msgErrore;
+			}
+			this.logger.error("Errore avvenuto durante la consegna JMS: "+msgErrore,e);
 			try{
 				// Rilascio Risorse
 				sender.close();

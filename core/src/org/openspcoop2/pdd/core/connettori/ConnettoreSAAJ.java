@@ -391,8 +391,14 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			return true;
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e),e);
-			this.errore = "Errore avvenuto durante la consegna SOAP: "+this.readExceptionMessageFromException(e);
+			String msgErrore = this.readExceptionMessageFromException(e);
+			if(this.generateErrorWithConnectorPrefix) {
+				this.errore = "Errore avvenuto durante la consegna SOAP: "+msgErrore;
+			}
+			else {
+				this.errore = msgErrore;
+			}
+			this.logger.error("Errore avvenuto durante la consegna SOAP: "+msgErrore,e);
 			return false;
 		}
 	}

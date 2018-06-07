@@ -502,8 +502,14 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.errore = "Errore avvenuto durante la consegna su FileSystem: "+this.readExceptionMessageFromException(e);
-			this.logger.error("Errore avvenuto durante la consegna su FileSystem: "+this.readExceptionMessageFromException(e),e);
+			String msgErrore = this.readExceptionMessageFromException(e);
+			if(this.generateErrorWithConnectorPrefix) {
+				this.errore = "Errore avvenuto durante la consegna su FileSystem: "+msgErrore;
+			}
+			else {
+				this.errore = msgErrore;
+			}
+			this.logger.error("Errore avvenuto durante la consegna su FileSystem: "+msgErrore,e);
 			return false;
 		} 
 	}

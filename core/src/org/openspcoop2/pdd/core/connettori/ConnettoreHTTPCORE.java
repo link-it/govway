@@ -606,8 +606,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
-			this.logger.error("Errore avvenuto durante la consegna HTTP: "+this.readExceptionMessageFromException(e),e);
-			this.errore = "Errore avvenuto durante la consegna HTTPNIO: "+this.readExceptionMessageFromException(e);
+			String msgErrore = this.readExceptionMessageFromException(e);
+			if(this.generateErrorWithConnectorPrefix) {
+				this.errore = "Errore avvenuto durante la consegna HTTP: "+msgErrore;
+			}
+			else {
+				this.errore = msgErrore;
+			}
+			this.logger.error("Errore avvenuto durante la consegna HTTP: "+msgErrore,e);
 			return false;
 		} 
 
