@@ -1302,7 +1302,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 					// login as su
 					de = new DataElement();
-					if (!userLogin.equals(mySU.getLogin())) {
+					if (!userLogin.equals(mySU.getLogin()) && !this.hasOnlyPermessiDiagnosticaReportistica(mySU)) {
 						de.setUrl(LoginCostanti.SERVLET_NAME_LOGIN_AS_SU,
 								new Parameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN, mySU.getLogin()));
 						de.setValue(UtentiCostanti.LABEL_ACCEDI);

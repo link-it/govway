@@ -220,13 +220,27 @@ public class ConfigurazioneTracciamentoTransazioni extends Action {
 			// ricarico la configurazione
 			newConfigurazione = confCore.getConfigurazioneGenerale();
 			
+			if(newConfigurazione.getMessaggiDiagnostici().getSeverita()!=null)
+				severita = newConfigurazione.getMessaggiDiagnostici().getSeverita().toString();
+			if(newConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j()!=null)
+				severita_log4j = newConfigurazione.getMessaggiDiagnostici().getSeveritaLog4j().toString();
+			if(newConfigurazione.getDump().getStato()!=null)
+				dumpApplicativo = newConfigurazione.getDump().getStato().toString();
+			if(newConfigurazione.getDump().getDumpBinarioPortaDelegata()!=null)
+				dumpPD = newConfigurazione.getDump().getDumpBinarioPortaDelegata().toString();
+			if(newConfigurazione.getDump().getDumpBinarioPortaApplicativa()!=null)
+				dumpPA = newConfigurazione.getDump().getDumpBinarioPortaApplicativa().toString();
+			if(newConfigurazione.getTracciamento().getStato()!=null)
+				registrazioneTracce = newConfigurazione.getTracciamento().getStato().toString();
+			
+			
 			confHelper.addToDatiRegistrazioneEsiti(dati, tipoOperazione, newConfigurazione.getTracciamento().getEsiti()); 
 			
-			confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, oldConfigurazione, dati, contaListe);
+			confHelper.addMessaggiDiagnosticiToDati(severita, severita_log4j, newConfigurazione, dati, contaListe);
 
-			confHelper.addTracciamentoToDati(registrazioneTracce, oldConfigurazione, dati, contaListe);
+			confHelper.addTracciamentoToDati(registrazioneTracce, newConfigurazione, dati, contaListe);
 			
-			confHelper.addRegistrazioneMessaggiToDati(dumpApplicativo, dumpPD, dumpPA, oldConfigurazione, dati, contaListe); 
+			confHelper.addRegistrazioneMessaggiToDati(dumpApplicativo, dumpPD, dumpPA, newConfigurazione, dati, contaListe); 
 			
 			// Set First is false
 			confHelper.addToDatiFirstTimeDisabled(dati,ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_FIRST_TIME);

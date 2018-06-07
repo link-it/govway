@@ -103,21 +103,4 @@ public class LoginHelper extends ConsoleHelper {
 			throw new Exception(e);
 		}
 	}
-	
-	private boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws Exception {
-		PermessiUtente pu = user.getPermessi();
-		Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
-
-		String isServizi = (pu.isServizi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isDiagnostica = (pu.isDiagnostica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isReportistica = (pu.isReportistica() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isSistema = (pu.isSistema() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isMessaggi = (pu.isCodeMessaggi() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isUtenti = (pu.isUtenti() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isAuditing = (pu.isAuditing() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		String isAccordiCooperazione = (pu.isAccordiCooperazione() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED);
-		
-		return this.hasOnlyPermessiDiagnosticaReportistica(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD);
-
-	}
 }
