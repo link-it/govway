@@ -34,24 +34,18 @@ public class PdDBaseBean<T,K,ServiceType extends IService> extends BaseBean<T, K
 		
 	public List<Soggetto> soggettiAutoComplete(Object val){
 		String tipoProtocollo = this.getProtocollo();
-	
 		return _getListaSoggetti(val, tipoProtocollo);
-	 
 	}
 
 	protected List<Soggetto> _getListaSoggetti(Object val, String tipoProtocollo) {
 		List<Soggetto> list = null;
 		Soggetto s = new Soggetto();
 		s.setNomeSoggetto("--");
-		
-		
 
 		if(val==null || StringUtils.isEmpty((String)val))
 			list = new ArrayList<Soggetto>();
 		else{
-			
-			  list = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
-			
+			list = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
 		}
 		
 		list.add(0,s);

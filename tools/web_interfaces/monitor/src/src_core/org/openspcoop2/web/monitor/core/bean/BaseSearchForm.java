@@ -1407,4 +1407,16 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		}
 		return aspsFromValues;
 	}
+	
+	public boolean isVisualizzaFiltroSoggettiSelectList() throws Exception{
+		return PddMonitorProperties.getInstance(log).isVisualizzaFiltroSoggettiSelectList();
+	}
+	
+	public boolean isVisualizzaFiltroServiziSelectList() throws Exception{
+		return PddMonitorProperties.getInstance(log).isVisualizzaFiltroServiziSelectList();
+	}
+	
+	public boolean isVisualizzaFiltroAzioniSelectList() throws Exception{
+		return PddMonitorProperties.getInstance(log).isVisualizzaFiltroAzioniSelectList();
+	}
 }

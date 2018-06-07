@@ -12,6 +12,7 @@ import org.openspcoop2.core.config.ConfigurazioneProtocollo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -35,8 +36,10 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.slf4j.Logger;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
@@ -260,7 +263,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String nomeSoggetto =  null;
 
 		String tipoProtocollo = this.search.getProtocollo();
-		
+
 
 		try {
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
@@ -276,7 +279,8 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 					String tipoReferenteAspc= (aspc.getIdReferente() != null) ? aspc.getIdReferente().getTipo() : null;
 
-					value = IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc);
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc); 
+					value = tipoProtocollo != null ? NamingUtils.getLabelAccordoServizioParteComune(tipoProtocollo, idAccordo) : NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
 				} else {
 					value = "--";
 				}
@@ -849,17 +853,17 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					false);
 			expr.and(permessi);
 		}
-		
+
 		// Protocollo
 		String protocollo = null;
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
 		// protocollo e' impostato anche scegliendo la modalita'
-//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
 		if (searchForm.isSetFiltroProtocollo()) {
 			protocollo = searchForm.getProtocollo();
 			impostaTipiCompatibiliConProtocollo(dao, PortaDelegata.model(), expr, protocollo);
 		}
-		
+
 
 		if(searchForm.getTipoNomeSoggettoLocale()!=null && 
 				!StringUtils.isEmpty(searchForm.getTipoNomeSoggettoLocale()) && !"--".equals(searchForm.getTipoNomeSoggettoLocale())){
@@ -920,12 +924,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String protocollo = null;
 		// aggiungo la condizione sul protocollo se e' impostato e se e' presente piu' di un protocollo
 		// protocollo e' impostato anche scegliendo la modalita'
-//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
+		//		if (StringUtils.isNotEmpty(searchForm.getProtocollo()) && searchForm.isShowListaProtocolli()) {
 		if (searchForm.isSetFiltroProtocollo()) {
 			protocollo = searchForm.getProtocollo();
 			impostaTipiCompatibiliConProtocollo(dao, PortaApplicativa.model(), expr, protocollo);
 		}
-		
+
 		boolean setSoggettoProprietario = false;
 		if(searchForm.getTipoNomeSoggettoLocale()!=null && 
 				!StringUtils.isEmpty(searchForm.getTipoNomeSoggettoLocale()) && !"--".equals(searchForm.getTipoNomeSoggettoLocale())){
@@ -966,41 +970,62 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 	}
 
-	private ConfigurazioneGenerale fromPD(PortaDelegata portaDelegata) {
+	private ConfigurazioneGenerale fromPD(PortaDelegata portaDelegata){
 		ConfigurazioneGenerale configurazioneGenerale = new ConfigurazioneGenerale(portaDelegata.getId(),PddRuolo.DELEGATA);
 
 		configurazioneGenerale.setStato(portaDelegata.getStato());
-		configurazioneGenerale.setLabel(portaDelegata.getNome());
-		if(portaDelegata.getNomeAzione()==null){
-			configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
-		}
-		else{
-			configurazioneGenerale.setAzione(portaDelegata.getNomeAzione());
-		}
-		configurazioneGenerale.setErogatore(portaDelegata.getTipoSoggettoErogatore()+CostantiConfigurazioni.SEPARATORE_TIPONOME+portaDelegata.getNomeSoggettoErogatore());
-		configurazioneGenerale.setFruitore(portaDelegata.getIdSoggetto().getTipo()+CostantiConfigurazioni.SEPARATORE_TIPONOME+portaDelegata.getIdSoggetto().getNome());
-		configurazioneGenerale.setServizio(portaDelegata.getTipoServizio()+CostantiConfigurazioni.SEPARATORE_TIPONOME+portaDelegata.getNomeServizio());
+		try {
+			String tipoProtocollo = this.search.getProtocollo();
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
+			configurazioneGenerale.setLabel(n.normalizePD(portaDelegata.getNome())); 
 
+
+
+			if(portaDelegata.getNomeAzione()==null){
+				configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
+			}
+			else{
+				configurazioneGenerale.setAzione(portaDelegata.getNomeAzione());
+			}
+
+			configurazioneGenerale.setErogatore(NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getTipoSoggettoErogatore(),portaDelegata.getNomeSoggettoErogatore()));
+			configurazioneGenerale.setFruitore(NamingUtils.getLabelSoggetto(tipoProtocollo, portaDelegata.getIdSoggetto().getTipo(),portaDelegata.getIdSoggetto().getNome()));
+
+			String labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaDelegata.getTipoServizio(), portaDelegata.getNomeServizio(), portaDelegata.getVersioneServizio());
+			configurazioneGenerale.setServizio(labelServizio);
+		}catch(Exception e){
+			log.error(e.getMessage(),e);
+		}
 		return configurazioneGenerale;
 	}
 
-	private ConfigurazioneGenerale fromPA(PortaApplicativa portaApplicativa) {
+	private ConfigurazioneGenerale fromPA(PortaApplicativa portaApplicativa){
 		ConfigurazioneGenerale configurazioneGenerale = new ConfigurazioneGenerale(portaApplicativa.getId(),PddRuolo.APPLICATIVA);
-
 		configurazioneGenerale.setStato(portaApplicativa.getStato());
-		configurazioneGenerale.setLabel(portaApplicativa.getNome());
-		configurazioneGenerale.setErogatore(portaApplicativa.getIdSoggetto().getTipo()+CostantiConfigurazioni.SEPARATORE_TIPONOME+portaApplicativa.getIdSoggetto().getNome());
-		configurazioneGenerale.setServizio(portaApplicativa.getTipoServizio()+CostantiConfigurazioni.SEPARATORE_TIPONOME+portaApplicativa.getNomeServizio());
-		if(portaApplicativa.getNomeAzione()==null){
-			configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
-		}
-		else{
-			configurazioneGenerale.setAzione(portaApplicativa.getNomeAzione()); 
-		}
+		try {
+			String tipoProtocollo = this.search.getProtocollo();
+			
 
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
+			configurazioneGenerale.setLabel(n.normalizePA(portaApplicativa.getNome())); 
+
+			configurazioneGenerale.setErogatore(NamingUtils.getLabelSoggetto(tipoProtocollo, portaApplicativa.getIdSoggetto().getTipo(), portaApplicativa.getIdSoggetto().getNome()));
+			String labelServizio = NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, portaApplicativa.getTipoServizio(), portaApplicativa.getNomeServizio(), portaApplicativa.getVersioneServizio());
+			configurazioneGenerale.setServizio(labelServizio);
+			if(portaApplicativa.getNomeAzione()==null){
+				configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
+			}
+			else{
+				configurazioneGenerale.setAzione(portaApplicativa.getNomeAzione()); 
+			}
+		}catch(Exception e){
+			log.error(e.getMessage(),e);
+		}
 		return configurazioneGenerale;
 	}
-	
+
 	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, PortaDelegataModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {
 		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
 		IExpression expressionTipoServiziCompatibili = null;
@@ -1042,7 +1067,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		if(expressionTipoSoggettiDestinatarioCompatibili != null)
 			expr.and(expressionTipoSoggettiDestinatarioCompatibili);
 	}
-	
+
 	private void impostaTipiCompatibiliConProtocollo(IServiceSearchWithId<?, ?> dao, PortaApplicativaModel model,	IExpression expr, String protocollo) throws ExpressionNotImplementedException, ExpressionException {
 		// Se ho selezionato il protocollo il tipo dei servizi da includere nei risultati deve essere compatibile col protocollo scelto.
 		IExpression expressionTipoServiziCompatibili = null;

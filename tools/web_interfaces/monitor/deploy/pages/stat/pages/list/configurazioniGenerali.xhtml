@@ -96,72 +96,27 @@
 							<a4j:outputPanel id="panelProtocollo" layout="block" rendered="#{configurazioniGeneraliSearchForm.showListaProtocolli}"
 								ajaxRendered="true">
 								<link:prop label="Modalità">
-									<rich:comboBox id="protocolloCombo"
-										value="#{configurazioniGeneraliSearchForm.protocollo}"
-										converter="allConverter" defaultLabel="Seleziona Protocollo"
-										enableManualInput="false" directInputSuggestions="true"
-										width="412">
-										<f:selectItems
-											value="#{configurazioniGeneraliSearchForm.protocolli}" />
-										<a4j:support status="mainStatus" event="onselect"
-											actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
+									<rich:comboBox id="protocolloCombo" value="#{configurazioniGeneraliSearchForm.protocollo}"
+										converter="selectItemConverter" defaultLabel="Seleziona Modalità" enableManualInput="false" directInputSuggestions="true" width="412">
+										<f:selectItems value="#{configurazioniGeneraliSearchForm.protocolli}" />
+										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.protocolloSelected}"
 											reRender="soggettoErogatoreComboCtr,servizioComboCtr" />
 									</rich:comboBox>
 								</link:prop>
 							</a4j:outputPanel>
 							
 							<a4j:outputPanel layout="block" id="soggettoErogatoreComboCtr">
-								<c:if test="#{applicationBean.user}">
-									<c:if test="#{!applicationBean.amministratore}">
-											<link:prop label="Soggetto" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
-												<rich:comboBox width="412" id="sogAssociatoSuggestion" 
-														value="#{configurazioniGeneraliSearchForm.tipoNomeSoggettoLocale}" 
-														suggestionValues="#{configurazioniGeneraliBean.tipiNomiSoggettiAssociati}"
-														enableManualInput="false">
-													<f:selectItem itemValue="--"/>
-													<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
-												</rich:comboBox>
-											</link:prop>
-										</c:if>
-								</c:if>
-								<c:if test="#{applicationBean.amministratore}">
-						
-									<link:prop label="Soggetto" rendered="#{true}">
-										<h:inputText id="sogErogCombo"
-											value="#{configurazioniGeneraliSearchForm.tipoNomeSoggettoLocale}" styleClass="inputLinkLong" />
-										<rich:suggestionbox id="sogDErogSuggestion" width="412"
-											for="sogErogCombo"
-											suggestionAction="#{configurazioniGeneraliBean.soggettiErogatoreAutoComplete}"
-											var="soggetto" ajaxSingle="true" nothingLabel="--"
-											param="sogErogCombo">
-											<h:column>
-												<h:outputText value="#{soggetto.nomeSoggetto}"
-													rendered="#{soggetto.nomeSoggetto=='--'}" />
-												<h:outputText
-													value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}"
-													rendered="#{soggetto.nomeSoggetto!='--'}" />
-											</h:column>
-											<a4j:support status="mainStatus" event="onselect"
-												actionListener="#{configurazioniGeneraliSearchForm.destinatarioSelected}"
-												reRender="searchPnl,servizioComboCtr" />
-										</rich:suggestionbox>
-		
-									</link:prop>
-								</c:if>
+								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroSoggetto.xhtml">
+									<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}" />
+									<ui:param name="sf_mbean" value="#{configurazioniGeneraliBean}" />
+								</ui:include>
 							</a4j:outputPanel>
 	
 							<a4j:outputPanel layout="block" id="servizioComboCtr">
-								<link:prop label="Servizio">
-									<rich:comboBox value="#{configurazioniGeneraliSearchForm.nomeServizio}" id="servizioCombo2" enableManualInput="false"
-										defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{configurazioniGeneraliBean.serviziSelectItemsWidth}"
-										converter="selectItemConverter" width="412">
-										<f:selectItem itemValue="--" itemLabel="--"/>
-										<f:selectItems value="#{configurazioniGeneraliBean.servizi}" />
-										<a4j:support status="mainStatus" event="onselect" actionListener="#{configurazioniGeneraliSearchForm.servizioSelected}" reRender="searchPnl"/>
-									</rich:comboBox>
-									<rich:toolTip rendered="#{not empty configurazioniGeneraliSearchForm.nomeServizio}" direction="top-right" for="servizioCombo2" showDelay="200" 
-										styleClass="tooltip" layout="block" value="#{configurazioniGeneraliSearchForm.nomeServizio}"/>
-								</link:prop>
+								<ui:include src="/stat/includes/searchFormConfigurazioniGeneraliFiltroServizio.xhtml">
+									<ui:param name="sf_bean" value="#{configurazioniGeneraliSearchForm}" />
+									<ui:param name="sf_mbean" value="#{configurazioniGeneraliBean}" />
+								</ui:include>
 							</a4j:outputPanel>
 	
 						</a4j:outputPanel>

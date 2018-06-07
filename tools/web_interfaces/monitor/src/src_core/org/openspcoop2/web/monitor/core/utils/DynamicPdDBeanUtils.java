@@ -555,7 +555,8 @@ public class DynamicPdDBeanUtils implements Serializable {
 //					}
 					
 					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoAsps, nomeAsps, res.getIdErogatore().getTipo(), res.getIdErogatore().getNome(), res.getVersione());
-					String label = tipoProtocollo != null ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+					String label = StringUtils.isEmpty(nomeSoggetto) ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) 
+							: NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(tipoProtocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 					
 					value = uri.toString();
 					//compongo la label e la imposto

@@ -23,7 +23,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_SERVIZI = "Servizi";
 	public static final String LABEL_SOGGETTI = "Soggetti";
 	
-	public static final String LABEL_INFORMAZIONI_SOGGETTO = "Servizi del Soggetto {0}/{1}";
+	public static final String LABEL_INFORMAZIONI_SOGGETTO = "Servizi del Soggetto {0}";
 	public static final String LABEL_INFORMAZIONI_SERVIZIO = "Servizio {0}";
 	
 	// Label Informazioni generali

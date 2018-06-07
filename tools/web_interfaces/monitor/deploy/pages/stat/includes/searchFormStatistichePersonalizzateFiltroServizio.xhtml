@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <c:if test="#{not sf_bean.visualizzaFiltroServiziSelectList}">
+    
+    </c:if>
+    
+   	<c:if test="#{sf_bean.visualizzaFiltroServiziSelectList}">
+   		<link:prop label="Servizio" required="true">
+			<rich:comboBox value="#{sf_servizio}" listWidth="#{sf_mbean.serviziSelectItemsWidth}" id="servizioCombo2"
+				defaultLabel="Selezione Servizio" directInputSuggestions="true" converter="selectItemConverter"
+				width="412" require="true" label="Servizio" enableManualInput="false" >
+				<f:selectItem itemValue="--" itemLabel="--" />
+				<f:selectItems value="#{sf_servizi}" />
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
+			</rich:comboBox>
+			<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo2" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizio}"/>
+		</link:prop>
+	</c:if>	
+   	
+</ui:composition>

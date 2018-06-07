@@ -18,7 +18,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -98,7 +102,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 	}
 
 	@Override
-	public List<String> getTipiNomiSoggettiAssociati() throws Exception {
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
 		return _getTipiNomiSoggettiAssociati(true);
 	}
 
@@ -164,16 +168,19 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 		this.labelInformazioniGenerali = labelInformazioniGenerali;
 	}
 
-	public String getLabelInformazioniServizi() {
+	public String getLabelInformazioniServizi() throws Exception {
 		if(this.getSearch() != null){
+			String tipoProtocollo = this.getSearch().getProtocollo();
 			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
-				this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SERVIZIO,this.getSearch().getNomeServizio());
-			}else if(this.getSearch().getTipoNomeSoggettoLocale()!=null && 
-					!StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
-					&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getSearch().getNomeServizio());
+				String label = tipoProtocollo != null ? NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo,idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+				this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SERVIZIO,label);
+			}else if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale())	&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
 				String tipoSoggetto = this.getSearch().getTipoSoggettoLocale();
 				String nomeSoggetto = this.getSearch().getSoggettoLocale();
-				this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SOGGETTO, tipoSoggetto,nomeSoggetto);
+				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggetto, nomeSoggetto); 
+				String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto ) : NamingUtils.getLabelSoggetto(idSoggetto);
+				this.labelInformazioniServizi = MessageFormat.format(CostantiConfigurazioni.LABEL_INFORMAZIONI_SOGGETTO, label);
 			}else {
 				// non ho selezionato ne servizio ne soggetto
 				this.labelInformazioniServizi = CostantiConfigurazioni.LABEL_SERVIZI;

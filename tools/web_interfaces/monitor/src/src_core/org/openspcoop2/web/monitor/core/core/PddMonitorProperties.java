@@ -777,4 +777,18 @@ public class PddMonitorProperties {
 	public String getExtendedInfoAuthorizationClass() throws Exception{
 		return this.appProperties.getProperty("console.extendedInfoAuthorizationClass", false, true);
 	}
+	
+	/* Properties che pilotano la visualizzazione dei filtri di ricerca per soggetti, servizi e azioni */
+	
+	public boolean isVisualizzaFiltroSoggettiSelectList() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.soggetti.selectList.enabled", true, true));
+	}
+	
+	public boolean isVisualizzaFiltroServiziSelectList() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.servizi.selectList.enabled", true, true));
+	}
+	
+	public boolean isVisualizzaFiltroAzioniSelectList() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.filtri.azioni.selectList.enabled", true, true));
+	}
 }

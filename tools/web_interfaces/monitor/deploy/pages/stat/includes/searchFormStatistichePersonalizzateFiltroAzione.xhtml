@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <c:if test="#{not sf_bean.visualizzaFiltroAzioniSelectList}">
+    
+    </c:if>
+    
+   	<c:if test="#{sf_bean.visualizzaFiltroAzioniSelectList}">
+		<link:prop label="Azione">
+			<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter"
+				defaultLabel="Selezione Azione" directInputSuggestions="true" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
+				width="412" enableManualInput="false" >
+				<f:selectItem itemValue="--" itemLabel="--" />
+				<f:selectItems value="#{sf_azioni}"/>
+				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>
+			</rich:comboBox>
+		</link:prop>
+	</c:if>	
+   	
+</ui:composition>

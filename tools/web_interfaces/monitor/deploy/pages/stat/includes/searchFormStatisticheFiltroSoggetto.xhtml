@@ -1,0 +1,292 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    
+    <c:if test="#{not sf_bean.visualizzaFiltroSoggettiSelectList}">
+    	<c:if test="#{applicationBean.user}">
+			<c:if test="#{!applicationBean.amministratore}">
+				<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1 and sf_bean.distribuzionePerSoggettoRemota}">
+						
+						<rich:comboBox width="412" id="sogLocaleCombo" 
+										value="#{sf_soggettoLocale}" 
+										suggestionValues="#{loginBean.loggedUser.tipiNomiSoggettiAssociati}"
+										enableManualInput="false">
+									<f:selectItem itemValue="--"/>
+									<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:comboBox>
+					
+				</link:prop>
+				<c:if test="#{sf_showSoggetti}">
+					
+					<link:prop label="Soggetto Destinatario"
+						rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+						
+						<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
+						<rich:suggestionbox 
+									width="412" 
+									for="sogDestCombo" 
+									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+									var="soggetto"
+									ajaxSingle="true"
+									nothingLabel="--"
+									param="sogDestCombo">
+							<h:column>
+								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+							</h:column>
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:suggestionbox>
+						
+					</link:prop>
+					
+
+					<link:prop label="Soggetto Mittente"
+						rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+
+						<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}" styleClass="inputLinkLong"/>
+						<rich:suggestionbox 
+									width="412" 
+									for="sogMitCombo" 
+									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+									var="soggetto"
+									ajaxSingle="true"
+									nothingLabel="--"
+									param="sogMitCombo">
+							<h:column>
+								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+							</h:column>
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:suggestionbox>
+						
+					</link:prop>
+					
+					<link:prop label="Soggetto Remoto"
+						rendered="#{sf_tipologiaRicerca eq 'all'}">
+						
+						<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}" styleClass="inputLinkLong"/>
+						<rich:suggestionbox 
+									width="412" 
+									for="sogCombo" 
+									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+									var="soggetto"
+									ajaxSingle="true"
+									nothingLabel="--"
+									param="sogCombo">
+							<h:column>
+								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+							</h:column>
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:suggestionbox>
+					</link:prop>
+					
+				</c:if>
+				<h:panelGroup>
+					<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />
+					<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
+				</h:panelGroup>
+			</c:if>
+		</c:if>	
+
+		<c:if test="#{applicationBean.amministratore}">
+			<link:prop label="Soggetto Locale" rendered="#{sf_bean.distribuzionePerSoggettoRemota}">
+					
+					<h:inputText id="sogLocaleCombo" value="#{sf_soggettoLocale}" styleClass="inputLinkLong" />
+					<rich:suggestionbox 
+								width="412" 
+								for="sogLocaleCombo" 
+								suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+								var="soggetto"
+								ajaxSingle="true"
+								nothingLabel="--"
+								param="sogLocaleCombo">
+						<h:column>
+							<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+							<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+						</h:column>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:suggestionbox>
+				
+			</link:prop>
+			<c:if test="#{sf_showSoggetti}">
+				
+
+				<link:prop label="Soggetto Destinatario"
+						rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+						
+						
+					<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
+					<rich:suggestionbox 
+								width="412" 
+								for="sogDestCombo" 
+								suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+								var="soggetto"
+								ajaxSingle="true"
+								nothingLabel="--"
+								param="sogDestCombo">
+						<h:column>
+							<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+							<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+						</h:column>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:suggestionbox>
+					
+				</link:prop>
+					
+
+				<link:prop label="Soggetto Mittente"
+					rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+					
+					
+					<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}" styleClass="inputLinkLong"/>
+					<rich:suggestionbox 
+								width="412" 
+								for="sogMitCombo" 
+								suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+								var="soggetto"
+								ajaxSingle="true"
+								nothingLabel="--"
+								param="sogMitCombo">
+						<h:column>
+							<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+							<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+						</h:column>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:suggestionbox>
+					
+				</link:prop>
+				
+				<link:prop label="Soggetto Remoto"
+					rendered="#{sf_tipologiaRicerca eq 'all'}">
+					
+					
+					<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}" styleClass="inputLinkLong"/>
+					<rich:suggestionbox 
+								width="412" 
+								for="sogCombo" 
+								suggestionAction="#{sf_mbean.soggettiAutoComplete}"
+								var="soggetto"
+								ajaxSingle="true"
+								nothingLabel="--"
+								param="sogCombo">
+						<h:column>
+							<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
+							<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
+						</h:column>
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:suggestionbox>
+					
+				</link:prop>
+				
+			</c:if>
+		</c:if>
+    </c:if>
+    
+   	<c:if test="#{sf_bean.visualizzaFiltroSoggettiSelectList}">
+   		<c:if test="#{applicationBean.user}">
+			<c:if test="#{!applicationBean.amministratore}">
+				<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1 and sf_bean.distribuzionePerSoggettoRemota}">
+					<rich:comboBox width="412" id="sogLocaleCombo" converter="selectItemConverter" defaultLabel="Selezione Soggetto Locale"
+									value="#{sf_soggettoLocale}"  listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
+									enableManualInput="false">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_soggettoLocale}"/>
+				</link:prop>
+				<c:if test="#{sf_showSoggetti}">
+					<link:prop label="Soggetto Destinatario" rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+						<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
+							defaultLabel="Selezione Soggetto Destinatario" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+							width="412"   enableManualInput="false">
+							<f:selectItem itemValue="--" itemLabel="--"/>
+							<f:selectItems value="#{sf_soggetti}"  />
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:comboBox>
+						<rich:toolTip rendered="#{not empty sf_nomeDestinatario}" direction="top-right" for="sogDestCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_nomeDestinatario}"/>
+					</link:prop>
+ 
+					<link:prop label="Soggetto Mittente" rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+						<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
+							defaultLabel="Selezione Soggetto Mittente" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+							width="412"   enableManualInput="false">
+							<f:selectItem itemValue="--" itemLabel="--"/>
+							<f:selectItems value="#{sf_soggetti}"  />
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:comboBox>
+						<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_nomeMittente}"/>
+					</link:prop>
+					
+					<link:prop label="Soggetto Remoto" rendered="#{sf_tipologiaRicerca eq 'all'}">
+						<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
+							defaultLabel="Selezione Soggetto Remoto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+							width="412"   enableManualInput="false">
+							<f:selectItem itemValue="--" itemLabel="--"/>
+							<f:selectItems value="#{sf_soggetti}"  />
+							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+						</rich:comboBox>
+						<rich:toolTip rendered="#{not empty sf_trafficoPerSoggetto}" direction="top-right" for="sogCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_trafficoPerSoggetto}"/>
+					</link:prop>
+				</c:if>
+				<h:panelGroup>
+					<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />
+					<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
+				</h:panelGroup>
+			</c:if>
+		</c:if>	
+
+		<c:if test="#{applicationBean.amministratore}">
+			<link:prop label="Soggetto Locale" rendered="#{sf_bean.distribuzionePerSoggettoRemota}">
+				<rich:comboBox width="412" id="sogLocaleCombo" converter="selectItemConverter" defaultLabel="Selezione Soggetto Locale"
+								value="#{sf_soggettoLocale}"  listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
+								enableManualInput="false">
+							<f:selectItem itemValue="--" itemLabel="--"/>
+							<f:selectItems value="#{sf_soggettiLocale}"  />
+							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+				</rich:comboBox>
+				<rich:toolTip rendered="#{not empty sf_soggettoLocale}" direction="top-right" for="sogLocaleCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_soggettoLocale}"/>
+			</link:prop>
+			<c:if test="#{sf_showSoggetti}">
+				<link:prop label="Soggetto Destinatario" rendered="#{sf_tipologiaRicerca eq 'uscita'}">
+					<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
+						defaultLabel="Selezione Soggetto Destinatario" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						width="412"   enableManualInput="false">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_soggetti}"  />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_nomeDestinatario}" direction="top-right" for="sogDestCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_nomeDestinatario}"/>
+				</link:prop>
+				<link:prop label="Soggetto Mittente" rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
+					<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
+						defaultLabel="Selezione Soggetto Mittente" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						width="412"   enableManualInput="false">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_soggetti}"  />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_nomeMittente}" direction="top-right" for="sogMitCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_nomeMittente}"/>	
+				</link:prop>
+				
+				<link:prop label="Soggetto Remoto" rendered="#{sf_tipologiaRicerca eq 'all'}">
+					<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
+						defaultLabel="Selezione Soggetto Remoto" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
+						width="412"   enableManualInput="false">
+						<f:selectItem itemValue="--" itemLabel="--"/>
+						<f:selectItems value="#{sf_soggetti}"  />
+						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
+					</rich:comboBox>
+					<rich:toolTip rendered="#{not empty sf_trafficoPerSoggetto}" direction="top-right" for="sogCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_trafficoPerSoggetto}"/>
+				</link:prop>
+			</c:if>
+		</c:if>
+	</c:if>	
+   	
+</ui:composition>

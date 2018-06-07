@@ -101,120 +101,28 @@
 				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" ajaxRendered="true" >
 					<link:prop label="Modalità">
 						<rich:comboBox id="protocolloCombo" value="#{sf_bean.protocollo}" converter="selectItemConverter" 
-							defaultLabel="Seleziona Protocollo" directInputSuggestions="true" width="412" enableManualInput="false">
+							defaultLabel="Seleziona Modalità" directInputSuggestions="true" width="412" enableManualInput="false">
 							<f:selectItems value="#{sf_bean.protocolli}"/>
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.protocolloSelected}" reRender="searchPnl" limitToList="true"/>
 						</rich:comboBox>
 					</link:prop>
 				</a4j:outputPanel>
 				
-				<c:if test="#{applicationBean.user}">
-					<c:if test="#{!applicationBean.amministratore}">
-							<link:prop label="Soggetto Locale" rendered="#{loginBean.loggedUser.sizeSoggetti>1}">
-								
-									<rich:comboBox width="412" id="sogLocaleSuggestion" 
-													value="#{sf_soggettoLocale}" 
-													suggestionValues="#{sf_mbean.tipiNomiSoggettiAssociati}"
-													enableManualInput="false">
-												<f:selectItem itemValue="--"/>
-												<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
-									</rich:comboBox>
-								
-							</link:prop>
-							<h:panelGroup>
-								<h:inputHidden value="#{sf_nomeMittente}" rendered="#{sf_tipologiaRicerca eq 'uscita'}" />
-								<h:inputHidden value="#{sf_nomeDestinatario}" rendered="#{sf_tipologiaRicerca eq 'ingresso'}" />
-							</h:panelGroup>
-					</c:if>
-				</c:if>
-				<c:if test="#{applicationBean.amministratore}">
-						<link:prop label="Soggetto Locale">
-							
-								<h:inputText id="sogLocaleInput" value="#{sf_soggettoLocale}" styleClass="inputLinkLong"/>
-								<rich:suggestionbox 
-											id="sogLocaleSuggestion"
-											width="412" 
-											for="sogLocaleInput" 
-											suggestionAction="#{sf_mbean.soggettiAutoComplete}"
-											var="soggetto"
-											ajaxSingle="true"
-											nothingLabel="--"
-											param="sogLocaleInput">
-									<h:column>
-										<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
-										<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
-									</h:column>
-									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
-								</rich:suggestionbox>
-							
-						</link:prop>
-				</c:if>
-				
-				<link:prop label="Soggetto Destinatario"
-					rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
-					
-						<h:inputText id="sogDestCombo" value="#{sf_nomeDestinatario}" styleClass="inputLinkLong"/>
-						<rich:suggestionbox
-									id="sogDestSuggestion" 
-									width="412" 
-									for="sogDestCombo" 
-									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
-									var="soggetto"
-									ajaxSingle="true"
-									nothingLabel="--"
-									param="sogDestCombo">
-							<h:column>
-								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
-								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
-							</h:column>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
-						</rich:suggestionbox>
-					
-				</link:prop>
-				
-	
-				<link:prop label="Soggetto Mittente"
-					rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
-					
-						<h:inputText id="sogMitCombo" value="#{sf_nomeMittente}"  styleClass="inputLinkLong"/>
-						<rich:suggestionbox
-									id="sogMitSuggestion" 
-									width="412" 
-									for="sogMitCombo" 
-									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
-									var="soggetto"
-									ajaxSingle="true"
-									nothingLabel="--"
-									param="sogMitCombo">
-							<h:column>
-								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
-								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
-							</h:column>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
-						</rich:suggestionbox>
-					
-				</link:prop>
-				
-				<link:prop label="Soggetto Remoto"
-					rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
-					
-						<h:inputText id="sogCombo" value="#{sf_trafficoPerSoggetto}"   styleClass="inputLinkLong"/>
-						<rich:suggestionbox
-									id="sogRemotoSuggestion" 
-									width="412" 
-									for="sogCombo" 
-									suggestionAction="#{sf_mbean.soggettiAutoComplete}"
-									var="soggetto"
-									ajaxSingle="true"
-									nothingLabel="--"
-									param="sogCombo">
-							<h:column>
-								<h:outputText value="#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto=='--'}"/>
-								<h:outputText value="#{soggetto.tipoSoggetto}/#{soggetto.nomeSoggetto}" rendered="#{soggetto.nomeSoggetto!='--'}"/>
-							</h:column>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true" />
-						</rich:suggestionbox>
-				</link:prop>
+				<ui:include src="/transazioni/includes/searchFormFiltroSoggetto.xhtml">
+					<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+					<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+					<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+					<ui:param name="sf_servizio" value="#{sf_servizio}" />
+					<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+					<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+					<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+					<ui:param name="sf_servizioApplicativo" value="#{sf_servizioApplicativo}" />
+					<ui:param name="sf_soggetti" value="#{sf_soggetti}" />
+					<ui:param name="sf_soggettiLocale" value="#{sf_soggettiLocale}" />
+					<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+					<ui:param name="sf_bean" value="#{sf_bean}" />
+					<ui:param name="sf_mbean" value="#{sf_mbean}" />
+			 	</ui:include>
 	
 				<a4j:outputPanel layout="block" id="saComboCtr">
 					<link:prop label="Servizio Applicativo" rendered="#{not empty sf_soggettoLocale}">
@@ -231,28 +139,37 @@
 				</a4j:outputPanel>
 				
 				<a4j:outputPanel layout="block" id="servizioComboCtr">
-					<link:prop label="Servizio" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
-						<rich:comboBox id="servizioCombo" value="#{sf_servizio}" converter="selectItemConverter"
-							defaultLabel="Selezione Servizio" directInputSuggestions="true" listWidth="#{sf_mbean.serviziSelectItemsWidth}"
-							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-							<f:selectItem itemValue="--" itemLabel="--"/>
-							<f:selectItems value="#{sf_servizi}"  />
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,ctr-ricerca-personal,azComboCtr" limitToList="true"/>
-						</rich:comboBox>
-						<rich:toolTip rendered="#{not empty sf_servizio}" direction="top-right" for="servizioCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_servizio}"/>
-					</link:prop>
+					<ui:include src="/transazioni/includes/searchFormFiltroServizio.xhtml">
+						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+						<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+						<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+						<ui:param name="sf_servizio" value="#{sf_servizio}" />
+						<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+						<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+						<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+						<ui:param name="sf_servizioApplicativo" value="#{sf_servizioApplicativo}" />
+						<ui:param name="sf_servizi" value="#{sf_servizi}" />
+						<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+						<ui:param name="sf_bean" value="#{sf_bean}" />
+						<ui:param name="sf_mbean" value="#{sf_mbean}" />
+				 	</ui:include>
 				</a4j:outputPanel>
 				
 				<a4j:outputPanel layout="block" id="azComboCtr">
-					<link:prop label="Azione" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio}">
-						<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter"
-							defaultLabel="Selezione Azione" directInputSuggestions="true"
-							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
-							<f:selectItem itemValue="--"  itemLabel="--" />
-							<f:selectItems value="#{sf_azioni}"/>
-							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl, ctr-ricerca-personal" limitToList="true"/>
-						</rich:comboBox>
-					</link:prop>	
+					<ui:include src="/transazioni/includes/searchFormFiltroAzione.xhtml">
+						<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
+						<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />
+						<ui:param name="sf_nomeDestinatario" value="#{sf_nomeDestinatario}" />
+						<ui:param name="sf_servizio" value="#{sf_servizio}" />
+						<ui:param name="sf_nomeAzione" value="#{sf_nomeAzione}" />
+						<ui:param name="sf_trafficoPerSoggetto" value="#{sf_trafficoPerSoggetto}" />
+						<ui:param name="sf_soggettoLocale" value="#{sf_soggettoLocale}" />
+						<ui:param name="sf_servizioApplicativo" value="#{sf_servizioApplicativo}" />
+						<ui:param name="sf_azioni" value="#{sf_azioni}" />
+						<ui:param name="sf_tipologiaRicerca" value="#{sf_tipologiaRicerca}" />
+						<ui:param name="sf_bean" value="#{sf_bean}" />
+						<ui:param name="sf_mbean" value="#{sf_mbean}" />
+				 	</ui:include>
 				</a4j:outputPanel>
 				
 			</a4j:outputPanel>

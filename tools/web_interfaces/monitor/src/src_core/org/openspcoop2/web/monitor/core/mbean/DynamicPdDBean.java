@@ -13,6 +13,7 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.commons.search.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -32,26 +33,34 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	protected static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 
+	protected List<SelectItem> soggettiAssociati = null;
+	protected List<SelectItem> soggettiLocale = null;
 	protected List<SelectItem> soggetti = null;
 	protected List<SelectItem> servizi = null;
 	protected List<SelectItem> azioni = null;
 	protected List<SelectItem> serviziApplicativi = null;
 
+	protected Integer soggettiAssociatiSelectItemsWidth = 0;
+	protected Integer soggettiLocaleSelectItemsWidth = 0;
+	protected Integer soggettiSelectItemsWidth = 0;
 	protected Integer serviziSelectItemsWidth= 0;
 	protected Integer serviziApplicativiSelectItemsWidth = 0;
 	protected Integer azioniSelectItemsWidth = 0;
 
+	protected boolean soggettiAssociatiSelectItemsWidthCheck = false;
+	protected boolean soggettiLocaleSelectItemsWidthCheck = false;
+	protected boolean soggettiSelectItemsWidthCheck = false;
 	protected boolean serviziSelectItemsWidthCheck = false;
 	protected boolean serviziApplicativiSelectItemsWidthCheck = false;
 	protected boolean azioniSelectItemsWidthCheck = false;
 
 	protected transient BaseSearchForm search;
 
-	protected Integer maxSelectItemsWidth = 700;
+	protected Integer maxSelectItemsWidth = 900;
 
 	protected Integer defaultSelectItemsWidth = 412;
 
-//	private static FontMetrics fm = null;
+	//	private static FontMetrics fm = null;
 
 	protected DynamicPdDBeanUtils dynamicUtils = null;
 
@@ -59,15 +68,15 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	protected boolean showTipoServizioOnServizioLabel =true;
 	protected boolean showErogatoreOnServizioLabel = true;
 
-//	public static Integer getFontWidth(String label){
-//		if(fm == null){
-//			Canvas c = new Canvas();
-//			Font verdanaFont = new Font("Verdana", Font.PLAIN , 11);
-//			fm = c.getFontMetrics(verdanaFont);
-//		}
-//
-//		return fm.stringWidth(label);
-//	}
+	//	public static Integer getFontWidth(String label){
+	//		if(fm == null){
+	//			Canvas c = new Canvas();
+	//			Font verdanaFont = new Font("Verdana", Font.PLAIN , 11);
+	//			fm = c.getFontMetrics(verdanaFont);
+	//		}
+	//
+	//		return fm.stringWidth(label);
+	//	}
 
 	public DynamicPdDBean(){
 		super();
@@ -107,13 +116,13 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			try {
 				String tipoProtocollo = this.search.getProtocollo();
 				IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
-				
+
 				String nomeServizio = idServizio.getNome();
 				String tipoServizio = idServizio.getTipo();
 				String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
 				String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
 				Integer versioneServizio = idServizio.getVersione();
-				
+
 				this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio);
 
 			} catch (Exception e) {
@@ -156,6 +165,65 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			this.serviziSelectItemsWidth = Math.max(this.serviziSelectItemsWidth,  lunghezzaSelectList);
 		}
 		return this.servizi;
+	}
+
+	public List<SelectItem> _getSoggetti() throws Exception {
+		if(this.search==null){
+			return new ArrayList<SelectItem>();
+		}
+
+		if(!this.soggettiSelectItemsWidthCheck){
+			this.soggetti = new ArrayList<SelectItem>();
+
+			String tipoProtocollo = this.search.getProtocollo();
+			String idPorta = null;
+			List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
+
+			for (Soggetto soggetto : list) {
+				String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
+				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+				String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+				this.soggetti.add(new SelectItem(value,label));
+			}
+			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggetti);
+			this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
+		}
+		return this.soggetti;
+	}
+
+	public List<SelectItem> getSoggettiLocale() throws Exception{
+		return _getSoggettiLocale(true);
+	}
+
+	public List<SelectItem> _getSoggettiLocale(boolean soloOperativi) throws Exception {
+		if(this.search==null){
+			return new ArrayList<SelectItem>();
+		}
+
+		if(!this.soggettiLocaleSelectItemsWidthCheck){
+			this.soggettiLocale = new ArrayList<SelectItem>();
+
+			String tipoProtocollo = this.search.getProtocollo();
+			String idPorta = null;
+			List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
+
+			for (Soggetto soggetto : list) {
+				boolean add = true;
+				if(soloOperativi) {
+					String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+					add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+				}
+				if(add) {				
+					String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
+					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+					this.soggettiLocale.add(new SelectItem(value,label));
+				}
+			}
+			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggettiLocale);
+			this.soggettiLocaleSelectItemsWidth = Math.max(this.soggettiLocaleSelectItemsWidth,  lunghezzaSelectList);
+		}
+		return this.soggettiLocale;
 	}
 
 	/***
@@ -217,60 +285,59 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.serviziApplicativi;
 	}
 
-	public List<SelectItem> getSoggetti(){
+	public List<SelectItem> getSoggetti()  throws Exception{
+		return _getSoggetti();
+	}
+
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
+		return _getTipiNomiSoggettiAssociati(false);
+	}
+
+	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
-		if(this.soggetti!=null)
-			return this.soggetti;
 
-		String tipoProtocollo = this.search.getProtocollo();
-		String idPorta = null;
-		List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
-		this.soggetti = new ArrayList<SelectItem>();
-		for (Soggetto soggetto : list) {
-			this.soggetti.add(new SelectItem(soggetto.getNomeSoggetto(),soggetto.getNomeSoggetto(),soggetto.getNomeSoggetto()));
-		}
-		return this.soggetti;
-	}
+		if(!this.soggettiSelectItemsWidthCheck){
+			this.soggettiAssociati = new ArrayList<SelectItem>();
 
-	public List<String> getTipiNomiSoggettiAssociati() throws Exception {
-		return _getTipiNomiSoggettiAssociati(false);
-	}
-	
-	public List<String> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
-		if(this.search==null){
-			return new ArrayList<String>();
-		}
-		UserDetailsBean loggedUser = Utility.getLoggedUser();
-		if(loggedUser!=null){
-			String tipoProtocollo = this.search.getProtocollo();
-			if(tipoProtocollo == null)
-				return loggedUser.getTipiNomiSoggettiAssociati();
+			UserDetailsBean loggedUser = Utility.getLoggedUser();
+			if(loggedUser!=null){
+				List<IDSoggetto> lst = new ArrayList<IDSoggetto>();
+				String tipoProtocollo = this.search.getProtocollo();
+				if(tipoProtocollo == null) {
+					lst = loggedUser.getUtenteSoggettoList();
+				} else {
+					// se ho selezionato un protocollo devo filtrare per protocollo
+					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
+					List<String> lstTmp = new ArrayList<String>();
+					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
 
-			// se ho selezionato un protocollo devo filtrare per protocollo
-			List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
-			List<String> lst = new ArrayList<String>();
-
-			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
-				for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-					if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
-						String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
-						boolean add = true;
-						if(soloOperativi) {
-							String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
-							add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
+							if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
+								String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
+								boolean add = true;
+								if(soloOperativi) {
+									String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
+									add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+								}
+								if(lstTmp.contains(tipoNome)==false && add){
+									lstTmp.add(tipoNome);
+									lst.add(utenteSoggetto);
+								}
+							}
 						}
-						if(lst.contains(tipoNome)==false && add){
-							lst.add(tipoNome);
-						}
-					}
 				}
 
-			return lst;
+				for (IDSoggetto idSoggetto : lst) {
+					String value = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+					this.soggettiAssociati.add(new SelectItem(value,label));
+				}
+			}
 		}
 
-		return new ArrayList<String>();
+		return this.soggettiAssociati;
 	}
 
 	@Override
@@ -296,7 +363,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0){
 				List<Soggetto> listaFiltrata = new ArrayList<Soggetto>();
 				List<String> listaTipi = new ArrayList<String>();
-				
+
 				// controllo soggetto locale
 				String tipoSoggettoLocale = Utility.parseTipoSoggetto(this.search.getTipoNomeSoggettoLocale());
 				String nomeSoggettoLocale = Utility.parseNomeSoggetto(this.search.getTipoNomeSoggettoLocale());
@@ -304,12 +371,12 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				if(nomeSoggettoLocale != null){
 					listaTipi.add(tipoSoggettoLocale);
 				} else {
-				
-				// prelevo il tipo dei soggetti compatibili
-				for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
-					if(!listaTipi.contains(utenteSoggetto.getTipo()))
-						listaTipi.add(utenteSoggetto.getTipo());
-				}
+
+					// prelevo il tipo dei soggetti compatibili
+					for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
+						if(!listaTipi.contains(utenteSoggetto.getTipo()))
+							listaTipi.add(utenteSoggetto.getTipo());
+					}
 
 				}
 				for (Soggetto soggetto : list) {
@@ -318,7 +385,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 							if(this.dynamicUtils.isTipoSoggettoCompatibile(tipo, soggetto.getTipoSoggetto()))
 								listaFiltrata.add(soggetto);
 						} catch (Exception e) {
-					 
+
 						}
 					}
 				}
@@ -327,9 +394,30 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 				return listaFiltrata;
 			}
 		}  
-		
+
 		list.add(0,s);
 		return list;	
+	}
+
+	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
+		this.soggettiAssociatiSelectItemsWidthCheck = false;
+		getTipiNomiSoggettiAssociati();
+		this.soggettiAssociatiSelectItemsWidthCheck = true;
+		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth).toString();
+	}
+
+	public String getSoggettiLocaleSelectItemsWidth() throws Exception{
+		this.soggettiLocaleSelectItemsWidthCheck = false;
+		getSoggettiLocale();
+		this.soggettiLocaleSelectItemsWidthCheck = true;
+		return checkWidthLimits(this.soggettiLocaleSelectItemsWidth).toString();
+	}
+
+	public String getSoggettiSelectItemsWidth() throws Exception{
+		this.soggettiSelectItemsWidthCheck = false;
+		getSoggetti();
+		this.soggettiSelectItemsWidthCheck = true;
+		return checkWidthLimits(this.soggettiSelectItemsWidth).toString();
 	}
 
 	public String getServiziSelectItemsWidth() throws Exception{
@@ -360,6 +448,30 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		toRet = Math.min(toRet, this.maxSelectItemsWidth);
 
 		return toRet;
+	}
+
+	public boolean isSoggettiLocaleSelectItemsWidthCheck() {
+		return this.soggettiLocaleSelectItemsWidthCheck;
+	}
+
+	public void setSoggettiLocaleSelectItemsWidthCheck(boolean soggettiLocaleSelectItemsWidthCheck) {
+		this.soggettiLocaleSelectItemsWidthCheck = soggettiLocaleSelectItemsWidthCheck;
+	}
+
+	public boolean isSoggettiAssociatiSelectItemsWidthCheck() {
+		return this.soggettiAssociatiSelectItemsWidthCheck;
+	}
+
+	public void setSoggettiAssociatiSelectItemsWidthCheck(boolean soggettiAssociatiSelectItemsWidthCheck) {
+		this.soggettiAssociatiSelectItemsWidthCheck = soggettiAssociatiSelectItemsWidthCheck;
+	}
+
+	public boolean isSoggettiSelectItemsWidthCheck() {
+		return this.soggettiSelectItemsWidthCheck;
+	}
+
+	public void setSoggettiSelectItemsWidthCheck(boolean soggettiSelectItemsWidthCheck) {
+		this.soggettiSelectItemsWidthCheck = soggettiSelectItemsWidthCheck;
 	}
 
 	public boolean isServiziSelectItemsWidthCheck() {
@@ -406,6 +518,18 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 	public void setAzioniSelectItemsWidth(Integer azioniSelectItemsWidth) {
 		this.azioniSelectItemsWidth = azioniSelectItemsWidth;
+	}
+
+	public Integer getSoggettiLocaleSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.soggettiLocaleSelectItemsWidth);
+	}
+
+	public Integer getSoggettiAssociatiSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth);
+	}
+
+	public Integer getSoggettiSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.soggettiSelectItemsWidth);
 	}
 
 	public Integer getServiziSelectItemsWidthAsInteger() throws Exception{
