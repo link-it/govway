@@ -332,17 +332,14 @@ public class StatisticsUtils {
 		// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
 		stat.setMittente(new IDSoggetto(getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row), 
 										getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row)));
+		
 		stat.setDestinatario(new IDSoggetto(getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row), 
 											getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row)));
+		
 		stat.setTipoServizio(getValueFromMap(Transazione.model().TIPO_SERVIZIO,row));
 		stat.setServizio(getValueFromMap(Transazione.model().NOME_SERVIZIO,row));
-		String v = getValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row);
-		if(v==null || "".equals(v) || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(v)) {
-			stat.setVersioneServizio(Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
-		}
-		else {
-			stat.setVersioneServizio(Integer.valueOf(v));
-		}
+		stat.setVersioneServizio(getVersionValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row));
+		
 		stat.setAzione(getValueFromMap(Transazione.model().AZIONE,row));
 		
 		stat.setEsito((Integer)row.get(Transazione.model().ESITO.getFieldName()));
@@ -362,6 +359,19 @@ public class StatisticsUtils {
 		}
 		else{
 			return Costanti.INFORMAZIONE_NON_DISPONIBILE;
+		}
+	}
+	private static Integer getVersionValueFromMap(IField field, Map<String, Object> row){
+		Object tmpObject = row.get(field.getFieldName());
+		Integer tmp = null;
+		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
+			tmp = (Integer) tmpObject;
+		}
+		if(tmp!=null && tmp.intValue()>0){
+			return tmp;
+		}
+		else{
+			return Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE;
 		}
 	}
 	

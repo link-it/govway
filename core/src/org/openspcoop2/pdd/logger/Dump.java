@@ -333,6 +333,7 @@ public class Dump {
 		
 		
 		Messaggio messaggio = new Messaggio();
+		messaggio.setProtocollo(this.protocolFactory.getProtocol());
 		messaggio.setTipoMessaggio(tipoMessaggio);
 		
 		messaggio.setGdo(DateManager.getDate());

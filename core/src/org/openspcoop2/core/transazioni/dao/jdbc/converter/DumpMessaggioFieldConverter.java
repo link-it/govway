@@ -73,6 +73,13 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "id_transazione";
 			}
 		}
+		if(field.equals(DumpMessaggio.model().PROTOCOLLO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".protocollo";
+			}else{
+				return "protocollo";
+			}
+		}
 		if(field.equals(DumpMessaggio.model().TIPO_MESSAGGIO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_messaggio";
@@ -304,6 +311,9 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		// the full definition of the table containing the alias
 		
 		if(field.equals(DumpMessaggio.model().ID_TRANSAZIONE)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().PROTOCOLLO)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().TIPO_MESSAGGIO)){

@@ -76,7 +76,7 @@ public class FileSystemSerializer {
 	}
 	
 	public void registraDump(byte[] oggettSerializzato, Date date) throws Exception{
-		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_DUMP, date,getDirTracce());
+		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_DUMP, date,getDirDump());
 	}
 	public File getDirDump(){
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP);

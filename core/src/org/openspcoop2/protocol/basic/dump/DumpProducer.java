@@ -106,6 +106,8 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 
 		Date gdo = messaggio.getGdo();
 		
+		String protocollo = messaggio.getProtocollo();
+		
 		String idTransazione = messaggio.getIdTransazione();
 		
 		TipoMessaggio tipoMessaggio = messaggio.getTipoMessaggio();
@@ -139,6 +141,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						
 			// MESSAGGIO BASE
 			DumpMessaggio dumpMessaggio = new DumpMessaggio();
+			dumpMessaggio.setProtocollo(protocollo);
 			dumpMessaggio.setIdTransazione(idTransazione);
 			dumpMessaggio.setTipoMessaggio(tipoMessaggio);
 			

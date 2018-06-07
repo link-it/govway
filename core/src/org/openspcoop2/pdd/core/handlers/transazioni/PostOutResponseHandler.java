@@ -675,6 +675,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				
 				for(int i=0; i<transaction.sizeMessaggi(); i++){
 					Messaggio messaggio = transaction.getMessaggio(i);
+					if(messaggio.getProtocollo()==null) {
+						messaggio.setProtocollo(transazioneDTO.getProtocollo());
+					}
 					if(messaggio.getDominio()==null) {
 						messaggio.setDominio(idDominio);
 					}

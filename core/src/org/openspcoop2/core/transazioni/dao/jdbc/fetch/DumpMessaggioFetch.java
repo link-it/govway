@@ -60,6 +60,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id", Long.class));
 				setParameter(object, "setIdTransazione", DumpMessaggio.model().ID_TRANSAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "id_transazione", DumpMessaggio.model().ID_TRANSAZIONE.getFieldType()));
+				setParameter(object, "setProtocollo", DumpMessaggio.model().PROTOCOLLO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "protocollo", DumpMessaggio.model().PROTOCOLLO.getFieldType()));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_messaggio", DumpMessaggio.model().TIPO_MESSAGGIO.getFieldType())+"");
 				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
@@ -176,6 +178,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id"));
 				setParameter(object, "setIdTransazione", DumpMessaggio.model().ID_TRANSAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"id-transazione"));
+				setParameter(object, "setProtocollo", DumpMessaggio.model().PROTOCOLLO.getFieldType(),
+					this.getObjectFromMap(map,"protocollo"));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					this.getObjectFromMap(map,"tipo-messaggio"));
 				setParameter(object, "setContentType", DumpMessaggio.model().CONTENT_TYPE.getFieldType(),
