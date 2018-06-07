@@ -1,9 +1,9 @@
 package org.openspcoop2.pdd.core.token;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +14,9 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
-import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
@@ -47,6 +45,9 @@ import org.slf4j.Logger;
 
 public class GestoreToken {
 
+	public static final boolean PORTA_DELEGATA = true;
+	public static final boolean PORTA_APPLICATIVA = false;
+	
 	/** Chiave della cache per la gestione dei token  */
 	private static final String TOKEN_CACHE_NAME = "token";
 	/** Cache */
@@ -285,7 +286,7 @@ public class GestoreToken {
 	
 	// ********* VERIFICA POSIZIONE TOKEN ****************** */
 	
-	public static EsitoPresenzaToken verificaPosizioneToken(AbstractDatiInvocazione datiInvocazione, boolean portaDelegata) {
+	public static EsitoPresenzaToken verificaPosizioneToken(Logger log, AbstractDatiInvocazione datiInvocazione, boolean portaDelegata) {
 		
 		EsitoPresenzaToken esitoPresenzaToken = null;
 		if(portaDelegata) {
@@ -430,12 +431,12 @@ public class GestoreToken {
 	
 	// ********* VALIDAZIONE JWT TOKEN ****************** */
 	
-	public static EsitoGestioneToken validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+	public static EsitoGestioneToken validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
 		
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _validazioneJWTToken(datiInvocazione, token, portaDelegata);
+			esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
 		}
     	else{
     		String funzione = "ValidazioneJWT";
@@ -460,7 +461,7 @@ public class GestoreToken {
 
 				// Effettuo la query
 				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _validazioneJWTToken(datiInvocazione, token, portaDelegata);
+				esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
 					
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -493,7 +494,7 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+	private static EsitoGestioneToken _validazioneJWTToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -507,8 +508,7 @@ public class GestoreToken {
 		
 		try{
 			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
-    		Properties properties = policyGestioneToken.getDefaultProperties();
-    		String tokenType = properties.getProperty(Costanti.POLICY_TOKEN_TYPE);
+    		String tokenType = policyGestioneToken.getTipoToken();
     		
     		String detailsError = null;
 			InformazioniToken informazioniToken = null;
@@ -547,7 +547,7 @@ public class GestoreToken {
     			}
     		}
     		  		
-    		if(informazioniToken!=null) {
+    		if(informazioniToken!=null && informazioniToken.isValid()) {
     			esitoGestioneToken.setValido(true);
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
@@ -564,7 +564,7 @@ public class GestoreToken {
     				esitoGestioneToken.setDetails(detailsError);	
 				}
 				else {
-					esitoGestioneToken.setDetails("Token non validao");	
+					esitoGestioneToken.setDetails("Token non valido");	
 				}
     			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
     					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
@@ -585,11 +585,11 @@ public class GestoreToken {
 	
 	// ********* INTROSPECTION TOKEN ****************** */
 	
-	public static EsitoGestioneToken introspectionToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _introspectionToken(datiInvocazione, token, portaDelegata);
+			esitoGestioneToken = _introspectionToken(log, datiInvocazione, token, portaDelegata);
 		}
     	else{
     		String funzione = "Introspection";
@@ -614,7 +614,7 @@ public class GestoreToken {
 
 				// Effettuo la query
 				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _introspectionToken(datiInvocazione, token, portaDelegata);
+				esitoGestioneToken = _introspectionToken(log, datiInvocazione, token, portaDelegata);
 					
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -647,7 +647,7 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _introspectionToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+	private static EsitoGestioneToken _introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -661,7 +661,6 @@ public class GestoreToken {
 		
 		try{
 			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
-    		Properties properties = policyGestioneToken.getDefaultProperties();
     		
     		String detailsError = null;
 			InformazioniToken informazioniToken = null;
@@ -669,38 +668,22 @@ public class GestoreToken {
 			
 			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
 			
-    		if(Costanti.POLICY_TOKEN_TYPE_JWS.equals(tokenType)) {
-    			// JWS Compact   			
-    			JsonVerifySignature jsonCompactVerify = null;
-    			try {
-    				jsonCompactVerify = new JsonVerifySignature(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID),
-    						JOSERepresentation.COMPACT);
-    				if(jsonCompactVerify.verify(token)) {
-    					informazioniToken = new InformazioniToken(jsonCompactVerify.getDecodedPayload(),tokenParser);
-    				}
-    				else {
-    					detailsError = "Token non valido";
-    				}
-    			}catch(Exception e) {
-    				detailsError = "Token non valido: "+e.getMessage();
-    				eProcess = e;
-    			}
-    		}
-    		else {
-    			// JWE Compact
-    			JsonDecrypt jsonDecrypt = null;
-    			try {
-    				jsonDecrypt = new JsonDecrypt(policyGestioneToken.getProperties().get(Costanti.POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID),
-    						JOSERepresentation.COMPACT);
-    				jsonDecrypt.decrypt(token);
-    				informazioniToken = new InformazioniToken(jsonDecrypt.getDecodedPayload(),tokenParser);
-    			}catch(Exception e) {
-    				detailsError = "Token non valido: "+e.getMessage();
-    				eProcess = e;
-    			}
-    		}
+			byte[] risposta = null;
+			try {
+				risposta = http(log, policyGestioneToken, INTROSPECTION, token);
+			}catch(Exception e) {
+				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				eProcess = e;
+			}
+			
+			try {
+				informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+			}catch(Exception e) {
+				detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
+				eProcess = e;
+			}
     		  		
-    		if(informazioniToken!=null) {
+    		if(informazioniToken!=null && informazioniToken.isValid()) {
     			esitoGestioneToken.setValido(true);
     			esitoGestioneToken.setInformazioniToken(informazioniToken);
     			esitoGestioneToken.setNoCache(false);
@@ -717,7 +700,7 @@ public class GestoreToken {
     				esitoGestioneToken.setDetails(detailsError);	
 				}
 				else {
-					esitoGestioneToken.setDetails("Token non validao");	
+					esitoGestioneToken.setDetails("Token non valido");	
 				}
     			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
     					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
@@ -738,8 +721,133 @@ public class GestoreToken {
 	
 	// ********* USER INFO TOKEN ****************** */
 	
-	public static EsitoGestioneToken userInfoToken(AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
-		throw new Exception("Not Implemented");
+	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+		EsitoGestioneToken esitoGestioneToken = null;
+		
+		if(GestoreToken.cacheToken==null){
+			esitoGestioneToken = _userInfoToken(log, datiInvocazione, token, portaDelegata);
+		}
+    	else{
+    		String funzione = "UserInfo";
+    		String keyCache = buildCacheKey(funzione, portaDelegata, token);
+
+			synchronized (GestoreToken.cacheToken) {
+
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+						esitoGestioneToken.setInCache(true);
+					}else if(response.getException()!=null){
+						GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				// Effettuo la query
+				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+				esitoGestioneToken = _userInfoToken(log, datiInvocazione, token, portaDelegata);
+					
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				if(esitoGestioneToken!=null){
+					esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+					if(!esitoGestioneToken.isNoCache()){
+						GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+						try{	
+							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+							responseCache.setObject(esitoGestioneToken);
+							GestoreToken.cacheToken.put(keyCache,responseCache);
+						}catch(UtilsException e){
+							GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+						}
+					}
+				}else{
+					throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
+				}
+			}
+    	}
+		
+		if(esitoGestioneToken.isValido()) {
+			// ricontrollo tutte le date
+			_validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+					datiInvocazione.getPolicyGestioneToken().isUserInfo_saveErrorInCache());
+		}
+		
+		return esitoGestioneToken;
+	}
+	
+	private static EsitoGestioneToken _userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+		EsitoGestioneToken esitoGestioneToken = null;
+		if(portaDelegata) {
+			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
+		}
+		else {
+			esitoGestioneToken = new EsitoGestioneTokenPortaApplicativa();
+		}
+		
+		esitoGestioneToken.setValido(false);
+		esitoGestioneToken.setToken(token);
+		
+		try{
+			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+    		
+    		String detailsError = null;
+			InformazioniToken informazioniToken = null;
+			Exception eProcess = null;
+			
+			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			
+			byte[] risposta = null;
+			try {
+				risposta = http(log, policyGestioneToken, USER_INFO, token);
+			}catch(Exception e) {
+				detailsError = "(Errore di Connessione) "+ e.getMessage();
+				eProcess = e;
+			}
+			
+			try {
+				informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+			}catch(Exception e) {
+				detailsError = "Risposta del servizio di UserInfo non valida: "+e.getMessage();
+				eProcess = e;
+			}
+    		  		
+    		if(informazioniToken!=null && informazioniToken.isValid()) {
+    			esitoGestioneToken.setValido(true);
+    			esitoGestioneToken.setInformazioniToken(informazioniToken);
+    			esitoGestioneToken.setNoCache(false);
+			}
+    		else {
+    			if(policyGestioneToken.isValidazioneJWT_saveErrorInCache()) {
+    				esitoGestioneToken.setNoCache(false);
+    			}
+    			else {
+    				esitoGestioneToken.setNoCache(true);
+    			}
+    			esitoGestioneToken.setEccezioneProcessamento(eProcess);
+    			if(detailsError!=null) {
+    				esitoGestioneToken.setDetails(detailsError);	
+				}
+				else {
+					esitoGestioneToken.setDetails("Token non valido");	
+				}
+    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
+    		}
+    		
+		}catch(Exception e){
+			esitoGestioneToken.setDetails(e.getMessage());
+			esitoGestioneToken.setEccezioneProcessamento(e);
+    	}
+		
+		return esitoGestioneToken;
 	}
 	
 	
@@ -749,7 +857,7 @@ public class GestoreToken {
 	
 	// ********* FORWARD TOKEN ****************** */
 	
-	public static void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
+	public static void forwardToken(Logger log, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
 		throw new Exception("Not Implemented");
 	}
 	
@@ -851,7 +959,9 @@ public class GestoreToken {
     	return bf.toString();
     }
 	
-	private static void http(PolicyGestioneToken policyGestioneToken, boolean introspection, String token) throws Exception {
+	private static final boolean INTROSPECTION = true;
+	private static final boolean USER_INFO = false;
+	private static byte[] http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -1028,19 +1138,53 @@ public class GestoreToken {
 			break;
 		}
 		
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);;
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		connettoreMsg.setRequestMessage(msg);
+		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
 		
 		boolean send = connettore.send(connettoreMsg);
 		if(send==false) {
-			throw new Exception("Errore di connessione");
+			if(connettore.getEccezioneProcessamento()!=null) {
+				throw new Exception(connettore.getErrore(), connettore.getEccezioneProcessamento());
+			}
+			else {
+				throw new Exception(connettore.getErrore());
+			}
 		}
 		
-//		AGGANCIARE TUTTI I PARAMETRI POI ANCHE ALLA VALIDAZIONE
-//	
-//		Realizzare una specifica su come fornire il token ????
-//				header HTTP / ContentType / HttpMethod / parametro
+		OpenSPCoop2Message msgResponse = connettore.getResponse();
+		ByteArrayOutputStream bout = null;
+		if(msgResponse!=null) {
+			bout = new ByteArrayOutputStream();
+			if(msgResponse!=null) {
+				msgResponse.writeTo(bout, true);
+			}
+			bout.flush();
+			bout.close();
+		}
+		
+		if(connettore.getCodiceTrasporto() >= 200 &&  connettore.getCodiceTrasporto() < 299) {
+			String msgSuccess = "Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgSuccess);
+				return bout.toByteArray();
+			}
+			else {
+				throw new Exception(msgSuccess+"; non è pervenuta alcuna risposta");
+			}
+		}
+		else {
+			String msgError = "Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
+			log.error(msgError+": "+bout.toString());
+			if(bout!=null && bout.size()>0 && bout.size()<(1024)) {
+				throw new Exception(msgError+": "+bout.toString());
+			}
+			else {
+				throw new Exception(msgError);
+			}
+		}
+		
 		
 	}
 	

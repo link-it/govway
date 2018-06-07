@@ -22,6 +22,20 @@ public class BasicTokenParser implements ITokenParser {
 	}
 
 	@Override
+	public boolean isValid() {
+		switch (this.parser) {
+		case INTROSPECTION_RESPONSE_RFC_7662:
+			String claim = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ACTIVE);
+			return Boolean.valueOf(claim);
+		case JSON_WEB_TOKEN_RFC_7519:
+		case OIDC_ID_TOKEN:
+		case CUSTOM:
+			return true;
+		}
+		return true;
+	}
+	
+	@Override
 	public String getIssuer() {
 		switch (this.parser) {
 		case JSON_WEB_TOKEN_RFC_7519:

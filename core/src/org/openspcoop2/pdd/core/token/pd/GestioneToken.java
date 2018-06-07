@@ -27,6 +27,7 @@ import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.slf4j.Logger;
 
 /**
  * Classe che implementala gestione token
@@ -38,10 +39,14 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 
 public class GestioneToken {
 
+	private Logger log;
+	public GestioneToken(Logger log) {
+		this.log = log;
+	}
 	
     public EsitoPresenzaTokenPortaDelegata verificaPresenzaToken(DatiInvocazionePortaDelegata datiInvocazione) throws TokenException{
 
-    	EsitoPresenzaTokenPortaDelegata esito = (EsitoPresenzaTokenPortaDelegata) GestoreToken.verificaPosizioneToken(datiInvocazione, true);
+    	EsitoPresenzaTokenPortaDelegata esito = (EsitoPresenzaTokenPortaDelegata) GestoreToken.verificaPosizioneToken(this.log, datiInvocazione, GestoreToken.PORTA_DELEGATA);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -55,7 +60,7 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaDelegata validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException { 	
     	try {
     	
-    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(datiInvocazione, token, true);
+    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, token, GestoreToken.PORTA_DELEGATA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -72,7 +77,7 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaDelegata introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
     	try {
         	
-    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(datiInvocazione, token, true);
+    		EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.introspectionToken(this.log, datiInvocazione, token, GestoreToken.PORTA_DELEGATA);
     		
     		if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -89,7 +94,7 @@ public class GestioneToken {
 	public EsitoGestioneTokenPortaDelegata userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
 		try {
         	
-			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(datiInvocazione, token, true);
+			EsitoGestioneTokenPortaDelegata esito = (EsitoGestioneTokenPortaDelegata) GestoreToken.userInfoToken(this.log, datiInvocazione, token, GestoreToken.PORTA_DELEGATA);
     		
 			if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -106,7 +111,7 @@ public class GestioneToken {
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken) throws TokenException {
 		try {
         	
-    		GestoreToken.forwardToken(datiInvocazione, esitoPresenzaToken, true);
+    		GestoreToken.forwardToken(this.log, datiInvocazione, esitoPresenzaToken, GestoreToken.PORTA_DELEGATA);
     		
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento

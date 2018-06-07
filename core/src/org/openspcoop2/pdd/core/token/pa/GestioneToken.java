@@ -26,6 +26,7 @@ import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.slf4j.Logger;
 
 /**
  * Classe che implementala gestione token
@@ -37,10 +38,14 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 
 public class GestioneToken {
 
+	private Logger log;
+	public GestioneToken(Logger log) {
+		this.log = log;
+	}
 	
     public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) throws TokenException{
 
-    	EsitoPresenzaTokenPortaApplicativa esito = (EsitoPresenzaTokenPortaApplicativa) GestoreToken.verificaPosizioneToken(datiInvocazione, false);
+    	EsitoPresenzaTokenPortaApplicativa esito = (EsitoPresenzaTokenPortaApplicativa) GestoreToken.verificaPosizioneToken(this.log, datiInvocazione, GestoreToken.PORTA_APPLICATIVA);
     	
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -53,7 +58,7 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaApplicativa validazioneJWTToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {   	
     	try {
     	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(datiInvocazione, token, false);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.validazioneJWTToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -69,7 +74,7 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaApplicativa introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
     	try {
         	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(datiInvocazione, token, false);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -85,7 +90,7 @@ public class GestioneToken {
 	public EsitoGestioneTokenPortaApplicativa userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
 		try {
         	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(datiInvocazione, token, false);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -101,7 +106,7 @@ public class GestioneToken {
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken) throws TokenException {
 		try {
         	
-    		GestoreToken.forwardToken(datiInvocazione, esitoPresenzaToken, false);
+    		GestoreToken.forwardToken(this.log, datiInvocazione, esitoPresenzaToken, GestoreToken.PORTA_APPLICATIVA);
     		
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento

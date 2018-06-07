@@ -164,6 +164,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// tipoConnetore
 		this.tipoConnettore = request.getTipoConnettore();
 		
+		// generateErrorWithConnectorPrefix
+		this.generateErrorWithConnectorPrefix = request.isGenerateErrorWithConnectorPrefix();
+		
 		// - Busta
 		this.busta = request.getBusta();
 		if(this.busta!=null)

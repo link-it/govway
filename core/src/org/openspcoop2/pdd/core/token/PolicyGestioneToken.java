@@ -147,6 +147,10 @@ public class PolicyGestioneToken implements Serializable {
 		}
 	}
 	
+	public String getTipoToken() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
+	}
+	
 	public String getLabelTipoToken() {
 		String tokenType = this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
 		if(Costanti.POLICY_TOKEN_TYPE_OPAQUE.equals(tokenType)) {

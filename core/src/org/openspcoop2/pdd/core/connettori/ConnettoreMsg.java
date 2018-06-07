@@ -57,7 +57,8 @@ public class ConnettoreMsg  {
 	private OpenSPCoop2Message request;
 	/** Proprieta' del connettore */
 	private java.util.Hashtable<String,String> properties;
-
+	/** Errore generato con un prefisso del connettore */
+	protected boolean generateErrorWithConnectorPrefix = true;
 
 	/** Indicazione su di un eventuale sbustamento SOAP */
 	private boolean sbustamentoSoap;
@@ -250,6 +251,10 @@ public class ConnettoreMsg  {
 		this.credenziali = cr;
 	}
 	
+	public void setGenerateErrorWithConnectorPrefix(boolean generateErrorWithConnectorPrefix) {
+		this.generateErrorWithConnectorPrefix = generateErrorWithConnectorPrefix;
+	}
+	
 
 
 	/* ********  G E T T E R   ******** */
@@ -427,5 +432,8 @@ public class ConnettoreMsg  {
 	}
 	public void setState(IState state) {
 		this.state = state;
+	}
+	public boolean isGenerateErrorWithConnectorPrefix() {
+		return this.generateErrorWithConnectorPrefix;
 	}
 }

@@ -31,10 +31,30 @@ public class InformazioniToken implements Serializable {
 			}
 		}
 		tokenParser.init(this.rawResponse, this.claims);
+		this.valid = tokenParser.isValid();
+		this.iss = tokenParser.getIssuer();
+		this.sub = tokenParser.getSubject();
+		this.username = tokenParser.getUsername();
+		this.aud = tokenParser.getAudience();
+		this.exp = tokenParser.getExpired();
+		this.iat = tokenParser.getIssuedAt();
+		this.nbf = tokenParser.getNotToBeUsedBefore();
+		this.clientId = tokenParser.getClientId();
+		List<String> r = tokenParser.getRoles();
+		if(r!=null && r.size()>0) {
+			this.roles.addAll(r);
+		}
+		List<String> s = tokenParser.getScopes();
+		if(s!=null && s.size()>0) {
+			this.scopes.addAll(s);
+		}
 	}
 	
 	// RawResponse
 	private String rawResponse;
+	
+	// Indicazione se il token e' valido
+	private boolean valid;
 	
 	// String representing the issuer of this token, as defined in JWT [RFC7519].
 	private String iss; 
@@ -75,6 +95,14 @@ public class InformazioniToken implements Serializable {
 	// Claims
 	private Map<String,String> claims = new HashMap<String,String>();
 
+	
+	public boolean isValid() {
+		return this.valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
 	
 	public String getIss() {
 		return this.iss;

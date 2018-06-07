@@ -8,6 +8,9 @@ public interface ITokenParser {
 
 	public void init(String raw, Map<String,String> claims);
 	
+	// Indicazione se il token e' valido
+	public boolean isValid();
+	
 	// String representing the issuer of this token, as defined in JWT [RFC7519].
 	public String getIssuer();
 	
