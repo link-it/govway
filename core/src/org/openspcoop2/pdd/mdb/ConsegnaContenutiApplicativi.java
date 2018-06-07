@@ -104,6 +104,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
+import org.openspcoop2.pdd.core.token.TokenForward;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -1323,6 +1324,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 			/* ------------------- Definizione connettoreMsg -----------------------*/
+						
 			// mapping in valori delle keyword delle proprieta di trasporto protocol-properties.
 			msgDiag.mediumDebug("Impostazione messaggio del connettore...");
 			mappingProtocolProperties(connettoreMsg.getPropertiesTrasporto(), propertiesTrasporto, 
@@ -1356,6 +1358,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			IConnettore connectorSender = null;
 
+			// mapping per forward token
+			TokenForward tokenForward = null;
+			Object oTokenForward = consegnaMessage.getContextProperty(org.openspcoop2.pdd.core.token.Costanti.MSG_CONTEXT_TOKEN_FORWARD);
+			if(oTokenForward!=null) {
+				tokenForward = (TokenForward) oTokenForward;
+			}
+			if(tokenForward!=null) {
+				if(tokenForward.getTrasporto()!=null && tokenForward.getTrasporto().size()>0) {
+					propertiesTrasporto.putAll(tokenForward.getTrasporto());
+				}
+				if(tokenForward.getUrl()!=null && tokenForward.getUrl().size()>0) {
+					propertiesUrlBased.putAll(tokenForward.getUrl());
+				}
+			}
+			
 			// Risposte del connettore
 			int codiceRitornato = -1;
 			TransportResponseContext transportResponseContext = null;

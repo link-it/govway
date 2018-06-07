@@ -2,8 +2,11 @@ package org.openspcoop2.pdd.core.token;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +22,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -35,13 +39,20 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.security.JOSERepresentation;
 import org.openspcoop2.utils.security.JsonDecrypt;
+import org.openspcoop2.utils.security.JsonEncrypt;
+import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class GestoreToken {
 
@@ -299,8 +310,7 @@ public class GestoreToken {
 		esitoPresenzaToken.setPresente(false);
 		try{
 			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
-    		Properties properties = policyGestioneToken.getDefaultProperties();
-    		String source = properties.getProperty(Costanti.POLICY_TOKEN_SOURCE);
+    		String source = policyGestioneToken.getTokenSource();
     		
     		String detailsError = null;
 			String token = null;
@@ -334,7 +344,7 @@ public class GestoreToken {
     					}
     				}
     				else {
-    					String headerName = properties.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME);					
+    					String headerName = policyGestioneToken.getTokenSourceHeaderName();
     					token =  urlProtocolContext.getParameterTrasporto(headerName);
     					if(token==null) {
     						detailsError = "Non è stato riscontrato l'header http '"+headerName+"' contenente il token";
@@ -364,7 +374,7 @@ public class GestoreToken {
     					propertyUrlName = Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN;
     				}
     				else {
-    					propertyUrlName = properties.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME);	
+    					propertyUrlName = policyGestioneToken.getTokenSourceUrlPropertyName();
     				}
     				token =  urlProtocolContext.getParameterFormBased(propertyUrlName);
 					if(token==null) {
@@ -857,11 +867,643 @@ public class GestoreToken {
 	
 	// ********* FORWARD TOKEN ****************** */
 	
-	public static void forwardToken(Logger log, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, boolean portaDelegata) throws Exception {
-		throw new Exception("Not Implemented");
+	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
+			boolean portaDelegata) throws Exception {
+		
+		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+			
+		TokenForward tokenForward = new TokenForward();
+		String token = esitoPresenzaToken.getToken();
+		
+		boolean trasparente = false;
+		String forwardTrasparenteMode = null;
+		String forwardTrasparenteMode_header = null;
+		String forwardTrasparenteMode_url = null;
+		if(policyGestioneToken.isForwardToken()) {
+			trasparente = policyGestioneToken.isForwardToken_trasparente();
+			if(trasparente) {
+				forwardTrasparenteMode = policyGestioneToken.getForwardToken_trasparenteMode();
+				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardTrasparenteMode)) {
+					forwardTrasparenteMode_header = esitoPresenzaToken.getHeaderHttp();
+					forwardTrasparenteMode_url = esitoPresenzaToken.getPropertyUrl();
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER.equals(forwardTrasparenteMode)) {
+					forwardTrasparenteMode_header = HttpConstants.AUTHORIZATION;
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(forwardTrasparenteMode)) {
+					forwardTrasparenteMode_url = Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN;
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(forwardTrasparenteMode)) {
+					forwardTrasparenteMode_header = policyGestioneToken.getForwardToken_trasparenteModeCustomHeader();
+				} 
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardTrasparenteMode)) {
+					forwardTrasparenteMode_url = policyGestioneToken.getForwardToken_trasparenteModeCustomUrl();
+				} 
+			}
+		}
+		
+		boolean infoRaccolte = false;
+		String forwardInforRaccolteMode = null;
+		Properties jwtSecurity = null;
+		boolean encodeBase64 = false;
+		boolean forwardValidazioneJWT = false;	
+		String forwardValidazioneJWT_mode = null;
+		String forwardValidazioneJWT_name = null;
+		boolean forwardIntrospection = false;	
+		String forwardIntrospection_mode = null;
+		String forwardIntrospection_name = null;
+		boolean forwardUserInfo = false;	
+		String forwardUserInfo_mode = null;
+		String forwardUserInfo_name = null;
+		if(policyGestioneToken.isForwardToken()) {
+			infoRaccolte = policyGestioneToken.isForwardToken_informazioniRaccolte();
+			if(infoRaccolte) {
+				forwardInforRaccolteMode = policyGestioneToken.getForwardToken_informazioniRaccolteMode();
+				encodeBase64 = policyGestioneToken.isForwardToken_informazioniRaccolteEncodeBase64();
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardTrasparenteMode) ||
+						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardTrasparenteMode)) {
+					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardTrasparenteMode)) {
+					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID);
+				}
+				
+				forwardValidazioneJWT = policyGestioneToken.isForwardToken_informazioniRaccolte_validazioneJWT();
+				if(forwardValidazioneJWT) {
+					forwardValidazioneJWT_mode = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode();
+					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardValidazioneJWT_mode)) {
+						forwardValidazioneJWT_name = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode_headerName();
+					}
+					else {
+						forwardValidazioneJWT_name = policyGestioneToken.getForwardToken_informazioniRaccolte_validazioneJWT_mode_queryParameterName();
+					}
+				}
+				
+				forwardIntrospection = policyGestioneToken.isForwardToken_informazioniRaccolte_introspection();
+				if(forwardIntrospection) {
+					forwardIntrospection_mode = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode();
+					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardIntrospection_mode)) {
+						forwardIntrospection_name = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode_headerName();
+					}
+					else {
+						forwardIntrospection_name = policyGestioneToken.getForwardToken_informazioniRaccolte_introspection_mode_queryParameterName();
+					}
+				}
+				
+				forwardUserInfo = policyGestioneToken.isForwardToken_informazioniRaccolte_userInfo();
+				if(forwardUserInfo) {
+					forwardUserInfo_mode = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode();
+					if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardUserInfo_mode)) {
+						forwardUserInfo_name = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode_headerName();
+					}
+					else {
+						forwardUserInfo_name = policyGestioneToken.getForwardToken_informazioniRaccolte_userInfo_mode_queryParameterName();
+					}
+				}
+			}
+		}
+		
+		// Elimino token ricevuto
+		boolean delete = _deleteTokenReceived(datiInvocazione, esitoPresenzaToken, trasparente, forwardTrasparenteMode_header, forwardTrasparenteMode_url);
+		
+		if(trasparente) {
+			
+			// Forward trasparente
+			
+			if(delete) { 
+				// la delete ha tenuto conto dell'opzione di forward prima di eliminare
+				_forwardTokenTrasparente(token, esitoPresenzaToken, tokenForward, forwardTrasparenteMode, forwardTrasparenteMode_header, forwardTrasparenteMode_url);
+			}
+		}
+		
+		if(infoRaccolte) {
+			
+			// Forward informazioni raccolte
+			
+			_forwardInfomazioniRaccolte(portaDelegata, idTransazione, token, tokenForward, esitoValidazioneJWT, esitoIntrospection, esitoUserInfo, 
+					forwardInforRaccolteMode, jwtSecurity, encodeBase64, 
+					forwardValidazioneJWT, forwardValidazioneJWT_mode, forwardValidazioneJWT_name,
+					forwardIntrospection, forwardIntrospection_mode, forwardIntrospection_name,
+					forwardUserInfo, forwardUserInfo_mode, forwardUserInfo_name);
+			
+		}
+		
+		// Imposto token forward nel messaggio
+		if(tokenForward.getUrl().size()>0 || tokenForward.getTrasporto().size()>0) {
+			datiInvocazione.getMessage().addContextProperty(Costanti.MSG_CONTEXT_TOKEN_FORWARD, tokenForward);
+		}
+
 	}
 	
+	private static boolean _deleteTokenReceived(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken,
+			boolean trasparente, String forwardTrasparenteMode_header, String forwardTrasparenteMode_url) throws Exception {
+		
+		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
+		
+		boolean remove = false;
+		if(esitoPresenzaToken.getHeaderHttp()!=null) {
+			if(!HttpConstants.AUTHORIZATION.equals(esitoPresenzaToken.getHeaderHttp())) {
+				if(!policyGestioneToken.isForwardToken()) {
+					remove = true;
+				}
+				else if(!trasparente) {
+					remove = true;
+				}
+				else if(!esitoPresenzaToken.getHeaderHttp().equals(forwardTrasparenteMode_header)) {
+					remove = true;
+				}
+			}
+			if(remove) {
+				datiInvocazione.getMessage().getTransportRequestContext().removeParameterTrasporto(esitoPresenzaToken.getHeaderHttp());
+			}
+		}
+		else if(esitoPresenzaToken.getPropertyUrl()!=null) {
+			if(!policyGestioneToken.isForwardToken()) {
+				remove = true;
+			}
+			else if(!trasparente) {
+				remove = true;
+			}
+			else if(!esitoPresenzaToken.getPropertyUrl().equals(forwardTrasparenteMode_url)) {
+				remove = true;
+			}
+			if(remove) {
+				datiInvocazione.getMessage().getTransportRequestContext().removeParameterFormBased(esitoPresenzaToken.getPropertyUrl());
+			}
+		}
+		else if(esitoPresenzaToken.getPropertyFormBased()!=null) {
+			if(!policyGestioneToken.isForwardToken()) {
+				remove = true;
+			}
+			else if(!trasparente) {
+				remove = true;
+			}
+			if(remove) {
+				byte[] contenuto = datiInvocazione.getMessage().castAsRestBinary().getContent(); // dovrebbe essere un binary
+				// MyVariableOne=ValueOne&MyVariableTwo=ValueTwo
+				String contenutoAsString = new String(contenuto);
+				String [] split = contenutoAsString.split("&");
+				StringBuffer bf = new StringBuffer();
+				for (int i = 0; i < split.length; i++) {
+					String nameValue = split[i];
+					if(nameValue.contains("=")) {
+						String [] tmp = nameValue.split("=");
+						String name = tmp[0];
+						String value = tmp[1];
+						if(!esitoPresenzaToken.getPropertyFormBased().equals(name)) {
+							bf.append(name).append("=").append(value);
+						}
+					}
+					else {
+						if(bf.length()>0) {
+							bf.append("&");
+						}
+						bf.append(nameValue);
+					}
+				}
+				if(bf.length()>0) {
+					byte [] newContenuto = bf.toString().getBytes();
+					datiInvocazione.getMessage().castAsRestBinary().updateContent(newContenuto);
+				}
+				else {
+					datiInvocazione.getMessage().castAsRestBinary().updateContent(null);
+				}
+			}
+		}
+		return remove;
+	}
 	
+	private static void _forwardTokenTrasparente(String token, EsitoPresenzaToken esitoPresenzaToken, TokenForward tokenForward,
+			String forwardTrasparenteMode, String forwardTrasparenteMode_header, String forwardTrasparenteMode_url) throws Exception {
+		if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(forwardTrasparenteMode)) {
+			if(esitoPresenzaToken.getHeaderHttp()!=null) {
+				if(HttpConstants.AUTHORIZATION.equals(esitoPresenzaToken.getHeaderHttp())) {
+					tokenForward.getTrasporto().put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
+				}
+				else {
+					tokenForward.getTrasporto().put(esitoPresenzaToken.getHeaderHttp(), token);
+				}
+			}
+			else if(esitoPresenzaToken.getPropertyUrl()!=null) {
+				tokenForward.getUrl().put(esitoPresenzaToken.getPropertyUrl(), token);
+			}
+			else if(esitoPresenzaToken.getPropertyFormBased()!=null) {
+				throw new Exception("Configurazione non supportata"); // non dovrebbe mai entrare in questo ramo poichè il token non viene eliminato
+			}
+		}
+		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER.equals(forwardTrasparenteMode)) {
+			tokenForward.getTrasporto().put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+token);
+		}
+		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(forwardTrasparenteMode)) {
+			tokenForward.getUrl().put(Costanti.RFC6750_URI_QUERY_PARAMETER_ACCESS_TOKEN, token);
+		}
+		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(forwardTrasparenteMode)) {
+			tokenForward.getTrasporto().put(forwardTrasparenteMode_header, token);
+		}
+		else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(forwardTrasparenteMode)) {
+			tokenForward.getUrl().put(forwardTrasparenteMode_url, token);
+		}
+	}
+	
+	private static void _forwardInfomazioniRaccolte(boolean portaDelegata, String idTransazione, String token, TokenForward tokenForward,
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
+			String forwardInforRaccolteMode, Properties jwtSecurity, boolean encodeBase64,
+			boolean forwardValidazioneJWT, String forwardValidazioneJWT_mode, String forwardValidazioneJWT_name,
+			boolean forwardIntrospection, String forwardIntrospection_mode, String forwardIntrospection_name,
+			boolean forwardUserInfo, String forwardUserInfo_mode, String forwardUserInfo_name) throws Exception {
+		
+		List<InformazioniToken> list = getInformazioniTokenValide(esitoValidazioneJWT, esitoIntrospection, esitoUserInfo);
+		if(list.size()<=0) {
+			return; // può succedere nei casi warning only
+		}
+		
+		if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode) ||
+				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(forwardInforRaccolteMode) ||
+				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInforRaccolteMode)) {
+			InformazioniToken normalized = 
+					_normalizeInformazioniToken(list);
+			
+			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+			java.util.Properties headerNames = null;
+			HashMap<String, Boolean> set = null;
+			JSONUtils jsonUtils = null;
+			ObjectNode jsonNode = null;
+			boolean op2headers = Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode);
+			SimpleDateFormat sdf = null;
+			if(op2headers) {
+				headerNames = properties.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
+				if(portaDelegata) {
+					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+				}
+				else {
+					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+				}
+				String pattern = properties.getGestioneTokenFormatDate();
+				if(pattern!=null) {
+					sdf = new SimpleDateFormat(pattern);
+				}
+			}
+			else {
+				if(portaDelegata) {
+					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
+				}
+				else {
+					set = properties.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
+				}
+				jsonUtils = JSONUtils.getInstance();
+				jsonNode = jsonUtils.newObjectNode();
+				jsonNode.put("id", idTransazione);
+			}
+			
+			if(normalized.getIss()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER)) {
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER), normalized.getIss());
+					}
+					else {
+						jsonNode.put("issuer", normalized.getIss());
+					}
+				}
+			}
+			if(normalized.getSub()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT)) {
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT), normalized.getSub());
+					}
+					else {
+						jsonNode.put("subject", normalized.getSub());
+					}
+				}
+			}
+			if(normalized.getUsername()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME)) {
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME), normalized.getUsername());
+					}
+					else {
+						jsonNode.put("username", normalized.getUsername());
+					}
+				}
+			}
+			if(normalized.getAud()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE)) {
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), normalized.getAud());
+					}
+					else {
+						jsonNode.put("audience", normalized.getAud());
+					}
+				}
+			}
+			if(normalized.getClientId()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID)) {
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID), normalized.getClientId());
+					}
+					else {
+						jsonNode.put("clientId", normalized.getClientId());
+					}
+				}
+			}
+			if(normalized.getIat()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT)) {
+					if(op2headers) {
+						String value = null;
+						if(sdf!=null) {
+							value = sdf.format(normalized.getIat());
+						}
+						else {
+							value = (normalized.getIat().getTime() / 1000) + "";
+						}
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT), value);
+					}
+					else {
+						jsonNode.put("iat", jsonUtils.getDateFormat().format(normalized.getIat()));
+					}
+				}
+			}
+			if(normalized.getExp()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED)) {
+					if(op2headers) {
+						String value = null;
+						if(sdf!=null) {
+							value = sdf.format(normalized.getExp());
+						}
+						else {
+							value = (normalized.getExp().getTime() / 1000) + "";
+						}
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED), value);
+					}
+					else {
+						jsonNode.put("expire", jsonUtils.getDateFormat().format(normalized.getExp()));
+					}
+				}
+			}
+			if(normalized.getNbf()!=null) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF)) {
+					if(op2headers) {
+						String value = null;
+						if(sdf!=null) {
+							value = sdf.format(normalized.getNbf());
+						}
+						else {
+							value = (normalized.getNbf().getTime() / 1000) + "";
+						}
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF), value);
+					}
+					else {
+						jsonNode.put("nbf", jsonUtils.getDateFormat().format(normalized.getNbf()));
+					}
+				}
+			}
+			if(normalized.getRoles()!=null && normalized.getRoles().size()>0) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES)) {
+					ArrayNode array = null;
+					StringBuffer bf = new StringBuffer();
+					if(!op2headers) {
+						array =  jsonUtils.newArrayNode();
+					}
+					for (String role : normalized.getRoles()) {
+						if(op2headers) {
+							if(bf.length()>0) {
+								bf.append(" ");
+							}
+							bf.append(role);
+						}
+						else {
+							array.add(role);
+						}
+					}
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES), bf.toString());
+					}
+					else {
+						jsonNode.set("roles", array);
+					}
+				}
+			}
+			if(normalized.getScopes()!=null && normalized.getScopes().size()>0) {
+				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES)) {
+					ArrayNode array = null;
+					StringBuffer bf = new StringBuffer();
+					if(!op2headers) {
+						array =  jsonUtils.newArrayNode();
+					}
+					for (String scope : normalized.getScopes()) {
+						if(op2headers) {
+							if(bf.length()>0) {
+								bf.append(" ");
+							}
+							bf.append(scope);
+						}
+						else {
+							array.add(scope);
+						}
+					}
+					if(op2headers) {
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES), bf.toString());
+					}
+					else {
+						jsonNode.set("scopes", array);
+					}
+				}
+			}
+			if(normalized.getUserInfo()!=null) {
+				ObjectNode userInfoNode = jsonUtils.newObjectNode();
+				
+				if(normalized.getUserInfo().getFullName()!=null) {
+					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME)) {
+						if(op2headers) {
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), normalized.getUserInfo().getFullName());
+						}
+						else {
+							jsonNode.put("fullName", normalized.getUserInfo().getFullName());
+						}
+					}
+				}
+				if(normalized.getUserInfo().getFirstName()!=null) {
+					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME)) {
+						if(op2headers) {
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), normalized.getUserInfo().getFirstName());
+						}
+						else {
+							jsonNode.put("firstName", normalized.getUserInfo().getFirstName());
+						}
+					}
+				}
+				if(normalized.getUserInfo().getMiddleName()!=null) {
+					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME)) {
+						if(op2headers) {
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), normalized.getUserInfo().getMiddleName());
+						}
+						else {
+							jsonNode.put("middleName", normalized.getUserInfo().getMiddleName());
+						}
+					}
+				}
+				if(normalized.getUserInfo().getFamilyName()!=null) {
+					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME)) {
+						if(op2headers) {
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), normalized.getUserInfo().getFamilyName());
+						}
+						else {
+							jsonNode.put("familyName", normalized.getUserInfo().getFamilyName());
+						}
+					}
+				}
+				if(normalized.getUserInfo().getEMail()!=null) {
+					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL)) {
+						if(op2headers) {
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), normalized.getUserInfo().getEMail());
+						}
+						else {
+							jsonNode.put("eMail", normalized.getUserInfo().getEMail());
+						}
+					}
+				}
+				
+				jsonNode.set("userInfo", userInfoNode);
+			}		
+
+			if(!op2headers) {
+				String json = jsonUtils.toString(jsonNode);
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(forwardInforRaccolteMode)) {
+					String headerName = properties.getGestioneTokenHeaderTrasportoJSON();
+					if(encodeBase64) {
+						tokenForward.getTrasporto().put(headerName, Base64Utilities.encodeAsString(json.getBytes()));
+					}
+					else {
+						tokenForward.getTrasporto().put(headerName, json);
+					}
+				}
+				else {
+					// JWS Compact   			
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+	    			String compact = jsonCompactSignature.sign(json);
+	    			String headerName = properties.getGestioneTokenHeaderTrasportoJWT();
+	    			tokenForward.getTrasporto().put(headerName, compact);
+				}
+			}
+		} 
+		else {
+			
+			if(forwardValidazioneJWT && esitoValidazioneJWT!=null && esitoValidazioneJWT.isValido() && 
+					esitoValidazioneJWT.getInformazioniToken()!=null &&
+					esitoValidazioneJWT.getInformazioniToken().getRawResponse()!=null) {
+				
+				String value = esitoValidazioneJWT.getInformazioniToken().getRawResponse();
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
+					// JWS Compact   			
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+	    			value = jsonCompactSignature.sign(value);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
+					// JWE Compact
+					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					value = jsonCompactEncrypt.encrypt(value);
+				}
+				else {
+					//Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON
+					if(encodeBase64) {
+						value = Base64Utilities.encodeAsString(value.getBytes());
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardValidazioneJWT_mode)) {
+					tokenForward.getTrasporto().put(forwardValidazioneJWT_name, value);
+				}
+				else {
+					tokenForward.getUrl().put(forwardValidazioneJWT_name, value);
+				}
+				
+			}
+			
+			if(forwardIntrospection && esitoIntrospection!=null && esitoIntrospection.isValido() && 
+					esitoIntrospection.getInformazioniToken()!=null &&
+					esitoIntrospection.getInformazioniToken().getRawResponse()!=null) {
+				
+				String value = esitoIntrospection.getInformazioniToken().getRawResponse();
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
+					// JWS Compact   			
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+	    			value = jsonCompactSignature.sign(value);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
+					// JWE Compact
+					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					value = jsonCompactEncrypt.encrypt(value);
+				}
+				else {
+					//Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON
+					if(encodeBase64) {
+						value = Base64Utilities.encodeAsString(value.getBytes());
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardIntrospection_mode)) {
+					tokenForward.getTrasporto().put(forwardIntrospection_name, value);
+				}
+				else {
+					tokenForward.getUrl().put(forwardIntrospection_name, value);
+				}
+				
+			}
+			
+			if(forwardUserInfo && esitoUserInfo!=null && esitoUserInfo.isValido() && 
+					esitoUserInfo.getInformazioniToken()!=null &&
+					esitoUserInfo.getInformazioniToken().getRawResponse()!=null) {
+				
+				String value = esitoUserInfo.getInformazioniToken().getRawResponse();
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInforRaccolteMode)) {
+					// JWS Compact   			
+	    			JsonSignature jsonCompactSignature = new JsonSignature(jwtSecurity,JOSERepresentation.COMPACT);
+	    			value = jsonCompactSignature.sign(value);
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInforRaccolteMode)) {
+					// JWE Compact
+					JsonEncrypt jsonCompactEncrypt = new JsonEncrypt(jwtSecurity,JOSERepresentation.COMPACT);
+					value = jsonCompactEncrypt.encrypt(value);
+				}
+				else {
+					//Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON
+					if(encodeBase64) {
+						value = Base64Utilities.encodeAsString(value.getBytes());
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardUserInfo_mode)) {
+					tokenForward.getTrasporto().put(forwardValidazioneJWT_name, value);
+				}
+				else {
+					tokenForward.getUrl().put(forwardValidazioneJWT_name, value);
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	private static List<InformazioniToken> getInformazioniTokenValide(EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo){
+		List<InformazioniToken> list = new ArrayList<>();
+		if(esitoValidazioneJWT!=null && esitoValidazioneJWT.isValido() && esitoValidazioneJWT.getInformazioniToken()!=null) {
+			list.add(esitoValidazioneJWT.getInformazioniToken());
+		}
+		if(esitoIntrospection!=null && esitoIntrospection.isValido() && esitoIntrospection.getInformazioniToken()!=null) {
+			list.add(esitoIntrospection.getInformazioniToken());
+		}
+		if(esitoUserInfo!=null && esitoUserInfo.isValido() && esitoUserInfo.getInformazioniToken()!=null) {
+			list.add(esitoUserInfo.getInformazioniToken());
+		}
+		return list;
+	}
+	
+	private static InformazioniToken _normalizeInformazioniToken(List<InformazioniToken> list) throws Exception {
+		if(list.size()==1) {
+			return list.get(0);
+		}
+		else {
+			return new InformazioniToken(list.toArray(new InformazioniToken[1]));
+		}
+	}
 	
 	
 	

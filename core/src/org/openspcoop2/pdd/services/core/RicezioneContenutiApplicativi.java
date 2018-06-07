@@ -1651,7 +1651,7 @@ public class RicezioneContenutiApplicativi {
 				
 				GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
 				
-				GestioneToken gestioneTokenEngine = new GestioneToken(logCore);
+				GestioneToken gestioneTokenEngine = new GestioneToken(logCore, idTransazione);
 				
 				// cerco token
 				
@@ -1659,11 +1659,14 @@ public class RicezioneContenutiApplicativi {
 				msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken");
 				
 				EsitoPresenzaTokenPortaDelegata esitoPresenzaToken = gestioneTokenEngine.verificaPresenzaToken(datiInvocazione);
+				EsitoGestioneTokenPortaDelegata esitoValidazioneToken = null;
+				EsitoGestioneTokenPortaDelegata esitoIntrospectionToken = null;
+				EsitoGestioneTokenPortaDelegata esitoUserInfoToken = null;
 				if(esitoPresenzaToken.isPresente()) {
 					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN, esitoPresenzaToken.getToken());
 					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.trovato"); // stampa del token info
 					
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_POSIZIONE, esitoPresenzaToken);
+					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_POSIZIONE, esitoPresenzaToken);
 					
 					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.completataSuccesso");
 
@@ -1675,14 +1678,14 @@ public class RicezioneContenutiApplicativi {
 						
 							msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken");
 							
-							EsitoGestioneTokenPortaDelegata esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
+							esitoValidazioneToken = gestioneTokenEngine.validazioneJWTToken(datiInvocazione, esitoPresenzaToken.getToken());
 							if(esitoValidazioneToken.isValido()) {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.completataSuccesso");
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoValidazioneToken.getInformazioniToken().getRawResponse());
 								
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_ESITO_VALIDAZIONE, esitoValidazioneToken);
+								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE, esitoValidazioneToken);
 								
 								if(esitoValidazioneToken.isInCache()) {
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.validazioneToken.inCache");
@@ -1732,14 +1735,14 @@ public class RicezioneContenutiApplicativi {
 							
 							msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken");
 							
-							EsitoGestioneTokenPortaDelegata esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
+							esitoIntrospectionToken = gestioneTokenEngine.introspectionToken(datiInvocazione, esitoPresenzaToken.getToken());
 							if(esitoIntrospectionToken.isValido()) {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.completataSuccesso");
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoIntrospectionToken.getInformazioniToken().getRawResponse());
 								
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_ESITO_INTROSPECTION, esitoIntrospectionToken);
+								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION, esitoIntrospectionToken);
 								
 								if(esitoIntrospectionToken.isInCache()) {
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.introspectionToken.inCache");
@@ -1788,14 +1791,14 @@ public class RicezioneContenutiApplicativi {
 							
 							msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken");
 							
-							EsitoGestioneTokenPortaDelegata esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
+							esitoUserInfoToken = gestioneTokenEngine.userInfoToken(datiInvocazione, esitoPresenzaToken.getToken());
 							if(esitoUserInfoToken.isValido()) {
 								
 								msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.completataSuccesso");
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_INFO, esitoUserInfoToken.getInformazioniToken().getRawResponse());
 								
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_ESITO_USER_INFO, esitoUserInfoToken);
+								pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_USER_INFO, esitoUserInfoToken);
 								
 								if(esitoUserInfoToken.isInCache()) {
 									msgDiag.logPersonalizzato("gestioneTokenInCorso.userInfoToken.inCache");
@@ -1863,7 +1866,8 @@ public class RicezioneContenutiApplicativi {
 				else {
 					
 					msgDiag.mediumDebug("Gestione forward token ...");
-					gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken);
+					gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
+							esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
 					msgDiag.mediumDebug("Gestione forward token completata");
 					
 					

@@ -10,15 +10,18 @@ public class BasicTokenParser implements ITokenParser {
 	protected String raw;
 	protected Map<String, String> claims;
 	protected TipologiaClaims parser;
+	private ITokenUserInfoParser userInfoParser;
 	
 	public BasicTokenParser(TipologiaClaims parser) {
 		this.parser = parser;
+		this.userInfoParser = new BasicTokenUserInfoParser(parser);
 	}
 	
 	@Override
 	public void init(String raw, Map<String, String> claims) {
 		this.raw = raw;
 		this.claims = claims;
+		this.userInfoParser.init(raw, claims);
 	}
 
 	@Override
@@ -223,4 +226,9 @@ public class BasicTokenParser implements ITokenParser {
 		return null;
 	}
 
+	// ITokenUserInfoParser
+	@Override
+	public ITokenUserInfoParser getUserInfoParser() {
+		return this.userInfoParser;
+	}
 }

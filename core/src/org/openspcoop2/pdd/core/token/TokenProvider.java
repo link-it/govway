@@ -373,14 +373,156 @@ public class TokenProvider implements IProvider {
 				throw new ProviderValidationException("Almeno una modalità di forward del token deve essere selezionata");
 			}
 			
-			if(forwardInformazioniRaccolte) {
-				boolean forwardIntrospection = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);
-				boolean forwardUserInfo = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);
-								
-				if(!forwardIntrospection && !forwardUserInfo) {
-					throw new ProviderValidationException("Almeno una scelta tra 'Introspection' o tramite 'OIDC UserInfo' deve essere selezionata per inoltrare le informazioni raccolte all'applicativo erogatore.");
+			if(forwardTrasparente) {
+				String mode = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE);
+				if(mode==null) {
+					throw new ProviderValidationException("Nessuna modalità di forward trasparente indicata");
+				}
+				if(!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)
+						) {
+					throw new ProviderValidationException("La modalità di forward trasparente indicata '"+mode+"' non e' supportata");	
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode)) {
+					String hdr = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER);
+					if(hdr==null) {
+						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di un header http");
+					}
+				}
+				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)) {
+					String url = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL);
+					if(url==null) {
+						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di una proprietà della url");
+					}
 				}
 			}
+			
+			if(forwardInformazioniRaccolte) {
+				String mode = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE);
+				if(mode==null) {
+					throw new ProviderValidationException("Nessuna modalità di forward, delle informazioni raccolte, indicata");
+				}
+				if(!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) &&
+						!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode) 
+						) {
+					throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, indicata '"+mode+"' non e' supportata");	
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(mode) ||
+					Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode) 
+						) {
+					String base64 = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64);
+					if(base64==null) {
+						throw new ProviderValidationException("Nessuna indicazione sull'encoding 'Base64' fornito; Tale indicazione è richiesta dalla modalità di forward, delle informazioni raccolte, indicata: "+mode);
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(mode) ||
+						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) ||
+						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON.equals(mode) 
+							) {
+					boolean forwardValidazioneJWT = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT);	
+					boolean forwardIntrospection = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);
+					boolean forwardUserInfo = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);
+					if(!forwardValidazioneJWT && !forwardIntrospection && !forwardUserInfo) {
+						throw new ProviderValidationException("Almeno una scelta tra 'Validazione JWT', 'Introspection' o 'OIDC UserInfo' deve essere selezionata per inoltrare le informazioni raccolte all'applicativo erogatore tramite la modalità scelta: "+mode);
+					}
+					
+					if(forwardValidazioneJWT) {
+						String modeForward = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE);
+						if(modeForward==null) {
+							throw new ProviderValidationException("Nessuna tipo di consegna (header/url), delle informazioni raccolte, indicata");
+						}
+						if(!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward) &&
+								!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward) 
+									) {
+							throw new ProviderValidationException("(Validazione JWT) Tipo di consegna '"+modeForward+"', delle informazioni raccolte, indicata sconosciuta");
+						}
+						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_HEADER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Validazione JWT) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+						}
+						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_URL_PARAMETER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Validazione JWT) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+						}
+					}
+					
+					if(forwardIntrospection) {
+						String modeForward = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE);
+						if(modeForward==null) {
+							throw new ProviderValidationException("Nessuna tipo di consegna (header/url), delle informazioni raccolte, indicata");
+						}
+						if(!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward) &&
+								!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward) 
+									) {
+							throw new ProviderValidationException("(Introspection) Tipo di consegna '"+modeForward+"', delle informazioni raccolte, indicata sconosciuta");
+						}
+						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_HEADER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Introspection) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+						}
+						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_URL_PARAMETER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Introspection) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+						}
+					}
+					
+					if(forwardUserInfo) {
+						String modeForward = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE);
+						if(modeForward==null) {
+							throw new ProviderValidationException("Nessuna tipo di consegna (header/url), delle informazioni raccolte, indicata");
+						}
+						if(!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward) &&
+								!Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward) 
+									) {
+							throw new ProviderValidationException("(Introspection) Tipo di consegna '"+modeForward+"', delle informazioni raccolte, indicata sconosciuta");
+						}
+						if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_HEADER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Introspection) Il tipo di consegna (header), delle informazioni raccolte, richiede la definizione di un nome di un header http");
+							}
+						}
+						else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL.equals(modeForward)) {
+							String name = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME);
+							if(name==null) {
+								throw new ProviderValidationException("(Introspection) Il tipo di consegna (url), delle informazioni raccolte, richiede la definizione di un nome di un parametro della URL");
+							}
+						}
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(mode) ||
+						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(mode) 
+							) {
+					Properties p = mapProperties.get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID);
+					if(p==null || p.size()<=0) {
+						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la firma JWS; configurazione non riscontrata");
+					}
+				}
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(mode) 
+							) {
+					Properties p = mapProperties.get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID);
+					if(p==null || p.size()<=0) {
+						throw new ProviderValidationException("La modalità di forward, delle informazioni raccolte, selezionata richiede una configurazione per poter attuare la cifratura JWE; configurazione non riscontrata");
+					}
+				}
+				
+			}
+			
 		}
 	}
 

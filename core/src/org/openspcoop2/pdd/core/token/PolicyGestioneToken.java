@@ -150,7 +150,6 @@ public class PolicyGestioneToken implements Serializable {
 	public String getTipoToken() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
 	}
-	
 	public String getLabelTipoToken() {
 		String tokenType = this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
 		if(Costanti.POLICY_TOKEN_TYPE_OPAQUE.equals(tokenType)) {
@@ -161,6 +160,16 @@ public class PolicyGestioneToken implements Serializable {
 		}
 	}
 	
+	public String getTokenSource() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE);
+	}
+	public String getTokenSourceHeaderName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER_NAME);
+	}
+	public String getTokenSourceUrlPropertyName() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL_PROPERTY_NAME);
+	}
+		
 	public String getLabelPosizioneToken() {
 		String position = this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_SOURCE);
 		if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(position)) {
@@ -187,21 +196,11 @@ public class PolicyGestioneToken implements Serializable {
 	}
 	
 	public boolean isEndpointHttps() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_ENDPOINT_HTTPS_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_ENDPOINT_HTTPS_STATO);	
 	}
 	
 	public boolean isValidazioneJWT_saveErrorInCache() throws ProviderException, ProviderValidationException{
-		boolean save = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE);
-		if(tmp!=null) {
-			save = Boolean.valueOf(tmp);
-		}
-		return save;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE);	
 	}
 	public ITokenParser getValidazioneJWT_TokenParser() throws Exception {
 		ITokenParser parser = null;
@@ -220,12 +219,7 @@ public class PolicyGestioneToken implements Serializable {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_URL);
 	}
 	public boolean isIntrospection_saveErrorInCache() throws ProviderException, ProviderValidationException{
-		boolean save = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE);
-		if(tmp!=null) {
-			save = Boolean.valueOf(tmp);
-		}
-		return save;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_SAVE_ERROR_IN_CACHE);	
 	}
 	public HttpRequestMethod getIntrospection_httpMethod() {
 		return HttpRequestMethod.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_HTTP_METHOD));
@@ -258,12 +252,7 @@ public class PolicyGestioneToken implements Serializable {
 		return parser;
 	}
 	public boolean isIntrospection_basicAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_BASIC_STATO);	
 	}
 	public String getIntrospection_basicAuthentication_username() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_USERNAME);
@@ -272,35 +261,20 @@ public class PolicyGestioneToken implements Serializable {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BASIC_PASSWORD);
 	}
 	public boolean isIntrospection_bearerAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BEARER_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_BEARER_STATO);	
 	}
 	public String getIntrospection_beareAuthentication_token() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_BEARER_TOKEN);
 	}
 	public boolean isIntrospection_httpsAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_INTROSPECTION_AUTH_SSL_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_INTROSPECTION_AUTH_SSL_STATO);	
 	}
 	
 	public String getUserInfo_endpoint() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_URL);
 	}
 	public boolean isUserInfo_saveErrorInCache() throws ProviderException, ProviderValidationException{
-		boolean save = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_SAVE_ERROR_IN_CACHE);
-		if(tmp!=null) {
-			save = Boolean.valueOf(tmp);
-		}
-		return save;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_SAVE_ERROR_IN_CACHE);	
 	}
 	public HttpRequestMethod getUserInfo_httpMethod() {
 		return HttpRequestMethod.valueOf(this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_HTTP_METHOD));
@@ -333,12 +307,7 @@ public class PolicyGestioneToken implements Serializable {
 		return parser;
 	}
 	public boolean isUserInfo_basicAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_BASIC_STATO);	
 	}
 	public String getUserInfo_basicAuthentication_username() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_USERNAME);
@@ -347,23 +316,76 @@ public class PolicyGestioneToken implements Serializable {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BASIC_PASSWORD);
 	}
 	public boolean isUserInfo_bearerAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BEARER_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_BEARER_STATO);	
 	}
 	public String getUserInfo_beareAuthentication_token() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_BEARER_TOKEN);
 	}
 	public boolean isUserInfo_httpsAuthentication() throws ProviderException, ProviderValidationException{
-		boolean value = false;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_USER_INFO_AUTH_SSL_STATO);
-		if(tmp!=null) {
-			value = Boolean.valueOf(tmp);
-		}
-		return value;
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_USER_INFO_AUTH_SSL_STATO);	
 	}
 	
+	
+	public boolean isForwardToken_trasparente() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_STATO);	
+	}
+	public String getForwardToken_trasparenteMode() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE);
+	}
+	public String getForwardToken_trasparenteModeCustomHeader() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER);
+	}
+	public String getForwardToken_trasparenteModeCustomUrl() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL);
+	}
+	
+	public boolean isForwardToken_informazioniRaccolte() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO);	
+	}
+	public String getForwardToken_informazioniRaccolteMode() {
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE);
+	}
+	public boolean isForwardToken_informazioniRaccolteEncodeBase64() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64);	
+	}
+	
+	public boolean isForwardToken_informazioniRaccolte_validazioneJWT() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT);	
+	}
+	public String getForwardToken_informazioniRaccolte_validazioneJWT_mode() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE);
+	}
+	public String getForwardToken_informazioniRaccolte_validazioneJWT_mode_headerName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_HEADER_NAME);
+	}
+	public String getForwardToken_informazioniRaccolte_validazioneJWT_mode_queryParameterName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_URL_PARAMETER_NAME);
+	}
+	
+	public boolean isForwardToken_informazioniRaccolte_introspection() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION);	
+	}
+	public String getForwardToken_informazioniRaccolte_introspection_mode() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE);
+	}
+	public String getForwardToken_informazioniRaccolte_introspection_mode_headerName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_HEADER_NAME);
+	}
+	public String getForwardToken_informazioniRaccolte_introspection_mode_queryParameterName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_URL_PARAMETER_NAME);
+	}
+	
+	public boolean isForwardToken_informazioniRaccolte_userInfo() throws ProviderException, ProviderValidationException{
+		return TokenUtilities.isEnabled(this.defaultProperties, Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO);	
+	}
+	public String getForwardToken_informazioniRaccolte_userInfo_mode() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE);
+	}
+	public String getForwardToken_informazioniRaccolte_userInfo_mode_headerName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_HEADER_NAME);
+	}
+	public String getForwardToken_informazioniRaccolte_userInfo_mode_queryParameterName() throws ProviderException, ProviderValidationException{
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME);
+	}
+
 }

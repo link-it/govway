@@ -23,6 +23,7 @@ package org.openspcoop2.utils.json;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -163,9 +164,25 @@ public class JSONUtils {
 
 	// NEW DOCUMENT
 
-	public JsonNode newNode() throws UtilsException {
+	public ObjectNode newObjectNode() throws UtilsException {
 		try {
 			return getObjectMapper().createObjectNode();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public ArrayNode newArrayNode() throws UtilsException {
+		try {
+			return getObjectMapper().createArrayNode();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public DateFormat getDateFormat() throws UtilsException {
+		try {
+			return getObjectMapper().getDateFormat();
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}

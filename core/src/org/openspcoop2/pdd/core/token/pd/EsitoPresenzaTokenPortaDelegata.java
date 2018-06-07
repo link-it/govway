@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.core.token.pd;
 
+import java.io.Serializable;
+
 import org.openspcoop2.pdd.core.token.EsitoPresenzaToken;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 
@@ -32,7 +34,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
  * @author $Author: apoli $
  * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
  */
-public class EsitoPresenzaTokenPortaDelegata extends EsitoPresenzaToken {
+public class EsitoPresenzaTokenPortaDelegata extends EsitoPresenzaToken implements Serializable {
 
 	
 	/**

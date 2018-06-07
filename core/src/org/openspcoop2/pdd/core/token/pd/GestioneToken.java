@@ -23,6 +23,7 @@
 package org.openspcoop2.pdd.core.token.pd;
 
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
+import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -40,8 +41,10 @@ import org.slf4j.Logger;
 public class GestioneToken {
 
 	private Logger log;
-	public GestioneToken(Logger log) {
+	private String idTransazione;
+	public GestioneToken(Logger log, String idTransazione) {
 		this.log = log;
+		this.idTransazione = idTransazione;
 	}
 	
     public EsitoPresenzaTokenPortaDelegata verificaPresenzaToken(DatiInvocazionePortaDelegata datiInvocazione) throws TokenException{
@@ -108,10 +111,14 @@ public class GestioneToken {
     	}
 	}
 	
-	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken) throws TokenException {
+	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken,
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo) throws TokenException {
 		try {
         	
-    		GestoreToken.forwardToken(this.log, datiInvocazione, esitoPresenzaToken, GestoreToken.PORTA_DELEGATA);
+    		GestoreToken.forwardToken(this.log, this.idTransazione,
+    				datiInvocazione, esitoPresenzaToken, 
+    				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
+    				GestoreToken.PORTA_DELEGATA);
     		
     	}catch(Exception e) {
     		throw new TokenException(e.getMessage(),e); // errore di processamento

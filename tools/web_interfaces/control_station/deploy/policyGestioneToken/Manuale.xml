@@ -764,6 +764,11 @@
 			</conditions>
 
 			<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="asReceived" required="true" reloadOnChange="true">
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="tokenSource" value="RFC6750_form" />
+					</condition>
+				</conditions>
 				<values>
 					<value value="asReceived" label="Come è stato ricevuto"/>
 					<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
@@ -805,17 +810,20 @@
 			<item type="select" name="tokenForwardInfoRaccolteMode" label="Modalità" default="op2header" required="true" reloadOnChange="true">
 				<values>
 					<value value="op2header" label="OpenSPCoop Headers"/>
+					<value value="op2json" label="OpenSPCoop JSON"/>
+					<value value="op2jws" label="OpenSPCoop JWS"/>
 					<value value="jws" label="JWS"/>
 					<value value="jwe" label="JWE"/>
-					<value value="raw" label="JSON"/>
+					<value value="json" label="JSON"/>
 				</values>
 				<property name="policy.tokenForward.infoRaccolte.mode" />
 			</item>
 			
 			<item type="checkbox" name="tokenForwardInfoRaccolteModeBase64" label="Base64 Encoded" defaultSelected="true">
 				<conditions and="true">
-					<condition and="true">
-						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="op2json"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.base64" />
@@ -823,7 +831,8 @@
 
 			<item type="select" name="tokenForwardInfoRaccolteModeJWSSignature" label="Signature Algorithm" required="true">
 				<conditions and="true">
-					<condition and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 					</condition>
 				</conditions>
@@ -847,16 +856,95 @@
 				<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
 			</item>
 			
-			<item type="checkbox" name="tokenForwardInfoRaccolteModeIntrospection" label="Introspection" defaultSelected="true">
-				<conditions and="true">
+			<item type="hidden" name="tokenForwardInfoRaccolteScelta" value="true">
+				<!-- La scelta deve essere 'true' se almeno due funzioni insieme sono abilitate -->
+				<conditions and="false">
+					<condition and="true">
+						<selected name="validazioneJwtStato"/>
+						<selected name="introspectionStato"/>
+					</condition>
+					<condition and="true">
+						<selected name="validazioneJwtStato"/>
+						<selected name="userInfoStato"/>
+					</condition>
 					<condition and="true">
 						<selected name="introspectionStato"/>
 						<selected name="userInfoStato"/>
 					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.scelta" />
+			</item>
+			
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeValidazioneJWT" label="Validazione JWT" defaultSelected="true">
+				<conditions and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT" />
+			</item>
+			<item type="hidden" name="tokenForwardInfoRaccolteModeValidazioneJWTForce" value="true">
+				<conditions not="true" and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeValidazioneJWT" value="true"/>
+						<equals name="tokenForwardInfoRaccolteModeValidazioneJWTForce" value="true"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT.mode" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegnaHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.validazioneJWT.mode.header" />
+			</item>	
+			<item type="text" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegnaQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.validazioneJWT.mode.queryParameter" />
+			</item>
+			
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeIntrospection" label="Introspection" defaultSelected="true">
+				<conditions and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.introspection" />
@@ -864,28 +952,59 @@
 			<item type="hidden" name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true">
 				<conditions not="true" and="true">
 					<condition and="true">
-						<selected name="introspectionStato"/>
-						<selected name="userInfoStato"/>
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
 					</condition>
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.introspection" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeIntrospection" value="true"/>
+						<equals name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.infoRaccolte.introspection.mode" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegnaHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.introspection.mode.header" />
+			</item>	
+			<item type="text" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegnaQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.introspection.mode.queryParameter" />
 			</item>
 			
 			<item type="checkbox" name="tokenForwardInfoRaccolteModeUserInfo" label="UserInfo" defaultSelected="true">
 				<conditions and="true">
 					<condition and="true">
-						<selected name="introspectionStato"/>
-						<selected name="userInfoStato"/>
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
 					</condition>
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.userInfo" />
@@ -893,16 +1012,47 @@
 			<item type="hidden" name="tokenForwardInfoRaccolteModeUserInfoForce" value="true">
 				<conditions not="true" and="true">
 					<condition and="true">
-						<selected name="introspectionStato"/>
-						<selected name="userInfoStato"/>
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
 					</condition>
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="raw"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.userInfo" />
+			</item>
+			<item type="select" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteModeUserInfo" value="true"/>
+						<equals name="tokenForwardInfoRaccolteModeUserInfoForce" value="true"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.infoRaccolte.userInfo.mode" />
+			</item>
+			<item type="text" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegnaHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.userInfo.mode.header" />
+			</item>	
+			<item type="text" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegnaQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna"/>
+						<equals name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.tokenForward.infoRaccolte.userInfo.mode.queryParameter" />
 			</item>
 
 		</subsection>
@@ -910,7 +1060,8 @@
 		<subsection label="JWS KeyStore">
 
 			<conditions and="true">
-				<condition and="true">
+				<condition and="false">
+					<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/
 					<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 				</condition>
 			</conditions>

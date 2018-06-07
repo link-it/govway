@@ -7,6 +7,15 @@ public class Costanti {
 	public final static String TIPOLOGIA = "gestionePolicyToken";
 	
 	
+	// Context
+	
+	public final static String PDD_CONTEXT_TOKEN_POSIZIONE = "TOKEN_POSIZIONE";
+	public final static String PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = "TOKEN_ESITO_VALIDAZIONE";
+	public final static String PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = "TOKEN_ESITO_INTROSPECTION";
+	public final static String PDD_CONTEXT_TOKEN_ESITO_USER_INFO = "TOKEN_ESITO_USER_INFO";
+	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
+	
+	
 	// Policy id
 	
 	public final static String POLICY_REALM = "policy.realm";
@@ -95,10 +104,40 @@ public class Costanti {
 	public final static String POLICY_USER_INFO_AUTH_SSL_STATO = "policy.userInfo.endpoint.https.stato";
 	
 	public final static String POLICY_TOKEN_FORWARD_STATO = "policy.tokenForward.stato";
+	
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_STATO = "policy.tokenForward.trasparente.stato";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE = "policy.tokenForward.trasparente.mode";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_AS_RECEIVED = "asReceived";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_HEADER = "RFC6750_header";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "RFC6750_url";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "CUSTOM_header";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "CUSTOM_url";
+	
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO = "policy.tokenForward.infoRaccolte.stato";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE = "policy.tokenForward.infoRaccolte.mode";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS = "op2header";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON = "op2json";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS = "op2jws";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS = "jws";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE = "jwe";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JSON = "json";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCODE_BASE64 = "policy.tokenForward.infoRaccolte.base64";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER = "CUSTOM_header";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_URL = "CUSTOM_url";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT = "policy.tokenForward.infoRaccolte.validazioneJWT";	
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE = "policy.tokenForward.infoRaccolte.validazioneJWT.mode";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_HEADER_NAME = "policy.tokenForward.infoRaccolte.validazioneJWT.mode.header";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_VALIDAZIONE_JWT_MODE_URL_PARAMETER_NAME = "policy.tokenForward.infoRaccolte.validazioneJWT.mode.queryParameter";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION = "policy.tokenForward.infoRaccolte.introspection";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE = "policy.tokenForward.infoRaccolte.introspection.mode";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_HEADER_NAME = "policy.tokenForward.infoRaccolte.introspection.mode.header";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_INTROSPECTION_MODE_URL_PARAMETER_NAME = "policy.tokenForward.infoRaccolte.introspection.mode.queryParameter";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO = "policy.tokenForward.infoRaccolte.userInfo";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE = "policy.tokenForward.infoRaccolte.userInfo.mode";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_HEADER_NAME = "policy.tokenForward.infoRaccolte.userInfo.mode.header";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_USER_INFO_MODE_URL_PARAMETER_NAME = "policy.tokenForward.infoRaccolte.userInfo.mode.queryParameter";
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID = SecurityConstants.SIGNATURE_PROPERTY_REF_ID;
+	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID = SecurityConstants.ENCRYPTION_PROPERTY_REF_ID;
 	
 	
 	

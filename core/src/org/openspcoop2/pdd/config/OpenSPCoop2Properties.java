@@ -1522,6 +1522,12 @@ public class OpenSPCoop2Properties {
 			
 			// Gestione Token
 			this.getGestioneToken_iatTimeCheck_milliseconds();
+			this.getGestioneTokenFormatDate();
+			this.getGestioneTokenHeaderTrasportoJSON();
+			this.getGestioneTokenHeaderTrasportoJWT();
+			if(this.checkTipiIntegrazioneGestioneToken() == false) {
+				return false;
+			}
 			
 			// Trasporto REST / SOAP
 			
@@ -2187,6 +2193,99 @@ public class OpenSPCoop2Properties {
 	}
 
 
+	public List<String> getKeywordsIntegrazioneGestioneToken(){
+		List<String> keywords = new ArrayList<>();
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL);
+		return keywords;
+	}
+
+	private boolean checkTipiIntegrazioneGestioneToken(){
+		
+		java.util.Properties prop = this.getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto();
+		if ( prop == null ){
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
+			return false;
+		}
+		
+		HashMap<String, Boolean> propSetPD_trasporto = null;
+		try {
+			propSetPD_trasporto = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+		}catch(Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*'.");
+			return false;
+		}
+		
+		HashMap<String, Boolean> propSetPD_json = null;
+		try {
+			propSetPD_json = this.getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson();
+		}catch(Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*'.");
+			return false;
+		}
+		
+		HashMap<String, Boolean> propSetPA_trasporto = null;
+		try {
+			propSetPA_trasporto = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto();
+		}catch(Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*'.");
+			return false;
+		}
+		
+		HashMap<String, Boolean> propSetPA_json = null;
+		try {
+			propSetPA_json = this.getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson();
+		}catch(Exception e) {
+			this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*'.");
+			return false;
+		}
+		
+		List<String> keywords = this.getKeywordsIntegrazioneGestioneToken();
+		for (String keyword : keywords) {
+			if( prop.get(keyword) == null){
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword."+
+						keyword+"'.");
+				return false;
+			}
+			if( propSetPD_trasporto.containsKey(keyword) == false){
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+
+						keyword+"'.");
+				return false;
+			}
+			if( propSetPD_json.containsKey(keyword) == false){
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+
+						keyword+"'.");
+				return false;
+			}
+			if( propSetPA_trasporto.containsKey(keyword) == false){
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+
+						keyword+"'.");
+				return false;
+			}
+			if( propSetPA_json.containsKey(keyword) == false){
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+
+						keyword+"'.");
+				return false;
+			}
+		}
+				
+
+		return true;
+	}
+
 	public List<String> getKeywordsIntegrazione(){
 		List<String> keywords = new ArrayList<>();
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE);
@@ -2406,7 +2505,6 @@ public class OpenSPCoop2Properties {
 		}
 		return true;
 	}
-
 
 
 
@@ -13318,7 +13416,238 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.getGestioneToken_iatTimeCheck_milliseconds;
 	}
+	
+	private static Boolean getGestioneTokenFormatDate_read = null;
+	private static String getGestioneTokenFormatDate = null;
+	public String getGestioneTokenFormatDate() throws Exception{
 
+		if(OpenSPCoop2Properties.getGestioneTokenFormatDate_read==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.date.format"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneTokenFormatDate = value;
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.date.format' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg);
+			}
+			
+			OpenSPCoop2Properties.getGestioneTokenFormatDate_read = true;
+		}
+
+		return OpenSPCoop2Properties.getGestioneTokenFormatDate;
+	}
+	
+	private static String getGestioneTokenHeaderTrasportoJSON = null;
+	public String getGestioneTokenHeaderTrasportoJSON() throws Exception{
+
+		if(OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJSON==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJSON = value;
+				}else{
+					throw new Exception("Non impostata");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg);
+			}
+		}
+
+		return OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJSON;
+	}
+	
+	private static String getGestioneTokenHeaderTrasportoJWT = null;
+	public String getGestioneTokenHeaderTrasportoJWT() throws Exception{
+
+		if(OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJWT==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJWT = value;
+				}else{
+					throw new Exception("Non impostata");
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader' non impostata, errore:"+e.getMessage();
+				this.log.error(msg,e);
+				throw new Exception(msg);
+			}
+		}
+
+		return OpenSPCoop2Properties.getGestioneTokenHeaderTrasportoJWT;
+	}
+
+	/**
+	 * Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto' 
+	 *
+	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto'
+	 *  
+	 */
+	private static java.util.Properties keyValue_gestioneTokenHeaderIntegrazioneTrasporto = null;
+	public java.util.Properties getKeyValue_gestioneTokenHeaderIntegrazioneTrasporto() {	
+		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.");
+				OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = prop;
+
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*': "+e.getMessage());
+				OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = null;
+	public HashMap<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.");
+				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPD;
+	}
+
+	
+	private static HashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = null;
+	public HashMap<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneTrasporto() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.");
+				keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneTrasporto_setPA;
+	}
+	
+	private static HashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = null;
+	public HashMap<String, Boolean> getKeyPDSetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPD==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.");
+				keyValue_gestioneTokenHeaderIntegrazioneJson_setPD = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_gestioneTokenHeaderIntegrazioneJson_setPD.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPD;
+	}
+
+	
+	private static HashMap<String, Boolean> keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = null;
+	public HashMap<String, Boolean> getKeyPASetEnabled_gestioneTokenHeaderIntegrazioneJson() throws Exception {	
+		if(OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA==null){
+
+			java.util.Properties prop = new java.util.Properties();
+			try{ 
+
+				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.");
+				keyValue_gestioneTokenHeaderIntegrazioneJson_setPA = new HashMap<String, Boolean>();
+				Iterator<?> it = prop.keySet().iterator();
+				while (it.hasNext()) {
+					Object object = (Object) it.next();
+					if(object instanceof String) {
+						String key = (String) object;
+						String value = prop.getProperty(key);
+						try {
+							boolean b = Boolean.parseBoolean(value);
+							keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.put(key, b);
+						}catch(Exception e) {
+							throw new Exception("Rilevato errore durante il parsing della property 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+key+"' (atteso: true/false): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*': "+e.getMessage());
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.keyValue_gestioneTokenHeaderIntegrazioneJson_setPA;
+	}
 	
 	
 	

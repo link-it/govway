@@ -50,4 +50,6 @@ public interface ITokenParser {
 	// Scopes
 	public List<String> getScopes();
 
+	// ITokenUserInfoParser
+	public ITokenUserInfoParser getUserInfoParser();
 }

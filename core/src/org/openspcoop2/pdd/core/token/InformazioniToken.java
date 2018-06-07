@@ -1,6 +1,7 @@
 package org.openspcoop2.pdd.core.token;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,6 +48,111 @@ public class InformazioniToken implements Serializable {
 		List<String> s = tokenParser.getScopes();
 		if(s!=null && s.size()>0) {
 			this.scopes.addAll(s);
+		}
+		if(tokenParser.getUserInfoParser()!=null) {
+			this.userInfo = new InformazioniTokenUserInfo(this, tokenParser.getUserInfoParser());
+		}
+	}
+	@SuppressWarnings("unchecked")
+	public InformazioniToken(InformazioniToken ... informazioniTokens ) throws Exception {
+		if(informazioniTokens!=null && informazioniTokens.length>0) {
+			
+			Object iss = getValue("iss", informazioniTokens); 
+			if(iss!=null && iss instanceof String) {
+				this.iss = (String) iss;
+			}
+			
+			Object sub = getValue("sub", informazioniTokens); 
+			if(sub!=null && sub instanceof String) {
+				this.sub = (String) sub;
+			}
+			
+			Object username = getValue("username", informazioniTokens); 
+			if(username!=null && username instanceof String) {
+				this.username = (String) username;
+			}
+			
+			Object aud = getValue("aud", informazioniTokens); 
+			if(aud!=null && aud instanceof String) {
+				this.aud = (String) aud;
+			}
+			
+			Object exp = getValue("exp", informazioniTokens); 
+			if(exp!=null && exp instanceof String) {
+				this.exp = (Date) exp;
+			}
+			
+			Object iat = getValue("iat", informazioniTokens); 
+			if(iat!=null && iat instanceof String) {
+				this.iat = (Date) iat;
+			}
+			
+			Object nbf = getValue("nbf", informazioniTokens); 
+			if(nbf!=null && nbf instanceof String) {
+				this.nbf = (Date) nbf;
+			}
+			
+			Object clientId = getValue("clientId", informazioniTokens); 
+			if(clientId!=null && clientId instanceof String) {
+				this.clientId = (String) clientId;
+			}
+			
+			Object roles = getValue("roles", informazioniTokens); 
+			if(roles!=null && roles instanceof String) {
+				this.roles = (List<String>) roles;
+			}
+			
+			Object scopes = getValue("scopes", informazioniTokens); 
+			if(scopes!=null && scopes instanceof String) {
+				this.scopes = (List<String>) scopes;
+			}
+			
+			List<InformazioniTokenUserInfo> listUserInfo = new ArrayList<>();
+			for (int i = 0; i < informazioniTokens.length; i++) {
+				InformazioniTokenUserInfo userInfo = informazioniTokens[i].getUserInfo();
+				if(userInfo!=null) {
+					listUserInfo.add(userInfo);
+				}
+			}
+			if(listUserInfo.size()==1) {
+				this.userInfo = listUserInfo.get(0);
+			}
+			else {
+				this.userInfo = new InformazioniTokenUserInfo(listUserInfo.toArray(new InformazioniTokenUserInfo[1]));
+			}
+		}
+	}
+	private static Object getValue(String field, InformazioniToken ... informazioniTokens) throws Exception {
+		Object tmp = null;
+		List<Object> listTmp = new ArrayList<>();
+		String getMethodName = "get"+((field.charAt(0)+"").toUpperCase())+field.substring(1);
+		Method getMethod = InformazioniToken.class.getMethod(getMethodName);
+		
+		// La fusione avviene per precedenza dall'ultimo fino al primo (a meno che non sia una lista)
+		for (int i = 0; i < informazioniTokens.length; i++) {
+			InformazioniToken infoToken = informazioniTokens[i];
+			Object o = getMethod.invoke(infoToken);
+			if(o!=null) {
+				if(o instanceof List<?>) {
+					List<?> list = (List<?>) o;
+					if(list.size()>0) {
+						for (Object object : list) {
+							if(!listTmp.contains(object)) {
+								listTmp.add(object);
+							}
+						}
+					}
+				}
+				else {
+					tmp = o;
+				}
+			}
+		}
+		if(listTmp.size()>0) {
+			return listTmp;
+		}
+		else {
+			return tmp;
 		}
 	}
 	
@@ -95,6 +201,9 @@ public class InformazioniToken implements Serializable {
 	// Claims
 	private Map<String,String> claims = new HashMap<String,String>();
 
+	// UserInfo
+	private InformazioniTokenUserInfo userInfo;
+	
 	
 	public boolean isValid() {
 		return this.valid;
@@ -194,5 +303,12 @@ public class InformazioniToken implements Serializable {
 	
 	public String getRawResponse() {
 		return this.rawResponse;
+	}
+	
+	public InformazioniTokenUserInfo getUserInfo() {
+		return this.userInfo;
+	}
+	public void setUserInfo(InformazioniTokenUserInfo userInfo) {
+		this.userInfo = userInfo;
 	}
 }

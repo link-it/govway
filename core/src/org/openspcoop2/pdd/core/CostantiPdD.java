@@ -199,6 +199,24 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS = "OpenSPCoop2PddDetails";
 
     
+    /** Costante che indica il valore dell'header di integrazione per i token*/
+    public final static String HEADER_INTEGRAZIONE_TOKEN_ISSUER = "issuer";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_SUBJECT = "subject";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_USERNAME = "username";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_AUDIENCE = "audience";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID = "clientId";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT = "issuedAt";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_EXPIRED = "expired";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_NBF = "nbf";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_ROLES = "roles";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_SCOPES = "scopes";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FULL_NAME = "fullName";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME = "firstName";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME = "middleName";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME = "familyName";
+    public final static String HEADER_INTEGRAZIONE_TOKEN_EMAIL = "email";
+    
+    
     /** Attesa attiva di default effettuata per messaggi gia in processamento, in millisecondi */
     public final static long MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA = 90 * 1000; // 2 minuti
     /** Intervallo maggiore per frequenza di check per messaggi gia in processamento, in millisecondi */
