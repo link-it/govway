@@ -1852,6 +1852,7 @@ public class DriverUsersDB {
 
 		Connection connectionDB = null;
 		PreparedStatement stm = null;
+		ResultSet rs = null;
 		try {
 			// Get Connection
 			if(this.connection!=null)
@@ -1863,17 +1864,32 @@ public class DriverUsersDB {
 			}
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
-			sqlQueryObject.addUpdateTable(CostantiDB.USERS);
-			sqlQueryObject.addUpdateTable(CostantiDB.USERS_STATI);
-			sqlQueryObject.addUpdateField(CostantiDB.USERS_STATI+".stato",statoOggetto);
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI+".id_utente = "+CostantiDB.USERS+".id");
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addFromTable(CostantiDB.USERS);
 			sqlQueryObject.addWhereCondition(CostantiDB.USERS +".login = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI +".oggetto = ?");
-			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connectionDB.prepareStatement(sqlQuery);
 			stm.setString(1, login);
-			stm.setString(2, nomeOggetto);
+			rs = stm.executeQuery();
+			
+			Long idUtente = null; 
+			while (rs.next()) {
+				idUtente = rs.getLong("id");
+			}
+			rs.close();
+			stm.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+			sqlQueryObject.addUpdateTable(CostantiDB.USERS_STATI);
+			sqlQueryObject.addUpdateField("stato","?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI+".id_utente = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.USERS_STATI +".oggetto = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLUpdate();
+			stm = connectionDB.prepareStatement(sqlQuery);
+			stm.setString(1, statoOggetto);
+			stm.setLong(2, idUtente);
+			stm.setString(3, nomeOggetto);
 			stm.executeUpdate();
 			stm.close();
 
@@ -1882,6 +1898,11 @@ public class DriverUsersDB {
 		} catch (Exception ex) {
 			throw new DriverUsersDBException("[DriverUsersDB::saveStato] Exception: " + ex.getMessage(),ex);
 		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
 			try {
 				stm.close();
 			} catch (Exception e) {
