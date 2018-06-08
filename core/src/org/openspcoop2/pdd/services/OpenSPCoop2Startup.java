@@ -102,6 +102,7 @@ import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMX;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
 import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
+import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -1025,13 +1026,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						}
 					}
 
-					GestoreAutenticazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+					GestoreToken.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
 				}
 				else{
-					GestoreAutenticazione.initialize(logCore);
+					GestoreToken.initialize(logCore);
 				}
 			}catch(Exception e){
-				msgDiag.logStartupError(e,"Gestore Autenticazione");
+				msgDiag.logStartupError(e,"Gestore Token");
 				return;
 			}
 			

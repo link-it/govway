@@ -37,9 +37,9 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="condition">
  * 		&lt;sequence>
+ * 			&lt;element name="defined" type="{http://www.openspcoop2.org/core/mvc/properties}defined" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="selected" type="{http://www.openspcoop2.org/core/mvc/properties}selected" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="equals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="defined" type="{http://www.openspcoop2.org/core/mvc/properties}defined" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
@@ -55,9 +55,9 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "condition", 
   propOrder = {
+  	"defined",
   	"selected",
-  	"equals",
-  	"defined"
+  	"equals"
   }
 )
 
@@ -65,6 +65,30 @@ import java.util.List;
 
 public class Condition extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Condition() {
+  }
+
+  public void addDefined(Defined defined) {
+    this.defined.add(defined);
+  }
+
+  public Defined getDefined(int index) {
+    return this.defined.get( index );
+  }
+
+  public Defined removeDefined(int index) {
+    return this.defined.remove( index );
+  }
+
+  public List<Defined> getDefinedList() {
+    return this.defined;
+  }
+
+  public void setDefinedList(List<Defined> defined) {
+    this.defined=defined;
+  }
+
+  public int sizeDefinedList() {
+    return this.defined.size();
   }
 
   public void addSelected(Selected selected) {
@@ -115,30 +139,6 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
     return this.equals.size();
   }
 
-  public void addDefined(Defined defined) {
-    this.defined.add(defined);
-  }
-
-  public Defined getDefined(int index) {
-    return this.defined.get( index );
-  }
-
-  public Defined removeDefined(int index) {
-    return this.defined.remove( index );
-  }
-
-  public List<Defined> getDefinedList() {
-    return this.defined;
-  }
-
-  public void setDefinedList(List<Defined> defined) {
-    this.defined=defined;
-  }
-
-  public int sizeDefinedList() {
-    return this.defined.size();
-  }
-
   public boolean isAnd() {
     return this.and;
   }
@@ -166,6 +166,36 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
   private static final long serialVersionUID = 1L;
 
 
+
+  @XmlElement(name="defined",required=true,nillable=false)
+  protected List<Defined> defined = new ArrayList<Defined>();
+
+  /**
+   * @deprecated Use method getDefinedList
+   * @return List<Defined>
+  */
+  @Deprecated
+  public List<Defined> getDefined() {
+  	return this.defined;
+  }
+
+  /**
+   * @deprecated Use method setDefinedList
+   * @param defined List<Defined>
+  */
+  @Deprecated
+  public void setDefined(List<Defined> defined) {
+  	this.defined=defined;
+  }
+
+  /**
+   * @deprecated Use method sizeDefinedList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeDefined() {
+  	return this.defined.size();
+  }
 
   @XmlElement(name="selected",required=true,nillable=false)
   protected List<Selected> selected = new ArrayList<Selected>();
@@ -225,36 +255,6 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
   @Deprecated
   public int sizeEquals() {
   	return this.equals.size();
-  }
-
-  @XmlElement(name="defined",required=true,nillable=false)
-  protected List<Defined> defined = new ArrayList<Defined>();
-
-  /**
-   * @deprecated Use method getDefinedList
-   * @return List<Defined>
-  */
-  @Deprecated
-  public List<Defined> getDefined() {
-  	return this.defined;
-  }
-
-  /**
-   * @deprecated Use method setDefinedList
-   * @param defined List<Defined>
-  */
-  @Deprecated
-  public void setDefined(List<Defined> defined) {
-  	this.defined=defined;
-  }
-
-  /**
-   * @deprecated Use method sizeDefinedList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeDefined() {
-  	return this.defined.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")

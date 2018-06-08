@@ -40,9 +40,9 @@ public class ConditionModel extends AbstractModel<Condition> {
 	
 		super();
 	
+		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new Field("defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.SELECTED = new org.openspcoop2.core.mvc.properties.model.SelectedModel(new Field("selected",org.openspcoop2.core.mvc.properties.Selected.class,"condition",Condition.class));
 		this.EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new Field("equals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
-		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new Field("defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.AND = new Field("and",boolean.class,"condition",Condition.class);
 		this.NOT = new Field("not",boolean.class,"condition",Condition.class);
 	
@@ -52,9 +52,9 @@ public class ConditionModel extends AbstractModel<Condition> {
 	
 		super(father);
 	
+		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new ComplexField(father,"defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.SELECTED = new org.openspcoop2.core.mvc.properties.model.SelectedModel(new ComplexField(father,"selected",org.openspcoop2.core.mvc.properties.Selected.class,"condition",Condition.class));
 		this.EQUALS = new org.openspcoop2.core.mvc.properties.model.EqualsModel(new ComplexField(father,"equals",org.openspcoop2.core.mvc.properties.Equals.class,"condition",Condition.class));
-		this.DEFINED = new org.openspcoop2.core.mvc.properties.model.DefinedModel(new ComplexField(father,"defined",org.openspcoop2.core.mvc.properties.Defined.class,"condition",Condition.class));
 		this.AND = new ComplexField(father,"and",boolean.class,"condition",Condition.class);
 		this.NOT = new ComplexField(father,"not",boolean.class,"condition",Condition.class);
 	
@@ -62,11 +62,11 @@ public class ConditionModel extends AbstractModel<Condition> {
 	
 	
 
+	public org.openspcoop2.core.mvc.properties.model.DefinedModel DEFINED = null;
+	 
 	public org.openspcoop2.core.mvc.properties.model.SelectedModel SELECTED = null;
 	 
 	public org.openspcoop2.core.mvc.properties.model.EqualsModel EQUALS = null;
-	 
-	public org.openspcoop2.core.mvc.properties.model.DefinedModel DEFINED = null;
 	 
 	public IField AND = null;
 	 

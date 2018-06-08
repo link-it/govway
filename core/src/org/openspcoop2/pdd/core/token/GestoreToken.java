@@ -25,10 +25,11 @@ import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
-import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
@@ -37,6 +38,7 @@ import org.openspcoop2.pdd.core.token.pd.EsitoPresenzaTokenPortaDelegata;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -314,30 +316,31 @@ public class GestoreToken {
 			PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
     		String source = policyGestioneToken.getTokenSource();
     		
-    		String detailsError = null;
+
 			String token = null;
-			    		
+
+    		String detailsErrorHeader = null;
     		if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source) ||
     				Costanti.POLICY_TOKEN_SOURCE_RFC6750_HEADER.equals(source) ||
     				Costanti.POLICY_TOKEN_SOURCE_CUSTOM_HEADER.equals(source)) {
     			if(datiInvocazione.getInfoConnettoreIngresso()==null || 
     					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext()==null) {
-    				detailsError = "Informazioni di trasporto non presenti";
+    				detailsErrorHeader = "Informazioni di trasporto non presenti";
     			}
     			else {
     				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
     				if(urlProtocolContext.getParametersTrasporto()==null || urlProtocolContext.getParametersTrasporto().size()<=0) {
-        				detailsError = "Header di trasporto non presenti";
+    					detailsErrorHeader = "Header di trasporto non presenti";
         			}
     				if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source) ||
     	    				Costanti.POLICY_TOKEN_SOURCE_RFC6750_HEADER.equals(source)) {
     					if(urlProtocolContext.getCredential()==null || urlProtocolContext.getCredential().getBearerToken()==null) {
     						if(urlProtocolContext.getCredential()!=null && urlProtocolContext.getCredential().getUsername()!=null) {
-    							detailsError = "Riscontrato header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BASIC+
+    							detailsErrorHeader = "Riscontrato header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BASIC+
     									"'; la configurazione richiede invece la presenza di un token valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"' ";
     						}
     						else {
-    							detailsError = "Non è stato riscontrato un header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"' e contenente un token";
+    							detailsErrorHeader = "Non è stato riscontrato un header http '"+HttpConstants.AUTHORIZATION+"' valorizzato tramite autenticazione '"+HttpConstants.AUTHORIZATION_PREFIX_BEARER+"' e contenente un token";
     						}
     					}
     					else {
@@ -349,7 +352,7 @@ public class GestoreToken {
     					String headerName = policyGestioneToken.getTokenSourceHeaderName();
     					token =  urlProtocolContext.getParameterTrasporto(headerName);
     					if(token==null) {
-    						detailsError = "Non è stato riscontrato l'header http '"+headerName+"' contenente il token";
+    						detailsErrorHeader = "Non è stato riscontrato l'header http '"+headerName+"' contenente il token";
     					}
     					else {
     						esitoPresenzaToken.setHeaderHttp(headerName);
@@ -358,17 +361,18 @@ public class GestoreToken {
     			}
     		}
     		
+    		String detailsErrorUrl = null;
     		if( (token==null && Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source)) ||
     				Costanti.POLICY_TOKEN_SOURCE_RFC6750_URL.equals(source) ||
     				Costanti.POLICY_TOKEN_SOURCE_CUSTOM_URL.equals(source)) {
     			if(datiInvocazione.getInfoConnettoreIngresso()==null || 
     					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext()==null) {
-    				detailsError = "Informazioni di trasporto non presenti";
+    				detailsErrorUrl = "Informazioni di trasporto non presenti";
     			}
     			else {
     				URLProtocolContext urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
     				if(urlProtocolContext.getParametersFormBased()==null || urlProtocolContext.getParametersFormBased().size()<=0) {
-        				detailsError = "Parametri nella URL non presenti";
+    					detailsErrorUrl = "Parametri nella URL non presenti";
         			}
     				String propertyUrlName = null;
     				if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source) ||
@@ -380,7 +384,7 @@ public class GestoreToken {
     				}
     				token =  urlProtocolContext.getParameterFormBased(propertyUrlName);
 					if(token==null) {
-						detailsError = "Non è stato riscontrata la proprietà della URL '"+propertyUrlName+"' contenente il token";
+						detailsErrorUrl = "Non è stato riscontrata la proprietà della URL '"+propertyUrlName+"' contenente il token";
 					}
 					else {
 						esitoPresenzaToken.setPropertyUrl(propertyUrlName);
@@ -388,12 +392,13 @@ public class GestoreToken {
     			}
     		}
     		
+    		String detailsErrorForm = null;
     		if( (token==null && Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source)) ||
     				Costanti.POLICY_TOKEN_SOURCE_RFC6750_FORM.equals(source)) {
     			if(datiInvocazione.getInfoConnettoreIngresso()==null || 
     					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext()==null ||
     					datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest()==null) {
-    				detailsError = "Informazioni di trasporto non presenti";
+    				detailsErrorForm = "Informazioni di trasporto non presenti";
     			}
     			else {
     				HttpServletRequest httpServletRequest = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest();
@@ -401,16 +406,68 @@ public class GestoreToken {
     					FormUrlEncodedHttpServletRequest form = (FormUrlEncodedHttpServletRequest) httpServletRequest;
     					token = form.getFormUrlEncodedParameter(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
     					if(token==null) {
-    						detailsError = "Non è stato riscontrata la proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"' contenente il token";
+    						detailsErrorForm = "Non è stato riscontrata la proprietà della Form '"+Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN+"' contenente il token";
     					}
     					else {
     						esitoPresenzaToken.setPropertyFormBased(Costanti.RFC6750_FORM_PARAMETER_ACCESS_TOKEN);
     					}
     				}
     				else {
-    					detailsError = "Non è stato riscontrata la presenza di un contenuto 'Form-Encoded'";
+    					detailsErrorForm = "Non è stato riscontrata la presenza di un contenuto 'Form-Encoded'";
     				}
 	    		}
+    		}
+    		
+    		String detailsError = null;
+    		if(detailsErrorHeader!=null) {
+    			if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source)) {
+//    				if(detailsError!=null) {
+//    					detailsError = detailsError+"; ";
+//    				}
+    				if(detailsErrorUrl!=null || detailsErrorForm!=null) {
+    					detailsError = "\n";
+    				}
+    				else {
+    					detailsError = "";
+    				}
+    				detailsError = detailsError + "(Authorization Request Header) " +detailsErrorHeader;
+    			}
+    			else {
+    				detailsError = detailsErrorHeader;
+    			}
+    		}
+    		if(detailsErrorUrl!=null) {
+    			if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source)) {
+    				if(detailsError!=null) {
+    					detailsError = detailsError+"\n";
+    				}
+    				else {
+    					if(detailsErrorForm!=null) {
+    						detailsError = "\n";
+    					}
+    					else {
+    						detailsError = "";
+    					}
+    				}
+    				detailsError = detailsError + "(URI Query Parameter) " +detailsErrorUrl;
+    			}
+    			else {
+    				detailsError = detailsErrorUrl;
+    			}
+    		}
+    		if(detailsErrorForm!=null) {
+    			if(Costanti.POLICY_TOKEN_SOURCE_RFC6750.equals(source)) {
+    				if(detailsError!=null) {
+    					detailsError = detailsError+"\n";
+    				}
+    				else {
+    					detailsError = "";
+    				}
+    				detailsError = detailsError + "(Form-Encoded Body Parameter) " +detailsErrorForm;
+    			}
+    			else {
+    				detailsError = detailsErrorForm;
+    			}
     		}
     		
     		
@@ -609,11 +666,15 @@ public class GestoreToken {
 	
 	// ********* INTROSPECTION TOKEN ****************** */
 	
-	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+	public static EsitoGestioneToken introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _introspectionToken(log, datiInvocazione, token, portaDelegata);
+			esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
+					pddContext, protocolFactory,
+					token, portaDelegata);
 		}
     	else{
     		String funzione = "Introspection";
@@ -638,7 +699,9 @@ public class GestoreToken {
 
 				// Effettuo la query
 				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _introspectionToken(log, datiInvocazione, token, portaDelegata);
+				esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
+						pddContext, protocolFactory,
+						token, portaDelegata);
 					
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -671,7 +734,9 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+	private static EsitoGestioneToken _introspectionToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -690,21 +755,24 @@ public class GestoreToken {
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
 			
-			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			ITokenParser tokenParser = policyGestioneToken.getIntrospection_TokenParser();
 			
 			byte[] risposta = null;
 			try {
-				risposta = http(log, policyGestioneToken, INTROSPECTION, token);
+				risposta = http(log, policyGestioneToken, INTROSPECTION, token,
+						pddContext, protocolFactory);
 			}catch(Exception e) {
 				detailsError = "(Errore di Connessione) "+ e.getMessage();
 				eProcess = e;
 			}
 			
-			try {
-				informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
-			}catch(Exception e) {
-				detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
-				eProcess = e;
+			if(detailsError==null) {
+				try {
+					informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+				}catch(Exception e) {
+					detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
+					eProcess = e;
+				}
 			}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
@@ -713,7 +781,7 @@ public class GestoreToken {
     			esitoGestioneToken.setNoCache(false);
 			}
     		else {
-    			if(policyGestioneToken.isValidazioneJWT_saveErrorInCache()) {
+    			if(policyGestioneToken.isIntrospection_saveErrorInCache()) {
     				esitoGestioneToken.setNoCache(false);
     			}
     			else {
@@ -751,11 +819,15 @@ public class GestoreToken {
 	
 	// ********* USER INFO TOKEN ****************** */
 	
-	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) throws Exception {
+	public static EsitoGestioneToken userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata) throws Exception {
 		EsitoGestioneToken esitoGestioneToken = null;
 		
 		if(GestoreToken.cacheToken==null){
-			esitoGestioneToken = _userInfoToken(log, datiInvocazione, token, portaDelegata);
+			esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
+					pddContext, protocolFactory,
+					token, portaDelegata);
 		}
     	else{
     		String funzione = "UserInfo";
@@ -780,7 +852,9 @@ public class GestoreToken {
 
 				// Effettuo la query
 				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _userInfoToken(log, datiInvocazione, token, portaDelegata);
+				esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
+						pddContext, protocolFactory,
+						token, portaDelegata);
 					
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -813,7 +887,9 @@ public class GestoreToken {
 		return esitoGestioneToken;
 	}
 	
-	private static EsitoGestioneToken _userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, String token, boolean portaDelegata) {
+	private static EsitoGestioneToken _userInfoToken(Logger log, AbstractDatiInvocazione datiInvocazione, 
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory,
+			String token, boolean portaDelegata) {
 		EsitoGestioneToken esitoGestioneToken = null;
 		if(portaDelegata) {
 			esitoGestioneToken = new EsitoGestioneTokenPortaDelegata();
@@ -832,21 +908,24 @@ public class GestoreToken {
 			InformazioniToken informazioniToken = null;
 			Exception eProcess = null;
 			
-			ITokenParser tokenParser = policyGestioneToken.getValidazioneJWT_TokenParser();
+			ITokenParser tokenParser = policyGestioneToken.getUserInfo_TokenParser();
 			
 			byte[] risposta = null;
 			try {
-				risposta = http(log, policyGestioneToken, USER_INFO, token);
+				risposta = http(log, policyGestioneToken, USER_INFO, token,
+						pddContext, protocolFactory);
 			}catch(Exception e) {
 				detailsError = "(Errore di Connessione) "+ e.getMessage();
 				eProcess = e;
 			}
 			
-			try {
-				informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
-			}catch(Exception e) {
-				detailsError = "Risposta del servizio di UserInfo non valida: "+e.getMessage();
-				eProcess = e;
+			if(detailsError==null) {
+				try {
+					informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+				}catch(Exception e) {
+					detailsError = "Risposta del servizio di UserInfo non valida: "+e.getMessage();
+					eProcess = e;
+				}
 			}
     		  		
     		if(informazioniToken!=null && informazioniToken.isValid()) {
@@ -855,7 +934,7 @@ public class GestoreToken {
     			esitoGestioneToken.setNoCache(false);
 			}
     		else {
-    			if(policyGestioneToken.isValidazioneJWT_saveErrorInCache()) {
+    			if(policyGestioneToken.isUserInfo_saveErrorInCache()) {
     				esitoGestioneToken.setNoCache(false);
     			}
     			else {
@@ -1630,7 +1709,8 @@ public class GestoreToken {
 	
 	private static final boolean INTROSPECTION = true;
 	private static final boolean USER_INFO = false;
-	private static byte[] http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token) throws Exception {
+	private static byte[] http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
 		
 		// *** Raccola Parametri ***
 		
@@ -1748,15 +1828,16 @@ public class GestoreToken {
 		// *** Definizione Connettore ***
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
-		IConnettore connettore = null;
+		ConnettoreBaseHTTP connettore = null;
 		if(https) {
-			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
-		}
-		else {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
 			connettore = new ConnettoreHTTPS();
 		}
+		else {
+			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
+			connettore = new ConnettoreHTTP();
+		}
+		connettore.init(pddContext, protocolFactory);
 		
 		if(basic){
 			InvocazioneCredenziali credenziali = new InvocazioneCredenziali();
@@ -1811,6 +1892,7 @@ public class GestoreToken {
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		connettoreMsg.setRequestMessage(msg);
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
+		connettore.setHttpMethod(msg);
 		
 		boolean send = connettore.send(connettoreMsg);
 		if(send==false) {

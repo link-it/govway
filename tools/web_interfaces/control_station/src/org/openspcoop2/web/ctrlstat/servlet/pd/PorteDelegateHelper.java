@@ -689,7 +689,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps, pIdFruizione);
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
+				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom);
 				ServletUtils.setDataElementCustomLabel(de, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI, statoControlloAccessi);
 				dati.addElement(de);
 			}
@@ -1907,6 +1907,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					// Controllo Accessi
 					de = new DataElement();
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD);
+					
+					String gestioneToken = null;
+					if(pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null &&
+							!"".equals(pd.getGestioneToken().getPolicy()) &&
+							!"-".equals(pd.getGestioneToken().getPolicy())) {
+						gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+					}
+					
 					String autenticazione = pd.getAutenticazione();
 					String autenticazioneCustom = null;
 					if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
@@ -1931,7 +1939,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
 					}
 					
-					String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+					String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken, autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 					de.setValue(statoControlloAccessi);
 					e.addElement(de);
 					

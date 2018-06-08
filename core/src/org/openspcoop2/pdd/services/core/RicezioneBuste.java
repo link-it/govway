@@ -2259,7 +2259,7 @@ public class RicezioneBuste {
 				
 				GestoreToken.validazioneConfigurazione(datiInvocazione); // assicura che la configurazione sia corretta
 				
-				GestioneToken gestioneTokenEngine = new GestioneToken(logCore, idTransazione);
+				GestioneToken gestioneTokenEngine = new GestioneToken(logCore, idTransazione, pddContext, protocolFactory);
 				
 				// cerco token
 				

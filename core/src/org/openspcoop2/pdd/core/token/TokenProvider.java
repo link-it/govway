@@ -158,7 +158,7 @@ public class TokenProvider implements IProvider {
 				}
 				break;
 			case form:
-				tmp = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME);
+				tmp = pDefault.getProperty(Costanti.POLICY_INTROSPECTION_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME);
 				if(tmp==null) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della FORM su cui inoltrare il token al servizio di Introspection");
 				}
@@ -281,7 +281,7 @@ public class TokenProvider implements IProvider {
 				}
 				break;
 			case form:
-				tmp = pDefault.getProperty(Costanti.POLICY_USER_INFO_REQUEST_TOKEN_POSITION_URL_PROPERTY_NAME);
+				tmp = pDefault.getProperty(Costanti.POLICY_USER_INFO_REQUEST_TOKEN_POSITION_FORM_PROPERTY_NAME);
 				if(tmp==null) {
 					throw new ProviderValidationException("Non è stato indicato il nome della proprietà della FORM su cui inoltrare il token al servizio di UserInfo");
 				}

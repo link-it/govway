@@ -2196,6 +2196,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				de = new DataElement();
 				//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONTROLLO_ACCESSI, pIdSogg, pIdPorta, pIdAsps);
+				
+				String gestioneToken = null;
+				if(paAssociata.getGestioneToken()!=null && paAssociata.getGestioneToken().getPolicy()!=null &&
+						!"".equals(paAssociata.getGestioneToken().getPolicy()) &&
+						!"-".equals(paAssociata.getGestioneToken().getPolicy())) {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
 				String autenticazione = paAssociata.getAutenticazione();
 				String autenticazioneCustom = null;
 				if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
@@ -2220,7 +2228,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					autorizzazione = AutorizzazioneUtilities.convertToStato(paAssociata.getAutorizzazione());
 				}
 				
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken,autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
 				e.addElement(de);
 				
@@ -3035,6 +3043,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// Controllo Accessi
 				de = new DataElement();
 				de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONTROLLO_ACCESSI, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
+				
+				String gestioneToken = null;
+				if(pdAssociata.getGestioneToken()!=null && pdAssociata.getGestioneToken().getPolicy()!=null &&
+						!"".equals(pdAssociata.getGestioneToken().getPolicy()) &&
+						!"-".equals(pdAssociata.getGestioneToken().getPolicy())) {
+					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
 				String autenticazione = pdAssociata.getAutenticazione();
 				String autenticazioneCustom = null;
 				if (autenticazione != null && !TipoAutenticazione.getValues().contains(autenticazione)) {
@@ -3059,7 +3075,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					autorizzazione = AutorizzazioneUtilities.convertToStato(pdAssociata.getAutorizzazione());
 				}
 				
-				String statoControlloAccessi = this.getLabelStatoControlloAccessi(autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
+				String statoControlloAccessi = this.getLabelStatoControlloAccessi(gestioneToken, autenticazione, autenticazioneOpzionale, autenticazioneCustom, autorizzazione, autorizzazioneContenuti,autorizzazioneCustom); 
 				de.setValue(statoControlloAccessi);
 				e.addElement(de);
 				

@@ -7074,6 +7074,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try{
 			config.setAccessoDatiAutenticazione(getAccessoDatiAutenticazione());
 		}catch (Exception e) {}
+		
+		// - AccessoDatiGestioneToken
+		try{
+			config.setAccessoDatiGestioneToken(getAccessoDatiGestioneToken());
+		}catch (Exception e) {}
 
 		// - RoutingTable
 		try{

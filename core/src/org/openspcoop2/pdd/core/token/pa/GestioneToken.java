@@ -22,11 +22,13 @@
 
 package org.openspcoop2.pdd.core.token.pa;
 
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.slf4j.Logger;
 
@@ -42,9 +44,14 @@ public class GestioneToken {
 
 	private Logger log;
 	private String idTransazione;
-	public GestioneToken(Logger log, String idTransazione) {
+	private PdDContext pddContext;
+	private IProtocolFactory<?> protocolFactory;
+	public GestioneToken(Logger log, String idTransazione,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
 		this.log = log;
 		this.idTransazione = idTransazione;
+		this.pddContext = pddContext;
+		this.protocolFactory = protocolFactory;
 	}
 	
     public EsitoPresenzaTokenPortaApplicativa verificaPresenzaToken(DatiInvocazionePortaApplicativa datiInvocazione) throws TokenException{
@@ -88,7 +95,9 @@ public class GestioneToken {
     public EsitoGestioneTokenPortaApplicativa introspectionToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
     	try {
         	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.introspectionToken(this.log, datiInvocazione, 
+    				this.pddContext, this.protocolFactory,
+    				token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
@@ -109,7 +118,9 @@ public class GestioneToken {
 	public EsitoGestioneTokenPortaApplicativa userInfoToken(AbstractDatiInvocazione datiInvocazione, String token) throws TokenException {
 		try {
         	
-    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, token, GestoreToken.PORTA_APPLICATIVA);
+    		EsitoGestioneTokenPortaApplicativa esito = (EsitoGestioneTokenPortaApplicativa) GestoreToken.userInfoToken(this.log, datiInvocazione, 
+    				this.pddContext, this.protocolFactory,
+    				token, GestoreToken.PORTA_APPLICATIVA);
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());

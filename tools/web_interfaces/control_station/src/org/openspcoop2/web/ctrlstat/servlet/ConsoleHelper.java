@@ -3209,7 +3209,7 @@ public class ConsoleHelper {
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT);
+					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 				}
 				dati.addElement(de);
 				
@@ -3224,7 +3224,7 @@ public class ConsoleHelper {
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION);
+					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 				}
 				dati.addElement(de);
 				
@@ -3239,7 +3239,7 @@ public class ConsoleHelper {
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO);
+					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 				}
 				dati.addElement(de);
 				
@@ -3254,7 +3254,7 @@ public class ConsoleHelper {
 					de.setPostBack(true);
 				}else {
 					de.setType(DataElementType.HIDDEN);
-					de.setValue(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD);
+					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
 				}
 				dati.addElement(de);
 			}
@@ -3616,7 +3616,7 @@ public class ConsoleHelper {
 		
 		if (this.isModalitaAvanzata()) {
 			DataElement de = new DataElement();
-			de.setType(DataElementType.SUBTITLE);
+			de.setType(DataElementType.TITLE);
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			dati.addElement(de);
 		}
@@ -3856,9 +3856,15 @@ public class ConsoleHelper {
 		}
 	}
 	
-	public String getLabelStatoControlloAccessi(String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom,
+	public String getLabelStatoControlloAccessi(
+			String gestioneToken,
+			String autenticazione, String autenticazioneOpzionale, String autenticazioneCustom,
 			String autorizzazione, String autorizzazioneContenuti,String autorizzazioneCustom) {
 		String label = CostantiControlStation.DEFAULT_VALUE_DISABILITATO;
+		
+		if(gestioneToken!=null && StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)) {
+			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;
+		}
 		
 		if(autenticazione != null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
 			return CostantiControlStation.DEFAULT_VALUE_ABILITATO;

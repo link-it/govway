@@ -19,7 +19,7 @@
 			<property name="policy.realm" force="true"/>
 		</item>
 		-->
-		<item type="hidden" name="policyForceEmptyMessageError" value="true">
+		<item type="hidden" name="policyForceEmptyMessageError" value="false">
 			<property name="policy.messageError.bodyEmpty" force="true"/>
 		</item>
 		<item type="hidden" name="policyGenericError" value="true">
@@ -909,7 +909,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
 				<conditions and="true">
 					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteModeValidazioneJWT" value="true"/>
+						<selected name="tokenForwardInfoRaccolteModeValidazioneJWT" />
 						<equals name="tokenForwardInfoRaccolteModeValidazioneJWTForce" value="true"/>
 					</condition>
 				</conditions>
@@ -969,7 +969,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
 				<conditions and="true">
 					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteModeIntrospection" value="true"/>
+						<selected name="tokenForwardInfoRaccolteModeIntrospection" />
 						<equals name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true"/>
 					</condition>
 				</conditions>
@@ -1029,7 +1029,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
 				<conditions and="true">
 					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteModeUserInfo" value="true"/>
+						<selected name="tokenForwardInfoRaccolteModeUserInfo" />
 						<equals name="tokenForwardInfoRaccolteModeUserInfoForce" value="true"/>
 					</condition>
 				</conditions>
