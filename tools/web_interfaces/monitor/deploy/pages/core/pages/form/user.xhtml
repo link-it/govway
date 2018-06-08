@@ -23,60 +23,68 @@
 				}
 			</style>
 			<a4j:keepAlive beanName="utentiBean" />
-				<c:if test="#{applicationBean.user and applicationBean.showCambiaPassword}">
-					<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
-						<link:fieldset legend="Soggetti Associati" rendered="#{not empty utentiBean.listaSoggettiAssociatiUtente}" collapsible="false" closed="false">	
-							<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">
-								<c:forEach items="#{utentiBean.listaSoggettiAssociatiUtente}" var="sog">
-									<h:outputText styleClass="" value="#{sog}" />
-								</c:forEach>
-							</h:panelGrid>
-						</link:fieldset>
-						<a4j:outputPanel layout="block" rendered="#{not empty utentiBean.listaSoggettiAssociatiUtente}">	
-							<div class="spacerDettaglio"></div>
-						</a4j:outputPanel>
-						
-						<link:fieldset legend="Servizi Associati" rendered="#{not empty utentiBean.listaServiziAssociatiUtente}" collapsible="false" closed="false">
-							<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">	
-								<c:forEach items="#{utentiBean.listaServiziAssociatiUtente}" var="ser">
-									<h:outputText styleClass="" value="#{ser}" />
-								</c:forEach>
-							</h:panelGrid>
-						</link:fieldset>
-						<a4j:outputPanel layout="block" rendered="#{not empty utentiBean.listaServiziAssociatiUtente}">	
-							<div class="spacerDettaglio"></div>
-						</a4j:outputPanel>
-					</c:if>
-					
-					<a4j:outputPanel layout="block" id="panelRoleUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
-						<h:form id="formRoleUser" prependId="false">
-							<h:inputHidden id="inUser" value="#{utentiBean.user.id}"/>
-							<link:fieldset legend="Password" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
-								<link:prop label="Modifica">
-									<h:selectBooleanCheckbox id="_modificaPwd" styleClass="controlset" value="#{utentiBean.showFormCambiaPassword}" >
-										<a4j:support status="mainStatus" event="onchange" reRender="panelRoleUser" />
-										</h:selectBooleanCheckbox>
-								</link:prop>
-								
-								<a4j:outputPanel layout="block" rendered="#{utentiBean.showFormCambiaPassword}" id="fieldFormPwdPanel">	
-									<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
-										<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
-									</link:prop>
-								
-									<link:prop label="Nuova" required="true">
-										<h:inputSecret label="Nuova" id="_pwdChange" value="#{utentiBean.user.password}"   styleClass="inputLinkLong"/>
-									</link:prop>
-										
-									<link:prop label="Conferma Nuova" required="true" note="#{utentiBean.notePassword}" noteEscape="false">
-										<h:inputSecret id="conpwdChange" label="Conferma Nuova" value="#{utentiBean.confermaPassword}"   styleClass="inputLinkLong"/>
-									</link:prop>
-								</a4j:outputPanel>
-							</link:fieldset>
-							<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{utentiBean.showFormCambiaPassword}" id="buttonFormPwdPanel">
-								<a4j:commandButton id="modificaPwd" styleClass="icon-save" action="#{utentiBean.cambioPassword}" value="Modifica Password" reRender="panelRoleUser"/>
-							</a4j:outputPanel>
-						</h:form>
-					</a4j:outputPanel>
+			<link:fieldset legend="Utente" collapsible="false" closed="false">
+				<link:prop label="Nome" >
+					<div class="divNoEdit"> 
+						<h:outputText value="#{utentiBean.user.login}" id="nomeUtenteProfilo" styleClass="spanNoEdit" />
+					</div>
+				</link:prop>
+				<link:prop label="Modalità Gateway" >
+					<div class="divNoEdit"> 
+						<h:outputText value="#{utentiBean.modalitaDisponibiliUser}"  id="modalitaUtenteProfilo" styleClass="spanNoEdit"/>
+					</div>
+				</link:prop>
+			</link:fieldset>
+			<c:if test="#{applicationBean.operatore and !applicationBean.amministratore}">
+				<c:if test="#{not empty utentiBean.listaSoggettiAssociatiUtente}">
+					<link:fieldset legend="Soggetti Associati" collapsible="false" closed="false">	
+						<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">
+							<c:forEach items="#{utentiBean.listaSoggettiAssociatiUtente}" var="sog">
+								<h:outputText styleClass="" value="#{sog}" />
+							</c:forEach>
+						</h:panelGrid>
+					</link:fieldset>
 				</c:if>
+				<c:if test="#{not empty utentiBean.listaServiziAssociatiUtente}">
+					<link:fieldset legend="Servizi Associati" collapsible="false" closed="false">
+						<h:panelGrid columns="1" styleClass="borderSpacingTable" columnClasses="valueAllineataSx">	
+							<c:forEach items="#{utentiBean.listaServiziAssociatiUtente}" var="ser">
+								<h:outputText styleClass="" value="#{ser}" />
+							</c:forEach>
+						</h:panelGrid>
+					</link:fieldset>
+				</c:if>
+			</c:if>
+			<c:if test="#{applicationBean.user and applicationBean.showCambiaPassword}">
+				<a4j:outputPanel layout="block" id="panelRoleUser" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}">
+					<h:form id="formRoleUser" prependId="false">
+						<h:inputHidden id="inUser" value="#{utentiBean.user.id}"/>
+						<link:fieldset legend="Password" rendered="#{not empty utentiBean.user.id and utentiBean.user.id gt 0}" collapsible="false" closed="false">
+							<link:prop label="Modifica">
+								<h:selectBooleanCheckbox id="_modificaPwd" styleClass="controlset" value="#{utentiBean.showFormCambiaPassword}" >
+									<a4j:support status="mainStatus" event="onchange" reRender="panelRoleUser" />
+									</h:selectBooleanCheckbox>
+							</link:prop>
+							
+							<a4j:outputPanel layout="block" rendered="#{utentiBean.showFormCambiaPassword}" id="fieldFormPwdPanel">	
+								<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
+									<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
+								</link:prop>
+							
+								<link:prop label="Nuova" required="true">
+									<h:inputSecret label="Nuova" id="_pwdChange" value="#{utentiBean.user.password}"   styleClass="inputLinkLong"/>
+								</link:prop>
+									
+								<link:prop label="Conferma Nuova" required="true" note="#{utentiBean.notePassword}" noteEscape="false">
+									<h:inputSecret id="conpwdChange" label="Conferma Nuova" value="#{utentiBean.confermaPassword}"   styleClass="inputLinkLong"/>
+								</link:prop>
+							</a4j:outputPanel>
+						</link:fieldset>
+						<a4j:outputPanel layout="block" styleClass="buttonrow"  rendered="#{utentiBean.showFormCambiaPassword}" id="buttonFormPwdPanel">
+							<a4j:commandButton id="modificaPwd" styleClass="icon-save" action="#{utentiBean.cambioPassword}" value="Modifica Password" reRender="panelRoleUser"/>
+						</a4j:outputPanel>
+					</h:form>
+				</a4j:outputPanel>
+			</c:if>
 		</ui:define>
 </ui:composition>

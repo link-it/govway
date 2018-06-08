@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -266,7 +267,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	public boolean isShowVecchiaPassword() {
 		if(this.user.getId() != null && this.user.getId() > 0){
 			UserDetailsBean loggedUser = Utility.getLoggedUser();
-			if(this.user.getLogin().equals(loggedUser.getUsername()) && !loggedUser.isAdmin())
+			if(this.user.getLogin().equals(loggedUser.getUsername())) // && !loggedUser.isAdmin())
 				return true;
 		}
 
@@ -276,5 +277,16 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	public void setShowVecchiaPassword(boolean showVecchiaPassword) {
 	}
 
-
+	public String getModalitaDisponibiliUser() throws Exception {
+		List<String> protocolliDisponibli = Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor();
+		StringBuilder sb= new StringBuilder();
+		for (String protocollo : protocolliDisponibli) {
+			if(sb.length() > 0)
+				sb.append(", ");
+			
+			sb.append(NamingUtils.getLabelProtocollo(protocollo));
+		}
+		
+		return sb.toString();
+	}
 }

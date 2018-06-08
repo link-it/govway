@@ -271,6 +271,12 @@ div.form-container .display-form table.controlset label{
 	width: auto;
 }
 
+div.form-container input[type="checkbox"].controlset,
+div.form-container .display-form input[type="checkbox"].controlset {
+	margin-bottom: 2px;
+    margin-top: 2px;
+}
+
 .spanNoEdit {
 /* 	vertical-align: middle; */
 }
