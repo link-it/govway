@@ -795,6 +795,24 @@ public class SingleCsvFileExporter implements IExporter{
 				} else {
 					oneLine.add(CostantiExport.EMPTY_STRING);
 				}
+			} else if(keyColonna.equals(CostantiExport.KEY_COL_TIPO_RICHIESTA)){
+				if(StringUtils.isNotEmpty(t.getTipoRichiesta())){
+					oneLine.add(t.getTipoRichiesta() + "");
+				} else {
+					oneLine.add(CostantiExport.EMPTY_STRING);
+				}
+			} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_INGRESSO)){
+				if(StringUtils.isNotEmpty(t.getCodiceRispostaIngresso())){
+					oneLine.add(t.getCodiceRispostaIngresso() + "");
+				} else {
+					oneLine.add(CostantiExport.EMPTY_STRING);
+				}
+			} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_USCITA)){
+				if(StringUtils.isNotEmpty(t.getCodiceRispostaUscita())){
+					oneLine.add(t.getCodiceRispostaUscita() + "");
+				} else {
+					oneLine.add(CostantiExport.EMPTY_STRING);
+				}
 			} else {
 				// colonna non riconosciuta
 				throw new ExportException("Colonna ["+keyColonna+"] non definita.");

@@ -36,6 +36,7 @@ public class ColonnaExportManager {
 		this.addColonna(CostantiExport.KEY_COL_PROTOCOLLO, CostantiExport.LABEL_COL_PROTOCOLLO);
 		this.addColonna(CostantiExport.KEY_COL_ESITO, CostantiExport.LABEL_COL_ESITO);
 		this.addColonna(CostantiExport.KEY_COL_ESITO_CONTESTO, CostantiExport.LABEL_COL_ESITO_CONTESTO);
+		this.addColonna(CostantiExport.KEY_COL_TIPO_RICHIESTA, CostantiExport.LABEL_COL_TIPO_RICHIESTA);
 		this.addColonna(CostantiExport.KEY_COL_CLUSTER_ID, CostantiExport.LABEL_COL_CLUSTER_ID);
 		this.addColonna(CostantiExport.KEY_COL_EVENTI_GESTIONE, CostantiExport.LABEL_COL_EVENTI_GESTIONE);
 		this.addColonna(CostantiExport.KEY_COL_STATO, CostantiExport.LABEL_COL_STATO);
@@ -51,6 +52,8 @@ public class ColonnaExportManager {
 		this.addColonna(CostantiExport.KEY_COL_LATENZA_PORTA, CostantiExport.LABEL_COL_LATENZA_PORTA);
 		this.addColonna(CostantiExport.KEY_COL_LATENZA_SERVIZIO, CostantiExport.LABEL_COL_LATENZA_SERVIZIO);
 		this.addColonna(CostantiExport.KEY_COL_LATENZA_TOTALE, CostantiExport.LABEL_COL_LATENZA_TOTALE);
+		this.addColonna(CostantiExport.KEY_COL_CODICE_RISPOSTA_INGRESSO, CostantiExport.LABEL_COL_CODICE_RISPOSTA_INGRESSO);
+		this.addColonna(CostantiExport.KEY_COL_CODICE_RISPOSTA_USCITA, CostantiExport.LABEL_COL_CODICE_RISPOSTA_USCITA);
 		this.addColonna(CostantiExport.KEY_COL_RICHIESTA_INGRESSO_BYTES, CostantiExport.LABEL_COL_RICHIESTA_INGRESSO_BYTES);
 		this.addColonna(CostantiExport.KEY_COL_RICHIESTA_USCITA_BYTES, CostantiExport.LABEL_COL_RICHIESTA_USCITA_BYTES);
 		this.addColonna(CostantiExport.KEY_COL_RISPOSTA_INGRESSO_BYTES, CostantiExport.LABEL_COL_RISPOSTA_INGRESSO_BYTES);
@@ -71,7 +74,6 @@ public class ColonnaExportManager {
 		this.addColonna(CostantiExport.KEY_COL_ID_COLLABORAZIONE, CostantiExport.LABEL_COL_ID_COLLABORAZIONE);
 		this.addColonna(CostantiExport.KEY_COL_URI_ACCORDO_SERVIZIO, CostantiExport.LABEL_COL_URI_ACCORDO_SERVIZIO);
 		this.addColonna(CostantiExport.KEY_COL_SERVIZIO, CostantiExport.LABEL_COL_SERVIZIO);
-		this.addColonna(CostantiExport.KEY_COL_VERSIONE_SERVIZIO, CostantiExport.LABEL_COL_VERSIONE_SERVIZIO);
 		this.addColonna(CostantiExport.KEY_COL_AZIONE, CostantiExport.LABEL_COL_AZIONE);	
 		this.addColonna(CostantiExport.KEY_COL_ID_CORRELAZIONE_APPLICATIVA, CostantiExport.LABEL_COL_ID_CORRELAZIONE_APPLICATIVA);
 		this.addColonna(CostantiExport.KEY_COL_ID_CORRELAZIONEAPPLICATIVARISPOSTA, CostantiExport.LABEL_COL_ID_CORRELAZIONEAPPLICATIVARISPOSTA);
@@ -113,6 +115,8 @@ public class ColonnaExportManager {
 //		this.addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_LIST_EXT, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_LIST_EXT);
 //		this.addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_EXT, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_EXT);
 	
+		// versione servizio non e' selezionabile dall'utente 
+		this.addColonna(CostantiExport.KEY_COL_VERSIONE_SERVIZIO, CostantiExport.LABEL_COL_VERSIONE_SERVIZIO,true);
 	}
 	
 	public void addColonna(String key, String label){

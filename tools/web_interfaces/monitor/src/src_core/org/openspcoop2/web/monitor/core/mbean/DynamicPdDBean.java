@@ -167,39 +167,39 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		return this.servizi;
 	}
 
-	public List<SelectItem> _getSoggetti() throws Exception {
-		if(this.search==null){
-			return new ArrayList<SelectItem>();
-		}
-
-		if(!this.soggettiSelectItemsWidthCheck){
-			this.soggetti = new ArrayList<SelectItem>();
-
-			String tipoProtocollo = this.search.getProtocollo();
-			String idPorta = null;
-			List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
-
-			for (Soggetto soggetto : list) {
-				String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
-				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
-				String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
-				this.soggetti.add(new SelectItem(value,label));
-			}
-			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggetti);
-			this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
-		}
-		return this.soggetti;
-	}
+//	public List<SelectItem> _getSoggetti() throws Exception {
+//		if(this.search==null){
+//			return new ArrayList<SelectItem>();
+//		}
+//
+//		if(!this.soggettiSelectItemsWidthCheck){
+//			this.soggetti = new ArrayList<SelectItem>();
+//
+//			String tipoProtocollo = this.search.getProtocollo();
+//			String idPorta = null;
+//			List<Soggetto> list = this.dynamicUtilsService.findElencoSoggetti(tipoProtocollo ,idPorta);
+//
+//			for (Soggetto soggetto : list) {
+//				String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
+//				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+//				String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+//				this.soggetti.add(new SelectItem(value,label));
+//			}
+//			Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggetti);
+//			this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
+//		}
+//		return this.soggetti;
+//	}
 
 	public List<SelectItem> getSoggettiLocale() throws Exception{
-		return _getSoggettiLocale(true);
+		return _getSoggetti(true,false);
 	}
 
-	public List<SelectItem> _getSoggettiLocale(boolean soloOperativi) throws Exception {
+	public List<SelectItem> _getSoggetti(boolean includiOperativi,boolean includiEsterni) throws Exception {
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
-
+		
 		if(!this.soggettiLocaleSelectItemsWidthCheck){
 			this.soggettiLocale = new ArrayList<SelectItem>();
 
@@ -209,10 +209,17 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 
 			for (Soggetto soggetto : list) {
 				boolean add = true;
-				if(soloOperativi) {
-					String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
-					add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+				if(!(includiOperativi && includiEsterni)) { 
+					if(includiOperativi) {
+						String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+						add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+					} 
+					if(includiEsterni) {
+						String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+						add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.ESTERNO);
+					}
 				}
+				
 				if(add) {				
 					String value = soggetto.getTipoSoggetto() + "/" + soggetto.getNomeSoggetto();
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
@@ -286,7 +293,8 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 	}
 
 	public List<SelectItem> getSoggetti()  throws Exception{
-		return _getSoggetti();
+		boolean multiTenant = Utility.getLoggedUtente().isPermitMultiTenant();
+		return _getSoggetti(false,!multiTenant);
 	}
 
 	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {

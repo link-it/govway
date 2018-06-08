@@ -3,7 +3,9 @@ package org.openspcoop2.web.monitor.transazioni.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
@@ -219,5 +221,41 @@ public class TransazioneBean extends Transazione{
 		else{
 			return nomePorta;
 		}
+	}
+	
+	public String getSoggettoFruitore() throws Exception { 
+		if(StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
+			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
+		}
+		
+		return "";
+	}
+	
+	public String getSoggettoErogatore() throws Exception { 
+		if(StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
+			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
+		}
+		
+		return "";
+	}
+	
+	public String getSoggettoPdd() throws Exception { 
+		if(StringUtils.isNotEmpty(this.getPddNomeSoggetto())) {
+			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getPddTipoSoggetto(), this.getPddNomeSoggetto());
+		}
+		
+		return "";
+	}
+	
+	public String getProtocolloLabel() throws Exception{
+		return NamingUtils.getLabelProtocollo(this.getProtocollo()); 
+	}
+	
+	
+	public String getServizio() throws Exception{
+		if(StringUtils.isNotEmpty(this.getNomeServizio())) {
+			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(this.getProtocollo(), this.getTipoServizio(), this.getNomeServizio(), this.getVersioneServizio());
+		}
+		return "";
 	}
 }

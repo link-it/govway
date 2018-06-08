@@ -116,6 +116,9 @@ public class CostantiExport {
 	public static final String KEY_COL_LATENZA_TOTALE = "colLatenzaTotale";
 	public static final String KEY_COL_INDIRIZZO_CLIENT = "colIndirizzoClient";
 	public static final String KEY_COL_X_FORWARDED_FOR = "colXForwardedFor";
+	public static final String KEY_COL_TIPO_RICHIESTA = "colTipoRichiesta";
+	public static final String KEY_COL_CODICE_RISPOSTA_INGRESSO = "colCodiceRispostaIngresso";
+	public static final String KEY_COL_CODICE_RISPOSTA_USCITA = "colCodiceRispostaUscita";
 	
 	/** LABEL campi */
 	
@@ -189,4 +192,7 @@ public class CostantiExport {
 	public static final String LABEL_COL_LATENZA_TOTALE = "Latenza Totale";
 	public static final String LABEL_COL_INDIRIZZO_CLIENT = "Indirizzo Client";
 	public static final String LABEL_COL_X_FORWARDED_FOR = "X-Forwarded-For";
+	public static final String LABEL_COL_TIPO_RICHIESTA = "Tipo Richiesta";
+	public static final String LABEL_COL_CODICE_RISPOSTA_INGRESSO = "Codice Risposta Ingresso";
+	public static final String LABEL_COL_CODICE_RISPOSTA_USCITA = "Codice Risposta Uscita";
 }
