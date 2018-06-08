@@ -70,10 +70,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private boolean showFaultIntegrazione = false;
 
 	private boolean visualizzaDataAccettazione = false;
-	private Boolean hasDumpRichiesta = null;
-	private Boolean hasDumpRisposta = null;
-	private Boolean hasHeaderTrasportoRichiesta = null;
-	private Boolean hasHeaderTrasportoRisposta = null;
+	private Boolean hasDumpRichiestaIngresso = null;
+	private Boolean hasDumpRichiestaUscita = null;
+	private Boolean hasDumpRispostaIngresso = null;
+	private Boolean hasDumpRispostaUscita = null;
+	private Boolean hasHeaderTrasportoRichiestaIngresso = null;
+	private Boolean hasHeaderTrasportoRichiestaUscita = null;
+	private Boolean hasHeaderTrasportoRispostaIngresso = null;
+	private Boolean hasHeaderTrasportoRispostaUscita = null;
 	
 	static {
 		try {
@@ -492,36 +496,64 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		}
 	}
 	
- 	public boolean getHasDumpRichiesta() {
-		if(this.hasDumpRichiesta == null)
-			this.hasDumpRichiesta  = this.getHasDump(TipoMessaggio.RICHIESTA_INGRESSO); //TODO sistemare
+ 	public boolean getHasDumpRichiestaIngresso() {
+		if(this.hasDumpRichiestaIngresso == null)
+			this.hasDumpRichiestaIngresso  = this.getHasDump(TipoMessaggio.RICHIESTA_INGRESSO); 
 		
-		return this.hasDumpRichiesta;
+		return this.hasDumpRichiestaIngresso;
+	}
+ 	
+ 	public boolean getHasDumpRichiestaUscita() {
+		if(this.hasDumpRichiestaUscita == null)
+			this.hasDumpRichiestaUscita  = this.getHasDump(TipoMessaggio.RICHIESTA_USCITA); 
+		
+		return this.hasDumpRichiestaUscita;
 	}
 
-	public boolean getHasDumpRisposta() {
-		if(this.hasDumpRisposta == null)
-			this.hasDumpRisposta  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO); //TODO sistemare
+	public boolean getHasDumpRispostaIngresso() {
+		if(this.hasDumpRispostaIngresso == null)
+			this.hasDumpRispostaIngresso  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO); 
 		
-		return this.hasDumpRisposta;
+		return this.hasDumpRispostaIngresso;
+	}
+
+	public boolean getHasDumpRispostaUscita() {
+		if(this.hasDumpRispostaUscita == null)
+			this.hasDumpRispostaUscita  = this.getHasDump(TipoMessaggio.RISPOSTA_USCITA);  
+		
+		return this.hasDumpRispostaUscita;
 	}
 
 	private boolean getHasDump(TipoMessaggio tipo) {
 		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, tipo);
 	}
 
-	public boolean getHasHeaderTrasportoRichiesta() {
-		if(this.hasHeaderTrasportoRichiesta == null)
-			this.hasHeaderTrasportoRichiesta = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_INGRESSO); //TODO sistemare
+	public boolean getHasHeaderTrasportoRichiestaIngresso() {
+		if(this.hasHeaderTrasportoRichiestaIngresso == null)
+			this.hasHeaderTrasportoRichiestaIngresso = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_INGRESSO);  
 		
-		return this.hasHeaderTrasportoRichiesta;
+		return this.hasHeaderTrasportoRichiestaIngresso;
+	}
+	
+	public boolean getHasHeaderTrasportoRichiestaUscita() {
+		if(this.hasHeaderTrasportoRichiestaUscita == null)
+			this.hasHeaderTrasportoRichiestaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_USCITA);  
+		
+		return this.hasHeaderTrasportoRichiestaUscita;
 	}
 
-	public boolean getHasHeaderTrasportoRisposta() {
-		if(this.hasHeaderTrasportoRisposta == null)
-			this.hasHeaderTrasportoRisposta = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO); //TODO sistemare 
+	public boolean getHasHeaderTrasportoRispostaIngresso() {
+		if(this.hasHeaderTrasportoRispostaIngresso == null)
+			this.hasHeaderTrasportoRispostaIngresso = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO);  
 		
-		return this.hasHeaderTrasportoRisposta;
+		return this.hasHeaderTrasportoRispostaIngresso;
+	}
+
+	public boolean getHasHeaderTrasportoRispostaUscita() {
+		if(this.hasHeaderTrasportoRispostaUscita == null)
+			this.hasHeaderTrasportoRispostaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_USCITA);  
+		
+		return this.hasHeaderTrasportoRispostaUscita;
 	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {

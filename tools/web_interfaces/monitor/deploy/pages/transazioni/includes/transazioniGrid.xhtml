@@ -97,9 +97,9 @@
 						<h:outputText value="#{item.esitoContesto}" converter="esitoContestoConverter"/>
 					</rich:toolTip>
 				</rich:column>
-				<rich:column id="colTipoRichiesta" sortable="false" label="Tipo Richiesta" visible="false">
+				<rich:column id="colTipoRichiesta" sortable="false" label="Metodo HTTP" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outTipoRichiesta1" value="Tipo Richiesta" />
+						<h:outputText id="outTipoRichiesta1" value="Metodo HTTP" />
 					</f:facet>
 					<h:outputText id="outTipoRichiesta2" value="#{item.tipoRichiesta}" rendered="#{not empty item.tipoRichiesta}"/>
 					<rich:toolTip for="outTipoRichiesta2" value="#{item.tipoRichiesta}" rendered="#{not empty item.tipoRichiesta}"/>
