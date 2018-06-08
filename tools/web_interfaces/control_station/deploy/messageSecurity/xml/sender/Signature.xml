@@ -1,4 +1,4 @@
-<config id="messageSecurity.xml.sender.signature" label="JWT Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
+<config id="messageSecurity.xml.sender.signature" label="XML Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties"
 	provider="org.openspcoop2.security.message.xml.SecurityProvider">
 
 	 <compatibility not="false" and="false">

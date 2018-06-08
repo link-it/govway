@@ -42,6 +42,11 @@
 		</item>
 
 		<subsection label="Detached">
+			<conditions>
+                    <condition>
+                            <equals name="signatureMode" value="detached"/>
+                    </condition>
+            </conditions>
 		
 			<item type="select" name="detachedType" label="Tipo" default="header" required="true" reloadOnChange="true" >
 				<values>

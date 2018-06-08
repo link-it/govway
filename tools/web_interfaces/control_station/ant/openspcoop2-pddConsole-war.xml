@@ -13,8 +13,8 @@
 	<import file="../../../../ant/commons/utils.xml" />
 
 	<target name="war_openspcoop2_pddConsole_resources">	
-                <zip destfile="${build_pddConsole_resourceDIR}/messageSecurity.zip" basedir="deploy" includes="messageSecurity/**/*.xml" />
-                <zip destfile="${build_pddConsole_resourceDIR}/policyGestioneToken.zip" basedir="deploy" includes="policyGestioneToken/**/*.xml" />
+                <zip destfile="${build_pddConsole_resourceDIR}/messageSecurity.zip" basedir="${deploy.dir}" includes="messageSecurity/**/*.xml" />
+                <zip destfile="${build_pddConsole_resourceDIR}/policyGestioneToken.zip" basedir="${deploy.dir}" includes="policyGestioneToken/**/*.xml" />
 	</target>
 
 	<!-- Compilazione della libreria 'org.openspcoop.web.ctrlstat.*' -->
