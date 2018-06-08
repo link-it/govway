@@ -64,7 +64,9 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), 
-    						datiInvocazione.getInfoConnettoreIngresso(), this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
+    						datiInvocazione.getInfoConnettoreIngresso(), 
+    						this.getPddContext(),
+    						this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setAutorizzato(false);
     		}else{

@@ -221,6 +221,15 @@ public enum ErroriIntegrazione {
 	
 	ERRORE_442_RIFERIMENTO_ID_MESSAGGIO("Tra le informazioni di integrazione non è stato rilevato il riferimento ad un identificativo di un messaggio precedente",
 			CodiceErroreIntegrazione.CODICE_442_RIFERIMENTO_ID_MESSAGGIO),
+	
+	ERRORE_443_TOKEN_NON_PRESENTE("Token non presente",
+			CodiceErroreIntegrazione.CODICE_443_TOKEN_NON_PRESENTE),
+	
+	ERRORE_444_TOKEN_NON_VALIDO("Token non valido",
+			CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO),
+	
+	ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+			CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA),
 
 	// errori spediti in buste errore
 	

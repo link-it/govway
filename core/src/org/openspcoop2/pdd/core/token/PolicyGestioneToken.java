@@ -108,9 +108,17 @@ public class PolicyGestioneToken implements Serializable {
 		}
 		return realm;
 	}
-	public boolean isGenericError() throws ProviderException, ProviderValidationException{
+	public boolean isMessageErrorGenerateEmptyMessage() throws ProviderException, ProviderValidationException{
 		boolean genericError = true;
-		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_GENERIC_ERROR);
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_MESSAGE_ERROR_BODY_EMPTY);
+		if(tmp!=null) {
+			genericError = Boolean.valueOf(tmp);
+		}
+		return genericError;
+	}
+	public boolean isMessageErrorGenerateGenericMessage() throws ProviderException, ProviderValidationException{
+		boolean genericError = true;
+		String tmp = this.defaultProperties.getProperty(Costanti.POLICY_MESSAGE_ERROR_GENERIC_MESSAGE);
 		if(tmp!=null) {
 			genericError = Boolean.valueOf(tmp);
 		}

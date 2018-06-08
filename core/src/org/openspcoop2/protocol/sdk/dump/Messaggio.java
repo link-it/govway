@@ -39,6 +39,7 @@ import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.message.constants.MessageType;
 
 /**
  * Messaggio
@@ -55,6 +56,8 @@ public class Messaggio implements Serializable{
 	private static final long serialVersionUID = 4718160136521047108L;
 	
 	private TipoMessaggio tipoMessaggio;
+	
+	private MessageType formatoMessaggio;
 	
 	private String contentType;
 	
@@ -89,6 +92,10 @@ public class Messaggio implements Serializable{
 	public Messaggio(DumpMessaggio dumpMessaggio) {
 		
 		this.tipoMessaggio = dumpMessaggio.getTipoMessaggio();
+		
+		if(dumpMessaggio.getFormatoMessaggio()!=null) {
+			this.formatoMessaggio = MessageType.valueOf(dumpMessaggio.getFormatoMessaggio());
+		}
 		
 		this.contentType = dumpMessaggio.getContentType();
 		
@@ -166,6 +173,10 @@ public class Messaggio implements Serializable{
 		DumpMessaggio dumpMessaggio = new DumpMessaggio();
 		
 		dumpMessaggio.setTipoMessaggio(this.tipoMessaggio);
+		
+		if(this.formatoMessaggio!=null) {
+			dumpMessaggio.setFormatoMessaggio(this.formatoMessaggio.name());
+		}
 		
 		dumpMessaggio.setContentType(this.contentType);
 		
@@ -247,6 +258,12 @@ public class Messaggio implements Serializable{
 		return dumpMessaggio;
 	}
 	
+	public MessageType getFormatoMessaggio() {
+		return this.formatoMessaggio;
+	}
+	public void setFormatoMessaggio(MessageType formatoMessaggio) {
+		this.formatoMessaggio = formatoMessaggio;
+	}
 	
 	public TipoMessaggio getTipoMessaggio() {
 		return this.tipoMessaggio;

@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.token.pa;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.slf4j.Logger;
@@ -53,6 +54,11 @@ public class GestioneToken {
     	if(esito.getEccezioneProcessamento()!=null) {
     		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
     	}
+    	else if(esito.isPresente()==false) {
+    		if(esito.getErrorMessage()==null) {
+    			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_PRESENTE.getErroreCooperazione());
+    		}
+    	}
     	
     	return esito;
     	
@@ -65,6 +71,11 @@ public class GestioneToken {
     		
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
+        	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
+        		}
         	}
         	
         	return esito;
@@ -82,6 +93,11 @@ public class GestioneToken {
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
         	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
+        		}
+        	}
         	
         	return esito;
     		
@@ -98,6 +114,11 @@ public class GestioneToken {
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione());
         	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_NON_VALIDO.getErroreCooperazione());
+        		}
+        	}
         	
         	return esito;
     		
@@ -107,12 +128,14 @@ public class GestioneToken {
 	}
 	
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaApplicativa esitoPresenzaToken,
-			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo) throws TokenException {
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
+			InformazioniToken informazioniTokenNormalizzate) throws TokenException {
 		try {
         	
     		GestoreToken.forwardToken(this.log, this.idTransazione,
     				datiInvocazione, esitoPresenzaToken, 
     				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
+    				informazioniTokenNormalizzate,
     				GestoreToken.PORTA_APPLICATIVA);
     		
     	}catch(Exception e) {

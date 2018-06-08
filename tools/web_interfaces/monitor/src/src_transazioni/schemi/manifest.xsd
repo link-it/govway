@@ -146,6 +146,11 @@
                     
                     <xsd:attribute name="url-invocazione" type="xsd:string" use="optional"/>
                     
+                    <xsd:attribute name="tipo-richiesta" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="codice-risposta-ingresso" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="codice-risposta-uscita" type="xsd:string" use="optional"/>
+                    
                     <xsd:attribute name="indirizzo-client" type="xsd:string" use="optional"/>                  
                     <xsd:attribute name="x-forwarded-for" type="xsd:string" use="optional"/>
                     

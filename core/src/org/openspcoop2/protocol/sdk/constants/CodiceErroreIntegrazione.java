@@ -253,8 +253,14 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     CODICE_440_PARSING_EXCEPTION_RISPOSTA(440),
     /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabile,441 */
     CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE(441),
-    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,441 */
+    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,442 */
     CODICE_442_RIFERIMENTO_ID_MESSAGGIO(442),
+    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,443 */
+    CODICE_443_TOKEN_NON_PRESENTE(443),
+    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,444 */
+    CODICE_444_TOKEN_NON_VALIDO(444),
+    /** String che contiene un codice di errore OpenSPCoop: PortaDelegataNonInvocabileSenzaFornireRiferimentoIdMessaggio,445 */
+    CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA(445),
     
     // errori spediti in buste errore
     
@@ -350,6 +356,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 440: return CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA;
 				case 441: return CodiceErroreIntegrazione.CODICE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE;
 				case 442: return CodiceErroreIntegrazione.CODICE_442_RIFERIMENTO_ID_MESSAGGIO;
+				case 443: return CodiceErroreIntegrazione.CODICE_443_TOKEN_NON_PRESENTE;
+				case 444: return CodiceErroreIntegrazione.CODICE_444_TOKEN_NON_VALIDO;
+				case 445: return CodiceErroreIntegrazione.CODICE_445_TOKEN_AUTORIZZAZIONE_FALLITA;
 				case 450: return CodiceErroreIntegrazione.CODICE_450_PA_INESISTENTE;
 				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;

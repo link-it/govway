@@ -26,7 +26,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,9 +44,13 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServletRequest;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
+import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
+import org.openspcoop2.pdd.core.token.InformazioniTokenUserInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -138,7 +144,8 @@ public class XACMLPolicyUtilities {
 		}
 	}
 
-	public static XacmlRequest newXacmlRequest(IProtocolFactory<?> protocolFactory, AbstractDatiInvocazione datiInvocazione, boolean checkRuoloRegistro, boolean checkRuoloEsterno,
+	public static XacmlRequest newXacmlRequest(IProtocolFactory<?> protocolFactory, AbstractDatiInvocazione datiInvocazione, 
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			String policyKey) throws AutorizzazioneException{
 
 		XacmlRequest xacmlRequest = new XacmlRequest();
@@ -148,14 +155,6 @@ public class XACMLPolicyUtilities {
 			throw new AutorizzazioneException("UrlProtocolContext non disponibile; risorsa richiesta dall'autorizzazione");
 		}
 		urlProtocolContext = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext();
-
-		HttpServletRequest httpServletRequest = null;
-		if(checkRuoloEsterno){
-			if(datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest()==null){
-				throw new AutorizzazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
-			}
-			httpServletRequest = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest();
-		}
 
 		if(datiInvocazione.getIdServizio()==null || 
 				datiInvocazione.getIdServizio().getSoggettoErogatore()==null ||
@@ -180,7 +179,62 @@ public class XACMLPolicyUtilities {
 		if(datiInvocazione instanceof DatiInvocazionePortaApplicativa){
 			datiPA = (DatiInvocazionePortaApplicativa) datiInvocazione;
 		}
+	
+		PdDContext pddContext = datiInvocazione.getPddContext();
+		
+		InformazioniToken informazioniTokenNormalizzate = null;
+		InformazioniTokenUserInfo informazioniTokenUserInfoNormalizzate = null;
+		Map<String, String> jwtClaims = null;
+		Map<String, String> introspectionClaims = null;
+		Map<String, String> userInfoClaims = null;
+		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+		if(oInformazioniTokenNormalizzate!=null) {
+			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+			informazioniTokenUserInfoNormalizzate = informazioniTokenNormalizzate.getUserInfo();
+		}
+		Object oTmp = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE);
+		if(oTmp!=null) {
+			EsitoGestioneToken esito = (EsitoGestioneToken) oTmp;
+			if(esito.getInformazioniToken()!=null &&
+					esito.getInformazioniToken().getClaims()!=null &&
+					esito.getInformazioniToken().getClaims().size()>0) {
+				jwtClaims = esito.getInformazioniToken().getClaims();
+			}
+		}
+		oTmp = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION);
+		if(oTmp!=null) {
+			EsitoGestioneToken esito = (EsitoGestioneToken) oTmp;
+			if(esito.getInformazioniToken()!=null &&
+					esito.getInformazioniToken().getClaims()!=null &&
+					esito.getInformazioniToken().getClaims().size()>0) {
+				introspectionClaims = esito.getInformazioniToken().getClaims();
+			}
+		}
+		oTmp = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_ESITO_USER_INFO);
+		if(oTmp!=null) {
+			EsitoGestioneToken esito = (EsitoGestioneToken) oTmp;
+			if(esito.getInformazioniToken()!=null &&
+					esito.getInformazioniToken().getClaims()!=null &&
+					esito.getInformazioniToken().getClaims().size()>0) {
+				userInfoClaims = esito.getInformazioniToken().getClaims();
+			}
+		}
+		List<String> tokenRoles = null;
+		if(informazioniTokenNormalizzate!=null) {
+			tokenRoles = informazioniTokenNormalizzate.getRoles();
+		}
+		
+		HttpServletRequest httpServletRequest = null;
+		if(checkRuoloEsterno){
+			if(datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest()==null){
+				if(tokenRoles==null) {
+					throw new AutorizzazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+				}
+			}
+			httpServletRequest = datiInvocazione.getInfoConnettoreIngresso().getUrlProtocolContext().getHttpServletRequest();
+		}
 
+		
 
 
 		// Action
@@ -237,7 +291,35 @@ public class XACMLPolicyUtilities {
 		if(protocolFactory!=null){
 			xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_PROTOCOL_ATTRIBUTE_ID, protocolFactory.getProtocol());    	
 		}
+		
+		if(informazioniTokenNormalizzate!=null) {
+			if(informazioniTokenNormalizzate.getAud()!=null) {
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_AUDIENCE_ATTRIBUTE_ID, informazioniTokenNormalizzate.getAud());
+			}
+			if(informazioniTokenNormalizzate.getScopes()!=null && informazioniTokenNormalizzate.getScopes().size()>0) {
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_SCOPE_ATTRIBUTE_ID, informazioniTokenNormalizzate.getScopes());
+			}
+		}
+		
+		if(jwtClaims!=null && jwtClaims.size()>0) {
+			Iterator<?> it = jwtClaims.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = jwtClaims.get(key);
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_JWT_CLAIMS_PREFIX+key, value);
+			}
+		}
+		
+		if(introspectionClaims!=null && introspectionClaims.size()>0) {
+			Iterator<?> it = introspectionClaims.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = introspectionClaims.get(key);
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TOKEN_INTROSPECTION_CLAIMS_PREFIX+key, value);
+			}
+		}
 
+		
 
 		// Subject
 
@@ -369,6 +451,9 @@ public class XACMLPolicyUtilities {
 						roles.add(idRuolo.getNome()); // nella xacml policy comunque inserisco l'identificativo del ruolo nel registro della PdD
 					}
 				}
+				if(tokenRoles!=null && tokenRoles.size()>0) {
+					roles.addAll(tokenRoles);
+				}
 			}
 			catch(DriverRegistroServiziNotFound notFound){
 				if(!checkRuoloRegistro) {
@@ -405,6 +490,47 @@ public class XACMLPolicyUtilities {
 		
 		if(roles!=null && roles.size()>0){
 			xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_ROLE_ATTRIBUTE_ID, roles);
+		}
+		
+		if(informazioniTokenUserInfoNormalizzate!=null) {
+			if(informazioniTokenUserInfoNormalizzate.getFullName()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_FULL_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getFullName());
+			}
+			if(informazioniTokenUserInfoNormalizzate.getFirstName()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_FIRST_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getFirstName());
+			}
+			if(informazioniTokenUserInfoNormalizzate.getMiddleName()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_MIDDLE_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getMiddleName());
+			}
+			if(informazioniTokenUserInfoNormalizzate.getFamilyName()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_FAMILY_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getFamilyName());
+			}
+			if(informazioniTokenUserInfoNormalizzate.getEMail()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_USER_INFO_EMAIL_NAME_ATTRIBUTE_ID, informazioniTokenUserInfoNormalizzate.getEMail());
+			}
+		}
+		if(informazioniTokenNormalizzate!=null) {
+			if(informazioniTokenNormalizzate.getIss()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_ISSUER_ATTRIBUTE_ID, informazioniTokenNormalizzate.getIss());
+			}
+			if(informazioniTokenNormalizzate.getSub()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_SUBJECT_ATTRIBUTE_ID, informazioniTokenNormalizzate.getSub());
+			}
+			if(informazioniTokenNormalizzate.getUsername()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_USERNAME_ATTRIBUTE_ID, informazioniTokenNormalizzate.getUsername());
+			}
+			if(informazioniTokenNormalizzate.getClientId()!=null) {
+				xacmlRequest.addSubjectAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_CLIENT_ID_ATTRIBUTE_ID, informazioniTokenNormalizzate.getClientId());
+			}
+		}
+		
+		if(userInfoClaims!=null && userInfoClaims.size()>0) {
+			Iterator<?> it = userInfoClaims.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = userInfoClaims.get(key);
+				xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_SUBJECT_TOKEN_USERINFO_CLAIMS_PREFIX+key, value);
+			}
 		}
 
 		

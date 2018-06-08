@@ -64,6 +64,12 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "esito_contesto", Transazione.model().ESITO_CONTESTO.getFieldType()));
 				setParameter(object, "setProtocollo", Transazione.model().PROTOCOLLO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "protocollo", Transazione.model().PROTOCOLLO.getFieldType()));
+				setParameter(object, "setTipoRichiesta", Transazione.model().TIPO_RICHIESTA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "tipo_richiesta", Transazione.model().TIPO_RICHIESTA.getFieldType()));
+				setParameter(object, "setCodiceRispostaIngresso", Transazione.model().CODICE_RISPOSTA_INGRESSO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "codice_risposta_ingresso", Transazione.model().CODICE_RISPOSTA_INGRESSO.getFieldType()));
+				setParameter(object, "setCodiceRispostaUscita", Transazione.model().CODICE_RISPOSTA_USCITA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "codice_risposta_uscita", Transazione.model().CODICE_RISPOSTA_USCITA.getFieldType()));
 				setParameter(object, "setDataAccettazioneRichiesta", Transazione.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_accettazione_richiesta", Transazione.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()));
 				setParameter(object, "setDataIngressoRichiesta", Transazione.model().DATA_INGRESSO_RICHIESTA.getFieldType(),
@@ -244,6 +250,12 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"esito-contesto"));
 				setParameter(object, "setProtocollo", Transazione.model().PROTOCOLLO.getFieldType(),
 					this.getObjectFromMap(map,"protocollo"));
+				setParameter(object, "setTipoRichiesta", Transazione.model().TIPO_RICHIESTA.getFieldType(),
+					this.getObjectFromMap(map,"tipo-richiesta"));
+				setParameter(object, "setCodiceRispostaIngresso", Transazione.model().CODICE_RISPOSTA_INGRESSO.getFieldType(),
+					this.getObjectFromMap(map,"codice-risposta-ingresso"));
+				setParameter(object, "setCodiceRispostaUscita", Transazione.model().CODICE_RISPOSTA_USCITA.getFieldType(),
+					this.getObjectFromMap(map,"codice-risposta-uscita"));
 				setParameter(object, "setDataAccettazioneRichiesta", Transazione.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"data-accettazione-richiesta"));
 				setParameter(object, "setDataIngressoRichiesta", Transazione.model().DATA_INGRESSO_RICHIESTA.getFieldType(),

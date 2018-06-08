@@ -474,6 +474,9 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 	SICUREZZA_CIFRATURA_ALLEGATO_NON_VALIDA(1363),
 	SICUREZZA_CIFRATURA_ALLEGATO_NON_PRESENTE(1364),
 	SICUREZZA_NON_PRESENTE(1365),
+	SICUREZZA_TOKEN_NON_PRESENTE(1366),
+	SICUREZZA_TOKEN_NON_VALIDO(1367),
+	SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA(1368),
 	
 	
 	// Allegati [code set 1400-1449]
@@ -1071,7 +1074,10 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 				CodiceErroreCooperazione.SICUREZZA_CIFRATURA_NON_PRESENTE.equals(codice) ||
 				CodiceErroreCooperazione.SICUREZZA_CIFRATURA_ALLEGATO_NON_VALIDA.equals(codice) ||
 				CodiceErroreCooperazione.SICUREZZA_CIFRATURA_ALLEGATO_NON_PRESENTE.equals(codice) ||
-				CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE.equals(codice);
+				CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE.equals(codice)  ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(codice);
 	}
 	
 	public static boolean isEccezioneMessageSecurity(CodiceErroreCooperazione codice){
@@ -1092,11 +1098,20 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 				CodiceErroreCooperazione.SICUREZZA_NON_PRESENTE.equals(codice);
 	}
 	
+	public static boolean isEccezioneSicurezzaToken(CodiceErroreCooperazione codice){
+		return	
+				CodiceErroreCooperazione.SICUREZZA.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(codice);
+	}
+	
 	public static boolean isEccezioneSicurezzaAutorizzazione(CodiceErroreCooperazione codice){
 		return	
 				CodiceErroreCooperazione.SICUREZZA.equals(codice) ||
 				CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(codice) ||
-				CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(codice);
+				CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(codice) ||
+				CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(codice);
 	}
 	
 	public static boolean isEccezioneAllegati(CodiceErroreCooperazione codice){
@@ -1545,6 +1560,9 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 			case 1363: return SICUREZZA_CIFRATURA_ALLEGATO_NON_VALIDA;
 			case 1364: return SICUREZZA_CIFRATURA_ALLEGATO_NON_PRESENTE;
 			case 1365: return SICUREZZA_NON_PRESENTE;
+			case 1366: return SICUREZZA_TOKEN_NON_PRESENTE;
+			case 1367: return SICUREZZA_TOKEN_NON_VALIDO;
+			case 1368: return SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA;
 			
 			// Allegati [code set 1400-1449]
 			case 1400: return ALLEGATI;

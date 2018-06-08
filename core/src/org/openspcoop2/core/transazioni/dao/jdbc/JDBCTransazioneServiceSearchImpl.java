@@ -149,6 +149,9 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().ESITO);
     		fields.add(Transazione.model().ESITO_CONTESTO);
     		fields.add(Transazione.model().PROTOCOLLO);
+    		fields.add(Transazione.model().TIPO_RICHIESTA);
+    		fields.add(Transazione.model().CODICE_RISPOSTA_INGRESSO);
+    		fields.add(Transazione.model().CODICE_RISPOSTA_USCITA);
     		fields.add(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA);
     		fields.add(Transazione.model().DATA_INGRESSO_RICHIESTA);
     		fields.add(Transazione.model().DATA_USCITA_RICHIESTA);
@@ -685,6 +688,9 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_CONTESTO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PROTOCOLLO,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_RICHIESTA,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CODICE_RISPOSTA_INGRESSO,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CODICE_RISPOSTA_USCITA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_INGRESSO_RICHIESTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DATA_USCITA_RICHIESTA,true));

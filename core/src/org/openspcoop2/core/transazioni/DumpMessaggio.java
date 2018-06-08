@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -73,6 +74,7 @@ import java.util.List;
   	"idTransazione",
   	"protocollo",
   	"tipoMessaggio",
+  	"formatoMessaggio",
   	"contentType",
   	"multipartContentType",
   	"multipartContentId",
@@ -146,6 +148,14 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setTipoMessaggio(org.openspcoop2.core.transazioni.constants.TipoMessaggio tipoMessaggio) {
     this.tipoMessaggio = tipoMessaggio;
+  }
+
+  public java.lang.String getFormatoMessaggio() {
+    return this.formatoMessaggio;
+  }
+
+  public void setFormatoMessaggio(java.lang.String formatoMessaggio) {
+    this.formatoMessaggio = formatoMessaggio;
   }
 
   public java.lang.String getContentType() {
@@ -372,6 +382,10 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-messaggio",required=false,nillable=false)
+  protected java.lang.String formatoMessaggio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="content-type",required=false,nillable=false)

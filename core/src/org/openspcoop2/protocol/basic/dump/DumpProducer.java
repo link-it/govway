@@ -38,6 +38,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
 import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.basic.BasicConnectionResult;
 import org.openspcoop2.protocol.basic.BasicProducer;
 import org.openspcoop2.protocol.basic.BasicProducerType;
@@ -112,6 +113,8 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 		
 		TipoMessaggio tipoMessaggio = messaggio.getTipoMessaggio();
 		
+		MessageType formatoMessaggio = messaggio.getFormatoMessaggio();
+		
 		if(this.debug){
 			this.log.debug("@@ log["+idTransazione+"]["+tipoMessaggio+"] ....");
 		}
@@ -144,8 +147,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			dumpMessaggio.setProtocollo(protocollo);
 			dumpMessaggio.setIdTransazione(idTransazione);
 			dumpMessaggio.setTipoMessaggio(tipoMessaggio);
-			
+						
 			if(this.debug){
+				this.log.debug("formato-messaggio: "+formatoMessaggio);
 				this.log.debug("gdo: "+dateformat.format(gdo));
 				this.log.debug("content-type["+messaggio.getContentType()+"]");
 				if(messaggio.getBody()==null) {
@@ -154,6 +158,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 				else {
 					this.log.debug("body: "+Utilities.convertBytesToFormatString(messaggio.getBody().length));
 				}
+			}
+			if(formatoMessaggio!=null) {
+				dumpMessaggio.setFormatoMessaggio(formatoMessaggio.name());
 			}
 			dumpMessaggio.setDumpTimestamp(gdo);
 			dumpMessaggio.setContentType(messaggio.getContentType());

@@ -11,6 +11,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -43,6 +44,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
     "idTransazione",
     "protocollo",
     "tipoMessaggio",
+    "formatoMessaggio",
     "contentType",
     "multipartContentType",
     "multipartContentId",
@@ -91,6 +93,19 @@ public class SearchFilterDumpMessaggio extends org.openspcoop2.utils.beans.BaseB
 	
 	public TipoMessaggio getTipoMessaggio(){
 		return this.tipoMessaggio;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-messaggio",required=false,nillable=false)
+	private String formatoMessaggio;
+	
+	public void setFormatoMessaggio(String formatoMessaggio){
+		this.formatoMessaggio = formatoMessaggio;
+	}
+	
+	public String getFormatoMessaggio(){
+		return this.formatoMessaggio;
 	}
 	
 	

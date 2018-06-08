@@ -9,17 +9,22 @@ public class Costanti {
 	
 	// Context
 	
+	public final static String PDD_CONTEXT_TOKEN_REALM = "PDD_CONTEXT_TOKEN_REALM";
+	public final static String PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY = "PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY";
+	public final static String PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE = "PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE";
 	public final static String PDD_CONTEXT_TOKEN_POSIZIONE = "TOKEN_POSIZIONE";
 	public final static String PDD_CONTEXT_TOKEN_ESITO_VALIDAZIONE = "TOKEN_ESITO_VALIDAZIONE";
 	public final static String PDD_CONTEXT_TOKEN_ESITO_INTROSPECTION = "TOKEN_ESITO_INTROSPECTION";
 	public final static String PDD_CONTEXT_TOKEN_ESITO_USER_INFO = "TOKEN_ESITO_USER_INFO";
+	public final static String PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE = "TOKEN_INFORMAZIONI_NORMALIZZATE";
 	public final static String MSG_CONTEXT_TOKEN_FORWARD = "TOKEN_FORWARD"; // per salvarlo con il messaggio
 	
 	
 	// Policy id
 	
 	public final static String POLICY_REALM = "policy.realm";
-	public final static String POLICY_GENERIC_ERROR = "policy.genericError";
+	public final static String POLICY_MESSAGE_ERROR_BODY_EMPTY = "policy.messageError.bodyEmpty";
+	public final static String POLICY_MESSAGE_ERROR_GENERIC_MESSAGE = "policy.messageError.genericMessage";
 	
 	public final static String POLICY_TOKEN_SOURCE = "policy.token.source";
 	public final static String POLICY_TOKEN_SOURCE_RFC6750 = "RFC6750";

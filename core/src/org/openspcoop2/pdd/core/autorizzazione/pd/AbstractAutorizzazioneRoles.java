@@ -64,7 +64,9 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     	try{
     		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
     				autorizzazioneRoles(datiInvocazione.getPd(), datiInvocazione.getServizioApplicativo(), 
-    						datiInvocazione.getInfoConnettoreIngresso(), this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
+    						datiInvocazione.getInfoConnettoreIngresso(), 
+    						this.getPddContext(),
+    						this.checkRuoloRegistro, this.checkRuoloEsterno)==false){
     			if(servizioApplicativo!=null){
 	    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
 	    					getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo));

@@ -18,6 +18,9 @@
  			<xsd:element name="esito" type="xsd:int" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-richiesta" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="codice-risposta-ingresso" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="codice-risposta-uscita" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-accettazione-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-accettazione-richiesta-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ingresso-richiesta-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />

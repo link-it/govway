@@ -104,10 +104,12 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -2269,6 +2271,7 @@ public class ConfigurazionePdDReader {
 	
 	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
 			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if( (pa == null) || pa.getRuoli()==null || pa.getRuoli().sizeRuoloList()<=0 ){
@@ -2282,11 +2285,24 @@ public class ConfigurazionePdDReader {
 		}
 		
 		HttpServletRequest httpServletRequest = null;
+		List<String> tokenRoles = null;
 		if(checkRuoloEsterno){
+			
+    		InformazioniToken informazioniTokenNormalizzate = null;
+    		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+    		if(oInformazioniTokenNormalizzate!=null) {
+    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+    		}
+    		if(informazioniTokenNormalizzate!=null) {
+    			tokenRoles = informazioniTokenNormalizzate.getRoles();
+    		}
+			
 			if(infoConnettoreIngresso==null ||
 					infoConnettoreIngresso.getUrlProtocolContext()==null ||
 					infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest()==null){
-				throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+				if(tokenRoles==null) {
+					throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+				}
 			}
 			httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
 		}
@@ -2323,7 +2339,15 @@ public class ConfigurazionePdDReader {
 				}catch(Exception e) {
 					throw new DriverConfigurazioneException("Recupero del ruolo '"+ruolo.getNome()+"' fallito: "+e.getMessage(),e);
 				}
-				if(httpServletRequest.isUserInRole(nomeRuoloDaVerificare)){
+				boolean foundInHttpServlet = false;
+				boolean foundInToken = false;
+				if(httpServletRequest!=null) {
+					foundInHttpServlet = httpServletRequest.isUserInRole(nomeRuoloDaVerificare);
+				}
+				if(tokenRoles!=null && tokenRoles.size()>0) {
+					foundInToken = tokenRoles.contains(nomeRuoloDaVerificare); 
+				}
+				if(foundInHttpServlet || foundInToken){
 					trovato = true;
 				}
 			}
@@ -2490,6 +2514,7 @@ public class ConfigurazionePdDReader {
 	
 	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
 			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
 		if( (pd == null) || pd.getRuoli()==null || pd.getRuoli().sizeRuoloList()<=0 ){
@@ -2503,11 +2528,24 @@ public class ConfigurazionePdDReader {
 		}
 		
 		HttpServletRequest httpServletRequest = null;
+		List<String> tokenRoles = null;
 		if(checkRuoloEsterno){
+			
+    		InformazioniToken informazioniTokenNormalizzate = null;
+    		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+    		if(oInformazioniTokenNormalizzate!=null) {
+    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+    		}
+    		if(informazioniTokenNormalizzate!=null) {
+    			tokenRoles = informazioniTokenNormalizzate.getRoles();
+    		}
+						
 			if(infoConnettoreIngresso==null ||
 					infoConnettoreIngresso.getUrlProtocolContext()==null ||
 					infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest()==null){
-				throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+				if(tokenRoles==null) {
+					throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+				}
 			}
 			httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
 		}
@@ -2544,7 +2582,15 @@ public class ConfigurazionePdDReader {
 				}catch(Exception e) {
 					throw new DriverConfigurazioneException("Recupero del ruolo '"+ruolo.getNome()+"' fallito: "+e.getMessage(),e);
 				}
-				if(httpServletRequest.isUserInRole(nomeRuoloDaVerificare)){
+				boolean foundInHttpServlet = false;
+				boolean foundInToken = false;
+				if(httpServletRequest!=null) {
+					foundInHttpServlet = httpServletRequest.isUserInRole(nomeRuoloDaVerificare);
+				}
+				if(tokenRoles!=null && tokenRoles.size()>0) {
+					foundInToken = tokenRoles.contains(nomeRuoloDaVerificare); 
+				}
+				if(foundInHttpServlet || foundInToken){
 					trovato = true;
 				}
 			}

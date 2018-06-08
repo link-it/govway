@@ -13,6 +13,9 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-accettazione-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-accettazione-richiesta-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-ingresso-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -103,6 +106,9 @@ import java.util.Date;
     "esito",
     "esitoContesto",
     "protocollo",
+    "tipoRichiesta",
+    "codiceRispostaIngresso",
+    "codiceRispostaUscita",
     "dataAccettazioneRichiestaMin",
     "dataAccettazioneRichiestaMax",
     "dataIngressoRichiestaMin",
@@ -233,6 +239,45 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public String getProtocollo(){
 		return this.protocollo;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-richiesta",required=false,nillable=false)
+	private String tipoRichiesta;
+	
+	public void setTipoRichiesta(String tipoRichiesta){
+		this.tipoRichiesta = tipoRichiesta;
+	}
+	
+	public String getTipoRichiesta(){
+		return this.tipoRichiesta;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="codice-risposta-ingresso",required=false,nillable=false)
+	private String codiceRispostaIngresso;
+	
+	public void setCodiceRispostaIngresso(String codiceRispostaIngresso){
+		this.codiceRispostaIngresso = codiceRispostaIngresso;
+	}
+	
+	public String getCodiceRispostaIngresso(){
+		return this.codiceRispostaIngresso;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="codice-risposta-uscita",required=false,nillable=false)
+	private String codiceRispostaUscita;
+	
+	public void setCodiceRispostaUscita(String codiceRispostaUscita){
+		this.codiceRispostaUscita = codiceRispostaUscita;
+	}
+	
+	public String getCodiceRispostaUscita(){
+		return this.codiceRispostaUscita;
 	}
 	
 	

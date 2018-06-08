@@ -80,7 +80,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 			else{
 				throw new AutorizzazioneException("Identificativo Porta non presente");
 			}
-			this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione, 
+			this.xacmlRequest = XACMLPolicyUtilities.newXacmlRequest(this.getProtocolFactory(), datiInvocazione,
 	    			this.checkRuoloRegistro, this.checkRuoloEsterno, this.policyKey);
 			this.xacmlRequestAsString = new String(MarshallUtilities.marshallRequest(this.xacmlRequest));
 			this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);

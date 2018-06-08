@@ -38,6 +38,17 @@
 			    <xsd:element name="protocollo" type="xsd:string">
 			        
 			    </xsd:element>
+				
+				<!-- Dati HTTP -->
+				<xsd:element minOccurs="0" name="tipo-richiesta" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="codice-risposta-ingresso" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="codice-risposta-uscita" type="xsd:string">
+					
+				</xsd:element>
 			    
 				<!-- Tempi di latenza -->
 				<xsd:element minOccurs="0" name="data-accettazione-richiesta" type="xsd:dateTime">
@@ -395,6 +406,9 @@
 					
 				</xsd:element>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="formato-messaggio" type="xsd:string">
 					
 				</xsd:element>
 				<xsd:element minOccurs="0" name="content-type" type="xsd:string">

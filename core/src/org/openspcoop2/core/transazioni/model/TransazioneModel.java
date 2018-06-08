@@ -46,6 +46,9 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.ESITO = new Field("esito",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new Field("esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione",Transazione.class);
+		this.TIPO_RICHIESTA = new Field("tipo-richiesta",java.lang.String.class,"transazione",Transazione.class);
+		this.CODICE_RISPOSTA_INGRESSO = new Field("codice-risposta-ingresso",java.lang.String.class,"transazione",Transazione.class);
+		this.CODICE_RISPOSTA_USCITA = new Field("codice-risposta-uscita",java.lang.String.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new Field("data-accettazione-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RICHIESTA = new Field("data-ingresso-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RICHIESTA = new Field("data-uscita-richiesta",java.util.Date.class,"transazione",Transazione.class);
@@ -130,6 +133,9 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.ESITO = new ComplexField(father,"esito",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new ComplexField(father,"esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione",Transazione.class);
+		this.TIPO_RICHIESTA = new ComplexField(father,"tipo-richiesta",java.lang.String.class,"transazione",Transazione.class);
+		this.CODICE_RISPOSTA_INGRESSO = new ComplexField(father,"codice-risposta-ingresso",java.lang.String.class,"transazione",Transazione.class);
+		this.CODICE_RISPOSTA_USCITA = new ComplexField(father,"codice-risposta-uscita",java.lang.String.class,"transazione",Transazione.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new ComplexField(father,"data-accettazione-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_INGRESSO_RICHIESTA = new ComplexField(father,"data-ingresso-richiesta",java.util.Date.class,"transazione",Transazione.class);
 		this.DATA_USCITA_RICHIESTA = new ComplexField(father,"data-uscita-richiesta",java.util.Date.class,"transazione",Transazione.class);
@@ -217,6 +223,12 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField ESITO_CONTESTO = null;
 	 
 	public IField PROTOCOLLO = null;
+	 
+	public IField TIPO_RICHIESTA = null;
+	 
+	public IField CODICE_RISPOSTA_INGRESSO = null;
+	 
+	public IField CODICE_RISPOSTA_USCITA = null;
 	 
 	public IField DATA_ACCETTAZIONE_RICHIESTA = null;
 	 

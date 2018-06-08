@@ -345,6 +345,42 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 			            </xsd:appinfo>
 			        </xsd:annotation>
 			    </xsd:element>
+				
+				<!-- Dati HTTP -->
+				<xsd:element name="tipo-richiesta" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="10"/>
+								<linkit:sql-column-comment><![CDATA[Informazioni Http]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Tipo di richiesta utilizzato nella transazione (es. HTTP GET, POST)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="codice-risposta-ingresso" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="10"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Il codice di risposta ottenuto nella fase di uscita (es. HTTP 200/404/500)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="codice-risposta-uscita" type="xsd:string" minOccurs="0" >
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="10"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Il codice di risposta ritornato al client (es. HTTP 200/404/500)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			    
 				<!-- Tempi di latenza -->
 				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0">
@@ -1469,6 +1505,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-ddl-column-comment>Ruolo del messaggio all'interno della transazione</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="formato-messaggio" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di messaggio (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

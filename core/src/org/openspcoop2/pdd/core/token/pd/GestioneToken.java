@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.core.token.pd;
 import org.openspcoop2.pdd.core.token.AbstractDatiInvocazione;
 import org.openspcoop2.pdd.core.token.EsitoGestioneToken;
 import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -55,6 +56,11 @@ public class GestioneToken {
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
     	}
+    	else if(esito.isPresente()==false) {
+    		if(esito.getErrorMessage()==null) {
+    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_443_TOKEN_NON_PRESENTE.getErroreIntegrazione());
+    		}
+    	}
     	
     	return esito;
     	
@@ -68,6 +74,11 @@ public class GestioneToken {
         	if(esito.getEccezioneProcessamento()!=null) {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
+        	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_444_TOKEN_NON_VALIDO.getErroreIntegrazione());
+        		}
         	}
         	
         	return esito;
@@ -86,6 +97,11 @@ public class GestioneToken {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
         	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_444_TOKEN_NON_VALIDO.getErroreIntegrazione());
+        		}
+        	}
         	
         	return esito;
     		
@@ -103,6 +119,11 @@ public class GestioneToken {
         		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
     					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_560_GESTIONE_TOKEN));
         	}
+        	else if(esito.isValido()==false) {
+        		if(esito.getErrorMessage()==null) {
+        			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_444_TOKEN_NON_VALIDO.getErroreIntegrazione());
+        		}
+        	}
         	
         	return esito;
     		
@@ -112,12 +133,14 @@ public class GestioneToken {
 	}
 	
 	public void forwardToken(AbstractDatiInvocazione datiInvocazione, EsitoPresenzaTokenPortaDelegata esitoPresenzaToken,
-			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo) throws TokenException {
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
+			InformazioniToken informazioniTokenNormalizzate) throws TokenException {
 		try {
         	
     		GestoreToken.forwardToken(this.log, this.idTransazione,
     				datiInvocazione, esitoPresenzaToken, 
     				esitoValidazioneJWT, esitoIntrospection, esitoUserInfo,
+    				informazioniTokenNormalizzate,
     				GestoreToken.PORTA_DELEGATA);
     		
     	}catch(Exception e) {

@@ -1,4 +1,4 @@
-package org.openspcoop2.pdd.core.token;
+package org.openspcoop2.message.utils;
 
 import java.util.Properties;
 
@@ -11,12 +11,35 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 
 public class WWWAuthenticateGenerator {
 	
-	public static OpenSPCoop2Message buildErrorMessage(ErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
+	public static OpenSPCoop2Message buildErrorMessage(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
 		
 		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
 		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto
+		forcedResponseMessage.setResponseCode(getReturnCode(errorCode)+"");	
+		forcedResponseMessage.setHeaders(new Properties());
+		String headerValue = buildHeaderValue(errorCode, realm, genericError, error, scope);
+		forcedResponseMessage.getHeaders().put(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, headerValue);
+		errorMessage.forceResponse(forcedResponseMessage);
+		
+		return errorMessage;
+	}
+	
+	public static int getReturnCode(WWWAuthenticateErrorCode errorCode) {
+		switch (errorCode) {
+		case invalid_request:
+			return 400;
+		case invalid_token:
+			return 401;
+		case insufficient_scope:
+			return 403;
+		}
+		return 500;
+	}
+	
+	public static String buildHeaderValue(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
+		
 		StringBuffer bf = new StringBuffer(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
 		bf.append("realm=\"");
 		bf.append(realm);
@@ -28,19 +51,16 @@ public class WWWAuthenticateGenerator {
 		}
 		switch (errorCode) {
 		case invalid_request:
-			forcedResponseMessage.setResponseCode("400");
 			if(genericError) {
 				bf.append("The request is missing a required token parameter");
 			}
 			break;
 		case invalid_token:
-			forcedResponseMessage.setResponseCode("401");
 			if(genericError) {
 				bf.append("Token invalid");
 			}
 			break;
 		case insufficient_scope:
-			forcedResponseMessage.setResponseCode("403");
 			if(genericError) {
 				bf.append("The request requires higher privileges than provided by the access token");
 			}
@@ -58,36 +78,8 @@ public class WWWAuthenticateGenerator {
 			bf.append("\"");
 		}
 		
-		forcedResponseMessage.setHeaders(new Properties());
-		forcedResponseMessage.getHeaders().put(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, bf.toString());
-		errorMessage.forceResponse(forcedResponseMessage);
-		
-		return errorMessage;
+		return bf.toString();
 	}
 	
-	
 }
 
-enum ErrorCode {
-	
-	 invalid_request,
-//     The request is missing a required parameter, includes an
-//     unsupported parameter or parameter value, repeats the same
-//     parameter, uses more than one method for including an access
-//     token, or is otherwise malformed.  The resource server SHOULD
-//     respond with the HTTP 400 (Bad Request) status code.
-
-	 invalid_token,
-//     The access token provided is expired, revoked, malformed, or
-//     invalid for other reasons.  The resource SHOULD respond with
-//     the HTTP 401 (Unauthorized) status code.  The client MAY
-//     request a new access token and retry the protected resource
-//     request.
-
-	 insufficient_scope;
-//     The request requires higher privileges than provided by the
-//     access token.  The resource server SHOULD respond with the HTTP
-//     403 (Forbidden) status code and MAY include the "scope"
-//     attribute with the scope necessary to access the protected
-//     resource.
-}

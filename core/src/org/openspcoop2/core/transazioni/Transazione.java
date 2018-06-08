@@ -44,6 +44,9 @@ import java.util.List;
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-accettazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-ingresso-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-uscita-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
@@ -134,6 +137,9 @@ import java.util.List;
   	"esito",
   	"esitoContesto",
   	"protocollo",
+  	"tipoRichiesta",
+  	"codiceRispostaIngresso",
+  	"codiceRispostaUscita",
   	"dataAccettazioneRichiesta",
   	"dataIngressoRichiesta",
   	"dataUscitaRichiesta",
@@ -274,6 +280,30 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setProtocollo(java.lang.String protocollo) {
     this.protocollo = protocollo;
+  }
+
+  public java.lang.String getTipoRichiesta() {
+    return this.tipoRichiesta;
+  }
+
+  public void setTipoRichiesta(java.lang.String tipoRichiesta) {
+    this.tipoRichiesta = tipoRichiesta;
+  }
+
+  public java.lang.String getCodiceRispostaIngresso() {
+    return this.codiceRispostaIngresso;
+  }
+
+  public void setCodiceRispostaIngresso(java.lang.String codiceRispostaIngresso) {
+    this.codiceRispostaIngresso = codiceRispostaIngresso;
+  }
+
+  public java.lang.String getCodiceRispostaUscita() {
+    return this.codiceRispostaUscita;
+  }
+
+  public void setCodiceRispostaUscita(java.lang.String codiceRispostaUscita) {
+    this.codiceRispostaUscita = codiceRispostaUscita;
   }
 
   public java.util.Date getDataAccettazioneRichiesta() {
@@ -930,6 +960,18 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="protocollo",required=true,nillable=false)
   protected java.lang.String protocollo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-richiesta",required=false,nillable=false)
+  protected java.lang.String tipoRichiesta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="codice-risposta-ingresso",required=false,nillable=false)
+  protected java.lang.String codiceRispostaIngresso;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="codice-risposta-uscita",required=false,nillable=false)
+  protected java.lang.String codiceRispostaUscita;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

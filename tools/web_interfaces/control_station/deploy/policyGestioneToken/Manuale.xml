@@ -19,8 +19,11 @@
 			<property name="policy.realm" force="true"/>
 		</item>
 		-->
+		<item type="hidden" name="policyForceEmptyMessageError" value="true">
+			<property name="policy.messageError.bodyEmpty" force="true"/>
+		</item>
 		<item type="hidden" name="policyGenericError" value="true">
-			<property name="policy.genericError" force="true"/>
+			<property name="policy.messageError.genericMessage" force="true"/>
 		</item>
 				
 		<subsection label="Token">
@@ -832,7 +835,7 @@
 			<item type="select" name="tokenForwardInfoRaccolteModeJWSSignature" label="Signature Algorithm" required="true">
 				<conditions and="true">
 					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/
+						<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 					</condition>
 				</conditions>
@@ -1061,7 +1064,7 @@
 
 			<conditions and="true">
 				<condition and="false">
-					<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/
+					<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/>
 					<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 				</condition>
 			</conditions>

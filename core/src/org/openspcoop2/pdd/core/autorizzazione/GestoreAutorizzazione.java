@@ -22,13 +22,18 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.ScopeTipoMatch;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
+import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -38,8 +43,12 @@ import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativ
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -283,11 +292,37 @@ public class GestoreAutorizzazione {
 	
 
 	// NOTA: le chiamate ad autorizzazione per contenuto non possono essere cachete, poiche' variano sempre i contenuti.
-
-    public static EsitoAutorizzazionePortaDelegata verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
- 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+	public static EsitoAutorizzazionePortaDelegata verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
+	 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+		
+		checkDatiPortaDelegata(datiInvocazione);
     	
-    	checkDatiPortaDelegata(datiInvocazione);
+		EsitoAutorizzazionePortaDelegata esito = _verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, msg);
+    	if(esito.isAutorizzato()==false) {
+    		return esito;
+    	}
+		
+		// Verifica scopes
+    	
+    	AutorizzazioneScope authScope = null;
+    	if(datiInvocazione.getPd()!=null) {
+    		authScope = datiInvocazione.getPd().getScope();
+    	}
+    	if(authScope!=null && authScope.sizeScopeList()>0) {
+    		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
+    		if(esito.isAutorizzato()==false) {
+    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+        	}
+    		return esitoNew;
+    	}
+    	else {	
+    		return esito;
+    	}
+    	
+	}
+	
+    private static EsitoAutorizzazionePortaDelegata _verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
+ 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	
     	IAutorizzazionePortaDelegata auth = newInstanceAuthPortaDelegata(tipoAutorizzazione, pddContext, protocolFactory);
     	
@@ -350,6 +385,35 @@ public class GestoreAutorizzazione {
     		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
+    
+    	EsitoAutorizzazionePortaApplicativa esito = _verificaAutorizzazionePortaApplicativa(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, msg);
+    	if(esito.isAutorizzato()==false) {
+    		return esito;
+    	}
+    	
+    	// Verifica scopes
+    	
+    	AutorizzazioneScope authScope = null;
+    	if(datiInvocazione.getPa()!=null) {
+    		authScope = datiInvocazione.getPa().getScope();
+    	}
+    	else {
+    		authScope = datiInvocazione.getPd().getScope();
+    	}
+    	if(authScope!=null && authScope.sizeScopeList()>0) {
+    		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
+    		if(esito.isAutorizzato()==false) {
+    			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+        	}
+    		return esitoNew;
+    	}
+    	else {	
+    		return esito;
+    	}
+    	
+    }
+    private static EsitoAutorizzazionePortaApplicativa _verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
     	
     	IAutorizzazionePortaApplicativa auth = newInstanceAuthPortaApplicativa(tipoAutorizzazione, pddContext, protocolFactory);
     	
@@ -521,5 +585,88 @@ public class GestoreAutorizzazione {
 		}
     }
     
+    private static EsitoAutorizzazione autorizzazioneScope(AutorizzazioneScope authScope, EsitoAutorizzazione esito, 
+    		PdDContext pddContext, AbstractDatiInvocazione datiInvocazione) throws Exception {
+    	if(authScope!=null && authScope.sizeScopeList()>0) {
+    		
+    		InformazioniToken informazioniTokenNormalizzate = null;
+    		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+    		if(oInformazioniTokenNormalizzate!=null) {
+    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+    		}
+    		boolean autorizzato = true;
+    		String errorMessage = null;
+    		if(informazioniTokenNormalizzate.getScopes()==null || informazioniTokenNormalizzate.getScopes().size()<=0) {
+    			errorMessage = "Token without scopes";
+    			autorizzato = false;
+    		}
+    		else {
+	    		boolean foundAlmostOne = false;
+	    		for (Scope scope : authScope.getScopeList()) {
+					org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(scope.getNome(),null);
+					String nomeScope = scopeOp2Registry.getNome();
+					if(scopeOp2Registry.getNomeEsterno()!=null) {
+						nomeScope = scopeOp2Registry.getNomeEsterno();
+					}
+					if(informazioniTokenNormalizzate.getScopes().contains(nomeScope)==false) {
+						if(ScopeTipoMatch.ALL.equals(authScope.getMatch())) {
+							autorizzato = false;
+							errorMessage = "Scope '"+nomeScope+"' not found";
+							break;
+						}
+					}
+					else {
+						foundAlmostOne = true;
+					}
+				}
+	    		if(!foundAlmostOne) {
+	    			autorizzato = false;
+	    			errorMessage = "Scopes not found";
+	    		}
+    		}
+    		
+    		if(!autorizzato) {
+    		
+    			String realm = "OpenSPCoop";
+    			Object oRealm = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY);
+        		if(oRealm!=null) {
+        			realm = (String) oRealm;
+        		}
+    			
+    			boolean emptyMessage = false;
+    			Object oEmptyMessage = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY);
+        		if(oEmptyMessage!=null) {
+        			emptyMessage = (Boolean) oEmptyMessage;
+        		}
+        		
+        		boolean genericMessage = false;
+    			Object oGenericMessage = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE);
+        		if(oGenericMessage!=null) {
+        			genericMessage = (Boolean) oGenericMessage;
+        		}
+    			
+        		String [] scopes = new String[authScope.sizeScopeList()];
+        		for (int i = 0; i < authScope.sizeScopeList(); i++) {
+        			org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(authScope.getScope(i).getNome(),null);
+					String nomeScope = scopeOp2Registry.getNome();
+					if(scopeOp2Registry.getNomeEsterno()!=null) {
+						nomeScope = scopeOp2Registry.getNomeEsterno();
+					}
+					scopes[i] = nomeScope;
+        		}
+        		
+        		if(emptyMessage) {
+        			esito.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage, scopes));
+        		}
+        		else {
+        			esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage, scopes));
+        		}
+    		}
+    		
+    		
+    	}
+    	
+    	return esito;
+    }
 
 }

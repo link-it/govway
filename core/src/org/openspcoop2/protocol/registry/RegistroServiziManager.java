@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
@@ -56,6 +58,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -286,6 +289,16 @@ public class RegistroServiziManager {
 	public Ruolo getRuolo(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
 	}
+	public Ruolo getRuolo(IDRuolo idRuolo,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getRuolo(idRuolo.getNome(), nomeRegistro);
+	}
+	
+	public Scope getScope(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getScope(this.getConnection(), nome, nomeRegistro);
+	}
+	public Scope getScope(IDScope idScope,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getScope(idScope.getNome(), nomeRegistro);
+	}
 
 	public Soggetto getSoggetto(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
@@ -313,6 +326,10 @@ public class RegistroServiziManager {
 
 	public List<IDRuolo> getAllIdRuoli(FiltroRicercaRuoli filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllIdRuoli(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDScope> getAllIdScope(FiltroRicercaScope filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdScope(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 	
 	public List<IDSoggetto> getAllIdSoggetti(FiltroRicercaSoggetti filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{

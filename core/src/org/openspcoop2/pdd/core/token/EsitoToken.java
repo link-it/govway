@@ -53,8 +53,15 @@ public abstract class EsitoToken implements java.io.Serializable {
 	private boolean noCache = false;
 	
 	private OpenSPCoop2Message errorMessage;
+	private String wwwAuthenticateErrorHeader;
 	
 	
+	public String getWwwAuthenticateErrorHeader() {
+		return this.wwwAuthenticateErrorHeader;
+	}
+	public void setWwwAuthenticateErrorHeader(String wwwAuthenticateErrorHeader) {
+		this.wwwAuthenticateErrorHeader = wwwAuthenticateErrorHeader;
+	}
 	public OpenSPCoop2Message getErrorMessage() {
 		return this.errorMessage;
 	}

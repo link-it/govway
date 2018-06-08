@@ -21,6 +21,10 @@ CREATE TABLE transazioni
 	esito_contesto VARCHAR2(20),
 	-- Protocollo utilizzato per la transazione
 	protocollo VARCHAR2(20) NOT NULL,
+	-- Informazioni Http
+	tipo_richiesta VARCHAR2(10),
+	codice_risposta_ingresso VARCHAR2(10),
+	codice_risposta_uscita VARCHAR2(10),
 	-- Tempi di latenza
 	data_accettazione_richiesta TIMESTAMP,
 	data_ingresso_richiesta TIMESTAMP,
@@ -196,6 +200,7 @@ CREATE TABLE dump_messaggi
 	id_transazione VARCHAR2(255) NOT NULL,
 	protocollo VARCHAR2(20) NOT NULL,
 	tipo_messaggio VARCHAR2(255) NOT NULL,
+	formato_messaggio VARCHAR2(20),
 	content_type VARCHAR2(255),
 	multipart_content_type VARCHAR2(255),
 	multipart_content_id VARCHAR2(255),

@@ -25,6 +25,8 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+
 
 /**
  * Esito di un processo di autorizzazione.
@@ -50,6 +52,25 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	private Exception eccezioneProcessamento;
 	
 	private boolean noCache = false;
+	
+	private OpenSPCoop2Message errorMessage;
+	private String wwwAuthenticateErrorHeader;
+	
+	
+	public String getWwwAuthenticateErrorHeader() {
+		return this.wwwAuthenticateErrorHeader;
+	}
+	public void setWwwAuthenticateErrorHeader(String wwwAuthenticateErrorHeader) {
+		this.wwwAuthenticateErrorHeader = wwwAuthenticateErrorHeader;
+	}
+	
+	
+	public OpenSPCoop2Message getErrorMessage() {
+		return this.errorMessage;
+	}
+	public void setErrorMessage(OpenSPCoop2Message errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 		
 	/**
 	 * Ritorna l'indicazione se e' autorizzato

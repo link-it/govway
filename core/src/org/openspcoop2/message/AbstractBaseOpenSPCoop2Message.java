@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -75,6 +76,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	/* Trasporto */	
 	public TransportRequestContext transportRequestContext;
 	public TransportResponseContext transportResponseContext;	
+	public Map<String, String> forceTransportHeaders = new HashMap<>();
+	public Map<String, String> forceUrlProperties = new HashMap<>();
 	public OpenSPCoop2MessageProperties forwardTransportHeader = new OpenSPCoop2MessageProperties();
 	public OpenSPCoop2MessageProperties forwardUrlProperties = new OpenSPCoop2MessageProperties();
 		
@@ -637,7 +640,33 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		return this.transportResponseContext;
 	}
 	@Override
+	public void forceTransportHeader(String name, String value) {
+		this.forceTransportHeaders.put(name, value);
+	}
+	@Override
+	public void forceUrlProperty(String name, String value) {
+		this.forceUrlProperties.put(name, value);
+	}
+	@Override
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{
+		OpenSPCoop2MessageProperties msg = this._getForwardTransportHeader(forwardConfig);
+		if(msg==null) {
+			msg = new OpenSPCoop2MessageProperties();			
+		}
+		if(this.forwardTransportHeader!=null && this.forceTransportHeaders.size()>0) {
+			Iterator<String> it = this.forceTransportHeaders.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = this.forceTransportHeaders.get(key);
+				msg.removeProperty(key);
+				msg.removeProperty(key.toLowerCase());
+				msg.removeProperty(key.toUpperCase());
+				msg.addProperty(key, value);
+			}
+		}
+		return msg;
+	}
+	protected OpenSPCoop2MessageProperties _getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException{
 		try{
 			if(forwardConfig==null || forwardConfig.isForwardEnable()==false) {
 				return this.forwardTransportHeader;
@@ -671,6 +700,24 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	
 	@Override
 	public OpenSPCoop2MessageProperties getForwardUrlProperties(ForwardConfig forwardConfig) throws MessageException{
+		OpenSPCoop2MessageProperties msg = this._getForwardUrlProperties(forwardConfig);
+		if(msg==null) {
+			msg = new OpenSPCoop2MessageProperties();			
+		}
+		if(this.forceUrlProperties!=null && this.forceUrlProperties.size()>0) {
+			Iterator<String> it = this.forceUrlProperties.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				String value = this.forceUrlProperties.get(key);
+				msg.removeProperty(key);
+				msg.removeProperty(key.toLowerCase());
+				msg.removeProperty(key.toUpperCase());
+				msg.addProperty(key, value);
+			}
+		}
+		return msg;
+	}
+	protected OpenSPCoop2MessageProperties _getForwardUrlProperties(ForwardConfig forwardConfig) throws MessageException{
 		try{
 			if(forwardConfig==null || forwardConfig.isForwardEnable()==false) {
 				return this.forwardUrlProperties;

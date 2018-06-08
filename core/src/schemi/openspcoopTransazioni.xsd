@@ -27,6 +27,11 @@
 								    
 			    <!-- Protocollo della transazione -->
 			    <xsd:element name="protocollo" type="xsd:string" />
+				
+				<!-- Dati HTTP -->
+				<xsd:element name="tipo-richiesta" type="xsd:string" minOccurs="0" />
+				<xsd:element name="codice-risposta-ingresso" type="xsd:string" minOccurs="0" />
+				<xsd:element name="codice-risposta-uscita" type="xsd:string" minOccurs="0" />
 			    
 				<!-- Tempi di latenza -->
 				<xsd:element name="data-accettazione-richiesta" type="xsd:dateTime" minOccurs="0"/>
@@ -210,6 +215,7 @@
 				<xsd:element name="id-transazione" type="xsd:string"/>
 				<xsd:element name="protocollo" type="xsd:string" />
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
+				<xsd:element name="formato-messaggio" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="content-type" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="multipart-content-type" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="multipart-content-id" type="xsd:string" minOccurs="0"/>

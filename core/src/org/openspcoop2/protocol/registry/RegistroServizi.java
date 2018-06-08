@@ -42,6 +42,7 @@ import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -54,6 +55,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
@@ -70,6 +72,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -946,6 +949,54 @@ public class RegistroServizi  {
 				}
 			}
 			
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero scope ...";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+			List<IDScope> listScope = null;
+			try{
+				listScope = this.driverRegistroServizi.get(nomeRegistro).getAllIdScope(filtroScope);
+			}
+			catch(DriverRegistroServiziNotFound notFound){}
+			catch(DriverRegistroServiziException e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+			
+			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recuperati "+(listScope!=null ? listScope.size() : 0)+" scope";
+			this.log.debug(msg);
+			if(alogConsole!=null){
+				alogConsole.debug(msg);
+			}
+			
+			if(listScope!=null && listScope.size()>0){
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listScope.size()+" scope ...";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+				
+				for (IDScope idScope : listScope) {
+					
+					try{
+						this.cache.remove(_getKey_getScope(idScope.getNome()));
+						this.getScope(connectionPdD, nomeRegistro, idScope.getNome());
+					}
+					catch(DriverRegistroServiziNotFound notFound){}
+					catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+					
+				}
+				
+				msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], lettura di "+listScope.size()+" scope completata";
+				this.log.debug(msg);
+				if(alogConsole!=null){
+					alogConsole.debug(msg);
+				}
+			}
+			
+			
 			msg = "[Prefill] Inizializzazione cache (RegistroServizi) per il registro ["+nomeRegistro+"], recupero soggetti ...";
 			this.log.debug(msg);
 			if(alogConsole!=null){
@@ -1770,8 +1821,6 @@ public class RegistroServizi  {
 		else
 			throw new DriverRegistroServiziNotFound("[getPortaDominio] Porta di dominio ["+nomePdD+"] non Trovata");
 
-
-
 	}
 	
 	
@@ -1817,7 +1866,50 @@ public class RegistroServizi  {
 		else
 			throw new DriverRegistroServiziNotFound("[getRuolo] Ruolo ["+nomeRuolo+"] non trovato");
 
+	}
+	
+	
+	private String _getKey_getScope(String nomeScope) throws DriverRegistroServiziException{
+		return "getScope_" + nomeScope;
+	}
+	public org.openspcoop2.core.registry.Scope getScope(Connection connectionPdD,String nomeRegistro,String nomeScope) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		// Raccolta dati
+		if(nomeScope == null)
+			throw new DriverRegistroServiziException("[getScope]: Parametro non definito");	
+		IDScope idScope = new IDScope(nomeScope);
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = this._getKey_getScope(nomeScope);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Scope) response.getObject());
+				}
+			}
+		}
 
+
+		// Algoritmo CACHE
+		Scope scope = null;
+		if(this.cache!=null){
+			scope = (Scope) this.getObjectCache(key,"getScope",nomeRegistro,null,connectionPdD,idScope);
+		}else{
+			scope = (Scope) this.getObject("getScope",nomeRegistro,null,connectionPdD,idScope);
+		}
+
+		if(scope!=null)
+			return scope;
+		else
+			throw new DriverRegistroServiziNotFound("[getScope] Scope ["+nomeScope+"] non trovato");
 
 	}
 	
@@ -2183,6 +2275,11 @@ public class RegistroServizi  {
 	@SuppressWarnings("unchecked")
 	public List<IDRuolo> getAllIdRuoli(Connection connectionPdD,String nomeRegistro,FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return (List<IDRuolo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdRuoli");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDScope> getAllIdScope(Connection connectionPdD,String nomeRegistro,FiltroRicercaScope filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDScope>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdScope");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -76,6 +76,8 @@ public interface OpenSPCoop2Message {
 	public TransportRequestContext getTransportRequestContext();
 	public void setTransportResponseContext(TransportResponseContext transportResponseContext);
 	public TransportResponseContext getTransportResponseContext();
+	public void forceTransportHeader(String name, String value);
+	public void forceUrlProperty(String name, String value);
 	public OpenSPCoop2MessageProperties getForwardTransportHeader(ForwardConfig forwardConfig) throws MessageException;
 	public OpenSPCoop2MessageProperties getForwardUrlProperties(ForwardConfig forwardConfig) throws MessageException;
 	

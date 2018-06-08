@@ -70,6 +70,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -604,8 +605,10 @@ public class ConfigurazionePdDManager {
 	}
 	
 	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pa, soggetto, infoConnettoreIngresso, checkRuoloRegistro, checkRuoloEsterno);
+		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pa, soggetto, infoConnettoreIngresso, 
+				pddContext, checkRuoloRegistro, checkRuoloEsterno);
 	}
 	
 	public boolean isPortaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -650,8 +653,10 @@ public class ConfigurazionePdDManager {
 	}
 	
 	public boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, checkRuoloRegistro, checkRuoloEsterno);
+		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
+				pddContext, checkRuoloRegistro, checkRuoloEsterno);
 	}
 
 	public void aggiornaProprietaGestioneErrorePD(ProprietaErroreApplicativo gestioneErrore, ServizioApplicativo sa) throws DriverConfigurazioneException {

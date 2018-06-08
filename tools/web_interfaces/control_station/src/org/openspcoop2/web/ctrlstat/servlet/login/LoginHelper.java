@@ -22,13 +22,10 @@ package org.openspcoop2.web.ctrlstat.servlet.login;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**

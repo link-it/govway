@@ -108,6 +108,27 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "protocollo";
 			}
 		}
+		if(field.equals(Transazione.model().TIPO_RICHIESTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".tipo_richiesta";
+			}else{
+				return "tipo_richiesta";
+			}
+		}
+		if(field.equals(Transazione.model().CODICE_RISPOSTA_INGRESSO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".codice_risposta_ingresso";
+			}else{
+				return "codice_risposta_ingresso";
+			}
+		}
+		if(field.equals(Transazione.model().CODICE_RISPOSTA_USCITA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".codice_risposta_uscita";
+			}else{
+				return "codice_risposta_uscita";
+			}
+		}
 		if(field.equals(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_accettazione_richiesta";
@@ -598,11 +619,25 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "id_transazione";
 			}
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.PROTOCOLLO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".protocollo";
+			}else{
+				return "protocollo";
+			}
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.TIPO_MESSAGGIO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_messaggio";
 			}else{
 				return "tipo_messaggio";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.FORMATO_MESSAGGIO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_messaggio";
+			}else{
+				return "formato_messaggio";
 			}
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_TYPE)){
@@ -860,6 +895,15 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().PROTOCOLLO)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
+		if(field.equals(Transazione.model().TIPO_RICHIESTA)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().CODICE_RISPOSTA_INGRESSO)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().CODICE_RISPOSTA_USCITA)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
 		if(field.equals(Transazione.model().DATA_ACCETTAZIONE_RICHIESTA)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
@@ -1070,7 +1114,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ID_TRANSAZIONE)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.PROTOCOLLO)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.TIPO_MESSAGGIO)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.FORMATO_MESSAGGIO)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENT_TYPE)){

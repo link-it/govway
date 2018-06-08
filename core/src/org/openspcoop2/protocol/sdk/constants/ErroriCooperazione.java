@@ -131,7 +131,16 @@ public enum ErroriCooperazione {
 			CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO),
 			
 	ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO("E' stato rilevata una violazione per quanto concerne le informazioni richieste del protocollo in gestione",
-			CodiceErroreCooperazione.FORMATO_NON_CORRETTO);
+			CodiceErroreCooperazione.FORMATO_NON_CORRETTO),
+	
+	TOKEN_NON_PRESENTE("Token non presente",
+			CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE),
+	
+	TOKEN_NON_VALIDO("Token non valido",
+			CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO),
+	
+	TOKEN_AUTORIZZAZIONE_FALLITA("La richiesta presenta un token non sufficente per fruire del servizio richiesto",
+			CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA);
 	
 	private final String descrizione;
 	private final CodiceErroreCooperazione codiceErrore;

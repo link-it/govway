@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -33,11 +34,20 @@ import org.openspcoop2.protocol.sdk.state.IState;
  */
 public abstract class AbstractDatiInvocazione {
 
+	private PdDContext pddContext;
+	
 	private InfoConnettoreIngresso infoConnettoreIngresso;
 	
 	private IDServizio idServizio;
 	
 	private IState state;
+	
+	public PdDContext getPddContext() {
+		return this.pddContext;
+	}
+	public void setPddContext(PdDContext pddContext) {
+		this.pddContext = pddContext;
+	}
 	
 	public InfoConnettoreIngresso getInfoConnettoreIngresso() {
 		return this.infoConnettoreIngresso;

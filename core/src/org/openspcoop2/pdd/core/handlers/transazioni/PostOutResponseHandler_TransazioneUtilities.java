@@ -130,6 +130,16 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			// ** protocollo **
 			transactionDTO.setProtocollo(context.getProtocolFactory().getProtocol());
 
+			
+			// ** header HTTP **
+			if(transaction.getRequestInfo()!=null && 
+					transaction.getRequestInfo().getProtocolContext()!=null &&
+					transaction.getRequestInfo().getProtocolContext().getRequestType()!=null) {
+				transactionDTO.setTipoRichiesta(transaction.getRequestInfo().getProtocolContext().getRequestType());
+			}
+			transactionDTO.setCodiceRispostaIngresso(transaction.getCodiceTrasportoRichiesta());
+			if(context.getReturnCode()>0)
+				transactionDTO.setCodiceRispostaUscita(context.getReturnCode()+"");
 
 			// ** Tempi di latenza **
 

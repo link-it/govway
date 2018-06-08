@@ -21,6 +21,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
+import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
@@ -423,8 +425,14 @@ public class GestoreToken {
 				else {
 					esitoPresenzaToken.setDetails("Token non individuato tramite la configurazione indicata");	
 				}
-    			esitoPresenzaToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_request, policyGestioneToken.getRealm(), 
-    					policyGestioneToken.isGenericError(), esitoPresenzaToken.getDetails()));   			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+	    			esitoPresenzaToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_request, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoPresenzaToken.getDetails()));   			
+    			}
+    			else {
+    				esitoPresenzaToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_request, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoPresenzaToken.getDetails()));
+    			}
     		}
     		
     	}catch(Exception e){
@@ -576,8 +584,14 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
-    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-    					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
+    			} 			
     		}
     		
 		}catch(Exception e){
@@ -712,8 +726,14 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
-    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-    					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
+    			} 	
     		}
     		
 		}catch(Exception e){
@@ -848,8 +868,14 @@ public class GestoreToken {
 				else {
 					esitoGestioneToken.setDetails("Token non valido");	
 				}
-    			esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-    					policyGestioneToken.isGenericError(), esitoGestioneToken.getDetails()));   			
+    			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+    				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));   			
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					policyGestioneToken.isMessageErrorGenerateGenericMessage(), esitoGestioneToken.getDetails()));
+    			} 		
     		}
     		
 		}catch(Exception e){
@@ -869,6 +895,7 @@ public class GestoreToken {
 	
 	public static void forwardToken(Logger log, String idTransazione, AbstractDatiInvocazione datiInvocazione, EsitoPresenzaToken esitoPresenzaToken, 
 			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
+			InformazioniToken informazioniTokenNormalizzate,
 			boolean portaDelegata) throws Exception {
 		
 		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
@@ -981,7 +1008,9 @@ public class GestoreToken {
 			
 			// Forward informazioni raccolte
 			
-			_forwardInfomazioniRaccolte(portaDelegata, idTransazione, token, tokenForward, esitoValidazioneJWT, esitoIntrospection, esitoUserInfo, 
+			_forwardInfomazioniRaccolte(portaDelegata, idTransazione, token, tokenForward, 
+					esitoValidazioneJWT, esitoIntrospection, esitoUserInfo, 
+					informazioniTokenNormalizzate,
 					forwardInforRaccolteMode, jwtSecurity, encodeBase64, 
 					forwardValidazioneJWT, forwardValidazioneJWT_mode, forwardValidazioneJWT_name,
 					forwardIntrospection, forwardIntrospection_mode, forwardIntrospection_name,
@@ -1107,22 +1136,20 @@ public class GestoreToken {
 	}
 	
 	private static void _forwardInfomazioniRaccolte(boolean portaDelegata, String idTransazione, String token, TokenForward tokenForward,
-			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo, 
+			EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo,
+			InformazioniToken informazioniTokenNormalizzate,
 			String forwardInforRaccolteMode, Properties jwtSecurity, boolean encodeBase64,
 			boolean forwardValidazioneJWT, String forwardValidazioneJWT_mode, String forwardValidazioneJWT_name,
 			boolean forwardIntrospection, String forwardIntrospection_mode, String forwardIntrospection_name,
 			boolean forwardUserInfo, String forwardUserInfo_mode, String forwardUserInfo_name) throws Exception {
 		
-		List<InformazioniToken> list = getInformazioniTokenValide(esitoValidazioneJWT, esitoIntrospection, esitoUserInfo);
-		if(list.size()<=0) {
-			return; // può succedere nei casi warning only
+		if(informazioniTokenNormalizzate==null) {
+			return; // può succedere nei casi warning only, significa che non vi sono token validi
 		}
 		
 		if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode) ||
 				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JSON.equals(forwardInforRaccolteMode) ||
 				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInforRaccolteMode)) {
-			InformazioniToken normalized = 
-					_normalizeInformazioniToken(list);
 			
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 			java.util.Properties headerNames = null;
@@ -1156,115 +1183,115 @@ public class GestoreToken {
 				jsonNode.put("id", idTransazione);
 			}
 			
-			if(normalized.getIss()!=null) {
+			if(informazioniTokenNormalizzate.getIss()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER), normalized.getIss());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUER), informazioniTokenNormalizzate.getIss());
 					}
 					else {
-						jsonNode.put("issuer", normalized.getIss());
+						jsonNode.put("issuer", informazioniTokenNormalizzate.getIss());
 					}
 				}
 			}
-			if(normalized.getSub()!=null) {
+			if(informazioniTokenNormalizzate.getSub()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT), normalized.getSub());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SUBJECT), informazioniTokenNormalizzate.getSub());
 					}
 					else {
-						jsonNode.put("subject", normalized.getSub());
+						jsonNode.put("subject", informazioniTokenNormalizzate.getSub());
 					}
 				}
 			}
-			if(normalized.getUsername()!=null) {
+			if(informazioniTokenNormalizzate.getUsername()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME), normalized.getUsername());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_USERNAME), informazioniTokenNormalizzate.getUsername());
 					}
 					else {
-						jsonNode.put("username", normalized.getUsername());
+						jsonNode.put("username", informazioniTokenNormalizzate.getUsername());
 					}
 				}
 			}
-			if(normalized.getAud()!=null) {
+			if(informazioniTokenNormalizzate.getAud()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), normalized.getAud());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE), informazioniTokenNormalizzate.getAud());
 					}
 					else {
-						jsonNode.put("audience", normalized.getAud());
+						jsonNode.put("audience", informazioniTokenNormalizzate.getAud());
 					}
 				}
 			}
-			if(normalized.getClientId()!=null) {
+			if(informazioniTokenNormalizzate.getClientId()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID)) {
 					if(op2headers) {
-						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID), normalized.getClientId());
+						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CLIENT_ID), informazioniTokenNormalizzate.getClientId());
 					}
 					else {
-						jsonNode.put("clientId", normalized.getClientId());
+						jsonNode.put("clientId", informazioniTokenNormalizzate.getClientId());
 					}
 				}
 			}
-			if(normalized.getIat()!=null) {
+			if(informazioniTokenNormalizzate.getIat()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT)) {
 					if(op2headers) {
 						String value = null;
 						if(sdf!=null) {
-							value = sdf.format(normalized.getIat());
+							value = sdf.format(informazioniTokenNormalizzate.getIat());
 						}
 						else {
-							value = (normalized.getIat().getTime() / 1000) + "";
+							value = (informazioniTokenNormalizzate.getIat().getTime() / 1000) + "";
 						}
 						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ISSUED_AT), value);
 					}
 					else {
-						jsonNode.put("iat", jsonUtils.getDateFormat().format(normalized.getIat()));
+						jsonNode.put("iat", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getIat()));
 					}
 				}
 			}
-			if(normalized.getExp()!=null) {
+			if(informazioniTokenNormalizzate.getExp()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED)) {
 					if(op2headers) {
 						String value = null;
 						if(sdf!=null) {
-							value = sdf.format(normalized.getExp());
+							value = sdf.format(informazioniTokenNormalizzate.getExp());
 						}
 						else {
-							value = (normalized.getExp().getTime() / 1000) + "";
+							value = (informazioniTokenNormalizzate.getExp().getTime() / 1000) + "";
 						}
 						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EXPIRED), value);
 					}
 					else {
-						jsonNode.put("expire", jsonUtils.getDateFormat().format(normalized.getExp()));
+						jsonNode.put("expire", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getExp()));
 					}
 				}
 			}
-			if(normalized.getNbf()!=null) {
+			if(informazioniTokenNormalizzate.getNbf()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF)) {
 					if(op2headers) {
 						String value = null;
 						if(sdf!=null) {
-							value = sdf.format(normalized.getNbf());
+							value = sdf.format(informazioniTokenNormalizzate.getNbf());
 						}
 						else {
-							value = (normalized.getNbf().getTime() / 1000) + "";
+							value = (informazioniTokenNormalizzate.getNbf().getTime() / 1000) + "";
 						}
 						tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_NBF), value);
 					}
 					else {
-						jsonNode.put("nbf", jsonUtils.getDateFormat().format(normalized.getNbf()));
+						jsonNode.put("nbf", jsonUtils.getDateFormat().format(informazioniTokenNormalizzate.getNbf()));
 					}
 				}
 			}
-			if(normalized.getRoles()!=null && normalized.getRoles().size()>0) {
+			if(informazioniTokenNormalizzate.getRoles()!=null && informazioniTokenNormalizzate.getRoles().size()>0) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES)) {
 					ArrayNode array = null;
 					StringBuffer bf = new StringBuffer();
 					if(!op2headers) {
 						array =  jsonUtils.newArrayNode();
 					}
-					for (String role : normalized.getRoles()) {
+					for (String role : informazioniTokenNormalizzate.getRoles()) {
 						if(op2headers) {
 							if(bf.length()>0) {
 								bf.append(" ");
@@ -1283,14 +1310,14 @@ public class GestoreToken {
 					}
 				}
 			}
-			if(normalized.getScopes()!=null && normalized.getScopes().size()>0) {
+			if(informazioniTokenNormalizzate.getScopes()!=null && informazioniTokenNormalizzate.getScopes().size()>0) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES)) {
 					ArrayNode array = null;
 					StringBuffer bf = new StringBuffer();
 					if(!op2headers) {
 						array =  jsonUtils.newArrayNode();
 					}
-					for (String scope : normalized.getScopes()) {
+					for (String scope : informazioniTokenNormalizzate.getScopes()) {
 						if(op2headers) {
 							if(bf.length()>0) {
 								bf.append(" ");
@@ -1309,56 +1336,56 @@ public class GestoreToken {
 					}
 				}
 			}
-			if(normalized.getUserInfo()!=null) {
+			if(informazioniTokenNormalizzate.getUserInfo()!=null) {
 				ObjectNode userInfoNode = jsonUtils.newObjectNode();
 				
-				if(normalized.getUserInfo().getFullName()!=null) {
+				if(informazioniTokenNormalizzate.getUserInfo().getFullName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), normalized.getUserInfo().getFullName());
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), informazioniTokenNormalizzate.getUserInfo().getFullName());
 						}
 						else {
-							jsonNode.put("fullName", normalized.getUserInfo().getFullName());
+							jsonNode.put("fullName", informazioniTokenNormalizzate.getUserInfo().getFullName());
 						}
 					}
 				}
-				if(normalized.getUserInfo().getFirstName()!=null) {
+				if(informazioniTokenNormalizzate.getUserInfo().getFirstName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), normalized.getUserInfo().getFirstName());
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), informazioniTokenNormalizzate.getUserInfo().getFirstName());
 						}
 						else {
-							jsonNode.put("firstName", normalized.getUserInfo().getFirstName());
+							jsonNode.put("firstName", informazioniTokenNormalizzate.getUserInfo().getFirstName());
 						}
 					}
 				}
-				if(normalized.getUserInfo().getMiddleName()!=null) {
+				if(informazioniTokenNormalizzate.getUserInfo().getMiddleName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), normalized.getUserInfo().getMiddleName());
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), informazioniTokenNormalizzate.getUserInfo().getMiddleName());
 						}
 						else {
-							jsonNode.put("middleName", normalized.getUserInfo().getMiddleName());
+							jsonNode.put("middleName", informazioniTokenNormalizzate.getUserInfo().getMiddleName());
 						}
 					}
 				}
-				if(normalized.getUserInfo().getFamilyName()!=null) {
+				if(informazioniTokenNormalizzate.getUserInfo().getFamilyName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), normalized.getUserInfo().getFamilyName());
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), informazioniTokenNormalizzate.getUserInfo().getFamilyName());
 						}
 						else {
-							jsonNode.put("familyName", normalized.getUserInfo().getFamilyName());
+							jsonNode.put("familyName", informazioniTokenNormalizzate.getUserInfo().getFamilyName());
 						}
 					}
 				}
-				if(normalized.getUserInfo().getEMail()!=null) {
+				if(informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL)) {
 						if(op2headers) {
-							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), normalized.getUserInfo().getEMail());
+							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), informazioniTokenNormalizzate.getUserInfo().getEMail());
 						}
 						else {
-							jsonNode.put("eMail", normalized.getUserInfo().getEMail());
+							jsonNode.put("eMail", informazioniTokenNormalizzate.getUserInfo().getEMail());
 						}
 					}
 				}
@@ -1482,7 +1509,7 @@ public class GestoreToken {
 		
 	}
 	
-	private static List<InformazioniToken> getInformazioniTokenValide(EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo){
+	public static List<InformazioniToken> getInformazioniTokenValide(EsitoGestioneToken esitoValidazioneJWT, EsitoGestioneToken esitoIntrospection, EsitoGestioneToken esitoUserInfo){
 		List<InformazioniToken> list = new ArrayList<>();
 		if(esitoValidazioneJWT!=null && esitoValidazioneJWT.isValido() && esitoValidazioneJWT.getInformazioniToken()!=null) {
 			list.add(esitoValidazioneJWT.getInformazioniToken());
@@ -1496,7 +1523,7 @@ public class GestoreToken {
 		return list;
 	}
 	
-	private static InformazioniToken _normalizeInformazioniToken(List<InformazioniToken> list) throws Exception {
+	public static InformazioniToken normalizeInformazioniToken(List<InformazioniToken> list) throws Exception {
 		if(list.size()==1) {
 			return list.get(0);
 		}
@@ -1526,7 +1553,7 @@ public class GestoreToken {
 				if(!now.before(esitoGestioneToken.getInformazioniToken().getExp())){
 					esitoGestioneToken.setValido(false);
 					esitoGestioneToken.setDetails("Token expired");
-					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 	    					esitoGestioneToken.getDetails()));  
 				}
@@ -1546,7 +1573,7 @@ public class GestoreToken {
 					esitoGestioneToken.setValido(false);
 					SimpleDateFormat sdf = new SimpleDateFormat(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
-					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 	    					esitoGestioneToken.getDetails()));  
 				}
@@ -1568,7 +1595,7 @@ public class GestoreToken {
 						esitoGestioneToken.setValido(false);
 						SimpleDateFormat sdf = new SimpleDateFormat(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
-						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(ErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
 		    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
 		    					esitoGestioneToken.getDetails()));  
 					}

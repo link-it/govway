@@ -37,25 +37,58 @@ public enum MessageType implements Serializable {
 	
 	// Generic Utilities
 	
+	private static final String LABEL_SOAP_11 = "Soap-1.1";
+	private static final String LABEL_SOAP_12 = "Soap-1.2";
+	private static final String LABEL_XML = "Xml";
+	private static final String LABEL_JSON = "Json";
+	private static final String LABEL_BINARY = "Binary";
+	private static final String LABEL_MIME_MULTIPART = "MIME-Multipart";
+	
 	public String getMessageVersionAsString(){
 		switch (this) {
 			case SOAP_11:
-				return "Soap-1.1";
+				return LABEL_SOAP_11;
 			case SOAP_12:
-				return "Soap-1.2";
+				return LABEL_SOAP_12;
 			case XML:
-				return "Xml";
+				return LABEL_XML;
 			case JSON:
-				return "Json";
+				return LABEL_JSON;
 			case BINARY:
-				return "Binary";
+				return LABEL_BINARY;
 			case MIME_MULTIPART:
-				return "MIME-Multipart";
+				return LABEL_MIME_MULTIPART;
 			default:
 				throw new RuntimeException("Unsupported-Type");
 		}
-		
+	}
+	public String getLabelMessageVersion(){
+		return this.getMessageVersionAsString();
 	}
 	
+	public static MessageType getMessageTypeFromLabel(String v) {
+		if(v==null) {
+			return null;
+		}
+		if(LABEL_SOAP_11.equals(v)) {
+			return MessageType.SOAP_11;
+		}
+		else if(LABEL_SOAP_12.equals(v)) {
+			return MessageType.SOAP_12;
+		}
+		else if(LABEL_XML.equals(v)) {
+			return MessageType.XML;
+		}
+		else if(LABEL_JSON.equals(v)) {
+			return MessageType.JSON;
+		}
+		else if(LABEL_BINARY.equals(v)) {
+			return MessageType.BINARY;
+		}
+		else if(LABEL_MIME_MULTIPART.equals(v)) {
+			return MessageType.MIME_MULTIPART;
+		}
+		return null;
+	}
 	
 }
