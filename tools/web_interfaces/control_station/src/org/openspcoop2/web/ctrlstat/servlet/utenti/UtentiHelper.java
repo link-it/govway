@@ -696,18 +696,18 @@ public class UtentiHelper extends ConsoleHelper {
 
 			PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();
 			
-			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
+//			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
 			
-				de = new DataElement();
-				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-				de.setType(DataElementType.CRYPT);
-				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
-				de.setValue("");
-				de.setSize(this.getSize());
-				de.setRequired(true);
-				dati.addElement(de);
+			de = new DataElement();
+			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+			de.setType(DataElementType.CRYPT);
+			de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PASSWORD);
+			de.setValue("");
+			de.setSize(this.getSize());
+			de.setRequired(true);
+			dati.addElement(de);
 				
-			}
+//			}
 
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PASSWORD);
