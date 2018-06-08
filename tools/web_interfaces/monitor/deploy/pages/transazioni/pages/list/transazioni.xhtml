@@ -511,10 +511,10 @@ xmlns="http://www.w3.org/1999/xhtml"
 							</rich:column>
 							<rich:column id="colProtocollo">
 								<f:facet name="header">
-									<h:outputText id="outProtocollo1" value="Protocollo" />
+									<h:outputText id="outProtocollo1" value="Modalità" />
 								</f:facet>
-								<h:outputText id="outProtocollo2" value="#{item.protocollo}" />
-								<rich:toolTip for="outProtocollo2" value="#{item.protocollo}" />
+								<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}" />
+								<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}" />
 							</rich:column>
 							<rich:column id="colPddRuolo" sortable="false" label="Tipologia">
 								<f:facet name="header">
@@ -536,22 +536,22 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<f:facet name="header">
 									<h:outputText id="outFruitoreLive1" value="Fruitore" />
 								</f:facet>
-								<h:outputText id="outFruitoreLive2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
-								<rich:toolTip for="outFruitoreLive2" value="#{item.tipoSoggettoFruitore}/#{item.nomeSoggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
+								<h:outputText id="outFruitoreLive2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
+								<rich:toolTip for="outFruitoreLive2" value="#{item.soggettoFruitore}" rendered="#{not empty item.nomeSoggettoFruitore}"/>
 							</rich:column>
 							<rich:column id="colErogatoreLive">
 								<f:facet name="header">
 									<h:outputText id="outErogatoreLive1" value="Erogatore" />
 								</f:facet>
-								<h:outputText id="outErogatoreLive2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}"  rendered="#{not empty item.nomeSoggettoErogatore}"/>
-								<rich:toolTip for="outErogatoreLive2" value="#{item.tipoSoggettoErogatore}/#{item.nomeSoggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
+								<h:outputText id="outErogatoreLive2" value="#{item.soggettoErogatore}"  rendered="#{not empty item.nomeSoggettoErogatore}"/>
+								<rich:toolTip for="outErogatoreLive2" value="#{item.soggettoErogatore}" rendered="#{not empty item.nomeSoggettoErogatore}"/>
 							</rich:column>
 							<rich:column id="colServLive">
 								<f:facet name="header">
 									<h:outputText id="outServLive1" value="Servizio" />
 								</f:facet>
-								<h:outputText id="outServLive2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
-								<rich:toolTip for="outServLive2" value="#{item.tipoServizio}/#{item.nomeServizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<h:outputText id="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<rich:toolTip for="outServLive2" value="#{item.servizio}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
 								<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 								<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 							</rich:column>

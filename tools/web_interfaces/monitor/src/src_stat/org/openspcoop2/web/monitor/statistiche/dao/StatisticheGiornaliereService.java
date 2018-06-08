@@ -1267,7 +1267,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	// ********** ESITI LIVE ******************
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,String protocollo) {
 
 		// StringBuffer pezzoIdPorta = new StringBuffer();
 		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1348,16 +1348,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.esitoUtils.setExpressionContesto(exprKo, model.ESITO_CONTESTO, esitoContesto);
 			exprKo.addGroupBy(model.DATA);
 
-			String modalita = Utility.getLoggedUtenteModalita();
-			
-			if(StringUtils.isNotEmpty(modalita) && !modalita.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
-			
-				impostaTipiCompatibiliConProtocollo(dao, model, exprOk, modalita);
-				impostaTipiCompatibiliConProtocollo(dao, model, exprFault, modalita);
-				impostaTipiCompatibiliConProtocollo(dao, model, exprKo, modalita);
-				
-			}
-
+			impostaTipiCompatibiliConProtocollo(dao, model, exprOk, protocollo);
+			impostaTipiCompatibiliConProtocollo(dao, model, exprFault, protocollo);
+			impostaTipiCompatibiliConProtocollo(dao, model, exprKo, protocollo);
 			
 			if(forceIndexes!=null && forceIndexes.size()>0){
 				for (Index index : forceIndexes) {

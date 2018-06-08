@@ -39,7 +39,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 * @param esitoContesto
 	 * @return esiti sul numero transazioni (ok,ko) nell'intervallo
 	 */
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto,String protocollo);
 
 	/**
 	 * Recupera le informazioni per la live view

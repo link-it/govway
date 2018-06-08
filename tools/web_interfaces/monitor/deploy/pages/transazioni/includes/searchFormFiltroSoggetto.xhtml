@@ -125,7 +125,7 @@
 										value="#{sf_soggettoLocale}" directInputSuggestions="true"
 										defaultLabel="Selezione Soggetto Locale" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
 										enableManualInput="false">
-									<f:selectItem itemValue="--"/>
+									<f:selectItem itemValue="--" itemLabel="--"/>
 									<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
 						</rich:comboBox>

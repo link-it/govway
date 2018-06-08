@@ -33,7 +33,7 @@ public class StatisticaReportManager implements ILiveReport {
 	}
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo, String esitoContesto) {
-		return  this.statService.getEsiti(permessiUtente, min, max,periodo,esitoContesto);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo, String esitoContesto,String protocollo) {
+		return  this.statService.getEsiti(permessiUtente, min, max,periodo,esitoContesto,protocollo);
 	}
 }

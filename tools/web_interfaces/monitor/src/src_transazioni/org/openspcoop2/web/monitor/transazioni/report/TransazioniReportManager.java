@@ -39,7 +39,7 @@ public class TransazioniReportManager implements ILiveReport,Serializable {
 	}
 	
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto) {
-		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto);
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,String periodo,String esitoContesto,String protocollo) {
+		return this.transazioniService.getEsiti(permessiUtente, min, max, esitoContesto,protocollo);
 	}
 }

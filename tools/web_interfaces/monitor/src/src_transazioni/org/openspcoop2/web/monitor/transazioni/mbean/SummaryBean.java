@@ -6,34 +6,44 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.transazioni.constants.Colors;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.constants.Colors;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
-import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
-import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
-import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
-import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
+import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.constants.CostantiGrafici;
+import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.core.Utility;
@@ -47,8 +57,13 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.report.CostantiReport;
 import org.openspcoop2.web.monitor.core.report.ILiveReport;
 import org.openspcoop2.web.monitor.core.report.ReportFactory;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
+import org.openspcoop2.web.monitor.core.utils.DynamicPdDBeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
+import org.slf4j.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -82,6 +97,17 @@ public class SummaryBean implements Serializable{
 
 	private transient EsitiProperties esitiProperties;
 
+	private List<SelectItem> soggettiAssociati = null;
+	
+	private Integer soggettiAssociatiSelectItemsWidth = 0;
+	private Integer soggettiSelectItemsWidth = 0;
+	
+	private boolean soggettiAssociatiSelectItemsWidthCheck = false;
+	private boolean soggettiSelectItemsWidthCheck = false;
+	
+	private Integer maxSelectItemsWidth = 900;
+
+	private Integer defaultSelectItemsWidth = 412;
 	/*
 	 * chart info
 	 */
@@ -91,6 +117,11 @@ public class SummaryBean implements Serializable{
 	private boolean funzionalitaStatisticaAbilitata;
 
 	private boolean useGraficiSVG = false;
+	
+	private DynamicPdDBeanUtils dynamicUtils = null;
+	
+	private String protocollo;
+	private List<SelectItem> protocolli= null;
 
 
 	public SummaryBean() {		
@@ -103,7 +134,10 @@ public class SummaryBean implements Serializable{
 
 			this.intervalloRefresh = (Integer.parseInt(this.intervalloRefresh) ) + ""; //* 1000
 
+			this.dynamicUtils = new DynamicPdDBeanUtils(log);
+			
 			this.dynamicUtilsService = new DynamicUtilsService();
+			
 			this.userService = new UserService();
 
 			// controllo se e' abilitata la funzionalita' delle statistiche
@@ -122,6 +156,22 @@ public class SummaryBean implements Serializable{
 				this.periodoDefault = CostantiReport.PERIODO_NOT_SET;
 				this.report = ReportFactory.getInstance().getTransazioniReportManager();
 			}
+			
+			IProtocolFactory<?> protocolFactory = null;
+			String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+			
+			if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
+				try {
+					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+				}catch(Exception e) {
+					User user = Utility.getLoggedUtente();
+					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(user.getProtocolliSupportati().get(0));
+				}
+			} else {
+				protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
+			}
+			
+			this.protocollo = protocolFactory.getProtocol();
 		} catch (Exception e) {
 			log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e); 
 		}
@@ -282,7 +332,7 @@ public class SummaryBean implements Serializable{
 			ResLive r = null;
 			try{
 				// L'xml del Summary Bean viene generato dal report selezionato all'avvio del bean.
-				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto);
+				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
 			} catch (CoreException er) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 				log.error(er.getMessage(), er);
@@ -476,7 +526,7 @@ public class SummaryBean implements Serializable{
 
 					ResLive r = null;
 					try{
-						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto);
+						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
 					} catch (CoreException er) {
 						MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
 						log.error(er.getMessage(),er);
@@ -845,7 +895,7 @@ public class SummaryBean implements Serializable{
 		List<Soggetto> list = null;
 		Soggetto s = new Soggetto();
 		s.setNomeSoggetto("--");
-		String tipoProtocollo = null;
+		String tipoProtocollo =  this.getProtocollo();
 
 		if(val==null || StringUtils.isEmpty((String)val))
 			list = new ArrayList<Soggetto>();
@@ -859,23 +909,80 @@ public class SummaryBean implements Serializable{
 
 	}
 	
-	@SuppressWarnings("deprecation")
-	public List<String> soggettiServiziAutoComplete(Object val){
+	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
+		return _getTipiNomiSoggettiAssociati(false);
+	}
 
-		List<String> list = new ArrayList<String>();
-		list.add("--");
+	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
+		if(this.soggettiAssociati == null)
+			this.soggettiAssociati = new ArrayList<SelectItem>();
 		
-		String tipoProtocollo = null;
+		if(!this.soggettiAssociatiSelectItemsWidthCheck){
+			this.soggettiAssociati = new ArrayList<SelectItem>();
+
+			UserDetailsBean loggedUser = Utility.getLoggedUser();
+			if(loggedUser!=null){
+				List<IDSoggetto> lst = new ArrayList<IDSoggetto>();
+				String tipoProtocollo = this.getProtocollo();
+				
+				if(tipoProtocollo == null) {
+					lst = loggedUser.getUtenteSoggettoList();
+				} else {
+					// se ho selezionato un protocollo devo filtrare per protocollo
+					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoList();
+					List<String> lstTmp = new ArrayList<String>();
+					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0)
+
+						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
+							if(this.dynamicUtils.isTipoSoggettoCompatibileConProtocollo(utenteSoggetto.getTipo(), tipoProtocollo)){
+								String tipoNome = utenteSoggetto.getTipo() + "/" + utenteSoggetto.getNome();
+								boolean add = true;
+								if(soloOperativi) {
+									String nomePddFromSoggetto = this.dynamicUtils.getServerFromSoggetto(utenteSoggetto.getTipo(), utenteSoggetto.getNome());
+									add = this.dynamicUtils.checkTipoPdd(nomePddFromSoggetto, TipoPdD.OPERATIVO);
+								}
+								if(lstTmp.contains(tipoNome)==false && add){
+									lstTmp.add(tipoNome);
+									lst.add(utenteSoggetto);
+								}
+							}
+						}
+				}
+
+				for (IDSoggetto idSoggetto : lst) {
+					String value = idSoggetto.getTipo() + "/" + idSoggetto.getNome();
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo,idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+					this.soggettiAssociati.add(new SelectItem(value,label));
+				}
+				Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(this.soggettiAssociati);
+				this.soggettiAssociatiSelectItemsWidth = Math.max(this.soggettiAssociatiSelectItemsWidth,  lunghezzaSelectList);
+			}
+		}
+
+		return this.soggettiAssociati;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public List<SelectItem> soggettiServiziAutoComplete(Object val) throws Exception {
+		this.soggettiSelectItemsWidth = 0;
+		List<SelectItem> list = new ArrayList<SelectItem>();
+		list.add(new SelectItem("--","--"));
+		
+		String tipoProtocollo = this.getProtocollo();
+		
 		if(val!=null && !StringUtils.isEmpty((String)val)){
 			
-			List<String> listInternal = new ArrayList<String>();
+			
+			Map<String,String> mapInternal = new HashMap<String,String>();
 			
 			List<Soggetto> listSoggetti = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
 			if(listSoggetti!=null && listSoggetti.size()>0){
 				for (Soggetto soggetto : listSoggetti) {
 					IDServizio idServizio = new IDServizio();
-					idServizio.setSoggettoErogatore(new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()));
-					listInternal.add(ParseUtility.convertToSoggettoServizio(idServizio));
+					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto());
+					idServizio.setSoggettoErogatore(idSoggetto);
+					String label = tipoProtocollo != null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idSoggetto) : NamingUtils.getLabelSoggetto(idSoggetto);
+					mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 				}
 			}
 			
@@ -886,16 +993,38 @@ public class SummaryBean implements Serializable{
 					idServizio.setSoggettoErogatore(new IDSoggetto(asps.getIdErogatore().getTipo(), asps.getIdErogatore().getNome()));
 					idServizio.setTipo(asps.getTipo());
 					idServizio.setNome(asps.getNome());
-					listInternal.add(ParseUtility.convertToSoggettoServizio(idServizio));
+					idServizio.setVersione(asps.getVersione());
+					String label = tipoProtocollo != null ?  NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
+					mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 				}
 			}
 			
-			if(listInternal!=null && listInternal.size()>0){
-				Collections.sort(listInternal);
-				list.addAll(listInternal);
+			if(mapInternal.size()>0){
+				//convert map to a List
+				List<Entry<String, String>> tmpList = new LinkedList<Map.Entry<String, String>>(mapInternal.entrySet());
+
+				//sorting the list with a comparator
+				Collections.sort(tmpList, new Comparator<Entry<String, String>>() {
+					@Override
+					public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+						return (o1.getValue()).compareTo(o2.getValue());
+					}
+				});
+
+				//convert sortedMap back to Map
+				Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+				for (Entry<String, String> entry : tmpList) {
+					sortedMap.put(entry.getKey(), entry.getValue());
+				}
+				
+				for (String key : sortedMap.keySet()) {
+					list.add(new SelectItem(key, sortedMap.get(key)));
+				}
 			}
-			
 		}
+		
+		Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(list);
+		this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
 		
 		return list;
 
@@ -979,4 +1108,145 @@ public class SummaryBean implements Serializable{
 	public void setUseGraficiSVG(boolean useGraficiSVG) {
 		this.useGraficiSVG = useGraficiSVG;
 	}
+	
+	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
+		this.soggettiAssociatiSelectItemsWidthCheck = false;
+		getTipiNomiSoggettiAssociati();
+		this.soggettiAssociatiSelectItemsWidthCheck = true;
+		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth).toString();
+	}
+	
+	public Integer getSoggettiAssociatiSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth);
+	}
+	
+	public boolean isSoggettiAssociatiSelectItemsWidthCheck() {
+		return this.soggettiAssociatiSelectItemsWidthCheck;
+	}
+
+	public void setSoggettiAssociatiSelectItemsWidthCheck(boolean soggettiAssociatiSelectItemsWidthCheck) {
+		this.soggettiAssociatiSelectItemsWidthCheck = soggettiAssociatiSelectItemsWidthCheck;
+	}
+	
+	public String getSoggettiSelectItemsWidth() throws Exception{
+		return checkWidthLimits(this.soggettiSelectItemsWidth).toString();
+	}
+	
+	public Integer getSoggettiSelectItemsWidthAsInteger() throws Exception{
+		return checkWidthLimits(this.soggettiSelectItemsWidth);
+	}
+	
+	public boolean isSoggettiSelectItemsWidthCheck() {
+		return this.soggettiSelectItemsWidthCheck;
+	}
+
+	public void setSoggettiSelectItemsWidthCheck(boolean soggettiSelectItemsWidthCheck) {
+		this.soggettiSelectItemsWidthCheck = soggettiSelectItemsWidthCheck;
+	}
+	
+	public Integer checkWidthLimits(Integer value){
+		// valore deve essere compreso minore del max ma almeno quanto la default
+		Integer toRet = Math.max(this.defaultSelectItemsWidth, value);
+
+		toRet = Math.min(toRet, this.maxSelectItemsWidth);
+
+		return toRet;
+	}
+	
+	/**
+	 * I nomi spcoop dei soggetti associati all'utente loggato
+	 */
+	public List<Soggetto> getSoggettiGestione() {
+		User u = Utility.getLoggedUtente();
+		return Utility.getSoggettiGestione(u,this.soggettoLocale);
+	}
+	
+	public String getProtocollo() {
+		if(!Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+			this.setProtocollo(Utility.getLoginBean().getModalita()); 
+		}
+		
+		return this.protocollo;
+	}
+	
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+
+		if (StringUtils.isEmpty(protocollo)
+				|| "*".equals(protocollo))
+			this.protocollo = null;
+	}
+
+	public List<SelectItem> getProtocolli() throws Exception {
+		//		if(this.protocolli == null)
+		this.protocolli = new ArrayList<SelectItem>();
+//		this.protocolli.add(new SelectItem("*",AllConverter.ALL_STRING));
+		try {
+			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
+			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+
+			for (String protocolKey : listaNomiProtocolli) {
+				IProtocolFactory<?> protocollo = protocolFactories.get(protocolKey);
+				this.protocolli.add(new SelectItem(protocollo.getProtocol(),NamingUtils.getLabelProtocollo(protocollo.getProtocol())));
+			}
+
+		} catch (ProtocolException e) {
+			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+		}  
+
+
+		return this.protocolli;
+	}
+
+
+	public boolean isShowListaProtocolli(){
+		try {
+			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
+			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			int numeroProtocolli = protocolFactories.size();
+
+			// se c'e' installato un solo protocollo non visualizzo la select List.
+			if(numeroProtocolli == 1)
+				return false;
+			
+			
+			User utente = Utility.getLoggedUtente();
+			
+			// utente ha selezionato una modalita'
+			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
+				return false;
+			}
+			
+			
+			if(utente.getProtocolliSupportati() ==null ||  utente.getProtocolliSupportati().size() <= 1) {
+				return false;
+			}
+
+			List<Soggetto> listaSoggettiGestione = this.getSoggettiGestione();
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+
+			numeroProtocolli = listaNomiProtocolli.size();
+
+			// se c'e' installato un solo protocollo non visualizzo la select List.
+			if(numeroProtocolli == 1)
+				return false;
+
+		} catch (ProtocolException e) {
+			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+		}  
+
+		return true;
+	}
+	
+	public boolean isSetFiltroProtocollo() {
+		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) &&
+				(this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
+		
+		return setFilter;
+	}
+	
+	public void protocolloSelected(ActionEvent ae) {}
 }

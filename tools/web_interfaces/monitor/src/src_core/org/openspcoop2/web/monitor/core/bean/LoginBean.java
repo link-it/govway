@@ -108,6 +108,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setLoggedIn(true);
 					this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
+					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
 				}else{
@@ -127,6 +128,7 @@ public class LoginBean extends AbstractLoginBean {
 				this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
 				if(this.getLoggedUser() != null){
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
+					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor()); 
 					this.setLoggedIn(true);
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
@@ -297,14 +299,14 @@ public class LoginBean extends AbstractLoginBean {
 	public void setModalita(String modalita) {
 		this.modalita = modalita;
 		
-		if(this.modalita.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL))
+		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.modalita))
 			this.modalita = null;
 	}
 
 	public boolean isVisualizzaMenuModalita()  {
 		if(this.visualizzaMenuModalita == null) {
 			try {
-				List<String> listaNomiProtocolli = listaProtocolliDisponibilePerUtentePddMonitor();
+				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
 
 				this.visualizzaMenuModalita = listaNomiProtocolli.size() > 1;
 
@@ -339,7 +341,6 @@ public class LoginBean extends AbstractLoginBean {
 		
 		try {
 			this.loginDao.salvaModalita(this.getLoggedUser().getUtente());
-			this.vociMenuModalita = null;
 		} catch (NotFoundException | ServiceException e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio della modalita', si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
@@ -364,42 +365,38 @@ public class LoginBean extends AbstractLoginBean {
 	}
 
 	public List<MenuModalitaItem> getVociMenuModalita() {
-		if(this.vociMenuModalita == null) {
-			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
-			try {
-				String tipoNomeSoggettoLocale = null;
-				if (this.getUtente().getSoggetti().size() == 1) {
-					IDSoggetto s = this.getUtente().getSoggetti().get(0);
-					tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
-				}
-				List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
+		this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+		try {
+			String tipoNomeSoggettoLocale = null;
+			if (this.getUtente().getSoggetti().size() == 1) {
+				IDSoggetto s = this.getUtente().getSoggetti().get(0);
+				tipoNomeSoggettoLocale = s.getTipo() + "/" + s.getNome();
+			}
+			List<Soggetto> listaSoggettiGestione = Utility.getSoggettiGestione(this.getUtente(),tipoNomeSoggettoLocale);
 
-				ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
-				MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 
-				List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
+			List<String> listaNomiProtocolli = Utility.getListaProtocolli(listaSoggettiGestione, pfManager, protocolFactories);
 
-				if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
-					// prelevo l'eventuale protocollo selezionato
-					// popolo la tendina con i protocolli disponibili
-					for (String protocolloDisponibile : listaNomiProtocolli) {
-						String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
-						
-						MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, NamingUtils.getLabelProtocollo(protocolloDisponibile), iconProt); 
-						this.vociMenuModalita.add(menuItem);
-					}
-
-					// seleziona tutti
-					MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
+				// prelevo l'eventuale protocollo selezionato
+				// popolo la tendina con i protocolli disponibili
+				for (String protocolloDisponibile : listaNomiProtocolli) {
+					String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+					
+					MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, NamingUtils.getLabelProtocollo(protocolloDisponibile), iconProt); 
 					this.vociMenuModalita.add(menuItem);
 				}
 
-			}catch(Exception e) {
-				this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+				// seleziona tutti
+				MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, Costanti.LABEL_PARAMETRO_MODALITA_ALL, (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
+				this.vociMenuModalita.add(menuItem);
 			}
-			
+
+		}catch(Exception e) {
+			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 		}
-		
 		
 		return this.vociMenuModalita;
 	}

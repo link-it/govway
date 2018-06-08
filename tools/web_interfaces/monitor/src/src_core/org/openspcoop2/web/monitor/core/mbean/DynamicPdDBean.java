@@ -306,7 +306,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			return new ArrayList<SelectItem>();
 		}
 
-		if(!this.soggettiSelectItemsWidthCheck){
+		if(!this.soggettiAssociatiSelectItemsWidthCheck){
 			this.soggettiAssociati = new ArrayList<SelectItem>();
 
 			UserDetailsBean loggedUser = Utility.getLoggedUser();

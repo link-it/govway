@@ -1364,7 +1364,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto) {
+	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, String protocollo) {
 		// StringBuffer pezzoIdPorta = new StringBuffer();
 
 		this.log.debug("Get Esiti [permessiUtenti: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
@@ -1411,12 +1411,9 @@ public class TransazioniService implements ITransazioniService {
 			}
 			this.esitoUtils.setExpressionContesto(exprKo, Transazione.model().ESITO_CONTESTO, esitoContesto);
 			
-			String modalita = Utility.getLoggedUtenteModalita();
-			if(StringUtils.isNotEmpty(modalita) && !modalita.equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
-				exprOk.and().equals(Transazione.model().PROTOCOLLO,	modalita);
-				exprFault.and().equals(Transazione.model().PROTOCOLLO,	modalita);
-				exprKo.and().equals(Transazione.model().PROTOCOLLO,	modalita);
-			}
+			exprOk.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
+			exprFault.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
+			exprKo.and().equals(Transazione.model().PROTOCOLLO,	protocollo);
 			
 			// Devo rileggere il valore ogni volta, il service del live viene istanziato solamente una volta
 			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);

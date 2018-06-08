@@ -42,6 +42,9 @@
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipologia" value="Tipologia" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 							<h:outputText id="outTipologia" value="#{dettagliBean.tipologiaConProtocollo}" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Tipo Richiesta" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
+							<h:outputText id="outTipoRichiesta" value="#{dettagliBean.dettaglio.tipoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelOp" value="Operazione" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
 							<h:outputText id="outOp" value="#{dettagliBean.dettaglio.operazioneIm}" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
@@ -460,6 +463,9 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelUrlInvocazione" value="URL Invocazione" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
 							<h:outputText id="outUrlInvocazione" value="#{dettagliBean.dettaglio.urlInvocazione}" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
 							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta Invocazione" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
+							<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
+							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
 							<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
 							
@@ -476,6 +482,9 @@
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelXForwardedFor" value="X-Forwarded-For" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
 							<h:outputText id="outXForwardedFor" value="#{dettagliBean.dettaglio.transportClientAddress}" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
+							
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
+							<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaTotale" value="Latenza Totale" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" />
 							<h:outputText id="outLatenzaTotale" value="#{dettagliBean.dettaglio.latenzaTotale}" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" converter="latenzaConverter" />
