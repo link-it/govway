@@ -47,6 +47,7 @@
 			<param name="queue" value="${queue}"/>
 			<param name="plugins_pddMonitor" value="${pddMonitor}/deploy/plugins"/>
 			<param name="deploy_pddMonitor" value="${pddMonitor}/deploy"/>
+			<param name="buildJsfAsModule" value="false"/>
 	 	</antcall>
 	
 		<move file="${deploy_sw}/${TIPO_AS}/dist/pddMonitor.war" todir="${deploy_sw}/${TIPO_AS}"/>

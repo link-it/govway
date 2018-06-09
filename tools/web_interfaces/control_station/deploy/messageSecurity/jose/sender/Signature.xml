@@ -25,7 +25,7 @@
 		</item>
 				
 		<item type="hidden" name="signatureAction" value="Signature">
-			<property name="Action" force="true"/>
+			<property name="action" force="true"/>
 		</item>
 		
 		<item type="select" name="signatureMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >

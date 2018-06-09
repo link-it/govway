@@ -339,7 +339,7 @@ public class LocalForwardEngine {
 							this.requestMessageAfterProcess = requestMessage; // per aggiornare il messaggio fuori dall'engine
 						}
 						
-						String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
 						if(messageSecurityContext.processOutgoing(requestMessage) == false){
@@ -560,7 +560,7 @@ public class LocalForwardEngine {
 						this.requestMessageAfterProcess = requestMessage; // per aggiornare il messaggio fuori dall'engine
 					}
 					
-					String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+					String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRichiestaInCorso");					
 					if(messageSecurityContext.processIncoming(requestMessage,this.busta) == false){  
@@ -849,7 +849,7 @@ public class LocalForwardEngine {
 						responseMessage = responseMessage.normalizeToSaajImpl();
 						this.responseMessageAfterProcess = responseMessage; // per aggiornare il messaggio fuori dall'engine
 					}
-					String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+					String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 					this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 					this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 					messageSecurityApply = true;
@@ -1021,7 +1021,7 @@ public class LocalForwardEngine {
 							responseMessage = responseMessage.normalizeToSaajImpl();
 							this.responseMessageAfterProcess = responseMessage; // per aggiornare il messaggio fuori dall'engine
 						}
-						String tipoSicurezza = SecurityConstants.convertActionToString(securityConfig.getFlowParameters());
+						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
 						this.localForwardParameter.getMsgDiag().addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 						this.localForwardParameter.getMsgDiag().logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE,"messageSecurity.processamentoRispostaInCorso");					
 						if(messageSecurityContext.processIncoming(responseMessage,this.busta) == false){

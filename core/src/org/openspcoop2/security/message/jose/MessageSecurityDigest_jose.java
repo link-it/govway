@@ -35,7 +35,7 @@ public class MessageSecurityDigest_jose implements IMessageSecurityDigest{
 
 	@Override
 	public IDigestReader getDigestReader(MessageSecurityContext messageSecurityContext) throws SecurityException {
-		throw new SecurityException("Not Implemented");
+		return null;
 	}
 	
 }

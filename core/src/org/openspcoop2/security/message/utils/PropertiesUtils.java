@@ -99,10 +99,10 @@ public class PropertiesUtils {
 			p = _readProperties(messageSecurityContext.getIncomingProperties(), SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_FILE);
 		}
 		if(p==null) {
-			p = _readProperties(messageSecurityContext.getOutgoingProperties(), SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
+			p = _readProperties(messageSecurityContext.getIncomingProperties(), SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
 		}
 		if(p==null) {
-			p = _readProperties(messageSecurityContext.getOutgoingProperties(), SecurityConstants.SIGNATURE_PROPERTY_FILE);
+			p = _readProperties(messageSecurityContext.getIncomingProperties(), SecurityConstants.SIGNATURE_PROPERTY_FILE);
 		}
 		
 		if(p==null) {

@@ -25,7 +25,7 @@
 		</item>
 				
 		<item type="hidden" name="encryptionAction" value="Decrypt">
-			<property name="Action" force="true"/>
+			<property name="action" force="true"/>
 		</item>
 		
 		<item type="select" name="decryptionMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >

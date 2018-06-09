@@ -18,6 +18,9 @@
 		<item type="hidden" name="securityEngine" value="wss4j">
 			<property name="securityEngine" force="true"/>
 		</item>
+                <item type="hidden" name="securityAction" value="Timestamp">
+                        <property name="action" force="true"/>
+                </item>
 		
 		<item type="text" name="actor" label="Actor" required="false" validation="(.+)">
 			<property name="actor" />

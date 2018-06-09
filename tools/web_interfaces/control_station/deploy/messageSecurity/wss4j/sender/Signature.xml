@@ -30,10 +30,10 @@
 			<property name="mustUnderstand" />
 		</item>
 		<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
-			<property name="Action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
+			<property name="action" append="true" appendSeparator="_" selectedValue="Timestamp" unselectedValue=""/>
 		</item>
 		<item type="hidden" name="signatureAction" value="Signature">
-			<property name="Action" append="true" appendSeparator="_" force="true"/>
+			<property name="action" append="true" appendSeparator="_" force="true"/>
 		</item>
 
 	</section>

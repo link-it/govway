@@ -1486,9 +1486,6 @@ public class InoltroBuste extends GenericLib{
 				if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null && 
 						messageSecurityConfig.getFlowParameters().size() > 0){
 					try{
-						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityConfig.getFlowParameters());
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
-						pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
 						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta ...");
 						
@@ -1507,6 +1504,10 @@ public class InoltroBuste extends GenericLib{
 						
 						messageSecurityContext = messageSecurityFactory.getMessageSecurityContext(contextParameters);
 						messageSecurityContext.setOutgoingProperties(messageSecurityConfig.getFlowParameters());
+						
+						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
+						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
 						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
 						
@@ -2698,11 +2699,7 @@ public class InoltroBuste extends GenericLib{
 					if(messageSecurityConfig!=null && messageSecurityConfig.getFlowParameters()!=null
 							&& messageSecurityConfig.getFlowParameters().size()>0){
 						
-						try{
-							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityConfig.getFlowParameters());
-							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-							
+						try{							
 							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della risposta ...");
 														
 							if(messageSecurityContext==null){
@@ -2722,6 +2719,10 @@ public class InoltroBuste extends GenericLib{
 							}
 							messageSecurityContext.setIncomingProperties(messageSecurityConfig.getFlowParameters());  
 							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
+							
+							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
+							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
 							

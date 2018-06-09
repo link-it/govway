@@ -6402,13 +6402,14 @@ public class RicezioneBuste {
 						flowPropertiesResponse.messageSecurity.getFlowParameters() !=null &&
 						flowPropertiesResponse.messageSecurity.getFlowParameters().size() > 0){
 						try{
-							String tipoSicurezza = SecurityConstants.convertActionToString(flowPropertiesResponse.messageSecurity.getFlowParameters());
+							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
+							messageSecurityContext.setOutgoingProperties(flowPropertiesResponse.messageSecurity.getFlowParameters());
+							
+							String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
 							msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
-							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
-							messageSecurityContext.setOutgoingProperties(flowPropertiesResponse.messageSecurity.getFlowParameters());
 							
 							if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
 								msgDiag.mediumDebug("Normalize to saajImpl");
