@@ -77,6 +77,7 @@
 	<var name="el_impl_jar" value="" />
 	<var name="javax_el_jar" value="" />
 	<var name="jsf_module_jar" value="" />
+	<var name="wildfly_module_jar" value="" />
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value="" />
@@ -214,6 +215,18 @@
 		</and>
 		<then>
 			<var name="jsf_module_jar" value="*.jar" />
+		</then>
+	</if>
+	<if>
+		<and>
+			<or>
+				<matches string="${as}" pattern="wildfly8"/>
+				<matches string="${as}" pattern="wildfly9"/>
+			</or>
+			<equals arg1="${buildJsfAsModule}" arg2="false"/>
+		</and>
+		<then>
+			<var name="wildfly_module_jar" value="*.jar" />
 		</then>
 	</if>	
 

@@ -236,7 +236,7 @@
 				<include name="${jsf_module_jar}"/>
 			</lib>
 			<lib dir="${deploy_pddMonitor}/modulo-jsf12/org/jboss/as/jsf-injection/mojarra-1.2_15">
-				<include name="${jsf_module_jar}"/>
+				<include name="${wildfly_module_jar}"/>
 			</lib>
 			<lib dir="${dist_pddMonitor}">
 				<include name="openspcoop2*.jar" />
