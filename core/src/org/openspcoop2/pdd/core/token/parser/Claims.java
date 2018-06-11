@@ -48,6 +48,7 @@ public class Claims {
 	public final static String OIDC_ID_CLAIMS_NAME = "name";
 	public final static String OIDC_ID_CLAIMS_GIVE_NAME = "given_name";
 	public final static String OIDC_ID_CLAIMS_FAMILY_NAME = "family_name";
+	public final static String OIDC_ID_CLAIMS_LAST_NAME = "last_name"; // usato in talune implementazioni 
 	public final static String OIDC_ID_CLAIMS_MIDDLE_NAME = "middle_name";
 	public final static String OIDC_ID_CLAIMS_NICKNAME = "nickname";
 	public final static String OIDC_ID_CLAIMS_PREFERRED_USERNAME = "preferred_username";

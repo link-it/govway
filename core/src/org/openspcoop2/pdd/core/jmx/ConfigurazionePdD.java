@@ -39,13 +39,13 @@ import javax.management.MBeanOperationInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.slf4j.Logger;
 
 
 /**
@@ -62,7 +62,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public final static String MSG_DIAGNOSTICI_SEVERITA_LIVELLO_LOG4J = "msgDiagnosticiLivelloSeveritaLog4J";
 	public final static String MSG_DIAGNOSTICI_APPENDER = "msgDiagnosticiAppender";	
 	public final static String TRACCIAMENTO_ABILITATO = "tracciamentoAbilitato";
-	public final static String DUMP_ABILITATO = "dumpApplicativoAbilitato";
 	public final static String DUMP_BINARIO_PD_ABILITATO = "dumpBinarioPortaDelegataAbilitato";
 	public final static String DUMP_BINARIO_PA_ABILITATO = "dumpBinarioPortaApplicativaAbilitato";
 	public final static String TRACCIAMENTO_APPENDER = "tracciamentoAppender";
@@ -79,7 +78,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	private String msgDiagnosticiLivelloSeveritaLog4J = "";
 	private String[] msgDiagnosticiAppender = null;
 	private boolean tracciamentoAbilitato = true;
-	private boolean dumpApplicativoAbilitato = false;
 	private boolean dumpBinarioPDAbilitato = false;
 	private boolean dumpBinarioPAAbilitato = false;
 	private String[] tracciamentoAppender = null;
@@ -110,9 +108,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		
 		if(attributeName.equals(ConfigurazionePdD.TRACCIAMENTO_ABILITATO))
 			return this.tracciamentoAbilitato;
-		
-		if(attributeName.equals(ConfigurazionePdD.DUMP_ABILITATO))
-			return this.dumpApplicativoAbilitato;
 		
 		if(attributeName.equals(ConfigurazionePdD.DUMP_BINARIO_PD_ABILITATO))
 			return this.dumpBinarioPDAbilitato;
@@ -193,9 +188,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TRACCIAMENTO_ABILITATO))
 				this.setTracciamentoAbilitato((Boolean) attribute.getValue());
-			
-			else if(attribute.getName().equals(ConfigurazionePdD.DUMP_ABILITATO))
-				this.setDumpAbilitato((Boolean) attribute.getValue());
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.DUMP_BINARIO_PD_ABILITATO))
 				this.setDumpBinarioPD((Boolean) attribute.getValue());
@@ -366,12 +358,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 						"Indicazione se e' abilito il tracciamento delle buste emesse/ricevute dalla Porta di Dominio",
 							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
 		
-		// MetaData per l'attributo dumpApplicativoAbilitato
-		MBeanAttributeInfo dumpApplicativoAbilitatoVAR 
-			= new MBeanAttributeInfo(ConfigurazionePdD.DUMP_ABILITATO,boolean.class.getName(),
-						"Indicazione se e' abilito la registrazione dei contenuti applicativi gestiti dalla Porta di Dominio",
-							JMXUtils.JMX_ATTRIBUTE_READABLE,JMXUtils.JMX_ATTRIBUTE_WRITABLE,!JMXUtils.JMX_ATTRIBUTE_IS_GETTER);
-		
 		// MetaData per l'attributo dumpBinarioPDAbilitato
 		MBeanAttributeInfo dumpBinarioPDAbilitatoVAR 
 			= new MBeanAttributeInfo(ConfigurazionePdD.DUMP_BINARIO_PD_ABILITATO,boolean.class.getName(),
@@ -450,7 +436,7 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		// Lista attributi
 		MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[]{cacheAbilitataVAR,livelloMsgDiagnosticiVAR,
 				livelloMsgDiagnosticiLog4JVAR,msgDiagnosticiAppenderVAR,tracciamentoAbilitatoVAR,
-				dumpApplicativoAbilitatoVAR,dumpBinarioPDAbilitatoVAR,dumpBinarioPAAbilitatoVAR,
+				dumpBinarioPDAbilitatoVAR,dumpBinarioPAAbilitatoVAR,
 				tracciamentoAppenderVAR,
 				log4jDiagnosticaAbilitatoVAR, log4jOpenSPCoopAbilitatoVAR, log4jIntegrationManagerAbilitatoVAR,
 				log4jTracciamentoAbilitatoVAR, log4jDumpAbilitatoVAR};
@@ -515,7 +501,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 				
 		// Tracciamento
 		this.tracciamentoAbilitato = this.configReader.tracciamentoBuste();
-		this.dumpApplicativoAbilitato = this.configReader.dumpMessaggi();
 		this.dumpBinarioPDAbilitato = this.configReader.dumpBinarioPD();
 		this.dumpBinarioPAAbilitato = this.configReader.dumpBinarioPA();
 		this.log4jTracciamentoAbilitato = OpenSPCoop2Logger.loggerTracciamentoAbilitato;
@@ -692,11 +677,6 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public void setTracciamentoAbilitato(boolean v){
 		this.tracciamentoAbilitato = v;
 		ConfigurazionePdDReader.tracciamentoBusteJMX = v;
-	}
-	
-	public void setDumpAbilitato(boolean v){
-		this.dumpApplicativoAbilitato = v;
-		ConfigurazionePdDReader.dumpMessaggiJMX = v;
 	}
 	
 	public void setDumpBinarioPD(boolean v){

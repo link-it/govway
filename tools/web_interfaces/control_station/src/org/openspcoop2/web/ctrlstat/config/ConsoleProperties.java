@@ -599,9 +599,6 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.tracciamento");
 	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(String alias) throws UtilsException {
-		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpApplicativo");
-	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.dumpBinarioPD");
 	}

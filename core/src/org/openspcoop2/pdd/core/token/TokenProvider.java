@@ -387,13 +387,13 @@ public class TokenProvider implements IProvider {
 					throw new ProviderValidationException("La modalità di forward trasparente indicata '"+mode+"' non e' supportata");	
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER.equals(mode)) {
-					String hdr = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER);
+					String hdr = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME);
 					if(hdr==null) {
 						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di un header http");
 					}
 				}
 				else if(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL.equals(mode)) {
-					String url = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL);
+					String url = pDefault.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME);
 					if(url==null) {
 						throw new ProviderValidationException("La modalità di forward trasparente indicata prevede l'indicazione del nome di una proprietà della url");
 					}

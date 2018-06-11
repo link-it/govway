@@ -534,28 +534,30 @@ public class GestoreToken {
 					}
 				}
 
-				// Effettuo la query
-				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
-					
-				// Aggiungo la risposta in cache (se esiste una cache)	
-				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-				// - impostare il noCache a true
-				if(esitoGestioneToken!=null){
-					esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-					if(!esitoGestioneToken.isNoCache()){
-						GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-						try{	
-							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-							responseCache.setObject(esitoGestioneToken);
-							GestoreToken.cacheToken.put(keyCache,responseCache);
-						}catch(UtilsException e){
-							GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				if(esitoGestioneToken==null) {
+					// Effettuo la query
+					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+					esitoGestioneToken = _validazioneJWTToken(log, datiInvocazione, token, portaDelegata);
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esitoGestioneToken!=null){
+						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoGestioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoGestioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
 						}
+					}else{
+						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
-				}else{
-					throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 				}
 			}
     	}
@@ -697,30 +699,32 @@ public class GestoreToken {
 					}
 				}
 
-				// Effettuo la query
-				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
-						pddContext, protocolFactory,
-						token, portaDelegata);
-					
-				// Aggiungo la risposta in cache (se esiste una cache)	
-				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-				// - impostare il noCache a true
-				if(esitoGestioneToken!=null){
-					esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-					if(!esitoGestioneToken.isNoCache()){
-						GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-						try{	
-							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-							responseCache.setObject(esitoGestioneToken);
-							GestoreToken.cacheToken.put(keyCache,responseCache);
-						}catch(UtilsException e){
-							GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				if(esitoGestioneToken==null) {
+					// Effettuo la query
+					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+					esitoGestioneToken = _introspectionToken(log, datiInvocazione, 
+							pddContext, protocolFactory,
+							token, portaDelegata);
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esitoGestioneToken!=null){
+						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoGestioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoGestioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
 						}
+					}else{
+						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
-				}else{
-					throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 				}
 			}
     	}
@@ -850,30 +854,32 @@ public class GestoreToken {
 					}
 				}
 
-				// Effettuo la query
-				GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
-				esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
-						pddContext, protocolFactory,
-						token, portaDelegata);
-					
-				// Aggiungo la risposta in cache (se esiste una cache)	
-				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
-				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
-				// - impostare il noCache a true
-				if(esitoGestioneToken!=null){
-					esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
-					if(!esitoGestioneToken.isNoCache()){
-						GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
-						try{	
-							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-							responseCache.setObject(esitoGestioneToken);
-							GestoreToken.cacheToken.put(keyCache,responseCache);
-						}catch(UtilsException e){
-							GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				if(esitoGestioneToken==null) {
+					// Effettuo la query
+					GestoreToken.logger.debug("oggetto con chiave ["+keyCache+"] (method:"+funzione+") eseguo operazione...");
+					esitoGestioneToken = _userInfoToken(log, datiInvocazione, 
+							pddContext, protocolFactory,
+							token, portaDelegata);
+						
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esitoGestioneToken!=null){
+						esitoGestioneToken.setInCache(false); // la prima volta che lo recupero sicuramente non era in cache
+						if(!esitoGestioneToken.isNoCache()){
+							GestoreToken.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esitoGestioneToken);
+								GestoreToken.cacheToken.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreToken.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
 						}
+					}else{
+						throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 					}
-				}else{
-					throw new TokenException("Metodo (GestoreToken."+funzione+") ha ritornato un valore di esito null");
 				}
 			}
     	}
@@ -1010,7 +1016,7 @@ public class GestoreToken {
 		}
 		
 		boolean infoRaccolte = false;
-		String forwardInforRaccolteMode = null;
+		String forwardInformazioniRaccolteMode = null;
 		Properties jwtSecurity = null;
 		boolean encodeBase64 = false;
 		boolean forwardValidazioneJWT = false;	
@@ -1025,13 +1031,13 @@ public class GestoreToken {
 		if(policyGestioneToken.isForwardToken()) {
 			infoRaccolte = policyGestioneToken.isForwardToken_informazioniRaccolte();
 			if(infoRaccolte) {
-				forwardInforRaccolteMode = policyGestioneToken.getForwardToken_informazioniRaccolteMode();
+				forwardInformazioniRaccolteMode = policyGestioneToken.getForwardToken_informazioniRaccolteMode();
 				encodeBase64 = policyGestioneToken.isForwardToken_informazioniRaccolteEncodeBase64();
-				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardTrasparenteMode) ||
-						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardTrasparenteMode)) {
+				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInformazioniRaccolteMode) ||
+						Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWS.equals(forwardInformazioniRaccolteMode)) {
 					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_SIGNATURE_PROP_REF_ID);
 				}
-				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardTrasparenteMode)) {
+				else if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_JWE.equals(forwardInformazioniRaccolteMode)) {
 					jwtSecurity = policyGestioneToken.getProperties().get(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_ENCRYP_PROP_REF_ID);
 				}
 				
@@ -1090,7 +1096,7 @@ public class GestoreToken {
 			_forwardInfomazioniRaccolte(portaDelegata, idTransazione, token, tokenForward, 
 					esitoValidazioneJWT, esitoIntrospection, esitoUserInfo, 
 					informazioniTokenNormalizzate,
-					forwardInforRaccolteMode, jwtSecurity, encodeBase64, 
+					forwardInformazioniRaccolteMode, jwtSecurity, encodeBase64, 
 					forwardValidazioneJWT, forwardValidazioneJWT_mode, forwardValidazioneJWT_name,
 					forwardIntrospection, forwardIntrospection_mode, forwardIntrospection_name,
 					forwardUserInfo, forwardUserInfo_mode, forwardUserInfo_name);
@@ -1416,7 +1422,12 @@ public class GestoreToken {
 				}
 			}
 			if(informazioniTokenNormalizzate.getUserInfo()!=null) {
-				ObjectNode userInfoNode = jsonUtils.newObjectNode();
+				ObjectNode userInfoNode = null;
+				if(!op2headers) {
+					userInfoNode = jsonUtils.newObjectNode();
+				}
+				
+				boolean add = false;
 				
 				if(informazioniTokenNormalizzate.getUserInfo().getFullName()!=null) {
 					if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME)) {
@@ -1424,7 +1435,8 @@ public class GestoreToken {
 							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FULL_NAME), informazioniTokenNormalizzate.getUserInfo().getFullName());
 						}
 						else {
-							jsonNode.put("fullName", informazioniTokenNormalizzate.getUserInfo().getFullName());
+							userInfoNode.put("fullName", informazioniTokenNormalizzate.getUserInfo().getFullName());
+							add = true;
 						}
 					}
 				}
@@ -1434,7 +1446,8 @@ public class GestoreToken {
 							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FIRST_NAME), informazioniTokenNormalizzate.getUserInfo().getFirstName());
 						}
 						else {
-							jsonNode.put("firstName", informazioniTokenNormalizzate.getUserInfo().getFirstName());
+							userInfoNode.put("firstName", informazioniTokenNormalizzate.getUserInfo().getFirstName());
+							add = true;
 						}
 					}
 				}
@@ -1444,7 +1457,8 @@ public class GestoreToken {
 							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_MIDDLE_NAME), informazioniTokenNormalizzate.getUserInfo().getMiddleName());
 						}
 						else {
-							jsonNode.put("middleName", informazioniTokenNormalizzate.getUserInfo().getMiddleName());
+							userInfoNode.put("middleName", informazioniTokenNormalizzate.getUserInfo().getMiddleName());
+							add = true;
 						}
 					}
 				}
@@ -1454,7 +1468,8 @@ public class GestoreToken {
 							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_FAMILY_NAME), informazioniTokenNormalizzate.getUserInfo().getFamilyName());
 						}
 						else {
-							jsonNode.put("familyName", informazioniTokenNormalizzate.getUserInfo().getFamilyName());
+							userInfoNode.put("familyName", informazioniTokenNormalizzate.getUserInfo().getFamilyName());
+							add = true;
 						}
 					}
 				}
@@ -1464,12 +1479,15 @@ public class GestoreToken {
 							tokenForward.getTrasporto().put(headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_EMAIL), informazioniTokenNormalizzate.getUserInfo().getEMail());
 						}
 						else {
-							jsonNode.put("eMail", informazioniTokenNormalizzate.getUserInfo().getEMail());
+							userInfoNode.put("eMail", informazioniTokenNormalizzate.getUserInfo().getEMail());
+							add = true;
 						}
 					}
 				}
 				
-				jsonNode.set("userInfo", userInfoNode);
+				if(!op2headers && add) {
+					jsonNode.set("userInfo", userInfoNode);
+				}
 			}		
 
 			if(!op2headers) {
@@ -1576,10 +1594,10 @@ public class GestoreToken {
 					}
 				}
 				if(Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_NO_OPENSPCOOP_CUSTOM_HEADER.equals(forwardUserInfo_mode)) {
-					tokenForward.getTrasporto().put(forwardValidazioneJWT_name, value);
+					tokenForward.getTrasporto().put(forwardUserInfo_name, value);
 				}
 				else {
-					tokenForward.getUrl().put(forwardValidazioneJWT_name, value);
+					tokenForward.getUrl().put(forwardUserInfo_name, value);
 				}
 				
 			}

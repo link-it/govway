@@ -1017,16 +1017,14 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 			
 			//	dump applicativo
-			if(ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).dumpMessaggi()){
-				msgDiag.mediumDebug("Dump applicativo messaggio ritornato...");
-				Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),
-						IntegrationManager.ID_MODULO,idMessaggio,
-						fruitore,idServizio,
-						TipoPdD.INTEGRATION_MANAGER,pddContext,
-						stato.getStatoRichiesta(),stato.getStatoRisposta(),
-						ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
-				dumpApplicativo.dumpIntegrationManagerGetMessage(consegnaMessage);
-			}
+			msgDiag.mediumDebug("Dump applicativo messaggio ritornato...");
+			Dump dumpApplicativo = new Dump(this.propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol()),
+					IntegrationManager.ID_MODULO,idMessaggio,
+					fruitore,idServizio,
+					TipoPdD.INTEGRATION_MANAGER,pddContext,
+					stato.getStatoRichiesta(),stato.getStatoRisposta(),
+					ConfigurazionePdDManager.getInstance(stato.getStatoRichiesta(),stato.getStatoRisposta()).getDumpConfigurazione());
+			dumpApplicativo.dumpIntegrationManagerGetMessage(consegnaMessage);
 
 			// Costruzione Message da ritornare
 			IntegrationManagerMessage msgReturn = null;

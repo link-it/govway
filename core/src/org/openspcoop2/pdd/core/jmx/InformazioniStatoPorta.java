@@ -37,7 +37,7 @@ public class InformazioniStatoPorta {
 			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
-			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
+			boolean tracciamento, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
 			String infoInternazionalizzazione, String infoTimeZone,  
@@ -50,7 +50,7 @@ public class InformazioniStatoPorta {
 				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
-				tracciamento, dumpApplicativo, dumpPD, dumpPA,
+				tracciamento, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
 				infoInternazionalizzazione, infoTimeZone,
@@ -70,7 +70,7 @@ public class InformazioniStatoPorta {
 			String statoServizioIM,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
-			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
+			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
 			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
 			String infoInternazionalizzazione, String infoTimeZone, 
@@ -139,7 +139,6 @@ public class InformazioniStatoPorta {
 		bf.append("===========================\n");
 		bf.append("\n");
 		format(bf, tracciamento ? "abilitato" : "disabilitato", "Buste");
-		format(bf, dumpApplicativo ? "abilitato" : "disabilitato", "Dump Applicativo");
 		format(bf, dumpPD ? "abilitato" : "disabilitato", "Dump Binario Porta Delegata");
 		format(bf, dumpPA ? "abilitato" : "disabilitato", "Dump Binario Porta Applicativa");
 		format(bf, log4j_tracciamento ? "abilitato" : "disabilitato", "Log4J openspcoop2_tracciamento.log");

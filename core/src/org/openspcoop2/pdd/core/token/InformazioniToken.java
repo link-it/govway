@@ -45,7 +45,7 @@ public class InformazioniToken implements Serializable {
 		if(r!=null && r.size()>0) {
 			this.roles.addAll(r);
 		}
-		List<String> s = tokenParser.getScopes();
+		List<String> s = tokenParser.getScopes(); 
 		if(s!=null && s.size()>0) {
 			this.scopes.addAll(s);
 		}

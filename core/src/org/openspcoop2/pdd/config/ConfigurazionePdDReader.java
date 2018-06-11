@@ -4012,48 +4012,6 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.openSPCoopAppender_Tracciamento;
 	}
 
-
-	/**
-	 * Restituisce l'indicazione se effettuare o meno il dump dei messaggi. 
-	 *
-	 * @return Restituisce l'indicazione se effettuare o meno il dump dei messaggi.  (di default ritorna 'disabilitato'). 
-	 * 
-	 */
-	private static Boolean dumpMessaggi = null;
-	public static Boolean dumpMessaggiJMX = null;
-	protected boolean dumpMessaggi(Connection connectionPdD){
-
-		if(ConfigurazionePdDReader.dumpMessaggiJMX!=null)
-			return ConfigurazionePdDReader.dumpMessaggiJMX;
-
-		if( this.configurazioneDinamica || ConfigurazionePdDReader.dumpMessaggi==null){
-			try{
-				Configurazione configurazione = null;
-				try{
-					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				}catch(DriverConfigurazioneNotFound e){
-					this.log.debug("dumpMessaggi (not found): "+e.getMessage());
-				}catch(Exception e){
-					this.log.error("dumpMessaggi",e);
-				}
-
-				if(configurazione!=null && configurazione.getDump()!=null){
-					StatoFunzionalita read = configurazione.getDump().getStato();	   
-					if(CostantiConfigurazione.ABILITATO.equals(read))
-						ConfigurazionePdDReader.dumpMessaggi = true;
-					else
-						ConfigurazionePdDReader.dumpMessaggi = false;
-				}else{
-					ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
-				}
-
-			}catch(Exception e){
-				ConfigurazionePdDReader.dumpMessaggi = false; // default CostantiConfigurazione.DISABILITATO
-			}
-		}
-
-		return ConfigurazionePdDReader.dumpMessaggi;
-	}
 	
 	private static DumpConfigurazione dumpConfigurazione = null;
 	public DumpConfigurazione getDumpConfigurazione(Connection connectionPdD) {

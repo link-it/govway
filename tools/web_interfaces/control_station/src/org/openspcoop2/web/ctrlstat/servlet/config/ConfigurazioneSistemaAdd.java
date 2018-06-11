@@ -314,11 +314,6 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE));
 						tipo = "stato del tracciamento delle buste";
 					}
-					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO.equals(nomeParametroPostBack)){
-						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias);
-						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO));
-						tipo = "stato del dump applicativo";
-					}
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias);
 						nuovoStato = CostantiConfigurazione.ABILITATO.getValue().equals(confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD));

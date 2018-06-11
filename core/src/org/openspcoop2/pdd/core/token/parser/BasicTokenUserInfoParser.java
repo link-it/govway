@@ -62,7 +62,11 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 	public String getFamilyName() {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
-			return this.claims.get(Claims.OIDC_ID_CLAIMS_FAMILY_NAME);
+			String tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_FAMILY_NAME);
+			if(tmp==null) {
+				tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_LAST_NAME);
+			}
+			return tmp;
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:

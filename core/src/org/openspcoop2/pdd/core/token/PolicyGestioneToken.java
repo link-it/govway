@@ -341,10 +341,10 @@ public class PolicyGestioneToken implements Serializable {
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE);
 	}
 	public String getForwardToken_trasparenteModeCustomHeader() {
-		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER);
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME);
 	}
 	public String getForwardToken_trasparenteModeCustomUrl() {
-		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL);
+		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME);
 	}
 	
 	public boolean isForwardToken_informazioniRaccolte() throws ProviderException, ProviderValidationException{

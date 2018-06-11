@@ -62,7 +62,7 @@ public class Costanti {
 	public final static String POLICY_VALIDAZIONE_SAVE_ERROR_IN_CACHE = "policy.validazioneJWT.saveErrorInCache";
 	public final static String POLICY_VALIDAZIONE_JWS_VERIFICA_PROP_REF_ID = SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID;
 	public final static String POLICY_VALIDAZIONE_JWE_DECRYPT_PROP_REF_ID = SecurityConstants.DECRYPTION_PROPERTY_REF_ID;
-	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser.className";
+	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE = "policy.validazioneJWT.claimsParser";
 	public final static String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
 
 	public final static String POLICY_REQUEST_TOKEN_POSITION_AUTHORIZATION = "authorization";
@@ -117,6 +117,8 @@ public class Costanti {
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_RFC6750_URL = "RFC6750_url";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER = "CUSTOM_header";
 	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL = "CUSTOM_url";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_HEADER_NAME = "policy.tokenForward.trasparente.mode.header";
+	public final static String POLICY_TOKEN_FORWARD_TRASPARENTE_MODE_CUSTOM_URL_PARAMETER_NAME = "policy.tokenForward.trasparente.mode.queryParameter";
 	
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_STATO = "policy.tokenForward.infoRaccolte.stato";
 	public final static String POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE = "policy.tokenForward.infoRaccolte.mode";

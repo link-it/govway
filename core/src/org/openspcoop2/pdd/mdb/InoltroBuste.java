@@ -1957,14 +1957,12 @@ public class InoltroBuste extends GenericLib{
 			
 			
 			/* ------------------- Dump -----------------------*/
-			if(configurazionePdDManager.dumpMessaggi() ){
-				DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
-				Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
-						soggettoFruitore,idServizio,tipoPdD,pddContext,
-						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
-						dumpConfig);
-				dumpApplicativo.dumpRichiestaUscita(requestMessage, outRequestContext.getConnettore());
-			}
+			DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
+			Dump dumpApplicativoRichiesta = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
+					soggettoFruitore,idServizio,tipoPdD,pddContext,
+					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+					dumpConfig);
+			dumpApplicativoRichiesta.dumpRichiestaUscita(requestMessage, outRequestContext.getConnettore());
 			
 			
 			
@@ -2390,8 +2388,7 @@ public class InoltroBuste extends GenericLib{
 				responseMessage = inResponseContext.getMessaggio();
 			
 				// dump applicativo
-				if(responseMessage!=null && configurazionePdDManager.dumpMessaggi() ){
-					DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pd);
+				if(responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroBuste.ID_MODULO,idMessageRequest,
 							soggettoFruitore,idServizio,tipoPdD,pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),

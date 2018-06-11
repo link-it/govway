@@ -751,6 +751,7 @@
 		<item type="checkbox" name="tokenForwardInfoRaccolte" label="Informazioni Raccolte" defaultSelected="false" reloadOnChange="true">
 			<conditions>
 				<condition and="false">
+					<selected name="validazioneJwtStato"/>
 					<selected name="introspectionStato"/>
 					<selected name="userInfoStato"/>
 				</condition>
@@ -878,39 +879,139 @@
 				<property name="policy.tokenForward.infoRaccolte.scelta" />
 			</item>
 			
-			<item type="checkbox" name="tokenForwardInfoRaccolteModeValidazioneJWT" label="Validazione JWT" defaultSelected="true">
+			<item type="hidden" name="tokenForwardInfoRaccolteNoSceltaValidazioneJWT" value="true">
 				<conditions and="true">
 					<condition and="true">
-						<defined name="tokenForwardInfoRaccolteScelta"/>
-						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
-					</condition>
-					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
+						<selected name="validazioneJwtStato"/>
+						<equals not="true" name="tokenForwardInfoRaccolteScelta" value="true"/>
 					</condition>
 				</conditions>
-				<property name="policy.tokenForward.infoRaccolte.validazioneJWT" />
-			</item>
-			<item type="hidden" name="tokenForwardInfoRaccolteModeValidazioneJWTForce" value="true">
-				<conditions not="true" and="true">
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT.tmp" />
+			</item>	
+			<item type="hidden" name="tokenForwardInfoRaccolteSceltaValidazioneJWT" value="true">
+				<conditions and="false">
 					<condition and="true">
 						<defined name="tokenForwardInfoRaccolteScelta"/>
 						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
 					</condition>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteNoSceltaValidazioneJWT"/>
+						<equals name="tokenForwardInfoRaccolteNoSceltaValidazioneJWT" value="true"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT.tmp2" />
+			</item>		
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeValidazioneJWT" label="Validazione JWT" defaultSelected="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteSceltaValidazioneJWT"/>
+						<equals name="tokenForwardInfoRaccolteSceltaValidazioneJWT" value="true"/>
+					</condition>
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
 						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
 					</condition>
+					<condition and="true">
+						<selected name="validazioneJwtStato"/>
+					</condition>
 				</conditions>
 				<property name="policy.tokenForward.infoRaccolte.validazioneJWT" />
 			</item>
+			
+			<item type="hidden" name="tokenForwardInfoRaccolteNoSceltaIntrospection" value="true">
+				<conditions and="true">
+					<condition and="true">
+						<selected name="introspectionStato"/>
+						<equals not="true" name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.introspection.tmp" />
+			</item>	
+			<item type="hidden" name="tokenForwardInfoRaccolteSceltaIntrospection" value="true">
+				<conditions and="false">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteNoSceltaIntrospection"/>
+						<equals name="tokenForwardInfoRaccolteNoSceltaIntrospection" value="true"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT.tmp2" />
+			</item>	
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeIntrospection" label="Introspection" defaultSelected="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteSceltaIntrospection"/>
+						<equals name="tokenForwardInfoRaccolteSceltaIntrospection" value="true"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
+					</condition>
+					<condition and="true">
+						<selected name="introspectionStato"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.introspection" />
+			</item>
+			
+			<item type="hidden" name="tokenForwardInfoRaccolteNoSceltaUserInfo" value="true">
+				<conditions and="true">
+					<condition and="true">
+						<selected name="userInfoStato"/>
+						<equals not="true" name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.UserInfo.tmp" />
+			</item>	
+			<item type="hidden" name="tokenForwardInfoRaccolteSceltaUserInfo" value="true">
+				<conditions and="false">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteScelta"/>
+						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
+					</condition>
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteNoSceltaUserInfo"/>
+						<equals name="tokenForwardInfoRaccolteNoSceltaUserInfo" value="true"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.validazioneJWT.tmp2" />
+			</item>	
+			<item type="checkbox" name="tokenForwardInfoRaccolteModeUserInfo" label="UserInfo" defaultSelected="true" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="true">
+						<defined name="tokenForwardInfoRaccolteSceltaUserInfo"/>
+						<equals name="tokenForwardInfoRaccolteSceltaUserInfo" value="true"/>
+					</condition>
+					<condition and="false">
+						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
+						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
+					</condition>
+					<condition and="true">
+						<selected name="userInfoStato"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.infoRaccolte.userInfo" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="Informazioni Raccolte Validazione JWT">
+			<conditions and="true">
+				<condition and="true">
+					<selected name="tokenForwardInfoRaccolteModeValidazioneJWT" />
+				</condition>
+			</conditions>
+			
 			<item type="select" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
-				<conditions and="true">
-					<condition and="false">
+				<conditions and="false">
+					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeValidazioneJWT" />
-						<equals name="tokenForwardInfoRaccolteModeValidazioneJWTForce" value="true"/>
 					</condition>
 				</conditions>
 				<values>
@@ -938,39 +1039,19 @@
 			    <property name="policy.tokenForward.infoRaccolte.validazioneJWT.mode.queryParameter" />
 			</item>
 			
-			<item type="checkbox" name="tokenForwardInfoRaccolteModeIntrospection" label="Introspection" defaultSelected="true">
-				<conditions and="true">
-					<condition and="true">
-						<defined name="tokenForwardInfoRaccolteScelta"/>
-						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
-					</condition>
-					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
-					</condition>
-				</conditions>
-				<property name="policy.tokenForward.infoRaccolte.introspection" />
-			</item>
-			<item type="hidden" name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true">
-				<conditions not="true" and="true">
-					<condition and="true">
-						<defined name="tokenForwardInfoRaccolteScelta"/>
-						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
-					</condition>
-					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
-					</condition>
-				</conditions>
-				<property name="policy.tokenForward.infoRaccolte.introspection" />
-			</item>
+		</subsection>
+		
+		<subsection label="Informazioni Raccolte Introspection">
+			<conditions and="true">
+				<condition and="true">
+					<selected name="tokenForwardInfoRaccolteModeIntrospection" />
+				</condition>
+			</conditions>
+			
 			<item type="select" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
-				<conditions and="true">
-					<condition and="false">
+				<conditions and="false">
+					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeIntrospection" />
-						<equals name="tokenForwardInfoRaccolteModeIntrospectionForce" value="true"/>
 					</condition>
 				</conditions>
 				<values>
@@ -997,40 +1078,20 @@
 				</conditions>
 			    <property name="policy.tokenForward.infoRaccolte.introspection.mode.queryParameter" />
 			</item>
+				
+		</subsection>
+		
+		<subsection label="Informazioni Raccolte UserInfo">
+			<conditions and="true">
+				<condition and="true">
+					<selected name="tokenForwardInfoRaccolteModeUserInfo" />
+				</condition>
+			</conditions>
 			
-			<item type="checkbox" name="tokenForwardInfoRaccolteModeUserInfo" label="UserInfo" defaultSelected="true">
-				<conditions and="true">
-					<condition and="true">
-						<defined name="tokenForwardInfoRaccolteScelta"/>
-						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
-					</condition>
-					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
-					</condition>
-				</conditions>
-				<property name="policy.tokenForward.infoRaccolte.userInfo" />
-			</item>
-			<item type="hidden" name="tokenForwardInfoRaccolteModeUserInfoForce" value="true">
-				<conditions not="true" and="true">
-					<condition and="true">
-						<defined name="tokenForwardInfoRaccolteScelta"/>
-						<equals name="tokenForwardInfoRaccolteScelta" value="true"/>
-					</condition>
-					<condition and="false">
-						<equals name="tokenForwardInfoRaccolteMode" value="jws"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
-						<equals name="tokenForwardInfoRaccolteMode" value="json"/>
-					</condition>
-				</conditions>
-				<property name="policy.tokenForward.infoRaccolte.userInfo" />
-			</item>
 			<item type="select" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
-				<conditions and="true">
-					<condition and="false">
+				<conditions and="false">
+					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeUserInfo" />
-						<equals name="tokenForwardInfoRaccolteModeUserInfoForce" value="true"/>
 					</condition>
 				</conditions>
 				<values>
@@ -1057,7 +1118,7 @@
 				</conditions>
 			    <property name="policy.tokenForward.infoRaccolte.userInfo.mode.queryParameter" />
 			</item>
-
+			
 		</subsection>
 		
 		<subsection label="JWS KeyStore">

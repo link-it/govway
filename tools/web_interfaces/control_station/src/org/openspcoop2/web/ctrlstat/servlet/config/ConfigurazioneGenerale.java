@@ -125,7 +125,6 @@ public final class ConfigurazioneGenerale extends Action {
 			String validman = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			String gestman = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
 			String registrazioneTracce = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			String dumpApplicativo = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 			String dumpPD = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
 			String dumpPA = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 			String xsd = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_XSD);
@@ -224,7 +223,7 @@ public final class ConfigurazioneGenerale extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+							connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 							xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 							configurazione.getProtocolli());
 
@@ -360,12 +359,11 @@ public final class ConfigurazioneGenerale extends Action {
 				}
 				
 				if (newConfigurazione.getDump() != null) {
-					newConfigurazione.getDump().setStato(StatoFunzionalita.toEnumConstant(dumpApplicativo));
 					newConfigurazione.getDump().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
 					newConfigurazione.getDump().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
 				} else {
 					Dump d = new Dump();
-					d.setStato(StatoFunzionalita.toEnumConstant(dumpApplicativo));
+					d.setStato(StatoFunzionalita.DISABILITATO);
 					d.setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(dumpPD));
 					d.setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(dumpPA));
 					newConfigurazione.setDump(d);
@@ -489,7 +487,7 @@ public final class ConfigurazioneGenerale extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+						connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 						xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 						configurazione.getProtocolli());
 
@@ -583,8 +581,6 @@ public final class ConfigurazioneGenerale extends Action {
 					gestman = configurazione.getAttachments().getGestioneManifest().toString();
 				if(configurazione.getTracciamento().getStato()!=null)
 					registrazioneTracce = configurazione.getTracciamento().getStato().toString();
-				if(configurazione.getDump().getStato()!=null)
-					dumpApplicativo = configurazione.getDump().getStato().toString();
 				if(configurazione.getDump().getDumpBinarioPortaDelegata()!=null)
 					dumpPD = configurazione.getDump().getDumpBinarioPortaDelegata().toString();
 				if(configurazione.getDump().getDumpBinarioPortaApplicativa()!=null)
@@ -660,7 +656,7 @@ public final class ConfigurazioneGenerale extends Action {
 			dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 			dati = confHelper.addConfigurazioneToDati(  inoltromin, stato, controllo, severita, severita_log4j, integman, nomeintegman, profcoll, 
-					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpApplicativo, dumpPD, dumpPA, 
+					connessione, utilizzo, validman, gestman, registrazioneTracce, dumpPD, dumpPA, 
 					xsd, tipoValidazione, confPers, configurazione, dati, applicaMTOM,
 					configurazione.getProtocolli());
 

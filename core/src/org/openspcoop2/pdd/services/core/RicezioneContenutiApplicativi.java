@@ -462,6 +462,8 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		
+
+		
 		
 		
 		
@@ -470,8 +472,22 @@ public class RicezioneContenutiApplicativi {
 			if(Dump.sistemaDumpDisponibile){
 				try{
 					ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+					
+					if(internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)==false) {
+						URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
+						if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
+							IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
+							identificativoPortaDelegata.setNome(urlProtocolContext.getInterfaceName());
+							PortaDelegata portaDelegata = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata);
+							if(portaDelegata!=null) {
+								DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegata);
+								internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
+							}
+						}
+					}
+					
 					OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
-					if (configurazionePdDReader.dumpMessaggi() && msgRichiesta!=null) {
+					if (msgRichiesta!=null) {
 						
 						Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
 						dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
@@ -554,7 +570,7 @@ public class RicezioneContenutiApplicativi {
 		if(Dump.sistemaDumpDisponibile){
 			try{
 				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
-				if (configurazionePdDReader.dumpMessaggi() && msgRisposta!=null) {
+				if (msgRisposta!=null) {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects);
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
@@ -565,6 +581,7 @@ public class RicezioneContenutiApplicativi {
 				setSOAPFault(IntegrationError.INTERNAL_ERROR, logCore,msgDiag, e, "DumpNonRiuscito");
 				return;
 			}catch(Exception e){
+				logCore.error(e.getMessage(),e);
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
 			}
 		}
@@ -585,20 +602,71 @@ public class RicezioneContenutiApplicativi {
 		}
 		
 		ProtocolContext protocolContext = this.msgContext.getProtocol();
+		URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
+		IDSoggetto soggettoErogatore = null;
+		IDServizio idServizio = null;
+		IDSoggetto fruitore = null;
+		IDSoggetto dominio = null;
+		String idRichiesta = null;
+		if(protocolContext!=null) {
+			if(protocolContext.getTipoServizio()!=null && protocolContext.getServizio()!=null && protocolContext.getVersioneServizio()!=null &&
+				protocolContext.getErogatore()!=null && protocolContext.getErogatore().getTipo()!=null && protocolContext.getErogatore().getNome()!=null) {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
+						protocolContext.getErogatore(), protocolContext.getVersioneServizio());
+			}
+			dominio = protocolContext.getDominio();
+			idRichiesta = protocolContext.getIdRichiesta();
+			if(protocolContext.getFruitore()!=null && protocolContext.getFruitore().getTipo()!=null && protocolContext.getFruitore().getNome()!=null) {
+				fruitore = protocolContext.getFruitore();
+			}
+		}
+		
+		if(dominio == null || fruitore==null || idServizio == null) {
+			if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
+				IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
+				identificativoPortaDelegata.setNome(urlProtocolContext.getInterfaceName());
+				PortaDelegata portaDelegata = null;
+				try {
+					portaDelegata = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata);
+				}catch(Exception e) {}
+				if(portaDelegata!=null) {
+					// Aggiorno tutti
+					soggettoErogatore = new IDSoggetto(portaDelegata.getSoggettoErogatore().getTipo(),portaDelegata.getSoggettoErogatore().getNome());
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(),portaDelegata.getServizio().getNome(), 
+								soggettoErogatore, portaDelegata.getServizio().getVersione());
+					dominio = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+					fruitore = new IDSoggetto(portaDelegata.getTipoSoggettoProprietario(), portaDelegata.getNomeSoggettoProprietario());
+					try {
+						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory));
+					}catch(Exception e) {
+						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol());
+					}
+				}
+			}
+		}
+		if(idServizio!=null) {
+			if(protocolContext!=null && protocolContext.getAzione()!=null) {
+				idServizio.setAzione(protocolContext.getAzione());
+			}
+			else if(this.msgContext.getRequestInfo()!=null && 
+					this.msgContext.getRequestInfo().getIdServizio()!=null && this.msgContext.getRequestInfo().getIdServizio().getAzione()!=null) {
+				idServizio.setAzione(this.msgContext.getRequestInfo().getIdServizio().getAzione());
+			}
+		}
+		if(dominio==null) {
+			dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol());
+		}
+
 		Dump dumpApplicativo = null;
-		if(protocolContext!=null){
-			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
-					protocolContext.getErogatore(), protocolContext.getVersioneServizio());
-			idServizio.setAzione(protocolContext.getAzione());
-			
-			dumpApplicativo = new Dump(protocolContext.getDominio(),
-					this.msgContext.getIdModulo(), protocolContext.getIdRichiesta(),
-					protocolContext.getFruitore(),idServizio,
+		if(idServizio!=null){
+			dumpApplicativo = new Dump(dominio,
+					this.msgContext.getIdModulo(), 
+					idRichiesta, fruitore, idServizio,
 					this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
 		}else{
-			dumpApplicativo = new Dump(OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()),
+			dumpApplicativo = new Dump(dominio,
 					this.msgContext.getIdModulo(),this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
@@ -1247,35 +1315,33 @@ public class RicezioneContenutiApplicativi {
 		
 		// ------------- Dump richiesta-----------------------------
 		
-		if (configurazionePdDReader.dumpMessaggi()) {
-			
-			msgDiag.mediumDebug("Dump richiesta ...");
-			
-			DumpConfigurazione dumpConfig = null;
-			try {
-				dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegata);
-				internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
-			} 
-			catch (Exception e) {
-				msgDiag.logErroreGenerico(e, "readDumpConfigurazione");
-				openspcoopstate.releaseResource();
-				if (this.msgContext.isGestioneRisposta()) {
-					this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
-				}
-				return;
+		msgDiag.mediumDebug("Dump richiesta ...");
+		
+		DumpConfigurazione dumpConfig = null;
+		try {
+			dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegata);
+			internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
+		} 
+		catch (Exception e) {
+			msgDiag.logErroreGenerico(e, "readDumpConfigurazione");
+			openspcoopstate.releaseResource();
+			if (this.msgContext.isGestioneRisposta()) {
+				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE), e,null)));
 			}
-			
-			Dump dumpApplicativo = new Dump(identitaPdD,
-					this.msgContext.getIdModulo(), null,
-					soggettoFruitore, richiestaDelegata.getIdServizio(),
-					this.msgContext.getTipoPorta(), inRequestContext.getPddContext(),
-					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
-					dumpConfig);
-			dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
-			internalObjects.put(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO, true);
+			return;
 		}
+		
+		Dump dumpApplicativo = new Dump(identitaPdD,
+				this.msgContext.getIdModulo(), null,
+				soggettoFruitore, richiestaDelegata.getIdServizio(),
+				this.msgContext.getTipoPorta(), inRequestContext.getPddContext(),
+				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+				dumpConfig);
+		dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
+		internalObjects.put(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO, true);
+		
 		
 		
 		
@@ -1680,6 +1746,7 @@ public class RicezioneContenutiApplicativi {
 			} catch (Exception e) {
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				msgDiag.logPersonalizzato("gestioneTokenFallita.erroreGenerico");
 				logCore.error("processo di gestione token ["+ tipoGestioneToken + "] fallito, " + e.getMessage(),e);
 				
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

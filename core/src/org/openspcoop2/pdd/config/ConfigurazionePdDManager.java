@@ -836,10 +836,6 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getOpenSPCoopAppender_Tracciamento(this.getConnection());
 	}
 	
-	public boolean dumpMessaggi(){
-		return this.configurazionePdDReader.dumpMessaggi(this.getConnection());
-	}
-	
 	public DumpConfigurazione getDumpConfigurazione() {
 		return this.configurazionePdDReader.getDumpConfigurazione(this.getConnection());
 	}

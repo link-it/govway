@@ -761,7 +761,6 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = new Hashtable<String, String>();
-	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = new Hashtable<String, String>();
@@ -951,9 +950,6 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento.get(alias);
-	}
-	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(String alias) {
-		return this.jmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD.get(alias);
@@ -1456,7 +1452,6 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici = core.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j = core.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento;
-		this.jmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo = core.jmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD = core.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA = core.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica;
@@ -1797,7 +1792,6 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnostici(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_severitaDiagnosticiLog4j(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_tracciamento(alias));
-					this.jmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPD(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_dumpPA.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_dumpPA(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDiagnostica(alias));

@@ -27,7 +27,10 @@ import java.util.Hashtable;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPFault;
 
+import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -527,14 +530,27 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					}
 					
 					context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
-					if(ConfigurazionePdDManager.getInstance().dumpMessaggi()){
-						Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
-								IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),
-								null,null,
-								ConfigurazionePdDManager.getInstance().getDumpConfigurazione());
-						dumpApplicativo.dumpRichiestaIngressoByIntegrationManagerError(msg.getMessage(),urlProtocolContext);
-								//IntegrationManager.buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
+					
+					ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+					DumpConfigurazione dumpConfig = null;
+					if(portaDelegata!=null) {							
+						IDPortaDelegata identificativoPortaDelegata = new IDPortaDelegata();
+						identificativoPortaDelegata.setNome(portaDelegata);
+						PortaDelegata portaDelegataObject = configurazionePdDReader.getPortaDelegata_SafeMethod(identificativoPortaDelegata);
+						if(portaDelegataObject!=null) {
+							dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaDelegataObject);
+						}
 					}
+					if(dumpConfig==null) {
+						dumpConfig = ConfigurazionePdDManager.getInstance().getDumpConfigurazione();
+					}
+					
+					Dump dumpApplicativo = new Dump(openSPCoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),
+							IntegrationManager.ID_MODULO,TipoPdD.DELEGATA,context.getPddContext(),
+							null,null,
+							dumpConfig);
+					dumpApplicativo.dumpRichiestaIngressoByIntegrationManagerError(msg.getMessage(),urlProtocolContext);
+							//IntegrationManager.buildInfoConnettoreIngresso(req, credenziali, urlProtocolContext));
 					if(msg.getImbustamento()==false){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 						msgDiag.logPersonalizzato("buildMsg.nonRiuscito");

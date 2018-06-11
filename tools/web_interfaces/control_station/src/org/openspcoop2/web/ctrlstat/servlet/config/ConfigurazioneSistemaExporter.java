@@ -314,16 +314,6 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
-		String dumpApplicativo = null;
-		try{
-			dumpApplicativo = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias));
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del dump applicativo (jmxResourcePdD): "+e.getMessage(),e);
-			dumpApplicativo = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
-		}
-		
 		String dumpPD = null;
 		try{
 			dumpPD = confCore.readJMXAttribute(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -560,7 +550,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				statoServizioIM,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
-				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),
+				"true".equals(tracciamento), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
 				infoDatabase, infoSSL, infoCryptographyKeyLength, 
 				infoInternazionalizzazione, infoTimeZone, 

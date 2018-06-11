@@ -1052,7 +1052,7 @@ public class InoltroRisposte extends GenericLib{
 				}
 				
 				//	dump applicativo
-				if(responseHttpReply!=null && configurazionePdDManager.dumpMessaggi() ){
+				if(responseHttpReply!=null ){
 					DumpConfigurazione dumpConfig = configurazionePdDManager.getDumpConfigurazione(pa);
 					Dump dumpApplicativo = new Dump(identitaPdD,InoltroRisposte.ID_MODULO,idMessageRequest,
 							soggettoMittente,idServizio,tipoPorta,pddContext,

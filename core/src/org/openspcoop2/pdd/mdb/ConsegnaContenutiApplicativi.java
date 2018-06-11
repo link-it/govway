@@ -1651,22 +1651,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			
 			/* ------------------- Dump -----------------------*/
-			if(configurazionePdDManager.dumpMessaggi() ){
 				
-				// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
-				connettoreMsg.getRequestMessage(requestInfo);
-				
-				String idMessaggioDump = idMessaggioConsegna;
-				if(idMessaggioPreBehaviour!=null){
-					idMessaggioDump = idMessaggioPreBehaviour;
-				}
-				
-				Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
-						soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
-						openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
-						dumpConfig);
-				dumpApplicativo.dumpRichiestaUscita(consegnaMessage, outRequestContext.getConnettore());
+			// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
+			connettoreMsg.getRequestMessage(requestInfo);
+			
+			String idMessaggioDumpRichiesta = idMessaggioConsegna;
+			if(idMessaggioPreBehaviour!=null){
+				idMessaggioDumpRichiesta = idMessaggioPreBehaviour;
 			}
+			
+			Dump dumpApplicativoRichiesta = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDumpRichiesta,
+					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
+					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+					dumpConfig);
+			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessage, outRequestContext.getConnettore());
+
 			
 			
 			
@@ -2047,7 +2046,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				
 				//	dump applicativo
-				if(responseMessage!=null && configurazionePdDManager.dumpMessaggi() ){
+				if(responseMessage!=null ){
 					Dump dumpApplicativo = new Dump(identitaPdD,ConsegnaContenutiApplicativi.ID_MODULO,idMessaggioDump,
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),

@@ -120,8 +120,10 @@ public class BasicTokenParser implements ITokenParser {
 		}
 		if(tmp!=null) {
 			long l = Long.valueOf(tmp);
-			l = l * 1000;
-			return new Date(l);
+			if(l>0) {
+				l = l * 1000;
+				return new Date(l);
+			}
 		}
 		return null;
 	}
@@ -144,8 +146,10 @@ public class BasicTokenParser implements ITokenParser {
 		}
 		if(tmp!=null) {
 			long l = Long.valueOf(tmp);
-			l = l * 1000;
-			return new Date(l);
+			if(l>0) {
+				l = l * 1000;
+				return new Date(l);
+			}
 		}
 		return null;
 	}
@@ -167,8 +171,10 @@ public class BasicTokenParser implements ITokenParser {
 		}
 		if(tmp!=null) {
 			long l = Long.valueOf(tmp);
-			l = l * 1000;
-			return new Date(l);
+			if(l>0) {
+				l = l * 1000;
+				return new Date(l);
+			}
 		}
 		return null;
 	}
@@ -210,7 +216,7 @@ public class BasicTokenParser implements ITokenParser {
 
 	@Override
 	public List<String> getScopes() {
-		if(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID.equals(this.parser)) {
+		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser)) {
 			String tmp = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
 			if(tmp!=null) {
 				String [] tmpArray = tmp.split(" ");

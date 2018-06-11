@@ -1759,7 +1759,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeverita_msgDiagnostici(),true),
 						LogLevels.toOpenSPCoop2(configurazionePdDManager.getSeveritaLog4J_msgDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,
-						configurazionePdDManager.tracciamentoBuste(), configurazionePdDManager.dumpMessaggi(),
+						configurazionePdDManager.tracciamentoBuste(), 
 						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
 						infoConfigSistema.getInformazioniDatabase(),

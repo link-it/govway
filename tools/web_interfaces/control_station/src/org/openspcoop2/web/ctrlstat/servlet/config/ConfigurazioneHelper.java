@@ -2863,7 +2863,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String controllo, String severita, String severita_log4j,
 			String integman, String nomeintegman, String profcoll,
 			String connessione, String utilizzo, String validman,
-			String gestman, String registrazioneTracce, String dumpApplicativo, String dumpPD, String dumpPA,
+			String gestman, String registrazioneTracce, String dumpPD, String dumpPA,
 			String xsd,	String tipoValidazione, String confPers, Configurazione configurazione,
 			Vector<DataElement> dati, String applicaMTOM, ConfigurazioneProtocolli configProtocolli) throws Exception {
 		DataElement de = new DataElement();
@@ -2979,7 +2979,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		addTracciamentoToDatiAsHidden(registrazioneTracce, configurazione, dati);
 		
-		addRegistrazioneMessaggiToDatiAsHidden(dumpApplicativo, dumpPD, dumpPA, configurazione, dati);
+		addRegistrazioneMessaggiToDatiAsHidden(dumpPD, dumpPA, configurazione, dati);
 		
 		
 		// I.M.
@@ -3314,14 +3314,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
-	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpApplicativo, String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
+	public void addRegistrazioneMessaggiToDatiAsHidden(String dumpPD, String dumpPA, Configurazione configurazione,	Vector<DataElement> dati) {
 		DataElement de = new DataElement();
-
-		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		de.setType(DataElementType.HIDDEN);
-		de.setValue(dumpApplicativo);
-		dati.addElement(de);
 		
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
@@ -4170,34 +4164,6 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}catch(Exception e){
 			this.log.error("Errore durante la lettura delle informazioni sul tracciamento (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-		}
-		
-		try{
-			String value = this.confCore.readJMXAttribute(gestoreRisorseJMX, alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_dumpApplicativo(alias));
-			boolean enable = "true".equals(value);
-			
-			String[] tipoMsg = { CostantiConfigurazione.ABILITATO.getValue(), CostantiConfigurazione.DISABILITATO.getValue() };
-			de = newDataElementStyleRuntime();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoMsg);
-				de.setSelected(v);
-				de.setPostBack_viaPOST(true);
-			}
-			else{
-				de.setType(DataElementType.TEXT);
-				de.setValue(v);
-			}
-			dati.addElement(de);
-			
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sul dump applicativo (jmxResourcePdD): "+e.getMessage(),e);
-			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 		}
 			
 		try{
