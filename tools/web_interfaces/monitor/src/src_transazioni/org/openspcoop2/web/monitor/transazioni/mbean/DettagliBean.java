@@ -24,7 +24,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -688,5 +688,16 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	public void setVisualizzaDataAccettazione(boolean visualizzaDataAccettazione) {
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
+	}
+	
+	public boolean isVisualizzaTextAreaUrlInvocazione () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getUrlInvocazione())) {
+			if(this.dettaglio.getUrlInvocazione().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+
+	public void setVisualizzaTextAreaUrlInvocazione(boolean visualizzaTextAreaUrlInvocazione) {
 	}
 }

@@ -323,6 +323,12 @@ div.form-container .display-form input[type="checkbox"].controlset {
 	margin-bottom: 12px;
 }
 
+.buttonrowlistaLeft{
+	display: block;
+/* 	float: right; */
+	padding-top: 20px;
+}
+
 .buttonrowsonda a,
 .buttonrowsonda input[type="button"],
 .buttonrowsonda input[type="submit"],

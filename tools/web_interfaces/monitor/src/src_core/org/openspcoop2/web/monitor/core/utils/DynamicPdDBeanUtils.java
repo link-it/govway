@@ -288,6 +288,16 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * 
 	 * Restituisce l'elenco delle Azioni dell'Accordo di servizio passato come parametro
 	 * 
+	 * La Mappa contiene
+	 * Nome Azione
+	 * 
+	 * @param tipoProtocollo
+	 * @param tipoServizio
+	 * @param nomeServizio
+	 * @param tipoErogatore
+	 * @param nomeErogatore
+	 * @param versioneServizio
+	 * @return Azioni dell'Accordo di servizio
 	 */
 	public Map<String, String> findAzioniFromServizio(String tipoProtocollo,String tipoServizio,String nomeServizio,  String tipoErogatore, String nomeErogatore,Integer versioneServizio){
 		Map<String, String>  map = new HashMap<String, String>();
@@ -306,6 +316,13 @@ public class DynamicPdDBeanUtils implements Serializable {
 	 * 
 	 * Restituisce la lista delle select items  per le azioni
 	 * 
+	 * @param tipoProtocollo
+	 * @param tipoServizio
+	 * @param nomeServizio
+	 * @param tipoErogatore
+	 * @param nomeErogatore
+	 * @param versioneServizio
+	 * @return Lista delle SelectItems per le Azioni trovate
 	 */
 	public List<SelectItem> getListaSelectItemsAzioniFromServizio(String tipoProtocollo, String tipoServizio,String nomeServizio,  String tipoErogatore , String nomeErogatore,Integer versioneServizio){
 		List<SelectItem> azioni = new ArrayList<SelectItem>();

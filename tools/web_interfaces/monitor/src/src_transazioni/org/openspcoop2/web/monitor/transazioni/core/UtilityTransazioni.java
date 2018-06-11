@@ -648,6 +648,22 @@ public class UtilityTransazioni {
 				){
 				datiIntegrazione.setXForwardedFor(UtilityTransazioni.escapeXmlValue(t.getTransportClientAddress()));
 			}
+			if( 
+					(t.getTipoRichiesta()!=null && StringUtils.isNotEmpty(t.getTipoRichiesta())) 
+				){
+				datiIntegrazione.setTipoRichiesta(UtilityTransazioni.escapeXmlValue(t.getTipoRichiesta()));
+			}
+			if( 
+					(t.getCodiceRispostaIngresso()!=null && StringUtils.isNotEmpty(t.getCodiceRispostaIngresso())) 
+				){
+				datiIntegrazione.setCodiceRispostaIngresso(UtilityTransazioni.escapeXmlValue(t.getCodiceRispostaIngresso()));
+			}
+			if( 
+					(t.getCodiceRispostaUscita()!=null && StringUtils.isNotEmpty(t.getCodiceRispostaUscita())) 
+				){
+				datiIntegrazione.setCodiceRispostaUscita(UtilityTransazioni.escapeXmlValue(t.getCodiceRispostaUscita()));
+			}
+			
 			
 			transazione.setDatiIntegrazione(datiIntegrazione);
 		}

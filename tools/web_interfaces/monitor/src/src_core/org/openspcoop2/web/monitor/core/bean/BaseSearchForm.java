@@ -84,6 +84,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	private String protocollo;
 	private List<SelectItem> protocolli= null;
+	private String modalita = null;
+	
 
 	private IFilter filtro;
 
@@ -1183,9 +1185,20 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public void setModalitaRicercaStorico(String modalitaRicercaStorico) {
 		this.modalitaRicercaStorico = modalitaRicercaStorico;
 	}
+	
+	public String getModalita() {
+		if(this.modalita == null)
+			return Utility.getLoginBean().getModalita();
+		
+		return this.modalita;
+	}
+
+	public void setModalita(String modalita) {
+		this.modalita = modalita;
+	}
 
 	public String getProtocollo() {
-		if(!Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
+		if(!this.getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
 			this.setProtocollo(Utility.getLoginBean().getModalita()); 
 		}
 		

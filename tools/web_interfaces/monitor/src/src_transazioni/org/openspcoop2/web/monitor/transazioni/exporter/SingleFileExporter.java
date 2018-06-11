@@ -388,10 +388,10 @@ public class SingleFileExporter implements IExporter{
 				
 				//contenuti
 				
-				// TODO aggiornare con i nuovi valori
 				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_INGRESSO);
-				
+				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_USCITA);
 				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_INGRESSO);
+				exportContenuti(t, this.zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_USCITA);
 			}
 
 		}//chiudo for transazioni

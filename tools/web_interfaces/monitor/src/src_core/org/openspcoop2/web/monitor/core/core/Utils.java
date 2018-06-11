@@ -16,10 +16,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
+import org.slf4j.Logger;
 
 
 public class Utils {
@@ -105,6 +105,31 @@ public class Utils {
 		}
 		return res;
 	} 
+	
+	 public static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer) {
+		 try{
+			 // 1024 = 1K
+			 // Visualizzo al massimo 250K
+			 int max = 250 * 1024;
+//			 if(b.length>max){
+//				 return "Visualizzazione non riuscita: la dimensione supera 250K";
+//			 }
+//
+//			 for (int i = 0; i < b.length; i++) {
+//				 if(!Utilities.isPrintableChar((char)b[i])){
+//
+//					 return "Visualizzazione non riuscita: il documento contiene caratteri non visualizzabili";
+//				 }
+//			 }
+			 stringBuffer.append(org.openspcoop2.utils.Utilities.convertToPrintableText(b, max));
+			 return null;
+
+		 }catch(Exception e){
+			 log.error("getTestoVisualizzabile error", e);
+			 return e.getMessage();
+		 }
+
+	 }
 
 	/**
 	 * Legge le proprieta' dal fileProperties passato come parametro

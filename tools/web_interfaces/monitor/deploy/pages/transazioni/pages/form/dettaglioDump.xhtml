@@ -32,39 +32,53 @@
 		<a4j:keepAlive beanName="dettagliDump" />
 		<a4j:loadScript src="/scripts/shCore.js" />
 		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
 		<script type="text/javascript">
 		//<![CDATA[
-		   var xmlPnl = jQuery("#xmlPnl"); 
-		   var bodyWrapperPanel = jQuery("#bodyWrapper");
-		   jQuery(window).resize(function(){lineWrap()});
-		   jQuery(document).ready(inizializza);
-		   
-		   SyntaxHighlighter.all();
-		   lineWrap();
-		   
-		   function inizializza(){
-			   checkWidth(xmlPnl,bodyWrapperPanel);
+			if(#{dettagliDump.visualizzaMessaggio}){
+			   var xmlPnl = jQuery("#xmlPnl"); 
+			   var bodyWrapperPanel = jQuery("#bodyWrapper");
+			   jQuery(window).resize(function(){lineWrap()});
+			   jQuery(document).ready(inizializza);
+			   
+			   SyntaxHighlighter.all();
 			   lineWrap();
-		   }
+			   
+			   function inizializza(){
+				   checkWidth(xmlPnl,bodyWrapperPanel);
+				   lineWrap();
+			   }
+			}
 			 //]]>
 		</script>
 		
-		<rich:panel id="xmlPnl" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.envelope}">
+		<rich:panel id="xmlPnl" rendered="#{not empty dettagliDump.dumpMessaggio}">
 			<f:facet name="header">
-				<h:outputText id="outXml" value="Xml"/>
+				<h:outputText id="outXml" value="Dettaglio Dump"/>
 			</f:facet>
-			<div style="height: 350px; overflow-y: scroll;" id="xmlPnl2">
-				<pre class="brush: xml; toolbar: false;">#{dettagliDump.prettyEnvelop}</pre>
-			</div>
-		</rich:panel>
-		<rich:spacer id="spacer1" height="10px" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.envelope and not empty dettagliDump.allegati}"/>
-		<rich:panel id="allegatiPnl" rendered="#{not empty dettagliDump.allegati}">
-			<f:facet name="header">
-				<h:outputText id="outAllegati" value="Allegati"/>
-			</f:facet>
-			<h:form id="formDettagliDump">
+			
+			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.body}" collapsible="false" closed="false">
+				<h:form id="formMessaggioDump">
+					<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnl2" rendered="#{dettagliDump.visualizzaMessaggio}">
+						<pre class="brush: #{dettagliDump.brush}; toolbar: false;">#{dettagliDump.prettyEnvelop}</pre>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliDump.visualizzaMessaggio}">
+						<h:outputText id="outErroreVisualizza" value="#{dettagliDump.erroreVisualizzaMessaggio}"/>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDump.dumpMessaggio.body}">
+			      		<a4j:outputPanel layout="block" styleClass="#{dettagliDump.visualizzaMessaggio ? 'buttonrowlista' : 'buttonrowlistaLeft'}">
+			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download"/>
+			      		</a4j:outputPanel>
+			      	</a4j:outputPanel>
+				</h:form>
+			</link:fieldset>
+			
+			<rich:spacer id="spacer1" height="10px" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.body and not empty dettagliDump.allegati}"/>
+			
+			<link:fieldset legend="Allegati" rendered="#{not empty dettagliDump.allegati}" collapsible="false" closed="false">
+				<h:form id="formDettagliDump">
 						<rich:dataTable 
 							value="#{dettagliDump.allegati}"
 							var="allegato"
@@ -88,7 +102,7 @@
 							<rich:column id="colDownload">
 								<a4j:htmlCommandLink id="iconLink" title="#{allegato.idAllegato}" action="#{dettagliDump.download}" target="_blank"  value="Download">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />
-									<f:setPropertyActionListener value="#{dettagliDump.isRisposta}" target="#{dettagliDump.isRisposta}" />
+									<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}" />
 									<f:setPropertyActionListener value="false" target="#{dettagliDump.base64Decode}" />
 								</a4j:htmlCommandLink>
 								<h:outputLabel value="&#160;&#160;" />
@@ -96,38 +110,58 @@
 									target="_blank"  value="[Decodifica Base64]"
 									rendered="#{allegato.base64}">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />
-									<f:setPropertyActionListener value="#{dettagliDump.isRisposta}" target="#{dettagliDump.isRisposta}" />
+									<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}" />
 									<f:setPropertyActionListener value="true" target="#{dettagliDump.base64Decode}" />
 								</a4j:htmlCommandLink>							
 							</rich:column>
 						</rich:dataTable>
-						<a4j:outputPanel layout="block" styleClass="buttonrow buttonrowheight">
+						<a4j:outputPanel layout="block" styleClass="buttonrow">
 				      		<div class="buttonrowlista">
 				      			 <a4j:htmlCommandLink id="all-iconLink" action="#{dettagliDump.downloadAll}" styleClass="icon-compress" target="_blank" value="Download All"/>
 				      		</div>
 				      	</a4j:outputPanel>
-			</h:form>
-		</rich:panel>
-		<rich:spacer id="spacer2" height="10px" rendered="#{not empty dettagliDump.contenuti}"/>
-		<rich:panel id="contenutiPnl" rendered="#{not empty dettagliDump.contenuti}">
-			<f:facet name="header">
-				<h:outputText id="outContenuti" value="Contenuti"/>
-			</f:facet>
-			<rich:dataTable id="tableContenuti" value="#{dettagliDump.contenuti}" var="contenuto" width="100%" rowClasses="even, odd">
-				<rich:column id="colNome" width="40%">
-					<f:facet name="header">	
-						<h:outputText id="outNome1" value="Nome"/>
-					</f:facet>
-					<h:outputText id="outNome2" value="#{contenuto.nome}"/>
-				</rich:column>
-				
-				<rich:column id="colValore">
-					<f:facet name="header">	
-						<h:outputText id="outValore1" value="Valore"/>
-					</f:facet>
-					<h:outputText id="outValore2" value="#{contenuto.valoreAsString}"/>
-				</rich:column>
-			</rich:dataTable>
+				</h:form>
+			</link:fieldset>
+			
+			<rich:spacer id="spacer2" height="10px" rendered="#{not empty dettagliDump.contenuti}"/>
+			
+			<link:fieldset legend="Contenuti" rendered="#{not empty dettagliDump.contenuti}" collapsible="false" closed="false">
+				<rich:dataTable id="tableContenuti" value="#{dettagliDump.contenuti}" var="contenuto" width="100%" rowClasses="even, odd">
+					<rich:column id="colNome" width="40%">
+						<f:facet name="header">	
+							<h:outputText id="outNome1" value="Nome"/>
+						</f:facet>
+						<h:outputText id="outNome2" value="#{contenuto.nome}"/>
+					</rich:column>
+					
+					<rich:column id="colValore">
+						<f:facet name="header">	
+							<h:outputText id="outValore1" value="Valore"/>
+						</f:facet>
+						<h:outputText id="outValore2" value="#{contenuto.valoreAsString}"/>
+					</rich:column>
+				</rich:dataTable>
+			</link:fieldset>
+			
+			<rich:spacer id="spacer3" height="10px" rendered="#{not empty dettagliDump.headersTrasporto}"/>
+			
+			<link:fieldset legend="Headers" rendered="#{not empty dettagliDump.headersTrasporto}" collapsible="false" closed="false">
+				<rich:dataTable id="tableNome" value="#{dettagliDump.headersTrasporto}" var="ht" width="100%" rowClasses="even, odd">
+					<rich:column id="colNome" width="40%">
+						<f:facet name="header">	
+							<h:outputText id="outNome1" value="Nome"/>
+						</f:facet>
+						<h:outputText id="outNome2" value="#{ht.nome}"/>
+					</rich:column>
+					
+					<rich:column id="colValore">
+						<f:facet name="header">	
+							<h:outputText id="outValore1" value="Valore"/>
+						</f:facet>
+						<h:outputText id="outValore2" value="#{ht.valore}"/>
+					</rich:column>
+				</rich:dataTable>
+			</link:fieldset>
 		</rich:panel>
 	</ui:define>
 </ui:composition>

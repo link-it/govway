@@ -297,10 +297,10 @@ public class MultiFileExporter implements IExporter{
 
 				//contenuti
 
-				// TODO aggiornare con i nuovi valori
 				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_INGRESSO);
-
+				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RICHIESTA_USCITA);
 				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_INGRESSO);
+				exportContenuti(t, zip, transazioneDir, this.transazioniService, TipoMessaggio.RISPOSTA_USCITA);
 			}
 
 		}//chiudo for transazioni

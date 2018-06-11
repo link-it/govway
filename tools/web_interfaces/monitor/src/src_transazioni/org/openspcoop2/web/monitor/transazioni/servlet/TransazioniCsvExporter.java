@@ -80,11 +80,14 @@ public class TransazioniCsvExporter extends HttpServlet{
 
 			// prelevo le informazioni sull'utente loggato
 			User utente =null;
+			String modalita = null;
 			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 			if(lbInSession != null && lbInSession.isLoggedIn()) {
 				utente = lbInSession.getUtente();
+				modalita = lbInSession.getModalita();
 			}
 			searchForm.setUser(utente);
+			searchForm.setModalita(modalita);
 			service.setSearch(searchForm);
 
 			// Then we have to get the Response where to write our file
