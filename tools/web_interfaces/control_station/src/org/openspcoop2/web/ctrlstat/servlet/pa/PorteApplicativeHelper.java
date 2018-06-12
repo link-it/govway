@@ -1478,9 +1478,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			
 			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			
-			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 
-			this.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti);
+			this.controlloAccessiAutenticazione(dati, tipoOp, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazioneSoggetti,false);
 			
 			String urlAutorizzazioneAutenticati = null;
 			String urlAutorizzazioneRuoli = null;

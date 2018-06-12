@@ -320,9 +320,9 @@ public class PorteDelegateControlloAccessi extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
-				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,isPortaDelegata);
 				
 				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
@@ -360,9 +360,9 @@ public class PorteDelegateControlloAccessi extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 				
-				porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+				porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,isPortaDelegata);
 				
 				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 
@@ -575,9 +575,9 @@ public class PorteDelegateControlloAccessi extends Action {
 			}
 			
 			porteDelegateHelper.controlloAccessiGestioneToken(dati, TipoOperazione.OTHER, gestioneToken, policyLabels, policyValues, gestioneTokenPolicy,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, portaDelegata,isPortaDelegata);
 			
-			porteDelegateHelper.controlloAccessiAutenticazione(dati, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione);
+			porteDelegateHelper.controlloAccessiAutenticazione(dati, TipoOperazione.OTHER, autenticazione, autenticazioneCustom, autenticazioneOpzionale, confPers, isSupportatoAutenticazione,isPortaDelegata);
 			
 			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 

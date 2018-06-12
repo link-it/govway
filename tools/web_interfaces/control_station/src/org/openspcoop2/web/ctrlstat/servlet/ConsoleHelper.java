@@ -3100,167 +3100,192 @@ public class ConsoleHelper {
 		dati.addElement(de);
 	}
 	
-	public void controlloAccessiAutenticazione(Vector<DataElement> dati, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
-			boolean confPers, boolean isSupportatoAutenticazioneSoggetti){
+	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
+			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata){
 		
-		if(isSupportatoAutenticazioneSoggetti){
+		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
+				(isPortaDelegata ? this.core.isEnabledAutenticazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutenticazione_generazioneAutomaticaPorteApplicative());
+		
+		if(mostraSezione){
+			if(isSupportatoAutenticazioneSoggetti){
+				
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TITLE); //SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
+				dati.addElement(de);
 			
+				List<String> autenticazioneValues = TipoAutenticazione.getValues();
+				List<String> autenticazioneLabels = TipoAutenticazione.getLabels();
+				int totEl = autenticazioneValues.size();
+				if (confPers)
+					totEl++;
+				String[] tipoAutenticazione = new String[totEl];
+				String[] labelTipoAutenticazione = new String[totEl];
+				for (int i = 0; i < autenticazioneValues.size(); i++) {
+					tipoAutenticazione[i]=autenticazioneValues.get(i);
+					labelTipoAutenticazione[i]=autenticazioneLabels.get(i);
+				}
+				if (confPers ){
+					tipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+				}
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+				de.setType(DataElementType.SELECT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
+				de.setValues(tipoAutenticazione);
+				de.setLabels(labelTipoAutenticazione);
+				//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
+				de.setPostBack(true);
+				de.setSelected(autenticazione);
+				dati.addElement(de);
+		
+				de = new DataElement();
+				de.setLabel("");
+				if (autenticazione == null ||
+						!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
+					de.setType(DataElementType.HIDDEN);
+				else
+					de.setType(DataElementType.TEXT_EDIT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
+				de.setValue(autenticazioneCustom);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+				if(TipoAutenticazione.DISABILITATO.getValue().equals(autenticazione)==false){
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue("");
+				}
+				dati.addElement(de);
+			}
+		} else {
 			DataElement de = new DataElement();
-			de.setType(DataElementType.TITLE); //SUBTITLE);
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
-			dati.addElement(de);
-		
-			List<String> autenticazioneValues = TipoAutenticazione.getValues();
-			List<String> autenticazioneLabels = TipoAutenticazione.getLabels();
-			int totEl = autenticazioneValues.size();
-			if (confPers)
-				totEl++;
-			String[] tipoAutenticazione = new String[totEl];
-			String[] labelTipoAutenticazione = new String[totEl];
-			for (int i = 0; i < autenticazioneValues.size(); i++) {
-				tipoAutenticazione[i]=autenticazioneValues.get(i);
-				labelTipoAutenticazione[i]=autenticazioneLabels.get(i);
-			}
-			if (confPers ){
-				tipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-				labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
-			}
-			de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
-			de.setType(DataElementType.SELECT);
+			de.setType(DataElementType.HIDDEN);
 			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
-			de.setValues(tipoAutenticazione);
-			de.setLabels(labelTipoAutenticazione);
-			//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
-			de.setPostBack(true);
-			de.setSelected(autenticazione);
+			de.setValue(TipoAutenticazione.DISABILITATO.getValue());
 			dati.addElement(de);
-	
-			de = new DataElement();
-			de.setLabel("");
-			if (autenticazione == null ||
-					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
-				de.setType(DataElementType.HIDDEN);
-			else
-				de.setType(DataElementType.TEXT_EDIT);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
-			de.setValue(autenticazioneCustom);
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
-			if(TipoAutenticazione.DISABILITATO.equals(autenticazione)==false){
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-				de.setValue("");
-			}
-			dati.addElement(de);
-			
 		}
-		
 	}
 	
 	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto) throws Exception {
-		DataElement de = new DataElement();
-		de.setType(DataElementType.TITLE); //SUBTITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
-		dati.addElement(de);
+			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto,boolean isPortaDelegata) throws Exception {
 		
-		String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
+		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
+				(isPortaDelegata ? this.core.isEnabledToken_generazioneAutomaticaPorteDelegate() : this.core.isEnabledToken_generazioneAutomaticaPorteApplicative());
 		
-		// stato abilitazione
-		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
-		de.setType(DataElementType.SELECT);
-		de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
-		de.setValues(valoriAbilitazione);
-		de.setPostBack(true);
-		de.setSelected(gestioneToken);
-		dati.addElement(de);
-		
-		if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
-			// nome della policy da utilizzare
-			de = new DataElement();
-			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
-			de.setType(DataElementType.SELECT);
-			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
-			de.setValues(gestioneTokenPolicyValues);
-			de.setValues(gestioneTokenPolicyLabels);
-			de.setSelected(gestioneTokenPolicy);
-			de.setRequired(true);
-			de.setPostBack(true);
+		if(mostraSezione) {
+			
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE); //SUBTITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
 			dati.addElement(de);
 			
-			if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
-				
-				GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
-				Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
-				
-				// validazione input
+			String [] valoriAbilitazione = {StatoFunzionalita.DISABILITATO.getValue(), StatoFunzionalita.ABILITATO.getValue()};
+			
+			// stato abilitazione
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setValues(valoriAbilitazione);
+			de.setPostBack(true);
+			de.setSelected(gestioneToken);
+			dati.addElement(de);
+			
+			if(StatoFunzionalita.ABILITATO.getValue().equals(gestioneToken)){
+				// nome della policy da utilizzare
 				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
-				if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
-					de.setType(DataElementType.SELECT);
-					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-					de.setSelected(gestioneTokenValidazioneInput);
-					de.setPostBack(true);
-				}else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
-				}
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				de.setType(DataElementType.SELECT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY);
+				de.setValues(gestioneTokenPolicyValues);
+				de.setValues(gestioneTokenPolicyLabels);
+				de.setSelected(gestioneTokenPolicy);
+				de.setRequired(true);
+				de.setPostBack(true);
 				dati.addElement(de);
 				
-				// introspection
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
-				if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
-					de.setType(DataElementType.SELECT);
-					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-					de.setSelected(gestioneTokenIntrospection);
-					de.setPostBack(true);
-				}else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+				if(gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
+					
+					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
+					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					
+					// validazione input
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT);
+					if(TokenUtilities.isValidazioneEnabled(mappaDB)) {
+						de.setType(DataElementType.SELECT);
+						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+						de.setSelected(gestioneTokenValidazioneInput);
+						de.setPostBack(true);
+					}else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.addElement(de);
+					
+					// introspection
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION);
+					if(TokenUtilities.isIntrospectionEnabled(mappaDB)) {
+						de.setType(DataElementType.SELECT);
+						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+						de.setSelected(gestioneTokenIntrospection);
+						de.setPostBack(true);
+					}else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.addElement(de);
+					
+					// userInfo
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
+					if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
+						de.setType(DataElementType.SELECT);
+						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
+						de.setSelected(gestioneTokenUserInfo);
+						de.setPostBack(true);
+					}else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.addElement(de);
+					
+					// token forward
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
+						de.setType(DataElementType.SELECT);
+						de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
+						de.setSelected(gestioneTokenForward);
+						de.setPostBack(true);
+					}else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(StatoFunzionalita.DISABILITATO.getValue());
+					}
+					dati.addElement(de);
 				}
-				dati.addElement(de);
-				
-				// userInfo
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO);
-				if(TokenUtilities.isUserInfoEnabled(mappaDB)) {
-					de.setType(DataElementType.SELECT);
-					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA_CON_WARNING);
-					de.setSelected(gestioneTokenUserInfo);
-					de.setPostBack(true);
-				}else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
-				}
-				dati.addElement(de);
-				
-				// token forward
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-				if(TokenUtilities.isTokenForwardEnabled(mappaDB)) {
-					de.setType(DataElementType.SELECT);
-					de.setValues(CostantiControlStation.SELECT_VALUES_STATO_FUNZIONALITA);
-					de.setSelected(gestioneTokenForward);
-					de.setPostBack(true);
-				}else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(StatoFunzionalita.DISABILITATO.getValue());
-				}
-				dati.addElement(de);
 			}
+		} else {
+			// stato abilitazione
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
+			de.setValue(gestioneToken);
+			dati.addElement(de);
 		}
 	}
 	
@@ -3286,304 +3311,237 @@ public class ConsoleHelper {
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope) throws Exception{
 		
-		DataElement de = new DataElement();
-		de.setType(DataElementType.TITLE); //SUBTITLE);
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
-		dati.addElement(de);
+		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
+				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative());
 		
-		List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
-		int totEl = auturizzazioneValues.size();
-		if (confPers )
-			totEl++;
-		String[] tipoAutorizzazione = new String[totEl];
-		for (int i = 0; i < auturizzazioneValues.size(); i++) {
-			tipoAutorizzazione[i]=auturizzazioneValues.get(i);
-		}
-		if (confPers ){
-			tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-		}
-		de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
-		de.setType(DataElementType.SELECT);
-		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
-		de.setValues(tipoAutorizzazione);
-		de.setPostBack(true);
-		de.setSelected(autorizzazione);
-		dati.addElement(de);
-		
-		de = new DataElement();
-		de.setLabel("");
-		if (autorizzazione == null ||
-				!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
-			de.setType(DataElementType.HIDDEN);
-		else
-			de.setType(DataElementType.TEXT_EDIT);
-		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
-		de.setValue(autorizzazioneCustom);
-		dati.addElement(de);
-		
-		
-		boolean old_autorizzazione_autenticazione = false;
-		boolean old_autorizzazione_ruoli = false;
-		boolean old_autorizzazione_scope = false;
-		String old_autorizzazione = null;
-		
-		String nomePostback = this.getPostBackElementName();
-		if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE.equals(nomePostback) &&
-				TipoOperazione.CHANGE.equals(tipoOperazione) && (numAutenticati>0)) {
-			autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
-		}
-		if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI.equals(nomePostback) &&
-				TipoOperazione.CHANGE.equals(tipoOperazione) && (numRuoli>0)) {
-			autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
-		}
-		
-		if(TipoOperazione.CHANGE.equals(tipoOperazione) && oggetto!=null){
-			if(isPortaDelegata){
-				PortaDelegata pd = (PortaDelegata) oggetto;
-				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
-				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
-				old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione());
-				old_autorizzazione_scope = pd.getScope() != null && pd.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
-			}
-			else {
-				PortaApplicativa pa = (PortaApplicativa) oggetto;
-				old_autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
-				old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
-				old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione());
-				old_autorizzazione_scope = pa.getScope() != null && pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
-			}
-		}
-		
-		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
-		
-			boolean autorizzazione_autenticazione =  false;
-						
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+		if(mostraSezione) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE); //SUBTITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
+			dati.addElement(de);
 			
-				if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+			List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
+			int totEl = auturizzazioneValues.size();
+			if (confPers )
+				totEl++;
+			String[] tipoAutorizzazione = new String[totEl];
+			for (int i = 0; i < auturizzazioneValues.size(); i++) {
+				tipoAutorizzazione[i]=auturizzazioneValues.get(i);
+			}
+			if (confPers ){
+				tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+			}
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setValues(tipoAutorizzazione);
+			de.setPostBack(true);
+			de.setSelected(autorizzazione);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel("");
+			if (autorizzazione == null ||
+					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+				de.setType(DataElementType.HIDDEN);
+			else
+				de.setType(DataElementType.TEXT_EDIT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+			de.setValue(autorizzazioneCustom);
+			dati.addElement(de);
+			
+			
+			boolean old_autorizzazione_autenticazione = false;
+			boolean old_autorizzazione_ruoli = false;
+			boolean old_autorizzazione_scope = false;
+			String old_autorizzazione = null;
+			
+			String nomePostback = this.getPostBackElementName();
+			if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE.equals(nomePostback) &&
+					TipoOperazione.CHANGE.equals(tipoOperazione) && (numAutenticati>0)) {
+				autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+			}
+			if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI.equals(nomePostback) &&
+					TipoOperazione.CHANGE.equals(tipoOperazione) && (numRuoli>0)) {
+				autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+			}
+			
+			if(TipoOperazione.CHANGE.equals(tipoOperazione) && oggetto!=null){
+				if(isPortaDelegata){
+					PortaDelegata pd = (PortaDelegata) oggetto;
+					old_autorizzazione = AutorizzazioneUtilities.convertToStato(pd.getAutorizzazione());
+					old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione());
+					old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione());
+					old_autorizzazione_scope = pd.getScope() != null && pd.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
+				}
+				else {
+					PortaApplicativa pa = (PortaApplicativa) oggetto;
+					old_autorizzazione = AutorizzazioneUtilities.convertToStato(pa.getAutorizzazione());
+					old_autorizzazione_autenticazione = TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione());
+					old_autorizzazione_ruoli = TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione());
+					old_autorizzazione_scope = pa.getScope() != null && pa.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
+				}
+			}
+			
+			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+			
+				boolean autorizzazione_autenticazione =  false;
+							
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+				
+					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+						de = new DataElement();
+						de.setType(DataElementType.SUBTITLE);
+						if(isPortaDelegata){
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+						}
+						else{
+							String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
+							de.setLabel(labelSoggetti);
+						}
+						dati.addElement(de);
+					}
+					
+					autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
+					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+						de.setType(DataElementType.CHECKBOX);
+						de.setSelected(autorizzazione_autenticazione);
+						de.setPostBack(true);
+					}
+					else{
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					dati.addElement(de);
+					
+				}
+				
+				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+					if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+						de = new DataElement();
+						de.setType(DataElementType.LINK);
+						de.setUrl(urlAutorizzazioneAutenticati);
+						if(isPortaDelegata){
+							String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI;
+							if(!this.isModalitaCompleta()) {
+								labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
+							}
+							if (contaListe) {
+								ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numAutenticati));
+							} else
+								ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
+						}
+						else{
+							if (contaListe) {
+								ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,Long.valueOf(numAutenticati));
+							} else
+								ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
+						}
+						dati.addElement(de);
+					}
+				}
+				else{
+					if(!isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
+						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) && autorizzazione_autenticazione && isPortaDelegata){
+							String [] saArray = null;
+							if(autenticati!=null && autenticati.size()>0){
+								saArray = autenticati.toArray(new String[1]);
+							}
+							this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
+						}
+	//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
+						if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
+							String soggettiList [] = null;
+							String soggettiLabelList[] = null;
+							if(autenticati!=null && autenticati.size()>0){
+								soggettiList = autenticati.toArray(new String[1]);
+								if(autenticatiLabel!=null && autenticatiLabel.size()>0){
+									soggettiLabelList = autenticatiLabel.toArray(new String[1]);
+								}
+							}
+							this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false);
+						}
+					}
+				}
+			}
+			
+			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+					
+				boolean autorizzazione_ruoli = false;
+				
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+					
 					de = new DataElement();
 					de.setType(DataElementType.SUBTITLE);
-					if(isPortaDelegata){
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
-					}
-					else{
-						String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
-						de.setLabel(labelSoggetti);
-					}
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 					dati.addElement(de);
-				}
 				
-				autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
-				
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_ABILITATO);
-				
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
-				if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+					autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
 					de.setType(DataElementType.CHECKBOX);
-					de.setSelected(autorizzazione_autenticazione);
+					de.setSelected(autorizzazione_ruoli);
 					de.setPostBack(true);
-				}
-				else{
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_DISABLED);
-				}
-				dati.addElement(de);
-				
-			}
-			
-			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(urlAutorizzazioneAutenticati);
-					if(isPortaDelegata){
-						String labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI;
-						if(!this.isModalitaCompleta()) {
-							labelApplicativi = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_APPLICATIVI;
-						}
-						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,labelApplicativi,Long.valueOf(numAutenticati));
-						} else
-							ServletUtils.setDataElementCustomLabel(de,labelApplicativi);
-					}
-					else{
-						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI,Long.valueOf(numAutenticati));
-						} else
-							ServletUtils.setDataElementCustomLabel(de,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOGGETTI);
-					}
 					dati.addElement(de);
-				}
-			}
-			else{
-				if(!isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) {
-					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) && autorizzazione_autenticazione && isPortaDelegata){
-						String [] saArray = null;
-						if(autenticati!=null && autenticati.size()>0){
-							saArray = autenticati.toArray(new String[1]);
-						}
-						this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
-					}
-//					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata && isSupportatoAutenticazione) {
-					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante) && autorizzazione_autenticazione && !isPortaDelegata) {
-						String soggettiList [] = null;
-						String soggettiLabelList[] = null;
-						if(autenticati!=null && autenticati.size()>0){
-							soggettiList = autenticati.toArray(new String[1]);
-							if(autenticatiLabel!=null && autenticatiLabel.size()>0){
-								soggettiLabelList = autenticatiLabel.toArray(new String[1]);
-							}
-						}
-						this.addPorteSoggettoToDati(tipoOperazione, dati, soggettiLabelList, soggettiList, autenticato, 0, false);
-					}
-				}
-			}
-		}
-		
-		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 				
-			boolean autorizzazione_ruoli = false;
-			
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
-				
-				de = new DataElement();
-				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-				dati.addElement(de);
-			
-				autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
-				
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_ABILITATO);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(autorizzazione_ruoli);
-				de.setPostBack(true);
-				dati.addElement(de);
-			
-			}
-					
-			if(autorizzazione_ruoli || AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
-				
-				de = new DataElement();
-				if(autorizzazione_ruoli){
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
 				}
-				else{
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY);
-				}
-				de.setName(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
-				de.setValue(autorizzazioneRuoliTipologia);			
-				de.setType(DataElementType.SELECT);
-				de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
-				de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
-				de.setSelected(autorizzazioneRuoliTipologia);
-				if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
-					de.setPostBack(true);
-				}
-				dati.add(de);
-				
-			}
-			
-			if(autorizzazione_ruoli){
-				String[] tipoRole = { RuoloTipoMatch.ALL.getValue(),
-						RuoloTipoMatch.ANY.getValue() };
-				String[] labelRole = { CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ANY };
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH);
-				de.setName(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
-				de.setValue(autorizzazioneRuoliMatch);			
-				de.setType(DataElementType.SELECT);
-				de.setValues(tipoRole);
-				de.setLabels(labelRole);
-				de.setSelected(autorizzazioneRuoliMatch);
-				dati.add(de);
-			}
-			
-			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-				if(urlAutorizzazioneRuoli!=null && autorizzazione_ruoli && (old_autorizzazione_ruoli || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
+						
+				if(autorizzazione_ruoli || AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
 					
 					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(urlAutorizzazioneRuoli);
-					if (contaListe) {
-						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
-					} else
-						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
-					dati.addElement(de);
-								
-				}
-			}
-			else{
-				if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
-						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
-						&& autorizzazione_ruoli){
-					FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
-					if(isPortaDelegata){
-						filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+					if(autorizzazione_ruoli){
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
 					}
 					else{
-						filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY);
 					}
-					filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
-					if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
-						filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
-					}
-					else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
-						filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
-					}
-					this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
-							AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione);
-				}
-			}
-			
-		}
-		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
-			boolean autorizzazione_scope = false;
-		
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && visualizzaSezioneScope){
-				
-				de = new DataElement();
-				de.setType(DataElementType.SUBTITLE);
-				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
-				dati.addElement(de);
-			
-				autorizzazione_scope = ServletUtils.isCheckBoxEnabled(autorizzazioneScope);
-				
-				de = new DataElement();
-				de.setLabel(CostantiControlStation.LABEL_ABILITATO);
-				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(autorizzazione_scope);
-				de.setPostBack(true);
-				dati.addElement(de);
-			
-				if(autorizzazione_scope){
-					String[] tipoScope = { ScopeTipoMatch.ALL.getValue(),	ScopeTipoMatch.ANY.getValue() };
-					String[] labelScope = { CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ANY };
-					de = new DataElement();
-					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH);
-					de.setName(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+					de.setName(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
+					de.setValue(autorizzazioneRuoliTipologia);			
 					de.setType(DataElementType.SELECT);
-					de.setValues(tipoScope);
-					de.setLabels(labelScope);
-					de.setSelected(autorizzazioneScopeMatch);
+					de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
+					de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
+					de.setSelected(autorizzazioneRuoliTipologia);
+					if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
+						de.setPostBack(true);
+					}
+					dati.add(de);
+					
+				}
+				
+				if(autorizzazione_ruoli){
+					String[] tipoRole = { RuoloTipoMatch.ALL.getValue(),
+							RuoloTipoMatch.ANY.getValue() };
+					String[] labelRole = { CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ANY };
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH);
+					de.setName(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+					de.setValue(autorizzazioneRuoliMatch);			
+					de.setType(DataElementType.SELECT);
+					de.setValues(tipoRole);
+					de.setLabels(labelRole);
+					de.setSelected(autorizzazioneRuoliMatch);
 					dati.add(de);
 				}
 				
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
-					if(urlAutorizzazioneScope!=null && autorizzazione_scope && old_autorizzazione_scope){
+					if(urlAutorizzazioneRuoli!=null && autorizzazione_ruoli && (old_autorizzazione_ruoli || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 						
 						de = new DataElement();
 						de.setType(DataElementType.LINK);
-						de.setUrl(urlAutorizzazioneScope);
+						de.setUrl(urlAutorizzazioneRuoli);
 						if (contaListe) {
-							ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE,Long.valueOf(numScope));
+							ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,Long.valueOf(numRuoli));
 						} else
-							ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE);
+							ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
 						dati.addElement(de);
 									
 					}
@@ -3591,27 +3549,106 @@ public class ConsoleHelper {
 				else{
 					if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
-							&& autorizzazione_scope){
-						FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+							&& autorizzazione_ruoli){
+						FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
 						if(isPortaDelegata){
-							filtroScope.setContesto(ScopeContesto.PORTA_DELEGATA); 
+							filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
 						}
 						else{
-							filtroScope.setContesto(ScopeContesto.PORTA_APPLICATIVA);
+							filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
 						}
-						// tipologia non impostata
-					//	filtroScope.setTipologia(RuoloTipologia.QUALSIASI);
-//						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
-//							filtroScope.setTipologia(RuoloTipologia.INTERNO);
-//						}
-//						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
-//							filtroScope.setTipologia(RuoloTipologia.ESTERNO);
-//						}
-						this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
-								AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
+						filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
+						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
+							filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+						}
+						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
+							filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+						}
+						this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
+								AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO, addTitoloSezione);
+					}
+				}
+				
+			}
+			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+				boolean autorizzazione_scope = false;
+			
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && visualizzaSezioneScope){
+					
+					de = new DataElement();
+					de.setType(DataElementType.SUBTITLE);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+					dati.addElement(de);
+				
+					autorizzazione_scope = ServletUtils.isCheckBoxEnabled(autorizzazioneScope);
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_SCOPE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(autorizzazione_scope);
+					de.setPostBack(true);
+					dati.addElement(de);
+				
+					if(autorizzazione_scope){
+						String[] tipoScope = { ScopeTipoMatch.ALL.getValue(),	ScopeTipoMatch.ANY.getValue() };
+						String[] labelScope = { CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH_ANY };
+						de = new DataElement();
+						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SCOPE_MATCH);
+						de.setName(CostantiControlStation.PARAMETRO_SCOPE_MATCH);
+						de.setType(DataElementType.SELECT);
+						de.setValues(tipoScope);
+						de.setLabels(labelScope);
+						de.setSelected(autorizzazioneScopeMatch);
+						dati.add(de);
+					}
+					
+					if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+						if(urlAutorizzazioneScope!=null && autorizzazione_scope && old_autorizzazione_scope){
+							
+							de = new DataElement();
+							de.setType(DataElementType.LINK);
+							de.setUrl(urlAutorizzazioneScope);
+							if (contaListe) {
+								ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE,Long.valueOf(numScope));
+							} else
+								ServletUtils.setDataElementCustomLabel(de,ScopeCostanti.LABEL_SCOPE);
+							dati.addElement(de);
+										
+						}
+					}
+					else{
+						if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
+								&& autorizzazione_scope){
+							FiltroRicercaScope filtroScope = new FiltroRicercaScope();
+							if(isPortaDelegata){
+								filtroScope.setContesto(ScopeContesto.PORTA_DELEGATA); 
+							}
+							else{
+								filtroScope.setContesto(ScopeContesto.PORTA_APPLICATIVA);
+							}
+							// tipologia non impostata
+						//	filtroScope.setTipologia(RuoloTipologia.QUALSIASI);
+	//						if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
+	//							filtroScope.setTipologia(RuoloTipologia.INTERNO);
+	//						}
+	//						else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
+	//							filtroScope.setTipologia(RuoloTipologia.ESTERNO);
+	//						}
+							this.addScopeToDati(tipoOperazione, dati, false, filtroScope, scope, null, true, false,
+									AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
+						}
 					}
 				}
 			}
+		} else {
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+			de.setValue(AutorizzazioneUtilities.STATO_DISABILITATO);
+			dati.addElement(de);
 		}
 	}
 	
@@ -3651,7 +3688,6 @@ public class ConsoleHelper {
 					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));
 					return false;
 				}
-				
 				
 				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
 				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());

@@ -4115,9 +4115,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Controllo Accesso
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
-			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
+			this.controlloAccessiAutenticazione(dati, tipoOp, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti,false);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -4132,9 +4132,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			// Controllo Accesso Fruizione
 			
-			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
-			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
+			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true,true);
 		
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -4986,9 +4986,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 				
-				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 
-				this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
+				this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true,true);
 				
 				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
@@ -5855,9 +5855,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			// Controllo Accesso
 			
-			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
 			
-			this.controlloAccessiAutenticazione(dati, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti);
+			this.controlloAccessiAutenticazione(dati, tipoOperazione, erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, false, erogazioneIsSupportatoAutenticazioneSoggetti,false);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
@@ -6142,9 +6142,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			boolean visualizzaSezioneScope = (gestioneToken!= null && gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) && (ServletUtils.isCheckBoxEnabled(gestioneTokenIntrospection) || ServletUtils.isCheckBoxEnabled(gestioneTokenValidazioneInput));
 			
-			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null);
+			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, gestioneTokenPolicy, gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
 		
-			this.controlloAccessiAutenticazione(dati, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true);
+			this.controlloAccessiAutenticazione(dati, tipoOp, fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, false, true,true);
 			
 			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
 				fruizioneAutenticazione, fruizioneAutorizzazione, null, 
