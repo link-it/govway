@@ -228,13 +228,15 @@ public final class PorteDelegateWS extends Action {
 			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
 			propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqLabelListTmp.addAll(labelConfigurazioniReq);
-			propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteDelegateHelper.isModalitaAvanzata())
+				propConfigReqLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
 			List<String>  propConfigReqListTmp = new ArrayList<String>(); 
 			propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqListTmp.addAll(nomiConfigurazioniReq);
-			propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteDelegateHelper.isModalitaAvanzata())
+				propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
 			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
@@ -243,13 +245,15 @@ public final class PorteDelegateWS extends Action {
 			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 
 			propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResLabelListTmp.addAll(labelConfigurazioniRes);
-			propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteDelegateHelper.isModalitaAvanzata())
+				propConfigResLabelListTmp.add(PorteDelegateCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
 			List<String>  propConfigResListTmp = new ArrayList<String>();
 			propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResListTmp.addAll(nomiConfigurazioniRes);
-			propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteDelegateHelper.isModalitaAvanzata())
+				propConfigResListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 
 			
 			String[] propConfigReqLabelList = propConfigReqLabelListTmp.toArray(new String[propConfigReqLabelListTmp.size()]);

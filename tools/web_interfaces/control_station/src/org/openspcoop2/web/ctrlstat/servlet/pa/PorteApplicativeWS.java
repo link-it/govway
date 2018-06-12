@@ -219,13 +219,15 @@ public final class PorteApplicativeWS extends Action {
 			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
 			propConfigReqLabelListTmp.add(PorteApplicativeCostanti.LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqLabelListTmp.addAll(labelConfigurazioniReq);
-			propConfigReqLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteApplicativeHelper.isModalitaAvanzata())
+				propConfigReqLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
 			List<String>  propConfigReqListTmp = new ArrayList<String>(); 
 			propConfigReqListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigReqListTmp.addAll(nomiConfigurazioniReq);
-			propConfigReqListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteApplicativeHelper.isModalitaAvanzata())
+				propConfigReqListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE,PorteApplicativeCostanti.TAG_PORTE_APPLICATIVE_MESSAGE_SECURITY_PA);
 			List<String> labelConfigurazioniRes = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniRes);
@@ -233,13 +235,15 @@ public final class PorteApplicativeWS extends Action {
 			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 
 			propConfigResLabelListTmp.add(PorteApplicativeCostanti.LABEL_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResLabelListTmp.addAll(labelConfigurazioniRes);
-			propConfigResLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteApplicativeHelper.isModalitaAvanzata())
+				propConfigResLabelListTmp.add(PorteApplicativeCostanti.LABEL_DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
 			List<String>  propConfigResListTmp = new ArrayList<String>();
 			propConfigResListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME_NESSUNO);
 			propConfigResListTmp.addAll(nomiConfigurazioniRes);
-			propConfigResListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
+			if(porteApplicativeHelper.isModalitaAvanzata())
+				propConfigResListTmp.add(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			String[] propConfigReqLabelList = propConfigReqLabelListTmp.toArray(new String[propConfigReqLabelListTmp.size()]);
 			String[] propConfigReqList= propConfigReqListTmp.toArray(new String[propConfigReqListTmp.size()]);
