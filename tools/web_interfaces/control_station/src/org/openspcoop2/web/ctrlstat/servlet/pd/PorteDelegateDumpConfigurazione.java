@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -41,6 +42,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -117,6 +119,7 @@ public class PorteDelegateDumpConfigurazione extends Action {
 			String dumpRispostaUscitaHeader = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
 			String dumpRispostaUscitaBody = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
 			String dumpRispostaUscitaAttachments = porteDelegateHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+			String actionConferma = porteDelegateHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			DumpConfigurazione oldConfigurazione = portaDelegata.getDump();
 			
@@ -125,6 +128,28 @@ public class PorteDelegateDumpConfigurazione extends Action {
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(CostantiControlStation.PARAMETRO_DUMP_STATO)){
 					initConfigurazione = true;
+				}
+				
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO)) {
+					if(!porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) && statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+					}
+				}
+				
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO)) {
+					if(!porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) && statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+					}
 				}
 			}
 			
@@ -180,18 +205,18 @@ public class PorteDelegateDumpConfigurazione extends Action {
 						realtime = oldConfigurazione.getRealtime().getValue();
 						statoDumpRichiesta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
 						statoDumpRisposta = porteDelegateHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-						dumpRichiestaIngressoHeader = oldConfigurazione.getRichiestaIngresso().get_value_headers();	
-						dumpRichiestaIngressoBody = oldConfigurazione.getRichiestaIngresso().get_value_body();
-						dumpRichiestaIngressoAttachments = oldConfigurazione.getRichiestaIngresso().get_value_attachments();
-						dumpRichiestaUscitaHeader = oldConfigurazione.getRichiestaUscita().get_value_headers();	
-						dumpRichiestaUscitaBody = oldConfigurazione.getRichiestaUscita().get_value_body();
-						dumpRichiestaUscitaAttachments = oldConfigurazione.getRichiestaUscita().get_value_attachments();
-						dumpRispostaIngressoHeader = oldConfigurazione.getRispostaIngresso().get_value_headers();	
-						dumpRispostaIngressoBody = oldConfigurazione.getRispostaIngresso().get_value_body();
-						dumpRispostaIngressoAttachments = oldConfigurazione.getRispostaIngresso().get_value_attachments();
-						dumpRispostaUscitaHeader = oldConfigurazione.getRispostaUscita().get_value_headers();	
-						dumpRispostaUscitaBody = oldConfigurazione.getRispostaUscita().get_value_body();
-						dumpRispostaUscitaAttachments = oldConfigurazione.getRispostaUscita().get_value_attachments();
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRichiestaUscitaBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRichiestaUscitaAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoHeader = StatoFunzionalita.ABILITATO.getValue();	
+						dumpRispostaIngressoBody = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaIngressoAttachments = StatoFunzionalita.ABILITATO.getValue();
+						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
 					}
 				}
 
@@ -241,30 +266,132 @@ public class PorteDelegateDumpConfigurazione extends Action {
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE,	ForwardParams.OTHER(""));
 			}
-
-			DumpConfigurazione newDumpConfigurazione = null;
 			
 			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
-				newDumpConfigurazione = porteDelegateHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
-						statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
-						dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+				boolean showConfermaRichiesta = false;
+				boolean showConfermaRisposta = false;
+				// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
+				if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					// doppio body
+					if(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						showConfermaRichiesta = true;
+					}
+					
+					// doppi attachments
+					if(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						showConfermaRichiesta = true;
+					}
+				}
+				
+				// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
+				if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					// doppio body
+					if(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						showConfermaRisposta = true;
+					}
+					
+					// doppi attachments
+					if(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						showConfermaRisposta = true;
+					}
+				}
+				
+				if(showConfermaRichiesta  || showConfermaRisposta) {
+					if(actionConferma == null) {
+						
+						ServletUtils.setPageDataTitle(pd, lstParam);
+	
+						// preparo i campi
+						Vector<DataElement> dati = new Vector<DataElement>();
+						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+						
+						porteDelegateHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+								dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+								dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+								dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
+								dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						
+						
+						porteDelegateHelper.addConfigurazioneDumpToDatiAsHidden(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+								dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+								dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+								dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
+								dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+						
+						dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idSoggFruitore, null,idAsps, idFruizione, dati);
+						
+						pd.setDati(dati);
+						
+						
+						String msg ="";
+						if(showConfermaRichiesta)
+							msg = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA;
+	
+						if(showConfermaRichiesta && showConfermaRisposta)
+							msg += " e ";
+						
+						if(showConfermaRisposta)
+							msg = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA;
+						
+						String messaggio =  MessageFormat.format(CostantiControlStation.MESSAGGIO_CONFERMA_REGISTRAZIONE_MESSAGGI_DOPPIO_SPAZIO, msg);
+						
+						pd.setMessage(messaggio, MessageType.CONFIRM);
+						
+						String[][] bottoni = { 
+								{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+									
+								},
+								{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+									Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
+	
+						pd.setBottoni(bottoni);
+						
+						// disabilito la form
+						pd.disableEditMode();
+	
+						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+	
+						return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	PorteDelegateCostanti.OBJECT_NAME_PORTE_DELEGATE_DUMP_CONFIGURAZIONE,	ForwardParams.OTHER(""));
+					} 
+				}
 			}
 			
-			portaDelegata.setDump(newDumpConfigurazione);
-			
-			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
-			
+			if(statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+				// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
+				if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+					DumpConfigurazione newDumpConfigurazione = porteDelegateHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
+							statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
+							dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+							
+					portaDelegata.setDump(newDumpConfigurazione);
+
+					porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+				
+					// Preparo la lista
+					pd.setMessage(PorteDelegateCostanti.LABEL_PORTE_DELEGATE_ARCHIVIO_MESSAGGI_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+				}
+			} else {
+				portaDelegata.setDump(null);
+
+				porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), portaDelegata);
+				
+				// Preparo la lista
+				pd.setMessage(PorteDelegateCostanti.LABEL_PORTE_DELEGATE_ARCHIVIO_MESSAGGI_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+
+			}
+
 			portaDelegata = porteDelegateCore.getPortaDelegata(idInt);
 			idporta = portaDelegata.getNome();
-
-			// Preparo la lista
-			pd.setMessage(PorteDelegateCostanti.LABEL_PORTE_DELEGATE_ARCHIVIO_MESSAGGI_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
 
 			ServletUtils.setPageDataTitle(pd, lstParam);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			DumpConfigurazione configurazioneAggiornata = portaDelegata.getDump();
 			

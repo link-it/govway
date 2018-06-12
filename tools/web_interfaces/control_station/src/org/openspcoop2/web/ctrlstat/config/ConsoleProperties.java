@@ -804,6 +804,9 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "elenchi_menu.visualizzazionePulsantiImportExportPackage");
 	}
 	
+	public String getTokenPolicyForceId() throws UtilsException{
+		return this.readProperty(false, "console.tokenPolicy.forceId");
+	}
 
 	
 	/* ---------------- Gestione pddConsole centralizzata ----------------------- */

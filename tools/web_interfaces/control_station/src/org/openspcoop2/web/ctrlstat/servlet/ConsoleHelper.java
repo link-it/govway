@@ -989,10 +989,12 @@ public class ConsoleHelper {
 					}
 				}
 
-				// Ruoli e Scope
+				// Ruoli, Policy Token e Scope
 				if(pu.isServizi()){
 					if(this.core.isRegistroServiziLocale()){
 						// ruoli
+						totEntries +=1;
+						// policy token
 						totEntries +=1;
 						// scope
 						totEntries +=1;
@@ -1109,7 +1111,7 @@ public class ConsoleHelper {
 					entries[index][1] = SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST;
 					index++;
 
-					//SA
+					// SA
 					if(this.isModalitaCompleta()) {
 						entries[index][0] = ServiziApplicativiCostanti.LABEL_SA_MENU_VISUALE_AGGREGATA;
 					}
@@ -1121,11 +1123,15 @@ public class ConsoleHelper {
 					
 				}
 				
-				// Ruoli e Scopes
+				// Ruoli, PolicyToken e Scopes
 				if(pu.isServizi()){
 					if(this.core.isRegistroServiziLocale()){
 						entries[index][0] = RuoliCostanti.LABEL_RUOLI;
 						entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
+						index++;
+						
+						entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
+						entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
 						index++;
 						
 						entries[index][0] = ScopeCostanti.LABEL_SCOPES;
@@ -1269,7 +1275,7 @@ public class ConsoleHelper {
 					int dimensioneEntries = 0;
 
 
-					dimensioneEntries = 5; // configurazione, tracciamento, controllo del traffico, gestione policy token e audit
+					dimensioneEntries = 4; // configurazione, tracciamento, controllo del traffico e audit
 
 					if(this.core.isShowPulsantiImportExport() && pu.isServizi()){
 						dimensioneEntries++; // importa
@@ -1310,9 +1316,6 @@ public class ConsoleHelper {
 					index++;
 					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
 					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO;
-					index++;
-					entries[index][0] = ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN;
-					entries[index][1] = ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN_LIST;
 					index++;
 					// link utenti sotto quello di configurazione  generale
 					if (pu.isUtenti()) {
@@ -5036,6 +5039,155 @@ public class ConsoleHelper {
 		}
 	}
 	
+	public void addConfigurazioneDumpToDatiAsHidden(TipoOperazione tipoOperazione,Vector<DataElement> dati, boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
+			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
+			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
+			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
+			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
+		
+		String valuesProp [] = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
+		String labelsProp [] = {CostantiControlStation.DEFAULT_VALUE_ABILITATO, CostantiControlStation.DEFAULT_VALUE_DISABILITATO};
+		
+		// stato generale dump
+		DataElement de = new DataElement();
+		de.setName(CostantiControlStation.PARAMETRO_DUMP_STATO); 
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(statoDump);
+		dati.addElement(de);
+		
+		if(!showStato || statoDump.equals(CostantiControlStation.VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO)) {
+		
+			// Realtime
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_REALTIME); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_REALTIME);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(realtime);
+			dati.addElement(de);
+			
+			// Stato Dump Richiesta
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_STATO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statoDumpRichiesta);
+			dati.addElement(de);
+			
+			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_HEADERS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaIngressoHeader);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_BODY);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaIngressoBody);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaIngressoAttachments);
+				dati.addElement(de);
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_HEADERS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaUscitaHeader);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_BODY);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaUscitaBody);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_USCITA_ATTACHMENTS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRichiestaUscitaAttachments);
+				dati.addElement(de);
+
+			}
+			
+
+			// Stato Dump Richiesta
+			de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO); 
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_STATO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(statoDumpRisposta);
+			dati.addElement(de);
+			
+			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_HEADERS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaIngressoHeader);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_BODY);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaIngressoBody);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_INGRESSO_ATTACHMENTS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaIngressoAttachments);
+				dati.addElement(de);
+				
+				
+				// header ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaUscitaHeader);
+				dati.addElement(de);
+				
+				// body ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaUscitaBody);
+				dati.addElement(de);
+				
+				// attachments ingresso
+				de = new DataElement();
+				de.setName(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(dumpRispostaUscitaAttachments);
+				dati.addElement(de);
+
+			}
+		}
+	}
+	
 	public boolean checkDataConfigurazioneDump(TipoOperazione tipoOperazione,boolean showStato, String statoDump, boolean showRealtime, String realtime, String statoDumpRichiesta, String statoDumpRisposta,
 			String dumpRichiestaIngressoHeader, String dumpRichiestaIngressoBody, String dumpRichiestaIngressoAttachments, 
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
@@ -5105,6 +5257,15 @@ public class ConsoleHelper {
 							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
 					return false;
 				}
+				
+				// se e' abilitato il dump per la richiesta almeno una singola voce deve essere abilitata
+				if(dumpRichiestaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRichiestaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
+						&& dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())
+						&& dumpRichiestaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
+						&& dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE, CostantiControlStation.LABEL_PARAMETRO_RICHIESTA));
+					return false;
+				}
 			}
 			
 			// statoDumpRisposta
@@ -5154,6 +5315,15 @@ public class ConsoleHelper {
 				if(StringUtils.isEmpty(dumpRispostaUscitaAttachments) || !(dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) || dumpRispostaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue()))) {
 					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO, 
 							CostantiControlStation.LABEL_PARAMETRO_DUMP_RICHIESTA_INGRESSO_ATTACHMENTS, CostantiControlStation.LABEL_PARAMETRO_DUMP_SEZIONE_USCITA, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
+					return false;
+				}
+				
+				// se e' abilitato il dump per la risposta almeno una singola voce deve essere abilitata
+				if(dumpRispostaIngressoHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRispostaIngressoBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
+						&& dumpRispostaIngressoAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())
+						&& dumpRispostaUscitaHeader.equals(StatoFunzionalita.DISABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.DISABILITATO.getValue()) 
+						&& dumpRispostaUscitaAttachments.equals(StatoFunzionalita.DISABILITATO.getValue())) {
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE, CostantiControlStation.LABEL_PARAMETRO_RISPOSTA));
 					return false;
 				}
 			}
@@ -5226,6 +5396,9 @@ public class ConsoleHelper {
 	
 	public boolean isDumpConfigurazioneAbilitato(DumpConfigurazione configurazione, boolean isRisposta) {
 		boolean abilitato = false;
+		
+		if(configurazione == null)
+			return false;
 		
 		if(isRisposta) {
 			DumpConfigurazioneRegola rispostaIngresso = configurazione.getRispostaIngresso();

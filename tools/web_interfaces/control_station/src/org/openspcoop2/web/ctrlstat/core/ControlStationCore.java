@@ -34,6 +34,7 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -523,6 +524,8 @@ public class ControlStationCore {
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
+	private String tokenPolicyForceId = null;
+	private boolean tokenPolicyForceIdEnabled = false;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -589,6 +592,12 @@ public class ControlStationCore {
 	}
 	public boolean isShowConfigurazioneTracciamentoDiagnostica() {
 		return this.showConfigurazioneTracciamentoDiagnostica;
+	}
+	public String getTokenPolicyForceId() {
+		return this.tokenPolicyForceId;
+	}
+	public boolean isTokenPolicyForceIdEnabled() {
+		return this.tokenPolicyForceIdEnabled;
 	}
 
 	/** Motori di Sincronizzazione */
@@ -1375,6 +1384,8 @@ public class ControlStationCore {
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
+		this.tokenPolicyForceId = core.tokenPolicyForceId;
+		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
 
 		/** Motori di Sincronizzazione */
 		this.sincronizzazionePddEngineEnabled = core.sincronizzazionePddEngineEnabled;
@@ -1621,7 +1632,8 @@ public class ControlStationCore {
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
-			
+			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
+			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
 			
 			// Gestione pddConsole centralizzata
 			if(this.singlePdD == false){

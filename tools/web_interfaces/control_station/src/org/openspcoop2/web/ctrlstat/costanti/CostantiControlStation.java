@@ -485,6 +485,7 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_AZIONI ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_RISORSE ="Si sta disabilitando la configurazione relativa alle risorse:{0}Procedere?";
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
+	public static final String MESSAGGIO_CONFERMA_REGISTRAZIONE_MESSAGGI_DOPPIO_SPAZIO = "L''attuale configurazione, prevedendo di registrare i dati del messaggio di {0} sia in Ingresso che in Uscita, raddoppia l''ammontare di spazio occupato. Procedere con la configurazione effettuata?";
 	
 	/** MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRORE_CORRELAZIONE_APPLICATIVA_CON_ELEMENTO_XML_DEFINITA_GIA_ESISTENTE = "Esiste gi&agrave; una correlazione applicativa con elemento [{0}] definita nella {1}";
@@ -528,4 +529,5 @@ public class CostantiControlStation {
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_DELLA_YY_NON_VALIDO = "Valore del campo {0} della {1} non valido.";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMPO_VALORE_DEL_CAMPO_XX_YY_DELLA_ZZ_NON_VALIDO = "Valore del campo {0} {1} della {2} non valido.";
 	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA = "Dati incompleti. &Egrave; necessario abilitare almeno una voce tra {0}";
+	public static final String MESSAGGIO_ERRORE_CONFIGURAZIONE_DUMP_DATI_INCOMPLETI_E_NECESSARIO_ABILITARE_UNA_VOCE = "Impossibile abilitare la Registrazione dei messaggi di {0} senza specificare almeno una voce di Ingresso o Uscita";
 }

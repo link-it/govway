@@ -11420,10 +11420,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ServletUtils.enabledPageDataSearch(this.pd, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME, search);
 			}
 			
+			List<String> lstLabels = new ArrayList<>();
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME);
+			lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE);
+			if(!this.core.isTokenPolicyForceIdEnabled())
+				lstLabels.add(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+			
 			// setto le label delle colonne
-			String[] labels = { 
-					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_DESCRIZIONE, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO 
-			};
+			String[] labels = lstLabels.toArray(new String[lstLabels.size()]);
+			
 			this.pd.setLabels(labels);
 		
 			// preparo i dati
@@ -11446,9 +11451,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setValue(policy.getDescrizione());
 					e.addElement(de);
 					
-					de = new DataElement();
-					de.setValue(policy.getTipo());
-					e.addElement(de);
+					if(!this.core.isTokenPolicyForceIdEnabled()) {
+						de = new DataElement();
+						de.setValue(policy.getTipo());
+						e.addElement(de);
+					}
 					
 					dati.addElement(e);
 				}
@@ -11504,15 +11511,20 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPO);
+		if(!this.core.isTokenPolicyForceIdEnabled()) {
 		if(tipoOperazione.equals(TipoOperazione.ADD)) {
-			de.setType(DataElementType.SELECT);
-			de.setPostBack(true);
-			de.setValues(propConfigPolicyGestioneTokenList);
-			de.setLabels(propConfigPolicyGestioneTokenLabelList);
-			de.setSelected(tipo); 
-			de.setRequired(true);
-		}else {
-			de.setType(DataElementType.TEXT);
+				de.setType(DataElementType.SELECT);
+				de.setPostBack(true);
+				de.setValues(propConfigPolicyGestioneTokenList);
+				de.setLabels(propConfigPolicyGestioneTokenLabelList);
+				de.setSelected(tipo); 
+				de.setRequired(true);
+			}else {
+				de.setType(DataElementType.TEXT);
+				de.setValue(tipo);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipo);
 		}
 		dati.addElement(de);

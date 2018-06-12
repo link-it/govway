@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.config;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -43,6 +44,7 @@ import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -102,6 +104,7 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			String dumpRispostaUscitaHeader = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_HEADERS);
 			String dumpRispostaUscitaBody = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_BODY);
 			String dumpRispostaUscitaAttachments = confHelper.getParameter(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_USCITA_ATTACHMENTS);
+			String actionConferma = confHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			Configurazione configurazioneGenerale = confCore.getConfigurazioneGenerale();
 			
@@ -123,6 +126,31 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCIAMENTO, 
 					ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_TRACCIAMENTO_TRANSAZIONI));
 			lstParam.add(new Parameter(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_MESSAGGI, null));
+			
+			String postBackElementName = confHelper.getPostBackElementName();
+			if(postBackElementName != null) {
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RICHIESTA_STATO)) {
+					if(!confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, false) && statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						dumpRichiestaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRichiestaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRichiestaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+					}
+				}
+				
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_DUMP_RISPOSTA_STATO)) {
+					if(!confHelper.isDumpConfigurazioneAbilitato(oldConfigurazione, true) && statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+						dumpRispostaIngressoHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaIngressoBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaIngressoAttachments = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaHeader = StatoFunzionalita.DISABILITATO.getValue();	
+						dumpRispostaUscitaBody = StatoFunzionalita.DISABILITATO.getValue();
+						dumpRispostaUscitaAttachments = StatoFunzionalita.DISABILITATO.getValue();
+					}
+				}
+			}
 
 			// edit in progress
 			if (confHelper.isEditModeInProgress()) {
@@ -189,46 +217,139 @@ public class ConfigurazioneDumpConfigurazione extends Action {
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE,	ForwardParams.OTHER(""));
 			}
-
-			Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
 			
-			DumpConfigurazione newDumpConfigurazione = confHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
-						statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
-						dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
-						dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+			boolean showConfermaRichiesta = false;
+			boolean showConfermaRisposta = false;
+			// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
+			if(statoDumpRichiesta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// doppio body
+				if(dumpRichiestaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					showConfermaRichiesta = true;
+				}
+				
+				// doppi attachments
+				if(dumpRichiestaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRichiestaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					showConfermaRichiesta = true;
+				}
+			}
 			
-			newConfigurazione.getDump().setConfigurazione(newDumpConfigurazione); 
+			// se ho abilitato entrambi i dump di ingresso e uscita per richiesta o risposta informo l'utente che lo spazio occupato sara' il doppio
+			if(statoDumpRisposta.equals(StatoFunzionalita.ABILITATO.getValue())) {
+				// doppio body
+				if(dumpRispostaIngressoBody.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaBody.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					showConfermaRisposta = true;
+				}
+				
+				// doppi attachments
+				if(dumpRispostaIngressoAttachments.equals(StatoFunzionalita.ABILITATO.getValue()) && dumpRispostaUscitaAttachments.equals(StatoFunzionalita.ABILITATO.getValue())) {
+					showConfermaRisposta = true;
+				}
+			}
+			
+			if(showConfermaRichiesta  || showConfermaRisposta) {
+				if(actionConferma == null) {
+					
+					ServletUtils.setPageDataTitle(pd, lstParam);
 
-			confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+					// preparo i campi
+					Vector<DataElement> dati = new Vector<DataElement>();
+					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+					
+					confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
+							dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+					
+					
+					confHelper.addConfigurazioneDumpToDatiAsHidden(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
+							dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, 
+							dumpRispostaIngressoHeader, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, 
+							dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+					
+					pd.setDati(dati);
+					
+					
+					String msg ="";
+					if(showConfermaRichiesta)
+						msg = CostantiControlStation.LABEL_PARAMETRO_RICHIESTA;
 
-			// Preparo la lista
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+					if(showConfermaRichiesta && showConfermaRisposta)
+						msg += " e ";
+					
+					if(showConfermaRisposta)
+						msg = CostantiControlStation.LABEL_PARAMETRO_RISPOSTA;
+					
+					String messaggio =  MessageFormat.format(CostantiControlStation.MESSAGGIO_CONFERMA_REGISTRAZIONE_MESSAGGI_DOPPIO_SPAZIO, msg);
+					
+					pd.setMessage(messaggio, MessageType.CONFIRM);
+					
+					String[][] bottoni = { 
+							{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+								
+							},
+							{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 
+					pd.setBottoni(bottoni);
+					
+					// disabilito la form
+					pd.disableEditMode();
+
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+
+					return ServletUtils.getStrutsForwardEditModeInProgress(mapping,	ConfigurazioneCostanti.OBJECT_NAME_CONFIGURAZIONE_DUMP_CONFIGURAZIONE,	ForwardParams.OTHER(""));
+				} 
+			}
+			
+			// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
+			if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
+
+				Configurazione newConfigurazione = confCore.getConfigurazioneGenerale();
+				
+				DumpConfigurazione newDumpConfigurazione = confHelper.getConfigurazioneDump(tipoOperazione, showStato, statoDump, showRealtime, realtime,
+							statoDumpRichiesta, statoDumpRisposta, dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 
+							dumpRichiestaUscitaHeader, dumpRichiestaUscitaBody, dumpRichiestaUscitaAttachments, dumpRispostaIngressoHeader, 
+							dumpRispostaIngressoBody, dumpRispostaIngressoAttachments, dumpRispostaUscitaHeader, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments);
+				
+				newConfigurazione.getDump().setConfigurazione(newDumpConfigurazione); 
+	
+				confCore.performUpdateOperation(userLogin, confHelper.smista(), newConfigurazione);
+	
+				// Preparo la lista
+				pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_DUMP_CONFIGURAZIONE_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+	
+				// ricarico la configurazione
+				newConfigurazione = confCore.getConfigurazioneGenerale();
+				
+				DumpConfigurazione configurazioneAggiornata = newConfigurazione.getDump().getConfigurazione();
+				statoDump = "";
+				realtime = configurazioneAggiornata.getRealtime().getValue();
+				statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
+				dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
+				dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
+				dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();
+				dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().get_value_headers();	
+				dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().get_value_body();
+				dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().get_value_attachments();
+				dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().get_value_headers();	
+				dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().get_value_body();
+				dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().get_value_attachments();
+				dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().get_value_headers();	
+				dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().get_value_body();
+				dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().get_value_attachments();
+			
+			}
+			
 			ServletUtils.setPageDataTitle(pd, lstParam);
-
+			
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
-
-			// ricarico la configurazione
-			newConfigurazione = confCore.getConfigurazioneGenerale();
-			
-			DumpConfigurazione configurazioneAggiornata = newConfigurazione.getDump().getConfigurazione();
-			statoDump = "";
-			realtime = configurazioneAggiornata.getRealtime().getValue();
-			statoDumpRichiesta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, false) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-			statoDumpRisposta = confHelper.isDumpConfigurazioneAbilitato(configurazioneAggiornata, true) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue();
-			dumpRichiestaIngressoHeader = configurazioneAggiornata.getRichiestaIngresso().get_value_headers();	
-			dumpRichiestaIngressoBody = configurazioneAggiornata.getRichiestaIngresso().get_value_body();
-			dumpRichiestaIngressoAttachments = configurazioneAggiornata.getRichiestaIngresso().get_value_attachments();
-			dumpRichiestaUscitaHeader = configurazioneAggiornata.getRichiestaUscita().get_value_headers();	
-			dumpRichiestaUscitaBody = configurazioneAggiornata.getRichiestaUscita().get_value_body();
-			dumpRichiestaUscitaAttachments = configurazioneAggiornata.getRichiestaUscita().get_value_attachments();
-			dumpRispostaIngressoHeader = configurazioneAggiornata.getRispostaIngresso().get_value_headers();	
-			dumpRispostaIngressoBody = configurazioneAggiornata.getRispostaIngresso().get_value_body();
-			dumpRispostaIngressoAttachments = configurazioneAggiornata.getRispostaIngresso().get_value_attachments();
-			dumpRispostaUscitaHeader = configurazioneAggiornata.getRispostaUscita().get_value_headers();	
-			dumpRispostaUscitaBody = configurazioneAggiornata.getRispostaUscita().get_value_body();
-			dumpRispostaUscitaAttachments = configurazioneAggiornata.getRispostaUscita().get_value_attachments();
 			
 			confHelper.addConfigurazioneDumpToDati(tipoOperazione, dati, showStato, statoDump, showRealtime, realtime, statoDumpRichiesta, statoDumpRisposta, 
 					dumpRichiestaIngressoHeader, dumpRichiestaIngressoBody, dumpRichiestaIngressoAttachments, 

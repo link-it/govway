@@ -116,6 +116,12 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 			
 			Config configurazione = null;
 			ConfigBean configurazioneBean = null;
+			
+			if(tipo == null) {
+				if(confCore.isTokenPolicyForceIdEnabled())
+					tipo = confCore.getTokenPolicyForceId();
+			}
+			
 			if(tipo != null && !tipo.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 				configurazione = configManager.getConfigurazione(propertiesSourceConfiguration, tipo);
 			
@@ -146,7 +152,13 @@ public class ConfigurazionePolicyGestioneTokenAdd extends Action {
 				if(nome == null) {
 					nome = "";
 					descrizione = "";
-					tipo = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+					
+					if(tipo == null) {
+						if(!confCore.isTokenPolicyForceIdEnabled())
+							tipo = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+						else
+							tipo = confCore.getTokenPolicyForceId();
+					}
 				}
 				
 				// preparo i campi
