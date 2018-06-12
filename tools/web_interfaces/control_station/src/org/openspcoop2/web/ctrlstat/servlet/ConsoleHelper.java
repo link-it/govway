@@ -3644,6 +3644,32 @@ public class ConsoleHelper {
 			List<String> ruoli,String gestioneToken, String policy, String validazioneInput, String introspection, String userInfo, String forward,String autorizzazioneScope, String autorizzazioneScopeMatch) throws Exception{
 		try {
 			
+			// check token
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(gestioneToken)){
+				
+				if(StringUtils.isEmpty(policy) || policy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));
+					return false;
+				}
+				
+				
+				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean userInfoB = !userInfo.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
+				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
+				
+				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
+					StringBuffer sb = new StringBuffer();
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT).append(", ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION).append(", ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO).append(" o ");
+					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA, sb.toString()));
+					return false;
+				}
+				
+			}
+			
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
 				
 				String labelAutenticati = null;
@@ -3823,32 +3849,6 @@ public class ConsoleHelper {
 						}
 					}
 				}
-			}
-			
-			// check token
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(gestioneToken)){
-				
-				if(StringUtils.isEmpty(policy) || policy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_POLICY));
-					return false;
-				}
-				
-				
-				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean userInfoB = !userInfo.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
-				
-				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
-					StringBuffer sb = new StringBuffer();
-					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT).append(", ");
-					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION).append(", ");
-					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO).append(" o ");
-					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD);
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_CONFIGURAZIONE_POLICY_TOKEN_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_UNA_MODALITA, sb.toString()));
-					return false;
-				}
-				
 			}
 			
 			return true;
@@ -5044,9 +5044,6 @@ public class ConsoleHelper {
 			String dumpRichiestaUscitaHeader, String dumpRichiestaUscitaBody, String dumpRichiestaUscitaAttachments, 
 			String dumpRispostaIngressoHeader, String dumpRispostaIngressoBody , String dumpRispostaIngressoAttachments,
 			String dumpRispostaUscitaHeader, String dumpRispostaUscitaBody, String dumpRispostaUscitaAttachments) throws Exception{
-		
-		String valuesProp [] = {StatoFunzionalita.ABILITATO.getValue(), StatoFunzionalita.DISABILITATO.getValue()};
-		String labelsProp [] = {CostantiControlStation.DEFAULT_VALUE_ABILITATO, CostantiControlStation.DEFAULT_VALUE_DISABILITATO};
 		
 		// stato generale dump
 		DataElement de = new DataElement();
