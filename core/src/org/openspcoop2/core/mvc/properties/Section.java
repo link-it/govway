@@ -42,6 +42,7 @@ import java.util.List;
  * 			&lt;element name="subsection" type="{http://www.openspcoop2.org/core/mvc/properties}subsection" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="hidden" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -130,6 +131,18 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.label = label;
   }
 
+  public boolean isHidden() {
+    return this.hidden;
+  }
+
+  public boolean getHidden() {
+    return this.hidden;
+  }
+
+  public void setHidden(boolean hidden) {
+    this.hidden = hidden;
+  }
+
   private static final long serialVersionUID = 1L;
 
 
@@ -200,5 +213,9 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="label",required=true)
   protected java.lang.String label;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="hidden",required=false)
+  protected boolean hidden = false;
 
 }

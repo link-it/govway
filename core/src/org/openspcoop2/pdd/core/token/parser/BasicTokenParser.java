@@ -32,6 +32,7 @@ public class BasicTokenParser implements ITokenParser {
 			return Boolean.valueOf(claim);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case OIDC_ID_TOKEN:
+		case GOOGLE:
 		case CUSTOM:
 			return true;
 		}
@@ -47,6 +48,8 @@ public class BasicTokenParser implements ITokenParser {
 			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER);
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_TOKEN_ISSUER);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_ISSUER);
 		case CUSTOM:
 			return null;
 		}
@@ -62,6 +65,8 @@ public class BasicTokenParser implements ITokenParser {
 			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT);
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_TOKEN_SUBJECT);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_SUBJECT);
 		case CUSTOM:
 			return null;
 		}
@@ -81,6 +86,8 @@ public class BasicTokenParser implements ITokenParser {
 				tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_NICKNAME);
 			}*/
 			return tmp;
+		case GOOGLE:
+			return null;
 		case CUSTOM:
 			return null;
 		}
@@ -96,6 +103,8 @@ public class BasicTokenParser implements ITokenParser {
 			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_AUDIENCE);
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_TOKEN_AUDIENCE);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_AUDIENCE);
 		case CUSTOM:
 			return null;
 		}
@@ -114,6 +123,9 @@ public class BasicTokenParser implements ITokenParser {
 			break;
 		case OIDC_ID_TOKEN:
 			tmp =  this.claims.get(Claims.OIDC_ID_TOKEN_EXPIRED);
+			break;
+		case GOOGLE:
+			tmp =  this.claims.get(Claims.GOOGLE_CLAIMS_EXPIRED);
 			break;
 		case CUSTOM:
 			return null;
@@ -141,6 +153,9 @@ public class BasicTokenParser implements ITokenParser {
 		case OIDC_ID_TOKEN:
 			tmp =  this.claims.get(Claims.OIDC_ID_TOKEN_ISSUED_AT);
 			break;
+		case GOOGLE:
+			tmp =  this.claims.get(Claims.GOOGLE_CLAIMS_ISSUED_AT);
+			break;
 		case CUSTOM:
 			return null;
 		}
@@ -165,6 +180,7 @@ public class BasicTokenParser implements ITokenParser {
 			tmp =  this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_NOT_TO_BE_USED_BEFORE);
 			break;
 		case OIDC_ID_TOKEN:
+		case GOOGLE:
 			return null; // unsupported
 		case CUSTOM:
 			return null;
@@ -187,6 +203,7 @@ public class BasicTokenParser implements ITokenParser {
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_JWT_ID);
 		case OIDC_ID_TOKEN:
+		case GOOGLE:
 			return null; // unsupported
 		case CUSTOM:
 			return null;
@@ -203,6 +220,8 @@ public class BasicTokenParser implements ITokenParser {
 			return this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID);
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_TOKEN_AZP);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_AZP);
 		case CUSTOM:
 			return null;
 		}
@@ -216,17 +235,22 @@ public class BasicTokenParser implements ITokenParser {
 
 	@Override
 	public List<String> getScopes() {
+		
+		String tmpScopes = null;
 		if(TipologiaClaims.INTROSPECTION_RESPONSE_RFC_7662.equals(this.parser)) {
-			String tmp = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
-			if(tmp!=null) {
-				String [] tmpArray = tmp.split(" ");
-				if(tmpArray!=null && tmpArray.length>0) {
-					List<String> scopes = new ArrayList<>();
-					for (int i = 0; i < tmpArray.length; i++) {
-						scopes.add(tmpArray[i].trim());
-					}
-					return scopes;
+			tmpScopes = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_SCOPE);
+		}
+		else if(TipologiaClaims.GOOGLE.equals(this.parser)) {
+			tmpScopes = this.claims.get(Claims.GOOGLE_CLAIMS_SCOPE);
+		}
+		if(tmpScopes!=null) {
+			String [] tmpArray = tmpScopes.split(" ");
+			if(tmpArray!=null && tmpArray.length>0) {
+				List<String> scopes = new ArrayList<>();
+				for (int i = 0; i < tmpArray.length; i++) {
+					scopes.add(tmpArray[i].trim());
 				}
+				return scopes;
 			}
 		}
 		return null;

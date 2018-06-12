@@ -65,6 +65,7 @@
         <property name="appServer_url" value="http://localhost:8080/" />
 
 		<!-- Directory per il deploy -->
+	<property name="deploy_jks_dir" location="deploy/jks" />
         <property name="deploy_web_dir" location="deploy/deploy_web" />
         <property name="deploy_threads_web_dir" location="deploy/threads" />
         <property name="data_content_handler_dir" location="deploy/data_content_handler" />

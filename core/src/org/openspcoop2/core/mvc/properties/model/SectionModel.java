@@ -44,6 +44,7 @@ public class SectionModel extends AbstractModel<Section> {
 		this.ITEM = new org.openspcoop2.core.mvc.properties.model.ItemModel(new Field("item",org.openspcoop2.core.mvc.properties.Item.class,"section",Section.class));
 		this.SUBSECTION = new org.openspcoop2.core.mvc.properties.model.SubsectionModel(new Field("subsection",org.openspcoop2.core.mvc.properties.Subsection.class,"section",Section.class));
 		this.LABEL = new Field("label",java.lang.String.class,"section",Section.class);
+		this.HIDDEN = new Field("hidden",boolean.class,"section",Section.class);
 	
 	}
 	
@@ -55,6 +56,7 @@ public class SectionModel extends AbstractModel<Section> {
 		this.ITEM = new org.openspcoop2.core.mvc.properties.model.ItemModel(new ComplexField(father,"item",org.openspcoop2.core.mvc.properties.Item.class,"section",Section.class));
 		this.SUBSECTION = new org.openspcoop2.core.mvc.properties.model.SubsectionModel(new ComplexField(father,"subsection",org.openspcoop2.core.mvc.properties.Subsection.class,"section",Section.class));
 		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"section",Section.class);
+		this.HIDDEN = new ComplexField(father,"hidden",boolean.class,"section",Section.class);
 	
 	}
 	
@@ -67,6 +69,8 @@ public class SectionModel extends AbstractModel<Section> {
 	public org.openspcoop2.core.mvc.properties.model.SubsectionModel SUBSECTION = null;
 	 
 	public IField LABEL = null;
+	 
+	public IField HIDDEN = null;
 	 
 
 	@Override

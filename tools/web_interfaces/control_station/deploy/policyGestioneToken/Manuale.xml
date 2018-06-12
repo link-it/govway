@@ -155,11 +155,12 @@
 			</condition>
 		</conditions>
 		
-		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" required="true">
+		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" required="true" reloadOnChange="true">
 			<values>
 				<value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/>
 				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
 				<value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/>
+				<value value="GOOGLE" label="Google - ID Token"/>
 				<value value="CUSTOM" label="Personalizzato"/>
 			</values>
 			<property name="policy.validazioneJWT.claimsParser" />
@@ -243,22 +244,44 @@
 			</condition>
 		</conditions>
 
-		<item type="select" name="introspectionType" label="Tipo" default="INTROSPECTION_RFC_7662" required="true">
+		<item type="select" name="introspectionType" label="Tipo" default="INTROSPECTION_RFC_7662" required="true" reloadOnChange="true">
 			<values>
 				<value value="INTROSPECTION_RFC_7662" label="RFC 7662 - Introspection"/>
+				<value value="GOOGLE" label="Google - TokenInfo"/>
 				<value value="CUSTOM" label="Personalizzato"/>
 			</values>
 			<property name="policy.introspection.tipo" />
 		</item>
 
+		<item type="text" name="introspectionEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/tokeninfo">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.endpoint.url" />
+		</item>
 		<item type="text" name="introspectionEndpointURL" label="URL" required="true" default="http://">
-		      	<property name="policy.introspection.endpoint.url" />
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.endpoint.url" />
 		</item>
 		
 		<item type="hidden" name="introspectionHttpMethodRFC7662" value="POST">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="INTROSPECTION_RFC_7662"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.httpMethod" />
+		</item>
+		<item type="hidden" name="introspectionHttpMethodGoogle" value="GET">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
 				</condition>
 			</conditions>
 			<property name="policy.introspection.httpMethod" />
@@ -288,7 +311,23 @@
 			</conditions>
 			<property name="policy.introspection.requestTokenPosition.formParameter" />
 		</item>
-		<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="form" required="true">
+		<item type="hidden" name="introspectionRequestPositionTokenGoogle" value="url">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="introspectionRequestPositionTokenUrlParameterGoogle" value="access_token">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.requestTokenPosition.queryParameter" />
+		</item>
+		<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="url" required="true">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -318,7 +357,7 @@
 			</conditions>
 		    <property name="policy.introspection.requestTokenPosition.queryParameter" />
 		</item>
-		<item type="text" name="introspectionRequestPositionTokenFormParameter" label="Nome Parametro Form-Encoded Body" required="true">
+		<item type="text" name="introspectionRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
 			<conditions>
 				<condition>
 					<equals name="introspectionRequestPositionToken" value="form"/>
@@ -354,7 +393,15 @@
 			</conditions>
 			<property name="policy.introspection.claimsParser" />
 		</item>
-		<item type="select" name="introspectionParserType" label="Claims Parser" default="CUSTOM" required="true">
+		<item type="hidden" name="introspectionParserTypeGoogle" value="GOOGLE">
+			<conditions>
+				<condition and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.introspection.claimsParser" />
+		</item>
+		<item type="select" name="introspectionParserType" label="Claims Parser" default="CUSTOM" required="true" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -364,6 +411,7 @@
 				<!--  <value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/> -->
 				<value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/>
 				<!--  <value value="OIDC_ID_TOKEN" label="OpenID Connect - ID Token"/> -->
+				<value value="GOOGLE" label="Google - TokenInfo"/>
 				<value value="CUSTOM" label="Personalizzato"/>
 			</values>
 			<property name="policy.introspection.claimsParser" />
@@ -386,6 +434,11 @@
 				</condition>
 			</conditions>
 			-->
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
 			<property name="policy.introspection.endpoint.basic.stato" />
 		</item>
 		<item type="checkbox" name="introspectionEndpointBearer" label="Autenticazione Bearer" defaultSelected="false" reloadOnChange="true">
@@ -396,10 +449,18 @@
 				<condition not="true" and="true">
 					<equals name="introspectionRequestPositionToken" value="authorization"/>
 				</condition>
+				<condition not="true" and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
 			</conditions>
 			<property name="policy.introspection.endpoint.bearer.stato" />
 		</item>
 		<item type="checkbox" name="introspectionEndpointHttps" label="Autenticazione Https" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="introspectionType" value="GOOGLE"/>
+				</condition>
+			</conditions>
 			<property name="policy.introspection.endpoint.https.stato" />
 		</item>
 		
@@ -439,22 +500,44 @@
 		</conditions>
 	
 	
-		<item type="select" name="userInfoType" label="Tipo" default="OIDC_USER_INFO" required="true">
+		<item type="select" name="userInfoType" label="Tipo" default="OIDC_USER_INFO" required="true" reloadOnChange="true">
 			<values>
 				<value value="OIDC_USER_INFO" label="OpenID Connect - UserInfo"/>
+				<value value="GOOGLE" label="Google - UserInfo"/>
 				<value value="CUSTOM" label="Personalizzato"/>
 			</values>
 			<property name="policy.userInfo.tipo" />
 		</item>
 		
+		<item type="text" name="userInfoEndpointURLGoogle" label="URL" required="true" default="https://www.googleapis.com/oauth2/v3/userinfo">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+		    <property name="policy.userInfo.endpoint.url" />
+		</item>
 		<item type="text" name="userInfoEndpointURL" label="URL" required="true" default="http://">
-		      	<property name="policy.userInfo.endpoint.url" />
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+		    <property name="policy.userInfo.endpoint.url" />
 		</item>
 		
 		<item type="hidden" name="userInfoHttpMethodOIDCUserInfo" value="GET">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="OIDC_USER_INFO"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.httpMethod" />
+		</item>
+				<item type="hidden" name="userInfoHttpMethodGoogle" value="GET">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
 				</condition>
 			</conditions>
 			<property name="policy.userInfo.httpMethod" />
@@ -476,7 +559,23 @@
 			</conditions>
 			<property name="policy.userInfo.requestTokenPosition" />
 		</item>
-		<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="authorization" required="true">
+		<item type="hidden" name="userInfoRequestPositionTokenGoogle" value="url">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.requestTokenPosition" />
+		</item>
+		<item type="hidden" name="userInfoRequestPositionTokenQueryParameterGoogle" value="access_token">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.requestTokenPosition.queryParameter" />
+		</item>
+		<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="url" required="true">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>
@@ -506,7 +605,7 @@
 			</conditions>
 		    <property name="policy.userInfo.requestTokenPosition.queryParameter" />
 		</item>
-		<item type="text" name="userInfoRequestPositionTokenFormParameter" label="Nome Parametro Form-Encoded Body" required="true">
+		<item type="text" name="userInfoRequestPositionTokenFormParameter" label="Nome Parametro Form" required="true">
 			<conditions>
 				<condition>
 					<equals name="userInfoRequestPositionToken" value="form"/>
@@ -542,7 +641,15 @@
 			</conditions>
 			<property name="policy.userInfo.claimsParser" />
 		</item>
-		<item type="select" name="userInfoParserType" label="Claims Parser" default="CUSTOM" required="true">
+		<item type="hidden" name="userInfoParserTypeGoogle" value="GOOGLE">
+			<conditions>
+				<condition and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
+			<property name="policy.userInfo.claimsParser" />
+		</item>
+		<item type="select" name="userInfoParserType" label="Claims Parser" default="CUSTOM" required="true" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>
@@ -573,17 +680,30 @@
 				</condition>
 			</conditions>
 			-->
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
 			<property name="policy.userInfo.endpoint.basic.stato" />
 		</item>
 		<item type="checkbox" name="userInfoEndpointBearer" label="Autenticazione Bearer" defaultSelected="false" reloadOnChange="true">
-			<conditions>
+			<conditions and="true">
 				<condition not="true" and="true">
 					<selected name="userInfoEndpointBasic"/>
+				</condition>
+				<condition not="true" and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
 				</condition>
 			</conditions>
 			<property name="policy.userInfo.endpoint.bearer.stato" />
 		</item>
 		<item type="checkbox" name="userInfoEndpointHttps" label="Autenticazione Https" defaultSelected="false" reloadOnChange="true">
+			<conditions>
+				<condition not="true" and="true">
+					<equals name="userInfoType" value="GOOGLE"/>
+				</condition>
+			</conditions>
 			<property name="policy.userInfo.endpoint.https.stato" />
 		</item>
 		
@@ -624,7 +744,7 @@
 				<selected name="endpointHttps"/>
 				<selected name="introspectionEndpointHttps"/>
 				<selected name="userInfoEndpointHttps"/>
-			</condition>
+			</condition>	
 		</conditions>
 	
 		<item type="select" name="endpointHttpsTipologia" label="Tipologia" required="true">
@@ -709,6 +829,46 @@
 				<property name="keyManagementAlgorithm" properties="sslClientConfig" />
 			</item>
 		
+		</subsection>
+		
+	</section>
+	
+	<section hidden="true" label="Https GOOGLE">
+
+		<conditions>
+			<condition and="false">
+				<equals name="introspectionType" value="GOOGLE"/>
+				<equals name="userInfoType" value="GOOGLE"/>
+			</condition>
+			<condition not="true" and="false">
+				<selected name="endpointHttps"/>
+				<selected name="introspectionEndpointHttps"/>
+				<selected name="userInfoEndpointHttps"/>
+			</condition>
+		</conditions>
+	
+		<item type="hidden" name="endpointHttpsTipologiaGOOGLE" value="TLSv1.2">
+			<property name="sslType" properties="sslConfig" />
+		</item>
+		<item type="hidden" name="endpointHttpsHostNameVerifierGOOGLE" value="true" >
+			<property name="hostnameVerifier" properties="sslConfig" />
+		</item>
+	
+		<subsection hidden="true"  label="Autenticazione Server GOOGLE">
+	
+			<item type="hidden" name="endpointHttpsTruststoreTypeGOOGLE" value="jks">
+				<property name="trustStoreType" properties="sslConfig" />
+			</item>
+			<item type="hidden" name="endpointHttpsTruststoreFileGOOGLE" value="/Token.jks">
+			    <property name="trustStoreLocation" properties="sslConfig" />
+			</item>
+			<item type="hidden" name="endpointHttpsTruststorePasswordGOOGLE" value="123456">
+			      	<property name="trustStorePassword" properties="sslConfig" />
+			</item>
+			<item type="hidden" name="endpointHttpsTruststoreAlgoritmoGOOGLE" value="PKIX">
+			      	<property name="trustManagementAlgorithm" properties="sslConfig" />
+			</item>
+			
 		</subsection>
 		
 	</section>

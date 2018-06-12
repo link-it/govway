@@ -75,6 +75,21 @@ public class Claims {
 	public final static String OIDC_ID_CLAIMS_POSTAL_CODE = "postal_code";
 	public final static String OIDC_ID_CLAIMS_COUNTRY = "country";
 	
+	// Google
+	
+	public final static String GOOGLE_CLAIMS_ISSUER = "iss";
+	public final static String GOOGLE_CLAIMS_SUBJECT = "sub";
+	public final static String GOOGLE_CLAIMS_AUDIENCE = "aud";
+	public final static String GOOGLE_CLAIMS_EXPIRED = "exp";
+	public final static String GOOGLE_CLAIMS_ISSUED_AT = "iat";
+	public final static String GOOGLE_CLAIMS_AZP = "azp";
+	public final static String GOOGLE_CLAIMS_SCOPE = "scope";
+	public final static String GOOGLE_CLAIMS_NAME = "name";
+	public final static String GOOGLE_CLAIMS_GIVE_NAME = "given_name";
+	public final static String GOOGLE_CLAIMS_FAMILY_NAME = "family_name";
+	public final static String GOOGLE_CLAIMS_MIDDLE_NAME = "middle_name";
+	public final static String GOOGLE_CLAIMS_EMAIL = "email";
+
 	
 	
 }

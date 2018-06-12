@@ -43,6 +43,7 @@ public class SubsectionModel extends AbstractModel<Subsection> {
 		this.CONDITIONS = new org.openspcoop2.core.mvc.properties.model.ConditionsModel(new Field("conditions",org.openspcoop2.core.mvc.properties.Conditions.class,"subsection",Subsection.class));
 		this.ITEM = new org.openspcoop2.core.mvc.properties.model.ItemModel(new Field("item",org.openspcoop2.core.mvc.properties.Item.class,"subsection",Subsection.class));
 		this.LABEL = new Field("label",java.lang.String.class,"subsection",Subsection.class);
+		this.HIDDEN = new Field("hidden",boolean.class,"subsection",Subsection.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class SubsectionModel extends AbstractModel<Subsection> {
 		this.CONDITIONS = new org.openspcoop2.core.mvc.properties.model.ConditionsModel(new ComplexField(father,"conditions",org.openspcoop2.core.mvc.properties.Conditions.class,"subsection",Subsection.class));
 		this.ITEM = new org.openspcoop2.core.mvc.properties.model.ItemModel(new ComplexField(father,"item",org.openspcoop2.core.mvc.properties.Item.class,"subsection",Subsection.class));
 		this.LABEL = new ComplexField(father,"label",java.lang.String.class,"subsection",Subsection.class);
+		this.HIDDEN = new ComplexField(father,"hidden",boolean.class,"subsection",Subsection.class);
 	
 	}
 	
@@ -63,6 +65,8 @@ public class SubsectionModel extends AbstractModel<Subsection> {
 	public org.openspcoop2.core.mvc.properties.model.ItemModel ITEM = null;
 	 
 	public IField LABEL = null;
+	 
+	public IField HIDDEN = null;
 	 
 
 	@Override

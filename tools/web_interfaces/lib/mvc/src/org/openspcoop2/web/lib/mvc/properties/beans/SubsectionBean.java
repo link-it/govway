@@ -46,9 +46,14 @@ public class SubsectionBean extends BaseItemBean<Subsection>{
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
-		if(this.visible != null && this.visible)
-			de.setType(DataElementType.SUBTITLE);
-		else 
+		if(this.visible != null && this.visible) {
+			if(this.getItem()!=null && this.getItem().isHidden()) {
+				de.setType(DataElementType.HIDDEN); 
+			}
+			else {
+				de.setType(DataElementType.SUBTITLE);
+			}
+		}else 
 			de.setType(DataElementType.HIDDEN); 
 		return de;
 	}

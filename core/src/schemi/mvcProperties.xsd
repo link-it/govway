@@ -27,6 +27,7 @@
 			<xsd:element name="subsection" type="subsection" maxOccurs="unbounded"  minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="label" type="xsd:string" use="required"/>
+		<xsd:attribute name="hidden" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	
 	<xsd:complexType name="subsection">
@@ -35,6 +36,7 @@
 			<xsd:element name="item" type="item" maxOccurs="unbounded"  minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="label" type="xsd:string" use="required"/>
+		<xsd:attribute name="hidden" type="xsd:boolean" default="false"/>
 	</xsd:complexType>
 	
 	

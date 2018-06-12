@@ -45,9 +45,14 @@ public class SectionBean extends BaseItemBean<Section>{
 		DataElement de = new DataElement();
 		de.setName(this.getName());
 		de.setLabel(this.getItem().getLabel()); 
-		if(this.visible != null && this.visible)
-			de.setType(DataElementType.TITLE);
-		else 
+		if(this.visible != null && this.visible) {
+			if(this.getItem()!=null && this.getItem().isHidden()) {
+				de.setType(DataElementType.HIDDEN); 
+			}
+			else {
+				de.setType(DataElementType.TITLE);
+			}
+		}else 
 			de.setType(DataElementType.HIDDEN); 
 		return de;
 	}

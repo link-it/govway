@@ -269,6 +269,10 @@
 				<include name="${wsdlPortaDelegata}"/>
 				<include name="${wsdlPortaApplicativa}"/>
 			</classes>
+			<!-- JKS -->
+			<classes dir="${deploy_jks_dir}">
+				<include name="*.jks"/>
+			</classes>
 		</war>
 	</target>
 	

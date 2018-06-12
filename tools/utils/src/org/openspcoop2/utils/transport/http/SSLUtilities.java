@@ -20,7 +20,9 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Provider.Service;
@@ -228,8 +230,8 @@ public class SSLUtilities {
 		KeyManager[] km = null;
 		TrustManager[] tm = null;
 
-		FileInputStream finKeyStore = null;
-		FileInputStream finTrustStore = null;
+		InputStream finKeyStore = null;
+		InputStream finTrustStore = null;
 		try{
 		
 			// Autenticazione CLIENT
@@ -241,7 +243,16 @@ public class SSLUtilities {
 				bfLog.append("\tKeystore keyManagementAlgorithm["+sslConfig.getKeyManagementAlgorithm()+"]\n");
 				//bfLog.append("\tKeystore keyPassword["+sslConfig.getKeyPassword()+"]\n");
 				KeyStore keystore = KeyStore.getInstance(sslConfig.getKeyStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-				finKeyStore = new FileInputStream(sslConfig.getKeyStoreLocation());
+				File file = new File(sslConfig.getKeyStoreLocation());
+				if(file.exists()) {
+					finKeyStore = new FileInputStream(file);
+				}
+				else {
+					finKeyStore = SSLUtilities.class.getResourceAsStream(sslConfig.getKeyStoreLocation());
+				}
+				if(finKeyStore == null) {
+					throw new Exception("Keystore ["+sslConfig.getKeyStoreLocation()+"] not found");
+				}				
 				keystore.load(finKeyStore, sslConfig.getKeyStorePassword().toCharArray());
 				KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
 				keyManagerFactory.init(keystore, sslConfig.getKeyPassword().toCharArray());
@@ -258,7 +269,16 @@ public class SSLUtilities {
 				//bfLog.append("\tTruststore password["+sslConfig.getTrustStorePassword()+"]\n");
 				bfLog.append("\tTruststore trustManagementAlgorithm["+sslConfig.getTrustManagementAlgorithm()+"]\n");
 				KeyStore truststore = KeyStore.getInstance(sslConfig.getTrustStoreType()); // JKS,PKCS12,jceks,bks,uber,gkr
-				finTrustStore = new FileInputStream(sslConfig.getTrustStoreLocation());
+				File file = new File(sslConfig.getTrustStoreLocation());
+				if(file.exists()) {
+					finTrustStore = new FileInputStream(file);
+				}
+				else {
+					finTrustStore = SSLUtilities.class.getResourceAsStream(sslConfig.getTrustStoreLocation());
+				}
+				if(finTrustStore == null) {
+					throw new Exception("Keystore ["+sslConfig.getTrustStoreLocation()+"] not found");
+				}		
 				truststore.load(finTrustStore, sslConfig.getTrustStorePassword().toCharArray());
 				TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(sslConfig.getTrustManagementAlgorithm());
 				trustManagerFactory.init(truststore);

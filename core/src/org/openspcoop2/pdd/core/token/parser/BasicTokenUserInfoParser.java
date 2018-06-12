@@ -23,6 +23,8 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_CLAIMS_NAME);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -36,6 +38,8 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_CLAIMS_GIVE_NAME);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_GIVE_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -49,6 +53,8 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_CLAIMS_MIDDLE_NAME);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_MIDDLE_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -67,6 +73,8 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 				tmp = this.claims.get(Claims.OIDC_ID_CLAIMS_LAST_NAME);
 			}
 			return tmp;
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_FAMILY_NAME);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
@@ -81,6 +89,8 @@ public class BasicTokenUserInfoParser implements ITokenUserInfoParser {
 		switch (this.parser) {
 		case OIDC_ID_TOKEN:
 			return this.claims.get(Claims.OIDC_ID_CLAIMS_EMAIL);
+		case GOOGLE:
+			return this.claims.get(Claims.GOOGLE_CLAIMS_EMAIL);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case INTROSPECTION_RESPONSE_RFC_7662:
 		case CUSTOM:
