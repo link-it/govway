@@ -89,6 +89,8 @@ public class Claims {
 	public final static String GOOGLE_CLAIMS_FAMILY_NAME = "family_name";
 	public final static String GOOGLE_CLAIMS_MIDDLE_NAME = "middle_name";
 	public final static String GOOGLE_CLAIMS_EMAIL = "email";
+	public final static String GOOGLE_CLAIMS_ERROR_DESCRIPTION = "error_description";
+	public final static String GOOGLE_CLAIMS_ERROR = "error";
 
 	
 	

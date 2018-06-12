@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,7 +20,10 @@ public class InformazioniToken implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InformazioniToken(String rawResponse, ITokenParser tokenParser) throws UtilsException {
+	public InformazioniToken(String rawResponse, ITokenParser tokenParser) throws Exception {
+		this(null,rawResponse,tokenParser);
+	}
+	public InformazioniToken(Integer httpResponseCode, String rawResponse, ITokenParser tokenParser) throws Exception {
 		this.rawResponse = rawResponse;
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		if(jsonUtils.isJson(this.rawResponse)) {
@@ -32,6 +34,9 @@ public class InformazioniToken implements Serializable {
 			}
 		}
 		tokenParser.init(this.rawResponse, this.claims);
+		if(httpResponseCode!=null) {
+			tokenParser.checkHttpTransaction(httpResponseCode);
+		}
 		this.valid = tokenParser.isValid();
 		this.iss = tokenParser.getIssuer();
 		this.sub = tokenParser.getSubject();

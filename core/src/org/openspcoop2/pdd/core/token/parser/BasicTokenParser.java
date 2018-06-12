@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class BasicTokenParser implements ITokenParser {
 
+	protected Integer httpResponseCode;
 	protected String raw;
 	protected Map<String, String> claims;
 	protected TipologiaClaims parser;
@@ -25,16 +26,72 @@ public class BasicTokenParser implements ITokenParser {
 	}
 
 	@Override
+	public void checkHttpTransaction(Integer httpResponseCode) throws Exception{
+		this.httpResponseCode = httpResponseCode;
+		switch (this.parser) {
+		case INTROSPECTION_RESPONSE_RFC_7662:
+		case JSON_WEB_TOKEN_RFC_7519:
+		case OIDC_ID_TOKEN:
+		case CUSTOM:
+			if(this.httpResponseCode!=null && 
+				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
+				String msgError = "Connessione terminata con errore (codice trasporto: "+this.httpResponseCode.intValue()+")";
+				throw new Exception(msgError+": "+this.raw);
+			}
+			break;
+		case GOOGLE:
+			if(this.httpResponseCode!=null) {
+				if(this.httpResponseCode.intValue() == 400 || this.httpResponseCode.intValue()==401) {
+					if(this.claims!=null && this.claims.size()>0) {
+						String tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR);
+						if(tmp==null) {
+							tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
+						}
+						if(tmp!=null) {
+							return;
+						}
+					}
+				}	
+			}
+			if(this.httpResponseCode!=null && 
+				(this.httpResponseCode.intValue() < 200 || this.httpResponseCode.intValue()>299)) {
+				String msgError = "Connessione terminata con errore (codice trasporto: "+this.httpResponseCode.intValue()+")";
+				throw new Exception(msgError+": "+this.raw);
+			}
+			break;
+		}
+	}
+	
+	@Override
 	public boolean isValid() {
+		
+		if(this.claims==null || this.claims.size()<=0) {
+			return false;
+		}
+		
 		switch (this.parser) {
 		case INTROSPECTION_RESPONSE_RFC_7662:
 			String claim = this.claims.get(Claims.INTROSPECTION_RESPONSE_RFC_7662_ACTIVE);
 			return Boolean.valueOf(claim);
 		case JSON_WEB_TOKEN_RFC_7519:
 		case OIDC_ID_TOKEN:
-		case GOOGLE:
 		case CUSTOM:
 			return true;
+		case GOOGLE:
+			if(this.httpResponseCode==null) {
+				return true;
+			}
+			else {
+				if(this.httpResponseCode.intValue() == 400 || this.httpResponseCode.intValue()==401) {
+					String tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR);
+					if(tmp==null) {
+						tmp = this.claims.get(Claims.GOOGLE_CLAIMS_ERROR_DESCRIPTION);
+					}
+					if(tmp!=null) {
+						return false;
+					}
+				}
+			}
 		}
 		return true;
 	}

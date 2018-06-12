@@ -53,6 +53,7 @@ import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -761,10 +762,14 @@ public class GestoreToken {
 			
 			ITokenParser tokenParser = policyGestioneToken.getIntrospection_TokenParser();
 			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
 			byte[] risposta = null;
 			try {
-				risposta = http(log, policyGestioneToken, INTROSPECTION, token,
+				httpResponse = http(log, policyGestioneToken, INTROSPECTION, token,
 						pddContext, protocolFactory);
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
 				detailsError = "(Errore di Connessione) "+ e.getMessage();
 				eProcess = e;
@@ -772,7 +777,7 @@ public class GestoreToken {
 			
 			if(detailsError==null) {
 				try {
-					informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+					informazioniToken = new InformazioniToken(httpResponseCode, new String(risposta),tokenParser);
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di Introspection non valida: "+e.getMessage();
 					eProcess = e;
@@ -916,10 +921,14 @@ public class GestoreToken {
 			
 			ITokenParser tokenParser = policyGestioneToken.getUserInfo_TokenParser();
 			
+			HttpResponse httpResponse = null;
+			Integer httpResponseCode = null;
 			byte[] risposta = null;
 			try {
-				risposta = http(log, policyGestioneToken, USER_INFO, token,
+				httpResponse = http(log, policyGestioneToken, USER_INFO, token,
 						pddContext, protocolFactory);
+				risposta = httpResponse.getContent();
+				httpResponseCode = httpResponse.getResultHTTPOperation();
 			}catch(Exception e) {
 				detailsError = "(Errore di Connessione) "+ e.getMessage();
 				eProcess = e;
@@ -927,7 +936,7 @@ public class GestoreToken {
 			
 			if(detailsError==null) {
 				try {
-					informazioniToken = new InformazioniToken(new String(risposta),tokenParser);
+					informazioniToken = new InformazioniToken(httpResponseCode, new String(risposta),tokenParser);
 				}catch(Exception e) {
 					detailsError = "Risposta del servizio di UserInfo non valida: "+e.getMessage();
 					eProcess = e;
@@ -1727,7 +1736,7 @@ public class GestoreToken {
 	
 	private static final boolean INTROSPECTION = true;
 	private static final boolean USER_INFO = false;
-	private static byte[] http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
+	private static HttpResponse http(Logger log, PolicyGestioneToken policyGestioneToken, boolean introspection, String token,
 			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception {
 		
 		// *** Raccola Parametri ***
@@ -1933,11 +1942,15 @@ public class GestoreToken {
 			bout.close();
 		}
 		
+		HttpResponse httpResponse = new HttpResponse();
+		httpResponse.setResultHTTPOperation(connettore.getCodiceTrasporto());
+		
 		if(connettore.getCodiceTrasporto() >= 200 &&  connettore.getCodiceTrasporto() < 299) {
 			String msgSuccess = "Connessione completata con successo (codice trasporto: "+connettore.getCodiceTrasporto()+")";
 			if(bout!=null && bout.size()>0) {
 				log.debug(msgSuccess);
-				return bout.toByteArray();
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
 			}
 			else {
 				throw new Exception(msgSuccess+"; non è pervenuta alcuna risposta");
@@ -1945,11 +1958,13 @@ public class GestoreToken {
 		}
 		else {
 			String msgError = "Connessione terminata con errore (codice trasporto: "+connettore.getCodiceTrasporto()+")";
-			log.error(msgError+": "+bout.toString());
-			if(bout!=null && bout.size()>0 && bout.size()<(1024)) {
-				throw new Exception(msgError+": "+bout.toString());
+			if(bout!=null && bout.size()>0) {
+				log.debug(msgError+": "+bout.toString());
+				httpResponse.setContent(bout.toByteArray());
+				return httpResponse;
 			}
 			else {
+				log.error(msgError);
 				throw new Exception(msgError);
 			}
 		}
@@ -1971,3 +1986,4 @@ public class GestoreToken {
 		}
 	}
 }
+

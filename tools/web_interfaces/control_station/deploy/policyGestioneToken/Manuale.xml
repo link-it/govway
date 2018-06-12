@@ -847,6 +847,9 @@
 			</condition>
 		</conditions>
 	
+		<item type="hidden" name="endpointHttpsGOOGLE" value="true">
+			<property name="policy.endpoint.https.stato" />
+		</item>	
 		<item type="hidden" name="endpointHttpsTipologiaGOOGLE" value="TLSv1.2">
 			<property name="sslType" properties="sslConfig" />
 		</item>

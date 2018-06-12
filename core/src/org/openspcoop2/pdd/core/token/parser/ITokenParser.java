@@ -8,6 +8,9 @@ public interface ITokenParser {
 
 	public void init(String raw, Map<String,String> claims);
 	
+	// Controllo se il token e' un token atteso su cui leggere le informazioni
+	public void checkHttpTransaction(Integer httpResponseCode) throws Exception;
+	
 	// Indicazione se il token e' valido
 	public boolean isValid();
 	
