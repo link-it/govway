@@ -1,6 +1,6 @@
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
- 
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,16 +39,16 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	 */
 	private static final long serialVersionUID = 1L; 
 	private transient Logger log =  LoggerManager.getPddMonitorCoreLogger();
-	
-	
+
+
 	private String idTransazione;
 	private TipoMessaggio tipoMessaggio;
-	
+
 	private DumpMessaggio dumpMessaggio;
 	private DumpAllegato selectedAttachment;
-	
+
 	private boolean base64Decode;
-	
+
 	public void setBase64Decode(boolean base64Decode) {
 		this.base64Decode = base64Decode;
 	}
@@ -56,56 +56,56 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	public void setSelectedAttachment(DumpAllegato selectedAttachment) {
 		this.selectedAttachment = selectedAttachment;
 	}
-	
+
 	public String getIdTransazione() {
 		return this.idTransazione;
 	}
-	
+
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
 	}
-	
+
 	public boolean isVisualizzaMessaggio(){
 		boolean visualizzaMessaggio = true;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			if(this.dumpMessaggio.getBody() == null)
 				return false;
-			
+
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
 			if(errore!= null)
 				return false;
-			
-//			MessageType messageType= MessageType.XML;
-//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-//			}
-			
-//			switch (messageType) {
-//			case BINARY:
-//			case MIME_MULTIPART:
-//				// questi due casi dovrebbero essere gestiti sopra 
-//				break;	
-//			case JSON:
-//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-//				try {
-//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-//				} catch (UtilsException e) {
-//				}
-//				break;
-//			case SOAP_11:
-//			case SOAP_12:
-//			case XML:
-//			default:
-//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-//				break;
-//			}
+
+			//			MessageType messageType= MessageType.XML;
+			//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
+			//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
+			//			}
+
+			//			switch (messageType) {
+			//			case BINARY:
+			//			case MIME_MULTIPART:
+			//				// questi due casi dovrebbero essere gestiti sopra 
+			//				break;	
+			//			case JSON:
+			//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+			//				try {
+			//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
+			//				} catch (UtilsException e) {
+			//				}
+			//				break;
+			//			case SOAP_11:
+			//			case SOAP_12:
+			//			case XML:
+			//			default:
+			//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+			//				break;
+			//			}
 		}
-		 
-			
+
+
 		return visualizzaMessaggio;
 	}
-	
+
 	public String getPrettyEnvelop(){
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
@@ -113,12 +113,12 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
 			if(errore!= null)
 				return "";
-			
+
 			MessageType messageType= MessageType.XML;
 			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
 				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
 			}
-			
+
 			switch (messageType) {
 			case BINARY:
 			case MIME_MULTIPART:
@@ -139,13 +139,13 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				break;
 			}
 		}
-		 
+
 		if(toRet == null)
 			toRet = this.dumpMessaggio.getBody() != null ? new String(this.dumpMessaggio.getBody()) : "";
-			
-		return toRet;
+
+			return toRet;
 	}
-	
+
 	public String getBrush() {
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
@@ -153,7 +153,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
 				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
 			}
-			
+
 			switch (messageType) {
 			case JSON:
 				toRet = "json";
@@ -169,46 +169,46 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				break;
 			}
 		}
-			
+
 		return toRet;
 	}
-	
+
 	public String getErroreVisualizzaMessaggio(){
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
 			return errore;
 		}
-			
+
 		return null;
 	}
-	
+
 	public DumpMessaggio getDumpMessaggio(){
 		if(this.dumpMessaggio!=null)
 			return this.dumpMessaggio;
-		
+
 		try {
 			this.dumpMessaggio = (((ITransazioniService)this.service)).getDumpMessaggio(this.idTransazione, this.tipoMessaggio);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
-			
+
 		}
-		
+
 		return this.dumpMessaggio;
 	}
-	
+
 	/***
 	 * //  eliminato dalla tabella styleClass="#{allegato.mimeTypeImageClass}"
 	 * 
 	 * @return Lista degli Allegati
 	 */
 	public List<DumpAllegato> getAllegati(){
-		
+
 		if(this.getDumpMessaggio()==null)
 			return null;
-		
+
 		List<DumpAllegato> list = (((ITransazioniService)this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-				
+
 		if(list.size()>0){
 			List<DumpAllegato> newL = new ArrayList<DumpAllegato>();
 			for (DumpAllegato dumpAllegato : list) {
@@ -221,24 +221,24 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		}
 
 	}
-	
+
 	public List<DumpHeaderTrasporto> getHeadersTrasporto(){
-		
+
 		if(this.getDumpMessaggio()==null)
 			return null;
-		
+
 		List<DumpHeaderTrasporto> list = (((ITransazioniService)this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-		
+
 		return (list.size()>0) ? list : null;
 	}
-	
+
 	public List<DumpContenuto> getContenuti(){
-		
+
 		if(this.getDumpMessaggio()==null)
 			return null;
-		
+
 		List<DumpContenuto> list = (((ITransazioniService)this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-		
+
 		if(list.size()>0){
 			List<DumpContenuto> listNew = new ArrayList<DumpContenuto>();
 			for (DumpContenuto dumpContenuto : list) {
@@ -249,16 +249,16 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		else{
 			return null;
 		}
-		
+
 		//return (list.size()>0) ? list : null;
 	}
-	
+
 	public String downloadMessaggio(){
 		this.log.debug("downloading messaggio: "+this.dumpMessaggio.getId());
 		try{
 			//recupero informazioni sul file
-			
-			
+
+
 			// We must get first our context
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -288,23 +288,23 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			//String fileName = "allegato_"+this.selectedAttachment.getId();
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "messaggio";
-			
+
 			String ext = MimeTypeUtils.fileExtensionForMIMEType(this.dumpMessaggio.getContentType());
-			
+
 			fileName+="."+ext;
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName, this.dumpMessaggio.getContentType());
-			
+
 			// Streams we will use to read, write the file bytes to our response
 			ByteArrayInputStream bis = null;
 			OutputStream os = null;
-						
+
 			// First we load the file in our InputStream
 			byte[] contenutoBody = this.dumpMessaggio.getBody();
-//			if(this.base64Decode){
-//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
-//			}
+			//			if(this.base64Decode){
+			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
+			//			}
 			bis = new ByteArrayInputStream(contenutoBody);
 			os = response.getOutputStream();
 
@@ -327,13 +327,13 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		}
 		return null;
 	}
-	
+
 	public String download(){
 		this.log.debug("downloading allegato: "+this.selectedAttachment.getId());
 		try{
 			//recupero informazioni sul file
-			
-			
+
+
 			// We must get first our context
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -363,18 +363,18 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			//String fileName = "allegato_"+this.selectedAttachment.getId();
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "allegato";
-			
+
 			String ext = MimeTypeUtils.fileExtensionForMIMEType(this.selectedAttachment.getContentType());
-			
+
 			fileName+="."+ext;
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName, this.selectedAttachment.getContentType());
-			
+
 			// Streams we will use to read, write the file bytes to our response
 			ByteArrayInputStream bis = null;
 			OutputStream os = null;
-						
+
 			// First we load the file in our InputStream
 			byte[] contenutoAllegato = this.selectedAttachment.getAllegato();
 			if(this.base64Decode){
@@ -402,14 +402,14 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		}
 		return null;
 	}
-	
+
 	public String downloadAll(){
-		
+
 		this.log.debug("downloading all attachments");
 		try{
 			//recupero informazioni sul file
-			
-			
+
+
 			// We must get first our context
 			FacesContext context = FacesContext.getCurrentInstance();
 
@@ -429,35 +429,35 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// Here fileName, is a String with the name that you will suggest as a
 			// name to save as
 			// I use the same name as it is stored in the file system of the server.
-			
+
 			String fileName = this.dumpMessaggio.getIdTransazione()+"-Attachments.zip";
-			
+
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);
 
-			
+
 			// Streams we will use to read, write the file bytes to our response
 			// First we load the file in our InputStream
 			List<DumpAllegato> allegatiCore = (((ITransazioniService)this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
-			
+
 			List<DumpAllegato> allegati = new ArrayList<DumpAllegato>();
 			for (DumpAllegato dumpAllegato : allegatiCore) {
 				allegati.add(new DumpAllegatoBean(dumpAllegato));
 			}
-			
+
 			ZipOutputStream zip = new ZipOutputStream(response.getOutputStream());
 			InputStream in = null;
-						
+
 			int index = 1;
 			for (DumpAllegato allegato : allegati) {
-				
+
 				String allegatofileName = "allegato_"+index;
-								
+
 				String allegatoExt = MimeTypeUtils.fileExtensionForMIMEType(allegato.getContentType());
-				
+
 				allegatofileName+="."+allegatoExt;
 				zip.putNextEntry(new ZipEntry(allegatofileName));
-				
+
 				byte[] contenutoAllegato = allegato.getAllegato();
 				in = new ByteArrayInputStream(contenutoAllegato);
 				int len;
@@ -466,7 +466,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				}
 				zip.closeEntry();
 				in.close();
-				
+
 				try{
 					DumpAllegatoBean da = (DumpAllegatoBean)allegato;
 					if(da.isBase64()){
@@ -474,7 +474,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 						allegatofileName = "allegato_"+index+".decodeBase64";
 						allegatofileName+="."+allegatoExt;
 						zip.putNextEntry(new ZipEntry(allegatofileName));
-	
+
 						in = new ByteArrayInputStream(contenutoAllegato);
 						while ((len = in.read(bytes)) > 0) {
 							zip.write(bytes, 0, len);
@@ -485,12 +485,12 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				}catch(Throwable e){
 					this.log.error(e.getMessage(), e);
 				}
-				
+
 				index++;
 			}
 			zip.flush();
 			zip.close();
-			
+
 			FacesContext.getCurrentInstance().responseComplete();
 
 			// End of the method
@@ -500,25 +500,48 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		}
 		return null;
 	}
-	
-	 public void setTipoMessaggio(String value) {
-		 if(value != null )
-			 this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
-	  }
 
-	  public String getTipoMessaggio() {
-	    if(this.tipoMessaggio == null){
-	    	return null;
-	    }else{
-	    	return this.tipoMessaggio.toString();
-	    }
-	  }
+	public void setTipoMessaggio(String value) {
+		if(value != null )
+			this.tipoMessaggio = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(value);
+	}
 
-	  public org.openspcoop2.core.transazioni.constants.TipoMessaggio getTipoMessaggioEnum() {
-	    return this.tipoMessaggio;
-	  }
+	public String getTipoMessaggio() {
+		if(this.tipoMessaggio == null){
+			return null;
+		}else{
+			return this.tipoMessaggio.toString();
+		}
+	}
 
-	  public void setTipoMessaggioEnum(org.openspcoop2.core.transazioni.constants.TipoMessaggio tipoMessaggio) {
-	    this.tipoMessaggio = tipoMessaggio;
-	  }
+	public org.openspcoop2.core.transazioni.constants.TipoMessaggio getTipoMessaggioEnum() {
+		return this.tipoMessaggio;
+	}
+
+	public void setTipoMessaggioEnum(org.openspcoop2.core.transazioni.constants.TipoMessaggio tipoMessaggio) {
+		this.tipoMessaggio = tipoMessaggio;
+	}
+
+	public String getTitoloPagina() {
+		if(this.tipoMessaggio != null) {
+			switch (this.tipoMessaggio) {
+			case RICHIESTA_INGRESSO:
+				return "Messaggio di Richiesta Contenuti Ingresso";
+			case RICHIESTA_USCITA:
+				return "Messaggio di Richiesta Contenuti Uscita";
+			case RISPOSTA_INGRESSO:
+				return "Messaggio di Risposta Contenuti Ingresso";
+			case RISPOSTA_USCITA:	
+				return "Messaggio di Risposta Contenuti Uscita";
+			case INTEGRATION_MANAGER:
+			case RICHIESTA_INGRESSO_DUMP_BINARIO:
+			case RICHIESTA_USCITA_DUMP_BINARIO:
+			case RISPOSTA_INGRESSO_DUMP_BINARIO:
+			case RISPOSTA_USCITA_DUMP_BINARIO:
+			default:
+				return "Contenuti Messaggio";
+			}
+		}
+		return "Contenuti Messaggio";
+	}
 }

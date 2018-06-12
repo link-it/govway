@@ -373,7 +373,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.dettaglio = null;
 	}
 
-	public String getTipologiaConProtocollo(){
+	public String getTipologiaConProtocollo() throws Exception{ 
 		if(this.dettaglio==null){
 			return "n.d.";
 		}
@@ -396,7 +396,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			break;
 		}
 		if(this.dettaglio.getProtocollo()!=null){
-			return ruolo + " ("+this.dettaglio.getProtocollo()+")";
+			return ruolo + " ("+this.dettaglio.getProtocolloLabel()+")";
 		}
 		else{
 			return ruolo;

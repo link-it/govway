@@ -24,7 +24,7 @@
 				</a4j:htmlCommandLink>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
-			<li><h:outputText styleClass="ultimo-path" id="dettaglioDump" value="Dettaglio Dump" /></li>
+			<li><h:outputText styleClass="ultimo-path" id="dettaglioDump" value="#{dettagliDump.titoloPagina}" /></li>
 		</ul>
 	</ui:define>
 	<ui:define name="body">
@@ -56,7 +56,7 @@
 		
 		<rich:panel id="xmlPnl" rendered="#{not empty dettagliDump.dumpMessaggio}">
 			<f:facet name="header">
-				<h:outputText id="outXml" value="Dettaglio Dump"/>
+				<h:outputText id="outXml" value="#{dettagliDump.titoloPagina}"/>
 			</f:facet>
 			
 			<link:fieldset legend="Messaggio" rendered="#{not empty dettagliDump.dumpMessaggio and not empty dettagliDump.dumpMessaggio.body}" collapsible="false" closed="false">

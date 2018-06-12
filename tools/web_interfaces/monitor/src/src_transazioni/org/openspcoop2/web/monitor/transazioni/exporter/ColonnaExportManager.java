@@ -115,8 +115,6 @@ public class ColonnaExportManager {
 //		this.addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_LIST_EXT, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_LIST_EXT);
 //		this.addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_EXT, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_EXT);
 	
-		// versione servizio non e' selezionabile dall'utente 
-		this.addColonna(CostantiExport.KEY_COL_VERSIONE_SERVIZIO, CostantiExport.LABEL_COL_VERSIONE_SERVIZIO,true);
 	}
 	
 	public void addColonna(String key, String label){

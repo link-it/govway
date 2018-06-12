@@ -529,10 +529,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				}
 								
 				colonneSelezionate.add(key);
-				
-				if(key.equals(CostantiExport.KEY_COL_SERVIZIO)) {
-					colonneSelezionate.add(CostantiExport.KEY_COL_VERSIONE_SERVIZIO);
-				}
 			}
 			
 		}else if(colonneEsportate.equals(CostantiExport.COLONNE_VALUE_VISUALIZZATE_NELLO_STORICO)){
@@ -554,10 +550,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 						// controllo che la colonna sia tra quelle previste e tra quelle visibili
 						if(ColonnaExportManager.getInstance().containsColonna(key) && visibility > 0){
 							colonneSelezionate.add(key);
-							
-							if(key.equals(CostantiExport.KEY_COL_SERVIZIO)) {
-								colonneSelezionate.add(CostantiExport.KEY_COL_VERSIONE_SERVIZIO);
-							}
 						}
 					}
 				}
@@ -569,10 +561,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				for (org.openspcoop2.web.monitor.core.bean.SelectItem selItem : this.getElencoColonneSelezionate()) {
 					if(!colonneSelezionate.contains(selItem.getValue())) {
 						colonneSelezionate.add(selItem.getValue());
-						
-						if(selItem.getValue().equals(CostantiExport.KEY_COL_SERVIZIO)) {
-							colonneSelezionate.add(CostantiExport.KEY_COL_VERSIONE_SERVIZIO);
-						}
 					}
 				}
 		}

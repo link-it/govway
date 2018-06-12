@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
@@ -307,518 +308,516 @@ public class SingleCsvFileExporter implements IExporter{
 
 	private List<Object> getLine(TransazioneBean t) throws ExportException {
 		List<Object> oneLine = new ArrayList<Object>();
-
-		for (String keyColonna : this.colonneSelezionate) {
-			if(keyColonna.equals(CostantiExport.KEY_COL_AZIONE)){
-				if(!t.getPddRuolo().equals(PddRuolo.INTEGRATION_MANAGER)){
-					if(StringUtils.isNotEmpty(t.getAzione())){
-						oneLine.add(t.getAzione());
+		try {
+			for (String keyColonna : this.colonneSelezionate) {
+				if(keyColonna.equals(CostantiExport.KEY_COL_AZIONE)){
+					if(!t.getPddRuolo().equals(PddRuolo.INTEGRATION_MANAGER)){
+						if(StringUtils.isNotEmpty(t.getAzione())){
+							oneLine.add(t.getAzione());
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}else {
+						if(StringUtils.isNotEmpty(t.getOperazioneIm())){
+							oneLine.add(CostantiExport.INTEGRATION_MANAGER_LABEL_CON_PARANTISI+ CostantiExport.WHITE_SPACE + t.getOperazioneIm());
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_CLUSTER_ID)){
+					if(StringUtils.isNotEmpty(t.getClusterId())){
+						oneLine.add(t.getClusterId());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				}else {
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_CREDENZIALI)){
+					if(StringUtils.isNotEmpty(t.getCredenziali())){
+						oneLine.add(t.getCredenziali());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RICHIESTA)){
+					if(t.getDataIdMsgRichiesta()!= null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRichiesta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RISPOSTA)){
+					if(t.getDataIdMsgRisposta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRisposta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RICHIESTA)){
+					if(t.getDataAccettazioneRichiesta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRichiesta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA)){
+					if(t.getDataIngressoRichiesta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRichiesta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RISPOSTA)){
+					if(t.getDataAccettazioneRisposta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRisposta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA)){
+					if(t.getDataIngressoRisposta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRisposta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA)){
+					if(t.getDataUscitaRichiesta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRichiesta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA)){
+					if(t.getDataUscitaRisposta() != null){
+						oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRisposta())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DIAGNOSTICI)){
+					if(this.exportDiagnostici){
+						this.scriviDiagnostici(t, oneLine); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DIGEST_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getDigestRichiesta())){
+						oneLine.add(t.getDigestRichiesta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DIGEST_RISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getDigestRisposta())){
+						oneLine.add(t.getDigestRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DUPLICATI_RICHIESTA)){
+					if(t.getDuplicatiRichiesta() >= 0){
+						oneLine.add(t.getDuplicatiRichiesta() + "");
+					} else {
+						oneLine.add(CostantiExport.DUPLICATA_VALUE);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_DUPLICATI_RISPOSTA)){
+					if(t.getDuplicatiRisposta() >= 0){
+						oneLine.add(t.getDuplicatiRisposta() + "");
+					} else {
+						oneLine.add(CostantiExport.DUPLICATA_VALUE);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO)){
+					oneLine.add(this.esitoUtils.getEsitoLabelFromValue(t.getEsito()));
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO_CONTESTO)){
+					if(StringUtils.isNotEmpty(t.getEsitoContesto())){
+						oneLine.add(this.esitoUtils.getEsitoContestoLabelFromValue(t.getEsitoContesto()));
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_EVENTI_GESTIONE)){
+					if(StringUtils.isNotEmpty(t.getEventiGestione())){
+						oneLine.add(t.getEventiGestione());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_FAULT_COOPERAZIONE)){
+					if(StringUtils.isNotEmpty(t.getFaultCooperazione())){
+						oneLine.add(t.getFaultCooperazionePretty());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_FAULT_INTEGRAZIONE)){
+					if(StringUtils.isNotEmpty(t.getFaultIntegrazione())){
+						oneLine.add(t.getFaultIntegrazionePretty());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_HEADER_PROTOCOLLO_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getHeaderProtocolloRichiesta())){
+						oneLine.add(t.getHeaderProtocolloRichiesta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_HEADER_PROTOCOLLO_RISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getHeaderProtocolloRisposta())){
+						oneLine.add(t.getHeaderProtocolloRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_ASINCRONO)){
+					if(StringUtils.isNotEmpty(t.getIdAsincrono())){
+						oneLine.add(t.getIdAsincrono());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_COLLABORAZIONE)){
+					if(StringUtils.isNotEmpty(t.getIdCollaborazione())){
+						oneLine.add(t.getIdCollaborazione());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_CORRELAZIONE_APPLICATIVA)){
+					if(StringUtils.isNotEmpty(t.getIdCorrelazioneApplicativa())){
+						oneLine.add(t.getIdCorrelazioneApplicativa());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_CORRELAZIONEAPPLICATIVARISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getIdCorrelazioneApplicativaRisposta())){
+						oneLine.add(t.getIdCorrelazioneApplicativaRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_MESSAGGIO_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getIdMessaggioRichiesta())){
+						oneLine.add(t.getIdMessaggioRichiesta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_MESSAGGIO_RISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getIdMessaggioRisposta())){
+						oneLine.add(t.getIdMessaggioRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_PORTA_SOGGETTO_EROGATORE)){
+					if(StringUtils.isNotEmpty(t.getIdportaSoggettoErogatore())){
+						oneLine.add(t.getIdportaSoggettoErogatore());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_PORTA_SOGGETTO_FRUITORE)){
+					if(StringUtils.isNotEmpty(t.getIdportaSoggettoFruitore())){
+						oneLine.add(t.getIdportaSoggettoFruitore());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_TRANSAZIONE)){
+					if(StringUtils.isNotEmpty(t.getIdTransazione())){
+						oneLine.add(t.getIdTransazione());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_SOGGETTO_EROGATORE)){
+					if(StringUtils.isNotEmpty(t.getIndirizzoSoggettoErogatore())){
+						oneLine.add(t.getIndirizzoSoggettoErogatore());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_SOGGETTO_FRUITORE)){
+					if(StringUtils.isNotEmpty(t.getIndirizzoSoggettoFruitore())){
+						oneLine.add(t.getIndirizzoSoggettoFruitore());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_PORTA)){
+					if(t.getLatenzaPorta() != null){
+						long v = t.getLatenzaPorta().longValue();
+						if(v >=0)
+							oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaPorta(), true));
+						else 
+							oneLine.add(CostantiExport.N_D);
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_SERVIZIO)){
+					if(t.getLatenzaServizio() != null){
+						long v = t.getLatenzaServizio().longValue();
+						if(v >=0)
+							oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaServizio(), true)); 
+						else 
+							oneLine.add(CostantiExport.N_D);
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_TOTALE)){
+					if(t.getLatenzaTotale() != null){
+						long v = t.getLatenzaTotale().longValue();
+						if(v >=0)
+							oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaTotale(), true)); 
+						else 
+							oneLine.add(CostantiExport.N_D);
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_CONNETTORE)){
+					if(StringUtils.isNotEmpty(t.getLocationConnettore())){
+						oneLine.add(t.getLocationConnettore());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getLocationRichiesta())){
+						oneLine.add(t.getLocationRichiesta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_RISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getLocationRisposta())){
+						oneLine.add(t.getLocationRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_NOME_PORTA)){
+					if(StringUtils.isNotEmpty(t.getNomePorta())){
+						oneLine.add(t.getNomePorta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_OPERAZIONE_IM)){
 					if(StringUtils.isNotEmpty(t.getOperazioneIm())){
-						oneLine.add(CostantiExport.INTEGRATION_MANAGER_LABEL_CON_PARANTISI+ CostantiExport.WHITE_SPACE + t.getOperazioneIm());
+						oneLine.add(t.getOperazioneIm());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_CLUSTER_ID)){
-				if(StringUtils.isNotEmpty(t.getClusterId())){
-					oneLine.add(t.getClusterId());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_CREDENZIALI)){
-				if(StringUtils.isNotEmpty(t.getCredenziali())){
-					oneLine.add(t.getCredenziali());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RICHIESTA)){
-				if(t.getDataIdMsgRichiesta()!= null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRichiesta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ID_MSG_RISPOSTA)){
-				if(t.getDataIdMsgRisposta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataIdMsgRisposta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RICHIESTA)){
-				if(t.getDataAccettazioneRichiesta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRichiesta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RICHIESTA)){
-				if(t.getDataIngressoRichiesta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRichiesta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_ACCETTAZIONE_RISPOSTA)){
-				if(t.getDataAccettazioneRisposta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataAccettazioneRisposta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_INGRESSO_RISPOSTA)){
-				if(t.getDataIngressoRisposta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataIngressoRisposta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RICHIESTA)){
-				if(t.getDataUscitaRichiesta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRichiesta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DATA_USCITA_RISPOSTA)){
-				if(t.getDataUscitaRisposta() != null){
-					oneLine.add(this.sdfDataTransazioni.format(t.getDataUscitaRisposta())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DIAGNOSTICI)){
-				if(this.exportDiagnostici){
-					this.scriviDiagnostici(t, oneLine); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DIGEST_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getDigestRichiesta())){
-					oneLine.add(t.getDigestRichiesta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DIGEST_RISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getDigestRisposta())){
-					oneLine.add(t.getDigestRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DUPLICATI_RICHIESTA)){
-				if(t.getDuplicatiRichiesta() >= 0){
-					oneLine.add(t.getDuplicatiRichiesta() + "");
-				} else {
-					oneLine.add(CostantiExport.DUPLICATA_VALUE);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_DUPLICATI_RISPOSTA)){
-				if(t.getDuplicatiRisposta() >= 0){
-					oneLine.add(t.getDuplicatiRisposta() + "");
-				} else {
-					oneLine.add(CostantiExport.DUPLICATA_VALUE);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO)){
-				oneLine.add(this.esitoUtils.getEsitoLabelFromValue(t.getEsito()));
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO_CONTESTO)){
-				if(StringUtils.isNotEmpty(t.getEsitoContesto())){
-					oneLine.add(this.esitoUtils.getEsitoContestoLabelFromValue(t.getEsitoContesto()));
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_EVENTI_GESTIONE)){
-				if(StringUtils.isNotEmpty(t.getEventiGestione())){
-					oneLine.add(t.getEventiGestione());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_FAULT_COOPERAZIONE)){
-				if(StringUtils.isNotEmpty(t.getFaultCooperazione())){
-					oneLine.add(t.getFaultCooperazionePretty());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_FAULT_INTEGRAZIONE)){
-				if(StringUtils.isNotEmpty(t.getFaultIntegrazione())){
-					oneLine.add(t.getFaultIntegrazionePretty());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_HEADER_PROTOCOLLO_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getHeaderProtocolloRichiesta())){
-					oneLine.add(t.getHeaderProtocolloRichiesta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_HEADER_PROTOCOLLO_RISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getHeaderProtocolloRisposta())){
-					oneLine.add(t.getHeaderProtocolloRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_ASINCRONO)){
-				if(StringUtils.isNotEmpty(t.getIdAsincrono())){
-					oneLine.add(t.getIdAsincrono());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_COLLABORAZIONE)){
-				if(StringUtils.isNotEmpty(t.getIdCollaborazione())){
-					oneLine.add(t.getIdCollaborazione());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_CORRELAZIONE_APPLICATIVA)){
-				if(StringUtils.isNotEmpty(t.getIdCorrelazioneApplicativa())){
-					oneLine.add(t.getIdCorrelazioneApplicativa());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_CORRELAZIONEAPPLICATIVARISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getIdCorrelazioneApplicativaRisposta())){
-					oneLine.add(t.getIdCorrelazioneApplicativaRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_MESSAGGIO_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getIdMessaggioRichiesta())){
-					oneLine.add(t.getIdMessaggioRichiesta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_MESSAGGIO_RISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getIdMessaggioRisposta())){
-					oneLine.add(t.getIdMessaggioRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_PORTA_SOGGETTO_EROGATORE)){
-				if(StringUtils.isNotEmpty(t.getIdportaSoggettoErogatore())){
-					oneLine.add(t.getIdportaSoggettoErogatore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_PORTA_SOGGETTO_FRUITORE)){
-				if(StringUtils.isNotEmpty(t.getIdportaSoggettoFruitore())){
-					oneLine.add(t.getIdportaSoggettoFruitore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_ID_TRANSAZIONE)){
-				if(StringUtils.isNotEmpty(t.getIdTransazione())){
-					oneLine.add(t.getIdTransazione());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_SOGGETTO_EROGATORE)){
-				if(StringUtils.isNotEmpty(t.getIndirizzoSoggettoErogatore())){
-					oneLine.add(t.getIndirizzoSoggettoErogatore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_SOGGETTO_FRUITORE)){
-				if(StringUtils.isNotEmpty(t.getIndirizzoSoggettoFruitore())){
-					oneLine.add(t.getIndirizzoSoggettoFruitore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_PORTA)){
-				if(t.getLatenzaPorta() != null){
-					long v = t.getLatenzaPorta().longValue();
-					if(v >=0)
-						oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaPorta(), true));
-					else 
-						oneLine.add(CostantiExport.N_D);
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_SERVIZIO)){
-				if(t.getLatenzaServizio() != null){
-					long v = t.getLatenzaServizio().longValue();
-					if(v >=0)
-						oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaServizio(), true)); 
-					else 
-						oneLine.add(CostantiExport.N_D);
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LATENZA_TOTALE)){
-				if(t.getLatenzaTotale() != null){
-					long v = t.getLatenzaTotale().longValue();
-					if(v >=0)
-						oneLine.add(DurataConverter.convertSystemTimeIntoString_millisecondi(t.getLatenzaTotale(), true)); 
-					else 
-						oneLine.add(CostantiExport.N_D);
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_CONNETTORE)){
-				if(StringUtils.isNotEmpty(t.getLocationConnettore())){
-					oneLine.add(t.getLocationConnettore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getLocationRichiesta())){
-					oneLine.add(t.getLocationRichiesta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_LOCATION_RISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getLocationRisposta())){
-					oneLine.add(t.getLocationRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_NOME_PORTA)){
-				if(StringUtils.isNotEmpty(t.getNomePorta())){
-					oneLine.add(t.getNomePorta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_OPERAZIONE_IM)){
-				if(StringUtils.isNotEmpty(t.getOperazioneIm())){
-					oneLine.add(t.getOperazioneIm());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_CODICE)){
-				if(StringUtils.isNotEmpty(t.getPddCodice())){
-					oneLine.add(t.getPddCodice());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_RUOLO)){
-				if(t.getPddRuolo()!= null){
-					switch(t.getPddRuolo()){
-					case APPLICATIVA:
-						oneLine.add(CostantiExport.RUOLO_EROGAZIONE_LABEL);
-						break;
-					case DELEGATA:
-						oneLine.add(CostantiExport.RUOLO_FUIZIONE_LABEL);
-						break;
-					case INTEGRATION_MANAGER:
-						oneLine.add(CostantiExport.RUOLO_INTEGRATION_MANAGER_LABEL);
-						break;
-					case ROUTER:
-						oneLine.add(CostantiExport.RUOLO_ROUTER_LABEL);
-						break;
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_CODICE)){
+					if(StringUtils.isNotEmpty(t.getPddCodice())){
+						oneLine.add(t.getPddCodice());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_SOGGETTO)){
-				if(StringUtils.isNotEmpty(t.getPddNomeSoggetto())){
-					oneLine.add(t.getPddTipoSoggetto() + CostantiExport.SEPARATORE_TIPO_NOME + t.getPddNomeSoggetto());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PROFILO_COLLABORAZIONE_OP2)){
-				if(StringUtils.isNotEmpty(t.getProfiloCollaborazioneOp2())){
-					oneLine.add(t.getProfiloCollaborazioneOp2());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PROFILO_COLLABORAZIONE_PROT)){
-				if(StringUtils.isNotEmpty(t.getProfiloCollaborazioneProt())){
-					oneLine.add(t.getProfiloCollaborazioneProt());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO)){
-				if(StringUtils.isNotEmpty(t.getProtocollo())){
-					oneLine.add(t.getProtocollo());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO_EXT_INFO_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getProtocolloExtInfoRichiesta())){
-					oneLine.add(t.getProtocolloExtInfoRichiesta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO_EXT_INFO_RISPOSTA)){
-				if(StringUtils.isNotEmpty(t.getProtocolloExtInfoRisposta())){
-					oneLine.add(t.getProtocolloExtInfoRisposta());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_RICHIESTA_INGRESSO_BYTES)){
-				if(t.getRichiestaIngressoBytes() != null){
-					oneLine.add(Utility.fileSizeConverter(t.getRichiestaIngressoBytes())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_RICHIESTA_USCITA_BYTES)){
-				if(t.getRichiestaUscitaBytes() != null){
-					oneLine.add(Utility.fileSizeConverter(t.getRichiestaUscitaBytes())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_RISPOSTA_INGRESSO_BYTES)){
-				if(t.getRispostaIngressoBytes() != null){
-					oneLine.add(Utility.fileSizeConverter(t.getRispostaIngressoBytes())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_RISPOSTA_USCITA_BYTES)){
-				if(t.getRispostaUscitaBytes() != null){
-					oneLine.add(Utility.fileSizeConverter(t.getRispostaUscitaBytes())); 
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_RUOLO_TRANSAZIONE)){
-				if(t.getRuoloTransazione()==-1){
-					oneLine.add(RuoloType.SCONOSCIUTO.toString());
-				}
-				else if(t.getRuoloTransazione()==1){
-					oneLine.add(RuoloType.INVOCAZIONE_ONEWAY.toString());
-				}
-				else if(t.getRuoloTransazione()==2){
-					oneLine.add(RuoloType.INVOCAZIONE_SINCRONA.toString());
-				}
-				else if(t.getRuoloTransazione()==3){
-					oneLine.add(RuoloType.INVOCAZIONE_ASINCRONA_SIMMETRICA.toString());
-				}
-				else if(t.getRuoloTransazione()==4){
-					oneLine.add(RuoloType.RISPOSTA_ASINCRONA_SIMMETRICA.toString());
-				}
-				else if(t.getRuoloTransazione()==5){
-					oneLine.add(RuoloType.INVOCAZIONE_ASINCRONA_ASIMMETRICA.toString());
-				}
-				else if(t.getRuoloTransazione()==6){
-					oneLine.add(RuoloType.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA.toString());
-				}
-				else if(t.getRuoloTransazione()==7){
-					oneLine.add(RuoloType.INTEGRATION_MANAGER.toString());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO)){
-				if(t.getPddRuolo().equals(PddRuolo.INTEGRATION_MANAGER)){
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_RUOLO)){
+					if(t.getPddRuolo()!= null){
+						switch(t.getPddRuolo()){
+						case APPLICATIVA:
+							oneLine.add(CostantiExport.RUOLO_EROGAZIONE_LABEL);
+							break;
+						case DELEGATA:
+							oneLine.add(CostantiExport.RUOLO_FUIZIONE_LABEL);
+							break;
+						case INTEGRATION_MANAGER:
+							oneLine.add(CostantiExport.RUOLO_INTEGRATION_MANAGER_LABEL);
+							break;
+						case ROUTER:
+							oneLine.add(CostantiExport.RUOLO_ROUTER_LABEL);
+							break;
+						}
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_SOGGETTO)){
+					if(StringUtils.isNotEmpty(t.getPddNomeSoggetto())){
+						oneLine.add(t.getPddTipoSoggetto() + CostantiExport.SEPARATORE_TIPO_NOME + t.getPddNomeSoggetto());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PROFILO_COLLABORAZIONE_OP2)){
+					if(StringUtils.isNotEmpty(t.getProfiloCollaborazioneOp2())){
+						oneLine.add(t.getProfiloCollaborazioneOp2());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PROFILO_COLLABORAZIONE_PROT)){
+					if(StringUtils.isNotEmpty(t.getProfiloCollaborazioneProt())){
+						oneLine.add(t.getProfiloCollaborazioneProt());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO)){
+					if(StringUtils.isNotEmpty(t.getProtocollo())){
+						oneLine.add(t.getProtocolloLabel());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO_EXT_INFO_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getProtocolloExtInfoRichiesta())){
+						oneLine.add(t.getProtocolloExtInfoRichiesta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_PROTOCOLLO_EXT_INFO_RISPOSTA)){
+					if(StringUtils.isNotEmpty(t.getProtocolloExtInfoRisposta())){
+						oneLine.add(t.getProtocolloExtInfoRisposta());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RICHIESTA_INGRESSO_BYTES)){
+					if(t.getRichiestaIngressoBytes() != null){
+						oneLine.add(Utility.fileSizeConverter(t.getRichiestaIngressoBytes())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RICHIESTA_USCITA_BYTES)){
+					if(t.getRichiestaUscitaBytes() != null){
+						oneLine.add(Utility.fileSizeConverter(t.getRichiestaUscitaBytes())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RISPOSTA_INGRESSO_BYTES)){
+					if(t.getRispostaIngressoBytes() != null){
+						oneLine.add(Utility.fileSizeConverter(t.getRispostaIngressoBytes())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RISPOSTA_USCITA_BYTES)){
+					if(t.getRispostaUscitaBytes() != null){
+						oneLine.add(Utility.fileSizeConverter(t.getRispostaUscitaBytes())); 
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_RUOLO_TRANSAZIONE)){
+					if(t.getRuoloTransazione()==-1){
+						oneLine.add(RuoloType.SCONOSCIUTO.toString());
+					}
+					else if(t.getRuoloTransazione()==1){
+						oneLine.add(RuoloType.INVOCAZIONE_ONEWAY.toString());
+					}
+					else if(t.getRuoloTransazione()==2){
+						oneLine.add(RuoloType.INVOCAZIONE_SINCRONA.toString());
+					}
+					else if(t.getRuoloTransazione()==3){
+						oneLine.add(RuoloType.INVOCAZIONE_ASINCRONA_SIMMETRICA.toString());
+					}
+					else if(t.getRuoloTransazione()==4){
+						oneLine.add(RuoloType.RISPOSTA_ASINCRONA_SIMMETRICA.toString());
+					}
+					else if(t.getRuoloTransazione()==5){
+						oneLine.add(RuoloType.INVOCAZIONE_ASINCRONA_ASIMMETRICA.toString());
+					}
+					else if(t.getRuoloTransazione()==6){
+						oneLine.add(RuoloType.RICHIESTA_STATO_ASINCRONA_ASIMMETRICA.toString());
+					}
+					else if(t.getRuoloTransazione()==7){
+						oneLine.add(RuoloType.INTEGRATION_MANAGER.toString());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO)){
+					if(t.getPddRuolo().equals(PddRuolo.INTEGRATION_MANAGER)){
+						if(StringUtils.isNotEmpty(t.getServizioApplicativoErogatore())){
+							oneLine.add(t.getServizioApplicativoErogatore());
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					} else {
+						if(StringUtils.isNotEmpty(t.getNomeServizio())){
+							oneLine.add(NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(t.getProtocollo(), t.getTipoServizio(), t.getNomeServizio(), t.getVersioneServizio()));
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO)){
+					if(t.getPddRuolo().equals(PddRuolo.DELEGATA)) {
+						if(StringUtils.isNotEmpty(t.getServizioApplicativoFruitore())){
+							oneLine.add(t.getServizioApplicativoFruitore());
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					} else {
+						if(StringUtils.isNotEmpty(t.getServizioApplicativoErogatore())){
+							oneLine.add(t.getServizioApplicativoErogatore());
+						} else {
+							oneLine.add(CostantiExport.EMPTY_STRING);
+						}
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO_EROGATORE)){
 					if(StringUtils.isNotEmpty(t.getServizioApplicativoErogatore())){
 						oneLine.add(t.getServizioApplicativoErogatore());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				} else {
-					if(StringUtils.isNotEmpty(t.getNomeServizio())){
-						oneLine.add(t.getTipoServizio() + CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeServizio());
-					} else {
-						oneLine.add(CostantiExport.EMPTY_STRING);
-					}
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO)){
-				if(t.getPddRuolo().equals(PddRuolo.DELEGATA)) {
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO_FRUITORE)){
 					if(StringUtils.isNotEmpty(t.getServizioApplicativoFruitore())){
 						oneLine.add(t.getServizioApplicativoFruitore());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				} else {
-					if(StringUtils.isNotEmpty(t.getServizioApplicativoErogatore())){
-						oneLine.add(t.getServizioApplicativoErogatore());
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_CORRELATO)){
+					if(StringUtils.isNotEmpty(t.getNomeServizioCorrelato())){
+						oneLine.add(t.getTipoServizioCorrelato()+ CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeServizioCorrelato());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO_EROGATORE)){
-				if(StringUtils.isNotEmpty(t.getServizioApplicativoErogatore())){
-					oneLine.add(t.getServizioApplicativoErogatore());
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SOGGETTO_EROGATORE)){
+					if(StringUtils.isNotEmpty(t.getNomeSoggettoErogatore())){
+						oneLine.add(NamingUtils.getLabelSoggetto(t.getProtocollo(), t.getTipoSoggettoErogatore() , t.getNomeSoggettoErogatore()));
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_SOGGETTO_FRUITORE)){
+					if(StringUtils.isNotEmpty(t.getNomeSoggettoFruitore())){
+						oneLine.add(NamingUtils.getLabelSoggetto(t.getProtocollo(), t.getTipoSoggettoFruitore(), t.getNomeSoggettoFruitore()));
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_STATO)){
+					if(StringUtils.isNotEmpty(t.getStato())){
+						oneLine.add(t.getStato());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TRACCIA_RICHIESTA)){
+					if(this.exportTracce){
+						this.scriviTraccia(t, oneLine, false);
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TRACCIA_RISPOSTA)){
+					if(this.exportTracce){
+						this.scriviTraccia(t, oneLine, true);
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_URI_ACCORDO_SERVIZIO)){
+					if(StringUtils.isNotEmpty(t.getUriAccordoServizio())){
+						oneLine.add(t.getUriAccordoServizio());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_URL_INVOCAZIONE)){
+					if(StringUtils.isNotEmpty(t.getUrlInvocazione())){
+						oneLine.add(t.getUrlInvocazione());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_CLIENT)){
+					if(StringUtils.isNotEmpty(t.getSocketClientAddress())){
+						oneLine.add(t.getSocketClientAddress() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_X_FORWARDED_FOR)){
+					if(StringUtils.isNotEmpty(t.getTransportClientAddress())){
+						oneLine.add(t.getTransportClientAddress() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_TIPO_RICHIESTA)){
+					if(StringUtils.isNotEmpty(t.getTipoRichiesta())){
+						oneLine.add(t.getTipoRichiesta() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_INGRESSO)){
+					if(StringUtils.isNotEmpty(t.getCodiceRispostaIngresso())){
+						oneLine.add(t.getCodiceRispostaIngresso() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_USCITA)){
+					if(StringUtils.isNotEmpty(t.getCodiceRispostaUscita())){
+						oneLine.add(t.getCodiceRispostaUscita() + "");
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
 				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
+					// colonna non riconosciuta
+					throw new ExportException("Colonna ["+keyColonna+"] non definita.");
 				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_APPLICATIVO_FRUITORE)){
-				if(StringUtils.isNotEmpty(t.getServizioApplicativoFruitore())){
-					oneLine.add(t.getServizioApplicativoFruitore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SERVIZIO_CORRELATO)){
-				if(StringUtils.isNotEmpty(t.getNomeServizioCorrelato())){
-					oneLine.add(t.getTipoServizioCorrelato()+ CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeServizioCorrelato());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SOGGETTO_EROGATORE)){
-				if(StringUtils.isNotEmpty(t.getNomeSoggettoErogatore())){
-					oneLine.add(t.getTipoSoggettoErogatore() + CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeSoggettoErogatore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_SOGGETTO_FRUITORE)){
-				if(StringUtils.isNotEmpty(t.getNomeSoggettoFruitore())){
-					oneLine.add(t.getTipoSoggettoFruitore() + CostantiExport.SEPARATORE_TIPO_NOME + t.getNomeSoggettoFruitore());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_STATO)){
-				if(StringUtils.isNotEmpty(t.getStato())){
-					oneLine.add(t.getStato());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_TRACCIA_RICHIESTA)){
-				if(this.exportTracce){
-					this.scriviTraccia(t, oneLine, false);
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_TRACCIA_RISPOSTA)){
-				if(this.exportTracce){
-					this.scriviTraccia(t, oneLine, true);
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_URI_ACCORDO_SERVIZIO)){
-				if(StringUtils.isNotEmpty(t.getUriAccordoServizio())){
-					oneLine.add(t.getUriAccordoServizio());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_URL_INVOCAZIONE)){
-				if(StringUtils.isNotEmpty(t.getUrlInvocazione())){
-					oneLine.add(t.getUrlInvocazione());
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_VERSIONE_SERVIZIO)){
-				if(t.getVersioneServizio()>0){
-					oneLine.add(t.getVersioneServizio() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_INDIRIZZO_CLIENT)){
-				if(StringUtils.isNotEmpty(t.getSocketClientAddress())){
-					oneLine.add(t.getSocketClientAddress() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_X_FORWARDED_FOR)){
-				if(StringUtils.isNotEmpty(t.getTransportClientAddress())){
-					oneLine.add(t.getTransportClientAddress() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_TIPO_RICHIESTA)){
-				if(StringUtils.isNotEmpty(t.getTipoRichiesta())){
-					oneLine.add(t.getTipoRichiesta() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_INGRESSO)){
-				if(StringUtils.isNotEmpty(t.getCodiceRispostaIngresso())){
-					oneLine.add(t.getCodiceRispostaIngresso() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else if(keyColonna.equals(CostantiExport.KEY_COL_CODICE_RISPOSTA_USCITA)){
-				if(StringUtils.isNotEmpty(t.getCodiceRispostaUscita())){
-					oneLine.add(t.getCodiceRispostaUscita() + "");
-				} else {
-					oneLine.add(CostantiExport.EMPTY_STRING);
-				}
-			} else {
-				// colonna non riconosciuta
-				throw new ExportException("Colonna ["+keyColonna+"] non definita.");
 			}
+		} catch (ExportException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ExportException("Errore durante la creazione della entry per la transazione ID ["+t.getIdTransazione()+"].",e);
 		}
-
 
 		return oneLine;
 	}
