@@ -130,7 +130,9 @@ public class CostantiPdD {
     public static final String DUMP_NON_REALTIME_MODE_DB = "db";
     public static final String DUMP_NON_REALTIME_MODE_FILE_SYSTEM = "fs";
     public static final String DUMP_NON_REALTIME_MODE_AUTO = "auto";
-    
+
+    /** Variabile che indica un soggetto anonimo */
+    public final static String SOGGETTO_ANONIMO = "Anonimo";
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
         	    

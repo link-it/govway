@@ -429,10 +429,19 @@ public class MsgDiagnostico {
 					}
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profilo);
 				}
-				if(busta.getTipoMittente()!=null)
+				if(busta.getTipoMittente()!=null) {
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, busta.getTipoMittente());
-				if(busta.getMittente()!=null)
+				}
+				else {
+					try{
+						this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(busta.getProtocollo()));
+					}catch(Exception e){}
+				}
+				if(busta.getMittente()!=null) {
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, busta.getMittente());
+				}else {
+					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, CostantiPdD.SOGGETTO_ANONIMO);
+				}
 				if(busta.getTipoDestinatario()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_DESTINATARIO_BUSTA_RICHIESTA, busta.getTipoDestinatario());
 				if(busta.getDestinatario()!=null)
@@ -541,6 +550,15 @@ public class MsgDiagnostico {
 		if(soggettoFruitore!=null){
 			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, soggettoFruitore.getTipo());
 			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, soggettoFruitore.getNome());
+		}
+		else {
+			if(idServizio!=null && idServizio.getTipo()!=null) {
+				try{
+					String protocollo = ProtocolFactoryManager.getInstance().getProtocolByServiceType(idServizio.getTipo());
+					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_MITTENTE_BUSTA_RICHIESTA, ProtocolFactoryManager.getInstance().getDefaultOrganizationTypes().get(protocollo));
+				}catch(Exception e){}
+				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_MITTENTE_BUSTA_RICHIESTA, CostantiPdD.SOGGETTO_ANONIMO);
+			}
 		}
 		if(idServizio!=null){
 			if(idServizio.getSoggettoErogatore()!=null){

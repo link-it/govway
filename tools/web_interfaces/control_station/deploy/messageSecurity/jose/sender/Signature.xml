@@ -37,7 +37,7 @@
 			<property name="signatureMode" />
 		</item>
 		
-		<item type="select" name="signatureAlgorithm" label="Algorithm" required="true">
+		<item type="select" name="signatureAlgorithm" label="Algorithm" required="true" reloadOnChange="true">
 		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 		</item>
 
@@ -78,6 +78,12 @@
 		</subsection>
 
 		<subsection label="KeyStore">
+
+			<conditions>
+                    <condition not="true">
+                            <equals name="signatureAlgorithm" value="NONE"/>
+                    </condition>
+            </conditions>
 
 			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
 				<values>

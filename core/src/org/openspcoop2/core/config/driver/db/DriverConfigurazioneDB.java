@@ -13576,7 +13576,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					pdAzione.setNome(rs.getString("nome_azione"));
 					pdAzione.setIdentificazione(PortaDelegataAzioneIdentificazione.toEnumConstant(modeAzione));
 					pdAzione.setPattern(rs.getString("pattern_azione"));
-					pdAzione.setNomePortaDelegante("nome_porta_delegante_azione");
+					pdAzione.setNomePortaDelegante(rs.getString("nome_porta_delegante_azione"));
 					pdAzione.setForceInterfaceBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_interface_based_azione")));
 				}
 				pd.setAzione(pdAzione);

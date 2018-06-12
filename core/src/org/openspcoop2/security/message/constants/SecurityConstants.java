@@ -290,6 +290,7 @@ public class SecurityConstants {
     public static final String AUTHORIZATION_CLASS = "authorizationClass";
     
     public static final String DETACH_HEADER_WSS = "detachHeaderWSSecurity";
+    public static final String DETACH_SECURITY_INFO = "detachSecurityInfo";
     
     // l'id puo' appartenere ad un altro header wssecurity con diverso actor/mustUnderstand. 
     // Se si abilita questa opzione in caso di presenza di differenti header wssecurity con actor differenti, 

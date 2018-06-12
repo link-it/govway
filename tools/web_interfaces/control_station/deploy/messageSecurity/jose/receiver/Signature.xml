@@ -35,7 +35,11 @@
 			</values>
 			<property name="signatureMode" />
 		</item>
-
+		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+		
 		<subsection label="Detached">
 			<conditions>
                     <condition>

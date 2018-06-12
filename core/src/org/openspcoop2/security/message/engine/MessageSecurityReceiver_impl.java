@@ -237,9 +237,15 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			// NOTA: Clean dipendente dall'implementazione
 			try{
 				boolean detachValue = true; // per default l'header WSS viene eliminato
-				Object detach = this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.DETACH_HEADER_WSS);
+				Object detach = this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.DETACH_HEADER_WSS); // per backward compatibility
 				if(detach!=null){
 					detachValue = Boolean.parseBoolean((String)detach);
+				}
+				if(detach==null) {
+					detach = this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.DETACH_SECURITY_INFO);
+					if(detach!=null){
+						detachValue = Boolean.parseBoolean((String)detach);
+					}
 				}
 				
 				boolean removeAllIdRefValue = this.messageSecurityContext.isRemoveAllWsuIdRef();
