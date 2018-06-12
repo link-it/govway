@@ -212,18 +212,38 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "singlePdD");
 	}
 	
+	public Boolean isToken_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.token.enabled");
+	}
+	
+	public Boolean isAutenticazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione.enabled");
+	}
 	public String getAutenticazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autenticazione");
 	}
 	
+	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteDelegate_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione.enabled");
+	}
 	public String getAutorizzazione_GenerazioneAutomaticaPorteDelegate() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteDelegate.autorizzazione");
 	}
 	
+	public Boolean isToken_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.token.enabled");
+	}
+	
+	public Boolean isAutenticazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione.enabled");
+	}
 	public String getAutenticazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione");
 	}
 	
+	public Boolean isAutorizzazione_GenerazioneAutomaticaPorteApplicative_enabled() throws UtilsException{
+		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione.enabled");
+	}
 	public String getAutorizzazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
 		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione");
 	}

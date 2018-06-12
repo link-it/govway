@@ -650,23 +650,47 @@ public class ControlStationCore {
 
 	/** Altro */
 	private String suffissoConnettoreAutomatico;
+	private boolean enabledToken_generazioneAutomaticaPorteDelegate;
+	private boolean enabledAutenticazione_generazioneAutomaticaPorteDelegate;
 	private String autenticazione_generazioneAutomaticaPorteDelegate;
+	private boolean enabledAutorizzazione_generazioneAutomaticaPorteDelegate;
 	private String autorizzazione_generazioneAutomaticaPorteDelegate;
+	private boolean enabledToken_generazioneAutomaticaPorteApplicative;
+	private boolean enabledAutenticazione_generazioneAutomaticaPorteApplicative;
 	private String autenticazione_generazioneAutomaticaPorteApplicative;
+	private boolean enabledAutorizzazione_generazioneAutomaticaPorteApplicative;
 	private String autorizzazione_generazioneAutomaticaPorteApplicative;
 	private boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 	private boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 	public String getSuffissoConnettoreAutomatico() {
 		return this.suffissoConnettoreAutomatico;
 	}
+	public boolean isEnabledToken_generazioneAutomaticaPorteDelegate() {
+		return this.enabledToken_generazioneAutomaticaPorteDelegate;
+	}
+	public boolean isEnabledAutenticazione_generazioneAutomaticaPorteDelegate() {
+		return this.enabledAutenticazione_generazioneAutomaticaPorteDelegate;
+	}
 	public String getAutenticazione_generazioneAutomaticaPorteDelegate() {
 		return this.autenticazione_generazioneAutomaticaPorteDelegate;
+	}
+	public boolean isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() {
+		return this.enabledAutorizzazione_generazioneAutomaticaPorteDelegate;
 	}
 	public String getAutorizzazione_generazioneAutomaticaPorteDelegate() {
 		return this.autorizzazione_generazioneAutomaticaPorteDelegate;
 	}
+	public boolean isEnabledToken_generazioneAutomaticaPorteApplicative() {
+		return this.enabledToken_generazioneAutomaticaPorteApplicative;
+	}
+	public boolean isEnabledAutenticazione_generazioneAutomaticaPorteApplicative() {
+		return this.enabledAutenticazione_generazioneAutomaticaPorteApplicative;
+	}
 	public String getAutenticazione_generazioneAutomaticaPorteApplicative() {
 		return this.autenticazione_generazioneAutomaticaPorteApplicative;
+	}
+	public boolean isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative() {
+		return this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative;
 	}
 	public String getAutorizzazione_generazioneAutomaticaPorteApplicative() {
 		return this.autorizzazione_generazioneAutomaticaPorteApplicative;
@@ -1404,10 +1428,16 @@ public class ControlStationCore {
 		
 		/** Altro */
 		this.suffissoConnettoreAutomatico = core.suffissoConnettoreAutomatico;
+		this.enabledToken_generazioneAutomaticaPorteDelegate = core.enabledToken_generazioneAutomaticaPorteDelegate;
+		this.enabledAutenticazione_generazioneAutomaticaPorteDelegate = core.enabledAutenticazione_generazioneAutomaticaPorteDelegate;
 		this.autenticazione_generazioneAutomaticaPorteDelegate = core.autenticazione_generazioneAutomaticaPorteDelegate;
-		this.autorizzazione_generazioneAutomaticaPorteDelegate = core.autorizzazione_generazioneAutomaticaPorteDelegate;
+		this.enabledAutorizzazione_generazioneAutomaticaPorteDelegate = core.enabledAutorizzazione_generazioneAutomaticaPorteDelegate;
+		this.autorizzazione_generazioneAutomaticaPorteDelegate = core.autorizzazione_generazioneAutomaticaPorteDelegate;		
+		this.enabledToken_generazioneAutomaticaPorteApplicative = core.enabledToken_generazioneAutomaticaPorteApplicative;
+		this.enabledAutenticazione_generazioneAutomaticaPorteApplicative = core.enabledAutenticazione_generazioneAutomaticaPorteApplicative;
 		this.autenticazione_generazioneAutomaticaPorteApplicative = core.autenticazione_generazioneAutomaticaPorteApplicative;
-		this.autorizzazione_generazioneAutomaticaPorteApplicative = core.autorizzazione_generazioneAutomaticaPorteApplicative;
+		this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative = core.enabledAutorizzazione_generazioneAutomaticaPorteApplicative;
+		this.autorizzazione_generazioneAutomaticaPorteApplicative = core.autorizzazione_generazioneAutomaticaPorteApplicative;		
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = core.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = core.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 		
@@ -1583,9 +1613,15 @@ public class ControlStationCore {
 			this.jdbcSerializableAttesaAttiva = consoleProperties.getGestioneSerializableDB_AttesaAttiva();
 			this.jdbcSerializableCheck = consoleProperties.getGestioneSerializableDB_CheckInterval();
 			this.singlePdD = consoleProperties.isSinglePdD();
+			this.enabledToken_generazioneAutomaticaPorteDelegate = consoleProperties.isToken_GenerazioneAutomaticaPorteDelegate_enabled();
+			this.enabledAutenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutenticazione_GenerazioneAutomaticaPorteDelegate_enabled();
 			this.autenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteDelegate();
-			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteDelegate();
+			this.enabledAutorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.isAutorizzazione_GenerazioneAutomaticaPorteDelegate_enabled();
+			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteDelegate();		
+			this.enabledToken_generazioneAutomaticaPorteApplicative = consoleProperties.isToken_GenerazioneAutomaticaPorteApplicative_enabled();
+			this.enabledAutenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutenticazione_GenerazioneAutomaticaPorteApplicative_enabled();
 			this.autenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteApplicative();
+			this.enabledAutorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.isAutorizzazione_GenerazioneAutomaticaPorteApplicative_enabled();
 			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteApplicative();
 			this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
