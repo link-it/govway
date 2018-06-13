@@ -3101,17 +3101,37 @@ public class ConsoleHelper {
 	}
 	
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
-			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata){
+			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
+			String gestioneToken) {
+		
+//	
+//			String gestioneToken,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail){
+//		
+		String autenticazioneTokenIssuer = null;
+		String autenticazioneTokenClientId = null;
+		String autenticazioneTokenSubject = null;
+		String autenticazioneTokenUsername = null;
+		String autenticazioneTokenEMail = null;
+		
+		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken);
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutenticazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutenticazione_generazioneAutomaticaPorteApplicative());
 		
 		if(mostraSezione){
-			if(isSupportatoAutenticazioneSoggetti){
-				
+			
+			if(isSupportatoAutenticazioneSoggetti || tokenAbilitato) {
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TITLE); //SUBTITLE);
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
+				dati.addElement(de);
+			}
+			
+			if(isSupportatoAutenticazioneSoggetti){
+				
+				DataElement de = new DataElement();
+				de.setType(DataElementType.SUBTITLE); //SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TRASPORTO);
 				dati.addElement(de);
 			
 				List<String> autenticazioneValues = TipoAutenticazione.getValues();
@@ -3164,6 +3184,51 @@ public class ConsoleHelper {
 				}
 				dati.addElement(de);
 			}
+			
+			if(tokenAbilitato) {
+
+				DataElement de = new DataElement();
+				de.setType(DataElementType.SUBTITLE); //SUBTITLE);
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE_TOKEN);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_ISSUER);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenIssuer));
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenClientId));
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_SUBJECT);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenSubject));
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_USERNAME);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenUsername));
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_TOKEN_MAIL);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneTokenEMail));
+				dati.addElement(de);
+				
+			}
+			
 		} else {
 			DataElement de = new DataElement();
 			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
@@ -3295,12 +3360,14 @@ public class ConsoleHelper {
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
-			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope) throws Exception{
+			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
+			String gestioneToken) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
-				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,visualizzaSezioneScope);
+				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,visualizzaSezioneScope,
+				gestioneToken);
 		
 	}
 	
@@ -3309,10 +3376,13 @@ public class ConsoleHelper {
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
-			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope) throws Exception{
+			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
+			String gestioneToken) throws Exception{
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative());
+		
+		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken);
 		
 		if(mostraSezione) {
 			DataElement de = new DataElement();
@@ -3640,6 +3710,26 @@ public class ConsoleHelper {
 									AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SCOPE, addTitoloSezione);
 						}
 					}
+					
+				}
+				
+				if(tokenAbilitato) {
+					de = new DataElement();
+					de.setType(DataElementType.SUBTITLE);
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE);
+					dati.addElement(de);
+					
+					String autorizzazione_tokenOptions = "";
+					
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
+					de.setNote(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_NOTE);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_OPTIONS);
+					de.setType(DataElementType.TEXT_AREA);
+					de.setRows(6);
+					de.setCols(55);
+					de.setValue(autorizzazione_tokenOptions);
+					dati.addElement(de);
 				}
 			}
 		} else {
