@@ -45,11 +45,7 @@ public class TopicBytesReceiver {
 			properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
 			properties.put(Context.PROVIDER_URL, "remote://127.0.0.1:4447");
 		}
-		else if("wildfly8".equals(args[0]) ||
-				"wildfly9".equals(args[0]) ||
-				"wildfly10".equals(args[0]) ||
-				"wildfly11".equals(args[0]) ||
-				"wildfly12".equals(args[0])){
+		else if(args[0].startsWith("wildfly")){
 			properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
 			properties.put(Context.PROVIDER_URL, "http-remoting://127.0.0.1:8080");
 		}
@@ -77,11 +73,7 @@ public class TopicBytesReceiver {
 		if("jboss7".equals(args[0])){
 			qcf = (TopicConnectionFactory) ctx.lookup("jms/RemoteConnectionFactory");
 		}
-		else if("wildfly8".equals(args[0]) ||
-				"wildfly9".equals(args[0]) ||
-				"wildfly10".equals(args[0]) ||
-				"wildfly11".equals(args[0]) ||
-				"wildfly12".equals(args[0])){
+		else if(args[0].startsWith("wildfly")){
 			qcf = (TopicConnectionFactory) ctx.lookup("jms/RemoteConnectionFactory");
 		}
 		else{

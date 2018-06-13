@@ -57,35 +57,6 @@
 		     	<property name="signatureParts" />
 		</item>
 
-		<subsection label="KeyStore">
-
-			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
-				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
-			</item>
-
-			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
-				<values>
-					<value value="jks" label="JKS"/>
-					<value value="pkcs12" label="PKCS12"/>
-					<!--  <value value="jceks" label="JCEKS"/> -->
-				</values>
-				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
-			</item>
-			<item type="text" name="keystoreFile" label="File" required="true">
-			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
-			</item>
-			<item type="text" name="keystorePassword" label="Password" required="true">
-			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
-			</item>
-			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			      	<property name="user" />
-			</item>
-			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			      	<property name="passwordCallbackRef" /> <!-- TODO Realizzare una classe Callback che ritorna questa password -->
-			</item>
-
-		</subsection>
-
 		<subsection label="Key Identifier">
 
 			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference" required="true">
@@ -117,6 +88,35 @@
 			</item>
 			<item type="text" name="signatureC14nAlgorithm" label="Canonicalization" required="false">
 			      	<property name="signatureC14nAlgorithm" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="KeyStore">
+
+			<item type="hidden" name="signatureCryptoProvider" value="org.apache.ws.security.components.crypto.Merlin">
+				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
+			</item>
+
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystoreFile" label="File" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.file" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePassword" label="Password" required="true">
+			      	<property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signaturePropRefId" />
+			</item>
+			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
+			      	<property name="user" />
+			</item>
+			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
+			      	<property name="passwordCallbackRef" /> <!-- TODO Realizzare una classe Callback che ritorna questa password -->
 			</item>
 
 		</subsection>

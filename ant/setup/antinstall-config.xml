@@ -51,9 +51,10 @@
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="wildfly12" property="antinstaller_as" displayText="Application Server">
-       
-		<option value="wildfly12" text="WildFly 12.x"/> 
-		<option value="wildfly11" text="WildFly 11.x"/> 
+      
+		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica --> 
+		<option value="wildfly10" text="WildFly 12.x"/> 
+		<option value="wildfly10" text="WildFly 11.x"/> 
 		<option value="wildfly10" text="WildFly 10.x"/>
 		<!--
 			Deprecati
@@ -69,8 +70,10 @@
 		-->
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat9" text="Apache Tomcat 9.x"/>
+            	<!-- il valore tomcat8 supporta 8.x e 9.x -->
+		<option value="tomcat8" text="Apache Tomcat 9.x"/>
             	<option value="tomcat8" text="Apache Tomcat 8.x"/>
+		<!-- il valore tomcat7 supporta solamente il 7.x -->
             	<option value="tomcat7" text="Apache Tomcat 7.x"/>
             	<!-- 
 			Deprecati

@@ -184,10 +184,14 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 
 				signatureProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
 				boolean verify = false;
-				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
-					verify = this.jsonVerifierSignature.verify(detachedSignature, restJsonMessage.getContent());
-				}else {
-					verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
+				try {
+					if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
+						verify = this.jsonVerifierSignature.verify(detachedSignature, restJsonMessage.getContent());
+					}else {
+						verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
+					}
+				}catch(Exception e) {
+					throw new Exception("Signature verification failed: "+e.getMessage(),e);
 				}
 				if(!verify) {
 					throw new Exception("Signature verification failed");
@@ -202,17 +206,16 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				
 				// **************** Leggo parametri encryption store **************************
 							
-				JOSERepresentation joseRepresentation = null;
-				String mode = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_MODE);
+				String mode = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_MODE);
 				if(mode==null || "".equals(mode.trim())){
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require '"+SecurityConstants.DECRYPTION_MODE+"' property");
 				}
 				try {
-					joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
+					this.joseRepresentation = JOSEUtils.toJOSERepresentation(mode);
 				}catch(Exception e) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", '"+SecurityConstants.DECRYPTION_MODE+"' property error: "+e.getMessage(),e);
 				}
-				if(JOSERepresentation.DETACHED.equals(joseRepresentation)) {
+				if(JOSERepresentation.DETACHED.equals(this.joseRepresentation)) {
 					throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+", "+SecurityConstants.DECRYPTION_MODE+" '"+mode+"' not supported");
 				}
 				
@@ -289,9 +292,10 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 				// **************** Process **************************
 							
 				encryptProcess = true; // le eccezioni lanciate da adesso sono registrato con codice relative alla verifica
-				boolean verify = this.jsonVerifierSignature.verify(restJsonMessage.getContent());
-				if(!verify) {
-					throw new Exception("Signature verification failed");
+				try {
+					this.jsonDecrypt.decrypt(restJsonMessage.getContent());
+				}catch(Exception e) {
+					throw new Exception("Decrypt failed: "+e.getMessage(),e);
 				}
 		
 			

@@ -43,6 +43,11 @@
 		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm" required="true">
 			<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
 		</item>
+		
+		<item type="checkbox" name="encryptionDeflater" label="Compressione" defaultSelected="false">
+			<property name="rs.security.encryption.zip.algorithm" properties="encryptionPropRefId" selectedValue="DEF" unselectedValue="NONE"/>
+		</item>
+		
 
 		<subsection label="KeyStore">
 

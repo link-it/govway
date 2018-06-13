@@ -36,6 +36,18 @@
 			</values>
 			<property name="decryptionMode" />
 		</item>
+		
+		<!-- Per Encrypt ci voglio per forza anche in fase di ricezione -->
+		<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm" required="true">
+			<property name="rs.security.encryption.key.algorithm" properties="decryptionPropRefId" />
+		</item>
+		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm" required="true">
+			<property name="rs.security.encryption.content.algorithm" properties="decryptionPropRefId" />
+		</item>
+		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
 
 		<subsection label="KeyStore">
 
