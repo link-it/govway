@@ -127,13 +127,18 @@ public class ReadPropertiesUtilities {
 		ItemBean itemBean = new ItemBean(item, item.getName(), configurazione.getProvider()); 
 		String name = item.getProperty() != null ? item.getProperty().getName() : item.getName();
 		
-		String propertyValue = getPropertyValue(propertiesMap, name);
+		String collectionName = item.getProperty().getProperties();
+		if(collectionName==null) {
+			collectionName = Costanti.NOME_MAPPA_PROPERTIES_DEFAULT;
+		}
+		
+		String propertyValue = getPropertyValue(propertiesMap, name, collectionName);
 //		System.out.println("READ -> Item: Name ["+item.getName()+"]-----------------");  
 		
 		// Lettura di un valore aggregato
 		if(item.getProperty() != null && item.getProperty().isAppend()) {
 			// estraggo il valore della property che contiene la sequenza delle chiavi salvate
-			String propertiesKeysValues = getPropertyValue(propertiesMap, Costanti.PRE_KEY_PROPERTIES_DEFAULT + name);
+			String propertiesKeysValues = getPropertyValue(propertiesMap, Costanti.PRE_KEY_PROPERTIES_DEFAULT + name, collectionName);
 			if(propertiesKeysValues != null) {
 				String [] chiaviSalvate = propertiesKeysValues.split(Costanti.KEY_PROPERTIES_DEFAULT_SEPARATOR);
 				String [] propertyValueSplit = propertyValue.split(item.getProperty().getAppendSeparator());
@@ -168,16 +173,16 @@ public class ReadPropertiesUtilities {
 
 
 
-	public static String getPropertyValue(Map<String, Properties> propertiesMap, String key) {
+	public static String getPropertyValue(Map<String, Properties> propertiesMap, String key, String collectionName) {
 		if(propertiesMap == null)
 			return null;
 		
-		for (String mapKey : propertiesMap.keySet()) {
-			if(propertiesMap.get(mapKey).containsKey(key))
-				return propertiesMap.get(mapKey).getProperty(key);
-			
+		if(propertiesMap.containsKey(collectionName)==false) {
+			return null;
 		}
 		
-		return null;
+		Properties p = propertiesMap.get(collectionName);
+		return p.getProperty(key);
+		
 	}
 }
