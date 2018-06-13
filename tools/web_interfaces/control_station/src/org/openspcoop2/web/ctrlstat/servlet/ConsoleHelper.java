@@ -989,7 +989,7 @@ public class ConsoleHelper {
 					}
 				}
 
-				// Ruoli, Policy Token e Scope
+				// Ruoli, Token Policy e Scope
 				if(pu.isServizi()){
 					if(this.core.isRegistroServiziLocale()){
 						// ruoli
@@ -3281,6 +3281,14 @@ public class ConsoleHelper {
 					
 					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
 					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
+					
+					String gestioneTokenOpzionale = "";
+					de = new DataElement();
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
+					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale));
+					dati.addElement(de);
 					
 					// validazione input
 					de = new DataElement();

@@ -362,7 +362,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_RUNTIME =  "Runtime"; //"Configurazione di Sistema";
 	
-	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Policy Token";
+	public final static String LABEL_CONFIGURAZIONE_POLICY_GESTIONE_TOKEN = "Token Policy";
 	
 	public final static String LABEL_CONFIGURAZIONE_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	
