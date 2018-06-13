@@ -51,6 +51,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private String nomeServizio;
 	// private String nomeDestinatario;
 	private String tipologiaRicerca;
+	private String defaultTipologiaRicerca;
 	// private String trafficoPerSoggetto;
 	// private String soggettoLocale;
 
@@ -137,7 +138,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public BaseSearchForm() {
 
-		this.tipologiaRicerca = "all";
+		this.tipologiaRicerca = this.getDefaultTipologiaRicerca();
 		this.esitoGruppo = EsitoUtils.ALL_VALUE;
 		this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 		try {
@@ -176,7 +177,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public BaseSearchForm(boolean useInBatch) {
 
-		this.tipologiaRicerca = "all";
+		this.tipologiaRicerca = this.getDefaultTipologiaRicerca();
 		this.esitoGruppo = EsitoUtils.ALL_VALUE;
 		this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 		try {
@@ -216,7 +217,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public void initSearchListener(ActionEvent ae) {
 		try {
 			super.initSearchListener(ae);
-			this.tipologiaRicerca = "all";
+			this.tipologiaRicerca = this.getDefaultTipologiaRicerca();
 			this.esitoGruppo = EsitoUtils.ALL_VALUE;
 			this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 			try {
@@ -584,6 +585,17 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		if (StringUtils.isEmpty(tipologiaRicerca)
 				|| "--".equals(tipologiaRicerca))
 			this.tipologiaRicerca = null;
+	}
+	
+	public String getDefaultTipologiaRicerca() {
+		return this.defaultTipologiaRicerca != null ? this.defaultTipologiaRicerca : "all";
+	}
+
+	public void setDefaultTipologiaRicerca(String defaultTipologiaRicerca) {
+		this.defaultTipologiaRicerca = defaultTipologiaRicerca;
+
+		if (StringUtils.isEmpty(defaultTipologiaRicerca) || "--".equals(defaultTipologiaRicerca))
+			this.defaultTipologiaRicerca = null;
 	}
 
 	public PermessiUtenteOperatore getPermessiUtenteOperatore() throws CoreException, UserInvalidException {

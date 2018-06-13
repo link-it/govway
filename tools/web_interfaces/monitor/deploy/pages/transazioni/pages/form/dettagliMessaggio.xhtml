@@ -458,7 +458,7 @@
 							<h:outputText id="outPdD" value="#{dettagliBean.dettaglio.pddCodice}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="PdD (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
-							<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.pddTipoSoggetto}/#{dettagliBean.dettaglio.pddNomeSoggetto}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
+							<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.soggettoPdd}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 																		
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelUrlInvocazione" value="URL Invocazione" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
 							<h:outputText id="outUrlInvocazione" value="#{dettagliBean.dettaglio.urlInvocazione}" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and not dettagliBean.visualizzaTextAreaUrlInvocazione}"/>
@@ -473,7 +473,7 @@
 							
 							<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'PortaDelegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'PortaApplicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
 							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
-							<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.nomePorta}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
+							<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
 													
 							<h:outputText styleClass="outputFieldLabel" id="outLabelConnettore" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'URL Inoltro' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'URL Consegna' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'URL Inoltro' : 'URL Inoltro'}"
 							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>

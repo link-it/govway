@@ -5,10 +5,15 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
-
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
@@ -165,22 +170,242 @@ public class TransazioneBean extends Transazione{
 	
 	public String getFaultCooperazionePretty(){
 		String f = super.getFaultCooperazione();
-		if(f!=null){
-			return Utils.prettifyXml(f);
+		String toRet = null;
+		if(f !=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			if(errore!= null)
+				return "";
+
+			MessageType messageType= MessageType.XML;
+//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+//			messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+//		}
+
+			switch (messageType) {
+			case BINARY:
+			case MIME_MULTIPART:
+				// questi due casi dovrebbero essere gestiti sopra 
+				break;	
+			case JSON:
+				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+				try {
+					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
+				} catch (UtilsException e) {
+				}
+				break;
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = Utils.prettifyXml(f);
+				break;
+			}
 		}
-		else{
-			return f;
+
+		if(toRet == null)
+			toRet = f != null ? f : "";
+
+			return toRet;
+	}
+	
+	public boolean isVisualizzaFaultCooperazione(){
+		boolean visualizzaMessaggio = true;
+		String f = super.getFaultCooperazione();
+		
+		if(f == null)
+			return false;
+		
+		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		if(errore!= null)
+			return false;
+
+		//			MessageType messageType= MessageType.XML;
+		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
+		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
+		//			}
+
+		//			switch (messageType) {
+		//			case BINARY:
+		//			case MIME_MULTIPART:
+		//				// questi due casi dovrebbero essere gestiti sopra 
+		//				break;	
+		//			case JSON:
+		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+		//				try {
+		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
+		//				} catch (UtilsException e) {
+		//				}
+		//				break;
+		//			case SOAP_11:
+		//			case SOAP_12:
+		//			case XML:
+		//			default:
+		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+		//				break;
+		//			}
+
+		return visualizzaMessaggio;
+	}
+
+	public String getBrushFaultCooperazione() {
+		String toRet = null;
+		String f = super.getFaultCooperazione();
+		if(f!=null) {
+			MessageType messageType= MessageType.XML;
+//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+//				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+//			}
+
+			switch (messageType) {
+			case JSON:
+				toRet = "json";
+				break;
+			case BINARY:
+			case MIME_MULTIPART:
+				// per ora restituisco il default
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = "xml";
+				break;
+			}
 		}
+
+		return toRet;
+	}
+
+	public String getErroreVisualizzaFaultCooperazione(){
+		String f = super.getFaultCooperazione();
+		if(f!=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			return errore;
+		}
+
+		return null;
 	}
 	
 	public String getFaultIntegrazionePretty(){
 		String f = super.getFaultIntegrazione();
-		if(f!=null){
-			return Utils.prettifyXml(f);
+		String toRet = null;
+		if(f !=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			if(errore!= null)
+				return "";
+
+			MessageType messageType= MessageType.XML;
+//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+//			messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+//		}
+
+			switch (messageType) {
+			case BINARY:
+			case MIME_MULTIPART:
+				// questi due casi dovrebbero essere gestiti sopra 
+				break;	
+			case JSON:
+				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+				try {
+					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
+				} catch (UtilsException e) {
+				}
+				break;
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = Utils.prettifyXml(f);
+				break;
+			}
 		}
-		else{
-			return f;
+
+		if(toRet == null)
+			toRet = f != null ? f : "";
+
+			return toRet;
+	}
+	
+	public boolean isVisualizzaFaultIntegrazione(){
+		boolean visualizzaMessaggio = true;
+		String f = super.getFaultIntegrazione();
+		
+		if(f == null)
+			return false;
+		
+		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		if(errore!= null)
+			return false;
+
+		//			MessageType messageType= MessageType.XML;
+		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
+		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
+		//			}
+
+		//			switch (messageType) {
+		//			case BINARY:
+		//			case MIME_MULTIPART:
+		//				// questi due casi dovrebbero essere gestiti sopra 
+		//				break;	
+		//			case JSON:
+		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+		//				try {
+		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
+		//				} catch (UtilsException e) {
+		//				}
+		//				break;
+		//			case SOAP_11:
+		//			case SOAP_12:
+		//			case XML:
+		//			default:
+		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
+		//				break;
+		//			}
+
+		return visualizzaMessaggio;
+	}
+
+	public String getBrushFaultIntegrazione() {
+		String toRet = null;
+		String f = super.getFaultIntegrazione();
+		if(f!=null) {
+			MessageType messageType= MessageType.XML;
+//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+//				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+//			}
+
+			switch (messageType) {
+			case JSON:
+				toRet = "json";
+				break;
+			case BINARY:
+			case MIME_MULTIPART:
+				// per ora restituisco il default
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = "xml";
+				break;
+			}
 		}
+
+		return toRet;
+	}
+
+	public String getErroreVisualizzaFaultIntegrazione(){
+		String f = super.getFaultIntegrazione();
+		if(f!=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			return errore;
+		}
+
+		return null;
 	}
 	
 	public String getEventiGestioneHTML(){
@@ -257,5 +482,20 @@ public class TransazioneBean extends Transazione{
 			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(this.getProtocollo(), this.getTipoServizio(), this.getNomeServizio(), this.getVersioneServizio());
 		}
 		return "";
+	}
+	
+	public String getPortaLabel() throws Exception{
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.getProtocollo());
+		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
+		switch(this.getPddRuolo()) {
+		case APPLICATIVA:
+			return n.normalizePA(this.getNomePorta());
+		case DELEGATA:
+			return n.normalizePD(this.getNomePorta());
+		case INTEGRATION_MANAGER:
+		case ROUTER:
+		default:
+			return this.getNomePorta();
+		}
 	}
 }

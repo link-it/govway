@@ -84,7 +84,7 @@
 					<h:outputText id="idDatiServizio" value="Filtro Dati Servizio" styleClass="subtitle"/>
 				</div>
 			
-				<link:prop label="Tipologia">
+				<link:prop label="Tipologia" rendered="#{sf_showTipologia}">
 					<rich:comboBox id="tipologiaCombo" value="#{sf_bean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
 							width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 						<f:selectItem itemLabel="Erogazione" itemValue="ingresso" />
@@ -93,6 +93,7 @@
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" actionListener="#{sf_bean.tipologiaRicercaListener}" />
 					</rich:comboBox>
 				</link:prop>
+				<h:inputHidden value="#{sf_bean.tipologiaRicerca}" rendered="#{not sf_showTipologia}" />
 			
 				<a4j:outputPanel id="panelProtocollo" layout="block"  rendered="#{sf_bean.showListaProtocolli}" >
 					<link:prop label="Modalità">

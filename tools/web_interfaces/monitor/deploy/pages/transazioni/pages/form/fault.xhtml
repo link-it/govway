@@ -24,67 +24,80 @@
 				</a4j:htmlCommandLink>
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
-			<li><h:outputText id="fault" value="Fault" styleClass="ultimo-path"/></li>
+			<li>
+				<h:outputText id="faultCBreadCrumb" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" styleClass="ultimo-path" rendered="#{dettagliBean.showFaultCooperazione}"/>
+				<h:outputText id="faultIBreadCrumb" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" styleClass="ultimo-path" rendered="#{dettagliBean.showFaultIntegrazione}"/>
+			</li>
 		</ul>
 	</ui:define>
 	<ui:define name="body">
 		<a4j:keepAlive beanName="dettagliBean" />
 		<a4j:loadScript src="/scripts/shCore.js" />
 		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
 		<a4j:loadStyle src="resource:///css/shCore.css" />
 		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
 		<a4j:outputPanel id="panelXmlFaultIntegrazione" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione and dettagliBean.showFaultIntegrazione==true}">	
 			<script type="text/javascript">
 			//<![CDATA[
-			   var xmlPnl = jQuery("#xmlPnlFaultIntegrazione"); 
-			   var bodyWrapperPanel = jQuery("#bodyWrapper");
-			   jQuery(window).resize(function(){lineWrap()});
-			   jQuery(document).ready(inizializza);
-			   
-			   SyntaxHighlighter.all();
-			   lineWrap();
-			   
-			   
-			   function inizializza(){
-				   checkWidth(xmlPnl,bodyWrapperPanel);
+				if(#{dettagliBean.dettaglio.visualizzaFaultIntegrazione}){
+				   var xmlPnl = jQuery("#xmlPnlFaultIntegrazione"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   jQuery(document).ready(inizializza);
+				   
+				   SyntaxHighlighter.all();
 				   lineWrap();
-			   }
+				   
+				   function inizializza(){
+					   checkWidth(xmlPnl,bodyWrapperPanel);
+					   lineWrap();
+				   }
+				}
 				 //]]>	
 			</script>
 			<rich:panel id="xmlPnlFaultIntegrazione" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}">
 				<f:facet name="header">
-					<h:outputText id="outXmlFaultIntegrazione" value="Xml"/>
+					<h:outputText id="outXmlFaultIntegrazione" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}"/>
 				</f:facet>
-				<div style="height: 350px; overflow-y: scroll;">
-					<pre class="brush: xml; toolbar: false;" >#{dettagliBean.dettaglio.faultIntegrazionePretty}</pre>
-				</div>
+				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultIntegrazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
+					<pre class="brush: #{dettagliBean.dettaglio.brushFaultIntegrazione}; toolbar: false;">#{dettagliBean.dettaglio.faultIntegrazionePretty}</pre>
+				</a4j:outputPanel>
+				<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultIntegrazione}">
+					<h:outputText id="outErroreVisualizzaFaultIntegrazione" value="#{dettagliDump.erroreVisualizzaFaultIntegrazione}"/>
+				</a4j:outputPanel>
 			</rich:panel>
 		</a4j:outputPanel>
 
         <a4j:outputPanel id="panelXmlFaultCooperazione" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione and dettagliBean.showFaultCooperazione==true}">
              <script type="text/javascript">
            //<![CDATA[
-			   var xmlPnl = jQuery("#xmlPnlFaultCooperazione"); 
-			   var bodyWrapperPanel = jQuery("#bodyWrapper");
-			   jQuery(window).resize(function(){lineWrap()});
-			   jQuery(document).ready(inizializza);
-			   
-			   SyntaxHighlighter.all();
-			   lineWrap();
-			   
-			   function inizializza(){
-				   checkWidth(xmlPnl,bodyWrapperPanel);
+        	   if(#{dettagliBean.dettaglio.visualizzaFaultCooperazione}){
+				   var xmlPnl = jQuery("#xmlPnlFaultCooperazione"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   jQuery(document).ready(inizializza);
+				   
+				   SyntaxHighlighter.all();
 				   lineWrap();
-			   }
+				   
+				   function inizializza(){
+					   checkWidth(xmlPnl,bodyWrapperPanel);
+					   lineWrap();
+				   }
+        	   }
 				 //]]>
 			</script>
                 <rich:panel id="xmlPnlFaultCooperazione" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}">
                         <f:facet name="header">
-                                <h:outputText id="outXmlFaultCooperazione" value="Xml"/>
+                                <h:outputText id="outXmlFaultCooperazione" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}"/>
                         </f:facet>
-                        <div style="height: 350px; overflow-y: scroll;">
-                                <pre class="brush: xml; toolbar: false;" >#{dettagliBean.dettaglio.faultCooperazionePretty}</pre>
-                        </div>
+           				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultCooperazione2" rendered="#{dettagliBean.dettaglio.visualizzaFaultCooperazione}">
+							<pre class="brush: #{dettagliBean.dettaglio.brushFaultCooperazione}; toolbar: false;">#{dettagliBean.dettaglio.faultCooperazionePretty}</pre>
+						</a4j:outputPanel>
+						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not dettagliBean.dettaglio.visualizzaFaultCooperazione}">
+							<h:outputText id="outErroreVisualizzaFaultCooperazione" value="#{dettagliDump.erroreVisualizzaFaultCooperazione}"/>
+						</a4j:outputPanel>
                 </rich:panel>
         </a4j:outputPanel>
 	</ui:define>

@@ -605,7 +605,7 @@ public class SingleCsvFileExporter implements IExporter{
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_PDD_SOGGETTO)){
 					if(StringUtils.isNotEmpty(t.getPddNomeSoggetto())){
-						oneLine.add(t.getPddTipoSoggetto() + CostantiExport.SEPARATORE_TIPO_NOME + t.getPddNomeSoggetto());
+						oneLine.add(t.getSoggettoPdd());
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}

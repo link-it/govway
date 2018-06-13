@@ -526,13 +526,13 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.tipoMessaggio != null) {
 			switch (this.tipoMessaggio) {
 			case RICHIESTA_INGRESSO:
-				return "Messaggio di Richiesta Contenuti Ingresso";
+				return "Messaggio di Richiesta - Contenuti Ingresso";
 			case RICHIESTA_USCITA:
-				return "Messaggio di Richiesta Contenuti Uscita";
+				return "Messaggio di Richiesta - Contenuti Uscita";
 			case RISPOSTA_INGRESSO:
-				return "Messaggio di Risposta Contenuti Ingresso";
+				return "Messaggio di Risposta - Contenuti Ingresso";
 			case RISPOSTA_USCITA:	
-				return "Messaggio di Risposta Contenuti Uscita";
+				return "Messaggio di Risposta - Contenuti Uscita";
 			case INTEGRATION_MANAGER:
 			case RICHIESTA_INGRESSO_DUMP_BINARIO:
 			case RICHIESTA_USCITA_DUMP_BINARIO:
