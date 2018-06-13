@@ -29,8 +29,8 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * JDBC_PostgreSQLQueryObject
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13572 $, $Date: 2018-01-26 11:48:01 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class JDBC_PostgreSQLQueryObject extends PostgreSQLQueryObject {
 

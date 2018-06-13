@@ -48,8 +48,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13620 $, $Date: 2018-02-08 10:36:01 +0100 (Thu, 08 Feb 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class ConfigurazioneDumpAppenderDel extends Action {

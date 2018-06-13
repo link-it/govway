@@ -37,8 +37,8 @@ import org.richfaces.component.html.HtmlListShuttle;
 * MultipleChoiceItemConverter converter per gli elementi degli input con selezione multipla. 
 * 
 * @author Pintori Giuliano (pintori@link.it)
-* @author $Author: apoli $
-* @version $Rev: 11423 $, $Date: 2016-01-25 16:58:18 +0100(lun, 25 gen 2016) $
+* @author $Author$
+* @version $Rev$, $Date$
 */
 public class MultipleChoiceItemConverter implements Converter {
 	

@@ -41,8 +41,8 @@ import org.testng.annotations.Test;
  * AutenticazionePortaApplicativa
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 13326 $, $Date: 2017-10-03 17:04:16 +0200 (Tue, 03 Oct 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RESTAutenticazionePortaApplicativa {
 

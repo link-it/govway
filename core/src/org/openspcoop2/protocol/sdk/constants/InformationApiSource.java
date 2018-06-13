@@ -23,8 +23,8 @@ package org.openspcoop2.protocol.sdk.constants;
  * InformationWsdlSource
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13576 $, $Date: 2018-01-26 12:39:34 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum InformationApiSource {
 

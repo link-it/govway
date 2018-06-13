@@ -28,8 +28,8 @@ import org.openspcoop2.protocol.sdk.state.IState;
  * AbstractDatiInvocazione
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13793 $, $Date: 2018-03-30 14:38:35 +0200 (Fri, 30 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class AbstractDatiInvocazione {
 

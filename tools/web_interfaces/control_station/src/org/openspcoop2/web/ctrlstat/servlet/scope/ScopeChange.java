@@ -60,8 +60,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * 
  * @author Andrea Poli (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13624 $, $Date: 2018-02-08 14:54:26 +0100 (Thu, 08 Feb 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class ScopeChange extends Action {

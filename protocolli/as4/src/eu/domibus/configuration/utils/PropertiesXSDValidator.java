@@ -29,8 +29,8 @@ import eu.domibus.configuration.Configuration;
  * XSD Validator    
  *
  * @author Poli Andrea (poli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13576 $, $Date: 2018-01-26 12:39:34 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class PropertiesXSDValidator {

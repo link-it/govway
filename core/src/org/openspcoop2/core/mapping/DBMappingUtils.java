@@ -44,8 +44,8 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * Funzioni di utilita utilizzate dai driver
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DBMappingUtils {
 

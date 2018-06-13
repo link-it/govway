@@ -51,8 +51,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13664 $, $Date: 2018-03-02 12:09:42 +0100 (Fri, 02 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class PorteDelegateProprietaProtocolloDel extends Action {

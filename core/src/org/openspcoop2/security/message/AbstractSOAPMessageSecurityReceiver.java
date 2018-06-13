@@ -28,8 +28,8 @@ import org.openspcoop2.security.SecurityException;
  * AbstractSOAPMessageSecurityReceiver
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13942 $, $Date: 2018-05-14 08:38:29 +0200 (Mon, 14 May 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class AbstractSOAPMessageSecurityReceiver implements IMessageSecurityReceiver{
 

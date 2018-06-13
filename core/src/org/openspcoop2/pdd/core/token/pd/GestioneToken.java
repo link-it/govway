@@ -37,8 +37,8 @@ import org.slf4j.Logger;
  * Classe che implementala gestione token
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13726 $, $Date: 2018-03-12 17:01:57 +0100 (Mon, 12 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class GestioneToken {

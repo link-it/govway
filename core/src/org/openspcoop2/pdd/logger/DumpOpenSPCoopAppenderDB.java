@@ -37,8 +37,8 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
  * per la registrazione dei messaggi su database.
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class DumpOpenSPCoopAppenderDB implements IDumpProducer{

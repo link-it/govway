@@ -48,8 +48,8 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * per la registrazione su database.
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13782 $, $Date: 2018-03-26 17:20:16 +0200 (Mon, 26 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BasicProducer extends BasicComponentFactory implements IMonitoraggioRisorsa {
 

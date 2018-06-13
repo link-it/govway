@@ -32,8 +32,8 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Giuliano Pintori (pintori@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13622 $, $Date: 2018-02-08 12:20:04 +0100 (Thu, 08 Feb 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ScopeCostanti {
 

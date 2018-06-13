@@ -38,8 +38,8 @@ import freemarker.template.Template;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: apoli $
- * @version $Rev: 13732 $, $Date: 2018-03-14 18:03:37 +0100 (Wed, 14 Mar 2018) $
+ * @author  $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public class TranslatorPayloadProfilesDefault {

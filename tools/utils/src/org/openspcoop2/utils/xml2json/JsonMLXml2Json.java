@@ -9,8 +9,8 @@ import org.w3c.dom.Node;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: bussu $
- * @version $ Rev: 12563 $, $Date: 16 mag 2018 $
+ * @author  $Author$
+ * @version $ Rev: 12563 $, $Date$
  * 
  */
 public class JsonMLXml2Json implements IXml2Json{

@@ -32,8 +32,8 @@ import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TY
  * JsonDeserializer
  * 
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13934 $, $Date: 2018-05-11 10:49:42 +0200 (Fri, 11 May 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class AbstractDeserializerWithFactory extends AbstractDeserializer {
 

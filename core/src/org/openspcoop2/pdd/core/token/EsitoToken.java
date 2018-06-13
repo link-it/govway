@@ -32,8 +32,8 @@ import org.openspcoop2.message.OpenSPCoop2Message;
  * Esito di un processo di gestione token.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13726 $, $Date: 2018-03-12 17:01:57 +0100 (Mon, 12 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class EsitoToken implements java.io.Serializable {
 

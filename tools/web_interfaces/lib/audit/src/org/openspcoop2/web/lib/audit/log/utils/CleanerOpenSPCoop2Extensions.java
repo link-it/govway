@@ -27,8 +27,8 @@ import org.openspcoop2.web.lib.audit.log.Operation;
  * CleanerOpenSPCoop2Extensions
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13896 $, $Date: 2018-04-27 16:44:32 +0200 (Fri, 27 Apr 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class CleanerOpenSPCoop2Extensions {
 

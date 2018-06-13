@@ -24,8 +24,8 @@ package org.openspcoop2.protocol.as4.pmode.beans;
  * Index
  * 
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: apoli $
- * @version $Rev: 13800 $, $Date: 2018-04-04 16:39:08 +0200 (Wed, 04 Apr 2018) $
+ * @author  $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public class Index {

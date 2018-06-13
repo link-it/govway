@@ -34,8 +34,8 @@ import org.openspcoop2.utils.UtilsException;
  * Encrypt
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100(ven, 26 gen 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class JsonSignature {
 

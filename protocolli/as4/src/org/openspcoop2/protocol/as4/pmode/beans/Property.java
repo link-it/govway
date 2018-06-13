@@ -26,8 +26,8 @@ import org.w3c.dom.Node;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: apoli $
- * @version $Rev: 13577 $, $Date: 2018-01-26 12:42:16 +0100 (Fri, 26 Jan 2018) $
+ * @author  $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public class Property {

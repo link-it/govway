@@ -43,8 +43,8 @@ import org.openspcoop2.utils.security.XmlSignature;
  * MessageSecuritySender_xml
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13743 $, $Date: 2018-03-16 10:59:08 -0400 (Fri, 16 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender{

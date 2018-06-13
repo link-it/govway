@@ -16,8 +16,8 @@ import org.bouncycastle.util.Arrays;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: bussu $
- * @version $ Rev: 12563 $, $Date: 08 mag 2018 $
+ * @author  $Author$
+ * @version $ Rev: 12563 $, $Date$
  * 
  */
 public class ClassToSerialize implements Serializable {

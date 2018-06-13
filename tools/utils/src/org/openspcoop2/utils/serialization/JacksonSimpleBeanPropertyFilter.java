@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter.Serializ
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: bussu $
- * @version $ Rev: 12563 $, $Date: 09 mag 2018 $
+ * @author  $Author$
+ * @version $ Rev: 12563 $, $Date$
  * 
  */
 public class JacksonSimpleBeanPropertyFilter extends SerializeExceptFilter {

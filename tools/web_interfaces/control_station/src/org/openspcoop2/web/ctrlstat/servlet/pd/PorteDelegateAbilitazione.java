@@ -64,8 +64,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * @author Andrea Poli (apoli@link.it)
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13658 $, $Date: 2018-03-01 16:31:37 +0100 (Thu, 01 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class PorteDelegateAbilitazione extends Action {

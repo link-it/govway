@@ -26,8 +26,8 @@ import org.openspcoop2.core.eventi.constants.TipoSeverita;
  * SeveritaConverter
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13908 $, $Date: 2018-05-04 11:47:48 +0200 (Fri, 04 May 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SeveritaConverter {
 

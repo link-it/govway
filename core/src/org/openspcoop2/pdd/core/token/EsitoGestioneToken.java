@@ -26,8 +26,8 @@ package org.openspcoop2.pdd.core.token;
  * Esito di un processo di gestione token.
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 13726 $, $Date: 2018-03-12 17:01:57 +0100 (Mon, 12 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public abstract class EsitoGestioneToken extends EsitoToken implements java.io.Serializable {
 

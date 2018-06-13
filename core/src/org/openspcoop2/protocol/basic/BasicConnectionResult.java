@@ -25,8 +25,8 @@ import java.sql.Connection;
  * BasicConnectionResult
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13575 $, $Date: 2018-01-26 12:33:08 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BasicConnectionResult {
 

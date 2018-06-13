@@ -28,8 +28,8 @@ import java.io.Serializable;
  * Stato
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13903 $, $Date: 2018-05-03 18:00:58 +0200 (Thu, 03 May 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 

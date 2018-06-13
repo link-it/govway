@@ -48,8 +48,8 @@ import org.openspcoop2.utils.Utilities;
  * 
  *  
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13783 $, $Date: 2018-03-27 11:52:51 +0200 (Tue, 27 Mar 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class TimerMonitoraggioRisorseThread extends Thread{
 

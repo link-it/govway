@@ -7,8 +7,8 @@ import java.util.Map;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
- * @author  $Author: bussu $
- * @version $ Rev: 12563 $, $Date: 16 mag 2018 $
+ * @author  $Author$
+ * @version $ Rev: 12563 $, $Date$
  * 
  */
 public class Xml2JsonFactory {

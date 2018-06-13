@@ -28,8 +28,8 @@ import org.openspcoop2.generic_project.exception.ServiceException;
  * AuthorizationManager
  *
  * @author Poli Andrea (poli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 13574 $, $Date: 2018-01-26 12:24:34 +0100 (Fri, 26 Jan 2018) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class AuthorizationManager extends org.openspcoop2.generic_project.utils.AuthorizationManager {
