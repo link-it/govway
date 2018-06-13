@@ -891,6 +891,10 @@
 			<zipfileset dir="${deploy_jks_dir}" prefix="properties">
 				<include name="*.jks"/>
 			</zipfileset>
+			<!-- JWK -->
+			<zipfileset dir="${deploy_jwk_dir}" prefix="properties">
+				<include name="*.jwk"/>
+			</zipfileset>
 		</ear>
 		
 		<!-- Elimino file temporanei -->

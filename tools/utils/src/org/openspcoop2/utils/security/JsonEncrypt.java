@@ -54,7 +54,7 @@ public class JsonEncrypt {
 	
 	public JsonEncrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JweUtils.loadEncryptionProvider(props, new JweHeaders(), false);
+			this.provider = JweUtils.loadEncryptionProvider(JsonUtils.newMessage(), props, new JweHeaders(), false);
 			this.representation=representation;
 			
 			this.contentAlgorithm = JweUtils.getContentEncryptionAlgorithm(props, ContentAlgorithm.A256GCM);
@@ -69,7 +69,7 @@ public class JsonEncrypt {
 			}
 			
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class JsonEncrypt {
 			
 			this.provider = JweUtils.createJweEncryptionProvider( (PublicKey) keystore.getPublicKey(alias), this.keyAlgorithm, this.contentAlgorithm, compression);
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 	
@@ -123,7 +123,7 @@ public class JsonEncrypt {
 			
 			this.provider = JweUtils.createJweEncryptionProvider( (SecretKey) keystore.getSecretKey(alias, passwordPrivateKey), this.keyAlgorithm, this.contentAlgorithm, compression);
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 
@@ -133,14 +133,11 @@ public class JsonEncrypt {
 			switch(this.representation) {
 				case SELF_CONTAINED: return encryptSelfContained(jsonString);
 				case COMPACT: return encryptCompact(jsonString);
-				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
 			}
 		}
-		catch(UtilsException t) {
-			throw t;
-		}
 		catch(Throwable t) {
-			throw new UtilsException("Error occurs during encrypt (representation "+this.representation+"): "+t.getMessage(),t);
+			throw JsonUtils.convert(this.representation, JsonUtils.ENCRYPT,JsonUtils.SENDER,t);
 		}
 	}
 

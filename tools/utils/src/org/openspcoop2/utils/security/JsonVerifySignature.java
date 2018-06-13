@@ -49,10 +49,10 @@ public class JsonVerifySignature {
 
 	public JsonVerifySignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JwsUtils.loadSignatureVerifier(props, new JwsHeaders());
+			this.provider = JwsUtils.loadSignatureVerifier(JsonUtils.newMessage(), props, new JwsHeaders(),false);
 			this.representation = representation;
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 	
@@ -65,7 +65,7 @@ public class JsonVerifySignature {
 			this.provider = JwsUtils.getPublicKeySignatureVerifier((X509Certificate) keystore.getCertificate(alias), algo);
 			this.representation=representation;
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 
@@ -75,32 +75,26 @@ public class JsonVerifySignature {
 			switch(this.representation) {
 				case SELF_CONTAINED: return verifySelfContained(jsonString);
 				case COMPACT: return verifyCompact(jsonString);
-				case DETACHED:   throw new UtilsException("Use method verify(String, String) with representation ["+this.representation+"]");
-				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+				case DETACHED:   throw new UtilsException("Use method verify(String, String) with representation '"+this.representation+"'");
+				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
 			}
 		}
-		catch(UtilsException t) {
-			throw t;
-		}
 		catch(Throwable t) {
-			throw new UtilsException("Error occurs during validation (representation "+this.representation+"): "+t.getMessage(),t);
+			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 
 	public boolean verify(String jsonDetachedSignature, String jsonDetachedPayload) throws UtilsException{
 		try {
 			switch(this.representation) {
-				case SELF_CONTAINED: throw new UtilsException("Use method verify(String) with representation ["+this.representation+"]");
-				case COMPACT: throw new UtilsException("UUse method verify(String) with representation ["+this.representation+"]");
+				case SELF_CONTAINED: throw new UtilsException("Use method verify(String) with representation '"+this.representation+"'");
+				case COMPACT: throw new UtilsException("UUse method verify(String) with representation '"+this.representation+"'");
 				case DETACHED:  return verifyDetached(jsonDetachedSignature, jsonDetachedPayload);
-				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
 			}
 		}
-		catch(UtilsException t) {
-			throw t;
-		}
 		catch(Throwable t) {
-			throw new UtilsException("Error occurs during validation (representation "+this.representation+"): "+t.getMessage(),t);
+			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.RECEIVER,t);
 		}
 	}
 

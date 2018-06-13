@@ -55,7 +55,7 @@ public class JsonDecrypt {
 	
 	public JsonDecrypt(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JweUtils.loadDecryptionProvider(props, null, false); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
+			this.provider = JweUtils.loadDecryptionProvider(JsonUtils.newMessage(), props, null, false); // lasciare null come secondo parametro senno non funziona il decrypt senza keyEncoding
 			this.representation=representation;
 			
 //			if(JOSERepresentation.SELF_CONTAINED.equals(representation)) {
@@ -75,7 +75,7 @@ public class JsonDecrypt {
 //				this.keyDecriptionProvider = JweUtils.getPrivateKeyDecryptionProvider(privateKey, this.keyAlgorithm);
 //			}
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
 		}
 	}
 	
@@ -100,7 +100,7 @@ public class JsonDecrypt {
 				this.provider = JweUtils.createJweDecryptionProvider( (PrivateKey) keystore.getPrivateKey(alias, passwordPrivateKey), keyAlgo, contentAlgo);
 			}
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
 		}
 	}
 
@@ -110,14 +110,11 @@ public class JsonDecrypt {
 			switch(this.representation) {
 				case SELF_CONTAINED: decryptSelfContained(jsonString); break;
 				case COMPACT: decryptCompact(jsonString); break;
-				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
 			}
 		}
-		catch(UtilsException t) {
-			throw t;
-		}
 		catch(Throwable t) {
-			throw new UtilsException("Error occurs during decrypt (representation "+this.representation+"): "+t.getMessage(),t);
+			throw JsonUtils.convert(this.representation, JsonUtils.DECRYPT,JsonUtils.RECEIVER,t);
 		}
 	}
 	

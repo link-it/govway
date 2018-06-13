@@ -273,6 +273,10 @@
 			<classes dir="${deploy_jks_dir}">
 				<include name="*.jks"/>
 			</classes>
+			<!-- JWK -->
+			<classes dir="${deploy_jwk_dir}">
+				<include name="*.jwk"/>
+			</classes>
 		</war>
 	</target>
 	

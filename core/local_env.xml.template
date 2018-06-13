@@ -4,85 +4,83 @@
 
 <project name="OpenSPCoop2_LocalEnv" basedir=".">
 
-		<!-- RootDir (per file Licensa,Copying...) -->
-		<property name="rootDir" location="../" />
-		<property name="openspcoop2" location="${rootDir}" />
+	<!-- RootDir (per file Licensa,Copying...) -->
+	<property name="rootDir" location="../" />
+	<property name="openspcoop2" location="${rootDir}" />
 
-		<!-- ApplicationServer version -->
-		<property name="as" value="jboss/wildfly/tomcat" />
+	<!-- ApplicationServer version -->
+	<property name="as" value="jboss/wildfly/tomcat" />
 
-		<!-- Build-Options -->
-		<property name="buildAsRelease" value="false" />
-		<property name="buildAPI" value="true" />
-		<property name="buildAllAPI" value="false" />
-		<property name="forceDisableJ2eeMode" value="false" />
+	<!-- Build-Options -->
+	<property name="buildAsRelease" value="false" />
+	<property name="buildAPI" value="true" />
+	<property name="buildAllAPI" value="false" />
+	<property name="forceDisableJ2eeMode" value="false" />
 
-		<!-- Sub-Build-Options -->
-		<property name="buildSchemi" value="true" />
-		<property name="buildMessage" value="true" />
-		<property name="buildCore" value="true" />
-		<property name="buildCore.registryWS" value="true" />
-		<property name="buildProtocolAPI" value="true" />
-		<property name="buildMonitorAPI" value="true" />
-		<property name="buildSecurity" value="true" />
-		<property name="buildSecurity_soapbox" value="true"/>
-		<property name="buildProtocolEngine" value="true" />
-		<property name="buildMonitorEngine" value="true" />
-		<property name="buildPdd" value="true" />
+	<!-- Sub-Build-Options -->
+	<property name="buildSchemi" value="true" />
+	<property name="buildMessage" value="true" />
+	<property name="buildCore" value="true" />
+	<property name="buildCore.registryWS" value="true" />
+	<property name="buildProtocolAPI" value="true" />
+	<property name="buildMonitorAPI" value="true" />
+	<property name="buildSecurity" value="true" />
+	<property name="buildSecurity_soapbox" value="true"/>
+	<property name="buildProtocolEngine" value="true" />
+	<property name="buildMonitorEngine" value="true" />
+	<property name="buildPdd" value="true" />
 
-		<!-- Dipendenze di compilazione -->
-		<property name="utils" location="../tools/utils"/>
- 		<property name="src_utils" location="${utils}/src"/>
- 		<property name="genericProject" location="../tools/generic_project"/>
- 		<property name="src_genericProject" location="${genericProject}/src"/>
+	<!-- Dipendenze di compilazione -->
+	<property name="utils" location="../tools/utils"/>
+	<property name="src_utils" location="${utils}/src"/>
+	<property name="genericProject" location="../tools/generic_project"/>
+	<property name="src_genericProject" location="${genericProject}/src"/>
 
-		<!-- WSDL -->
-		<property name="wsdlFolder" location="deploy/deploy_web/web_app" />
-		<property name="wsdlPortaDelegata" value="" />
-		<property name="wsdlPortaApplicativa" value="" />
-		<!--
-		<property name="wsdlPortaDelegata" value="PD.wsdl" />
-		<property name="wsdlPortaApplicativa" value="PA.wsdl" />
-		-->
+	<!-- WSDL -->
+	<property name="wsdlFolder" location="deploy/deploy_web/web_app" />
+	<property name="wsdlPortaDelegata" value="" />
+	<property name="wsdlPortaApplicativa" value="" />
+	<!--
+	<property name="wsdlPortaDelegata" value="PD.wsdl" />
+	<property name="wsdlPortaApplicativa" value="PA.wsdl" />
+	-->
 
-        <!-- Directory dell'Application Server -->
-        <property name="appServer"
-                location="/var/jboss/server/default" />
+	<!-- Directory dell'Application Server -->
+	<property name="appServer"
+        location="/var/jboss/server/default" />
 
-		<!-- Directory di deploy -->
-		<property name="appServer_deploy_dir"
-			location="${appServer}/deploy" />
+	<!-- Directory di deploy -->
+	<property name="appServer_deploy_dir" location="${appServer}/deploy" />
 
-		<!-- Directory delle librerie condivise dalle applicazioni nell'A.S. -->
-        <property name="appServer_shared_lib"
-                location="${appServer}/lib" />
+	<!-- Directory delle librerie condivise dalle applicazioni nell'A.S. -->
+	<property name="appServer_shared_lib" location="${appServer}/lib" />
 
-        <!-- Directory webServer (x InterfacciaGrafica) -->
-        <property name="webServer_deploy_dir"
-                location="${appServer_deploy_dir}/jboss-web.deployer" />
+	<!-- Directory webServer (x InterfacciaGrafica) -->
+	<property name="webServer_deploy_dir" location="${appServer_deploy_dir}/jboss-web.deployer" />
 
-        <!-- URL dell'application server -->
-        <property name="appServer_url" value="http://localhost:8080/" />
+	<!-- URL dell'application server -->
+	<property name="appServer_url" value="http://localhost:8080/" />
 
-		<!-- Directory per il deploy -->
+	<!-- Directory per il deploy -->
 	<property name="deploy_jks_dir" location="deploy/jks" />
-        <property name="deploy_web_dir" location="deploy/deploy_web" />
-        <property name="deploy_threads_web_dir" location="deploy/threads" />
-        <property name="data_content_handler_dir" location="deploy/data_content_handler" />
+	<property name="deploy_jwk_dir" location="deploy/jwk" />
+	<property name="deploy_web_dir" location="deploy/deploy_web" />
+	<property name="deploy_threads_web_dir" location="deploy/threads" />
+	<property name="data_content_handler_dir" location="deploy/data_content_handler" />
 
-        <!-- File di Configurazione -->
-        <property name="properties_dir" location="deploy/properties" />
+	<!-- File di Configurazione -->
+	<property name="properties_dir" location="deploy/properties" />
 
-         <!-- Librerie -->
-        <property name="required_lib" value="${rootDir}/lib" />
+	<!-- Librerie -->
+	<property name="required_lib" value="${rootDir}/lib" />
 
-        <!-- Librerie aggiuntive utilizzate da OpenSPCoop-->
-        <property name="plugins" location="deploy/plugins" />
-        <property name="application_plugins" location="deploy/application_plugins" />
+	<!-- Librerie aggiuntive utilizzate da OpenSPCoop-->
+	<property name="plugins" location="deploy/plugins" />
+	<property name="application_plugins" location="deploy/application_plugins" />
 
-        <!-- Specifica se inserire le informazioni di debug nelle classi -->
-		<property name="debug" value="true" />
-		<property name="printServerInfo" value="false" />
+	<!-- Specifica se inserire le informazioni di debug nelle classi -->
+	<property name="debug" value="true" />
+	<property name="printServerInfo" value="false" />
 
 
 </project>

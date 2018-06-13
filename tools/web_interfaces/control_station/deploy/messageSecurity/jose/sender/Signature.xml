@@ -85,25 +85,31 @@
                     </condition>
             </conditions>
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
 					<!--  <value value="jceks" label="JCEKS"/> -->
+					<value value="jwk" label="JWK"/>
 				</values>
 				<property name="rs.security.keystore.type" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystoreFile" label="File" required="true">
-			      	<property name="rs.security.keystore.file" properties="signaturePropRefId" />
+			    <property name="rs.security.keystore.file" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePassword" label="Password" required="true">
-			      	<property name="rs.security.keystore.password" properties="signaturePropRefId" />
+				<conditions>
+					<condition not="true" and="true">
+						<equals name="keystoreType" value="jwk"/>
+					</condition>
+				</conditions>
+			    <property name="rs.security.keystore.password" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyAlias" label="Alias Chiave Privata" required="true">
-			      	<property name="rs.security.keystore.alias" properties="signaturePropRefId" />
+			    <property name="rs.security.keystore.alias" properties="signaturePropRefId" />
 			</item>
 			<item type="text" name="keystorePrivateKeyPassword" label="Password Chiave Privata" required="true">
-			      	<property name="rs.security.key.password" properties="signaturePropRefId" />
+			    <property name="rs.security.key.password" properties="signaturePropRefId" />
 			</item>
 
 		</subsection>

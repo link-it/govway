@@ -44,10 +44,10 @@ public class JsonSignature {
 	
 	public JsonSignature(Properties props, JOSERepresentation representation) throws UtilsException{
 		try {
-			this.provider = JwsUtils.loadSignatureProvider(props, new JwsHeaders(props));
+			this.provider = JwsUtils.loadSignatureProvider(JsonUtils.newMessage(), props, new JwsHeaders(props), false);
 			this.representation=representation;
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class JsonSignature {
 			this.provider = JwsUtils.getPrivateKeySignatureProvider(keystore.getPrivateKey(alias, passwordPrivateKey), algo);
 			this.representation=representation;
 		}catch(Throwable t) {
-			throw new UtilsException(t.getMessage(),t);
+			throw JsonUtils.convert(representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
@@ -71,14 +71,11 @@ public class JsonSignature {
 				case SELF_CONTAINED: return signSelfContained(jsonString);
 				case COMPACT: return signCompact(jsonString);
 				case DETACHED:  return signDetached(jsonString);
-				default: throw new UtilsException("Unsupported representation ["+this.representation+"]");
+				default: throw new UtilsException("Unsupported representation '"+this.representation+"'");
 			}
 		}
-		catch(UtilsException t) {
-			throw t;
-		}
 		catch(Throwable t) {
-			throw new UtilsException("Error occurs during sign (representation "+this.representation+"): "+t.getMessage(),t);
+			throw JsonUtils.convert(this.representation, JsonUtils.SIGNATURE,JsonUtils.SENDER,t);
 		}
 	}
 
