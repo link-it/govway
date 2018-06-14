@@ -125,9 +125,9 @@
 			 	</ui:include>
 	
 				<a4j:outputPanel layout="block" id="saComboCtr">
-					<link:prop label="Servizio Applicativo" rendered="#{not empty sf_soggettoLocale}">
+					<link:prop label="Applicativo" rendered="#{not empty sf_soggettoLocale}">
 						<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
-									defaultLabel="Selezione Servizio Applicativo" 
+									defaultLabel="Selezione Applicativo" 
 									directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
 									width="412" enableManualInput="false">
 							<f:selectItem itemValue="--"/>

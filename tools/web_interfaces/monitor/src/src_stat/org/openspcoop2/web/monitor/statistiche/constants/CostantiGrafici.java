@@ -81,7 +81,7 @@ public class CostantiGrafici {
 
 	public static final String DATA_LABEL = "Data";
 	public static final String AZIONE_LABEL = "Azione";
-	public static final String SERVIZIO_APPLICATIVO_LABEL = "Servizio Applicativo";
+	public static final String SERVIZIO_APPLICATIVO_LABEL = "Applicativo";
 	public static final String SERVIZIO_LABEL = "Servizio";
 	public static final String SOGGETTO_LABEL = "Soggetto";
 	public static final String NOME_LABEL = "Nome";
@@ -105,7 +105,7 @@ public class CostantiGrafici {
 	public static final String IERI_LABEL = "Ieri";
 	public static final String DISTRIBUZIONE_PER_ESITI_LABEL = "Distribuzione per Esiti";
 	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL = "Distribuzione per Azione";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Servizio Applicativo";
+	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
 	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL = "Distribuzione per Servizio";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
@@ -113,7 +113,7 @@ public class CostantiGrafici {
 	
 	public static final String DISTRIBUZIONE_PREFIX = "Distribuzione";
 	public static final String DISTRIBUZIONE_PER_AZIONE_LABEL_SUFFIX = "per Azione";
-	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "per Servizio Applicativo";
+	public static final String DISTRIBUZIONE_PER_SERVIZIO_APPLICATIVO_LABEL_SUFFIX = "per Applicativo";
 	public static final String DISTRIBUZIONE_PER_SERVIZIO_LABEL_SUFFIX = "per Servizio";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_LOCALE_LABEL_SUFFIX = "per Soggetto Locale";
 	public static final String DISTRIBUZIONE_PER_SOGGETTO_REMOTO_LABEL_SUFFIX = "per Soggetto Remoto";
@@ -161,8 +161,8 @@ public class CostantiGrafici {
 	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_AZIONE_NOSVG_PATTERN = "{0}: {1}\\{br\\}Azione: {2}\\{br\\}Servizio: {3}\\{br\\}Erogatore: {4}";
 	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_AZIONE_SVG_PATTERN = "{0}: {1}<br/>Azione: {2}<br/>Servizio: {3}<br/>Erogatore: {4}";
 	
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_NOSVG_PATTERN = "{0}: {1}\\{br\\}Soggetto: {2}\\{br\\}Ruolo: {3}";
-	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_SVG_PATTERN = "{0}: {1}<br/>Servizio Applicativo: {2}<br/>Soggetto: {3}<br/>Ruolo: {4}";
+	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_NOSVG_PATTERN = "{0}: {1}\\{br\\}Soggetto: {2}";  //\\{br\\}Ruolo: {3}";
+	public static final String LABEL_TOOLTIP_DISTRIBUZIONE_SA_SVG_PATTERN = "{0}: {1}<br/>Applicativo: {2}<br/>Soggetto: {3}"; //<br/>Ruolo: {4}";
 	
 	// chiavi del json per il pie chart che rispettano la libreria d3pie
 	public static final String HEADER_KEY= "header";
@@ -237,7 +237,7 @@ public class CostantiGrafici {
 	public static final String TIPO_DISTRIBUZIONE_TEMPORALE_LABEL = "Distribuzione Temporale";
 	public static final String TIPO_DISTRIBUZIONE_ESITI_LABEL = "Distribuzione per Esiti";
 	public static final String TIPO_DISTRIBUZIONE_AZIONE_LABEL = "Distribuzione per Azione";
-	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Servizio Applicativo";
+	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_APPLICATIVO_LABEL = "Distribuzione per Applicativo";
 	public static final String TIPO_DISTRIBUZIONE_SERVIZIO_LABEL = "Distribuzione per Servizio";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_REMOTO_LABEL = "Distribuzione per Soggetto Remoto";
 	public static final String TIPO_DISTRIBUZIONE_SOGGETTO_LOCALE_LABEL = "Distribuzione per Soggetto Locale";

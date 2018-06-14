@@ -173,9 +173,9 @@ public class CostantiExport {
 	public static final String LABEL_COL_DIAGNOSTICI = "Diagnostici";
 	public static final String LABEL_COL_ID_CORRELAZIONE_APPLICATIVA =	"ID Applicativo Richiesta";
 	public static final String LABEL_COL_ID_CORRELAZIONEAPPLICATIVARISPOSTA = "ID Applicativo Risposta";
-	public static final String LABEL_COL_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
-	public static final String LABEL_COL_SERVIZIO_APPLICATIVO_FRUITORE = "Servizio Applicativo Fruitore";
-	public static final String LABEL_COL_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
+	public static final String LABEL_COL_SERVIZIO_APPLICATIVO = "Applicativo";
+	public static final String LABEL_COL_SERVIZIO_APPLICATIVO_FRUITORE = "Applicativo Fruitore";
+	public static final String LABEL_COL_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
 	public static final String LABEL_COL_OPERAZIONE_IM = "Operazione Integration Manager";
 	public static final String LABEL_COL_LOCATION_RICHIESTA = "Location Richiesta";
 	public static final String LABEL_COL_LOCATION_RISPOSTA = "Location Risposta";

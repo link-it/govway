@@ -16,6 +16,8 @@ import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
+import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
+import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerAzioneBean;
 
 public class DistribuzioneAzioneDM extends BaseDataModel<String, ResDistribuzione, IStatisticheGiornaliere> {
 
@@ -63,6 +65,8 @@ public class DistribuzioneAzioneDM extends BaseDataModel<String, ResDistribuzion
 				} catch (ServiceException e) {
 					DistribuzioneAzioneDM.log.error(e.getMessage(), e);
 				}
+				
+				list = DistribuzionePerAzioneBean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribAzioneSearch().getProtocollo());
 				
 				for (ResDistribuzione r : list) {
 					this.wrappedData.put(r.getRisultato(), r);

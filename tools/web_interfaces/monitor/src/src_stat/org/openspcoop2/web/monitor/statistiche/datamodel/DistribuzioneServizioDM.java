@@ -1,10 +1,5 @@
 package org.openspcoop2.web.monitor.statistiche.datamodel;
 
-import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
-import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +9,14 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
-import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.web.monitor.core.datamodel.BaseDataModel;
+import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
+import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
+import org.openspcoop2.web.monitor.statistiche.mbean.DistribuzionePerServizioBean;
+import org.slf4j.Logger;
 
 public class DistribuzioneServizioDM extends BaseDataModel<String, ResDistribuzione, IStatisticheGiornaliere> {
 
@@ -63,6 +64,8 @@ public class DistribuzioneServizioDM extends BaseDataModel<String, ResDistribuzi
 				} catch (ServiceException e) {
 					DistribuzioneServizioDM.log.error(e.getMessage(), e);
 				}
+				
+				list = DistribuzionePerServizioBean.calcolaLabels(list, ((StatisticheGiornaliereService) this.getDataProvider()).getDistribServizioSearch().getProtocollo());
 				
 				for (ResDistribuzione r : list) {
 					this.wrappedData.put(r.getRisultato(), r);

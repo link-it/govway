@@ -294,9 +294,9 @@
 					<h:outputText id="outProfColl2" value="#{item.profiloCollaborazioneProt}"/>
 					<rich:toolTip for="outProfColl2" value="#{item.profiloCollaborazioneOp2}"/>
 				</rich:column>
-				<rich:column id="colServizioApplicativo" sortable="false" label="Servizio Applicativo" visible="false">
+				<rich:column id="colServizioApplicativo" sortable="false" label="Applicativo" visible="false">
 					<f:facet name="header">
-						<h:outputText id="outServizioApplicativo1" value="Servizio Applicativo" />
+						<h:outputText id="outServizioApplicativo1" value="Applicativo" />
 					</f:facet>
 					<h:outputText id="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 					<rich:toolTip for="outServizioApplicativo2" value="#{item.servizioApplicativoFruitore}" rendered="#{item.pddRuolo=='DELEGATA'}"/>

@@ -1284,13 +1284,13 @@ public class StatsUtils {
 			break;
 		case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			if(form.isUseGraficiSVG())
-				sb.append(MessageFormat.format(CostantiGrafici.LABEL_TOOLTIP_DISTRIBUZIONE_SA_SVG_PATTERN, labelValore,valore,risultato,parent.get("0"),parent.get("1"),parent.get("2")));
+				sb.append(MessageFormat.format(CostantiGrafici.LABEL_TOOLTIP_DISTRIBUZIONE_SA_SVG_PATTERN, labelValore,valore,risultato,parent.get("0"),parent.get("1"))); //,parent.get("2")));
 			else 
 //				sb.append(MessageFormat.format(CostantiGrafici.LABEL_TOOLTIP_DISTRIBUZIONE_SA_NOSVG_PATTERN, labelValore,valore,risultato,parent.get("0"),parent.get("1")));
 				sb.append(labelValore).append(": ").append(valore).
-					append("{br}Servizio Applicativo: ").append(parent.get("0")).
-					append("{br}Soggetto: ").append(parent.get("1")).
-					append("{br}Ruolo: ").append(parent.get("2"));
+					append("{br}Applicativo: ").append(parent.get("0")).
+					append("{br}Soggetto: ").append(parent.get("1"));
+//					.append("{br}Ruolo: ").append(parent.get("2"));
 			
 			break;
 		case DISTRIBUZIONE_SOGGETTO:

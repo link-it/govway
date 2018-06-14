@@ -119,9 +119,9 @@ public class ExportUtils {
 				headerValueLabel = "Soggetto";
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				
-				headerValueCategory = "parent_1";
-				headerValueLabel = "Ruolo";
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
+//				headerValueCategory = "parent_1";
+//				headerValueLabel = "Ruolo";
+//				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				break;
 			case ANDAMENTO_TEMPORALE:
 			case DISTRIBUZIONE_SOGGETTO:
@@ -251,9 +251,9 @@ public class ExportUtils {
 				headerValueLabel = "Soggetto";
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 				
-				headerValueCategory = "parent_1";
-				headerValueLabel = "Ruolo";
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
+//				headerValueCategory = "parent_1";
+//				headerValueLabel = "Ruolo";
+//				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 				break;
 			case ANDAMENTO_TEMPORALE:
 			case DISTRIBUZIONE_SOGGETTO:
@@ -389,10 +389,10 @@ public class ExportUtils {
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
 						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
 				
-				headerValueCategory = "parent_1";
-				headerValueLabel = "Ruolo";
-				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
-						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
+//				headerValueCategory = "parent_1";
+//				headerValueLabel = "Ruolo";
+//				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
+//						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
 				break;
 			case ANDAMENTO_TEMPORALE:
 			case DISTRIBUZIONE_SOGGETTO:
@@ -1157,7 +1157,7 @@ public class ExportUtils {
 			break;
 		case DISTRIBUZIONE_SERVIZIO_APPLICATIVO:
 			header.add("parent_0");
-			header.add("parent_1");
+			//header.add("parent_1");
 			break;
 		case ANDAMENTO_TEMPORALE:
 		case DISTRIBUZIONE_SOGGETTO:

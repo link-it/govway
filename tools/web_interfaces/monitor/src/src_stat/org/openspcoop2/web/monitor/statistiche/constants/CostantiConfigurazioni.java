@@ -88,7 +88,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_PROXY = "Proxy";
 	public static final String LABEL_KEY_STORE = "KeyStore";
 	public static final String LABEL_CLIENT_CERTIFICATE = "Client Certificate";
-	public static final String LABEL_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
+	public static final String LABEL_SERVIZIO_APPLICATIVO = "Applicativo";
 	public static final String LABEL_MESSAGE_BOX = "MessageBox";
 	public static final String LABEL_SBUSTAMENTO_SOAP = "Sbustamento SOAP";
 	public static final String LABEL_SBUSTAMENTO_PROTOCOLLO = "Sbustamento Protocollo";

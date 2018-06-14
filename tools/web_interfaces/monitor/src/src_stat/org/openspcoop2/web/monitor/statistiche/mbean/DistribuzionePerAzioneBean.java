@@ -15,17 +15,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
 import org.openspcoop2.web.monitor.core.mbean.DynamicPdDBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.StatsSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiGrafici;
 import org.openspcoop2.web.monitor.statistiche.dao.IStatisticheGiornaliere;
@@ -65,7 +68,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
-		
+		list = calcolaLabels(list, this.search.getProtocollo());
 		
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
@@ -98,6 +101,8 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			return null;
 		}
 		
+		list = calcolaLabels(list, this.search.getProtocollo());
+		
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		
 		switch (tipoReport) {
@@ -118,6 +123,37 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		//log.debug(json); 
 		return json ;
 	}
+	
+	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo){
+		if(list!=null  && list.size()>0){
+			for (ResDistribuzione res : list) {
+				String tipoNomeSoggetto = res.getParentMap().get("1");
+				
+				String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+				String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
+				
+				try {
+					res.getParentMap().put("1", NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+				} catch (Exception e) {				
+				}
+				
+				
+				String tipoNomeVersioneServizio = res.getParentMap().get("0");
+				String tipoServizio = ParseUtility.parseTipoSoggetto(tipoNomeVersioneServizio);
+				String nomeServizio = ParseUtility.parseNomeSoggetto(tipoNomeVersioneServizio);
+
+				Integer versioneServizio = ParseUtility.parseVersione(nomeServizio);
+				nomeServizio = ParseUtility.parseNomeServizio(nomeServizio);
+				
+				try {
+					res.getParentMap().put("0", NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, tipoServizio, nomeServizio, versioneServizio));
+				} catch (Exception e) {				
+				}
+			}
+		}
+		return list;
+	}
+
 	
 	
 	@Override
@@ -228,6 +264,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -323,6 +360,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -418,6 +456,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){

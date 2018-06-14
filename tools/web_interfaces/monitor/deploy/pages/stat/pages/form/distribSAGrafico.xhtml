@@ -19,7 +19,7 @@
 			</li>
 			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
 			<li>
-				<h:outputText value="Distribuzione Per Servizio Applicativo" styleClass="ultimo-path"/>
+				<h:outputText value="Distribuzione Per Applicativo" styleClass="ultimo-path"/>
 			</li>
 		</ul>
 	</ui:define>
@@ -91,7 +91,7 @@
 							enableDelete="false">
 							<rich:column>
 								<f:facet name="header">
-									<h:outputText value="Servizio Applicativo" />
+									<h:outputText value="Applicativo" />
 								</f:facet>
 								<h:outputText value="#{item.risultato}"/>
 							</rich:column>
@@ -101,7 +101,7 @@
 								</f:facet>
 								<h:outputText value="#{item.parentMap['0']}"/>
 							</rich:column>
-							<rich:column>
+							<rich:column rendered="false">
 								<f:facet name="header">
 									<h:outputText value="Ruolo" />
 								</f:facet>

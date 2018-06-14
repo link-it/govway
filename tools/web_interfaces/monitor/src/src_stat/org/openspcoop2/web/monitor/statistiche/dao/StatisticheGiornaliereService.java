@@ -113,9 +113,9 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			this.statSettimanaleSearchDAO = this.transazioniStatisticheServiceManager
 					.getStatisticaSettimanaleServiceSearch();
 
-			this.esitoUtils = new EsitoUtils(log);
+			this.esitoUtils = new EsitoUtils(StatisticheGiornaliereService.log);
 			
-			this.pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			this.pddMonitorProperties = PddMonitorProperties.getInstance(StatisticheGiornaliereService.log);
 			
 		} catch (Exception e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -148,6 +148,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		this.statistichePersonalizzateSearch = statistichePersonalizzateSearch;
 	}
 	
+	public StatsSearchForm getDistribSoggettoSearch() {
+		return this.distribSoggettoSearch;
+	}
+
+	public StatsSearchForm getDistribServizioSearch() {
+		return this.distribServizioSearch;
+	}
+
+	public StatsSearchForm getDistribAzioneSearch() {
+		return this.distribAzioneSearch;
+	}
+
+	public StatsSearchForm getDistribSaSearch() {
+		return this.distribSaSearch;
+	}
 
 	@Override
 	public List<ResBase> findAll(int start, int limit) {
@@ -624,7 +639,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						}
 					}
 					
-					EsitiProperties esitiProperties = EsitiProperties.getInstance(log);
+					EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log);
 					List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 					List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1304,7 +1319,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				throw new ServiceException(e.getMessage(),e);
 			}			
 
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(log);
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(StatisticheGiornaliereService.log);
 			List<Integer> esitiOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
 			List<Integer> esitiKo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 			List<Integer> esitiFault = esitiProperties.getEsitiCodeFaultApplicativo();
@@ -1370,7 +1385,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try {
 				list = dao.groupBy(exprOk,fSum);
 			} catch (NotFoundException e) {
-				log.debug("Non sono presenti statistiche con esito OK");
+				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito OK");
 			}
 			long s = 0l;
 			if(list != null && list.size() > 0){
@@ -1390,7 +1405,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try {
 				list = dao.groupBy(exprFault,fSum);
 			} catch (NotFoundException e) {
-				log.debug("Non sono presenti statistiche con esito Fault");
+				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito Fault");
 			}
 			s = 0l;
 			if(list != null && list.size() > 0){
@@ -1410,7 +1425,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			try {
 				list = dao.groupBy(exprKo,fSum);
 			} catch (NotFoundException e) {
-				log.debug("Non sono presenti statistiche con esito KO");
+				StatisticheGiornaliereService.log.debug("Non sono presenti statistiche con esito KO");
 			}
 			s = 0l;
 			if(list != null && list.size() > 0){
@@ -2804,7 +2819,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE))
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
 						res.add(r);
 				}
 
@@ -3085,7 +3100,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE)) 	
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
 						res.add(r);
 				}
 
@@ -3371,7 +3386,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					ResDistribuzione r = new ResDistribuzione();
 					r.setRisultato(((String) row.get(aliasFieldTipoServizio)) + "/"
 							+ ((String) row.get(aliasFieldServizio)) + ":"
-							+ ((Integer) row.get(aliasFieldVersioneServizio)));
+							+ (row.get(aliasFieldVersioneServizio)));
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 							+ ((String) row.get(aliasFieldDestinatario)));
@@ -3383,7 +3398,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE)) 	
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
 						res.add(r);
 				}
 
@@ -4291,7 +4306,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					
 					r.getParentMap().put("0",((String) row.get(aliasFieldTipoServizio)) + "/"
 							+ ((String) row.get(aliasFieldServizio)) + ":"
-									+ ((Integer) row.get(aliasFieldVersioneServizio)));
+									+ (row.get(aliasFieldVersioneServizio)));
 					
 					r.getParentMap().put("1",((String) row.get(aliasFieldTipoDestinatario)) + "/"
 							+ ((String) row.get(aliasFieldDestinatario)));
@@ -4303,7 +4318,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE)) 	
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
 						res.add(r);
 				}
 
@@ -4862,7 +4877,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.getParentMap().put("0",((String) row.get(aliasFieldTipoSoggetto)) + "/"
 								+ ((String) row.get(aliasFieldSoggetto)));
 						
-						r.getParentMap().put("1",((String) row.get(aliasFieldRuoloSoggetto)));
+						//r.getParentMap().put("1",((String) row.get(aliasFieldRuoloSoggetto)));
 					}
 					
 					Number somma = StatsUtils.converToNumber(row.get(sommaAliasName));
@@ -4872,7 +4887,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE)) 	
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE)) 	
 						res.add(r);
 				}
 
@@ -5452,7 +5467,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						r.setSomma(0);
 					}
 
-					if(!r.getRisultato().contains(FALSA_UNION_DEFAULT_VALUE))
+					if(!r.getRisultato().contains(StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE))
 						res.add(r);
 					//						map.put(r.getSomma()+"_"+r.getRisultato(), r);
 				}
@@ -6271,7 +6286,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 	@Override
 	public List<String> getValoriRisorse() throws ServiceException{
-		log.debug("Leggo i valori delle risorse per la statistica: " + this.statistichePersonalizzateSearch.getNomeStatisticaPersonalizzata()); 
+		StatisticheGiornaliereService.log.debug("Leggo i valori delle risorse per la statistica: " + this.statistichePersonalizzateSearch.getNomeStatisticaPersonalizzata()); 
 
 		List<String> valori = new ArrayList<String>();
 		StatisticaModel model = null;
@@ -6374,7 +6389,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expressionTipoServiziCompatibili = DynamicUtilsService.getExpressionTipiServiziCompatibiliConProtocollo(dao, model.TIPO_SERVIZIO, protocollo);
 			}
 		} catch (Exception e) {
-			log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi servizio compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoServiziCompatibili != null)
@@ -6387,7 +6402,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expressionTipoSoggettiMittenteCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_MITTENTE, protocollo);
 			}
 		} catch (Exception e) {
-			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto mittente compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoSoggettiMittenteCompatibili != null)
@@ -6401,7 +6416,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				expressionTipoSoggettiDestinatarioCompatibili = DynamicUtilsService.getExpressionTipiSoggettiCompatibiliConProtocollo(dao, model.TIPO_DESTINATARIO, protocollo);
 			}
 		} catch (Exception e) {
-			log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
+			StatisticheGiornaliereService.log.error("Si e' verificato un errore durante il calcolo dei tipi soggetto destinatario compatibili con il protocollo scelto: "+ e.getMessage(), e);
 		}
 
 		if(expressionTipoSoggettiDestinatarioCompatibili != null)

@@ -15,12 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.monitor.sdk.constants.StatisticType;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
 import org.openspcoop2.web.monitor.core.datamodel.ResDistribuzione;
@@ -62,6 +64,23 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 		this.search.initSearchListener(ae);
 		((StatsSearchForm)this.search).setDistribuzionePerSoggettoRemota(false);
 	}
+	
+	public static List<ResDistribuzione>  calcolaLabels (List<ResDistribuzione> list, String protocollo){
+		if(list!=null  && list.size()>0){
+			for (ResDistribuzione res : list) {
+				String tipoNomeSoggetto = res.getRisultato();
+				
+				String tipoSoggetto = Utility.parseTipoSoggetto(tipoNomeSoggetto);
+				String nomeSoggetto = Utility.parseNomeSoggetto(tipoNomeSoggetto);
+				
+				try {
+					res.setRisultato(NamingUtils.getLabelSoggetto(protocollo, tipoSoggetto, nomeSoggetto));
+				} catch (Exception e) {				
+				}
+			}
+		}
+		return list;
+	}
 
 	public String getXml() {	
 		List<ResDistribuzione> list;
@@ -73,6 +92,8 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
+		
+		list = calcolaLabels(list, this.search.getProtocollo());
 
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		String xml = "";
@@ -104,6 +125,8 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			return null;
 		}
+		
+		list = calcolaLabels(list, this.search.getProtocollo());
 
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 
@@ -237,6 +260,8 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -332,6 +357,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
@@ -427,6 +453,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 				// passando dalla console, questo caso non succede mai, mentre tramite http get nel servizio di exporter può succedere
 				throw new NotFoundException("Dati non trovati");
 			}
+			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
