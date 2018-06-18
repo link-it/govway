@@ -1890,8 +1890,24 @@ public class DriverUsersDB {
 			stm.setString(1, statoOggetto);
 			stm.setLong(2, idUtente);
 			stm.setString(3, nomeOggetto);
-			stm.executeUpdate();
+			int update = stm.executeUpdate();
 			stm.close();
+			
+			// nuovo stato
+			if(update == 0) {
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
+				sqlQueryObject.addInsertTable(CostantiDB.USERS_STATI);
+				sqlQueryObject.addInsertField("stato","?");
+				sqlQueryObject.addInsertField("id_utente","?");
+				sqlQueryObject.addInsertField("oggetto","?");
+				sqlQuery = sqlQueryObject.createSQLInsert();
+				stm = connectionDB.prepareStatement(sqlQuery);
+				stm.setString(1, statoOggetto);
+				stm.setLong(2, idUtente);
+				stm.setString(3, nomeOggetto);
+				update = stm.executeUpdate();
+				stm.close();
+			}
 
 		} catch (SQLException se) {
 			throw new DriverUsersDBException("[DriverUsersDB::saveStato] SqlException: " + se.getMessage(),se);
