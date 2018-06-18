@@ -395,14 +395,15 @@ public final class PorteApplicativeAdd extends Action {
 			List<String> filtraAzioniUtilizzate = new ArrayList<String>(); // TODO controllare
 			if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {
 			
-				List<String> azioni = porteApplicativeCore.getAzioni(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
+				Map<String,String> azioni = porteApplicativeCore.getAzioniConLabel(servS, as, addTrattinoSelezioneNonEffettuata , true, filtraAzioniUtilizzate);
 				if(azioni != null && azioni.size() > 0) {
 					azioniList = new String[azioni.size()];
 					azioniListLabel = new String[azioni.size()];
-					Collections.sort(azioni);
-					for (int i = 0; i < azioni.size(); i++) {
-						azioniList[i] = "" + azioni.get(i);
-						azioniListLabel[i] = azioniList[i];
+					int i = 0;
+					for (String string : azioni.keySet()) {
+						azioniList[i] = string;
+						azioniListLabel[i] = azioni.get(string);
+						i++;
 					}
 				}
 			}

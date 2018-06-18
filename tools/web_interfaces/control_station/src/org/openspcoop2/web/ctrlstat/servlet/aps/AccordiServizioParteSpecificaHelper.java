@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -2011,7 +2012,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			int limit = ricerca.getPageSize(idLista);
 			int offset = ricerca.getIndexIniziale(idLista);
 			
-			List<String> azioni = this.porteApplicativeCore.getAzioni(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
 			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 			
@@ -2022,7 +2023,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			lista = this.impostaFiltroAzioneMappingErogazione(filtroAzione, lista,ricerca, idLista);
 			boolean allActionRedefined = false;
 			if(lista.size()>1) {
-				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioni, lista);
+				List<String> azioniL = new ArrayList<>();
+				if(azioni != null && azioni.size() > 0)
+					azioniL.addAll(azioni.keySet());
+				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, lista);
 			}
 			
 			// Utilizza la configurazione come parent
@@ -2156,7 +2160,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(sb.length() >0)
 								sb.append(", ");
 							
-							sb.append(string);
+							sb.append(azioni.get(string));
+							
+//							switch (serviceBinding) {
+//							case REST:
+//								sb.append(string);
+//								break;
+//							case SOAP:
+//							default:
+//								sb.append(string);
+//								break;
+//							}
 						}
 						de.setToolTip(sb.toString());
 					}
@@ -2798,7 +2812,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = apc.getServiceBinding();
 			ServiceBinding serviceBindingMessage = this.apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
-			List<String> azioni = this.porteApplicativeCore.getAzioni(asps, apc, false, true, new ArrayList<String>());
+			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
 			this.addFilterAzione(azioni, filtroAzione, serviceBindingMessage);
 
@@ -2812,7 +2826,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			lista = this.impostaFiltroAzioneMappingFruizione(filtroAzione, lista,ricerca, idLista);
 			boolean allActionRedefined = false;
 			if(lista.size()>1) {
-				allActionRedefined = this.allActionsRedefinedMappingFruizione(azioni, lista);
+				List<String> azioniL = new ArrayList<>();
+				if(azioni != null && azioni.size() > 0)
+					azioniL.addAll(azioni.keySet());
+				allActionRedefined = this.allActionsRedefinedMappingFruizione(azioniL, lista);
 			}
 			
 			boolean visualizzaMTOM = true;
@@ -2969,7 +2986,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(sb.length() >0)
 								sb.append(", ");
 							
-							sb.append(string);
+							sb.append(azioni.get(string));
 						}
 						de.setToolTip(sb.toString());
 					}
@@ -5766,7 +5783,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 	
 	public Vector<DataElement> addConfigurazioneErogazioneToDati(TipoOperazione tipoOperazione, Vector<DataElement> dati, String nome,
-			String[] azioni, String[] azioniDisponibiliList, 
+			String[] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
@@ -5797,6 +5814,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(this.getLabelAzioni(serviceBinding));
 		de.setValues(azioniDisponibiliList);
+		de.setLabels(azioniDisponibiliLabelList);
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONI);
@@ -6049,7 +6067,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	public Vector<DataElement> addConfigurazioneFruizioneToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String nome,
-			String [] azioni, String[] azioniDisponibiliList, String idAsps,
+			String [] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String idAsps,
 			IDSoggetto idSoggettoFruitore, String identificazione, AccordoServizioParteSpecifica asps,
 			AccordoServizioParteComune as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
 			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, List<String> saList,
@@ -6080,6 +6098,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(this.getLabelAzioni(serviceBinding));
 		de.setValues(azioniDisponibiliList);
+		de.setLabels(azioniDisponibiliLabelList);
 		de.setSelezionati(azioni); 
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONI);

@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -162,12 +163,17 @@ public final class PorteDelegateAzioneAdd extends Action {
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
-			List<String> azioni = porteDelegateCore.getAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
+			Map<String,String> azioni = porteDelegateCore.getAzioniConLabel(asps, aspc, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
+			String[] azioniDisponibiliLabelList = null;
 			if(azioni!=null && azioni.size()>0) {
 				azioniDisponibiliList = new String[azioni.size()];
-				for (int i = 0; i < azioni.size(); i++) {
-					azioniDisponibiliList[i] = "" + azioni.get(i);
+				azioniDisponibiliLabelList = new String[azioni.size()];
+				int i = 0;
+				for (String string : azioni.keySet()) {
+					azioniDisponibiliList[i] = string;
+					azioniDisponibiliLabelList[i] = azioni.get(string);
+					i++;
 				}
 			}
 
@@ -209,7 +215,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 					pd.disableEditMode();
 				}
 				else {
-					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
+					dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azioniDisponibiliLabelList, azionis, serviceBinding);
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 				}
 				pd.setDati(dati);
@@ -231,7 +237,7 @@ public final class PorteDelegateAzioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azionis, serviceBinding);
+				dati = porteDelegateHelper.addPorteAzioneToDati(TipoOperazione.ADD,dati, "", azioniDisponibiliList,azioniDisponibiliLabelList, azionis, serviceBinding);
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, idFruizione, dati);
 
 				pd.setDati(dati);

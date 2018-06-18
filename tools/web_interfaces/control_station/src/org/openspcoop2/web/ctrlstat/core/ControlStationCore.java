@@ -25,10 +25,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -100,6 +105,7 @@ import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.pdd.logger.DriverTracciamento;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -5338,6 +5344,136 @@ public class ControlStationCore {
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 		
+	}
+	
+	public Map<String,String> getMapAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws DriverConfigurazioneException{
+		String nomeMetodo = "getAzioni";
+		try {
+			// Prendo le azioni associate al servizio
+			Map<String,String> azioniMap = null;
+			List<String> azioniList = null;
+			try {
+				if(aspc!=null) {
+					org.openspcoop2.core.registry.constants.ServiceBinding sb = aspc.getServiceBinding();
+					switch (sb) {
+					case SOAP:
+						if (asps != null) {
+							
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+							
+							if(asps.getPortType()!=null){
+								// Bisogna prendere le operations del port type
+								PortType pt = null;
+								for (int i = 0; i < aspc.sizePortTypeList(); i++) {
+									if(aspc.getPortType(i).getNome().equals(asps.getPortType())){
+										pt = aspc.getPortType(i);
+										break;
+									}
+								}
+								if(pt==null){
+									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
+								}
+								if(pt.sizeAzioneList()>0){
+									azioniMap = new HashMap<String,String>();
+									azioniList = new ArrayList<String>();
+									for (int i = 0; i < pt.sizeAzioneList(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione(i).getNome())) {
+											azioniList.add(pt.getAzione(i).getNome());
+											azioniMap.put(pt.getAzione(i).getNome(),pt.getAzione(i).getNome());
+										}
+									}
+								}
+							}else{
+								if(aspc.sizeAzioneList()>0){
+									azioniMap = new HashMap<String,String>();
+									azioniList = new ArrayList<String>();
+									for (int i = 0; i < aspc.sizeAzioneList(); i++) {
+										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione(i).getNome())) {
+											azioniList.add(aspc.getAzione(i).getNome());
+											azioniMap.put(aspc.getAzione(i).getNome(),aspc.getAzione(i).getNome());
+										}
+									}
+								}
+							}				
+						}
+						break;
+
+					case REST:
+						if(aspc.sizeResourceList()>0){
+							azioniMap = new HashMap<String,String>();
+							azioniList = new ArrayList<String>();
+							for (int i = 0; i < aspc.sizeResourceList(); i++) {
+								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource(i).getNome())) {
+									azioniList.add(aspc.getResource(i).getNome());
+									azioniMap.put(aspc.getResource(i).getNome(),NamingUtils.getLabelResource(aspc.getResource(i)));
+								}
+							}
+						}
+						break;
+					}
+					
+				}
+			} catch (Exception e) {
+				if(throwException) {
+					throw e;
+				}
+			}
+			
+			Map<String,String> mapAzioniReturn = new HashMap<String,String>();
+			if(azioniList!=null && azioniList.size()>0) {
+				Collections.sort(azioniList);
+				
+				if(addTrattinoSelezioneNonEffettuata) {
+					mapAzioniReturn.put(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA,CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
+				}
+				
+				for (String key : azioniList) {
+					mapAzioniReturn.put(key, azioniMap.get(key));
+				}
+			}
+				
+			return mapAzioniReturn;
+			
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
+	public Map<String,String> getAzioniConLabel(AccordoServizioParteSpecifica asps,AccordoServizioParteComune aspc, 
+			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate) throws Exception{
+		Map<String,String> mapAzioni = getMapAzioni(asps, aspc, addTrattinoSelezioneNonEffettuata, throwException, filtraAzioniUtilizzate);
+		
+		if(addTrattinoSelezioneNonEffettuata) {
+			// elimino la entry "non selezionato" prima di ordinare per label, la riaggiungo dopo
+			mapAzioni.remove(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
+		}
+		
+		
+		//convert map to a List
+		List<Entry<String, String>> list = new LinkedList<Map.Entry<String, String>>(mapAzioni.entrySet());
+
+		//sorting the list with a comparator
+		Collections.sort(list, new Comparator<Entry<String, String>>() {
+			@Override
+			public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		//convert sortedMap back to Map
+		Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+		
+		if(addTrattinoSelezioneNonEffettuata) {
+			sortedMap.put(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA,CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA);
+		}
+		
+		for (Entry<String, String> entry : list) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		return sortedMap;
 	}
 	
 	public ServiceBinding toMessageServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {

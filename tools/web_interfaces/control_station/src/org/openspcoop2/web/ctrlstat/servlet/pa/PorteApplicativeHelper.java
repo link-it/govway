@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -1316,13 +1317,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY);
 					de.setLabel(this.getLabelAzioni(serviceBinding));
-					List<String> azioni = this.porteApplicativeCore.getAzioni(asps, aspc, false, true, new ArrayList<String>());
+					Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
 					StringBuffer bf = new StringBuffer();
-					for (String az : azioni) {
+					for (String az : azioni.keySet()) {
 						if(bf.length()>0) {
 							bf.append("\n");
 						}
-						bf.append(az);
+						bf.append(azioni.get(az));
 					}
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					if(azioni.size()<=5) {

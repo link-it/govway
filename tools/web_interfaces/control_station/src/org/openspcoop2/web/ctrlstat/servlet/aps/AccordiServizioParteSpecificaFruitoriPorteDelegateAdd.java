@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -380,12 +381,17 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
-			List<String> azioniS = porteDelegateCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
+			Map<String,String> azioniS = porteDelegateCore.getAzioniConLabel(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
+			String[] azioniDisponibiliLabelList = null;
 			if(azioniS!=null && azioniS.size()>0) {
 				azioniDisponibiliList = new String[azioniS.size()];
-				for (int i = 0; i < azioniS.size(); i++) {
-					azioniDisponibiliList[i] = azioniS.get(i);
+				azioniDisponibiliLabelList = new String[azioniS.size()];
+				int i = 0;
+				for (String string : azioniS.keySet()) {
+					azioniDisponibiliList[i] = string;
+					azioniDisponibiliLabelList[i] = azioniS.get(string);
+					i++;
 				}
 			}
 			
@@ -597,7 +603,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					
 	
 					dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
-					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+					dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 							true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 
@@ -668,7 +674,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, idSoggFruitoreDelServizio, null, null, idFruizione, dati);
 
-				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoFruitore,
+				dati = apsHelper.addConfigurazioneFruizioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoFruitore,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPD, mappingLabel, saList, nomeSA, fruizioneAutenticazione, fruizioneAutenticazioneOpzionale, 
 						true, fruizioneAutorizzazione, fruizioneAutorizzazioneAutenticati, 

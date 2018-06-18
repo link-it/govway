@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -398,12 +399,17 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			// Prendo le azioni  disponibili
 			boolean addTrattinoSelezioneNonEffettuata = false;
 			int sogliaAzioni = addTrattinoSelezioneNonEffettuata ? 1 : 0;
-			List<String> azioniS = porteApplicativeCore.getAzioni(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
+			Map<String,String> azioniS = porteApplicativeCore.getAzioniConLabel(asps, as, addTrattinoSelezioneNonEffettuata, true, azioniOccupate);
 			String[] azioniDisponibiliList = null;
+			String[] azioniDisponibiliLabelList = null;
 			if(azioniS!=null && azioniS.size()>0) {
 				azioniDisponibiliList = new String[azioniS.size()];
-				for (int i = 0; i < azioniS.size(); i++) {
-					azioniDisponibiliList[i] = azioniS.get(i);
+				azioniDisponibiliLabelList = new String[azioniS.size()];
+				int i = 0;
+				for (String string : azioniS.keySet()) {
+					azioniDisponibiliList[i] = string;
+					azioniDisponibiliLabelList[i] = azioniS.get(string);
+					i++;
 				}
 			}
 			
@@ -682,7 +688,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					
 	
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
-					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
+					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 							mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -756,7 +762,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 
-				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, idAsps, idSoggettoErogatoreDelServizio,
+				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
 						mappingPA, mappingLabel, nomeSA, saSoggetti, erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, 
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 

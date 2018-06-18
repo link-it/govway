@@ -4285,7 +4285,7 @@ public class ConsoleHelper {
 	}
 	
 	public Vector<DataElement> addPorteAzioneToDati(TipoOperazione add, Vector<DataElement> dati, String string,
-			String[] azioniDisponibiliList, String[] azioni, ServiceBinding serviceBinding) {
+			String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, String[] azioni, ServiceBinding serviceBinding) {
 		
 		String label = this.getLabelAzioni(serviceBinding);
 		
@@ -4298,6 +4298,7 @@ public class ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(label);
 		de.setValues(azioniDisponibiliList);
+		de.setLabels(azioniDisponibiliLabelList);
 		de.setSelezionati(azioni);
 		de.setType(DataElementType.MULTI_SELECT);
 		de.setName(CostantiControlStation.PARAMETRO_AZIONI);
@@ -4906,12 +4907,24 @@ public class ConsoleHelper {
 		return true;
 	}
 	
-	public void addFilterAzione(List<String> azioni, String azione, ServiceBinding serviceBinding) throws Exception{
-		String [] azioniS = azioni != null ?  azioni.toArray(new String[azioni.size()]) : new String [0];
-		this.addFilterAzione(azioniS, azione, serviceBinding);		  
+	public void addFilterAzione(Map<String,String> azioni, String azione, ServiceBinding serviceBinding) throws Exception{
+		String[] azioniDisponibiliList = new String [0];
+		String[] azioniDisponibiliLabelList = new String [0];
+		if(azioni!=null && azioni.size()>0) {
+			azioniDisponibiliList = new String[azioni.size()];
+			azioniDisponibiliLabelList = new String[azioni.size()];
+			int i = 0;
+			for (String string : azioni.keySet()) {
+				azioniDisponibiliList[i] = string;
+				azioniDisponibiliLabelList[i] = azioni.get(string);
+				i++;
+			}
+		}
+		
+		this.addFilterAzione(azioniDisponibiliList,azioniDisponibiliLabelList, azione, serviceBinding);		  
 	}
 	
-	public void addFilterAzione(String []azioni, String azione, ServiceBinding serviceBinding) throws Exception{
+	public void addFilterAzione(String []azioni, String []azioniLabels, String azione, ServiceBinding serviceBinding) throws Exception{
 		try {
 			String [] values = new String[azioni.length + 1];
 			String [] labels = new String[azioni.length + 1];
