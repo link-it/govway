@@ -199,10 +199,14 @@ public final class UtenteChange extends Action {
 					myS.setInterfaceType(interfaceType);
 					myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
 					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
-				}
-				if(changeModalita != null) {
+				} else if(changeModalita != null) {
 					myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
 					utentiCore.salvaModalitaUserPddConsole(myS.getLogin(), protocolloSelezionatoUtente);
+				} else {
+					myS.setProtocolloSelezionatoPddConsole(protocolloSelezionatoUtente);
+					myS.setInterfaceType(interfaceType);
+					myS.setPermitMultiTenant(ServletUtils.isCheckBoxEnabled(multiTenant));
+					utentiCore.performUpdateOperation(userLogin, utentiHelper.smista(), myS);
 				}
 				
 				LoginSessionUtilities.cleanLoginParametersSession(session);
