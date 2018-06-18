@@ -28,19 +28,19 @@
 			<property name="action" force="true"/>
 		</item>
 		
-		<item type="select" name="encryptionMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
+		<item type="select" name="encryptionMode" label="Tipo" default="compact" reloadOnChange="true" >
 			<values>
-				<value value="compatct" label="Compact"/>
+				<value value="compact" label="Compact"/>
 				<value value="selfContained" label="SelfContained"/>
 				<!--  <value value="detached" label="Detached"/> -->
 			</values>
 			<property name="encryptionMode" />
 		</item>
 		
-		<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm" required="true">
+		<item type="select" name="encryptionKeyAlgorithm" label="Key Algorithm">
 			<property name="rs.security.encryption.key.algorithm" properties="encryptionPropRefId" />
 		</item>
-		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm" required="true">
+		<item type="select" name="encryptionContentAlgorithm" label="Content Algorithm">
 			<property name="rs.security.encryption.content.algorithm" properties="encryptionPropRefId" />
 		</item>
 		
@@ -51,7 +51,7 @@
 
 		<subsection label="KeyStore">
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="keystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>

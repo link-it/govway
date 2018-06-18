@@ -27,9 +27,9 @@
 			<property name="action" force="true"/>
 		</item>
 		
-		<item type="select" name="signatureMode" label="Tipo" default="compatct" required="true" reloadOnChange="true" >
+		<item type="select" name="signatureMode" label="Tipo" default="compact" reloadOnChange="true" >
 			<values>
-				<value value="compatct" label="Compact"/>
+				<value value="compact" label="Compact"/>
 				<value value="selfContained" label="SelfContained"/>
 				<value value="detached" label="Detached"/>
 			</values>
@@ -47,7 +47,7 @@
                     </condition>
             </conditions>
 		
-			<item type="select" name="detachedType" label="Tipo" default="header" required="true" reloadOnChange="true" >
+			<item type="select" name="detachedType" label="Tipo" default="header" reloadOnChange="true" >
 				<values>
 					<value value="header" label="Header HTTP"/>
 					<value value="url" label="URL Query Parameter"/>
@@ -78,7 +78,7 @@
 				
 		<subsection label="TrustStore">
 
-			<item type="select" name="truststoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="truststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>

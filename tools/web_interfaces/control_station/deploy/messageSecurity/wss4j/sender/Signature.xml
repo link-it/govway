@@ -59,7 +59,7 @@
 
 		<subsection label="Key Identifier">
 
-			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference" required="true">
+			<item type="select" name="signatureKeyIdentifier" label="Tipo" default="DirectReference">
 				<values>
 					<value value="DirectReference" label="DirectReference"/>
 					<value value="IssuerSerial" label="IssuerSerial"/>
@@ -98,7 +98,7 @@
 				<property name="org.apache.ws.security.crypto.provider" force="true" properties="signaturePropRefId"/>
 			</item>
 
-			<item type="select" name="keystoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="keystoreType" label="Tipo" default="jks">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>

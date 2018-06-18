@@ -28,7 +28,16 @@
 				
 		<subsection label="Token">
 		
-			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" required="true" reloadOnChange="true">
+			<item type="select" name="tokenType" label="Tipo" default="opaque" reloadOnChange="true">
+				<values>
+					<value value="opaque" label="Opaco"/>
+					<value value="jws" label="JWS"/>
+					<value value="jwe" label="JWE"/>
+				</values>
+				<property name="policy.token.type" />
+			</item>
+		
+			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" reloadOnChange="true">
 				<values>
 					<value value="RFC6750" label="RFC 6750 - Bearer Token Usage"/>
 					<value value="RFC6750_header" label="RFC 6750 - Bearer Token Usage (Authorization Request Header Field)"/>
@@ -57,16 +66,7 @@
 				</conditions>
 			    <property name="policy.token.source.queryParameter" />
 			</item>
-		
-			<item type="select" name="tokenType" label="Tipo" default="opaque" required="true" reloadOnChange="true">
-				<values>
-					<value value="opaque" label="Opaco"/>
-					<value value="jws" label="JWS"/>
-					<value value="jwe" label="JWE"/>
-				</values>
-				<property name="policy.token.type" />
-			</item>
-			
+					
 		</subsection>
 		
 		<subsection label="Elaborazione Token">
@@ -155,7 +155,7 @@
 			</condition>
 		</conditions>
 		
-		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" required="true" reloadOnChange="true">
+		<item type="select" name="validazioneJWTParserType" label="Claims Parser" default="OIDC_ID_TOKEN" reloadOnChange="true">
 			<values>
 				<value value="JSON_WEB_TOKEN_RFC_7519" label="RFC 7519 - JSON Web Token "/>
 				<!-- <value value="INTROSPECTION_RESPONSE_RFC_7662" label="RFC 7662 - Introspection"/> -->
@@ -183,7 +183,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="validazioneJwtTruststoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -238,7 +238,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="validazioneJwtKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -278,7 +278,7 @@
 			</condition>
 		</conditions>
 
-		<item type="select" name="introspectionType" label="Tipo" default="INTROSPECTION_RFC_7662" required="true" reloadOnChange="true">
+		<item type="select" name="introspectionType" label="Tipo" default="INTROSPECTION_RFC_7662" reloadOnChange="true">
 			<values>
 				<value value="INTROSPECTION_RFC_7662" label="RFC 7662 - Introspection"/>
 				<value value="GOOGLE" label="Google - TokenInfo"/>
@@ -320,7 +320,7 @@
 			</conditions>
 			<property name="policy.introspection.httpMethod" />
 		</item>
-		<item type="select" name="introspectionHttpMethod" label="Http Method" required="true">
+		<item type="select" name="introspectionHttpMethod" label="Http Method">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -361,7 +361,7 @@
 			</conditions>
 			<property name="policy.introspection.requestTokenPosition.queryParameter" />
 		</item>
-		<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="url" required="true">
+		<item type="select" name="introspectionRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -435,7 +435,7 @@
 			</conditions>
 			<property name="policy.introspection.claimsParser" />
 		</item>
-		<item type="select" name="introspectionParserType" label="Claims Parser" default="CUSTOM" required="true" reloadOnChange="true">
+		<item type="select" name="introspectionParserType" label="Claims Parser" default="CUSTOM" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="introspectionType" value="CUSTOM"/>
@@ -534,7 +534,7 @@
 		</conditions>
 	
 	
-		<item type="select" name="userInfoType" label="Tipo" default="OIDC_USER_INFO" required="true" reloadOnChange="true">
+		<item type="select" name="userInfoType" label="Tipo" default="OIDC_USER_INFO" reloadOnChange="true">
 			<values>
 				<value value="OIDC_USER_INFO" label="OpenID Connect - UserInfo"/>
 				<value value="GOOGLE" label="Google - UserInfo"/>
@@ -576,7 +576,7 @@
 			</conditions>
 			<property name="policy.userInfo.httpMethod" />
 		</item>
-		<item type="select" name="userInfoHttpMethod" label="Http Method" required="true">
+		<item type="select" name="userInfoHttpMethod" label="Http Method">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>
@@ -609,7 +609,7 @@
 			</conditions>
 			<property name="policy.userInfo.requestTokenPosition.queryParameter" />
 		</item>
-		<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="url" required="true">
+		<item type="select" name="userInfoRequestPositionToken" label="Posizione Token" default="url" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>
@@ -683,7 +683,7 @@
 			</conditions>
 			<property name="policy.userInfo.claimsParser" />
 		</item>
-		<item type="select" name="userInfoParserType" label="Claims Parser" default="CUSTOM" required="true" reloadOnChange="true">
+		<item type="select" name="userInfoParserType" label="Claims Parser" default="CUSTOM" reloadOnChange="true">
 			<conditions>
 				<condition and="true">
 					<equals name="userInfoType" value="CUSTOM"/>
@@ -781,7 +781,7 @@
 			</condition>	
 		</conditions>
 	
-		<item type="select" name="endpointHttpsTipologia" label="Tipologia" required="true">
+		<item type="select" name="endpointHttpsTipologia" label="Tipologia">
 			<property name="sslType" properties="sslConfig" />
 		</item>
 		<item type="checkbox" name="endpointHttpsHostNameVerifier" label="Hostname Verifier" defaultSelected="true" >
@@ -791,7 +791,7 @@
 	
 		<subsection label="Autenticazione Server">
 	
-			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="endpointHttpsTruststoreType" label="Tipo" default="jks">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -820,14 +820,14 @@
 				</condition>
 			</conditions>
 			
-			<item type="select" name="endpointHttpsClientMode" label="Dati Accesso al KeyStore" default="default" required="true" reloadOnChange="true">
+			<item type="select" name="endpointHttpsClientMode" label="Dati Accesso al KeyStore" default="default" reloadOnChange="true">
 				<values>
 					<value value="default" label="Usa valore del TrustStore"/>
 					<value value="ridefinito" label="Ridefinisci"/>
 				</values>
 				<property name="policy.endpoint.ssl.mode" />
 			</item>
-			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks" required="true">
+			<item type="select" name="endpointHttpsClientKeystoreType" label="Tipo" default="jks">
 				<conditions>
 					<condition and="true">
 						<equals name="endpointHttpsClientMode" value="ridefinito"/>
@@ -964,7 +964,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="asReceived" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardTrasparenteMode" label="Modalità" default="asReceived" reloadOnChange="true">
 				<conditions>
 					<condition not="true" and="true">
 						<equals name="tokenSource" value="RFC6750_form" />
@@ -1008,7 +1008,7 @@
 				</condition>
 			</conditions>
 	
-			<item type="select" name="tokenForwardInfoRaccolteMode" label="Modalità" default="op2header" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteMode" label="Modalità" default="op2header" reloadOnChange="true">
 				<values>
 					<value value="op2header" label="OpenSPCoop Headers"/>
 					<value value="op2json" label="OpenSPCoop JSON"/>
@@ -1030,7 +1030,7 @@
 				<property name="policy.tokenForward.infoRaccolte.base64" />
 			</item>
 
-			<item type="select" name="tokenForwardInfoRaccolteModeJWSSignature" label="Signature Algorithm" required="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSSignature" label="Signature Algorithm" >
 				<conditions and="true">
 					<condition and="false">
 						<equals name="tokenForwardInfoRaccolteMode" value="op2jws"/>
@@ -1040,7 +1040,7 @@
 				<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 			</item>
 			
-			<item type="select" name="tokenForwardInfoRaccolteModeJWEKeyAlgorithm" label="Key Algorithm" required="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEKeyAlgorithm" label="Key Algorithm" >
 				<conditions and="true">
 					<condition and="true">
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
@@ -1048,7 +1048,7 @@
 				</conditions>
 				<property name="rs.security.encryption.key.algorithm" properties="encryptionPropRefId" />
 			</item>
-			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentAlgorithm" label="Content Algorithm" required="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentAlgorithm" label="Content Algorithm" >
 				<conditions and="true">
 					<condition and="true">
 						<equals name="tokenForwardInfoRaccolteMode" value="jwe"/>
@@ -1205,7 +1205,7 @@
 				</condition>
 			</conditions>
 			
-			<item type="select" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeValidazioneJWT_tipoConsegna" label="Consegna" default="CUSTOM_header" reloadOnChange="true">
 				<conditions and="false">
 					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeValidazioneJWT" />
@@ -1245,7 +1245,7 @@
 				</condition>
 			</conditions>
 			
-			<item type="select" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeIntrospection_tipoConsegna" label="Consegna" default="CUSTOM_header" reloadOnChange="true">
 				<conditions and="false">
 					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeIntrospection" />
@@ -1285,7 +1285,7 @@
 				</condition>
 			</conditions>
 			
-			<item type="select" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" label="Consegna" default="CUSTOM_header" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeUserInfo_tipoConsegna" label="Consegna" default="CUSTOM_header" reloadOnChange="true">
 				<conditions and="false">
 					<condition and="true">
 						<selected name="tokenForwardInfoRaccolteModeUserInfo" />
@@ -1327,7 +1327,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWSKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
@@ -1364,7 +1364,7 @@
 				</condition>
 			</conditions>
 
-			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" label="Tipo" default="jks" required="true" reloadOnChange="true">
+			<item type="select" name="tokenForwardInfoRaccolteModeJWEContentKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
 				<values>
 					<value value="jks" label="JKS"/>
 					<value value="pkcs12" label="PKCS12"/>
