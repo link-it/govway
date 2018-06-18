@@ -126,12 +126,11 @@ public class CostantiConfigurazione {
     public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_INTERNAL_ROLES = "authenticatedOrInternalRoles";
     public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_EXTERNAL_ROLES = "authenticatedOrExternalRoles";
     
-    public final static String AUTORIZZAZIONE_SCOPES = "scopes";
-    
-    
     public final static String AUTORIZZAZIONE_XACML_POLICY = "xacmlPolicy";
     public final static String AUTORIZZAZIONE_INTERNAL_XACML_POLICY = "internalXacmlPolicy";
     public final static String AUTORIZZAZIONE_EXTERNAL_XACML_POLICY = "externalXacmlPolicy";
+
+    public final static String AUTORIZZAZIONE_TOKEN = "token";
     
     /** tipo di configurazione: xml */
     public final static String CONFIGURAZIONE_XML = "xml";
@@ -276,4 +275,23 @@ public class CostantiConfigurazione {
 	public final static String LOCAL_NAME_PORTA_APPLICATIVA = "porta-applicativa";
 	public final static String LOCAL_NAME_SERVIZIO_APPLICATIVO = "servizio-applicativo";
 	public final static String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/config";
+	
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE = "PROTOCOLLO";
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX = "http://localhost:8080/openspcoop2/"+DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE;
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PD/";
+	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(String context) {
+		String c = "";
+		if(!"".equals(context)) {
+			c = context +"/";
+		}
+		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+	}
+	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PA/";
+	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(String context) {
+		String c = "";
+		if(!"".equals(context)) {
+			c = context +"/";
+		}
+		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+	}
 }

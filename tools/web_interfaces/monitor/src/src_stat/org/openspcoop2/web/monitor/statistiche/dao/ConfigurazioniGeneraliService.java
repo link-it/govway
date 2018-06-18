@@ -1,14 +1,30 @@
 package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.PortaApplicativa;
+import org.openspcoop2.core.commons.search.PortaDelegata;
+import org.openspcoop2.core.commons.search.constants.TipoPdD;
+import org.openspcoop2.core.commons.search.dao.IDBPortaApplicativaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IDBPortaDelegataServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
+import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
+import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
+import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
 import org.openspcoop2.core.config.ConfigurazioneProtocolli;
 import org.openspcoop2.core.config.ConfigurazioneProtocollo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -40,29 +56,14 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
-import org.openspcoop2.core.commons.search.PortaApplicativa;
-import org.openspcoop2.core.commons.search.PortaDelegata;
-import org.openspcoop2.core.commons.search.constants.TipoPdD;
-import org.openspcoop2.core.commons.search.dao.IDBPortaApplicativaServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IDBPortaDelegataServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IPortaApplicativaServiceSearch;
-import org.openspcoop2.core.commons.search.dao.IPortaDelegataServiceSearch;
-import org.openspcoop2.core.commons.search.model.PortaApplicativaModel;
-import org.openspcoop2.core.commons.search.model.PortaDelegataModel;
+import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
-import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
 import org.openspcoop2.web.monitor.core.dao.IDynamicUtilsService;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGeneralePK;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
@@ -70,6 +71,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
+import org.slf4j.Logger;
 
 public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliService {
 
@@ -108,14 +110,47 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			this.driverConfigDB = new DriverConfigurazioneDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
 			this.driverRegistroDB = new DriverRegistroServiziDB(datasourceJNDIName,datasourceJNDIContext, ConfigurazioniGeneraliService.log, tipoDatabase);
 
-			ConfigurazioneProtocolli proto = this.driverConfigDB.getConfigurazioneGenerale().getProtocolli();
-			if(proto!=null && proto.sizeProtocolloList()>0) {
-				this.endpointApplicativoPD = new Hashtable<>();
-				this.endpointApplicativoPA = new Hashtable<>();
-			}
-			for (ConfigurazioneProtocollo configProtocollo : proto.getProtocolloList()) {
-				this.endpointApplicativoPD.put(configProtocollo.getNome(), configProtocollo.getUrlInvocazioneServizioPD());
-				this.endpointApplicativoPA.put(configProtocollo.getNome(), configProtocollo.getUrlInvocazioneServizioPA());
+			ConfigurazioneProtocolli configProtocolli = this.driverConfigDB.getConfigurazioneGenerale().getProtocolli();
+			this.endpointApplicativoPD = new Hashtable<>();
+			this.endpointApplicativoPA = new Hashtable<>();
+			
+			ProtocolFactoryManager pManager = ProtocolFactoryManager.getInstance();
+			MapReader<String, IProtocolFactory<?>> mapPFactory = pManager.getProtocolFactories();
+			Enumeration<String> protocolName = mapPFactory.keys();
+			while (protocolName.hasMoreElements()) {
+				String protocollo = (String) protocolName.nextElement();
+				IProtocolFactory<?> pFactory = mapPFactory.get(protocollo);
+				String context = "";
+				if(pFactory.getManifest().getWeb().sizeContextList()>0) {
+					context = pFactory.getManifest().getWeb().getContext(0).getName();
+				}
+				
+				ConfigurazioneProtocollo configProtocollo = null;
+				if(configProtocolli!=null) {
+					for (ConfigurazioneProtocollo check : configProtocolli.getProtocolloList()) {
+						if(check.getNome().equals(protocollo)) {
+							configProtocollo = check;
+							break;
+						}
+					}
+				}
+				
+				String urlInvocazionePD = null;
+				String urlInvocazionePA = null;
+				if(configProtocollo!=null) {
+					urlInvocazionePD = configProtocollo.getUrlInvocazioneServizioPD();
+				}
+				if(configProtocollo!=null) {
+					urlInvocazionePA = configProtocollo.getUrlInvocazioneServizioPA();
+				}
+				if(urlInvocazionePD==null) {
+					urlInvocazionePD = CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context);
+				}
+				if(urlInvocazionePA==null) {
+					urlInvocazionePA = CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context);
+				}
+				this.endpointApplicativoPD.put(protocollo, urlInvocazionePD);
+				this.endpointApplicativoPA.put(protocollo, urlInvocazionePA);
 			}
 
 		}catch(Exception e){
