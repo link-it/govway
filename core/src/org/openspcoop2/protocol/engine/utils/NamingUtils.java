@@ -217,4 +217,11 @@ public class NamingUtils {
 		return bf.toString();
 	}
 	
+	public static String getLabelResource(org.openspcoop2.core.registry.Resource resource) throws Exception{
+		return resource.getMethod().getValue() + " " + resource.getPath();
+	}
+	
+	public static String getLabelResource(String httpmethod, String path) throws Exception{
+		return httpmethod + " " + path;
+	}
 }
