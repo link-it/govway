@@ -123,7 +123,7 @@ public class SecurityConstants {
     
     public static final String MODE_SELF_CONTAINED = "selfContained";
     public static final String MODE_DETACHED = "detached";
-    public static final String MODE_COMPACT = "compatct";
+    public static final String MODE_COMPACT = "compact";
     
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE = "#MultiPropUsePddFruitoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_EROGATORE = "#MultiPropUsePddErogatoreAsAlias#";

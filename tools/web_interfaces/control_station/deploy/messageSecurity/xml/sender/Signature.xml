@@ -28,47 +28,13 @@
 			<property name="action" force="true"/>
 		</item>
 		
-			<item type="select" name="signatureAlgorithm" label="Signature Algorithm" default="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256">
-				<values>
-					<value value="http://www.w3.org/2000/09/xmldsig#dsa-sha1" label="DSA-SHA1"/>
-					<value value="http://www.w3.org/2009/xmldsig11#dsa-sha256" label="DSA-SHA256"/>
-					<value value="http://www.w3.org/2000/09/xmldsig#rsa-sha1" label="RSA-SHA1"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha224" label="RSA-SHA224"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" label="RSA-SHA256"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha384" label="RSA-SHA384"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512" label="RSA-SH512"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1" label="ECDSA-SHA1"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha224" label="ECDSA-SHA224"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256" label="ECDSA-SHA256"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384" label="ECDSA-SHA384"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512" label="ECDSA-SHA1512"/>
-					<value value="http://www.w3.org/2000/09/xmldsig#hmac-sha1" label="HMAC-SHA1"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#hmac-sha224" label="HMAC-SHA224"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#hmac-sha256" label="HMAC-SHA256"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#hmac-sha384" label="HMAC-SHA384"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#hmac-sha512" label="HMAC-SHA512"/>
-				</values>
+			<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
 				<property name="signatureAlgorithm" />
 			</item>
-			<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm" default="http://www.w3.org/2001/04/xmlenc#sha256">
-				<values>
-					<value value="http://www.w3.org/2000/09/xmldsig#sha1" label="SHA1"/>
-					<value value="http://www.w3.org/2001/04/xmldsig-more#sha224" label="SHA224"/>
-					<value value="http://www.w3.org/2001/04/xmlenc#sha256" label="SHA256"/>
-					<value value="http://www.w3.org/2000/09/xmldsig#sha384" label="SHA384"/>
-					<value value="http://www.w3.org/2001/04/xmlenc#sha512" label="SHA512"/>
-				</values>
+			<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
 				<property name="signatureDigestAlgorithm" />
 			</item>
-			<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm" default="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments">
-				<values>
-					<value value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" label="Canonical XML 1.0 (omits comments)"/>
-					<value value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments" label="Canonical XML 1.0 (with comments))"/>
-					<value value="http://www.w3.org/2006/12/xml-c14n11" label="Canonical XML 1.1 (omits comments)"/>
-					<value value="http://www.w3.org/2006/12/xml-c14n11#WithComments" label="Canonical XML 1.1 (with comments))"/>
-					<value value="http://www.w3.org/2001/10/xml-exc-c14n#" label="Exclusive XML Canonicalization 1.0 (omits comments)"/>
-					<value value="http://www.w3.org/2001/10/xml-exc-c14n#WithComments" label="Exclusive XML Canonicalization 1.0 (with comments)"/>
-				</values>
+			<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
 				<property name="signatureC14nAlgorithm" />
 			</item>
 			
