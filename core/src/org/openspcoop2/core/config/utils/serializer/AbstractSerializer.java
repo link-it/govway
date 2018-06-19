@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.Proprieta;
@@ -1729,6 +1730,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(GestioneErroreSoapFault gestioneErroreSoapFault,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(GestioneErroreSoapFault.class, gestioneErroreSoapFault, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: gestione-token-autenticazione
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GestioneTokenAutenticazione gestioneTokenAutenticazione) throws SerializerException {
+		this.objToXml(fileName, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,GestioneTokenAutenticazione gestioneTokenAutenticazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GestioneTokenAutenticazione gestioneTokenAutenticazione) throws SerializerException {
+		this.objToXml(file, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param file Xml file to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,GestioneTokenAutenticazione gestioneTokenAutenticazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GestioneTokenAutenticazione gestioneTokenAutenticazione) throws SerializerException {
+		this.objToXml(out, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param out OutputStream to serialize the object <var>gestioneTokenAutenticazione</var>
+	 * @param gestioneTokenAutenticazione Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,GestioneTokenAutenticazione gestioneTokenAutenticazione,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param gestioneTokenAutenticazione Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GestioneTokenAutenticazione gestioneTokenAutenticazione) throws SerializerException {
+		return this.objToXml(GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param gestioneTokenAutenticazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(GestioneTokenAutenticazione gestioneTokenAutenticazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param gestioneTokenAutenticazione Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GestioneTokenAutenticazione gestioneTokenAutenticazione) throws SerializerException {
+		return this.objToXml(GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>gestioneTokenAutenticazione</var> of type {@link org.openspcoop2.core.config.GestioneTokenAutenticazione}
+	 * 
+	 * @param gestioneTokenAutenticazione Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(GestioneTokenAutenticazione gestioneTokenAutenticazione,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(GestioneTokenAutenticazione.class, gestioneTokenAutenticazione, prettyPrint).toString();
 	}
 	
 	

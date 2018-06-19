@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Vector;
 
 import javax.mail.BodyPart;
@@ -3102,18 +3103,10 @@ public class ConsoleHelper {
 	
 	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
-			String gestioneToken) {
+			String gestioneToken,String gestioneTokenPolicy,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail){
 		
-//	
-//			String gestioneToken,String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail){
-//		
-		String autenticazioneTokenIssuer = null;
-		String autenticazioneTokenClientId = null;
-		String autenticazioneTokenSubject = null;
-		String autenticazioneTokenUsername = null;
-		String autenticazioneTokenEMail = null;
-		
-		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken);
+		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
+				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutenticazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutenticazione_generazioneAutomaticaPorteApplicative());
@@ -3240,7 +3233,7 @@ public class ConsoleHelper {
 	}
 	
 	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto,boolean isPortaDelegata) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto,boolean isPortaDelegata) throws Exception {
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledToken_generazioneAutomaticaPorteDelegate() : this.core.isEnabledToken_generazioneAutomaticaPorteApplicative());
@@ -3282,7 +3275,6 @@ public class ConsoleHelper {
 					GenericProperties policySelezionata = this.confCore.getGenericProperties(gestioneTokenPolicy, CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_GESTIONE_POLICY_TOKEN);
 					Map<String, Properties> mappaDB = this.confCore.readGestorePolicyTokenPropertiesConfiguration(policySelezionata.getId()); 
 					
-					String gestioneTokenOpzionale = "";
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN_OPZIONALE);
@@ -3369,13 +3361,13 @@ public class ConsoleHelper {
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
 			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
-			String gestioneToken) throws Exception{
+			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
 				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,visualizzaSezioneScope,
-				gestioneToken);
+				gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
 		
 	}
 	
@@ -3385,12 +3377,13 @@ public class ConsoleHelper {
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
 			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
-			String gestioneToken) throws Exception{
+			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteDelegate() : this.core.isEnabledAutorizzazione_generazioneAutomaticaPorteApplicative());
 		
-		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken);
+		boolean tokenAbilitato = StatoFunzionalita.ABILITATO.getValue().equalsIgnoreCase(gestioneToken) &&
+				gestioneTokenPolicy != null && !gestioneTokenPolicy.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
 		
 		if(mostraSezione) {
 			DataElement de = new DataElement();
@@ -3721,13 +3714,11 @@ public class ConsoleHelper {
 					
 				}
 				
-				if(tokenAbilitato) {
+				if(tokenAbilitato && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
 					de = new DataElement();
 					de.setType(DataElementType.SUBTITLE);
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN_SUBTITLE);
 					dati.addElement(de);
-					
-					String autorizzazione_tokenOptions = "";
 					
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_TOKEN);
@@ -3776,7 +3767,10 @@ public class ConsoleHelper {
 			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli,  
 			String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean isSupportatoAutenticazione, boolean isPortaDelegata, Object oggetto,
-			List<String> ruoli,String gestioneToken, String policy, String validazioneInput, String introspection, String userInfo, String forward,String autorizzazioneScope, String autorizzazioneScopeMatch) throws Exception{
+			List<String> ruoli,String gestioneToken, 
+			String policy, String validazioneInput, String introspection, String userInfo, String forward,
+			String autorizzazione_tokenOptions,
+			String autorizzazioneScope, String autorizzazioneScopeMatch) throws Exception{
 		try {
 			
 			// check token
@@ -3817,8 +3811,10 @@ public class ConsoleHelper {
 				// autorizzazione abilitata
 				
 				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false && 
-						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false){
-					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE_TRA_XX_E_YY,
+						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false && 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneScope)==false &&
+						(autorizzazione_tokenOptions==null || "".equals(autorizzazione_tokenOptions))){
+					this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRORE_SELEZIONARE_ALMENO_UNA_MODALITÀ_DI_AUTORIZZAZIONE,
 							labelAutenticati, CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI));
 					return false;
 				}
@@ -3855,6 +3851,23 @@ public class ConsoleHelper {
 					}
 				}
 				
+				if(autorizzazione_tokenOptions!=null) {
+					Scanner scanner = new Scanner(autorizzazione_tokenOptions);
+					try {
+						while (scanner.hasNextLine()) {
+							String line = scanner.nextLine();
+							if(line==null || line.trim().equals("")) {
+								continue;
+							}
+							if(line.contains("=")==false) {
+								this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_AUTORIZZAZIONE_TOKEN);
+								return false;
+							}
+						}
+					}finally {
+						scanner.close();
+					}
+				}
 			}
 			
 			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) ||

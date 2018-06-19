@@ -22,6 +22,7 @@ package org.openspcoop2.core.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -36,7 +37,11 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="gestione-token">
+ * 		&lt;sequence>
+ * 			&lt;element name="autenticazione" type="{http://www.openspcoop2.org/core/config}gestione-token-autenticazione" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
  * 		&lt;attribute name="policy" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="token-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="validazione" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="introspection" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="userInfo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" use="optional" default="disabilitato"/>
@@ -52,7 +57,11 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "gestione-token")
+@XmlType(name = "gestione-token", 
+  propOrder = {
+  	"autenticazione"
+  }
+)
 
 @XmlRootElement(name = "gestione-token")
 
@@ -74,12 +83,40 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 		this.id=Long.valueOf(-1);
   }
 
+  public GestioneTokenAutenticazione getAutenticazione() {
+    return this.autenticazione;
+  }
+
+  public void setAutenticazione(GestioneTokenAutenticazione autenticazione) {
+    this.autenticazione = autenticazione;
+  }
+
   public java.lang.String getPolicy() {
     return this.policy;
   }
 
   public void setPolicy(java.lang.String policy) {
     this.policy = policy;
+  }
+
+  public void set_value_tokenOpzionale(String value) {
+    this.tokenOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_tokenOpzionale() {
+    if(this.tokenOpzionale == null){
+    	return null;
+    }else{
+    	return this.tokenOpzionale.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getTokenOpzionale() {
+    return this.tokenOpzionale;
+  }
+
+  public void setTokenOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita tokenOpzionale) {
+    this.tokenOpzionale = tokenOpzionale;
   }
 
   public void set_value_validazione(String value) {
@@ -177,9 +214,18 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 
 
 
+  @XmlElement(name="autenticazione",required=false,nillable=false)
+  protected GestioneTokenAutenticazione autenticazione;
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="policy",required=true)
   protected java.lang.String policy;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_tokenOpzionale;
+
+  @XmlAttribute(name="token-opzionale",required=false)
+  protected StatoFunzionalita tokenOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_validazione;

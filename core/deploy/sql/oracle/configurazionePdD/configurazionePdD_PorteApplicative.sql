@@ -65,11 +65,17 @@ CREATE TABLE porte_applicative
 	autenticazione_opzionale VARCHAR2(255),
 	-- Gestione Token
 	token_policy VARCHAR2(255),
+	token_opzionale VARCHAR2(255),
 	token_validazione VARCHAR2(255),
 	token_introspection VARCHAR2(255),
 	token_user_info VARCHAR2(255),
 	token_forward VARCHAR2(255),
-	token_options VARCHAR2(255),
+	token_options VARCHAR2(4000),
+	token_authn_issuer VARCHAR2(255),
+	token_authn_client_id VARCHAR2(255),
+	token_authn_subject VARCHAR2(255),
+	token_authn_username VARCHAR2(255),
+	token_authn_email VARCHAR2(255),
 	-- Autorizzazione
 	autorizzazione VARCHAR2(255),
 	autorizzazione_contenuto VARCHAR2(255),

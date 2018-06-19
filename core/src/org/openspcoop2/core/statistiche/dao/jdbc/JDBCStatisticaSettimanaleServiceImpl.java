@@ -80,6 +80,12 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.VERSIONE_SERVIZIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.AZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
@@ -105,6 +111,12 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getVersioneServizio(),StatisticaSettimanale.model().STATISTICA_BASE.VERSIONE_SERVIZIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getAzione(),StatisticaSettimanale.model().STATISTICA_BASE.AZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getServizioApplicativo(),StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTrasportoMittente(),StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTokenIssuer(),StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTokenClientId(),StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTokenSubject(),StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTokenUsername(),StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getTokenMail(),StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getEsito(),StatisticaSettimanale.model().STATISTICA_BASE.ESITO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getEsitoContesto(),StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaSettimanale.getStatisticaBase().getNumeroTransazioni(),StatisticaSettimanale.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
@@ -250,6 +262,18 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getAzione(), StatisticaSettimanale.model().STATISTICA_BASE.AZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO,false), "?");
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getServizioApplicativo(), StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTrasportoMittente(), StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTokenIssuer(), StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTokenClientId(), StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTokenSubject(), StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTokenUsername(), StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL,false), "?");
+		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getTokenMail(), StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO,false), "?");
 		lstObjects.add(new JDBCObject(statisticaSettimanale_statisticaBase.getEsito(), StatisticaSettimanale.model().STATISTICA_BASE.ESITO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaSettimanaleFieldConverter().toColumn(StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO,false), "?");

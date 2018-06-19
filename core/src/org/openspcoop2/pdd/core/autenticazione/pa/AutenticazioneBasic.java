@@ -66,6 +66,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 			esito.setClientIdentified(false);
 			return esito;
 		}
+		esito.setCredential(user);
 		
 		IDSoggetto idSoggetto = null;
 		try{

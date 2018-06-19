@@ -52,6 +52,12 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.VERSIONE_SERVIZIO = new Field("versione-servizio",int.class,"statistica",Statistica.class);
 		this.AZIONE = new Field("azione",java.lang.String.class,"statistica",Statistica.class);
 		this.SERVIZIO_APPLICATIVO = new Field("servizio-applicativo",java.lang.String.class,"statistica",Statistica.class);
+		this.TRASPORTO_MITTENTE = new Field("trasporto-mittente",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_ISSUER = new Field("token-issuer",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_CLIENT_ID = new Field("token-client-id",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_SUBJECT = new Field("token-subject",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_USERNAME = new Field("token-username",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_MAIL = new Field("token-mail",java.lang.String.class,"statistica",Statistica.class);
 		this.ESITO = new Field("esito",java.lang.Integer.class,"statistica",Statistica.class);
 		this.ESITO_CONTESTO = new Field("esito-contesto",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new Field("numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
@@ -80,6 +86,12 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione-servizio",int.class,"statistica",Statistica.class);
 		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"statistica",Statistica.class);
 		this.SERVIZIO_APPLICATIVO = new ComplexField(father,"servizio-applicativo",java.lang.String.class,"statistica",Statistica.class);
+		this.TRASPORTO_MITTENTE = new ComplexField(father,"trasporto-mittente",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_ISSUER = new ComplexField(father,"token-issuer",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_CLIENT_ID = new ComplexField(father,"token-client-id",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_SUBJECT = new ComplexField(father,"token-subject",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_USERNAME = new ComplexField(father,"token-username",java.lang.String.class,"statistica",Statistica.class);
+		this.TOKEN_MAIL = new ComplexField(father,"token-mail",java.lang.String.class,"statistica",Statistica.class);
 		this.ESITO = new ComplexField(father,"esito",java.lang.Integer.class,"statistica",Statistica.class);
 		this.ESITO_CONTESTO = new ComplexField(father,"esito-contesto",java.lang.String.class,"statistica",Statistica.class);
 		this.NUMERO_TRANSAZIONI = new ComplexField(father,"numero-transazioni",java.lang.Integer.class,"statistica",Statistica.class);
@@ -117,6 +129,18 @@ public class StatisticaModel extends AbstractModel<Statistica> {
 	public IField AZIONE = null;
 	 
 	public IField SERVIZIO_APPLICATIVO = null;
+	 
+	public IField TRASPORTO_MITTENTE = null;
+	 
+	public IField TOKEN_ISSUER = null;
+	 
+	public IField TOKEN_CLIENT_ID = null;
+	 
+	public IField TOKEN_SUBJECT = null;
+	 
+	public IField TOKEN_USERNAME = null;
+	 
+	public IField TOKEN_MAIL = null;
 	 
 	public IField ESITO = null;
 	 

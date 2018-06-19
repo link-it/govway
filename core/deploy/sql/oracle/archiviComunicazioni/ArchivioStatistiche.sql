@@ -31,6 +31,12 @@ CREATE TABLE statistiche_orarie
 	azione VARCHAR2(255) NOT NULL,
 	-- Informazioni di integrazione
 	servizio_applicativo VARCHAR2(255) NOT NULL,
+	trasporto_mittente VARCHAR2(20) NOT NULL,
+	token_issuer VARCHAR2(20) NOT NULL,
+	token_client_id VARCHAR2(20) NOT NULL,
+	token_subject VARCHAR2(20) NOT NULL,
+	token_username VARCHAR2(20) NOT NULL,
+	token_mail VARCHAR2(20) NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER NOT NULL,
 	esito_contesto VARCHAR2(20) NOT NULL,
@@ -52,8 +58,8 @@ CREATE TABLE statistiche_orarie
 
 -- index
 CREATE INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo);
--- CREATE INDEX INDEX_STAT_HOUR ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+-- CREATE INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail);
+-- CREATE INDEX INDEX_STAT_HOUR ON statistiche_orarie (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_statistiche_orarie
 BEFORE
 insert on statistiche_orarie
@@ -150,6 +156,12 @@ CREATE TABLE statistiche_giornaliere
 	azione VARCHAR2(255) NOT NULL,
 	-- Informazioni di integrazione
 	servizio_applicativo VARCHAR2(255) NOT NULL,
+	trasporto_mittente VARCHAR2(20) NOT NULL,
+	token_issuer VARCHAR2(20) NOT NULL,
+	token_client_id VARCHAR2(20) NOT NULL,
+	token_subject VARCHAR2(20) NOT NULL,
+	token_username VARCHAR2(20) NOT NULL,
+	token_mail VARCHAR2(20) NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER NOT NULL,
 	esito_contesto VARCHAR2(20) NOT NULL,
@@ -171,8 +183,8 @@ CREATE TABLE statistiche_giornaliere
 
 -- index
 CREATE INDEX INDEX_STAT_DAY_ENTRY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo);
--- CREATE INDEX INDEX_STAT_DAY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+-- CREATE INDEX INDEX_STAT_DAY_FULL ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail);
+-- CREATE INDEX INDEX_STAT_DAY ON statistiche_giornaliere (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_statistiche_giornaliere
 BEFORE
 insert on statistiche_giornaliere
@@ -269,6 +281,12 @@ CREATE TABLE statistiche_settimanali
 	azione VARCHAR2(255) NOT NULL,
 	-- Informazioni di integrazione
 	servizio_applicativo VARCHAR2(255) NOT NULL,
+	trasporto_mittente VARCHAR2(20) NOT NULL,
+	token_issuer VARCHAR2(20) NOT NULL,
+	token_client_id VARCHAR2(20) NOT NULL,
+	token_subject VARCHAR2(20) NOT NULL,
+	token_username VARCHAR2(20) NOT NULL,
+	token_mail VARCHAR2(20) NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER NOT NULL,
 	esito_contesto VARCHAR2(20) NOT NULL,
@@ -290,8 +308,8 @@ CREATE TABLE statistiche_settimanali
 
 -- index
 CREATE INDEX INDEX_STAT_WEEK_ENTRY ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo);
--- CREATE INDEX INDEX_STAT_WEEK ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+-- CREATE INDEX INDEX_STAT_WEEK_FULL ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail);
+-- CREATE INDEX INDEX_STAT_WEEK ON statistiche_settimanali (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_statistiche_settimanali
 BEFORE
 insert on statistiche_settimanali
@@ -388,6 +406,12 @@ CREATE TABLE statistiche_mensili
 	azione VARCHAR2(255) NOT NULL,
 	-- Informazioni di integrazione
 	servizio_applicativo VARCHAR2(255) NOT NULL,
+	trasporto_mittente VARCHAR2(20) NOT NULL,
+	token_issuer VARCHAR2(20) NOT NULL,
+	token_client_id VARCHAR2(20) NOT NULL,
+	token_subject VARCHAR2(20) NOT NULL,
+	token_username VARCHAR2(20) NOT NULL,
+	token_mail VARCHAR2(20) NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER NOT NULL,
 	esito_contesto VARCHAR2(20) NOT NULL,
@@ -409,8 +433,8 @@ CREATE TABLE statistiche_mensili
 
 -- index
 CREATE INDEX INDEX_STAT_MONTH_ENTRY ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio);
--- CREATE INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo);
--- CREATE INDEX INDEX_STAT_MONTH ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
+-- CREATE INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail);
+-- CREATE INDEX INDEX_STAT_MONTH ON statistiche_mensili (data DESC,esito,esito_contesto,id_porta,tipo_porta,tipo_destinatario,destinatario,tipo_servizio,servizio,versione_servizio,azione,tipo_mittente,mittente,servizio_applicativo,trasporto_mittente,token_issuer,token_client_id,token_subject,token_username,token_mail,richieste,bytes_banda_complessiva,bytes_banda_interna,bytes_banda_esterna,latenza_totale,latenza_porta,latenza_servizio);
 CREATE TRIGGER trg_statistiche_mensili
 BEFORE
 insert on statistiche_mensili

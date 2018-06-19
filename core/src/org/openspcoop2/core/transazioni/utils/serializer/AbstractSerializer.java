@@ -26,7 +26,9 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
@@ -480,6 +482,124 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
+	 Object: id-credenziale-mittente
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdCredenzialeMittente idCredenzialeMittente) throws SerializerException {
+		this.objToXml(fileName, IdCredenzialeMittente.class, idCredenzialeMittente, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param file Xml file to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdCredenzialeMittente idCredenzialeMittente) throws SerializerException {
+		this.objToXml(file, IdCredenzialeMittente.class, idCredenzialeMittente, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param file Xml file to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdCredenzialeMittente idCredenzialeMittente) throws SerializerException {
+		this.objToXml(out, IdCredenzialeMittente.class, idCredenzialeMittente, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param out OutputStream to serialize the object <var>idCredenzialeMittente</var>
+	 * @param idCredenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param idCredenzialeMittente Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdCredenzialeMittente idCredenzialeMittente) throws SerializerException {
+		return this.objToXml(IdCredenzialeMittente.class, idCredenzialeMittente, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param idCredenzialeMittente Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param idCredenzialeMittente Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdCredenzialeMittente idCredenzialeMittente) throws SerializerException {
+		return this.objToXml(IdCredenzialeMittente.class, idCredenzialeMittente, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>idCredenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param idCredenzialeMittente Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(IdCredenzialeMittente idCredenzialeMittente,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(IdCredenzialeMittente.class, idCredenzialeMittente, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: dump-header-trasporto
 	 =================================================================================
 	*/
@@ -592,6 +712,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(DumpHeaderTrasporto dumpHeaderTrasporto,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(DumpHeaderTrasporto.class, dumpHeaderTrasporto, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: credenziale-mittente
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CredenzialeMittente credenzialeMittente) throws SerializerException {
+		this.objToXml(fileName, CredenzialeMittente.class, credenzialeMittente, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,CredenzialeMittente credenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, CredenzialeMittente.class, credenzialeMittente, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param file Xml file to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CredenzialeMittente credenzialeMittente) throws SerializerException {
+		this.objToXml(file, CredenzialeMittente.class, credenzialeMittente, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param file Xml file to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,CredenzialeMittente credenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, CredenzialeMittente.class, credenzialeMittente, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param out OutputStream to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CredenzialeMittente credenzialeMittente) throws SerializerException {
+		this.objToXml(out, CredenzialeMittente.class, credenzialeMittente, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param out OutputStream to serialize the object <var>credenzialeMittente</var>
+	 * @param credenzialeMittente Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,CredenzialeMittente credenzialeMittente,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, CredenzialeMittente.class, credenzialeMittente, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param credenzialeMittente Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CredenzialeMittente credenzialeMittente) throws SerializerException {
+		return this.objToXml(CredenzialeMittente.class, credenzialeMittente, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param credenzialeMittente Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(CredenzialeMittente credenzialeMittente,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CredenzialeMittente.class, credenzialeMittente, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param credenzialeMittente Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CredenzialeMittente credenzialeMittente) throws SerializerException {
+		return this.objToXml(CredenzialeMittente.class, credenzialeMittente, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>credenzialeMittente</var> of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param credenzialeMittente Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(CredenzialeMittente credenzialeMittente,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(CredenzialeMittente.class, credenzialeMittente, prettyPrint).toString();
 	}
 	
 	

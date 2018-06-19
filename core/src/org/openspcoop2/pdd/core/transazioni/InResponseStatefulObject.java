@@ -12,7 +12,9 @@ public class InResponseStatefulObject {
 	private String returnCode;
 	private String location;
 	private String faultIntegrazione;
+	private String formatoFaultIntegrazione;
 	private String faultCooperazione;
+	private String formatoFaultCooperazione;
 	
 	private List<String> eventiGestione = new ArrayList<String>();
 	
@@ -57,6 +59,18 @@ public class InResponseStatefulObject {
 	}
 	public void setFaultCooperazione(String faultCooperazione) {
 		this.faultCooperazione = faultCooperazione;
+	}
+	public String getFormatoFaultIntegrazione() {
+		return this.formatoFaultIntegrazione;
+	}
+	public void setFormatoFaultIntegrazione(String formatoFaultIntegrazione) {
+		this.formatoFaultIntegrazione = formatoFaultIntegrazione;
+	}
+	public String getFormatoFaultCooperazione() {
+		return this.formatoFaultCooperazione;
+	}
+	public void setFormatoFaultCooperazione(String formatoFaultCooperazione) {
+		this.formatoFaultCooperazione = formatoFaultCooperazione;
 	}
 	public List<String> getEventiGestione() {
 		return this.eventiGestione;

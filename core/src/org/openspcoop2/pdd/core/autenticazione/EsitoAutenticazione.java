@@ -45,6 +45,9 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 
 	/** Indicazione se il client e' autenticato */
 	private boolean clientAuthenticated = false;
+	
+	/** Credenziale */
+	private String credential;
 
 	/** Indicazione se il client e' identificato */
 	private boolean clientIdentified = false;
@@ -75,7 +78,12 @@ public abstract class EsitoAutenticazione implements java.io.Serializable {
 		this.errorMessage = errorMessage;
 	}
 	
-		
+	public String getCredential() {
+		return this.credential;
+	}
+	public void setCredential(String credential) {
+		this.credential = credential;
+	}
 	
 	public boolean isClientAuthenticated() {
 		return this.clientAuthenticated;

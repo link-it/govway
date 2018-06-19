@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Node;
 
@@ -37,20 +38,28 @@ public abstract class AbstractJson2Xml implements IJson2Xml{
 	protected abstract XMLInputFactory getInputFactory();
 
 	@Override
-	public String json2xml(String jsonString) throws Exception {
-		StringWriter stringWriter = new StringWriter();
-		XMLStreamReader xmlStreamReader = this.getInputFactory().createXMLStreamReader(new StringReader(jsonString));
-		Transformer transformer = this.transformerFactory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-
-		transformer.transform(new StAXSource(xmlStreamReader), new StreamResult(stringWriter));
-		return stringWriter.toString();
+	public String json2xml(String jsonString) throws UtilsException {
+		try {
+			StringWriter stringWriter = new StringWriter();
+			XMLStreamReader xmlStreamReader = this.getInputFactory().createXMLStreamReader(new StringReader(jsonString));
+			Transformer transformer = this.transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+	
+			transformer.transform(new StAXSource(xmlStreamReader), new StreamResult(stringWriter));
+			return stringWriter.toString();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 	@Override
-	public Node json2xmlNode(String jsonString) throws Exception {
-		String xmlstring = json2xml(jsonString);
-		return this.xmlUtils.newElement(xmlstring.getBytes());
+	public Node json2xmlNode(String jsonString) throws UtilsException {
+		try {
+			String xmlstring = json2xml(jsonString);
+			return this.xmlUtils.newElement(xmlstring.getBytes());
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 }

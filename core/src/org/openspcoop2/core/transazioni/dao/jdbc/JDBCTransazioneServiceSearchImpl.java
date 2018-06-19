@@ -167,7 +167,9 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().PDD_NOME_SOGGETTO);
     		fields.add(Transazione.model().PDD_RUOLO);
     		fields.add(Transazione.model().FAULT_INTEGRAZIONE);
+    		fields.add(Transazione.model().FORMATO_FAULT_INTEGRAZIONE);
     		fields.add(Transazione.model().FAULT_COOPERAZIONE);
+    		fields.add(Transazione.model().FORMATO_FAULT_COOPERAZIONE);
     		fields.add(Transazione.model().TIPO_SOGGETTO_FRUITORE);
     		fields.add(Transazione.model().NOME_SOGGETTO_FRUITORE);
     		fields.add(Transazione.model().IDPORTA_SOGGETTO_FRUITORE);
@@ -215,6 +217,13 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().CREDENZIALI);
     		fields.add(Transazione.model().LOCATION_CONNETTORE);
     		fields.add(Transazione.model().URL_INVOCAZIONE);
+    		fields.add(Transazione.model().TRASPORTO_MITTENTE);
+    		fields.add(Transazione.model().TOKEN_ISSUER);
+    		fields.add(Transazione.model().TOKEN_CLIENT_ID);
+    		fields.add(Transazione.model().TOKEN_SUBJECT);
+    		fields.add(Transazione.model().TOKEN_USERNAME);
+    		fields.add(Transazione.model().TOKEN_MAIL);
+    		fields.add(Transazione.model().TOKEN_INFO);
     		fields.add(Transazione.model().DUPLICATI_RICHIESTA);
     		fields.add(Transazione.model().DUPLICATI_RISPOSTA);
     		fields.add(Transazione.model().CLUSTER_ID);
@@ -706,7 +715,9 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PDD_NOME_SOGGETTO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PDD_RUOLO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().FAULT_INTEGRAZIONE,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().FORMATO_FAULT_INTEGRAZIONE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().FAULT_COOPERAZIONE,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().FORMATO_FAULT_COOPERAZIONE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_SOGGETTO_FRUITORE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().NOME_SOGGETTO_FRUITORE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().IDPORTA_SOGGETTO_FRUITORE,true));
@@ -754,6 +765,13 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CREDENZIALI,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().LOCATION_CONNETTORE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().URL_INVOCAZIONE,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TRASPORTO_MITTENTE,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_ISSUER,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_CLIENT_ID,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_SUBJECT,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_USERNAME,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_MAIL,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TOKEN_INFO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RICHIESTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().DUPLICATI_RISPOSTA,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CLUSTER_ID,true));

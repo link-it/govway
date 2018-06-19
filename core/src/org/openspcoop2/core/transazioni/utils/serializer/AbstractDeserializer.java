@@ -24,7 +24,9 @@ import org.openspcoop2.generic_project.exception.DeserializerException;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
@@ -239,6 +241,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	
 	/*
 	 =================================================================================
+	 Object: id-credenziale-mittente
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdCredenzialeMittente readIdCredenzialeMittente(String fileName) throws DeserializerException {
+		return (IdCredenzialeMittente) this.xmlToObj(fileName, IdCredenzialeMittente.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdCredenzialeMittente readIdCredenzialeMittente(File file) throws DeserializerException {
+		return (IdCredenzialeMittente) this.xmlToObj(file, IdCredenzialeMittente.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdCredenzialeMittente readIdCredenzialeMittente(InputStream in) throws DeserializerException {
+		return (IdCredenzialeMittente) this.xmlToObj(in, IdCredenzialeMittente.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdCredenzialeMittente readIdCredenzialeMittente(byte[] in) throws DeserializerException {
+		return (IdCredenzialeMittente) this.xmlToObj(in, IdCredenzialeMittente.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdCredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdCredenzialeMittente readIdCredenzialeMittenteFromString(String in) throws DeserializerException {
+		return (IdCredenzialeMittente) this.xmlToObj(in.getBytes(), IdCredenzialeMittente.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: dump-header-trasporto
 	 =================================================================================
 	*/
@@ -296,6 +361,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpHeaderTrasporto readDumpHeaderTrasportoFromString(String in) throws DeserializerException {
 		return (DumpHeaderTrasporto) this.xmlToObj(in.getBytes(), DumpHeaderTrasporto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: credenziale-mittente
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialeMittente readCredenzialeMittente(String fileName) throws DeserializerException {
+		return (CredenzialeMittente) this.xmlToObj(fileName, CredenzialeMittente.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialeMittente readCredenzialeMittente(File file) throws DeserializerException {
+		return (CredenzialeMittente) this.xmlToObj(file, CredenzialeMittente.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialeMittente readCredenzialeMittente(InputStream in) throws DeserializerException {
+		return (CredenzialeMittente) this.xmlToObj(in, CredenzialeMittente.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialeMittente readCredenzialeMittente(byte[] in) throws DeserializerException {
+		return (CredenzialeMittente) this.xmlToObj(in, CredenzialeMittente.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialeMittente readCredenzialeMittenteFromString(String in) throws DeserializerException {
+		return (CredenzialeMittente) this.xmlToObj(in.getBytes(), CredenzialeMittente.class);
 	}	
 	
 	

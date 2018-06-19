@@ -59,6 +59,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
     	
     	// Essendoci l'identita' del chiamante, il client e' stato autenticato o da un frontend o dall'application server stesso
     	esito.setClientAuthenticated(true);
+    	esito.setCredential(subject);
 		
     	// Provo a identificare il chiamante rispetto ad una entita' del registro
 		IDServizioApplicativo idServizioApplicativo = null;

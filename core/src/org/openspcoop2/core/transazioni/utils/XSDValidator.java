@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
-import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
 
 /** 
  * XSD Validator    
@@ -39,7 +39,7 @@ public class XSDValidator {
 	
 	private static synchronized void initValidator(Class<?> validatorImpl,Logger log) throws ServiceException{
 		if(validator==null){
-			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,Transazione.class, 
+			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,CredenzialeMittente.class, 
 				"/openspcoopTransazioni.xsd"
 				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /openspcoopTransazioni.xsd
 			);

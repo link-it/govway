@@ -80,6 +80,18 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "azione", StatisticaSettimanale.model().STATISTICA_BASE.AZIONE.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setServizioApplicativo", StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "servizio_applicativo", StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTrasportoMittente", StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "trasporto_mittente", StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTokenIssuer", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_issuer", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTokenClientId", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_client_id", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTokenSubject", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_subject", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTokenUsername", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_username", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType()));
+				setParameter(object.getStatisticaBase(), "setTokenMail", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_mail", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setEsito", StatisticaSettimanale.model().STATISTICA_BASE.ESITO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "esito", StatisticaSettimanale.model().STATISTICA_BASE.ESITO.getFieldType()));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),
@@ -211,6 +223,18 @@ public class StatisticaSettimanaleFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"statistica-base.azione"));
 				setParameter(object.getStatisticaBase(), "setServizioApplicativo", StatisticaSettimanale.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.servizio-applicativo"));
+				setParameter(object.getStatisticaBase(), "setTrasportoMittente", StatisticaSettimanale.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.trasporto-mittente"));
+				setParameter(object.getStatisticaBase(), "setTokenIssuer", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.token-issuer"));
+				setParameter(object.getStatisticaBase(), "setTokenClientId", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.token-client-id"));
+				setParameter(object.getStatisticaBase(), "setTokenSubject", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.token-subject"));
+				setParameter(object.getStatisticaBase(), "setTokenUsername", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.token-username"));
+				setParameter(object.getStatisticaBase(), "setTokenMail", StatisticaSettimanale.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType(),
+					this.getObjectFromMap(map,"statistica-base.token-mail"));
 				setParameter(object.getStatisticaBase(), "setEsito", StatisticaSettimanale.model().STATISTICA_BASE.ESITO.getFieldType(),
 					this.getObjectFromMap(map,"statistica-base.esito"));
 				setParameter(object.getStatisticaBase(), "setEsitoContesto", StatisticaSettimanale.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType(),

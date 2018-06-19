@@ -22,6 +22,10 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Scanner;
+
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Scope;
@@ -302,7 +306,7 @@ public class GestoreAutorizzazione {
     		return esito;
     	}
 		
-		// Verifica scopes
+		// Verifica Token Scopes
     	
     	AutorizzazioneScope authScope = null;
     	if(datiInvocazione.getPd()!=null) {
@@ -310,14 +314,24 @@ public class GestoreAutorizzazione {
     	}
     	if(authScope!=null && authScope.sizeScopeList()>0) {
     		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
-    		if(esito.isAutorizzato()==false) {
-    			esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+    		if(esitoNew.isAutorizzato()==false) {
+    			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
         	}
     		return esitoNew;
     	}
-    	else {	
-    		return esito;
+    	
+    	// Verifica Token Options
+    	
+    	if(datiInvocazione.getPd()!=null && datiInvocazione.getPd().getGestioneToken()!=null
+    			&& datiInvocazione.getPd().getGestioneToken().getOptions()!=null) {
+    		EsitoAutorizzazionePortaDelegata esitoNew = (EsitoAutorizzazionePortaDelegata) autorizzazioneTokenOptions(datiInvocazione.getPd().getGestioneToken().getOptions(), esito, pddContext, datiInvocazione);
+    		if(esitoNew.isAutorizzato()==false) {
+    			esitoNew.setErroreIntegrazione(ErroriIntegrazione.ERRORE_445_TOKEN_AUTORIZZAZIONE_FALLITA.getErroreIntegrazione());
+        	}
+    		return esitoNew;
     	}
+    	
+    	return esito;
     	
 	}
 	
@@ -391,7 +405,7 @@ public class GestoreAutorizzazione {
     		return esito;
     	}
     	
-    	// Verifica scopes
+    	// Verifica Token Scopes
     	
     	AutorizzazioneScope authScope = null;
     	if(datiInvocazione.getPa()!=null) {
@@ -402,14 +416,36 @@ public class GestoreAutorizzazione {
     	}
     	if(authScope!=null && authScope.sizeScopeList()>0) {
     		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneScope(authScope, esito, pddContext, datiInvocazione);
-    		if(esito.isAutorizzato()==false) {
-    			esito.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+    		if(esitoNew.isAutorizzato()==false) {
+    			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
         	}
     		return esitoNew;
     	}
-    	else {	
-    		return esito;
+    	
+    	
+    	// Verifica Token Options
+    	
+    	String tokenOptions = null;
+    	if(datiInvocazione.getPa()!=null) {
+    		if(datiInvocazione.getPa().getGestioneToken()!=null) {
+    			tokenOptions = datiInvocazione.getPa().getGestioneToken().getOptions();
+    		}
     	}
+    	else {
+    		if(datiInvocazione.getPd().getGestioneToken()!=null) {
+    			tokenOptions = datiInvocazione.getPd().getGestioneToken().getOptions();
+    		}
+    	}
+    	
+    	if(tokenOptions!=null) {
+    		EsitoAutorizzazionePortaApplicativa esitoNew = (EsitoAutorizzazionePortaApplicativa) autorizzazioneTokenOptions(tokenOptions, esito, pddContext, datiInvocazione);
+    		if(esitoNew.isAutorizzato()==false) {
+    			esitoNew.setErroreCooperazione(ErroriCooperazione.TOKEN_AUTORIZZAZIONE_FALLITA.getErroreCooperazione());
+        	}
+    		return esitoNew;
+    	}
+    	
+    	return esito;
     	
     }
     private static EsitoAutorizzazionePortaApplicativa _verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
@@ -628,7 +664,7 @@ public class GestoreAutorizzazione {
     		if(!autorizzato) {
     		
     			String realm = "OpenSPCoop";
-    			Object oRealm = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY);
+    			Object oRealm = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM);
         		if(oRealm!=null) {
         			realm = (String) oRealm;
         		}
@@ -645,6 +681,10 @@ public class GestoreAutorizzazione {
         			genericMessage = (Boolean) oGenericMessage;
         		}
     			
+        		if(genericMessage) {
+        			esito.setDetails(errorMessage);
+        		}
+        		
         		String [] scopes = new String[authScope.sizeScopeList()];
         		for (int i = 0; i < authScope.sizeScopeList(); i++) {
         			org.openspcoop2.core.registry.Scope scopeOp2Registry = RegistroServiziManager.getInstance(datiInvocazione.getState()).getScope(authScope.getScope(i).getNome(),null);
@@ -655,12 +695,14 @@ public class GestoreAutorizzazione {
 					scopes[i] = nomeScope;
         		}
         		
+        		esito.setAutorizzato(false);
         		if(emptyMessage) {
         			esito.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage, scopes));
         		}
         		else {
         			esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage, scopes));
         		}
+        		
     		}
     		
     		
@@ -669,4 +711,127 @@ public class GestoreAutorizzazione {
     	return esito;
     }
 
+    private static EsitoAutorizzazione autorizzazioneTokenOptions(String tokenOptions, EsitoAutorizzazione esito, 
+    		PdDContext pddContext, AbstractDatiInvocazione datiInvocazione) throws Exception {
+    	
+    	boolean autorizzato = true;
+		String errorMessage = null;
+    	if(tokenOptions!=null) {
+    		
+    		Scanner scanner = new Scanner(tokenOptions);
+    		Properties properties = new Properties();
+			try {
+				while (scanner.hasNextLine()) {
+					String line = scanner.nextLine();
+					if(line==null || line.trim().equals("")) {
+						continue;
+					}
+					line = line.trim();
+					if(line.contains("=")) {
+						String key = line.split("=")[0];
+						key = key.trim();
+						int valueIndex = line.indexOf("=");
+						String value = "";
+						if(valueIndex<line.length()) {
+							value = line.substring(valueIndex+1);
+							value = value.trim();
+						}
+						properties.put(key, value);
+					}
+				}
+			}finally {
+				scanner.close();
+			}
+    		
+			if(properties.size()>0) {
+			
+	    		InformazioniToken informazioniTokenNormalizzate = null;
+	    		Object oInformazioniTokenNormalizzate = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+	    		if(oInformazioniTokenNormalizzate!=null) {
+	    			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+	    		}
+	    	
+	    		if(informazioniTokenNormalizzate.getClaims()==null || informazioniTokenNormalizzate.getClaims().size()<=0) {
+	    			autorizzato = false;
+	    			errorMessage = "Token without claims";
+	    		}
+	    		else {
+		    		Enumeration<?> en = properties.keys();
+		    		while (en.hasMoreElements()) {
+						String key = (String) en.nextElement();
+						String value = properties.getProperty(key);
+						if(informazioniTokenNormalizzate.getClaims().containsKey(key)==false) {
+							autorizzato = false;
+			    			errorMessage = "Token without claim '"+key+"'";
+							break;
+						}
+						String valueClaim = informazioniTokenNormalizzate.getClaims().get(key);
+						if(valueClaim==null) {
+							autorizzato = false;
+			    			errorMessage = "Token with claim '"+key+"' without value";
+							break;
+						}
+						if(value.contains(",")) {
+							String [] values = value.split(",");
+							boolean ok = false;
+							for (int i = 0; i < values.length; i++) {
+								String v = values[i].trim();
+								if(v.equals(valueClaim)) {
+									ok = true;
+									break;
+								}
+							}
+							if(!ok) {
+								autorizzato = false;
+								errorMessage = "Token claim '"+key+"' with unexpected value";
+							}
+						}
+						else {
+							if(value.equals(valueClaim)==false) {
+								autorizzato = false;
+								errorMessage = "Token claim '"+key+"' with unexpected value";
+							}
+						}
+					}
+	    		}
+			}
+    		
+    	}
+    	
+    	if(!autorizzato) {
+    		
+			String realm = "OpenSPCoop";
+			Object oRealm = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_REALM);
+    		if(oRealm!=null) {
+    			realm = (String) oRealm;
+    		}
+			
+			boolean emptyMessage = false;
+			Object oEmptyMessage = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_BODY_EMPTY);
+    		if(oEmptyMessage!=null) {
+    			emptyMessage = (Boolean) oEmptyMessage;
+    		}
+    		
+    		boolean genericMessage = false;
+			Object oGenericMessage = pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_MESSAGE_ERROR_GENERIC_MESSAGE);
+    		if(oGenericMessage!=null) {
+    			genericMessage = (Boolean) oGenericMessage;
+    		}
+			
+    		if(genericMessage) {
+    			esito.setDetails(errorMessage);
+    		}
+    		
+    		esito.setAutorizzato(false);
+    		if(emptyMessage) {
+    			esito.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage));
+    		}
+    		else {
+    			esito.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.insufficient_scope, realm, genericMessage, errorMessage));
+    		}
+		}
+		
+    	
+    	return esito;
+    }
 }

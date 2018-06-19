@@ -57,6 +57,9 @@ public class AutorizzazioneUtilities {
 		else if(TipoAutorizzazione.DISABILITATO.equals(autorizzazione)){
 			return STATO_DISABILITATO;
 		}
+		else if(TipoAutorizzazione.TOKEN.equals(autorizzazione)){
+			return STATO_ABILITATO;
+		}
 		else{
 			return STATO_ABILITATO;
 		}
@@ -87,7 +90,8 @@ public class AutorizzazioneUtilities {
 		}
 		
 	}
-	public static TipoAutorizzazione convertToTipoAutorizzazione(String stato,boolean authenticated,boolean roles, RuoloTipologia tipologia){
+	public static TipoAutorizzazione convertToTipoAutorizzazione(String stato,boolean authenticated,boolean roles,boolean scopes,String autorizzazione_tokenOptions,
+			RuoloTipologia tipologia){
 		if(STATO_DISABILITATO.equals(stato)){
 			return TipoAutorizzazione.DISABILITATO;
 		}
@@ -127,16 +131,17 @@ public class AutorizzazioneUtilities {
 					}
 				}
 			}
-			else{
-				if(authenticated){
-					return TipoAutorizzazione.AUTHENTICATED;
-				}
+			else if(authenticated){
+				return TipoAutorizzazione.AUTHENTICATED;
+			}
+			else if(scopes || (autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
+				return TipoAutorizzazione.TOKEN;
 			}
 		}
 		return TipoAutorizzazione.DISABILITATO; // ??
 	}
-	public static String convertToTipoAutorizzazioneAsString(String stato,boolean authenticated,boolean roles, RuoloTipologia tipologia){
-		return convertToTipoAutorizzazione(stato, authenticated, roles, tipologia).getValue();
+	public static String convertToTipoAutorizzazioneAsString(String stato,boolean authenticated,boolean roles,boolean scopes,String autorizzazione_tokenOptions, RuoloTipologia tipologia){
+		return convertToTipoAutorizzazione(stato, authenticated, roles, scopes, autorizzazione_tokenOptions, tipologia).getValue();
 	}
 	
 }

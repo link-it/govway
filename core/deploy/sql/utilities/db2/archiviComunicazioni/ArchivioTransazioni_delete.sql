@@ -7,3 +7,4 @@ DELETE FROM dump_messaggi;
 DELETE FROM transazioni_export;
 DELETE FROM transazioni_info;
 DELETE FROM transazioni;
+DELETE FROM credenziale_mittente;

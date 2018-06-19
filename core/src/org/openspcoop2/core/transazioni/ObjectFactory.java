@@ -122,6 +122,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link IdCredenzialeMittente }
+     */
+    public IdCredenzialeMittente createIdCredenzialeMittente() {
+        return new IdCredenzialeMittente();
+    }
+
+    /**
+     * Create an instance of {@link CredenzialeMittente }
+     */
+    public CredenzialeMittente createCredenzialeMittente() {
+        return new CredenzialeMittente();
+    }
+
+    /**
      * Create an instance of {@link Transazione }
      */
     public Transazione createTransazione() {

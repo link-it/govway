@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -53,6 +54,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -116,6 +118,8 @@ import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.pa.EsitoGestioneTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.EsitoPresenzaTokenPortaApplicativa;
 import org.openspcoop2.pdd.core.token.pa.GestioneToken;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -2270,12 +2274,19 @@ public class RicezioneBuste {
 		
 		msgDiag.mediumDebug("GestioneToken...");
 		String tipoGestioneToken = null;
+		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
 		try {
 			if(pa!=null){
 				tipoGestioneToken = configurazionePdDReader.getGestioneToken(pa);
+				if(pa.getGestioneToken()!=null) {
+					gestioneTokenAutenticazione = pa.getGestioneToken().getAutenticazione();
+				}
 			}
 			else{
 				tipoGestioneToken = configurazionePdDReader.getGestioneToken(pd);
+				if(pd.getGestioneToken()!=null) {
+					gestioneTokenAutenticazione = pd.getGestioneToken().getAutenticazione();
+				}
 			}
 		}catch(Exception exception){}
 		this.msgContext.getIntegrazione().setTipoGestioneToken(tipoGestioneToken);
@@ -2522,23 +2533,28 @@ public class RicezioneBuste {
 				}
 				else {
 					
-					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoPresenzaToken.getDetails());
-					msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.fallita");
-					fineGestione = true;
+					if(policyGestioneToken.isTokenOpzionale()==false) {
 					
-					String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] fallito: " + esitoPresenzaToken.getDetails();
-					if(esitoPresenzaToken.getEccezioneProcessamento()!=null) {
-						logCore.error(msgErrore,esitoPresenzaToken.getEccezioneProcessamento());
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoPresenzaToken.getDetails());
+						msgDiag.logPersonalizzato("gestioneTokenInCorso.verificaPresenzaToken.fallita");
+						
+						fineGestione = true;
+						
+						String msgErrore = "processo di gestione token ["+ tipoGestioneToken + "] fallito: " + esitoPresenzaToken.getDetails();
+						if(esitoPresenzaToken.getEccezioneProcessamento()!=null) {
+							logCore.error(msgErrore,esitoPresenzaToken.getEccezioneProcessamento());
+						}
+						else {
+							logCore.error(msgErrore);
+						}
+					
+						erroreCooperazione = esitoPresenzaToken.getErroreCooperazione();
+						erroreIntegrazione = esitoPresenzaToken.getErroreIntegrazione();
+						eGestioneToken = esitoPresenzaToken.getEccezioneProcessamento();
+						errorMessageGestioneToken = esitoPresenzaToken.getErrorMessage();
+						wwwAuthenticateErrorHeader = esitoPresenzaToken.getWwwAuthenticateErrorHeader();
+						
 					}
-					else {
-						logCore.error(msgErrore);
-					}
-				
-					erroreCooperazione = esitoPresenzaToken.getErroreCooperazione();
-					erroreIntegrazione = esitoPresenzaToken.getErroreIntegrazione();
-					eGestioneToken = esitoPresenzaToken.getEccezioneProcessamento();
-					errorMessageGestioneToken = esitoPresenzaToken.getErrorMessage();
-					wwwAuthenticateErrorHeader = esitoPresenzaToken.getWwwAuthenticateErrorHeader();
 				}
 		
 				if(fineGestione) {
@@ -2546,24 +2562,31 @@ public class RicezioneBuste {
 					msgDiag.logPersonalizzato("gestioneTokenFallita");
 				}
 				else {
-					
-					List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
-					InformazioniToken informazioniTokenNormalizzate = null;
-					if(listaEsiti!=null && listaEsiti.size()>0) {
-						informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
+					if(esitoPresenzaToken.isPresente()) {
+						List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
+						InformazioniToken informazioniTokenNormalizzate = null;
+						if(listaEsiti!=null && listaEsiti.size()>0) {
+							informazioniTokenNormalizzate = GestoreToken.normalizeInformazioniToken(listaEsiti);
+							informazioniTokenNormalizzate.setValid(true);
+						}
+						if(informazioniTokenNormalizzate!=null) {
+							pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
+							
+							Transaction tr = TransactionContext.getTransaction(idTransazione);
+							tr.setInformazioniToken(informazioniTokenNormalizzate);
+						}
+									
+						msgDiag.mediumDebug("Gestione forward token ...");
+						gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
+								esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
+								informazioniTokenNormalizzate);
+						msgDiag.mediumDebug("Gestione forward token completata");
+						
+						msgDiag.logPersonalizzato("gestioneTokenCompletataConSuccesso");
 					}
-					if(informazioniTokenNormalizzate!=null) {
-						pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE, informazioniTokenNormalizzate);
-					}
-								
-					msgDiag.mediumDebug("Gestione forward token ...");
-					gestioneTokenEngine.forwardToken(datiInvocazione,esitoPresenzaToken,
-							esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken,
-							informazioniTokenNormalizzate);
-					msgDiag.mediumDebug("Gestione forward token completata");
-					
-					
-					msgDiag.logPersonalizzato("gestioneTokenCompletataConSuccesso");
+					else {
+						msgDiag.logPersonalizzato("gestioneTokenCompletataSenzaRilevazioneToken");
+					}		
 				}
 				
 			} catch (Exception e) {
@@ -2664,10 +2687,20 @@ public class RicezioneBuste {
 		boolean supportatoAutenticazioneSoggetti = false;
 		if(functionAsRouter==false){
 			supportatoAutenticazioneSoggetti = protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
+			String credenzialeTrasporto = null;
+			String tipoAutenticazione = null;
+			
+			org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa datiInvocazioneAutenticazione = new org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa();
+			datiInvocazioneAutenticazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
+			datiInvocazioneAutenticazione.setState(openspcoopstate.getStatoRichiesta());
+			datiInvocazioneAutenticazione.setIdPA(idPA);
+			datiInvocazioneAutenticazione.setPa(pa);	
+			datiInvocazioneAutenticazione.setIdPD(idPD);
+			datiInvocazioneAutenticazione.setPd(pd);		
+			
 			if(supportatoAutenticazioneSoggetti){
 			
 				msgDiag.mediumDebug("Autenticazione del soggetto...");
-				String tipoAutenticazione = null;
 				boolean autenticazioneOpzionale = false;
 				try{
 					if(pa!=null){
@@ -2698,21 +2731,14 @@ public class RicezioneBuste {
 					OpenSPCoop2Message errorMessageAutenticazione = null;
 					String wwwAuthenticateErrorHeader = null;
 					try {						
-						org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.autenticazione.pa.DatiInvocazionePortaApplicativa();
-						datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
-						datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
-						datiInvocazione.setIdPA(idPA);
-						datiInvocazione.setPa(pa);	
-						datiInvocazione.setIdPD(idPD);
-						datiInvocazione.setPd(pd);		
-						
 						EsitoAutenticazionePortaApplicativa esito = 
-								GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione, datiInvocazione, pddContext, protocolFactory, requestMessage); 
+								GestoreAutenticazione.verificaAutenticazionePortaApplicativa(tipoAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage); 
 						if(esito.getDetails()==null){
 							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 						}else{
 							msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 						}
+						credenzialeTrasporto = esito.getCredential();
 						
 						if(esito.isClientAuthenticated() == false) {
 							erroreCooperazione = esito.getErroreCooperazione();
@@ -2745,7 +2771,7 @@ public class RicezioneBuste {
 							}
 						}
 						else {
-							msgDiag.logPersonalizzato("autenticazioneEffettuata");
+							msgDiag.logPersonalizzato("autenticazioneEffettuata");							
 						}
 						
 					} catch (Exception e) {
@@ -2851,6 +2877,198 @@ public class RicezioneBuste {
 					}
 				}
 			}
+			
+			
+			boolean autenticazioneToken = false;
+			if(gestioneTokenAutenticazione!=null) {
+				autenticazioneToken = GestoreAutenticazione.isAutenticazioneTokenEnabled(gestioneTokenAutenticazione);
+			}
+			if(autenticazioneToken) {
+				
+				String checkAuthnToken = GestoreAutenticazione.getLabel(gestioneTokenAutenticazione);
+				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
+				msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
+				
+				ErroreCooperazione erroreCooperazione = null;
+				ErroreIntegrazione erroreIntegrazione = null;
+				Exception eAutenticazione = null;
+				OpenSPCoop2Message errorMessageAutenticazione = null;
+				String wwwAuthenticateErrorHeader = null;
+				String errorMessage = null;
+				try {
+					EsitoAutenticazionePortaApplicativa	esito = 
+							GestoreAutenticazione.verificaAutenticazioneTokenPortaApplicativa(gestioneTokenAutenticazione, datiInvocazioneAutenticazione, pddContext, protocolFactory, requestMessage);
+
+					if(esito.isClientAuthenticated() == false) {
+						erroreCooperazione = esito.getErroreCooperazione();
+						erroreIntegrazione = esito.getErroreIntegrazione();
+						eAutenticazione = esito.getEccezioneProcessamento();
+						errorMessageAutenticazione = esito.getErrorMessage();
+						wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+						errorMessage = esito.getDetails();
+					}
+					
+					if (erroreIntegrazione != null || erroreCooperazione!=null) {
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, true);
+					}
+					else {
+						msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
+					}
+					
+				} catch (Exception e) {
+					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione token ["
+									+ checkAuthnToken + "] fallito, " + e.getMessage(),CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE);
+					eAutenticazione = e;
+					logCore.error("processo di autenticazione token ["
+							+ checkAuthnToken + "] fallito, " + e.getMessage(),e);
+				}
+				if (erroreIntegrazione != null || erroreCooperazione!=null) {
+					String descrizioneErrore = null;
+					try{
+						if(errorMessage!=null) {
+							descrizioneErrore = errorMessage;
+						}
+						else {
+							if(erroreCooperazione != null)
+								descrizioneErrore = erroreCooperazione.getDescrizione(protocolFactory);
+							else
+								descrizioneErrore = erroreIntegrazione.getDescrizione(protocolFactory);
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+					}catch(Exception e){
+						logCore.error("getDescrizione Error:"+e.getMessage(),e);
+					}
+					String errorMsg =  "Riscontrato errore durante il processo di Autenticazione Token per il messaggio con identificativo di transazione ["+idTransazione+"]: "+descrizioneErrore;
+					msgDiag.logPersonalizzato("autenticazioneTokenFallita");
+					if(eAutenticazione!=null){
+						logCore.error(errorMsg,eAutenticazione);
+					}
+					else{
+						logCore.error(errorMsg);
+					}
+					
+					// Tracciamento richiesta: non ancora registrata
+					if(this.msgContext.isTracciamentoAbilitato()){
+						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
+								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("["+ RicezioneBuste.ID_MODULO+ "] processo di autenticazione ["
+									+ tipoAutenticazione + "] fallito");
+						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
+								correlazioneApplicativa);
+					}
+					
+					if(this.msgContext.isGestioneRisposta()){
+
+						if(errorMessageAutenticazione!=null) {
+							this.msgContext.setMessageResponse(errorMessageAutenticazione);
+						}
+						else {
+						
+							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);	
+							if(erroreIntegrazione != null){
+								parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
+							}
+							else{
+								parametriGenerazioneBustaErrore.setErroreCooperazione(erroreCooperazione);
+							}
+
+							OpenSPCoop2Message errorOpenSPCoopMsg = null;
+							if(erroreCooperazione!=null){
+								if(CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(erroreCooperazione.getCodiceErrore())) {
+									parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHENTICATION);
+									errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+								}
+								else {
+									errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
+								}
+							}
+							else {
+								errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,eAutenticazione);
+							}	
+							
+							if(wwwAuthenticateErrorHeader!=null) {
+								errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
+							}
+							
+							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+							parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+							sendRispostaBustaErrore(parametriInvioBustaErrore);
+						}
+
+					}
+					
+					openspcoopstate.releaseResource();
+					return;
+					
+				}
+			}
+			else {
+				
+				msgDiag.logPersonalizzato("autenticazioneTokenDisabilitata");
+				
+			}
+			
+			
+			InformazioniToken informazioniTokenNormalizzate = null;
+			if(pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+				informazioniTokenNormalizzate = (InformazioniToken) pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+			}
+			
+			if(propertiesReader.isTransazioniEnabled() && 
+					(credenzialeTrasporto!=null || informazioniTokenNormalizzate!=null)) {
+				CredenzialiMittente credenzialiMittente = new CredenzialiMittente();
+				
+				try{
+				
+					if(credenzialeTrasporto!=null) {
+						GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente);
+					}
+					
+					if(informazioniTokenNormalizzate!=null) {
+						GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente);
+					}
+					
+					Transaction tr = TransactionContext.getTransaction(idTransazione);
+					tr.setCredenzialiMittente(credenzialiMittente);
+								
+				} catch (Exception e) {
+					msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento Credenziali Fallito");
+					msgDiag.logErroreGenerico(e,"GestoreAutenticazione.updateCredenziali");
+					logCore.error("GestoreAutenticazione.updateCredenziali error: "+e.getMessage(),e);
+					
+					// Tracciamento richiesta: non ancora registrata
+					if(this.msgContext.isTracciamentoAbilitato()){
+						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
+								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("GestoreAutenticazione.updateCredenziali, non riuscito: "+e.getMessage());
+						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
+								correlazioneApplicativa);
+					}
+					if(this.msgContext.isGestioneRisposta()){
+
+						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+						parametriGenerazioneBustaErrore.
+							setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE));
+						OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						
+						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+
+						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+						sendRispostaBustaErrore(parametriInvioBustaErrore);
+
+					}
+					openspcoopstate.releaseResource();
+					return;
+					
+				}
+				
+			}
+
+
 		}
 		
 		

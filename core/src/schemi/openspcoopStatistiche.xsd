@@ -104,6 +104,13 @@
 			<xsd:element name="versione-servizio" type="xsd:int" />			
 			<xsd:element name="azione" type="xsd:string" />
 			<xsd:element name="servizio-applicativo" type="xsd:string" />
+			<xsd:element name="trasporto-mittente" type="xsd:string" />
+			<xsd:element name="token-issuer" type="xsd:string" />
+			<xsd:element name="token-client-id" type="xsd:string" />
+			<xsd:element name="token-subject" type="xsd:string" />
+			<xsd:element name="token-username" type="xsd:string" />
+			<xsd:element name="token-mail" type="xsd:string" />
+			<xsd:element name="token-info" type="xsd:string" />
 			<xsd:element name="esito" type="xsd:integer" />
 			<xsd:element name="esito-contesto" type="xsd:string" />
 			

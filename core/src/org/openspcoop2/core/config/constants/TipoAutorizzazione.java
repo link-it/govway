@@ -45,7 +45,8 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 	AUTHENTICATED_EXTERNAL_ROLES (CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED_OR_EXTERNAL_ROLES,"authenticatedOrExternalRoles"),
 	XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_XACML_POLICY,"xacmlPolicy"),
 	INTERNAL_XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_INTERNAL_XACML_POLICY,"internalXacmlPolicy"),
-	EXTERNAL_XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_EXTERNAL_XACML_POLICY,"externalXacmlPolicy");
+	EXTERNAL_XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_EXTERNAL_XACML_POLICY,"externalXacmlPolicy"),
+	TOKEN (CostantiConfigurazione.AUTORIZZAZIONE_TOKEN,"token");
 
 	
 	/** Value */

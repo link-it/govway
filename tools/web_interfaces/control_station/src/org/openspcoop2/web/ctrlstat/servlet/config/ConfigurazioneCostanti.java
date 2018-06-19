@@ -438,7 +438,7 @@ public class ConfigurazioneCostanti {
 	
 	
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO = "Controllo del Traffico";
-	public final static String LABEL_CONFIGURAZIONE_LIMITAZIONE_NUMERO_RICHIESTE_COMPLESSIVE = "Limitazione Numero di Richieste Complessive Gestite dalla PdD";
+	public final static String LABEL_CONFIGURAZIONE_LIMITAZIONE_NUMERO_RICHIESTE_COMPLESSIVE = "Limitazione Numero di Richieste Complessive";
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_STATO_CONTROLLO_CONGESTIONE = "Controllo della Congestione";
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_DEL_TRAFFICO = "Controllo del Traffico";
 	public final static String LABEL_CONFIGURAZIONE_CONFIGURAZIONE_CACHE_DATI_STATISTICI = "Configurazione Cache Controllo del Traffico";
@@ -1072,23 +1072,11 @@ public class ConfigurazioneCostanti {
 	public final static String DEFAULT_VALUE_DISABILITATO = StatoFunzionalita.DISABILITATO.toString();
 	
 	
-	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE = "PROTOCOLLO";
-	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX = "http://localhost:8080/openspcoop2/"+DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE;
-	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PD/";
 	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(String context) {
-		String c = "";
-		if(!"".equals(context)) {
-			c = context +"/";
-		}
-		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PD.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+		return CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePd(context);
 	}
-	private final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_PREFIX+"PA/";
 	public static String getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(String context) {
-		String c = "";
-		if(!"".equals(context)) {
-			c = context +"/";
-		}
-		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
+		return CostantiConfigurazione.getDefaultValueParametroConfigurazioneProtocolloPrefixUrlInvocazionePa(context);
 	}
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = TipoAutenticazione.SSL.getValue();

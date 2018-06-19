@@ -64,7 +64,9 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.PDD_NOME_SOGGETTO = new Field("pdd-nome-soggetto",java.lang.String.class,"transazione",Transazione.class);
 		this.PDD_RUOLO = new Field("pdd-ruolo",java.lang.String.class,"transazione",Transazione.class);
 		this.FAULT_INTEGRAZIONE = new Field("fault-integrazione",java.lang.String.class,"transazione",Transazione.class);
+		this.FORMATO_FAULT_INTEGRAZIONE = new Field("formato-fault-integrazione",java.lang.String.class,"transazione",Transazione.class);
 		this.FAULT_COOPERAZIONE = new Field("fault-cooperazione",java.lang.String.class,"transazione",Transazione.class);
+		this.FORMATO_FAULT_COOPERAZIONE = new Field("formato-fault-cooperazione",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_SOGGETTO_FRUITORE = new Field("tipo-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
 		this.NOME_SOGGETTO_FRUITORE = new Field("nome-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
 		this.IDPORTA_SOGGETTO_FRUITORE = new Field("idporta-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
@@ -112,6 +114,13 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CREDENZIALI = new Field("credenziali",java.lang.String.class,"transazione",Transazione.class);
 		this.LOCATION_CONNETTORE = new Field("location-connettore",java.lang.String.class,"transazione",Transazione.class);
 		this.URL_INVOCAZIONE = new Field("url-invocazione",java.lang.String.class,"transazione",Transazione.class);
+		this.TRASPORTO_MITTENTE = new Field("trasporto-mittente",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_ISSUER = new Field("token-issuer",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_CLIENT_ID = new Field("token-client-id",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_SUBJECT = new Field("token-subject",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_USERNAME = new Field("token-username",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_MAIL = new Field("token-mail",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_INFO = new Field("token-info",java.lang.String.class,"transazione",Transazione.class);
 		this.DUPLICATI_RICHIESTA = new Field("duplicati-richiesta",int.class,"transazione",Transazione.class);
 		this.DUPLICATI_RISPOSTA = new Field("duplicati-risposta",int.class,"transazione",Transazione.class);
 		this.CLUSTER_ID = new Field("cluster-id",java.lang.String.class,"transazione",Transazione.class);
@@ -151,7 +160,9 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.PDD_NOME_SOGGETTO = new ComplexField(father,"pdd-nome-soggetto",java.lang.String.class,"transazione",Transazione.class);
 		this.PDD_RUOLO = new ComplexField(father,"pdd-ruolo",java.lang.String.class,"transazione",Transazione.class);
 		this.FAULT_INTEGRAZIONE = new ComplexField(father,"fault-integrazione",java.lang.String.class,"transazione",Transazione.class);
+		this.FORMATO_FAULT_INTEGRAZIONE = new ComplexField(father,"formato-fault-integrazione",java.lang.String.class,"transazione",Transazione.class);
 		this.FAULT_COOPERAZIONE = new ComplexField(father,"fault-cooperazione",java.lang.String.class,"transazione",Transazione.class);
+		this.FORMATO_FAULT_COOPERAZIONE = new ComplexField(father,"formato-fault-cooperazione",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_SOGGETTO_FRUITORE = new ComplexField(father,"tipo-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
 		this.NOME_SOGGETTO_FRUITORE = new ComplexField(father,"nome-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
 		this.IDPORTA_SOGGETTO_FRUITORE = new ComplexField(father,"idporta-soggetto-fruitore",java.lang.String.class,"transazione",Transazione.class);
@@ -199,6 +210,13 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.CREDENZIALI = new ComplexField(father,"credenziali",java.lang.String.class,"transazione",Transazione.class);
 		this.LOCATION_CONNETTORE = new ComplexField(father,"location-connettore",java.lang.String.class,"transazione",Transazione.class);
 		this.URL_INVOCAZIONE = new ComplexField(father,"url-invocazione",java.lang.String.class,"transazione",Transazione.class);
+		this.TRASPORTO_MITTENTE = new ComplexField(father,"trasporto-mittente",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_ISSUER = new ComplexField(father,"token-issuer",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_CLIENT_ID = new ComplexField(father,"token-client-id",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_SUBJECT = new ComplexField(father,"token-subject",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_USERNAME = new ComplexField(father,"token-username",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_MAIL = new ComplexField(father,"token-mail",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_INFO = new ComplexField(father,"token-info",java.lang.String.class,"transazione",Transazione.class);
 		this.DUPLICATI_RICHIESTA = new ComplexField(father,"duplicati-richiesta",int.class,"transazione",Transazione.class);
 		this.DUPLICATI_RISPOSTA = new ComplexField(father,"duplicati-risposta",int.class,"transazione",Transazione.class);
 		this.CLUSTER_ID = new ComplexField(father,"cluster-id",java.lang.String.class,"transazione",Transazione.class);
@@ -260,7 +278,11 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	 
 	public IField FAULT_INTEGRAZIONE = null;
 	 
+	public IField FORMATO_FAULT_INTEGRAZIONE = null;
+	 
 	public IField FAULT_COOPERAZIONE = null;
+	 
+	public IField FORMATO_FAULT_COOPERAZIONE = null;
 	 
 	public IField TIPO_SOGGETTO_FRUITORE = null;
 	 
@@ -355,6 +377,20 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField LOCATION_CONNETTORE = null;
 	 
 	public IField URL_INVOCAZIONE = null;
+	 
+	public IField TRASPORTO_MITTENTE = null;
+	 
+	public IField TOKEN_ISSUER = null;
+	 
+	public IField TOKEN_CLIENT_ID = null;
+	 
+	public IField TOKEN_SUBJECT = null;
+	 
+	public IField TOKEN_USERNAME = null;
+	 
+	public IField TOKEN_MAIL = null;
+	 
+	public IField TOKEN_INFO = null;
 	 
 	public IField DUPLICATI_RICHIESTA = null;
 	 

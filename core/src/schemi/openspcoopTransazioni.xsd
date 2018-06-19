@@ -3,6 +3,28 @@
 	targetNamespace="http://www.openspcoop2.org/core/transazioni" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 
+
+
+
+	<!-- ********* IDENTIFICATIVO MITTENTE ************* -->
+	
+	<xsd:element name="credenziale-mittente">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string" />
+				<xsd:element name="credenziale" type="xsd:string" />
+				<xsd:element name="ora-registrazione" type="xsd:dateTime"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="id-credenziale-mittente">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" />
+			<xsd:element name="credenziale" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
 	
 
 
@@ -55,7 +77,9 @@
 			    		    
 				<!-- Eventuale FAULT Applicativo -->
 				<xsd:element name="fault-integrazione" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="formato-fault-integrazione" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="fault-cooperazione" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="formato-fault-cooperazione" type="xsd:string" minOccurs="0"/>
 			    
 				<!-- Soggetto Fruitore -->
 				<xsd:element name="tipo-soggetto-fruitore" type="xsd:string" minOccurs="0"/>
@@ -121,6 +145,17 @@
 			    <xsd:element name="credenziali" type="xsd:string" minOccurs="0"/>
 			    <xsd:element name="location-connettore" type="xsd:string" minOccurs="0"/>
 			    <xsd:element name="url-invocazione" type="xsd:string" minOccurs="0"/>
+				
+				<!-- Trasporto -->
+				<xsd:element name="trasporto-mittente" type="xsd:string" minOccurs="0"/>
+				
+				<!-- Token -->
+				<xsd:element name="token-issuer" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-client-id" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-subject" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-username" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-mail" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="token-info" type="xsd:string" minOccurs="0"/>
 			    
 				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
 				<xsd:element name="duplicati-richiesta" type="xsd:int" minOccurs="0" default="0"/>

@@ -562,8 +562,18 @@ public class GestoreTransazioniStateful {
 			updateFields.add(updateField);
 		}
 		
+		if(object.getFormatoFaultIntegrazione()!=null){
+			UpdateField updateField = new UpdateField(Transazione.model().FORMATO_FAULT_INTEGRAZIONE, object.getFormatoFaultIntegrazione());
+			updateFields.add(updateField);
+		}
+		
 		if(object.getFaultCooperazione()!=null){
 			UpdateField updateField = new UpdateField(Transazione.model().FAULT_COOPERAZIONE, object.getFaultCooperazione());
+			updateFields.add(updateField);
+		}
+		
+		if(object.getFormatoFaultCooperazione()!=null){
+			UpdateField updateField = new UpdateField(Transazione.model().FORMATO_FAULT_COOPERAZIONE, object.getFormatoFaultCooperazione());
 			updateFields.add(updateField);
 		}
 		

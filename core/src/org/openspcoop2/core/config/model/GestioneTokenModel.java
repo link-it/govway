@@ -40,7 +40,9 @@ public class GestioneTokenModel extends AbstractModel<GestioneToken> {
 	
 		super();
 	
+		this.AUTENTICAZIONE = new org.openspcoop2.core.config.model.GestioneTokenAutenticazioneModel(new Field("autenticazione",org.openspcoop2.core.config.GestioneTokenAutenticazione.class,"gestione-token",GestioneToken.class));
 		this.POLICY = new Field("policy",java.lang.String.class,"gestione-token",GestioneToken.class);
+		this.TOKEN_OPZIONALE = new Field("token-opzionale",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.VALIDAZIONE = new Field("validazione",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.INTROSPECTION = new Field("introspection",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.USER_INFO = new Field("userInfo",java.lang.String.class,"gestione-token",GestioneToken.class);
@@ -53,7 +55,9 @@ public class GestioneTokenModel extends AbstractModel<GestioneToken> {
 	
 		super(father);
 	
+		this.AUTENTICAZIONE = new org.openspcoop2.core.config.model.GestioneTokenAutenticazioneModel(new ComplexField(father,"autenticazione",org.openspcoop2.core.config.GestioneTokenAutenticazione.class,"gestione-token",GestioneToken.class));
 		this.POLICY = new ComplexField(father,"policy",java.lang.String.class,"gestione-token",GestioneToken.class);
+		this.TOKEN_OPZIONALE = new ComplexField(father,"token-opzionale",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.VALIDAZIONE = new ComplexField(father,"validazione",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.INTROSPECTION = new ComplexField(father,"introspection",java.lang.String.class,"gestione-token",GestioneToken.class);
 		this.USER_INFO = new ComplexField(father,"userInfo",java.lang.String.class,"gestione-token",GestioneToken.class);
@@ -64,7 +68,11 @@ public class GestioneTokenModel extends AbstractModel<GestioneToken> {
 	
 	
 
+	public org.openspcoop2.core.config.model.GestioneTokenAutenticazioneModel AUTENTICAZIONE = null;
+	 
 	public IField POLICY = null;
+	 
+	public IField TOKEN_OPZIONALE = null;
 	 
 	public IField VALIDAZIONE = null;
 	 

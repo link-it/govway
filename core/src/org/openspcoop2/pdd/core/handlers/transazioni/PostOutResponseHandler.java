@@ -81,6 +81,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled = false;
 	private boolean transazioniRegistrazioneTracceHeaderRawEnabled = false;
 	private boolean transazioniRegistrazioneTracceDigestEnabled = false;
+	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
 
@@ -254,6 +255,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				this.transazioniRegistrazioneTracceProtocolPropertiesEnabled =  this.openspcoopProperties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.transazioniRegistrazioneTracceHeaderRawEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.transazioniRegistrazioneTracceDigestEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceDigestEnabled();
+				this.transazioniRegistrazioneTokenInformazioniNormalizzate = this.openspcoopProperties.isTransazioniRegistrazioneTransazioniTokenInformazioniNormalizzateEnabled();
 				
 				// salvataggio
 				this.salvataggioTracceManager = this.openspcoopProperties.getTransazioniRegistrazioneTracceManager();
@@ -432,7 +434,8 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				transazioneUtilities = new PostOutResponseHandler_TransazioneUtilities(this.log, 
 						this.transazioniRegistrazioneTracceHeaderRawEnabled,
 						this.transazioniRegistrazioneTracceDigestEnabled,
-						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled);
+						this.transazioniRegistrazioneTracceProtocolPropertiesEnabled,
+						this.transazioniRegistrazioneTokenInformazioniNormalizzate);
 				transazioneDTO = transazioneUtilities.fillTransaction(context, transaction, idDominio); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 							
 			}catch (Throwable e) {

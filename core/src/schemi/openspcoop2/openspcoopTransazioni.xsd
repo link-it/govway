@@ -19,6 +19,9 @@
 					<linkit:sql>
 						<linkit:sql-script generate="true">
 							<linkit:sql-table-list>
+								<linkit:sql-comment><![CDATA[IDENTIFICATIVO MITTENTE]]></linkit:sql-comment>
+								<linkit:sql-table object-name="credenziale-mittente"
+									object-type="credenziale-mittente"/>
 								<linkit:sql-comment><![CDATA[TRANSAZIONI]]></linkit:sql-comment>
 								<linkit:sql-table object-name="transazione"
 									object-type="transazione"/>
@@ -49,6 +52,76 @@
 		</xsd:appinfo>
 	</xsd:annotation>
 
+
+
+
+	<!-- ********* CREDENZIALE MITTENTE ************* -->
+
+	<xsd:element name="credenziale-mittente">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" id="id-credenziale-mittente">
+						<linkit:ws-interface generate="false"/>
+					</linkit:interface>
+					<linkit:sql-table-mapping name="credenziale_mittente" sequence-cycle="true"
+						comment="Contiene le principali informazioni di un mittente non identificato sulla porta">
+						<linkit:sql-table-unique create-index="true" >
+							<linkit:sql-table-unique-field name="tipo"/>
+							<linkit:sql-table-unique-field name="credenziale"/>
+						</linkit:sql-table-unique>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="tipo" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tipo" varchar="20"/>
+								<linkit:sql-ddl-column-comment>Tipo di credenziale del mittente</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="credenziale" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="credenziale" varchar="4000"/>
+								<linkit:sql-ddl-column-comment>Credenziale del mittente</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ora-registrazione" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+								<linkit:sql-ddl-column-comment>Data di registrazione delle credenziali</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:complexType name="id-credenziale-mittente">
+		<xsd:sequence>
+			<xsd:element name="tipo" type="xsd:string" />
+			<xsd:element name="credenziale" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	
 
 
 	<!-- ********* TRANSAZIONI ************* -->
@@ -148,7 +221,12 @@
 				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
 				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
 				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
-				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="trasporto-mittente"/>
+				    		<linkit:sql-table-index-field name="token-issuer"/>
+				    		<linkit:sql-table-index-field name="token-client-id"/>
+				    		<linkit:sql-table-index-field name="token-subject"/>
+				    		<linkit:sql-table-index-field name="token-username"/>
+				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="stato"/>
 				    	</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_TR_FULL">
@@ -165,7 +243,12 @@
 							<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
 							<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
 							<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
-							<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+							<linkit:sql-table-index-field name="trasporto-mittente"/>
+							<linkit:sql-table-index-field name="token-issuer"/>
+							<linkit:sql-table-index-field name="token-client-id"/>
+							<linkit:sql-table-index-field name="token-subject"/>
+							<linkit:sql-table-index-field name="token-username"/>
+							<linkit:sql-table-index-field name="token-mail"/>
 							<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
 							<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
 							<linkit:sql-table-index-field name="stato"/>
@@ -187,7 +270,12 @@
 				    		<linkit:sql-table-index-field name="tipo-soggetto-fruitore"/>
 				    		<linkit:sql-table-index-field name="nome-soggetto-fruitore"/>
 				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
-				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="trasporto-mittente"/>
+				    		<linkit:sql-table-index-field name="token-issuer"/>
+				    		<linkit:sql-table-index-field name="token-client-id"/>
+				    		<linkit:sql-table-index-field name="token-subject"/>
+				    		<linkit:sql-table-index-field name="token-username"/>
+				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa"/>
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
 				    		<linkit:sql-table-index-field name="stato"/>
@@ -211,7 +299,12 @@
 				    		<linkit:sql-table-index-field name="nome-servizio"/>
 				    		<linkit:sql-table-index-field name="azione"/>
 				    		<linkit:sql-table-index-field name="servizio-applicativo-fruitore"/>
-				    		<linkit:sql-table-index-field name="servizio-applicativo-erogatore"/>
+				    		<linkit:sql-table-index-field name="trasporto-mittente"/>
+				    		<linkit:sql-table-index-field name="token-issuer"/>
+				    		<linkit:sql-table-index-field name="token-client-id"/>
+				    		<linkit:sql-table-index-field name="token-subject"/>
+				    		<linkit:sql-table-index-field name="token-username"/>
+				    		<linkit:sql-table-index-field name="token-mail"/>
 				    		<linkit:sql-table-index-field name="esito"/>
 				    		<linkit:sql-table-index-field name="esito-contesto"/>
 				    		<linkit:sql-table-index-field name="stato"/>
@@ -562,6 +655,17 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="formato-fault-integrazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di messaggio (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="fault-cooperazione" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -574,7 +678,18 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-			    
+				<xsd:element name="formato-fault-cooperazione" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="20"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di messaggio (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			    	    
 				<!-- Soggetto Fruitore -->
 				<xsd:element name="tipo-soggetto-fruitore" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
@@ -1118,6 +1233,87 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			            </xsd:appinfo>
 			        </xsd:annotation>
 			    </xsd:element>
+							
+				<!-- Trasporto -->
+				<xsd:element name="trasporto-mittente" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="trasporto_mittente" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso una credenziale di trasporto (FK verso mittente_anonimo(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<!-- Token -->
+				<xsd:element name="token-issuer" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_issuer" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'issuer' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-client-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_client_id" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'client-id' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-subject" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_subject" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'subject' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-username" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_username" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'username' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-mail" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_mail" varchar="20" />
+								<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'email' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="token-info" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="token_info" text="true" />
+								<linkit:sql-ddl-column-comment><![CDATA[nformazioni complete estratte dal token]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			    
 				<!-- filtro duplicati (0=originale,-1=duplicata,<0=quanti duplicati esistono) -->
 				<xsd:element name="duplicati-richiesta" type="xsd:int" minOccurs="0" default="0">

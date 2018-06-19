@@ -1727,7 +1727,7 @@ public class GestoreToken {
     		bf.append("PD");
     	}
     	else {
-    		bf.append("PD");
+    		bf.append("PA");
     	}
     	bf.append("_");
     	bf.append(token);

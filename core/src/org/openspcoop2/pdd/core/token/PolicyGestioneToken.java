@@ -24,6 +24,8 @@ public class PolicyGestioneToken implements Serializable {
 	private Map<String, Properties> properties;
 	private Properties defaultProperties;
 	
+	private boolean tokenOpzionale;
+	
 	private boolean validazioneJWT;
 	private boolean validazioneJWT_warningOnly;
 	
@@ -53,6 +55,12 @@ public class PolicyGestioneToken implements Serializable {
 	public void setProperties(Map<String, Properties> properties) throws ProviderException, ProviderValidationException {
 		this.properties = properties;
 		this.defaultProperties = this.getDefaultProperties();
+	}
+	public boolean isTokenOpzionale() {
+		return this.tokenOpzionale;
+	}
+	public void setTokenOpzionale(boolean tokenOpzionale) {
+		this.tokenOpzionale = tokenOpzionale;
 	}
 	public boolean isValidazioneJWT() {
 		return this.validazioneJWT;

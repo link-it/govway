@@ -1149,12 +1149,113 @@
 	
 	<!-- Gestione Token -->
 	<xsd:complexType name="gestione-token">
+		<xsd:sequence>
+			<xsd:element name="autenticazione" type="gestione-token-autenticazione" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
 		<xsd:attribute name="policy" type="xsd:string" use="required" />
-		<xsd:attribute name="validazione" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" />
-		<xsd:attribute name="introspection" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" />
-		<xsd:attribute name="userInfo" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" />
-		<xsd:attribute name="forward" type="StatoFunzionalita" use="optional" default="disabilitato" />
+		<xsd:attribute name="token-opzionale" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="validazione" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="introspection" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="userInfo" type="StatoFunzionalitaConWarning" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="forward" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="options" type="xsd:string" use="optional" /> <!-- altri parametri generici -->
+	</xsd:complexType>
+	<xsd:complexType name="gestione-token-autenticazione">
+		<xsd:attribute name="issuer" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="client-id" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="subject" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="username" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="email" type="StatoFunzionalita" use="optional" default="disabilitato" >
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 

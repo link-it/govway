@@ -91,10 +91,23 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
+	<xsd:element name="gestione-token-autenticazione" type="tns:gestione-token-autenticazione" />
+	<xsd:complexType name="gestione-token-autenticazione">
+		<xsd:sequence>
+ 			<xsd:element name="issuer" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="client-id" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="subject" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="username" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="email" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
 	<xsd:element name="gestione-token" type="tns:gestione-token" />
 	<xsd:complexType name="gestione-token">
 		<xsd:sequence>
+ 			<xsd:element name="autenticazione" type="tns:gestione-token-autenticazione" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="policy" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-opzionale" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="validazione" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="introspection" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="userInfo" type="api:StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />

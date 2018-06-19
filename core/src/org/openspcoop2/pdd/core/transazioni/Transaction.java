@@ -1,8 +1,10 @@
 package org.openspcoop2.pdd.core.transazioni;
 
 
+import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.monitor.engine.config.TransactionResource;
 import org.openspcoop2.monitor.engine.config.TransactionServiceLibrary;
+import org.openspcoop2.pdd.core.token.InformazioniToken;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,7 +67,9 @@ public class Transaction {
 	
 	/** SOAPFault */
 	private String faultIntegrazione;
+	private String formatoFaultIntegrazione;
 	private String faultCooperazione;
+	private String formatoFaultCooperazione;
 	
 	/** CorrelazioneApplicativaRisposta */
 	private String correlazioneApplicativaRisposta;
@@ -98,6 +102,12 @@ public class Transaction {
 	
 	/** EventiGestione */
 	private List<String> eventiGestione = new ArrayList<String>();
+	
+	/** InformazioniToken */
+	private InformazioniToken informazioniToken;
+	
+	/** CredenzialiMittente */
+	private CredenzialiMittente credenzialiMittente;
 	
 	
 
@@ -174,8 +184,14 @@ public class Transaction {
 	public String getFaultIntegrazione() {
 		return this.faultIntegrazione;
 	}
+	public String getFormatoFaultIntegrazione() {
+		return this.formatoFaultIntegrazione;
+	}
 	public String getFaultCooperazione() {
 		return this.faultCooperazione;
+	}
+	public String getFormatoFaultCooperazione() {
+		return this.formatoFaultCooperazione;
 	}
 	
 	public Date getDataAccettazioneRichiesta() {
@@ -216,6 +232,14 @@ public class Transaction {
 	
 	public boolean containsEventoGestione(String evento){
 		return this.eventiGestione.contains(evento);
+	}
+	
+	public InformazioniToken getInformazioniToken() {
+		return this.informazioniToken;
+	}
+	
+	public CredenzialiMittente getCredenzialiMittente() {
+		return this.credenzialiMittente;
 	}
 	
 	
@@ -378,6 +402,19 @@ public class Transaction {
 		}
 	}
 	
+	public void setFormatoFaultIntegrazione(String formatoFault) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.deleted) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.formatoFaultIntegrazione = formatoFault;
+			}
+		}else{
+			this.formatoFaultIntegrazione = formatoFault;
+		}
+	}
+	
 	public void setFaultCooperazione(String fault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
 			synchronized (this.deleted) {
@@ -388,6 +425,19 @@ public class Transaction {
 			}
 		}else{
 			this.faultCooperazione = fault;
+		}
+	}
+	
+	public void setFormatoFaultCooperazione(String formatoFault) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.deleted) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.formatoFaultCooperazione = formatoFault;
+			}
+		}else{
+			this.formatoFaultCooperazione = formatoFault;
 		}
 	}
 
@@ -509,6 +559,32 @@ public class Transaction {
 			}
 		}else{
 			this.eventiGestione.add(evento);
+		}
+	}
+	
+	public void setInformazioniToken(InformazioniToken informazioniToken) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.deleted) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.informazioniToken = informazioniToken;
+			}
+		}else{
+			this.informazioniToken = informazioniToken;
+		}
+	}
+	
+	public void setCredenzialiMittente(CredenzialiMittente credenzialiMittente) throws TransactionDeletedException {
+		if(this.gestioneStateful){
+			synchronized (this.deleted) {
+				if(this.deleted){
+					throw new TransactionDeletedException("Transaction eliminata");
+				}
+				this.credenzialiMittente = credenzialiMittente;
+			}
+		}else{
+			this.credenzialiMittente = credenzialiMittente;
 		}
 	}
 	

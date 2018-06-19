@@ -44,15 +44,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 	private boolean transazioniRegistrazioneTracceHeaderRawEnabled;
 	private boolean transazioniRegistrazioneTracceDigestEnabled;
 	private boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled;
+	private boolean transazioniRegistrazioneTokenInformazioniNormalizzate;
 	
 	public PostOutResponseHandler_TransazioneUtilities(Logger log, 
 			boolean transazioniRegistrazioneTracceHeaderRawEnabled,
 			boolean transazioniRegistrazioneTracceDigestEnabled,
-			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled){
+			boolean transazioniRegistrazioneTracceProtocolPropertiesEnabled,
+			boolean transazioniRegistrazioneTokenInformazioniNormalizzate){
 		this.logger = log;
 		this.transazioniRegistrazioneTracceHeaderRawEnabled = transazioniRegistrazioneTracceHeaderRawEnabled;
 		this.transazioniRegistrazioneTracceDigestEnabled = transazioniRegistrazioneTracceDigestEnabled;
 		this.transazioniRegistrazioneTracceProtocolPropertiesEnabled = transazioniRegistrazioneTracceProtocolPropertiesEnabled;
+		this.transazioniRegistrazioneTokenInformazioniNormalizzate = transazioniRegistrazioneTokenInformazioniNormalizzate;
 	}
 	
 	public Transazione fillTransaction(PostOutResponseContext context,
@@ -250,7 +253,9 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** FAULT **
 			transactionDTO.setFaultIntegrazione(transaction.getFaultIntegrazione());
+			transactionDTO.setFormatoFaultIntegrazione(transaction.getFormatoFaultIntegrazione());
 			transactionDTO.setFaultCooperazione(transaction.getFaultCooperazione());
+			transactionDTO.setFormatoFaultCooperazione(transaction.getFormatoFaultCooperazione());
 //			boolean readFault = false;
 //			if(TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 //				if(transactionDTO.getFaultIntegrazione()==null){
@@ -266,6 +271,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			boolean readFault = true;
 			if(readFault){
 				String fault = null;
+				String formatoFault = null;
 				try{
 					if(context.getMessaggio()!=null){
 						if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())) {
@@ -291,6 +297,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 									fault = bout.toString();
 								}
 								
+								formatoFault = soapMsg.getMessageType().name();
 							}
 
 						}
@@ -300,9 +307,11 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				}
 				if(TipoPdD.DELEGATA.equals(context.getTipoPorta())){
 					transactionDTO.setFaultIntegrazione(fault);
+					transactionDTO.setFormatoFaultIntegrazione(formatoFault);
 				}
 				else{
 					transactionDTO.setFaultCooperazione(fault);
+					transactionDTO.setFormatoFaultCooperazione(formatoFault);
 				}
 			}
 			
@@ -652,6 +661,37 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			
 			// ** cluster-id **
 			transactionDTO.setClusterId(op2Properties.getClusterId(false));
+			
+			// credenziali
+			if(transaction.getCredenzialiMittente()!=null) {
+				
+				// trasporto
+				if(transaction.getCredenzialiMittente().getTrasporto()!=null) {
+					transactionDTO.setTrasportoMittente(transaction.getCredenzialiMittente().getTrasporto().getId()+"");
+				}
+				
+				// token
+				if(transaction.getCredenzialiMittente().getToken_issuer()!=null) {
+					transactionDTO.setTokenIssuer(transaction.getCredenzialiMittente().getToken_issuer().getId()+"");
+				}
+				if(transaction.getCredenzialiMittente().getToken_clientId()!=null) {
+					transactionDTO.setTokenClientId(transaction.getCredenzialiMittente().getToken_clientId().getId()+"");
+				}
+				if(transaction.getCredenzialiMittente().getToken_subject()!=null) {
+					transactionDTO.setTokenSubject(transaction.getCredenzialiMittente().getToken_subject().getId()+"");
+				}
+				if(transaction.getCredenzialiMittente().getToken_username()!=null) {
+					transactionDTO.setTokenUsername(transaction.getCredenzialiMittente().getToken_username().getId()+"");
+				}
+				if(transaction.getCredenzialiMittente().getToken_eMail()!=null) {
+					transactionDTO.setTokenMail(transaction.getCredenzialiMittente().getToken_eMail().getId()+"");
+				}
+			}
+			
+			// token info
+			if(this.transazioniRegistrazioneTokenInformazioniNormalizzate && transaction.getInformazioniToken()!=null) {
+				transactionDTO.setTokenInfo(transaction.getInformazioniToken().toJson());
+			}
 			
 			// ** Indirizzo IP **
 			Object oIpAddressRemote = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_REMOTE_ADDRESS);

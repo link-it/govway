@@ -234,11 +234,25 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "fault_integrazione";
 			}
 		}
+		if(field.equals(Transazione.model().FORMATO_FAULT_INTEGRAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault_integrazione";
+			}else{
+				return "formato_fault_integrazione";
+			}
+		}
 		if(field.equals(Transazione.model().FAULT_COOPERAZIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".fault_cooperazione";
 			}else{
 				return "fault_cooperazione";
+			}
+		}
+		if(field.equals(Transazione.model().FORMATO_FAULT_COOPERAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault_cooperazione";
+			}else{
+				return "formato_fault_cooperazione";
 			}
 		}
 		if(field.equals(Transazione.model().TIPO_SOGGETTO_FRUITORE)){
@@ -568,6 +582,55 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".url_invocazione";
 			}else{
 				return "url_invocazione";
+			}
+		}
+		if(field.equals(Transazione.model().TRASPORTO_MITTENTE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".trasporto_mittente";
+			}else{
+				return "trasporto_mittente";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_ISSUER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_issuer";
+			}else{
+				return "token_issuer";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_CLIENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_client_id";
+			}else{
+				return "token_client_id";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_SUBJECT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_subject";
+			}else{
+				return "token_subject";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_USERNAME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_username";
+			}else{
+				return "token_username";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_MAIL)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_mail";
+			}else{
+				return "token_mail";
+			}
+		}
+		if(field.equals(Transazione.model().TOKEN_INFO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_info";
+			}else{
+				return "token_info";
 			}
 		}
 		if(field.equals(Transazione.model().DUPLICATI_RICHIESTA)){
@@ -949,7 +1012,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().FAULT_INTEGRAZIONE)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
+		if(field.equals(Transazione.model().FORMATO_FAULT_INTEGRAZIONE)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
 		if(field.equals(Transazione.model().FAULT_COOPERAZIONE)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().FORMATO_FAULT_COOPERAZIONE)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().TIPO_SOGGETTO_FRUITORE)){
@@ -1091,6 +1160,27 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().URL_INVOCAZIONE)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TRASPORTO_MITTENTE)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_ISSUER)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_CLIENT_ID)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_SUBJECT)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_USERNAME)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_MAIL)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().TOKEN_INFO)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().DUPLICATI_RICHIESTA)){

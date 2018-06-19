@@ -59,6 +59,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
     	// Essendoci il principal del chiamante, il client e' stato autenticato dal container
     	esito.setClientAuthenticated(true);
+    	esito.setCredential(principal);
     	
 		IDServizioApplicativo idServizioApplicativo = null;
 		try{

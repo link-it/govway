@@ -48,6 +48,12 @@ import java.io.Serializable;
  * 			&lt;element name="versione-servizio" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="trasporto-mittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="token-client-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
@@ -82,6 +88,12 @@ import java.io.Serializable;
   	"versioneServizio",
   	"azione",
   	"servizioApplicativo",
+  	"trasportoMittente",
+  	"tokenIssuer",
+  	"tokenClientId",
+  	"tokenSubject",
+  	"tokenUsername",
+  	"tokenMail",
   	"esito",
   	"esitoContesto",
   	"numeroTransazioni",
@@ -222,6 +234,54 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
     this.servizioApplicativo = servizioApplicativo;
   }
 
+  public java.lang.String getTrasportoMittente() {
+    return this.trasportoMittente;
+  }
+
+  public void setTrasportoMittente(java.lang.String trasportoMittente) {
+    this.trasportoMittente = trasportoMittente;
+  }
+
+  public java.lang.String getTokenIssuer() {
+    return this.tokenIssuer;
+  }
+
+  public void setTokenIssuer(java.lang.String tokenIssuer) {
+    this.tokenIssuer = tokenIssuer;
+  }
+
+  public java.lang.String getTokenClientId() {
+    return this.tokenClientId;
+  }
+
+  public void setTokenClientId(java.lang.String tokenClientId) {
+    this.tokenClientId = tokenClientId;
+  }
+
+  public java.lang.String getTokenSubject() {
+    return this.tokenSubject;
+  }
+
+  public void setTokenSubject(java.lang.String tokenSubject) {
+    this.tokenSubject = tokenSubject;
+  }
+
+  public java.lang.String getTokenUsername() {
+    return this.tokenUsername;
+  }
+
+  public void setTokenUsername(java.lang.String tokenUsername) {
+    this.tokenUsername = tokenUsername;
+  }
+
+  public java.lang.String getTokenMail() {
+    return this.tokenMail;
+  }
+
+  public void setTokenMail(java.lang.String tokenMail) {
+    this.tokenMail = tokenMail;
+  }
+
   public java.lang.Integer getEsito() {
     return this.esito;
   }
@@ -351,6 +411,30 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
   protected java.lang.String servizioApplicativo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="trasporto-mittente",required=true,nillable=false)
+  protected java.lang.String trasportoMittente;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-issuer",required=true,nillable=false)
+  protected java.lang.String tokenIssuer;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-client-id",required=true,nillable=false)
+  protected java.lang.String tokenClientId;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-subject",required=true,nillable=false)
+  protected java.lang.String tokenSubject;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-username",required=true,nillable=false)
+  protected java.lang.String tokenUsername;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-mail",required=true,nillable=false)
+  protected java.lang.String tokenMail;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="esito",required=true,nillable=false)

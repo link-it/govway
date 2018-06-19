@@ -171,6 +171,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_HOUR">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -187,6 +193,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -286,6 +298,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_DAY">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -302,6 +320,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -396,6 +420,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_WEEK">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -412,6 +442,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -507,6 +543,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 						</linkit:sql-table-index>
 						<linkit:sql-table-index name="INDEX_STAT_MONTH">
 							<linkit:sql-table-index-column name="data" order="DESC" ignoreTypeCompatibility="true"/>
@@ -523,6 +565,12 @@
 							<linkit:sql-table-index-column name="tipo_mittente"/>
 							<linkit:sql-table-index-column name="mittente"/>
 							<linkit:sql-table-index-column name="servizio_applicativo"/>
+							<linkit:sql-table-index-column name="trasporto_mittente"/>
+							<linkit:sql-table-index-column name="token_issuer"/>
+							<linkit:sql-table-index-column name="token_client_id"/>
+							<linkit:sql-table-index-column name="token_subject"/>
+							<linkit:sql-table-index-column name="token_username"/>
+							<linkit:sql-table-index-column name="token_mail"/>
 							<linkit:sql-table-index-column name="richieste"/>
 							<linkit:sql-table-index-column name="bytes_banda_complessiva"/>
 							<linkit:sql-table-index-column name="bytes_banda_interna"/>
@@ -717,6 +765,72 @@
 							<linkit:sql-column-mapping name="servizio_applicativo"/>
 							<linkit:sql-column-comment><![CDATA[Informazioni di integrazione]]></linkit:sql-column-comment>
 							<linkit:sql-ddl-column-comment><![CDATA[Identificativo dell'applicativo]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="trasporto-mittente" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="trasporto_mittente" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso una credenziale di trasporto (FK verso mittente_anonimo(id))]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="token-issuer" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="token_issuer" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'issuer' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="token-client-id" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="token_client_id" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'client-id' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="token-subject" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="token_subject" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'subject' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="token-username" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="token_username" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'username' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="token-mail" type="xsd:string">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="token_mail" varchar="20" />
+							<linkit:sql-ddl-column-comment><![CDATA[Identificativo verso l'informazione 'email' estratta dal token (FK verso credenziale_mittente(id))]]></linkit:sql-ddl-column-comment>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>

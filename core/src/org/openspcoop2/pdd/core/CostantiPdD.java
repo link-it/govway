@@ -503,6 +503,8 @@ public class CostantiPdD {
     public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION = "@TOKEN_ENDPOINT_SERVIZIO_INTROSPECTION@";
     /** Costante che identifica l'endpoint del servizio di userInfo */
     public final static String KEY_TOKEN_ENDPOINT_SERVIZIO_USER_INFO = "@TOKEN_ENDPOINT_SERVIZIO_USER_INFO@";
+    /** Costante che identifica le informazioni di autenticazione controllate nel token */
+    public final static String KEY_TOKEN_AUTHN_CHECK = "@TOKEN_AUTHN_CHECK@";
     /** Costante che identifica il tipo di validazione contenuti */
     public final static String KEY_TIPO_VALIDAZIONE_CONTENUTI = "@TIPO_VALIDAZIONE_CONTENUTI@";
     /** Costante che identifica dettagli ulteriori sulla validazione contenuti */

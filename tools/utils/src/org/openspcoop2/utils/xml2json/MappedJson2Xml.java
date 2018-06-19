@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 
+import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 
 /**
@@ -18,10 +19,26 @@ import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 public class MappedJson2Xml extends AbstractJson2Xml {
 
 	private XMLInputFactory xmlInputFactory;
-	public MappedJson2Xml(Map<?, ?> jsonNamespaceMap) {
+	private Configuration configuration;
+	
+	public MappedJson2Xml(Map<String, String> jsonNamespaceMap) {
 		super();
-		this.xmlInputFactory =  new MappedXMLInputFactory(jsonNamespaceMap);
+		this.configuration = new Configuration(jsonNamespaceMap);
+		this.init();
 	}
+	public MappedJson2Xml(Configuration configuration) {
+		super();
+		this.configuration = configuration;
+		this.init();
+	}
+	private void init() {
+		this.xmlInputFactory = new MappedXMLInputFactory(this.configuration);			
+	}
+	
+	public Configuration getConfiguration() {
+		return this.configuration;
+	}
+	
 	@Override
 	protected XMLInputFactory getInputFactory() {
 		return this.xmlInputFactory;

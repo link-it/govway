@@ -51,6 +51,7 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 			
 			// Gestione FAULT
 			String fault = null;
+			String formatoFault = null;
 			try{
 				if(context.getMessaggio()!=null){
 					if(ServiceBinding.SOAP.equals(context.getMessaggio().getServiceBinding())) {
@@ -75,6 +76,8 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 								
 								fault = bout.toString();
 							}
+							
+							formatoFault = soapMsg.getMessageType().name();
 							
 						}
 					}
@@ -127,9 +130,11 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 				if(fault!=null){
 					if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())){
 						sObject.setFaultIntegrazione(fault);
+						sObject.setFormatoFaultIntegrazione(formatoFault);
 					}
 					else{
 						sObject.setFaultCooperazione(fault);
+						sObject.setFormatoFaultCooperazione(formatoFault);
 					}
 				}
 			
@@ -211,9 +216,11 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 					if(fault!=null){
 						if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())){
 							tr.setFaultIntegrazione(fault);
+							tr.setFormatoFaultIntegrazione(formatoFault);
 						}
 						else{
 							tr.setFaultCooperazione(fault);
+							tr.setFormatoFaultCooperazione(formatoFault);
 						}
 					}
 				}catch(TransactionDeletedException e){
@@ -222,9 +229,11 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 							sObject = new InResponseStatefulObject();
 						if(TipoPdD.APPLICATIVA.equals(context.getTipoPorta())){
 							sObject.setFaultIntegrazione(fault);
+							sObject.setFormatoFaultIntegrazione(formatoFault);
 						}
 						else{
 							sObject.setFaultCooperazione(fault);
+							sObject.setFormatoFaultCooperazione(formatoFault);
 						}
 					}
 				}

@@ -40,6 +40,8 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="pdd-tipo-soggetto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pdd-nome-soggetto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pdd-ruolo" type="{http://www.openspcoop2.org/core/transazioni}pdd-ruolo" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-fault-integrazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="formato-fault-cooperazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo-soggetto-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome-soggetto-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="idporta-soggetto-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -72,6 +74,13 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="credenziali" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="location-connettore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="url-invocazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="trasporto-mittente" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-client-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="token-info" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="socket-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="transport-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -133,6 +142,8 @@ import java.util.Date;
     "pddTipoSoggetto",
     "pddNomeSoggetto",
     "pddRuolo",
+    "formatoFaultIntegrazione",
+    "formatoFaultCooperazione",
     "tipoSoggettoFruitore",
     "nomeSoggettoFruitore",
     "idportaSoggettoFruitore",
@@ -165,6 +176,13 @@ import java.util.Date;
     "credenziali",
     "locationConnettore",
     "urlInvocazione",
+    "trasportoMittente",
+    "tokenIssuer",
+    "tokenClientId",
+    "tokenSubject",
+    "tokenUsername",
+    "tokenMail",
+    "tokenInfo",
     "clusterId",
     "socketClientAddress",
     "transportClientAddress",
@@ -605,6 +623,32 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault-integrazione",required=false,nillable=false)
+	private String formatoFaultIntegrazione;
+	
+	public void setFormatoFaultIntegrazione(String formatoFaultIntegrazione){
+		this.formatoFaultIntegrazione = formatoFaultIntegrazione;
+	}
+	
+	public String getFormatoFaultIntegrazione(){
+		return this.formatoFaultIntegrazione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault-cooperazione",required=false,nillable=false)
+	private String formatoFaultCooperazione;
+	
+	public void setFormatoFaultCooperazione(String formatoFaultCooperazione){
+		this.formatoFaultCooperazione = formatoFaultCooperazione;
+	}
+	
+	public String getFormatoFaultCooperazione(){
+		return this.formatoFaultCooperazione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo-soggetto-fruitore",required=false,nillable=false)
 	private String tipoSoggettoFruitore;
 	
@@ -1017,6 +1061,97 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public String getUrlInvocazione(){
 		return this.urlInvocazione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="trasporto-mittente",required=false,nillable=false)
+	private String trasportoMittente;
+	
+	public void setTrasportoMittente(String trasportoMittente){
+		this.trasportoMittente = trasportoMittente;
+	}
+	
+	public String getTrasportoMittente(){
+		return this.trasportoMittente;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-issuer",required=false,nillable=false)
+	private String tokenIssuer;
+	
+	public void setTokenIssuer(String tokenIssuer){
+		this.tokenIssuer = tokenIssuer;
+	}
+	
+	public String getTokenIssuer(){
+		return this.tokenIssuer;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-client-id",required=false,nillable=false)
+	private String tokenClientId;
+	
+	public void setTokenClientId(String tokenClientId){
+		this.tokenClientId = tokenClientId;
+	}
+	
+	public String getTokenClientId(){
+		return this.tokenClientId;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-subject",required=false,nillable=false)
+	private String tokenSubject;
+	
+	public void setTokenSubject(String tokenSubject){
+		this.tokenSubject = tokenSubject;
+	}
+	
+	public String getTokenSubject(){
+		return this.tokenSubject;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-username",required=false,nillable=false)
+	private String tokenUsername;
+	
+	public void setTokenUsername(String tokenUsername){
+		this.tokenUsername = tokenUsername;
+	}
+	
+	public String getTokenUsername(){
+		return this.tokenUsername;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-mail",required=false,nillable=false)
+	private String tokenMail;
+	
+	public void setTokenMail(String tokenMail){
+		this.tokenMail = tokenMail;
+	}
+	
+	public String getTokenMail(){
+		return this.tokenMail;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-info",required=false,nillable=false)
+	private String tokenInfo;
+	
+	public void setTokenInfo(String tokenInfo){
+		this.tokenInfo = tokenInfo;
+	}
+	
+	public String getTokenInfo(){
+		return this.tokenInfo;
 	}
 	
 	

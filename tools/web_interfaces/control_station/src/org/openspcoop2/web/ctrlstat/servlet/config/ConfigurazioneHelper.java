@@ -1863,9 +1863,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String validman = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_VALIDMAN);
 			String gestman = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
 			String registrazioneTracce = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
-			String dumpApplicativo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
-			String dumpPD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
-			String dumpPA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
+//			String dumpApplicativo = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
+//			String dumpPD = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PD);
+//			String dumpPA = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_CONNETTORE_PA);
 
 			// Campi obbligatori
 			if (inoltromin.equals("")) {
@@ -1943,21 +1943,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Buste dev'essere abilitato o disabilitato");
 				return false;
 			}
-			if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-					!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-				this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
-				return false;
-			}
-			if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-					!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-				this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
-				return false;
-			}
-			if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
-					!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
-				this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
-				return false;
-			}
+//			if (!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+//					!dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+//				this.pd.setMessage("Dump Applicativo dev'essere abilitato o disabilitato");
+//				return false;
+//			}
+//			if (!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+//					!dumpPD.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+//				this.pd.setMessage("Dump Binario Porta Delegata dev'essere abilitato o disabilitato");
+//				return false;
+//			}
+//			if (!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) &&
+//					!dumpPA.equals(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO)) {
+//				this.pd.setMessage("Dump Binario Porta Applicativa dev'essere abilitato o disabilitato");
+//				return false;
+//			}
 
 			// inoltromin dev'essere numerico
 			if (!this.checkNumber(inoltromin, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE, false) ) {
@@ -2984,10 +2984,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		// I.M.
 
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		if (!this.isModalitaStandard()) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INTEGRATION_MANAGER);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 
 		int totEl = ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM.length;
 		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
@@ -2999,23 +3001,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
 			tipoIM[(totEl-1)] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM;
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN);
-		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_INTEGMAN);
-		de.setValues(tipoIM);
-		de.setSelected(integman);
-		//					de.setOnChange("CambiaIntegMan('" +
-		//							InterfaceType.STANDARD.equals(user.getInterfaceType()) +
-		//							"')");
-		de.setPostBack(true);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN);
+		if (this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoIM);
+			de.setSelected(integman);
+			de.setPostBack(true);
+		}
+		de.setValue(integman);
 		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
-		if (integman == null || !integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM))
+		if (this.isModalitaStandard()) {
 			de.setType(DataElementType.HIDDEN);
-		else
-			de.setType(DataElementType.TEXT_EDIT);
+		}
+		else {
+			if (integman == null || !integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM))
+				de.setType(DataElementType.HIDDEN);
+			else
+				de.setType(DataElementType.TEXT_EDIT);
+		}
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_NOME_INTEGMAN);
 		de.setValue(nomeintegman);
 		dati.addElement(de);
@@ -3137,21 +3147,29 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 		}
 
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
+		if (!this.isModalitaStandard()) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_MANIFEST_ATTACHMENTS);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
 
 		String[] tipoGM = { 
 				ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO,
 				ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO
 		};
 		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN);
-		de.setType(DataElementType.SELECT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_GESTMAN);
-		de.setValues(tipoGM);
-		de.setSelected(gestman);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_GESTMAN);
+		if (this.isModalitaStandard()) {
+			de.setType(DataElementType.HIDDEN);
+		}
+		else {
+			de.setType(DataElementType.SELECT);
+			de.setValues(tipoGM);
+			de.setSelected(gestman);
+		}
+		de.setValue(gestman);
 		dati.addElement(de);
 		
 		
@@ -3261,39 +3279,40 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
-		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
-		ServletUtils.setDataElementVisualizzaLabel(de);
-		dati.addElement(de);
+		if (!this.isModalitaStandard()) {
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI);
+			ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TABELLA_DI_ROUTING);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING);
+			ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
+			ServletUtils.setDataElementVisualizzaLabel(de);
+			dati.addElement(de);
+		}
 		
 		// Lascio solo in menu
 //		if(this.confCore.getJmxPdD_aliases()!=null && this.confCore.getJmxPdD_aliases().size()>0){

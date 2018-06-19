@@ -3,6 +3,7 @@
  */
 package org.openspcoop2.utils.xml2json;
 
+import org.openspcoop2.utils.UtilsException;
 import org.w3c.dom.Node;
 
 /**
@@ -12,7 +13,7 @@ import org.w3c.dom.Node;
  * 
  */
 public interface IXml2Json {
-	public String xml2json(String xmlString) throws Exception;
-	public String xml2json(Node node) throws Exception;
+	public String xml2json(String xmlString) throws UtilsException;
+	public String xml2json(Node node) throws UtilsException;
 
 }

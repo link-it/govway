@@ -26,6 +26,8 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteServiceSearch;
+import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneInfoServiceSearch;
@@ -71,6 +73,38 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	protected DataSource get_Datasource() throws ServiceException {
 		throw new ServiceException("Connection managed from framework");
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:credenziale-mittente type:credenziale-mittente
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ICredenzialeMittenteServiceSearch getCredenzialeMittenteServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCCredenzialeMittenteServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ICredenzialeMittenteService getCredenzialeMittenteService() throws ServiceException,NotImplementedException{
+		return new JDBCCredenzialeMittenteService(this.unlimitedJdbcServiceManager);
 	}
 	
 	

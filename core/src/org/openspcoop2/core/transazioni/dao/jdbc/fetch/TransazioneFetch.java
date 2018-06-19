@@ -100,8 +100,12 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "pdd_ruolo", Transazione.model().PDD_RUOLO.getFieldType())+"");
 				setParameter(object, "setFaultIntegrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "fault_integrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType()));
+				setParameter(object, "setFormatoFaultIntegrazione", Transazione.model().FORMATO_FAULT_INTEGRAZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "formato_fault_integrazione", Transazione.model().FORMATO_FAULT_INTEGRAZIONE.getFieldType()));
 				setParameter(object, "setFaultCooperazione", Transazione.model().FAULT_COOPERAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "fault_cooperazione", Transazione.model().FAULT_COOPERAZIONE.getFieldType()));
+				setParameter(object, "setFormatoFaultCooperazione", Transazione.model().FORMATO_FAULT_COOPERAZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "formato_fault_cooperazione", Transazione.model().FORMATO_FAULT_COOPERAZIONE.getFieldType()));
 				setParameter(object, "setTipoSoggettoFruitore", Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tipo_soggetto_fruitore", Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldType()));
 				setParameter(object, "setNomeSoggettoFruitore", Transazione.model().NOME_SOGGETTO_FRUITORE.getFieldType(),
@@ -196,6 +200,20 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "location_connettore", Transazione.model().LOCATION_CONNETTORE.getFieldType()));
 				setParameter(object, "setUrlInvocazione", Transazione.model().URL_INVOCAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "url_invocazione", Transazione.model().URL_INVOCAZIONE.getFieldType()));
+				setParameter(object, "setTrasportoMittente", Transazione.model().TRASPORTO_MITTENTE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "trasporto_mittente", Transazione.model().TRASPORTO_MITTENTE.getFieldType()));
+				setParameter(object, "setTokenIssuer", Transazione.model().TOKEN_ISSUER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_issuer", Transazione.model().TOKEN_ISSUER.getFieldType()));
+				setParameter(object, "setTokenClientId", Transazione.model().TOKEN_CLIENT_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_client_id", Transazione.model().TOKEN_CLIENT_ID.getFieldType()));
+				setParameter(object, "setTokenSubject", Transazione.model().TOKEN_SUBJECT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_subject", Transazione.model().TOKEN_SUBJECT.getFieldType()));
+				setParameter(object, "setTokenUsername", Transazione.model().TOKEN_USERNAME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_username", Transazione.model().TOKEN_USERNAME.getFieldType()));
+				setParameter(object, "setTokenMail", Transazione.model().TOKEN_MAIL.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_mail", Transazione.model().TOKEN_MAIL.getFieldType()));
+				setParameter(object, "setTokenInfo", Transazione.model().TOKEN_INFO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_info", Transazione.model().TOKEN_INFO.getFieldType()));
 				setParameter(object, "setDuplicatiRichiesta", Transazione.model().DUPLICATI_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "duplicati_richiesta", Transazione.model().DUPLICATI_RICHIESTA.getFieldType()));
 				setParameter(object, "setDuplicatiRisposta", Transazione.model().DUPLICATI_RISPOSTA.getFieldType(),
@@ -286,8 +304,12 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"pdd-ruolo"));
 				setParameter(object, "setFaultIntegrazione", Transazione.model().FAULT_INTEGRAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"fault-integrazione"));
+				setParameter(object, "setFormatoFaultIntegrazione", Transazione.model().FORMATO_FAULT_INTEGRAZIONE.getFieldType(),
+					this.getObjectFromMap(map,"formato-fault-integrazione"));
 				setParameter(object, "setFaultCooperazione", Transazione.model().FAULT_COOPERAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"fault-cooperazione"));
+				setParameter(object, "setFormatoFaultCooperazione", Transazione.model().FORMATO_FAULT_COOPERAZIONE.getFieldType(),
+					this.getObjectFromMap(map,"formato-fault-cooperazione"));
 				setParameter(object, "setTipoSoggettoFruitore", Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldType(),
 					this.getObjectFromMap(map,"tipo-soggetto-fruitore"));
 				setParameter(object, "setNomeSoggettoFruitore", Transazione.model().NOME_SOGGETTO_FRUITORE.getFieldType(),
@@ -382,6 +404,20 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"location-connettore"));
 				setParameter(object, "setUrlInvocazione", Transazione.model().URL_INVOCAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"url-invocazione"));
+				setParameter(object, "setTrasportoMittente", Transazione.model().TRASPORTO_MITTENTE.getFieldType(),
+					this.getObjectFromMap(map,"trasporto-mittente"));
+				setParameter(object, "setTokenIssuer", Transazione.model().TOKEN_ISSUER.getFieldType(),
+					this.getObjectFromMap(map,"token-issuer"));
+				setParameter(object, "setTokenClientId", Transazione.model().TOKEN_CLIENT_ID.getFieldType(),
+					this.getObjectFromMap(map,"token-client-id"));
+				setParameter(object, "setTokenSubject", Transazione.model().TOKEN_SUBJECT.getFieldType(),
+					this.getObjectFromMap(map,"token-subject"));
+				setParameter(object, "setTokenUsername", Transazione.model().TOKEN_USERNAME.getFieldType(),
+					this.getObjectFromMap(map,"token-username"));
+				setParameter(object, "setTokenMail", Transazione.model().TOKEN_MAIL.getFieldType(),
+					this.getObjectFromMap(map,"token-mail"));
+				setParameter(object, "setTokenInfo", Transazione.model().TOKEN_INFO.getFieldType(),
+					this.getObjectFromMap(map,"token-info"));
 				setParameter(object, "setDuplicatiRichiesta", Transazione.model().DUPLICATI_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"duplicati-richiesta"));
 				setParameter(object, "setDuplicatiRisposta", Transazione.model().DUPLICATI_RISPOSTA.getFieldType(),

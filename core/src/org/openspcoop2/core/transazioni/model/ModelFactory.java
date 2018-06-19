@@ -28,6 +28,8 @@ package org.openspcoop2.core.transazioni.model;
  */
 public class ModelFactory {
 
+	public static CredenzialeMittenteModel CREDENZIALE_MITTENTE = new CredenzialeMittenteModel();
+	
 	public static TransazioneModel TRANSAZIONE = new TransazioneModel();
 	
 	public static TransazioneInfoModel TRANSAZIONE_INFO = new TransazioneInfoModel();

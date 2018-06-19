@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.GestioneToken;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -82,7 +83,9 @@ public class PorteDelegateCore extends ControlStationCore {
 	public void configureControlloAccessiPortaDelegata(PortaDelegata portaDelegata, 
 			String fruizioneAutenticazione, String fruizioneAutenticazioneOpzionale,
 			String fruizioneAutorizzazione, String fruizioneAutorizzazioneAutenticati, String fruizioneAutorizzazioneRuoli, String fruizioneAutorizzazioneRuoliTipologia, String fruizioneAutorizzazioneRuoliMatch,
-			String fruizioneServizioApplicativo, String fruizioneRuolo, String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch) {
+			String fruizioneServizioApplicativo, String fruizioneRuolo, 
+			String fruizioneAutorizzazione_tokenOptions,
+			String fruizioneAutorizzazioneScope, String fruizioneScope, String fruizioneAutorizzazioneScopeMatch) {
 		
 		portaDelegata.setAutenticazione(fruizioneAutenticazione);
 		if(fruizioneAutenticazioneOpzionale != null){
@@ -93,7 +96,10 @@ public class PorteDelegateCore extends ControlStationCore {
 		} else 
 			portaDelegata.setAutenticazioneOpzionale(null);
 		portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(fruizioneAutorizzazione, 
-				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli), 
+				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneAutenticati), 
+				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneRuoli),
+				ServletUtils.isCheckBoxEnabled(fruizioneAutorizzazioneScope),
+				fruizioneAutorizzazione_tokenOptions,
 				RuoloTipologia.toEnumConstant(fruizioneAutorizzazioneRuoliTipologia)));
 		
 		if(fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(fruizioneAutorizzazioneRuoliMatch)){
@@ -129,6 +135,9 @@ public class PorteDelegateCore extends ControlStationCore {
 			
 			portaDelegata.getScope().setStato(StatoFunzionalita.ABILITATO); 
 		}
+		else {
+			portaDelegata.setScope(null);
+		}
 		// scope
 		if(fruizioneScope!=null && !"".equals(fruizioneScope) && !"-".equals(fruizioneScope)){
 			if(portaDelegata.getScope() == null) {
@@ -149,23 +158,41 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public void configureControlloAccessiGestioneToken (PortaDelegata portaDelegata, String gestioneToken, String gestioneTokenPolicy, String gestioneTokenValidazioneInput, 
-			String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) {
+	public void configureControlloAccessiGestioneToken (PortaDelegata portaDelegata, String gestioneToken, 
+			String gestioneTokenPolicy, String gestioneTokenOpzionale,   
+			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
+			String autorizzazione_tokenOptions) {
 		if(portaDelegata.getGestioneToken() == null)
 			portaDelegata.setGestioneToken(new GestioneToken());
 		
 		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaDelegata.getGestioneToken().setPolicy(gestioneTokenPolicy);
+			portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.toEnumConstant(gestioneTokenOpzionale)); 
 			portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
 			portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 			portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
 			portaDelegata.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenForward)); 
+			portaDelegata.getGestioneToken().setOptions(autorizzazione_tokenOptions);
+			if(portaDelegata.getGestioneToken().getAutenticazione()==null) {
+				portaDelegata.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+			}
+			portaDelegata.getGestioneToken().getAutenticazione().setIssuer(StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
+			portaDelegata.getGestioneToken().getAutenticazione().setClientId(StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
+			portaDelegata.getGestioneToken().getAutenticazione().setSubject(StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
+			portaDelegata.getGestioneToken().getAutenticazione().setUsername(StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
+			portaDelegata.getGestioneToken().getAutenticazione().setEmail(StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
 		} else {
 			portaDelegata.getGestioneToken().setPolicy(null);
+			portaDelegata.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO); 
 			portaDelegata.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
 			portaDelegata.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
 			portaDelegata.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
 			portaDelegata.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
+			portaDelegata.getGestioneToken().setOptions(null);
+			if(portaDelegata.getGestioneToken().getAutenticazione()!=null) {
+				portaDelegata.getGestioneToken().setAutenticazione(null);
+			}
 		}
 	}
 	

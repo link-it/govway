@@ -35,6 +35,32 @@ public interface IServiceManager {
 
 	/*
 	 =====================================================================================================================
+	 Services relating to the object with name:credenziale-mittente type:credenziale-mittente
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public ICredenzialeMittenteServiceSearch getCredenzialeMittenteServiceSearch() throws ServiceException,NotImplementedException;
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.CredenzialeMittente}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public ICredenzialeMittenteService getCredenzialeMittenteService() throws ServiceException,NotImplementedException;
+	
+	
+	
+	/*
+	 =====================================================================================================================
 	 Services relating to the object with name:transazione type:transazione
 	 =====================================================================================================================
 	*/

@@ -1,0 +1,43 @@
+{
+    "required" : [ "id" ],
+    "properties": {
+        "id": {"type": "string"},
+        "issuer": {"type": "string"},
+	"subject": {"type": "string"},
+	"username": {"type": "string"},
+	"audience": {"type": "string"},
+	"clientId": {"type": "string"},
+	"iat": {
+            "type": "string",
+            "format": "date-time"
+        },
+	"expire": {
+            "type": "string",
+            "format": "date-time"
+        },
+	"expire": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "roles": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "scope": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+	"userInfo": {
+		"type": "object",
+		"properties": {
+			"fullName": {"type": "string"},
+			"firstName": {"type": "string"},
+			"middleName": {"type": "string"},
+			"familyName": {"type": "string"},
+			"email": {"type": "string"},
+		},
+		"additionalProperties": false
+	}
+    },
+    "additionalProperties": false
+}

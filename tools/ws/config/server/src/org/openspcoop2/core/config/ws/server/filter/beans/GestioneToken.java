@@ -27,11 +27,13 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="gestione-token">
  *     &lt;sequence>
+ *         &lt;element name="autenticazione" type="{http://www.openspcoop2.org/core/config/management}gestione-token-autenticazione" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="validazione" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" default="(StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="introspection" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" default="(StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="userInfo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" default="(StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="forward" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
+ *         &lt;element name="token-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="validazione" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="introspection" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="userInfo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="forward" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="options" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
@@ -43,6 +45,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
+import org.openspcoop2.core.config.ws.server.filter.beans.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
@@ -56,7 +59,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "gestione-token", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
+    "autenticazione",
     "policy",
+    "tokenOpzionale",
     "validazione",
     "introspection",
     "userInfo",
@@ -67,6 +72,18 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@XmlElement(name="autenticazione",required=false,nillable=false)
+	private GestioneTokenAutenticazione autenticazione;
+	
+	public void setAutenticazione(GestioneTokenAutenticazione autenticazione){
+		this.autenticazione = autenticazione;
+	}
+	
+	public GestioneTokenAutenticazione getAutenticazione(){
+		return this.autenticazione;
+	}
+	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="policy",required=false,nillable=false)
@@ -81,8 +98,20 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 	}
 	
 	
-	@XmlElement(name="validazione",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalitaConWarning validazione = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="token-opzionale",required=false,nillable=false)
+	private StatoFunzionalita tokenOpzionale;
+	
+	public void setTokenOpzionale(StatoFunzionalita tokenOpzionale){
+		this.tokenOpzionale = tokenOpzionale;
+	}
+	
+	public StatoFunzionalita getTokenOpzionale(){
+		return this.tokenOpzionale;
+	}
+	
+	
+	@XmlElement(name="validazione",required=false,nillable=false)
+	private StatoFunzionalitaConWarning validazione;
 	
 	public void setValidazione(StatoFunzionalitaConWarning validazione){
 		this.validazione = validazione;
@@ -93,8 +122,8 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 	}
 	
 	
-	@XmlElement(name="introspection",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalitaConWarning introspection = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="introspection",required=false,nillable=false)
+	private StatoFunzionalitaConWarning introspection;
 	
 	public void setIntrospection(StatoFunzionalitaConWarning introspection){
 		this.introspection = introspection;
@@ -105,8 +134,8 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 	}
 	
 	
-	@XmlElement(name="userInfo",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalitaConWarning userInfo = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="userInfo",required=false,nillable=false)
+	private StatoFunzionalitaConWarning userInfo;
 	
 	public void setUserInfo(StatoFunzionalitaConWarning userInfo){
 		this.userInfo = userInfo;
@@ -117,8 +146,8 @@ public class GestioneToken extends org.openspcoop2.utils.beans.BaseBean implemen
 	}
 	
 	
-	@XmlElement(name="forward",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita forward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="forward",required=false,nillable=false)
+	private StatoFunzionalita forward;
 	
 	public void setForward(StatoFunzionalita forward){
 		this.forward = forward;

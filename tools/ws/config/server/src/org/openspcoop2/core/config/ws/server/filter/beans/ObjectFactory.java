@@ -140,6 +140,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link GestioneTokenAutenticazione }
+     */
+    public GestioneTokenAutenticazione createGestioneTokenAutenticazione() {
+        return new GestioneTokenAutenticazione();
+    }
+    
+    /**
      * Create an instance of {@link RispostaAsincrona }
      */
     public RispostaAsincrona createRispostaAsincrona() {

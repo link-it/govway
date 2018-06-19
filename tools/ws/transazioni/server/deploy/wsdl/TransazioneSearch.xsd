@@ -45,6 +45,8 @@
  			<xsd:element name="pdd-tipo-soggetto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="pdd-nome-soggetto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="pdd-ruolo" type="api:pdd-ruolo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="formato-fault-integrazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="formato-fault-cooperazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="idporta-soggetto-fruitore" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -77,6 +79,13 @@
  			<xsd:element name="credenziali" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="location-connettore" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="url-invocazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="trasporto-mittente" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-issuer" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-client-id" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-username" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-mail" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="token-info" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="cluster-id" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="socket-client-address" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="transport-client-address" type="xsd:string" minOccurs="0" maxOccurs="1" />

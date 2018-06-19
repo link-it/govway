@@ -13,13 +13,14 @@ import org.openspcoop2.utils.json.JSONUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class InformazioniToken implements Serializable {
+public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public InformazioniToken() {} // per serializzatore
 	public InformazioniToken(String rawResponse, ITokenParser tokenParser) throws Exception {
 		this(null,rawResponse,tokenParser);
 	}
@@ -62,6 +63,12 @@ public class InformazioniToken implements Serializable {
 	public InformazioniToken(InformazioniToken ... informazioniTokens ) throws Exception {
 		if(informazioniTokens!=null && informazioniTokens.length>0) {
 			
+			for (int i = 0; i < informazioniTokens.length; i++) {
+				if(informazioniTokens[i].getClaims().size()>0) {
+					this.claims.putAll(informazioniTokens[i].getClaims());
+				}
+			}
+			
 			Object iss = getValue("iss", informazioniTokens); 
 			if(iss!=null && iss instanceof String) {
 				this.iss = (String) iss;
@@ -103,13 +110,19 @@ public class InformazioniToken implements Serializable {
 			}
 			
 			Object roles = getValue("roles", informazioniTokens); 
-			if(roles!=null && roles instanceof String) {
-				this.roles = (List<String>) roles;
+			if(roles!=null && roles instanceof List) {
+				List<String> l = (List<String>) roles;
+				if(l.size()>0) {
+					this.roles.addAll(l);
+				}
 			}
 			
 			Object scopes = getValue("scopes", informazioniTokens); 
-			if(scopes!=null && scopes instanceof String) {
-				this.scopes = (List<String>) scopes;
+			if(scopes!=null && scopes instanceof List) {
+				List<String> l = (List<String>) scopes;
+				if(l.size()>0) {
+					this.scopes.addAll(l);
+				}
 			}
 			
 			List<InformazioniTokenUserInfo> listUserInfo = new ArrayList<>();

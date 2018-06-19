@@ -64,6 +64,8 @@ public class TokenUtilities {
 		Map<String, Properties> multiProperties = DBPropertiesUtils.toMultiMap(properties);
 		policy.setProperties(multiProperties);
 		
+		policy.setTokenOpzionale(false);
+		
 		policy.setValidazioneJWT(false);
 		policy.setValidazioneJWT_warningOnly(false);
 		
@@ -76,6 +78,17 @@ public class TokenUtilities {
 		policy.setForwardToken(false);
 		
 		if(gestioneToken!=null) {
+			
+			if(gestioneToken.getTokenOpzionale()!=null) {
+				switch (gestioneToken.getTokenOpzionale()) {
+				case ABILITATO:
+					policy.setTokenOpzionale(true);
+					break;
+				case DISABILITATO:
+					policy.setTokenOpzionale(false);
+					break;
+				}
+			}
 			
 			if(gestioneToken.getValidazione()!=null) {
 				switch (gestioneToken.getValidazione()) {

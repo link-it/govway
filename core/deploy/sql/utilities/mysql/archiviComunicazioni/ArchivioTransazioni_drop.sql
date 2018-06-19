@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_credenziale_mittente_1 ON credenziale_mittente ;
 -- DROP INDEX index_dump_contenuti_1 ON dump_contenuti ;
 -- DROP INDEX index_dump_header_allegato_1 ON dump_header_allegato ;
 -- DROP INDEX index_dump_allegati_1 ON dump_allegati ;
@@ -25,3 +26,4 @@ DROP TABLE dump_messaggi;
 DROP TABLE transazioni_export;
 DROP TABLE transazioni_info;
 DROP TABLE transazioni;
+DROP TABLE credenziale_mittente;

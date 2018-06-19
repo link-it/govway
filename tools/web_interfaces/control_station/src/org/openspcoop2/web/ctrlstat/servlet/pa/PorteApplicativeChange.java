@@ -374,10 +374,19 @@ public final class PorteApplicativeChange extends Action {
 			
 			String gestioneToken = null; 
 			String gestioneTokenPolicy = null;
+			String gestioneTokenOpzionale = null;
 			String gestioneTokenValidazioneInput = null;
 			String gestioneTokenIntrospection = null;
 			String gestioneTokenUserInfo = null;
 			String gestioneTokenTokenForward = null;
+			
+			String autenticazioneTokenIssuer = null;
+			String autenticazioneTokenClientId = null;
+			String autenticazioneTokenSubject = null;
+			String autenticazioneTokenUsername = null;
+			String autenticazioneTokenEMail = null;
+			
+			String autorizzazione_tokenOptions = null;
 			
 			if(pa.getGestioneToken() != null) {
 				gestioneTokenPolicy = pa.getGestioneToken().getPolicy();
@@ -386,6 +395,13 @@ public final class PorteApplicativeChange extends Action {
 					gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
 				} else {
 					gestioneToken = StatoFunzionalita.ABILITATO.getValue();
+				}
+				
+				StatoFunzionalita tokenOpzionale = pa.getGestioneToken().getTokenOpzionale();
+				if(tokenOpzionale == null) {
+					gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
+				}else { 
+					gestioneTokenOpzionale = tokenOpzionale.getValue();
 				}
 				
 				StatoFunzionalitaConWarning validazione = pa.getGestioneToken().getValidazione();
@@ -415,14 +431,70 @@ public final class PorteApplicativeChange extends Action {
 				}else { 
 					gestioneTokenTokenForward = tokenForward.getValue();
 				}
+				
+				autorizzazione_tokenOptions = pa.getGestioneToken().getOptions();
+				
+				if(pa.getGestioneToken().getAutenticazione() != null) {
+					
+					StatoFunzionalita issuer = pa.getGestioneToken().getAutenticazione().getIssuer();
+					if(issuer == null) {
+						autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
+					}else { 
+						autenticazioneTokenIssuer = issuer.getValue();
+					}
+					
+					StatoFunzionalita clientId = pa.getGestioneToken().getAutenticazione().getClientId();
+					if(clientId == null) {
+						autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
+					}else { 
+						autenticazioneTokenClientId = clientId.getValue();
+					}
+					
+					StatoFunzionalita subject = pa.getGestioneToken().getAutenticazione().getSubject();
+					if(subject == null) {
+						autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
+					}else { 
+						autenticazioneTokenSubject = subject.getValue();
+					}
+					
+					StatoFunzionalita username = pa.getGestioneToken().getAutenticazione().getUsername();
+					if(username == null) {
+						autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
+					}else { 
+						autenticazioneTokenUsername = username.getValue();
+					}
+					
+					StatoFunzionalita mailTmp = pa.getGestioneToken().getAutenticazione().getEmail();
+					if(mailTmp == null) {
+						autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
+					}else { 
+						autenticazioneTokenEMail = mailTmp.getValue();
+					}
+					
+				}
+				else {
+					autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
+					autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
+					autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
+					autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
+					autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
+				}
 			}
 			else {
 				gestioneToken = StatoFunzionalita.DISABILITATO.getValue();
 				gestioneTokenPolicy = CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO;
+				gestioneTokenOpzionale = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_OPZIONALE;
+				
 				gestioneTokenValidazioneInput = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_VALIDAZIONE_INPUT;
 				gestioneTokenIntrospection = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_INTROSPECTION;
 				gestioneTokenUserInfo = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_USER_INFO;
 				gestioneTokenTokenForward = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TOKEN_FORWARD;
+				
+				autenticazioneTokenIssuer = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_ISSUER;
+				autenticazioneTokenClientId = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_CLIENT_ID;
+				autenticazioneTokenSubject = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_SUBJECT;
+				autenticazioneTokenUsername = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_USERNAME;
+				autenticazioneTokenEMail = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_AUTENTICAZIONE_EMAIL;
 			}
 			
 			String autorizzazioneScope = null;
@@ -841,7 +913,11 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, patternAzione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,
+						gestioneTokenPolicy,gestioneTokenOpzionale,
+						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+						autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);
@@ -1008,7 +1084,11 @@ public final class PorteApplicativeChange extends Action {
 						servS,as,serviceBinding,
 						statoPorta,modeaz,  azid, azione, forceWsdlBased, usataInConfigurazioni,usataInConfigurazioneDefault,
 						StatoFunzionalita.ABILITATO.equals(pa.getRicercaPortaAzioneDelegata()), 
-						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,gestioneTokenPolicy,gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						(pa.getAzione()!=null ? pa.getAzione().getNomePortaDelegante() : null), gestioneToken,null,null,
+						gestioneTokenPolicy,gestioneTokenOpzionale,
+						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
+						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
+						autorizzazione_tokenOptions,
 						autorizzazioneScope,numScope, autorizzazioneScopeMatch);
 
 				pd.setDati(dati);

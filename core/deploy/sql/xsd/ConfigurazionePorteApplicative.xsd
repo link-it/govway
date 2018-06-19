@@ -535,6 +535,17 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="token_opzionale" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_opzionale"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se un token deve obbligatoriamente essere presente (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="token_validazione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -584,8 +595,63 @@ Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistr
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="token_options"/>
+                                <linkit:sql-column-mapping name="token_options" varchar="4000"/>
                                 <linkit:sql-ddl-column-comment>Opzioni di configurazione ulteriori per la gestione del token</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_authn_issuer" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_authn_issuer"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'autenticazione deve verificare la presenza dell'informazione 'Issuer' nel token (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_authn_client_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_authn_client_id"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'autenticazione deve verificare la presenza dell'informazione 'ClientId' nel token (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_authn_subject" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_authn_subject"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'autenticazione deve verificare la presenza dell'informazione 'Subject' nel token (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_authn_username" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_authn_username"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'autenticazione deve verificare la presenza dell'informazione 'Username' nel token (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="token_authn_email" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="token_authn_email"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'autenticazione deve verificare la presenza dell'informazione 'EMail' nel token (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

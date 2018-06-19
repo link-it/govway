@@ -71,6 +71,7 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneToken;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
@@ -12673,11 +12674,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("autenticazione");
 			sqlQueryObject.addSelectField("autenticazione_opzionale");
 			sqlQueryObject.addSelectField("token_policy");
+			sqlQueryObject.addSelectField("token_opzionale");
 			sqlQueryObject.addSelectField("token_validazione");
 			sqlQueryObject.addSelectField("token_introspection");
 			sqlQueryObject.addSelectField("token_user_info");
 			sqlQueryObject.addSelectField("token_forward");
 			sqlQueryObject.addSelectField("token_options");
+			sqlQueryObject.addSelectField("token_authn_issuer");
+			sqlQueryObject.addSelectField("token_authn_client_id");
+			sqlQueryObject.addSelectField("token_authn_subject");
+			sqlQueryObject.addSelectField("token_authn_username");
+			sqlQueryObject.addSelectField("token_authn_email");
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("ruoli_match");
@@ -12877,11 +12884,31 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
 					GestioneToken gestioneToken = new GestioneToken();
 					gestioneToken.setPolicy(tokenPolicy);
+					gestioneToken.setTokenOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_opzionale")));
 					gestioneToken.setValidazione(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_validazione")));
 					gestioneToken.setIntrospection(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_introspection")));
 					gestioneToken.setUserInfo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_user_info")));
 					gestioneToken.setForward(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_forward")));
 					gestioneToken.setOptions(rs.getString("token_options"));
+					
+					String token_authn_issuer = rs.getString("token_authn_issuer");
+					String token_authn_client_id = rs.getString("token_authn_client_id");
+					String token_authn_subject = rs.getString("token_authn_subject");
+					String token_authn_username = rs.getString("token_authn_username");
+					String token_authn_email = rs.getString("token_authn_email");
+					if(token_authn_issuer!=null ||
+							token_authn_client_id!=null ||
+									token_authn_subject!=null ||
+											token_authn_username!=null ||
+													token_authn_email!=null) {
+						gestioneToken.setAutenticazione(new GestioneTokenAutenticazione());
+						gestioneToken.getAutenticazione().setIssuer(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_issuer));
+						gestioneToken.getAutenticazione().setClientId(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_client_id));
+						gestioneToken.getAutenticazione().setSubject(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_subject));
+						gestioneToken.getAutenticazione().setUsername(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_username));
+						gestioneToken.getAutenticazione().setEmail(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_email));
+					}
+
 					pa.setGestioneToken(gestioneToken);
 				}
 				
@@ -13417,11 +13444,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("autenticazione");
 			sqlQueryObject.addSelectField("autenticazione_opzionale");
 			sqlQueryObject.addSelectField("token_policy");
+			sqlQueryObject.addSelectField("token_opzionale");
 			sqlQueryObject.addSelectField("token_validazione");
 			sqlQueryObject.addSelectField("token_introspection");
 			sqlQueryObject.addSelectField("token_user_info");
 			sqlQueryObject.addSelectField("token_forward");
 			sqlQueryObject.addSelectField("token_options");
+			sqlQueryObject.addSelectField("token_authn_issuer");
+			sqlQueryObject.addSelectField("token_authn_client_id");
+			sqlQueryObject.addSelectField("token_authn_subject");
+			sqlQueryObject.addSelectField("token_authn_username");
+			sqlQueryObject.addSelectField("token_authn_email");
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("id_soggetto");
@@ -13493,11 +13526,32 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
 					GestioneToken gestioneToken = new GestioneToken();
 					gestioneToken.setPolicy(tokenPolicy);
+					gestioneToken.setTokenOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_opzionale")));
 					gestioneToken.setValidazione(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_validazione")));
 					gestioneToken.setIntrospection(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_introspection")));
 					gestioneToken.setUserInfo(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalitaConWarning(rs.getString("token_user_info")));
 					gestioneToken.setForward(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("token_forward")));
 					gestioneToken.setOptions(rs.getString("token_options"));
+					
+					
+					String token_authn_issuer = rs.getString("token_authn_issuer");
+					String token_authn_client_id = rs.getString("token_authn_client_id");
+					String token_authn_subject = rs.getString("token_authn_subject");
+					String token_authn_username = rs.getString("token_authn_username");
+					String token_authn_email = rs.getString("token_authn_email");
+					if(token_authn_issuer!=null ||
+							token_authn_client_id!=null ||
+									token_authn_subject!=null ||
+											token_authn_username!=null ||
+													token_authn_email!=null) {
+						gestioneToken.setAutenticazione(new GestioneTokenAutenticazione());
+						gestioneToken.getAutenticazione().setIssuer(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_issuer));
+						gestioneToken.getAutenticazione().setClientId(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_client_id));
+						gestioneToken.getAutenticazione().setSubject(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_subject));
+						gestioneToken.getAutenticazione().setUsername(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_username));
+						gestioneToken.getAutenticazione().setEmail(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(token_authn_email));
+					}
+					
 					pd.setGestioneToken(gestioneToken);
 				}
 				

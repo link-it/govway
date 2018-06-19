@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.GestioneToken;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -82,7 +83,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 	public void configureControlloAccessiPortaApplicativa(PortaApplicativa pa,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli, String erogazioneAutorizzazioneRuoliTipologia, String erogazioneAutorizzazioneRuoliMatch,
-			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch) {
+			String nomeSA, String erogazioneRuolo, IDSoggetto idErogazioneSoggettoAutenticato, 
+			String erogazioneAutorizzazione_tokenOptions,
+			String erogazioneAutorizzazioneScope, String erogazioneScope, String erogazioneAutorizzazioneScopeMatch) {
 		pa.setAutenticazione(erogazioneAutenticazione);
 		if(erogazioneAutenticazioneOpzionale != null){
 			if(ServletUtils.isCheckBoxEnabled(erogazioneAutenticazioneOpzionale))
@@ -92,7 +95,10 @@ public class PorteApplicativeCore extends ControlStationCore {
 		} else 
 			pa.setAutenticazioneOpzionale(null);
 		pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(erogazioneAutorizzazione, 
-				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli), 
+				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneAutenticati), 
+				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneRuoli),
+				ServletUtils.isCheckBoxEnabled(erogazioneAutorizzazioneScope),
+				erogazioneAutorizzazione_tokenOptions,
 				RuoloTipologia.toEnumConstant(erogazioneAutorizzazioneRuoliTipologia)));
 		
 		if(erogazioneAutorizzazioneRuoliMatch!=null && !"".equals(erogazioneAutorizzazioneRuoliMatch)){
@@ -138,6 +144,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 			
 			pa.getScope().setStato(StatoFunzionalita.ABILITATO); 
 		}
+		else {
+			pa.setScope(null);
+		}
 		// scope
 		if(erogazioneScope!=null && !"".equals(erogazioneScope) && !"-".equals(erogazioneScope)){
 			if(pa.getScope() == null) {
@@ -158,23 +167,41 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public void configureControlloAccessiGestioneToken (PortaApplicativa portaApplicativa, String gestioneToken, String gestioneTokenPolicy, String gestioneTokenValidazioneInput, 
-			String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward) {
+	public void configureControlloAccessiGestioneToken (PortaApplicativa portaApplicativa, String gestioneToken, 
+			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
+			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
+			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
+			String autorizzazione_tokenOptions) {
 		if(portaApplicativa.getGestioneToken() == null)
 			portaApplicativa.setGestioneToken(new GestioneToken());
 		
 		if(gestioneToken.equals(StatoFunzionalita.ABILITATO.getValue())) {
 			portaApplicativa.getGestioneToken().setPolicy(gestioneTokenPolicy);
+			portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.toEnumConstant(gestioneTokenOpzionale)); 
 			portaApplicativa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenValidazioneInput));
 			portaApplicativa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenIntrospection));
 			portaApplicativa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.toEnumConstant(gestioneTokenUserInfo));
 			portaApplicativa.getGestioneToken().setForward(StatoFunzionalita.toEnumConstant(gestioneTokenForward)); 	
+			portaApplicativa.getGestioneToken().setOptions(autorizzazione_tokenOptions);
+			if(portaApplicativa.getGestioneToken().getAutenticazione()==null) {
+				portaApplicativa.getGestioneToken().setAutenticazione(new GestioneTokenAutenticazione());
+			}
+			portaApplicativa.getGestioneToken().getAutenticazione().setIssuer(StatoFunzionalita.toEnumConstant(autenticazioneTokenIssuer)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setClientId(StatoFunzionalita.toEnumConstant(autenticazioneTokenClientId)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setSubject(StatoFunzionalita.toEnumConstant(autenticazioneTokenSubject)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setUsername(StatoFunzionalita.toEnumConstant(autenticazioneTokenUsername)); 
+			portaApplicativa.getGestioneToken().getAutenticazione().setEmail(StatoFunzionalita.toEnumConstant(autenticazioneTokenEMail)); 
 		} else {
 			portaApplicativa.getGestioneToken().setPolicy(null);
+			portaApplicativa.getGestioneToken().setTokenOpzionale(StatoFunzionalita.DISABILITATO); 
 			portaApplicativa.getGestioneToken().setValidazione(StatoFunzionalitaConWarning.DISABILITATO);
 			portaApplicativa.getGestioneToken().setIntrospection(StatoFunzionalitaConWarning.DISABILITATO);
 			portaApplicativa.getGestioneToken().setUserInfo(StatoFunzionalitaConWarning.DISABILITATO);
 			portaApplicativa.getGestioneToken().setForward(StatoFunzionalita.DISABILITATO); 
+			portaApplicativa.getGestioneToken().setOptions(null);
+			if(portaApplicativa.getGestioneToken().getAutenticazione()!=null) {
+				portaApplicativa.getGestioneToken().setAutenticazione(null);
+			}
 		}
 	}
 	

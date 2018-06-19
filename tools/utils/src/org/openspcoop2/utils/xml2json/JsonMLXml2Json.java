@@ -4,6 +4,7 @@
 package org.openspcoop2.utils.xml2json;
 
 import org.json.JSONML;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Node;
 
@@ -26,8 +27,12 @@ public class JsonMLXml2Json implements IXml2Json{
 	}
 
 	@Override
-	public String xml2json(Node node) throws Exception {
-		return JSONML.toJSONObject(this.xmlUtils.toString(node)).toString();
+	public String xml2json(Node node) throws UtilsException {
+		try {
+			return JSONML.toJSONObject(this.xmlUtils.toString(node)).toString();
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
 	}
 
 }

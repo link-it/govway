@@ -150,6 +150,48 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 				return "servizio_applicativo";
 			}
 		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TRASPORTO_MITTENTE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".trasporto_mittente";
+			}else{
+				return "trasporto_mittente";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_ISSUER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_issuer";
+			}else{
+				return "token_issuer";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_CLIENT_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_client_id";
+			}else{
+				return "token_client_id";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_SUBJECT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_subject";
+			}else{
+				return "token_subject";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_USERNAME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_username";
+			}else{
+				return "token_username";
+			}
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_MAIL)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".token_mail";
+			}else{
+				return "token_mail";
+			}
+		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.ESITO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".esito";
@@ -470,6 +512,24 @@ public class StatisticaOrariaFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TRASPORTO_MITTENTE)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_ISSUER)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_CLIENT_ID)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_SUBJECT)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_USERNAME)){
+			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
+		}
+		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.TOKEN_MAIL)){
 			return this.toTable(StatisticaOraria.model().STATISTICA_BASE, returnAlias);
 		}
 		if(field.equals(StatisticaOraria.model().STATISTICA_BASE.ESITO)){

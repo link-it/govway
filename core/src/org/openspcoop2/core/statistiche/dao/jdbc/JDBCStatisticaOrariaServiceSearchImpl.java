@@ -419,6 +419,12 @@ public class JDBCStatisticaOrariaServiceSearchImpl implements IJDBCServiceSearch
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.VERSIONE_SERVIZIO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.AZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TRASPORTO_MITTENTE,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_ISSUER,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_CLIENT_ID,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_SUBJECT,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_USERNAME,true));
+		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.TOKEN_MAIL,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ESITO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.ESITO_CONTESTO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatisticaOrariaFieldConverter().toColumn(StatisticaOraria.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,true));

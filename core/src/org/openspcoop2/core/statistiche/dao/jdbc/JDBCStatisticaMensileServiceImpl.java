@@ -80,6 +80,12 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.VERSIONE_SERVIZIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.AZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TRASPORTO_MITTENTE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_ISSUER,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_CLIENT_ID,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_SUBJECT,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_USERNAME,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_MAIL,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ESITO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI,false),"?");
@@ -105,6 +111,12 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getVersioneServizio(),StatisticaMensile.model().STATISTICA_BASE.VERSIONE_SERVIZIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getAzione(),StatisticaMensile.model().STATISTICA_BASE.AZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getServizioApplicativo(),StatisticaMensile.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTrasportoMittente(),StatisticaMensile.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTokenIssuer(),StatisticaMensile.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTokenClientId(),StatisticaMensile.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTokenSubject(),StatisticaMensile.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTokenUsername(),StatisticaMensile.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getTokenMail(),StatisticaMensile.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getEsito(),StatisticaMensile.model().STATISTICA_BASE.ESITO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getEsitoContesto(),StatisticaMensile.model().STATISTICA_BASE.ESITO_CONTESTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statisticaMensile.getStatisticaBase().getNumeroTransazioni(),StatisticaMensile.model().STATISTICA_BASE.NUMERO_TRANSAZIONI.getFieldType()),
@@ -250,6 +262,18 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getAzione(), StatisticaMensile.model().STATISTICA_BASE.AZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getServizioApplicativo(), StatisticaMensile.model().STATISTICA_BASE.SERVIZIO_APPLICATIVO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TRASPORTO_MITTENTE,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTrasportoMittente(), StatisticaMensile.model().STATISTICA_BASE.TRASPORTO_MITTENTE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_ISSUER,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTokenIssuer(), StatisticaMensile.model().STATISTICA_BASE.TOKEN_ISSUER.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_CLIENT_ID,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTokenClientId(), StatisticaMensile.model().STATISTICA_BASE.TOKEN_CLIENT_ID.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_SUBJECT,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTokenSubject(), StatisticaMensile.model().STATISTICA_BASE.TOKEN_SUBJECT.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_USERNAME,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTokenUsername(), StatisticaMensile.model().STATISTICA_BASE.TOKEN_USERNAME.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.TOKEN_MAIL,false), "?");
+		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getTokenMail(), StatisticaMensile.model().STATISTICA_BASE.TOKEN_MAIL.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ESITO,false), "?");
 		lstObjects.add(new JDBCObject(statisticaMensile_statisticaBase.getEsito(), StatisticaMensile.model().STATISTICA_BASE.ESITO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatisticaMensileFieldConverter().toColumn(StatisticaMensile.model().STATISTICA_BASE.ESITO_CONTESTO,false), "?");
