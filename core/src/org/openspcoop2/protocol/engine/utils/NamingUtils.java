@@ -218,10 +218,36 @@ public class NamingUtils {
 	}
 	
 	public static String getLabelResource(org.openspcoop2.core.registry.Resource resource) throws Exception{
-		return resource.getMethod().getValue() + " " + resource.getPath();
+		String method = null;
+		if(resource.getMethod()!=null) {
+			method = resource.getMethod().getValue();
+		}
+		return getLabelResource(method, resource.getPath());
 	}
 	
-	public static String getLabelResource(String httpmethod, String path) throws Exception{
-		return httpmethod + " " + path;
+	public static String getLabelResource(String httpmethodParam, String pathParam) throws Exception{
+		String method = null;
+		if(httpmethodParam==null || "".equals(httpmethodParam)) {
+			//resourcePrefix = "*"; Non mettiamo nulla
+		}
+		else {
+			method = httpmethodParam;
+		}
+		
+		String path = null;
+		if(pathParam==null || "".equals(pathParam)) {
+			path = "Qualsiasi";
+		}
+		else {
+			path = pathParam;
+		}
+		
+		if(method!=null) {
+			return  method + " " + path;
+		}
+		else {
+			return path;
+		}
+		
 	}
 }
