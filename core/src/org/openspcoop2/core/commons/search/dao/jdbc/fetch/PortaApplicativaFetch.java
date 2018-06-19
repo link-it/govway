@@ -65,8 +65,12 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "servizio", PortaApplicativa.model().NOME_SERVIZIO.getFieldType()));
 				setParameter(object, "setVersioneServizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "versione_servizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType()));
+				setParameter(object, "setModeAzione", PortaApplicativa.model().MODE_AZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "mode_azione", PortaApplicativa.model().MODE_AZIONE.getFieldType()));
 				setParameter(object, "setNomeAzione", PortaApplicativa.model().NOME_AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "azione", PortaApplicativa.model().NOME_AZIONE.getFieldType()));
+				setParameter(object, "setNomePortaDeleganteAzione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome_porta_delegante_azione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType()));
 				return object;
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){
@@ -113,8 +117,12 @@ public class PortaApplicativaFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"nome_servizio"));
 				setParameter(object, "setVersioneServizio", PortaApplicativa.model().VERSIONE_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"versione_servizio"));
+				setParameter(object, "setModeAzione", PortaApplicativa.model().MODE_AZIONE.getFieldType(),
+					this.getObjectFromMap(map,"mode_azione"));
 				setParameter(object, "setNomeAzione", PortaApplicativa.model().NOME_AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"nome_azione"));
+				setParameter(object, "setNomePortaDeleganteAzione", PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
+					this.getObjectFromMap(map,"nome_porta_delegante_azione"));
 				return object;
 			}
 			if(model.equals(PortaApplicativa.model().PORTA_APPLICATIVA_SERVIZIO_APPLICATIVO)){

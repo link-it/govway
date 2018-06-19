@@ -129,11 +129,25 @@ public class PortaDelegataFieldConverter extends AbstractSQLFieldConverter {
 				return "versione_servizio";
 			}
 		}
+		if(field.equals(PortaDelegata.model().MODE_AZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".mode_azione";
+			}else{
+				return "mode_azione";
+			}
+		}
 		if(field.equals(PortaDelegata.model().NOME_AZIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome_azione";
 			}else{
 				return "nome_azione";
+			}
+		}
+		if(field.equals(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".nome_porta_delegante_azione";
+			}else{
+				return "nome_porta_delegante_azione";
 			}
 		}
 		if(field.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.NOME)){
@@ -204,7 +218,13 @@ public class PortaDelegataFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(PortaDelegata.model().VERSIONE_SERVIZIO)){
 			return this.toTable(PortaDelegata.model(), returnAlias);
 		}
+		if(field.equals(PortaDelegata.model().MODE_AZIONE)){
+			return this.toTable(PortaDelegata.model(), returnAlias);
+		}
 		if(field.equals(PortaDelegata.model().NOME_AZIONE)){
+			return this.toTable(PortaDelegata.model(), returnAlias);
+		}
+		if(field.equals(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE)){
 			return this.toTable(PortaDelegata.model(), returnAlias);
 		}
 		if(field.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO.ID_SERVIZIO_APPLICATIVO.NOME)){

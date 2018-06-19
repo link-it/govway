@@ -43,7 +43,9 @@ import java.util.List;
  * 			&lt;element name="tipo_servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_servizio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="versione_servizio" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="mode_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="nome_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="nome_porta_delegante_azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="porta-applicativa-servizio-applicativo" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="porta-applicativa-azione" type="{http://www.openspcoop2.org/core/commons/search}porta-applicativa-azione" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -65,7 +67,9 @@ import java.util.List;
   	"tipoServizio",
   	"nomeServizio",
   	"versioneServizio",
+  	"modeAzione",
   	"nomeAzione",
+  	"nomePortaDeleganteAzione",
   	"portaApplicativaServizioApplicativo",
   	"portaApplicativaAzione"
   }
@@ -139,12 +143,28 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.versioneServizio = versioneServizio;
   }
 
+  public java.lang.String getModeAzione() {
+    return this.modeAzione;
+  }
+
+  public void setModeAzione(java.lang.String modeAzione) {
+    this.modeAzione = modeAzione;
+  }
+
   public java.lang.String getNomeAzione() {
     return this.nomeAzione;
   }
 
   public void setNomeAzione(java.lang.String nomeAzione) {
     this.nomeAzione = nomeAzione;
+  }
+
+  public java.lang.String getNomePortaDeleganteAzione() {
+    return this.nomePortaDeleganteAzione;
+  }
+
+  public void setNomePortaDeleganteAzione(java.lang.String nomePortaDeleganteAzione) {
+    this.nomePortaDeleganteAzione = nomePortaDeleganteAzione;
   }
 
   public void addPortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) {
@@ -238,8 +258,16 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   protected java.lang.Integer versioneServizio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="mode_azione",required=true,nillable=false)
+  protected java.lang.String modeAzione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome_azione",required=true,nillable=false)
   protected java.lang.String nomeAzione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome_porta_delegante_azione",required=true,nillable=false)
+  protected java.lang.String nomePortaDeleganteAzione;
 
   @XmlElement(name="porta-applicativa-servizio-applicativo",required=true,nillable=false)
   protected List<PortaApplicativaServizioApplicativo> portaApplicativaServizioApplicativo = new ArrayList<PortaApplicativaServizioApplicativo>();

@@ -69,8 +69,12 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "nome_servizio", PortaDelegata.model().NOME_SERVIZIO.getFieldType()));
 				setParameter(object, "setVersioneServizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "versione_servizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType()));
+				setParameter(object, "setModeAzione", PortaDelegata.model().MODE_AZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "mode_azione", PortaDelegata.model().MODE_AZIONE.getFieldType()));
 				setParameter(object, "setNomeAzione", PortaDelegata.model().NOME_AZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "nome_azione", PortaDelegata.model().NOME_AZIONE.getFieldType()));
+				setParameter(object, "setNomePortaDeleganteAzione", PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "nome_porta_delegante_azione", PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType()));
 				return object;
 			}
 			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO)){
@@ -121,8 +125,12 @@ public class PortaDelegataFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"nome_servizio"));
 				setParameter(object, "setVersioneServizio", PortaDelegata.model().VERSIONE_SERVIZIO.getFieldType(),
 					this.getObjectFromMap(map,"versione_servizio"));
+				setParameter(object, "setModeAzione", PortaDelegata.model().MODE_AZIONE.getFieldType(),
+					this.getObjectFromMap(map,"mode_azione"));
 				setParameter(object, "setNomeAzione", PortaDelegata.model().NOME_AZIONE.getFieldType(),
 					this.getObjectFromMap(map,"nome_azione"));
+				setParameter(object, "setNomePortaDeleganteAzione", PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE.getFieldType(),
+					this.getObjectFromMap(map,"nome_porta_delegante_azione"));
 				return object;
 			}
 			if(model.equals(PortaDelegata.model().PORTA_DELEGATA_SERVIZIO_APPLICATIVO)){

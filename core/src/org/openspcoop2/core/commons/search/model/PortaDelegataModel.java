@@ -48,7 +48,9 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.TIPO_SERVIZIO = new Field("tipo_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_SERVIZIO = new Field("nome_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.VERSIONE_SERVIZIO = new Field("versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
+		this.MODE_AZIONE = new Field("mode_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new Field("nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.NOME_PORTA_DELEGANTE_AZIONE = new Field("nome_porta_delegante_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new Field("porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.PORTA_DELEGATA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaDelegataAzioneModel(new Field("porta-delegata-azione",org.openspcoop2.core.commons.search.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 	
@@ -66,7 +68,9 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.TIPO_SERVIZIO = new ComplexField(father,"tipo_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_SERVIZIO = new ComplexField(father,"nome_servizio",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione_servizio",java.lang.Integer.class,"porta-delegata",PortaDelegata.class);
+		this.MODE_AZIONE = new ComplexField(father,"mode_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.NOME_AZIONE = new ComplexField(father,"nome_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.NOME_PORTA_DELEGANTE_AZIONE = new ComplexField(father,"nome_porta_delegante_azione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.PORTA_DELEGATA_SERVIZIO_APPLICATIVO = new org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"porta-delegata-servizio-applicativo",org.openspcoop2.core.commons.search.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
 		this.PORTA_DELEGATA_AZIONE = new org.openspcoop2.core.commons.search.model.PortaDelegataAzioneModel(new ComplexField(father,"porta-delegata-azione",org.openspcoop2.core.commons.search.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 	
@@ -90,7 +94,11 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	 
 	public IField VERSIONE_SERVIZIO = null;
 	 
+	public IField MODE_AZIONE = null;
+	 
 	public IField NOME_AZIONE = null;
+	 
+	public IField NOME_PORTA_DELEGANTE_AZIONE = null;
 	 
 	public org.openspcoop2.core.commons.search.model.PortaDelegataServizioApplicativoModel PORTA_DELEGATA_SERVIZIO_APPLICATIVO = null;
 	 
