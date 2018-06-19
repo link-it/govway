@@ -65,6 +65,31 @@ public class MerlinKeystore {
 			propStore.load(isStore);
 			isStore.close();
 			
+			this._initMerlinKeystore(propStore,passwordPrivateKey);
+			
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}finally{
+			try{
+				if(isStore!=null){
+					isStore.close();
+				}
+			}catch(Exception eClose){}
+		}
+		
+	}
+	
+	public MerlinKeystore(Properties propStore,String passwordPrivateKey) throws SecurityException{
+		this._initMerlinKeystore(propStore,passwordPrivateKey);
+	}
+	
+	private void _initMerlinKeystore(Properties propStore,String passwordPrivateKey) throws SecurityException{
+		
+		try{
+			if(propStore==null){
+				throw new Exception("Properties per lo Store non indicato");
+			}
+			
 			this.tipoStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			if(this.tipoStore!=null){
 				this.tipoStore = this.tipoStore.trim();
@@ -80,12 +105,6 @@ public class MerlinKeystore {
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){}
 		}
 		
 	}

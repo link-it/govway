@@ -63,6 +63,32 @@ public class MerlinTruststore {
 			propStore.load(isStore);
 			isStore.close();
 			
+			_initMerlinTruststore(propStore);
+			
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}finally{
+			try{
+				if(isStore!=null){
+					isStore.close();
+				}
+			}catch(Exception eClose){}
+		}
+		
+	}
+	public MerlinTruststore(Properties propStore) throws SecurityException{
+		
+		_initMerlinTruststore(propStore);
+		
+	}
+	
+	private void _initMerlinTruststore(Properties propStore) throws SecurityException{
+		
+		try{
+			if(propStore==null){
+				throw new Exception("Properties per lo Store non indicato");
+			}
+			
 			this.tipoStore = propStore.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE);
 			if(this.tipoStore!=null){
 				this.tipoStore = this.tipoStore.trim();
@@ -78,12 +104,6 @@ public class MerlinTruststore {
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
-		}finally{
-			try{
-				if(isStore!=null){
-					isStore.close();
-				}
-			}catch(Exception eClose){}
 		}
 		
 	}

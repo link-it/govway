@@ -11,7 +11,7 @@ import javax.xml.stream.XMLOutputFactory;
 
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
-import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.w3c.dom.Node;
@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
  */
 public class MappedXml2Json extends AbstractXml2Json {
 
-	private XMLUtils xmlUtils;
+	private AbstractXMLUtils xmlUtils;
 	private Map<String, String> jsonNamespaceMap;
 	private MappedXMLOutputFactory mappedXMLOutputFactory;
 	public MappedXml2Json() {
@@ -47,8 +47,9 @@ public class MappedXml2Json extends AbstractXml2Json {
 	@Override
 	public String xml2json(Node node) throws Exception {
 		if(this.jsonNamespaceMap==null) {
-			DynamicNamespaceContext f = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(node);
-			this.refreshOutputFactory(f);
+			DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+			dnc.findPrefixNamespace(node);
+			this.refreshOutputFactory(dnc);
 		}
 		return super.xml2json(node);
 	}

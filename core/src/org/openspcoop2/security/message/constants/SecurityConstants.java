@@ -151,6 +151,7 @@ public class SecurityConstants {
     public static final String ENCRYPTION_PROPERTY_REF_ID = ConfigurationConstants.ENC_PROP_REF_ID;
     public static final String ENCRYPTION_PROPERTY_FILE = ConfigurationConstants.ENC_PROP_FILE;
     public static final String ENCRYPTION_TRUSTSTORE_PROPERTY_FILE = "encryptionTrustStorePropFile";
+    public static final String ENCRYPTION_TRUSTSTORE_PROPERTY_REF_ID= "encryptionTrustStorePropRefId";
     public static final String ENCRYPTION_MULTI_PROPERTY_FILE = "encryptionMultiPropFile";
     public static final String ENCRYPTION_SYMMETRIC_KEY_VALUE = "encryptionSymmetricKeyValue";
     public static final String ENCRYPTION_SYMMETRIC = "encryptionSymmetricKey";
@@ -173,6 +174,7 @@ public class SecurityConstants {
     public static final String DECRYPTION_PROPERTY_FILE = ConfigurationConstants.DEC_PROP_FILE;
     public static final String DECRYPTION_PROPERTY_REF_ID = ConfigurationConstants.DEC_PROP_REF_ID;
     public static final String DECRYPTION_TRUSTSTORE_PROPERTY_FILE = "decryptionTrustStorePropFile";
+    public static final String DECRYPTION_TRUSTSTORE_PROPERTY_REF_ID = "decryptionTrustStorePropRefId";
     public static final String DECRYPTION_MULTI_PROPERTY_FILE = "decryptionMultiPropFile";
     public static final String DECRYPTION_SYMMETRIC_KEY_VALUE = "decryptionSymmetricKeyValue";
     public static final String DECRYPTION_SYMMETRIC_ALGORITHM = "decryptionSymAlgorithm";
@@ -203,6 +205,7 @@ public class SecurityConstants {
     public static final String SIGNATURE_PROPERTY_REF_ID = ConfigurationConstants.SIG_PROP_REF_ID;
     public static final String SIGNATURE_PROPERTY_FILE = ConfigurationConstants.SIG_PROP_FILE;
     public static final String SIGNATURE_TRUSTSTORE_PROPERTY_FILE = "signatureTrustStorePropFile";
+    public static final String SIGNATURE_TRUSTSTORE_PROPERTY_REF_ID = "signatureTrustStorePropRefId";
     public static final String SIGNATURE_MULTI_PROPERTY_FILE = "signatureMultiPropFile";
     public static final String SIGNATURE_C14N_ALGORITHM = "signatureC14nAlgorithm";
     public static final String SIGNATURE_DIGEST_ALGORITHM = ConfigurationConstants.SIG_DIGEST_ALGO;

@@ -37,7 +37,7 @@
 			<property name="signatureMode" />
 		</item>
 		
-		<item type="select" name="signatureAlgorithm" label="Algorithm" reloadOnChange="true">
+		<item type="select" name="signatureAlgorithm" label="Signature Algorithm" reloadOnChange="true">
 		      	<property name="rs.security.signature.algorithm" properties="signaturePropRefId" />
 		</item>
 

@@ -20,6 +20,7 @@
 package org.openspcoop2.security.message.utils;
 
 import java.security.KeyStore;
+import java.util.Properties;
 
 import org.openspcoop2.security.keystore.MerlinKeystore;
 import org.openspcoop2.security.keystore.MerlinTruststore;
@@ -59,10 +60,22 @@ public class KeystoreUtils {
 		if(encryptionSymmetricObject!=null){
 			encryptionSymmetric = SecurityConstants.TRUE.equals(encryptionSymmetricObject);
 		}
-		// 0. TrustStore
+		// 0.a TrustStore
 		String encryptionTrustStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_TRUSTSTORE_PROPERTY_FILE);
-		// 1. Property Merlin
+		// 0.b TrustStore as properties
+		Object oEncryptionTrustStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_TRUSTSTORE_PROPERTY_REF_ID);
+		Properties encryptionTrustStoreProperties = null;
+		if(oEncryptionTrustStoreProperties!=null) {
+			encryptionTrustStoreProperties = (Properties) oEncryptionTrustStoreProperties;
+		}
+		// 1.a Property Merlin
 		String encryptionStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_PROPERTY_FILE);
+		// 1.b Property Merlin as properties
+		Object oEncryptionStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_PROPERTY_REF_ID);
+		Properties encryptionStoreProperties = null;
+		if(oEncryptionStoreProperties!=null) {
+			encryptionStoreProperties = (Properties) oEncryptionStoreProperties;
+		}
 		// 2. Multi Property
 		String multiEncryptionStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_MULTI_PROPERTY_FILE);
 		// 3. In caso di chiave simmetrica provo a vedere se e' stata fornita direttamente una chiave
@@ -77,15 +90,25 @@ public class KeystoreUtils {
 			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(encryptionTrustStore);
 			encryptionTrustStoreKS = merlinTruststore.getTrustStore();
 		}
+		else if(encryptionTrustStoreProperties!=null){
+			MerlinTruststore merlinTruststore = new MerlinTruststore(encryptionTrustStoreProperties);
+			encryptionTrustStoreKS = merlinTruststore.getTrustStore();
+		}
 
 		// Istanzio keystore
 		// 1. Property Merlin
-		if(encryptionStore!=null){
+		if(encryptionStore!=null || encryptionStoreProperties!=null){
 			aliasEncryptPassword = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_PASSWORD);
 			if(aliasEncryptPassword==null){
 				throw new Exception(SecurityConstants.ENCRYPTION_PASSWORD+" non fornita");
 			}
+		}
+		if(encryptionStore!=null){
 			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(encryptionStore, aliasEncryptPassword);
+			encryptionKS = merlinKeystore.getKeyStore();
+		}
+		else if(encryptionStoreProperties!=null){
+			MerlinKeystore merlinKeystore = new MerlinKeystore(encryptionStoreProperties, aliasEncryptPassword);
 			encryptionKS = merlinKeystore.getKeyStore();
 		}
 		// 2. Multi Property
@@ -213,10 +236,22 @@ public class KeystoreUtils {
 		if(decryptionSymmetricObject!=null){
 			decryptionSymmetric = SecurityConstants.TRUE.equals(decryptionSymmetricObject);
 		}
-		// 0. TrustStore
+		// 0.a TrustStore
 		String decryptionTrustStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_TRUSTSTORE_PROPERTY_FILE);
-		// 1. Property Merlin
+		// 0.b TrustStore as properties
+		Object oDecryptionTrustStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_TRUSTSTORE_PROPERTY_REF_ID);
+		Properties decryptionTrustStoreProperties = null;
+		if(oDecryptionTrustStoreProperties!=null) {
+			decryptionTrustStoreProperties = (Properties) oDecryptionTrustStoreProperties;
+		}
+		// 1.a Property Merlin
 		String decryptionStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_PROPERTY_FILE);
+		// 1.b Property Merlin as properties
+		Object oDecryptionStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.DECRYPTION_PROPERTY_REF_ID);
+		Properties decryptionStoreProperties = null;
+		if(oDecryptionStoreProperties!=null) {
+			decryptionStoreProperties = (Properties) oDecryptionStoreProperties;
+		}
 		// 2. Multi Property
 		String multiDecryptionStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_MULTI_PROPERTY_FILE);
 		// 3. In caso di chiave simmetrica provo a vedere se e' stata fornita direttamente una chiave
@@ -231,15 +266,25 @@ public class KeystoreUtils {
 			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(decryptionTrustStore);
 			decryptionTrustStoreKS = merlinTruststore.getTrustStore();
 		}
+		else if(decryptionTrustStoreProperties!=null){
+			MerlinTruststore merlinTruststore = new MerlinTruststore(decryptionTrustStoreProperties);
+			decryptionTrustStoreKS = merlinTruststore.getTrustStore();
+		}
 		
 		// Istanzio keystore
 		// 1. Property Merlin
-		if(decryptionStore!=null){
+		if(decryptionStore!=null || decryptionStoreProperties!=null){
 			aliasDecryptPassword = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.DECRYPTION_PASSWORD);
 			if(aliasDecryptPassword==null){
 				throw new Exception(SecurityConstants.DECRYPTION_PASSWORD+" non fornita");
 			}
+		}
+		if(decryptionStore!=null){
 			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(decryptionStore, aliasDecryptPassword);
+			decryptionKS = merlinKeystore.getKeyStore();
+		}
+		else if(decryptionStoreProperties!=null){
+			MerlinKeystore merlinKeystore = new MerlinKeystore(decryptionStoreProperties, aliasDecryptPassword);
 			decryptionKS = merlinKeystore.getKeyStore();
 		}
 		// 2. Multi Property
@@ -363,10 +408,22 @@ public class KeystoreUtils {
 			}
 		}
 
-		// 0. TrustStore
+		// 0.a TrustStore
 		String signatureTrustStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_FILE);
-		// 1. Property Merlin
+		// 0.b TrustStore as properties
+		Object oSignatureTrustStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_REF_ID);
+		Properties signatureTrustStoreProperties = null;
+		if(oSignatureTrustStoreProperties!=null) {
+			signatureTrustStoreProperties = (Properties) oSignatureTrustStoreProperties;
+		}
+		// 1.a Property Merlin
 		String signatureStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_FILE);
+		// 1.b Property Merlin as properties
+		Object oSignatureStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
+		Properties signatureStoreProperties = null;
+		if(oSignatureStoreProperties!=null) {
+			signatureStoreProperties = (Properties) oSignatureStoreProperties;
+		}
 		// 2. Multi Property
 		String multiSignatureStore = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE);
 
@@ -376,15 +433,25 @@ public class KeystoreUtils {
 			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(signatureTrustStore);
 			signatureTrustStoreKS = merlinTruststore.getTrustStore();
 		}
+		else if(signatureTrustStoreProperties!=null) {
+			MerlinTruststore merlinTruststore = new MerlinTruststore(signatureTrustStoreProperties);
+			signatureTrustStoreKS = merlinTruststore.getTrustStore();
+		}
 
 		// Istanzio keystore
 		// 1. Property Merlin
-		if(signatureStore!=null){
+		if(signatureStore!=null || signatureStoreProperties!=null){
 			aliasSignaturePassword = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PASSWORD);
 			if(aliasSignaturePassword==null){
 				throw new Exception(SecurityConstants.SIGNATURE_PASSWORD+" non fornita");
 			}
+		}
+		if(signatureStore!=null){	
 			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(signatureStore, aliasSignaturePassword);
+			signatureKS = merlinKeystore.getKeyStore();
+		}
+		else if(signatureStoreProperties!=null) {
+			MerlinKeystore merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
 			signatureKS = merlinKeystore.getKeyStore();
 		}
 		// 2. Multi Property
@@ -497,10 +564,22 @@ public class KeystoreUtils {
 		// CRL
 		crlPath = (String)  messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_CRL);
 
-		// 0. TrustStore
+		// 0.a TrustStore
 		String signatureTrustStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_FILE);
-		// 1. Property Merlin
+		// 0.b TrustStore as properties
+		Object oSignatureTrustStoreProperties = messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_TRUSTSTORE_PROPERTY_REF_ID);
+		Properties signatureTrustStoreProperties = null;
+		if(oSignatureTrustStoreProperties!=null) {
+			signatureTrustStoreProperties = (Properties) oSignatureTrustStoreProperties;
+		}
+		// 1.a Property Merlin
 		String signatureStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_FILE);
+		// 1.b Property Merlin as properties
+		Object oSignatureStoreProperties = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PROPERTY_REF_ID);
+		Properties signatureStoreProperties = null;
+		if(oSignatureStoreProperties!=null) {
+			signatureStoreProperties = (Properties) oSignatureStoreProperties;
+		}
 		// 2. Multi Property
 		String multiSignatureStore = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.SIGNATURE_MULTI_PROPERTY_FILE);
 
@@ -508,6 +587,10 @@ public class KeystoreUtils {
 		// 0. TrustStore
 		if(signatureTrustStore!=null){
 			MerlinTruststore merlinTruststore = GestoreKeystoreCache.getMerlinTruststore(signatureTrustStore);
+			signatureTrustStoreKS = merlinTruststore.getTrustStore();
+		}
+		else if(signatureTrustStoreProperties!=null) {
+			MerlinTruststore merlinTruststore = new MerlinTruststore(signatureTrustStoreProperties);
 			signatureTrustStoreKS = merlinTruststore.getTrustStore();
 		}
 
@@ -519,6 +602,10 @@ public class KeystoreUtils {
 				throw new Exception(SecurityConstants.SIGNATURE_PASSWORD+" non fornita");
 			}
 			MerlinKeystore merlinKeystore = GestoreKeystoreCache.getMerlinKeystore(signatureStore, aliasSignaturePassword);
+			signatureKS = merlinKeystore.getKeyStore();
+		}
+		else if(signatureStoreProperties!=null) {
+			MerlinKeystore merlinKeystore = new MerlinKeystore(signatureStoreProperties, aliasSignaturePassword);
 			signatureKS = merlinKeystore.getKeyStore();
 		}
 		// 2. Multi Property
