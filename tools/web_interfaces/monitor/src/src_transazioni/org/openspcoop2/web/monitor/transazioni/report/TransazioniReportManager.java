@@ -34,7 +34,7 @@ public class TransazioniReportManager implements ILiveReport,Serializable {
 		try{
 			this.transazioniService = new TransazioniService();
 		}catch(Exception e){
-			log.error(e.getMessage(), e);
+			TransazioniReportManager.log.error(e.getMessage(), e);
 		}
 	}
 	

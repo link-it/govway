@@ -287,11 +287,23 @@ div.form-container .display-form input[type="checkbox"].controlset {
 
 
 .subtitle {
-	padding: 10px 20px 6px 5px;
+/* 	padding: 10px 20px 6px 5px; */
+	padding: 16px 20px 12px 5px;
     margin-left: 166px;
 }
 
 .subtitle span {
+	font-size: 12px;
+    font-weight: bold;
+    margin-left: 0px;
+	color: ${label.color};
+}
+
+.subtitle-nopaddingleft-nomarginleft {
+	padding: 16px 20px 12px 0px;
+}
+
+.subtitle-nopaddingleft-nomarginleft span {
 	font-size: 12px;
     font-weight: bold;
     margin-left: 0px;

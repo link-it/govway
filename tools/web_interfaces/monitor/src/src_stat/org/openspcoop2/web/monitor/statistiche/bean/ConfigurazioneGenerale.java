@@ -22,6 +22,8 @@ public class ConfigurazioneGenerale implements Serializable {
 	private String servizio = null;
 	private String azione = null;
 	
+	private String protocollo = null;
+	
 	private Long dbId = null;
 	private PddRuolo ruolo = null;
 	
@@ -131,5 +133,26 @@ public class ConfigurazioneGenerale implements Serializable {
 	public void setStato(String stato) {
 		this.stato = stato;
 	}
+	
+	public String getNome() {
+		if(this.pa != null) {
+			return this.pa.getPortaApplicativa().getNome();
+		} 
+		
+		if(this.pd != null) {
+			return this.pd.getPortaDelegata().getNome();
+		} 
+		
+		return this.label;
+	}
+
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
+	
 	
 }

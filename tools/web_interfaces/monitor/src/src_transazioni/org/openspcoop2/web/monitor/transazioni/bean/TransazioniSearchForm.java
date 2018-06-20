@@ -77,7 +77,7 @@ Context, Cloneable {
 		super();
 		
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniSearchForm.log);
 			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
 			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
 			this.visualizzaIdClusterAsSelectList = pddMonitorProperties.isAttivoTransazioniUtilizzoSondaPdDListAsClusterId();
@@ -93,7 +93,7 @@ Context, Cloneable {
 
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
 		}catch(Exception e){
-			log.error(e.getMessage(), e);
+			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
 	}
 
@@ -101,7 +101,7 @@ Context, Cloneable {
 		super(useInBatch);
 		
 		try{
-			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(log);
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(TransazioniSearchForm.log);
 			List<String> pddMonitorare = pddMonitorProperties.getListaPdDMonitorate_StatusPdD();
 			this.setVisualizzaIdCluster(pddMonitorare!=null && pddMonitorare.size()>1);
 			
@@ -111,7 +111,7 @@ Context, Cloneable {
 			
 			this.setUseCount(pddMonitorProperties.isAttivoUtilizzaCountStoricoTransazioni()); 
 		}catch(Exception e){
-			log.error(e.getMessage(), e);
+			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
 	}
 
@@ -126,7 +126,7 @@ Context, Cloneable {
 	public String getPrintPeriodo(){
 		if("Live".equals(this.periodo)){
 			try{
-				PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
+				PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(TransazioniSearchForm.log);
 				Integer liveUltimiGiorni = monitorProperties.getTransazioniLiveUltimiGiorni();
 				Date inizio = null;
 				if(liveUltimiGiorni!=null && liveUltimiGiorni!=0){
@@ -150,7 +150,7 @@ Context, Cloneable {
 				return AbstractDateSearchForm.printPeriodo(inizio, fine);
 				
 			}catch(Exception e){
-				log.error("Errore durante il calcolo dell'intervallo: "+e.getMessage(),e);
+				TransazioniSearchForm.log.error("Errore durante il calcolo dell'intervallo: "+e.getMessage(),e);
 				return "";
 			}
 		}

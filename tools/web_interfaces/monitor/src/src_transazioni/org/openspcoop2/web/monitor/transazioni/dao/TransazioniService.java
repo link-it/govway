@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
@@ -21,6 +22,7 @@ import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.IDBDumpMessaggioServiceSearch;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
@@ -62,6 +64,7 @@ import org.openspcoop2.monitor.sdk.condition.IFilter;
 import org.openspcoop2.monitor.sdk.exceptions.SearchException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
@@ -97,6 +100,7 @@ public class TransazioniService implements ITransazioniService {
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
 	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
 	private org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch transazioniSearchDAO;
+	private org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteServiceSearch credenzialiMittenteSearchDAO;
 
 	private org.openspcoop2.core.transazioni.dao.IDumpMessaggioServiceSearch dumpMessaggioSearchDAO;
 	
@@ -217,13 +221,10 @@ public class TransazioniService implements ITransazioniService {
 			this.transazioniServiceManager = 
 					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),this.log);
 
-			this.transazioniSearchDAO = this.transazioniServiceManager
-					.getTransazioneServiceSearch();
-			this.transazioniDAO = this.transazioniServiceManager
-					.getTransazioneService();
-
-			this.dumpMessaggioSearchDAO = this.transazioniServiceManager
-					.getDumpMessaggioServiceSearch();
+			this.transazioniSearchDAO = this.transazioniServiceManager.getTransazioneServiceSearch();
+			this.transazioniDAO = this.transazioniServiceManager.getTransazioneService();
+			this.credenzialiMittenteSearchDAO = this.transazioniServiceManager.getCredenzialeMittenteServiceSearch();
+			this.dumpMessaggioSearchDAO = this.transazioniServiceManager.getDumpMessaggioServiceSearch();
 
 			this.transazioniFieldConverter = ((IDBServiceUtilities<?>)this.transazioniSearchDAO).getFieldConverter(); 
 
@@ -236,16 +237,16 @@ public class TransazioniService implements ITransazioniService {
 			
 			if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() || monitorProperties.isAttivoModuloRicerchePersonalizzate()){
 				
-				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.basePluginsServiceManager), 
-						((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
+				this.basicServiceLibraryReader = new BasicServiceLibraryReader( (this.basePluginsServiceManager), 
+						(this.utilsServiceManager), true);
 			
 				if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() ){
 					this.transactionServiceLibraryReader = 
-							new TransactionServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
+							new TransactionServiceLibraryReader( (this.transazioniPluginsServiceManager), true);
 				}
 				if(monitorProperties.isAttivoModuloRicerchePersonalizzate() ){
 					this.searchServiceLibraryReader = 
-							new SearchServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
+							new SearchServiceLibraryReader( (this.ricerchePluginsServiceManager), true);
 				}
 			}
 			
@@ -285,13 +286,10 @@ public class TransazioniService implements ITransazioniService {
 			this.transazioniServiceManager = 
 					(org.openspcoop2.core.transazioni.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(),con,autoCommit,this.log);
 
-			this.transazioniSearchDAO = this.transazioniServiceManager
-					.getTransazioneServiceSearch();
-			this.transazioniDAO = this.transazioniServiceManager
-					.getTransazioneService();
-
-			this.dumpMessaggioSearchDAO = this.transazioniServiceManager
-					.getDumpMessaggioServiceSearch();
+			this.transazioniSearchDAO = this.transazioniServiceManager.getTransazioneServiceSearch();
+			this.transazioniDAO = this.transazioniServiceManager.getTransazioneService();
+			this.credenzialiMittenteSearchDAO = this.transazioniServiceManager.getCredenzialeMittenteServiceSearch();
+			this.dumpMessaggioSearchDAO = this.transazioniServiceManager.getDumpMessaggioServiceSearch();
 
 			this.transazioniFieldConverter = ((IDBServiceUtilities<?>)this.transazioniSearchDAO).getFieldConverter(); 
 
@@ -304,16 +302,16 @@ public class TransazioniService implements ITransazioniService {
 			
 			if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() || monitorProperties.isAttivoModuloRicerchePersonalizzate()){
 			
-				this.basicServiceLibraryReader = new BasicServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) this.basePluginsServiceManager), 
-						((org.openspcoop2.core.commons.search.dao.IServiceManager) this.utilsServiceManager), true);
+				this.basicServiceLibraryReader = new BasicServiceLibraryReader( (this.basePluginsServiceManager), 
+						(this.utilsServiceManager), true);
 				
 				if(monitorProperties.isAttivoModuloTransazioniPersonalizzate() ){
 					this.transactionServiceLibraryReader = 
-						new TransactionServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager)this.transazioniPluginsServiceManager), true);
+						new TransactionServiceLibraryReader( (this.transazioniPluginsServiceManager), true);
 				}
 				if(monitorProperties.isAttivoModuloRicerchePersonalizzate() ){
 					this.searchServiceLibraryReader = 
-						new SearchServiceLibraryReader( ((org.openspcoop2.monitor.engine.config.ricerche.dao.IServiceManager)this.ricerchePluginsServiceManager), true);
+						new SearchServiceLibraryReader( (this.ricerchePluginsServiceManager), true);
 				}
 				
 			}
@@ -728,8 +726,100 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			Transazione t = this.transazioniSearchDAO.find(expr);
-			return new TransazioneBean(t); 
-
+			TransazioneBean transazioneBean = new TransazioneBean(t);
+			
+			// Integrazione dei dati delle credenziali
+			// Trasporto Mittente
+			String trasportoMittente = t.getTrasportoMittente();
+			if(StringUtils.isNotEmpty(trasportoMittente)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(trasportoMittente));
+					transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			// Token Issuer
+			String tokenIssuer = t.getTokenIssuer();
+			if(StringUtils.isNotEmpty(tokenIssuer)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(tokenIssuer));
+					transazioneBean.setTokenIssuerLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTokenIssuerLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTokenIssuerLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			// Token Client ID
+			String tokenClientID = t.getTokenClientId();
+			if(StringUtils.isNotEmpty(tokenClientID)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(tokenClientID));
+					transazioneBean.setTokenClientIdLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTokenClientIdLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			// Token Subject
+			String tokenSubject = t.getTokenSubject();
+			if(StringUtils.isNotEmpty(tokenSubject)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(tokenSubject));
+					transazioneBean.setTokenSubjectLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTokenSubjectLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTokenSubjectLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			// Token Username
+			String tokenUsername = t.getTokenUsername();
+			if(StringUtils.isNotEmpty(tokenUsername)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(tokenUsername));
+					transazioneBean.setTokenUsernameLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTokenUsernameLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTokenUsernameLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			// Token Mail
+			String tokenMail = t.getTokenMail();
+			if(StringUtils.isNotEmpty(tokenMail)) {
+				try {
+					CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteSearchDAO).get(Long.parseLong(tokenMail));
+					transazioneBean.setTokenMailLabel(credenzialeMittente.getCredenziale()); 
+				} catch(NumberFormatException e) {
+					// informazione non valida
+					transazioneBean.setTokenMailLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+				} catch(NotFoundException e) {
+					// informazione non piu disponibile
+					transazioneBean.setTokenMailLabel(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
+				}
+			}
+			
+			return transazioneBean; 
 		} catch (NotFoundException nre) {
 			// ignore
 		} catch (Exception e) {
@@ -746,10 +836,10 @@ public class TransazioniService implements ITransazioniService {
 		msg.setTipoMessaggio(tipoMessaggio);
 		msg.setIdTransazione(idTransazione);
 		if(TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) || TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)){
-			msg.setId(virtualIdRequest); // id virtuale
+			msg.setId(TransazioniService.virtualIdRequest); // id virtuale
 		}
 		else{
-			msg.setId(virtualIdResponse); // id virtuale
+			msg.setId(TransazioniService.virtualIdResponse); // id virtuale
 		}
 		this.updateMessageWithSdk(msg);
 		if(msg.getBody() != null || msg.sizeAllegatoList() > 0 || msg.sizeContenutoList() > 0 || msg.sizeHeaderTrasportoList() > 0){
@@ -856,7 +946,7 @@ public class TransazioniService implements ITransazioniService {
 
 			this.log.debug("Get allegati Messaggio [idDump: " + idDump + "]");
 			
-			if(idDump==virtualIdRequest || idDump==virtualIdResponse){
+			if(idDump==TransazioniService.virtualIdRequest || idDump==TransazioniService.virtualIdResponse){
 				throw new NotFoundException("Id Dump negative, possibile virtual message");
 			}
 			
@@ -916,7 +1006,7 @@ public class TransazioniService implements ITransazioniService {
 
 			this.log.debug("Get Contenuti specifici [idDump: "	+ idDump + "]");
 			
-			if(idDump==virtualIdRequest || idDump==virtualIdResponse){
+			if(idDump==TransazioniService.virtualIdRequest || idDump==TransazioniService.virtualIdResponse){
 				throw new NotFoundException("Id Dump negative, possibile virtual message");
 			}
 			
@@ -1128,7 +1218,7 @@ public class TransazioniService implements ITransazioniService {
 			// .setParameter("id_dump", idDump)
 			// .getResultList();
 
-			if(idDump==virtualIdRequest || idDump==virtualIdResponse){
+			if(idDump==TransazioniService.virtualIdRequest || idDump==TransazioniService.virtualIdResponse){
 				throw new NotFoundException("Id Dump negative, possibile virtual message");
 			}
 			

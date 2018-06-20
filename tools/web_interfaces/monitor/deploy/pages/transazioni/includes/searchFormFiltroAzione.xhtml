@@ -12,9 +12,9 @@
     </c:if>
     
    	<c:if test="#{sf_bean.visualizzaFiltroAzioniSelectList}">
-		<link:prop label="Azione" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio}">
+		<link:prop label="#{sf_bean.labelAzione}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio}">
 			<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
-				defaultLabel="Selezione Azione" directInputSuggestions="true"
+				defaultLabel="Selezione #{sf_bean.labelAzione}" directInputSuggestions="true"
 				width="412" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
 				<f:selectItem itemValue="--"  itemLabel="--" />
 				<f:selectItems value="#{sf_azioni}"/>

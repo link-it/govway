@@ -22,7 +22,7 @@ public class ColonnaExportManager {
 	
 	public static ColonnaExportManager getInstance(){
 		if(ColonnaExportManager.instance == null)
-			init();
+			ColonnaExportManager.init();
 		
 		return ColonnaExportManager.instance;
 	}

@@ -23,4 +23,10 @@ public class Costanti {
 	public static final String SEPARATORE_TIPO_NOME = org.openspcoop2.web.monitor.core.utils.Costanti.SEPARATORE_TIPO_NOME;
 	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_APERTA = org.openspcoop2.web.monitor.core.utils.Costanti.SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_APERTA;
 	public static final String SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_CHIUSA = org.openspcoop2.web.monitor.core.utils.Costanti.SOGGETTO_SERVIZIO_SEPARATORE_CON_PARENTISI_CHIUSA;
+	
+	public static final String LABEL_PARAMETRO_RISORSA = "Risorsa";
+	public static final String LABEL_PARAMETRO_AZIONE = "Azione";
+	
+	public static final String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
+	public static final String LABEL_INFORMAZIONE_NON_PIU_PRESENTE = "Informazione non piu' presente";
 }

@@ -134,7 +134,7 @@ public class SummaryBean implements Serializable{
 
 			this.intervalloRefresh = (Integer.parseInt(this.intervalloRefresh) ) + ""; //* 1000
 
-			this.dynamicUtils = new DynamicPdDBeanUtils(log);
+			this.dynamicUtils = new DynamicPdDBeanUtils(SummaryBean.log);
 			
 			this.dynamicUtilsService = new DynamicUtilsService();
 			
@@ -173,13 +173,13 @@ public class SummaryBean implements Serializable{
 			
 			this.protocollo = protocolFactory.getProtocol();
 		} catch (Exception e) {
-			log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e); 
+			SummaryBean.log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e); 
 		}
 
 		try {
-			this.esitiProperties = EsitiProperties.getInstance(log);
+			this.esitiProperties = EsitiProperties.getInstance(SummaryBean.log);
 		} catch (Exception e) {
-			log.error("Errore durante la creazione del form: " + e.getMessage(),e);
+			SummaryBean.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
 
 		try {
@@ -190,7 +190,7 @@ public class SummaryBean implements Serializable{
 				this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 			}
 		} catch (Exception e) {
-			log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
+			SummaryBean.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 			this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 		}
 
@@ -335,7 +335,7 @@ public class SummaryBean implements Serializable{
 				r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
 			} catch (CoreException er) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
-				log.error(er.getMessage(), er);
+				SummaryBean.log.error(er.getMessage(), er);
 				return null;
 			}
 
@@ -529,7 +529,7 @@ public class SummaryBean implements Serializable{
 						r = this.report.getEsiti(this.getPermessiUtenteOperatore(), s, e, this.periodo, this.esitoContesto, this.protocollo);
 					} catch (CoreException er) {
 						MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
-						log.error(er.getMessage(),er);
+						SummaryBean.log.error(er.getMessage(),er);
 						return null;
 					}
 
@@ -566,7 +566,7 @@ public class SummaryBean implements Serializable{
 				grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
 				grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
 			}catch(Exception e){
-				log.error("Errore durante la generazione del json: " + e.getMessage(),e);
+				SummaryBean.log.error("Errore durante la generazione del json: " + e.getMessage(),e);
 				return "";
 			}
 			//String json = grafico != null ?  grafico.toString() : "";
@@ -677,7 +677,7 @@ public class SummaryBean implements Serializable{
 			esiti = this.transazioniService.getEsitiInfoLive(getPermessiUtenteOperatore(),this.lastRequest);
 		} catch (CoreException e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
-			log.error(e.getMessage(), e);
+			SummaryBean.log.error(e.getMessage(), e);
 			return null;
 		}
 
@@ -777,7 +777,7 @@ public class SummaryBean implements Serializable{
 				esiti = this.transazioniService.getEsitiInfoLive(this.getPermessiUtenteOperatore(),this.lastRequest);
 			} catch (CoreException e) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero degli esiti");
-				log.error(e.getMessage(),e);
+				SummaryBean.log.error(e.getMessage(),e);
 				return null;
 			}
 
@@ -818,7 +818,7 @@ public class SummaryBean implements Serializable{
 			grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
 			grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
 		}catch(Exception e){
-			log.error("Errore durante la generazione del json live: " + e.getMessage(),e);
+			SummaryBean.log.error("Errore durante la generazione del json live: " + e.getMessage(),e);
 			return "";
 		}
 		return grafico.toString();	
@@ -1049,14 +1049,14 @@ public class SummaryBean implements Serializable{
 				p = "{" + p + "}"; // trasformo in json
 			}
 
-			Stato state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
+			Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
 			state.setStato(p);
-			this.userService.saveTableState(STATO_PERIODO,Utility.getLoggedUtente(), state);
+			this.userService.saveTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente(), state);
 		}
 	}
 
 	public String leggiStatoPeriodo(){
-		Stato state = this.userService.getTableState(STATO_PERIODO,Utility.getLoggedUtente());
+		Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
 		String statoPeriodo = state.getStato();
 		if(statoPeriodo!=null){
 			if(statoPeriodo.startsWith("{")){
@@ -1194,7 +1194,7 @@ public class SummaryBean implements Serializable{
 			}
 
 		} catch (ProtocolException e) {
-			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+			SummaryBean.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}  
 
 
@@ -1235,7 +1235,7 @@ public class SummaryBean implements Serializable{
 				return false;
 
 		} catch (ProtocolException e) {
-			log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
+			SummaryBean.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}  
 
 		return true;

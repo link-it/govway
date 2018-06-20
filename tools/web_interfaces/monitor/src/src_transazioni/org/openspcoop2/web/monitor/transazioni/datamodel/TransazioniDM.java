@@ -53,13 +53,13 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 	protected List<TransazioneBean> findObjects(int start, int limit,	String sortField, SortOrder sortOrder) {
 		List<TransazioneBean> list = new ArrayList<TransazioneBean>();
 		try{
-			log.debug("findObjects Start["+start+"], Limit["+limit+"], SortField["+sortField+"], SortOrder["+sortOrder.toString()+"]...");
+			TransazioniDM.log.debug("findObjects Start["+start+"], Limit["+limit+"], SortField["+sortField+"], SortOrder["+sortOrder.toString()+"]...");
 			list = this.getDataProvider().findAll(start, limit,sortOrder ,sortField);
 
-			log.debug("findObjects trovati["+(list != null ? list.size() : 0)+"].");
+			TransazioniDM.log.debug("findObjects trovati["+(list != null ? list.size() : 0)+"].");
 		}
 		catch(Exception e){
-			log.error("Errore durante la find transazioni: "+e.getMessage(),e);
+			TransazioniDM.log.error("Errore durante la find transazioni: "+e.getMessage(),e);
 		}
 
 		return list;
@@ -69,9 +69,9 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 	protected int _executeTotalCountWithIService(ISearchFormService<TransazioneBean, String, TransazioniSearchForm> service) throws Exception {
 		if (service.getSearch().isUseCount()) {
 			if(service.getSearch().isExecuteQuery()) {
-				log.debug("Execute Count, SortField["+this.getSortField()+"], SortOrder["+this.getSortOrder().toString()+"]...");
+				TransazioniDM.log.debug("Execute Count, SortField["+this.getSortField()+"], SortOrder["+this.getSortOrder().toString()+"]...");
 				int count = ((ITransazioniService)service).totalCount(this.getSortOrder(), this.getSortField());
-				log.debug("Execute Count ["+count+"]."); 
+				TransazioniDM.log.debug("Execute Count ["+count+"]."); 
 				return count;
 			}else 
 				return 0;
@@ -81,7 +81,7 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 
 	@Override
 	public String getDefaultSortField() {
-		return COL_DATA_INGRESSO_RICHIESTA;
+		return TransazioniDM.COL_DATA_INGRESSO_RICHIESTA;
 	}
 	@Override
 	public SortOrder getSortOrder() {
@@ -117,6 +117,6 @@ SortableBaseDataModel<String, TransazioneBean, ITransazioniService, TransazioniS
 	}
 
 	public boolean isExecuteQuery(){
-		return ((TransazioniSearchForm)this.getDataProvider().getSearch()).isExecuteQuery();
+		return this.getDataProvider().getSearch().isExecuteQuery();
 	}	
 }

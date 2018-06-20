@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsService;
@@ -214,6 +215,55 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 	 * 
 	 * 
 	 */
+	
+	/**
+	 * 
+	 * @return numero degli applicativi registrati
+	 */
+	public ConfigurazioneGenerale getApplicativi(){
+		ConfigurazioneGenerale configurazione = new ConfigurazioneGenerale(); 
+		configurazione.setLabel(CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
+
+		ConfigurazioniGeneraliService.log.debug("Calcolo numero " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL); 
+		int count = 0;
+		String tipoProtocollo = this.search.getProtocollo();
+		try { 
+			if (StringUtils.isNotBlank(this.getSearch().getNomeServizio())){
+				String servizioString = this.getSearch().getNomeServizio();
+				IDServizio idServizio = ParseUtility.parseServizioSoggetto(servizioString);
+				AccordoServizioParteComune aspc = this.dynamicService.getAccordoServizio(tipoProtocollo, idServizio.getSoggettoErogatore(), idServizio.getTipo(), idServizio.getNome());
+				if(aspc != null){
+					String nomeAspc = aspc.getNome();
+
+					Integer versioneAspc = aspc.getVersione();
+
+					String nomeReferenteAspc = (aspc.getIdReferente() != null) ? aspc.getIdReferente().getNome() : null;
+
+					String tipoReferenteAspc= (aspc.getIdReferente() != null) ? aspc.getIdReferente().getTipo() : null;
+
+					String uriAccordoServizio = IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc); 
+					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, null, uriAccordoServizio, null, null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
+				} else {
+					count = 0;
+				}
+			}else {
+				if(this.getSearch().getTipoNomeSoggettoLocale()!=null && !StringUtils.isEmpty(this.getSearch().getTipoNomeSoggettoLocale()) 
+						&& !"--".equals(this.getSearch().getTipoNomeSoggettoLocale())){
+					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, this.getSearch().getTipoSoggettoLocale(), null, this.getSearch().getSoggettoLocale(), null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
+				}else {
+					count = this.dynamicService.countElencoServiziApplicativiFruitore(tipoProtocollo, null, null, null, null, null, null, null, null, null, this.search.getPermessiUtenteOperatore());
+				}
+				ConfigurazioniGeneraliService.log.debug("Trovati " + (count) + " " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
+			}
+		}catch(Exception e){
+			ConfigurazioniGeneraliService.log.error("Errore durante il calcolo del numero degli applicativi: " + e.getMessage(),e);
+		}
+
+		ConfigurazioniGeneraliService.log.debug("Trovate " + (count) + " " + CostantiConfigurazioni.CONF_SERVIZI_APPLICATIVI_LABEL);
+		configurazione.setValue(""+count); 
+
+		return configurazione;
+	}
 
 	/**
 	 * 
@@ -577,7 +627,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaDelegata portaDelegata : findAll) {
-						lst.add(this.fillDettaglioPD(portaDelegata));
+						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata);
+						lst.add(dettaglioPD);
+						
+						List<ConfigurazioneGenerale> findConfigurazioniFiglie = this.findConfigurazioniFiglie(portaDelegata.getNome(),dettaglioPD.getRuolo());
+						if(findConfigurazioniFiglie != null && findConfigurazioniFiglie.size() > 0)
+							lst.addAll(findConfigurazioniFiglie);
 					}
 					return lst;
 				}
@@ -591,7 +646,12 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
 
 					for (PortaApplicativa portaApplicativa : findAll) {
-						lst.add(this.fillDettaglioPA(portaApplicativa));
+						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa);
+						lst.add(dettaglioPA);
+						
+						List<ConfigurazioneGenerale> findConfigurazioniFiglie = this.findConfigurazioniFiglie(portaApplicativa.getNome(),dettaglioPA.getRuolo());
+						if(findConfigurazioniFiglie != null && findConfigurazioniFiglie.size() > 0)
+							lst.addAll(findConfigurazioniFiglie);
 					}
 
 					return lst;
@@ -622,6 +682,89 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		} catch (ProtocolException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		} catch (UserInvalidException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		}
+
+		return new ArrayList<ConfigurazioneGenerale>();
+	}
+	
+	@Override
+	public List<ConfigurazioneGenerale> findConfigurazioniFiglie(String nome, PddRuolo ruolo) throws ServiceException {
+		ConfigurazioniGeneraliService.log.debug("Metodo findConfigurazioniFiglie: nome[" + nome + "], ruolo: [" + ruolo + "]");
+
+		try {
+			if(PddRuolo.DELEGATA.equals(ruolo)) {
+				IExpression expr = this.portaDelegataDAO.newExpression();
+						
+				// seleziono solo le porte figlie
+				expr.equals(PortaDelegata.model().NOME_PORTA_DELEGANTE_AZIONE, nome);
+				expr.sortOrder(SortOrder.ASC);
+				expr.addOrder(PortaDelegata.model().ID_SOGGETTO.TIPO);
+				expr.addOrder(PortaDelegata.model().ID_SOGGETTO.NOME);
+				expr.addOrder(PortaDelegata.model().TIPO_SERVIZIO);
+				expr.addOrder(PortaDelegata.model().NOME_SERVIZIO);
+				expr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO);
+				expr.addOrder(PortaDelegata.model().NOME_AZIONE);
+				
+				IPaginatedExpression pagExpr = this.portaDelegataDAO.toPaginatedExpression(expr);
+				List<PortaDelegata> findAll = this.portaDelegataDAO.findAll(pagExpr);
+				if(findAll != null && findAll.size() > 0){
+					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
+
+					for (PortaDelegata portaDelegata : findAll) {
+						ConfigurazioneGenerale dettaglioPD = this.fillDettaglioPD(portaDelegata);
+						lst.add(dettaglioPD);
+					}
+					return lst;
+				}
+			} else {
+				IExpression expr = this.portaApplicativaDAO.newExpression();
+				
+				// seleziono solo le porte figlie
+				expr.equals(PortaApplicativa.model().NOME_PORTA_DELEGANTE_AZIONE, nome);
+				expr.sortOrder(SortOrder.ASC);
+				expr.addOrder(PortaApplicativa.model().ID_SOGGETTO.TIPO);
+				expr.addOrder(PortaApplicativa.model().ID_SOGGETTO.NOME);
+				expr.addOrder(PortaApplicativa.model().TIPO_SERVIZIO);
+				expr.addOrder(PortaApplicativa.model().NOME_SERVIZIO);
+				expr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO);
+				expr.addOrder(PortaApplicativa.model().NOME_AZIONE);
+				
+				IPaginatedExpression pagExpr = this.portaApplicativaDAO.toPaginatedExpression(expr);
+
+				List<PortaApplicativa> findAll = this.portaApplicativaDAO.findAll(pagExpr);
+				if(findAll != null && findAll.size() > 0){
+					List<ConfigurazioneGenerale> lst = new ArrayList<ConfigurazioneGenerale>();
+
+					for (PortaApplicativa portaApplicativa : findAll) {
+						ConfigurazioneGenerale dettaglioPA = this.fillDettaglioPA(portaApplicativa);
+						lst.add(dettaglioPA);
+					}
+
+					return lst;
+				}
+			}
+		} catch (ExpressionNotImplementedException  e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (ServiceException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (NotImplementedException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (NotFoundException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (MultipleResultException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (DriverConfigurazioneException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (DriverConfigurazioneNotFound e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (DriverRegistroServiziException e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (DriverRegistroServiziNotFound e) {
+			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
+		} catch (ProtocolException e) {
 			ConfigurazioniGeneraliService.log.error(e.getMessage(), e);
 		}
 
@@ -833,9 +976,19 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 
 			ConfigurazioniGeneraliService.log.debug("------------ Fine Filtro Impostato ----------");
 
-			lista.add(getPdd());
-			lista.add(getSoggettiOperativi()); 
-			lista.add(getSoggettiEsterni());
+			User loggedUtente = Utility.getLoggedUtente();
+						
+			// user no multitenant
+			if(!loggedUtente.isPermitMultiTenant()) {
+				lista.add(getSoggettiEsterni());
+			} else {
+			// user multi tenant
+				lista.add(getSoggettiOperativi()); 
+				lista.add(getSoggettiEsterni());
+			}
+			// applicativi
+			lista.add(getApplicativi());
+
 		}catch(Exception e){
 			ConfigurazioniGeneraliService.log.error("Errore durante la ricerca delle Configurazioni: " + e.getMessage(),e);
 		}
@@ -920,6 +1073,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			expr.equals(PortaDelegata.model().NOME_SERVIZIO,idServizio.getNome());
 			expr.equals(PortaDelegata.model().VERSIONE_SERVIZIO,idServizio.getVersione());
 		}
+		
+		// seleziono solo le porte di default
+		expr.notEquals(PortaDelegata.model().MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
 
 		if(!count) {
 			expr.sortOrder(SortOrder.ASC);
@@ -990,6 +1146,9 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 				expr.equals(PortaApplicativa.model().ID_SOGGETTO.NOME,idServizio.getSoggettoErogatore().getNome());
 			}
 		}
+		
+		// seleziono solo le porte di default
+		expr.notEquals(PortaApplicativa.model().MODE_AZIONE, CostantiConfigurazioni.VALUE_PORTE_DELEGATED_BY);
 
 		if(!count){
 			expr.sortOrder(SortOrder.ASC);
@@ -1015,7 +1174,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
 			configurazioneGenerale.setLabel(n.normalizePD(portaDelegata.getNome())); 
 
-
+			configurazioneGenerale.setProtocollo(tipoProtocollo); 
 
 			if(portaDelegata.getNomeAzione()==null){
 				configurazioneGenerale.setAzione(CostantiConfigurazioni.LABEL_AZIONE_STAR);
@@ -1041,6 +1200,7 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		try {
 			String tipoProtocollo = this.search.getProtocollo();
 			
+			configurazioneGenerale.setProtocollo(tipoProtocollo);
 
 			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
 			PorteNamingUtils n = new PorteNamingUtils(protocolFactory);

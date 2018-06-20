@@ -55,6 +55,7 @@ import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
+import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
@@ -1008,7 +1009,7 @@ public class SingleCsvFileExporter implements IExporter{
 	}
 
 	public void esportaXls(OutputStream outputStream, JasperReportBuilder report,List<String> colonneSelezionate) throws Exception{
-		JasperXlsExporterBuilder builder = export.xlsExporter(outputStream).setDetectCellType(true).setIgnorePageMargins(true)
+		JasperXlsExporterBuilder builder = DynamicReports.export.xlsExporter(outputStream).setDetectCellType(true).setIgnorePageMargins(true)
 				.setWhitePageBackground(false)
 				.setRemoveEmptySpaceBetweenColumns(true);
 
@@ -1018,7 +1019,7 @@ public class SingleCsvFileExporter implements IExporter{
 		for (String keyColonna : colonneSelezionate) {
 			ColonnaExport defColonna = ColonnaExportManager.getInstance().getColonna(keyColonna);
 			String label = defColonna != null ? defColonna.getLabel() : keyColonna;
-			TextColumnBuilder<String> nomeColumn = col.column(label, keyColonna, type.stringType());
+			TextColumnBuilder<String> nomeColumn = DynamicReports.col.column(label, keyColonna, DynamicReports.type.stringType());
 			colonne.add(nomeColumn);
 		}
 
@@ -1041,7 +1042,7 @@ public class SingleCsvFileExporter implements IExporter{
 		for (String keyColonna : colonneSelezionate) {
 			ColonnaExport defColonna = ColonnaExportManager.getInstance().getColonna(keyColonna);
 			String label = defColonna != null ? defColonna.getLabel() : keyColonna;
-			TextColumnBuilder<String> nomeColumn = col.column(label, keyColonna, type.stringType());
+			TextColumnBuilder<String> nomeColumn = DynamicReports.col.column(label, keyColonna, DynamicReports.type.stringType());
 			colonne.add(nomeColumn);
 		}
 
@@ -1053,12 +1054,12 @@ public class SingleCsvFileExporter implements IExporter{
 		.columns(colonne.toArray(new ColumnBuilder[colonne.size()]));
 
 
-		JasperCsvExporterBuilder builder = export.csvExporter(outputStream);
+		JasperCsvExporterBuilder builder = DynamicReports.export.csvExporter(outputStream);
 		report.toCsv(builder); 
 	}
 
 	public JasperReportBuilder creaReportBuilder(JRDataSource dataSource,Logger log) throws Exception{
-		JasperReportBuilder builder = report();
+		JasperReportBuilder builder = DynamicReports.report();
 		builder.setDataSource(dataSource);
 		return builder;
 	}

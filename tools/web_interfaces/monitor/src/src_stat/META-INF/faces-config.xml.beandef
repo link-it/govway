@@ -308,22 +308,3 @@
    			<to-view-id>/stat/pages/form/analisiStatistica.xhtml</to-view-id>
   		</navigation-case>
 	</navigation-rule>
-	
-	<!-- Configurazioni Generali -->
- 	<navigation-rule>
-		<from-view-id>/stat/pages/list/configurazioniGenerali.xhtml</from-view-id>
-		<navigation-case>
-   			<from-outcome>dettaglioConfigurazione</from-outcome>
-   			<to-view-id>/stat/pages/form/dettaglioConfigurazione.xhtml</to-view-id>
-  		</navigation-case>
-	</navigation-rule>
-	
-	<!-- Dettaglio Configurazione -->
- 	<navigation-rule>
-		<from-view-id>/stat/pages/form/dettaglioConfigurazione.xhtml</from-view-id>
-		 <navigation-case>
-		   <from-outcome>list/configurazioniGenerali</from-outcome>
-		   <to-view-id>/stat/pages/list/configurazioniGenerali.xhtml</to-view-id>
-		  </navigation-case>
-	</navigation-rule>
-	

@@ -23,12 +23,12 @@
 				<a4j:outputPanel id="outPanelInformazioniGenerali" ajaxRendered="false"  layout="block">
 					<h:form>
 						<h:panelGrid columns="#{applicationBean.amministratore ? 2 : 1}" columnClasses="align-top,align-top" styleClass="borderSpacingTable" style="width: 100%;">
-							<a4j:outputPanel id="outPanelInformazioniGenerali2" ajaxRendered="false"  layout="block" styleClass="form-container" rendered="#{applicationBean.amministratore}">
-								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
+							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;">
-		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
+			                            	<rich:column colspan="2" style="text-align: left;"> 
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
 		       	                	</f:facet>
@@ -42,12 +42,12 @@
 								</link:simpleDataTable>
 							</a4j:outputPanel>
 							
-							<a4j:outputPanel id="outPanelInformazioniGenerali4" ajaxRendered="false"  layout="block" styleClass="form-container">
-								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniServizi}" id="tableCS" enableDelete="false" showSelectAll="false">
+							<a4j:outputPanel id="outPanelInformazioniGenerali2" ajaxRendered="false"  layout="block" styleClass="form-container" rendered="#{applicationBean.amministratore}">
+								<link:simpleDataTable value="#{configurazioniGeneraliBean.listaConfigurazioniGenerali}" id="tableCG" enableDelete="false" showSelectAll="false">
 									<f:facet name="header">
 		                        		<rich:columnGroup>
-			                            	<rich:column colspan="2" style="text-align: left;"> 
-		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniServizi}" />
+			                            	<rich:column colspan="2" style="text-align: left;">
+		    	                            	<h:outputText value="#{configurazioniGeneraliBean.labelInformazioniGenerali}" />
 		        	                    	</rich:column>
 		            	               	</rich:columnGroup>
 		       	                	</f:facet>
@@ -157,29 +157,6 @@
 						reRenderIds="configurazioniTbl"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
-						<rich:column>
-							<f:facet name="header">
-								<h:outputText value="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' ? 'Porta Delegata' : 'Porta Applicativa'}"  id="outDettaglio"/>
-							</f:facet>
-							<a4j:htmlCommandLink id="dettaglioConfigurazione-iconLink" styleClass="icon-detail" value="#{item.label}" action="dettaglioConfigurazione">
-								<f:setPropertyActionListener value="#{item.id}" target="#{configurazioniGeneraliBean.selectedId}" />
-							</a4j:htmlCommandLink>
-						</rich:column>
-						
-						<rich:column id="colAbilitata" style="text-align: center;">
-							<f:facet name="header">
-								<h:outputText id="outAbilitata" value="Stato"/>
-							</f:facet>
-							<h:panelGroup>
-								<h:graphicImage value="/images/tema_link/check_green.png" id="imgGreen" rendered="#{item.stato == 'abilitato' or (empty item.stato)}">
-									<rich:toolTip id="toolImgGreen" for="imgGreen" mode="client" value="Abilitata" />
-								</h:graphicImage>
-								<h:graphicImage value="/images/tema_link/check_red.png" id="imgRed" rendered="#{item.stato == 'disabilitato'}">
-									<rich:toolTip id="toolImgRed" for="imgRed" mode="client" value="Disabilitata" />
-								</h:graphicImage>
-							</h:panelGroup>
-						</rich:column>
-						
 						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata'}">
 							<f:facet name="header">
 								<h:outputText value="Fruitore"  id="outFruitore"/>
@@ -199,13 +176,6 @@
 								<h:outputText value="Servizio"  id="outServizio"/>
 							</f:facet>
 							<h:outputText value="#{item.servizio}" />
-						</rich:column>
-						
-						<rich:column>
-							<f:facet name="header">
-								<h:outputText value="Azione"  id="outAzione"/>
-							</f:facet>
-							<h:outputText value="#{item.azione}" />
 						</rich:column>
 						
 						<ui:define name="buttons">

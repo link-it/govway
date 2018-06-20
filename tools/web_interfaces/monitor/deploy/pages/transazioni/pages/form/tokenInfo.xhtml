@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink id="dettagliTransazione" action="dettagliMessaggio" value="Dettagli Transazione">
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="tokenInfoBreadCrumb" value="Token Info" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="dettagliBean" />
+		<a4j:loadScript src="/scripts/shCore.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
+		<a4j:loadStyle src="resource:///css/shCore.css" />
+		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
+		<a4j:outputPanel id="panelJsonTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">	
+			<script type="text/javascript">
+			//<![CDATA[
+				if(#{dettagliBean.visualizzaTokenInfo}){
+				   var xmlPnl = jQuery("#jsonPnl"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   jQuery(document).ready(inizializza);
+				   
+				   SyntaxHighlighter.all();
+				   lineWrap();
+				   
+				   function inizializza(){
+					   checkWidth(xmlPnl,bodyWrapperPanel);
+					   lineWrap();
+				   }
+				}
+				 //]]>	
+			</script>
+			<rich:panel id="jsonPnl">
+				<f:facet name="header">
+					<h:outputText id="outXmlFaultIntegrazione" value="Token Info"/>
+				</f:facet>
+				<a4j:outputPanel layout="block" style="margin: 0px 0px 16px 0px; padding: 0px 0px 24px 0px;">	
+					<h:form id="formTokenInfo">
+						<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="jsonPnl2" rendered="#{dettagliBean.visualizzaTokenInfo}">
+							<pre class="brush: json; toolbar: false;">#{dettagliBean.prettyTokenInfo}</pre>
+						</a4j:outputPanel>
+						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
+				      		<a4j:outputPanel layout="block" styleClass="buttonrowlista">
+				      			 <a4j:htmlCommandLink id="jsonTokenInfo-iconLink" action="#{dettagliBean.downloadTokenInfo}" styleClass="icon-compress" target="_blank" value="Download"/>
+				      		</a4j:outputPanel>
+				      	</a4j:outputPanel>
+					</h:form>
+				</a4j:outputPanel>
+			</rich:panel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>
+
+</html>

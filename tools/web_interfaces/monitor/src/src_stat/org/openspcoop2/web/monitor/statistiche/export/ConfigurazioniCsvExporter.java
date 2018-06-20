@@ -12,26 +12,35 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.GestioneToken;
+import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
-import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.config.IProtocolIntegrationConfiguration;
+import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA;
@@ -39,6 +48,8 @@ import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPA.DettaglioSA;
 import org.openspcoop2.web.monitor.statistiche.bean.DettaglioPD;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.utils.ConfigurazioniUtils;
+import org.slf4j.Logger;
+
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperCsvExporterBuilder;
 import net.sf.dynamicreports.report.builder.column.ColumnBuilder;
@@ -68,17 +79,36 @@ public class ConfigurazioniCsvExporter {
 			/*
 		Label Generali
 
-    azioni (dove viene indicata la singola azione, o le azioni o la scritta unica azione...)
-    url di invocazione
-    Identificazione Azione: ....
-    Espressione: xpath o regolare
+    	azioni (dove viene indicata la singola azione, o le azioni o la scritta unica azione...)
+    	url di invocazione
+		Identificazione Azione: ....
+  		Pattern
+  		force interface based
 
+		Token (stato)
+		Token (policy)
+		Token (validazione input)
+		Token (introspection)
+		Token (user info)
+		Token (forward) 
 	    Autenticazione (stato)
-	    Autenticazione (opzionale
+	    Autenticazione (opzionale)
+		Autenticazione Token (issuer)
+		Autenticazione Token (client_id)
+		Autenticazione Token (subject)
+		Autenticazione Token (username)
+		Autenticazione Token (email)
+	    
 	    Autorizzazione (stato)
-	    Applicativi Autorizzati la colonna contiene l'elenco degli applicativi separati da '\n').
-	    Ruoli (separati da '\n')
+	    Autorizzazione (Soggetti autorizzati)
+	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
+	    Autorizzazione (Ruoli)
 	    Ruoli Richiesti (all/any)
+	    Ruoli (separati da '\n')
+	    Autorizzazione (Scope)
+	    Scope Richiesti (all/any)
+	    Scope (separati da '\n')
+	    Autorizzazione (Token claims)
 	  
 	    Servizio Applicativo
 	    MessageBox
@@ -93,25 +123,47 @@ public class ConfigurazioniCsvExporter {
 
 			 * */
 
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_DELEGATA);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MODALITA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORT_TYPE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_FRUITORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_EROGATORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SERVIZIO);
-
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE_RISORSA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_IDENTIFICAZIONE_AZIONE);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_ESPRESSIONE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PATTERN);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_FORCE_INTERFACE_BASED);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_POLICY);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_VALIDAZIONE_INPUT);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_INTROSPECTION);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_USER_INFO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_FORWARD);
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_ISSUER);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_SUBJECT);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_USERNAME);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_EMAIL); 
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_APPLICATIVI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_APPLICATIVI_AUTORIZZATI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SCOPE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TIPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
@@ -126,18 +178,42 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_CLIENT_CERTIFICATE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_DELEGATA);
 
 		} else {
 			// init colonne applicativa   
 			/*
-		Label Generali 		 
+		Label Generali 	
+		
+		url di invocazione
+		Identificazione Azione: ....
+  		Pattern
+  		force interface based
+		Token (stato)
+		Token (policy)
+		Token (validazione input)
+		Token (introspection)
+		Token (user info)
+		Token (forward) 
 	    Autenticazione (stato)
-	    Autenticazione (opzionale
+	    Autenticazione (opzionale)
+		Autenticazione Token (issuer)
+		Autenticazione Token (client_id)
+		Autenticazione Token (subject)
+		Autenticazione Token (username)
+		Autenticazione Token (email)
+	    
 	    Autorizzazione (stato)
+	    Autorizzazione (Soggetti autorizzati)
 	    Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
-	    Ruoli (separati da '\n')
+	    Autorizzazione (Ruoli)
 	    Ruoli Richiesti (all/any)
-	    Servizio Applicativo
+	    Ruoli (separati da '\n')
+	    Autorizzazione (Scope)
+	    Scope Richiesti (all/any)
+	    Scope (separati da '\n')
+	    Autorizzazione (Token claims)
+	    
 	    MessageBox
 	    Sbustamento SOAP
 	    Sbustamento Protocollo
@@ -151,22 +227,47 @@ public class ConfigurazioniCsvExporter {
 			 * */
 
 
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MODALITA);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_ASPC);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORT_TYPE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_EROGATORE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SERVIZIO);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AZIONE_RISORSA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_STATO);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_URL_DI_INVOCAZIONE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_IDENTIFICAZIONE_AZIONE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PATTERN);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_FORCE_INTERFACE_BASED);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_POLICY);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_VALIDAZIONE_INPUT);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_INTROSPECTION);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_USER_INFO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_TOKEN_FORWARD);
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_OPZIONALE);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_ISSUER);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_SUBJECT);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_USERNAME);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTENTICAZIONE_TOKEN_EMAIL);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SOGGETTI_AUTORIZZATI);
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_RUOLI_STATO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_RUOLI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_SCOPE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_RICHIESTI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 
-			this.labelColonne.add(CostantiConfigurazioni.LABEL_SERVIZIO_APPLICATIVO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MESSAGE_BOX);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SBUSTAMENTO_SOAP);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SBUSTAMENTO_PROTOCOLLO);
@@ -185,6 +286,8 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_CLIENT_CERTIFICATE);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ALTRE_CONFIGURAZIONI);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_PORTA_APPLICATIVA);
 
 		}
 
@@ -245,7 +348,7 @@ public class ConfigurazioniCsvExporter {
 		return dataSource;
 	}
 
-	private void popolaDataSourceExport(DRDataSource dataSource, List<ConfigurazioneGenerale> lstConfigurazioni) throws DriverRegistroServiziException  {
+	private void popolaDataSourceExport(DRDataSource dataSource, List<ConfigurazioneGenerale> lstConfigurazioni) throws Exception  {
 
 		for(ConfigurazioneGenerale configurazione: lstConfigurazioni){
 			if(this.ruolo.equals(PddRuolo.DELEGATA)) {
@@ -265,27 +368,29 @@ public class ConfigurazioniCsvExporter {
 		}//chiudo for configurazioni
 	}
 
-	private void addLinePA(DRDataSource dataSource, ConfigurazioneGenerale configurazione, DettaglioSA dettaglioSA) throws DriverRegistroServiziException  {
+	private void addLinePA(DRDataSource dataSource, ConfigurazioneGenerale configurazione, DettaglioSA dettaglioSA) throws Exception  {
 		List<Object> oneLine = new ArrayList<Object>();
 		DettaglioPA dettaglioPA = configurazione.getPa();
 		PortaApplicativa paOp2 = dettaglioPA.getPortaApplicativaOp2(); 
 		org.openspcoop2.core.commons.search.PortaApplicativa portaApplicativa = dettaglioPA.getPortaApplicativa();
-
-		// NOME PA
-		if(StringUtils.isNotEmpty(configurazione.getLabel()))
-			oneLine.add(configurazione.getLabel());
+		PortaApplicativaAzione paAzione = paOp2.getAzione();
+		
+		// Modalita
+		ServiceBinding serviceBinding= null;
+		String protocollo = configurazione.getProtocollo();
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration = protocolFactory.createProtocolIntegrationConfiguration();
+		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
+		if(StringUtils.isNotEmpty(protocollo))
+			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
 			oneLine.add("");
 		
-		// STATO
-		if(StringUtils.isNotEmpty(configurazione.getStato()))
-			oneLine.add(configurazione.getStato());
-		else 
-			oneLine.add("");
-
 		// ASPC
 		if(dettaglioPA.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
+			org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding2 = org.openspcoop2.core.registry.constants.ServiceBinding.toEnumConstant(aspc.getServiceBinding());
+			serviceBinding = ServiceBinding.valueOf(serviceBinding2.name());
 			String nomeAspc = aspc.getNome();
 
 			Integer versioneAspc = aspc.getVersione();
@@ -293,11 +398,11 @@ public class ConfigurazioniCsvExporter {
 			String nomeReferenteAspc = (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getNome() : null;
 
 			String tipoReferenteAspc= (aspc.getIdSoggetto() != null) ? aspc.getIdSoggetto().getTipo() : null;
-
-			oneLine.add(IDAccordoFactory.getInstance().getUriFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc));
+			
+			oneLine.add(NamingUtils.getLabelAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAspc,tipoReferenteAspc,nomeReferenteAspc,versioneAspc)));
 		} else 
 			oneLine.add("");
-
+		
 		// PORTTYPE
 		if(StringUtils.isNotEmpty(dettaglioPA.getPortType()))
 			oneLine.add(dettaglioPA.getPortType());
@@ -317,12 +422,11 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 
 		// AZIONE
-		if(portaApplicativa.getNomeAzione()!=null){
+		if(StringUtils.isNotEmpty(portaApplicativa.getNomeAzione())){  // TODO controllare lista azioni
 			// Azione: _XXX
 			oneLine.add(portaApplicativa.getNomeAzione());
 		}
 		else{
-			PortaApplicativaAzione paAzione = paOp2.getAzione();
 			List<String> azioni = dettaglioPA.getAzioni(); 
 			if(paAzione==null && (azioni == null || azioni.size() == 0)){
 				oneLine.add(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
@@ -339,6 +443,120 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add(sb.toString());
 			}
 		}
+		
+		// STATO
+		if(StringUtils.isNotEmpty(configurazione.getStato()))
+			oneLine.add(configurazione.getStato());
+		else 
+			oneLine.add("");
+		
+		// URL INVOCAZIONE
+		String urlInvocazione = null;
+		
+		try {
+			boolean useInterfaceNameInInvocationURL = createProtocolIntegrationConfiguration.useInterfaceNameInSubscriptionInvocationURL(serviceBinding); 
+			
+			String prefix = dettaglioPA.getEndpointApplicativoPA();
+			prefix = prefix.trim();
+			if(useInterfaceNameInInvocationURL) {
+				if(prefix.endsWith("/")==false) {
+					prefix = prefix + "/";
+				}
+			}
+			
+			urlInvocazione = prefix;
+			if(useInterfaceNameInInvocationURL) {
+				// se delegated by ci metto il nome della porta padre trattato dalle namingutils
+				if(StringUtils.isNotEmpty(portaApplicativa.getNomePortaDeleganteAzione())) {
+					urlInvocazione = urlInvocazione + n.enrichPA(portaApplicativa.getNomePortaDeleganteAzione());
+				} else {
+					urlInvocazione = urlInvocazione + configurazione.getLabel();
+				}
+			}
+		}catch(Exception e) {
+			 urlInvocazione = null;
+		}
+		
+		if(StringUtils.isNotEmpty(urlInvocazione))
+			oneLine.add(urlInvocazione);
+		else 
+			oneLine.add("");
+		
+		
+		if(paAzione != null) {
+			// Modalita identificazione azione
+			if(paAzione.getIdentificazione() != null){
+				oneLine.add(paAzione.getIdentificazione().toString());
+			} else {
+				oneLine.add("");
+			}
+			
+			//Pattern
+			if(StringUtils.isNotEmpty(paAzione.getPattern()))
+				oneLine.add(paAzione.getPattern());
+			else 
+				oneLine.add("");
+			
+			// force interface based
+			if(paAzione.getForceInterfaceBased() != null){
+				oneLine.add(paAzione.getForceInterfaceBased().getValue());
+			} else {
+				oneLine.add("");
+			}
+			
+		} else {
+			// Modalita identificazione azione
+			oneLine.add("");
+			
+			//Pattern
+			oneLine.add("");
+			
+			// force interface based
+			oneLine.add("");
+		}
+		
+		// Token (stato)
+		// Token (opzionale)
+		// Token (policy)
+		// Token (validazione input)
+		// Token (introspection)
+		// Token (user info)
+		// Token (forward)
+		GestioneToken gestioneToken = paOp2.getGestioneToken();
+		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
+		if(gestioneToken != null) {
+			gestioneTokenAutenticazione = gestioneToken.getAutenticazione(); 
+			String policy = gestioneToken.getPolicy();
+			if(policy != null) {
+				oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add(policy);
+				oneLine.add(gestioneToken.getValidazione() != null ? gestioneToken.getValidazione().getValue() : ""); 
+				oneLine.add(gestioneToken.getIntrospection() != null ? gestioneToken.getIntrospection().getValue() : "");
+				oneLine.add(gestioneToken.getUserInfo() != null ? gestioneToken.getUserInfo().getValue() : "");
+				oneLine.add(gestioneToken.getForward() != null ? gestioneToken.getForward().getValue() : "");
+				
+			} else {
+				// sei colonne vuote
+				oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+				oneLine.add(gestioneToken.getTokenOpzionale().getValue());
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+				oneLine.add("");
+			}
+		} else {
+			// sei colonne vuote
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
 
 		// Autenticazione (stato)
 		// Autenticazione (opzionale
@@ -361,8 +579,37 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 			oneLine.add("");
 		}
+		
+		// Autenticazione Token (issuer)
+		// Autenticazione Token (client_id)
+		// Autenticazione Token (subject)
+		// Autenticazione Token (username)
+		// Autenticazione Token (email)
+		if(gestioneTokenAutenticazione != null) {
+			oneLine.add(gestioneTokenAutenticazione.getIssuer().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getClientId().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getSubject().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getUsername().getValue());
+			oneLine.add(gestioneTokenAutenticazione.getEmail().getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
 
-
+		// Autorizzazione (Stato)
+		// Autorizzazione (Soggetti Autorizzati)
+		// Soggetti Autorizzati
+		// Autorizzazione (Ruoli Autorizzati)
+		// Ruoli Richiesti
+		// Ruoli Forniti
+		// Autorizzazione (Scope)
+		// Scope Richiesti
+		// Scope Forniti
+		// Autorizzazione (Token Claims)
+		
 		// Soggetti Autorizzati la colonna contiene l'elenco dei soggetti  separati da '\n').
 		// Ruoli (separati da '\n')
 		// Ruoli Richiesti (all/any)
@@ -384,11 +631,13 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(autorizzazione);
 		}
 
+		// Autorizzazione (Soggetti Autorizzati)
 		// Se abilitato:
 		// Servizi Applicativi Autorizzati: sa1 (user:xxx)
 		//                                  sa2 (user:xxx)
 		//                                  sa3 (user:xxx)
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> fruitori = dettaglioPA.getFruitori();
 
 			if(fruitori != null && fruitori.size() > 0){
@@ -400,17 +649,23 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add(sb.toString());
 			} else 
 				oneLine.add("");
-		}else 
+		}else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
+		}
 
-		// Ruoli: tutti/almenoUno
+		// Autorizzazione (Ruoli Autorizzati)
+		// Ruoli Richiesti: tutti/almenoUno
 		// Ruoli Autorizzati: ruolo1 (fonte esterna)
 		//                    ruolo2 (fonte interna)
 		//                    ruolo3 (fonte qualsiasi)
 		//
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.ROLES.getValue().toLowerCase())){
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+			
 			List<String> ruoli = dettaglioPA.getRuoli();
 			String match = dettaglioPA.getMatchRuoli();
+			oneLine.add(match);
 			if(paOp2.getRuoli()!=null){
 				StringBuffer sb = new StringBuffer();
 
@@ -423,20 +678,60 @@ public class ConfigurazioniCsvExporter {
 			} else {
 				oneLine.add("");
 			}
-			oneLine.add(match);
+			
 		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
 			oneLine.add("");
 			oneLine.add("");
 		}
+		
+		// Autorizzazione (Scope)
+		// Scope Richiesti
+		// Scope Forniti
+		AutorizzazioneScope scope = paOp2.getScope();
+		if(scope != null) {
+			oneLine.add(scope.getStato().getValue());
+			oneLine.add(scope.getMatch().getValue());
+			
+			if(scope.getScopeList()!=null){
+				StringBuffer sb = new StringBuffer();
+
+				for (Scope scopeS : scope.getScopeList()) {
+					if(sb.length()>0) sb.append("\n");
+					sb.append(scopeS.getNome());
+				}
+
+				oneLine.add(sb.toString());
+			} else {
+				oneLine.add("");
+			}
+			
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+
+		// Autorizzazione (Token Claims)
+		
+		if(gestioneToken != null) {
+			if(StringUtils.isNotEmpty(gestioneToken.getOptions()))
+				oneLine.add(gestioneToken.getOptions());
+			else 
+				oneLine.add("");
+		}else {
+			oneLine.add("");
+		}
+		
 
 		// colonne servizio applicativo e relativo connettore
 		if(dettaglioSA != null) {
 			ServizioApplicativo saOp2 = dettaglioSA.getSaOp2();
 			// colonne del servizio applicativo NOME | MESSAGE BOX | SBUSTAMENTO SOAP | SBUSTAMENTO PROTOCOLLO
-			if(StringUtils.isNotEmpty(saOp2.getNome()))
-				oneLine.add(saOp2.getNome());
-			else 
-				oneLine.add("");
+//			if(StringUtils.isNotEmpty(saOp2.getNome()))
+//				oneLine.add(saOp2.getNome());
+//			else 
+//				oneLine.add("");
 
 			if(saOp2.getInvocazioneServizio()!=null){
 				//  MESSAGE BOX 
@@ -477,6 +772,12 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add("");
 			}
 		}
+		
+		// NOME PA
+		if(StringUtils.isNotEmpty(portaApplicativa.getNome()))
+			oneLine.add(portaApplicativa.getNome());
+		else 
+			oneLine.add("");
 
 		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
 	}

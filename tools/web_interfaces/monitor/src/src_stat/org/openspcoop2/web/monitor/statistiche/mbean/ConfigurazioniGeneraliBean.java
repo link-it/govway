@@ -42,7 +42,7 @@ public class ConfigurazioniGeneraliBean extends DynamicPdDBean<ConfigurazioneGen
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
-	private String labelInformazioniGenerali = CostantiConfigurazioni.LABEL_SOGGETTI;
+	private String labelInformazioniGenerali = CostantiConfigurazioni.LABEL_REGISTRO;
 	private String labelInformazioniServizi = CostantiConfigurazioni.LABEL_SERVIZI;
 	private boolean includiInformazioniDettaglio = false;
 	private ConfigurazioneGeneralePK selectedId = null;

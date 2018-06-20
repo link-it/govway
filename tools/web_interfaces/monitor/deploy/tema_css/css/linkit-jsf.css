@@ -264,6 +264,7 @@
 	font-family: 'Roboto';
 	font-size: 14px;
 	font-weight: normal;
+	color: ${table.thead.color};
 }
 
 .extdt-subheadercell {

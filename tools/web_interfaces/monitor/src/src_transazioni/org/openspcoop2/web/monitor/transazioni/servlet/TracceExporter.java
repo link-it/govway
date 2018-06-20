@@ -1,14 +1,5 @@
 package org.openspcoop2.web.monitor.transazioni.servlet;
 
-import org.openspcoop2.web.monitor.core.bean.LoginBean;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
-import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
-import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
-import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
-import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,19 +16,26 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
-import org.openspcoop2.protocol.sdk.XMLRootElement;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
+import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
+import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
+import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
+import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
+import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -161,7 +159,7 @@ public class TracceExporter extends HttpServlet{
 			
 				while(transazioni.size()>0){
 
-					for(Transazione t: transazioni){
+					for(TransazioneBean t: transazioni){
 						//recupero i diagnostici per questa transazione
 
 

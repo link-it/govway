@@ -75,7 +75,7 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/form/dettaglioDump.jsf",
 		"/transazioni/pages/form/esitiLive.jsf",
 		"/transazioni/pages/form/fault.jsf",
-		"/transazioni/pages/form/headerTrasporto.jsf",
+		"/transazioni/pages/form/tokenInfo.jsf",
 		"/transazioni/pages/form/visualizzaDiagnostici.jsf",
 		"/transazioni/pages/form/visualizzaTraccia.jsf",
 
@@ -122,7 +122,7 @@ public class ContentAuthorizationCostanti {
 		{"/transazioni/pages/form/dettagliMessaggio.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/dettaglioDump.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/fault.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
-		{"/transazioni/pages/form/headerTrasporto.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
+		{"/transazioni/pages/form/tokenInfo.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/visualizzaDiagnostici.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		{"/transazioni/pages/form/visualizzaTraccia.jsf",ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE},
 		// Export Transazioni

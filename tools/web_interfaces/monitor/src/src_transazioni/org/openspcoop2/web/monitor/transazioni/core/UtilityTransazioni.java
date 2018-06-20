@@ -7,6 +7,7 @@ import org.openspcoop2.web.monitor.core.converter.EsitoContestoConverter;
 import org.openspcoop2.web.monitor.core.converter.EsitoConverter;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.core.contents.ContentType;
 import org.openspcoop2.web.monitor.transazioni.core.contents.RisorsaType;
@@ -60,7 +61,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
-import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
 import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
@@ -97,7 +97,7 @@ public class UtilityTransazioni {
 	 * ----------------------------------------------------------------------
 	 * --------------------------
 	 */
-	public static String getHeaderTransazione(Transazione t) {
+	public static String getHeaderTransazione(TransazioneBean t) {
 		StringBuffer sb = new StringBuffer();
 
 		if (StringUtils.isNotEmpty(t.getPddRuolo().toString())) {
@@ -282,12 +282,12 @@ public class UtilityTransazioni {
 		return sb.toString();
 	}
 
-	public static void writeManifestTransazione(Transazione t, OutputStream out)
+	public static void writeManifestTransazione(TransazioneBean t, OutputStream out)
 			throws Exception {
 		PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
-		writeManifestTransazione(t, out, monitorProperties.isAttivoTransazioniDataAccettazione());
+		UtilityTransazioni.writeManifestTransazione(t, out, monitorProperties.isAttivoTransazioniDataAccettazione());
 	}
-	public static void writeManifestTransazione(Transazione t, OutputStream out, boolean isAttivoTransazioniDataAccettazione)
+	public static void writeManifestTransazione(TransazioneBean t, OutputStream out, boolean isAttivoTransazioniDataAccettazione)
 			throws Exception {
 		/*
 		 * <transazione xmlns="http://www.spcoopit.it/PdS/Transaction/Manifest">
@@ -400,7 +400,7 @@ public class UtilityTransazioni {
         * - digest
         * - duplicati
     	*/
-		fillProtocollo(t,transazione);
+		UtilityTransazioni.fillProtocollo(t,transazione);
 		
 		
 		// Tempi di latenza
@@ -556,7 +556,7 @@ public class UtilityTransazioni {
 		
 		
 		// informazioni di diagnostica
-		fillDiagnostica(t, transazione);
+		UtilityTransazioni.fillDiagnostica(t, transazione);
 		
 		
 		// informazioni di integrazione (correlazione applicativa)		
@@ -664,6 +664,25 @@ public class UtilityTransazioni {
 				datiIntegrazione.setCodiceRispostaUscita(UtilityTransazioni.escapeXmlValue(t.getCodiceRispostaUscita()));
 			}
 			
+			if(StringUtils.isNotEmpty(t.getTrasportoMittenteLabel())) {
+				datiIntegrazione.setIdentificativoAutenticato(UtilityTransazioni.escapeXmlValue(t.getTrasportoMittenteLabel()));
+			}
+			if(StringUtils.isNotEmpty(t.getTokenIssuerLabel())) {
+				datiIntegrazione.setTokenIssuer(UtilityTransazioni.escapeXmlValue(t.getTokenIssuerLabel()));
+			}
+			if(StringUtils.isNotEmpty(t.getTokenClientIdLabel())) {
+				datiIntegrazione.setTokenClientId(UtilityTransazioni.escapeXmlValue(t.getTokenClientIdLabel()));
+			}
+			if(StringUtils.isNotEmpty(t.getTokenSubjectLabel())) {
+				datiIntegrazione.setTokenSubject(UtilityTransazioni.escapeXmlValue(t.getTokenSubjectLabel()));
+			}
+			if(StringUtils.isNotEmpty(t.getTokenUsernameLabel())) {
+				datiIntegrazione.setTokenUsername(UtilityTransazioni.escapeXmlValue(t.getTokenUsernameLabel()));
+			}
+			if(StringUtils.isNotEmpty(t.getTokenMailLabel())) {
+				datiIntegrazione.setTokenEMail(UtilityTransazioni.escapeXmlValue(t.getTokenMailLabel()));
+			}
+			
 			
 			transazione.setDatiIntegrazione(datiIntegrazione);
 		}
@@ -683,7 +702,7 @@ public class UtilityTransazioni {
 		marshaller.marshal(objFactory.createTransazione(transazione), out);
 	}
 
-	private static void fillProtocollo(Transazione t,org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType transazione) throws Exception{
+	private static void fillProtocollo(TransazioneBean t,org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType transazione) throws Exception{
 		
 		ProtocolloType protocollo = null;
 
@@ -972,12 +991,12 @@ public class UtilityTransazioni {
 		if(info==null){
 			return null;
 		}
-		String [] split = info.split(DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR);
+		String [] split = info.split(UtilityTransazioni.DIAGNOSTIC_WITH_DYNAMIC_INFO_DIAG_SEPARATOR);
 		if(split!=null && split.length>0){
 			Hashtable<String, Integer> counters = new Hashtable<String, Integer>();
 			for (int i = 0; i < split.length; i++) {
 				if(split[i]!=null && !"".equals(split[i].trim())){
-					String [] tmp = split[i].trim().split(DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR);
+					String [] tmp = split[i].trim().split(UtilityTransazioni.DIAGNOSTIC_WITH_DYNAMIC_INFO_TYPE_SEPARATOR);
 					if(tmp!=null && tmp.length>0){
 						if(tmp[0]!=null){
 							String tipo = tmp[0].trim();
@@ -999,7 +1018,7 @@ public class UtilityTransazioni {
 				StringBuffer bf = new StringBuffer();
 				Iterator<String> tipi = counters.keySet().iterator();
 				while (tipi.hasNext()) {
-					String tipo = (String) tipi.next();
+					String tipo = tipi.next();
 					Integer count = counters.get(tipo);
 					if(bf.length()>0){
 						bf.append(", ");
@@ -1012,7 +1031,7 @@ public class UtilityTransazioni {
 		return null;
 	}
 	
-	private static void fillDiagnostica(Transazione t,org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType transazione){
+	private static void fillDiagnostica(TransazioneBean t,org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType transazione){
 		String errorDiagnosticaMsg = " ... \nPer maggiori dettagli consultare i log della PdD";
 		
 		Diagnostica diagnostica = new Diagnostica();
@@ -1032,7 +1051,7 @@ public class UtilityTransazioni {
 				diagnostica.setMessaggi(DiagnosticaSerializationType.OPTIMIZED_ERROR);
 				diagnostica.setMessaggiErroreSerializzazione(t.getDiagnostici()+errorDiagnosticaMsg);
 			}
-			diagnostica.setMessaggiInfoSerializzazione(buildInfoDiagnosticaOptimized(t.getDiagnosticiExt()));
+			diagnostica.setMessaggiInfoSerializzazione(UtilityTransazioni.buildInfoDiagnosticaOptimized(t.getDiagnosticiExt()));
 		}
 		else{
 			diagnostica.setMessaggi(DiagnosticaSerializationType.STANDARD);

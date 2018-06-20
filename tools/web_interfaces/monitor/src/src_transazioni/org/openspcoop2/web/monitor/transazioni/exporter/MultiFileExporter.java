@@ -371,7 +371,7 @@ public class MultiFileExporter implements IExporter{
 				File searchFilter = new File(filesDirPath+File.separator+"SearchFilter.xml");
 				if(!searchFilter.exists()){
 					FileOutputStream fos = new FileOutputStream(searchFilter);
-					UtilityTransazioni.writeSearchFilterXml((TransazioniSearchForm)this.transazioniService.getSearch(),fos);
+					UtilityTransazioni.writeSearchFilterXml(this.transazioniService.getSearch(),fos);
 					fos.flush();
 					fos.close();
 				}

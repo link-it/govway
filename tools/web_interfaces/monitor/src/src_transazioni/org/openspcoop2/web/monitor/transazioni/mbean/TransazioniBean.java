@@ -84,13 +84,13 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
 			
 		}catch(Exception e){
-			log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 		}
 
 		try{
 			this.userService = new UserService();
 		}catch(Exception e){
-			log.error(e.getMessage(), e);
+			TransazioniBean.log.error(e.getMessage(), e);
 		}
 	}
 
@@ -536,8 +536,8 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				JSONObject json = JSONObject.fromObject(this.getTableState());
 				if(json != null){
 					// prelevo l'array dell'ordine delle colonne
-					JSONArray jsonArrayColumnsOrder = json.getJSONArray(COLUMNS_ORDER_STATO_TABELLE_KEY);
-					JSONObject jsonObjectColumnsVisibility = json.getJSONObject(COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
+					JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
+					JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
 
 					for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
 						String key = jsonArrayColumnsOrder.getString(i);
@@ -554,7 +554,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					}
 				}
 			}catch(Exception e){
-				log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
+				TransazioniBean.log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
 			}
 		}else  { // personalizzato
 			if(this.getElencoColonneSelezionate() != null)
@@ -820,7 +820,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	}
 
 	public void setElencoColonneSelezionate(List<org.openspcoop2.web.monitor.core.bean.SelectItem> elencoColonneSelezionate) {
-		log.debug("Set colonne selezionate ["+elencoColonneSelezionate+"]"); 
+		TransazioniBean.log.debug("Set colonne selezionate ["+elencoColonneSelezionate+"]"); 
 		this.elencoColonneSelezionate = elencoColonneSelezionate;
 	}
 
@@ -828,7 +828,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		List<org.openspcoop2.web.monitor.core.bean.SelectItem> colonne = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
 		List<org.openspcoop2.web.monitor.core.bean.SelectItem> colonneTmp = ColonnaExportManager.getInstance().getColonne();
 		for (org.openspcoop2.web.monitor.core.bean.SelectItem selectItem : colonneTmp) {
-			if(isCsvColumnEnabled((String)selectItem.getValue())==false){
+			if(isCsvColumnEnabled(selectItem.getValue())==false){
 				continue;
 			}
 			colonne.add(selectItem);
@@ -837,7 +837,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	}
 
 	public void colonnaSelectListener(ActionEvent ae){
-		log.debug("Evento selezione ["+ae+"]"); 
+		TransazioniBean.log.debug("Evento selezione ["+ae+"]"); 
 	}
 
 	public Boolean getShowSelezioneColonne() {

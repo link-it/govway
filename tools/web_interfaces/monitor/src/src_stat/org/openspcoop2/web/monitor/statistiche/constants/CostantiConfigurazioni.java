@@ -22,6 +22,7 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_INFORMAZIONI_GENERALI = "Informazioni Generali";
 	public static final String LABEL_SERVIZI = "Servizi";
 	public static final String LABEL_SOGGETTI = "Soggetti";
+	public static final String LABEL_REGISTRO = "Registro";
 	
 	public static final String LABEL_INFORMAZIONI_SOGGETTO = "Servizi del Soggetto {0}";
 	public static final String LABEL_INFORMAZIONI_SERVIZIO = "Servizio {0}";
@@ -32,12 +33,12 @@ public class CostantiConfigurazioni {
 	public static final String CONF_SOGGETTI_OPERATIVI_LABEL = "Soggetti 'Operativi'";
 	public static final String CONF_SOGGETTI_ESTERNI_LABEL = "Soggetti 'Esterni'";
 	public static final String CONF_PORTE_DI_DOMINIO_LABEL = "Porte di Dominio";
-	public static final String CONF_SERVIZI_APPLICATIVI_LABEL = "Servizi Applicativi";
+	public static final String CONF_SERVIZI_APPLICATIVI_LABEL = "Applicativi";
 
 	// Label informazioni Servizi
 
 	public static final String CONF_AZIONI_LABEL = "Azioni";	
-	public static final String CONF_ASPC_LABEL = "Accordi Servizio Parte Comune";
+	public static final String CONF_ASPC_LABEL = "API";
 	public static final String CONF_ASPS_LABEL = "Erogazioni di Servizio";
 	public static final String CONF_FRUIZIONI_SERVIZIO_LABEL = "Fruizioni di Servizio";
 
@@ -45,8 +46,8 @@ public class CostantiConfigurazioni {
 
 	public static final String CONF_PORTE_DELEGATE_LABEL = "Porte Delegate";
 	public static final String CONF_PORTE_APPLICATIVE_LABEL = "Porte Applicative";
-	public static final String CONF_SERVIZI_APPLICATIVI_FRUITORE_LABEL = "Servizi Applicativo con ruolo Fruitore";
-	public static final String CONF_SERVIZI_APPLICATIVI_EROGATORE_LABEL = "Servizi Applicativo con ruolo Erogatore";
+	public static final String CONF_SERVIZI_APPLICATIVI_FRUITORE_LABEL = "Applicativo con ruolo Fruitore";
+	public static final String CONF_SERVIZI_APPLICATIVI_EROGATORE_LABEL = "Applicativo con ruolo Erogatore";
 	
 	
 	public static final String LABEL_DOTS = ":";
@@ -62,7 +63,9 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_NOME_PORTA_APPLICATIVA = "Nome Porta Applicativa";
 	public static final String LABEL_EXPRESSIONE_REGOLARE = "Expressione Regolare";
 	public static final String LABEL_EXPRESSIONE_X_PATH = "Expressione XPath";
-	public static final String LABEL_IDENTIFICAZIONE_AZIONE = "Identificazione Azione";
+	public static final String LABEL_IDENTIFICAZIONE_AZIONE = "Modalita' Identificazione Azione";
+	public static final String LABEL_PATTERN = "Pattern";
+	public static final String LABEL_FORCE_INTERFACE_BASED = "Force Interface Based";
 	public static final String LABEL_URL_DI_BASE = "URL di Base";
 	public static final String LABEL_AZIONI = "Azioni";
 	public static final String LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE = "Utilizzo del Servizio senza azione";
@@ -99,12 +102,22 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_HTTP_BASIC_USERNAME = "HttpBasic Username";
 	public static final String LABEL_URL = "URL";
 	public static final String LABEL_AZIONE = "Azione";
+	public static final String LABEL_AZIONE_RISORSA = "Azione/Risorsa";
 	public static final String LABEL_MODALITA_INOLTRO = "Modalità Inoltro";
 	public static final String SEPARATORE_TIPONOME = "/";
-	public static final String LABEL_AZIONE_STAR = "*";
-	public static final String LABEL_ASPC = "Accordo di Servizio";
+	public static final String LABEL_AZIONE_STAR = "default"; //"*";
+	public static final String LABEL_ASPC = "API";
 	public static final String LABEL_PORT_TYPE = "PortType";
 	public static final String LABEL_TIPO_CODA_JMS = "Tipo JMS";
+	public static final String LABEL_MODALITA = "Modalità";
+	
+	public static final String LABEL_TOKEN_STATO = "Token (Stato)";
+	public static final String LABEL_TOKEN_OPZIONALE = "Token (Opzionale)";
+	public static final String LABEL_TOKEN_POLICY = "Token (Policy)";
+	public static final String LABEL_TOKEN_VALIDAZIONE_INPUT = "Token (Validazione JWT)";
+	public static final String LABEL_TOKEN_INTROSPECTION = "Token (Introspection)";
+	public static final String LABEL_TOKEN_USER_INFO = "Token (UserInfo)";
+	public static final String LABEL_TOKEN_FORWARD = "Token (Token Forward) ";
 	
 	// label Colonne CSV
 	public static final String PREFIX_COLONNA = "col_";
@@ -115,8 +128,20 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_ESPRESSIONE = "Espressione";
 	public static final String LABEL_AUTENTICAZIONE_STATO = "Autenticazione (Stato)";
 	public static final String LABEL_AUTENTICAZIONE_OPZIONALE = "Autenticazione (Opzionale)";
+	public static final String LABEL_AUTENTICAZIONE_TOKEN_ISSUER = "Autenticazione (Token Issuer)";
+	public static final String LABEL_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Autenticazione (Token ClientID)";
+	public static final String LABEL_AUTENTICAZIONE_TOKEN_SUBJECT = "Autenticazione (Token Subject)";
+	public static final String LABEL_AUTENTICAZIONE_TOKEN_USERNAME = "Autenticazione (Token Username)";
+	public static final String LABEL_AUTENTICAZIONE_TOKEN_EMAIL = "Autenticazione (Token eMail)";
 	public static final String LABEL_AUTORIZZAZIONE_STATO = "Autorizzazione (Stato)";
+	public static final String LABEL_AUTORIZZAZIONE_RUOLI_STATO = "Autorizzazione (Ruoli)";
+	public static final String LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS = "Autorizzazione (Token Claims)";
+	public static final String LABEL_AUTORIZZAZIONE_APPLICATIVI_AUTORIZZATI_STATO = "Autorizzazione (Applicativi Autorizzati)";
+	public static final String LABEL_AUTORIZZAZIONE_SOGGETTI_AUTORIZZATI_STATO = "Autorizzazione (Soggetti Autorizzati)";
 	public static final String LABEL_RUOLI_RICHIESTI = "Ruoli Richiesti";
+	public static final String LABEL_AUTORIZZAZIONE_SCOPE_STATO = "Autorizzazione (Scope)";
+	public static final String LABEL_SCOPE_RICHIESTI = "Scope Richiesti";
+	public static final String LABEL_SCOPE_FORNITI = "Scope";
 	public static final String LABEL_CONNETTORE_TIPO = "Connettore (Tipo)";
 	public static final String LABEL_CONNETTORE_ENDPOINT = "Connettore (Endpoint)";
 	public static final String LABEL_CONNETTORE_DEBUG = "Connettore (Debug)";
@@ -131,6 +156,10 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CONNETTORE_HOSTNAME_VERIFIER = "Connettore (Hostname Verifier)";
 	public static final String LABEL_CONNETTORE_TRUST_STORE = "Connettore (TrustStore)";
 	public static final String LABEL_CONNETTORE_KEY_STORE = "Connettore (KeyStore)";
+	
+	
+	// Valori Mode delle Porte
+	public static final String VALUE_PORTE_DELEGATED_BY = "delegatedBy";
 	
 }
 

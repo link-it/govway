@@ -30,20 +30,30 @@ public class TransazioneBean extends Transazione{
 	private Long latenzaServizio = null;
 	private Long latenzaPorta = null;
 
+	private java.lang.String trasportoMittenteLabel = null;
+	private java.lang.String tokenIssuerLabel = null;
+	private java.lang.String tokenClientIdLabel = null;
+	private java.lang.String tokenSubjectLabel = null;
+	private java.lang.String tokenUsernameLabel = null;
+	private java.lang.String tokenMailLabel = null;
+
 	public TransazioneBean() {
 		super();
 	}
-	
+
 	public TransazioneBean(Transazione transazione){
 		List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(
 				0);
-		metodiEsclusi.add(new BlackListElement("setLatenzaTotale",
-				Long.class));
-		metodiEsclusi.add(new BlackListElement("setLatenzaServizio",
-				Long.class));
-		metodiEsclusi.add(new BlackListElement("setLatenzaPorta",
-				Long.class));
-		
+		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
+		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
+		metodiEsclusi.add(new BlackListElement("setLatenzaPorta", Long.class));
+		metodiEsclusi.add(new BlackListElement("setTrasportoMittenteLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenIssuerLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenClientIdLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenSubjectLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenUsernameLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
+
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
 
@@ -56,7 +66,7 @@ public class TransazioneBean extends Transazione{
 
 		if(this.latenzaTotale == null)
 			return -1L;
-		
+
 		return this.latenzaTotale;
 	}
 
@@ -70,7 +80,7 @@ public class TransazioneBean extends Transazione{
 				this.latenzaServizio = this.dataIngressoRisposta.getTime() - this.dataUscitaRichiesta.getTime();
 			}
 		}
-		
+
 		if(this.latenzaServizio == null)
 			return -1L;
 
@@ -90,7 +100,7 @@ public class TransazioneBean extends Transazione{
 					this.latenzaPorta = this.getLatenzaTotale();
 
 		}
-		
+
 		if(this.latenzaPorta == null)
 			return -1L;
 
@@ -102,7 +112,7 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public String getEsitoStyleClass(){
-		
+
 		try{
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
 			String name = esitiProperties.getEsitoName(this.getEsito());
@@ -122,9 +132,9 @@ public class TransazioneBean extends Transazione{
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
 			return "icon-ko";
 		}
-		
+
 	}
-	
+
 	public boolean isEsitoOk(){	
 		try{
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
@@ -158,7 +168,7 @@ public class TransazioneBean extends Transazione{
 			return false;
 		}
 	}
-	
+
 	public boolean isShowContesto(){
 		try{
 			return EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger()).getEsitiTransactionContextCode().size()>1;
@@ -167,7 +177,7 @@ public class TransazioneBean extends Transazione{
 			return false;
 		}
 	}
-	
+
 	public String getFaultCooperazionePretty(){
 		String f = super.getFaultCooperazione();
 		String toRet = null;
@@ -178,9 +188,9 @@ public class TransazioneBean extends Transazione{
 				return "";
 
 			MessageType messageType= MessageType.XML;
-//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-//			messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-//		}
+			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+			}
 
 			switch (messageType) {
 			case BINARY:
@@ -206,16 +216,16 @@ public class TransazioneBean extends Transazione{
 		if(toRet == null)
 			toRet = f != null ? f : "";
 
-			return toRet;
+		return toRet;
 	}
-	
+
 	public boolean isVisualizzaFaultCooperazione(){
 		boolean visualizzaMessaggio = true;
 		String f = super.getFaultCooperazione();
-		
+
 		if(f == null)
 			return false;
-		
+
 		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
 		if(errore!= null)
@@ -254,9 +264,9 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultCooperazione();
 		if(f!=null) {
 			MessageType messageType= MessageType.XML;
-//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-//				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-//			}
+			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
+			}
 
 			switch (messageType) {
 			case JSON:
@@ -287,7 +297,7 @@ public class TransazioneBean extends Transazione{
 
 		return null;
 	}
-	
+
 	public String getFaultIntegrazionePretty(){
 		String f = super.getFaultIntegrazione();
 		String toRet = null;
@@ -298,9 +308,9 @@ public class TransazioneBean extends Transazione{
 				return "";
 
 			MessageType messageType= MessageType.XML;
-//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-//			messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-//		}
+			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
+			}
 
 			switch (messageType) {
 			case BINARY:
@@ -326,16 +336,16 @@ public class TransazioneBean extends Transazione{
 		if(toRet == null)
 			toRet = f != null ? f : "";
 
-			return toRet;
+		return toRet;
 	}
-	
+
 	public boolean isVisualizzaFaultIntegrazione(){
 		boolean visualizzaMessaggio = true;
 		String f = super.getFaultIntegrazione();
-		
+
 		if(f == null)
 			return false;
-		
+
 		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
 		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
 		if(errore!= null)
@@ -374,9 +384,9 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultIntegrazione();
 		if(f!=null) {
 			MessageType messageType= MessageType.XML;
-//			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-//				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-//			}
+			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
+			}
 
 			switch (messageType) {
 			case JSON:
@@ -407,7 +417,7 @@ public class TransazioneBean extends Transazione{
 
 		return null;
 	}
-	
+
 	public String getEventiGestioneHTML(){
 		String tmp = this.getEventiGestione();
 		if(tmp!=null){
@@ -447,43 +457,43 @@ public class TransazioneBean extends Transazione{
 			return nomePorta;
 		}
 	}
-	
+
 	public String getSoggettoFruitore() throws Exception { 
 		if(StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
 			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
 		}
-		
+
 		return "";
 	}
-	
+
 	public String getSoggettoErogatore() throws Exception { 
 		if(StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
 			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
 		}
-		
+
 		return "";
 	}
-	
+
 	public String getSoggettoPdd() throws Exception { 
 		if(StringUtils.isNotEmpty(this.getPddNomeSoggetto())) {
 			return NamingUtils.getLabelSoggetto(this.getProtocollo(), this.getPddTipoSoggetto(), this.getPddNomeSoggetto());
 		}
-		
+
 		return "";
 	}
-	
+
 	public String getProtocolloLabel() throws Exception{
 		return NamingUtils.getLabelProtocollo(this.getProtocollo()); 
 	}
-	
-	
+
+
 	public String getServizio() throws Exception{
 		if(StringUtils.isNotEmpty(this.getNomeServizio())) {
 			return NamingUtils.getLabelAccordoServizioParteSpecificaSenzaErogatore(this.getProtocollo(), this.getTipoServizio(), this.getNomeServizio(), this.getVersioneServizio());
 		}
 		return "";
 	}
-	
+
 	public String getPortaLabel() throws Exception{
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.getProtocollo());
 		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
@@ -498,4 +508,53 @@ public class TransazioneBean extends Transazione{
 			return this.getNomePorta();
 		}
 	}
+
+	public java.lang.String getTrasportoMittenteLabel() {
+		return this.trasportoMittenteLabel;
+	}
+
+	public void setTrasportoMittenteLabel(java.lang.String trasportoMittenteLabel) {
+		this.trasportoMittenteLabel = trasportoMittenteLabel;
+	}
+
+	public java.lang.String getTokenIssuerLabel() {
+		return this.tokenIssuerLabel;
+	}
+
+	public void setTokenIssuerLabel(java.lang.String tokenIssuerLabel) {
+		this.tokenIssuerLabel = tokenIssuerLabel;
+	}
+
+	public java.lang.String getTokenClientIdLabel() {
+		return this.tokenClientIdLabel;
+	}
+
+	public void setTokenClientIdLabel(java.lang.String tokenClientIdLabel) {
+		this.tokenClientIdLabel = tokenClientIdLabel;
+	}
+
+	public java.lang.String getTokenSubjectLabel() {
+		return this.tokenSubjectLabel;
+	}
+
+	public void setTokenSubjectLabel(java.lang.String tokenSubjectLabel) {
+		this.tokenSubjectLabel = tokenSubjectLabel;
+	}
+
+	public java.lang.String getTokenUsernameLabel() {
+		return this.tokenUsernameLabel;
+	}
+
+	public void setTokenUsernameLabel(java.lang.String tokenUsernameLabel) {
+		this.tokenUsernameLabel = tokenUsernameLabel;
+	}
+
+	public java.lang.String getTokenMailLabel() {
+		return this.tokenMailLabel;
+	}
+
+	public void setTokenMailLabel(java.lang.String tokenMailLabel) {
+		this.tokenMailLabel = tokenMailLabel;
+	}
+
 }

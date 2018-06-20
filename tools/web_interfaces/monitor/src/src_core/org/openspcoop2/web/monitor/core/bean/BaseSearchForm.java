@@ -16,6 +16,7 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.engine.config.ricerche.ConfigurazioneRicerca;
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
@@ -319,6 +320,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.ricercaSelezionata = null;
 		this.nomeRicercaPersonalizzata = null;
 		this.nomeStatisticaPersonalizzata = null;
+		this.labelAzione = null;
 	}
 
 	public void azioneSelected(ActionEvent ae) {
@@ -1443,5 +1445,28 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	
 	public boolean isVisualizzaFiltroAzioniSelectList() throws Exception{
 		return PddMonitorProperties.getInstance(log).isVisualizzaFiltroAzioniSelectList();
+	}
+	
+	private String labelAzione = null;
+	
+	public String getLabelAzione() {
+		if(this.labelAzione != null)
+			return this.labelAzione;
+		
+		if(StringUtils.isNotEmpty(this.getNomeServizio())) {
+			try {
+				IDServizio idServizio = Utility.parseServizioSoggetto(this.getNomeServizio());
+				AccordoServizioParteSpecifica asps = this.getAspsFromNomeServizio(idServizio);
+				ServiceBinding serviceBinding = ServiceBinding.toEnumConstant(asps.getIdAccordoServizioParteComune().getServiceBinding());
+				this.labelAzione = ServiceBinding.REST.equals(serviceBinding) ? Costanti.LABEL_PARAMETRO_RISORSA : Costanti.LABEL_PARAMETRO_AZIONE;
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				this.labelAzione = Costanti.LABEL_PARAMETRO_AZIONE;
+			}
+		}
+		else 
+			this.labelAzione = Costanti.LABEL_PARAMETRO_AZIONE;
+		
+		return this.labelAzione;
 	}
 }

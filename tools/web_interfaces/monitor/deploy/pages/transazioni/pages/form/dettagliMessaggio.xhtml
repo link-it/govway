@@ -43,9 +43,6 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipologia" value="Tipologia" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 							<h:outputText id="outTipologia" value="#{dettagliBean.tipologiaConProtocollo}" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Metodo HTTP" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
-							<h:outputText id="outTipoRichiesta" value="#{dettagliBean.dettaglio.tipoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
-						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelOp" value="Operazione" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
 							<h:outputText id="outOp" value="#{dettagliBean.dettaglio.operazioneIm}" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
 							
@@ -65,9 +62,6 @@
 							<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt}"/>
 							<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
-							<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
-								
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoErogatore" value="Applicativo Erogatore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
 							<h:outputText id="outServizioApplicativoErogatore" value="#{dettagliBean.dettaglio.servizioApplicativoErogatore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
 							
@@ -441,6 +435,75 @@
 						
 					</link:fieldset>
 					
+					<rich:spacer id="spacerInformazioniMittente" height="10px"/>
+					
+					<link:fieldset legend="Informazioni Mittente"
+						rendered="#{true}" collapsible="false" closed="false">
+							<h:panelGrid id="panelDettaglioMittente" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+						
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
+								<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTrasportoMittente" value="ID Autenticato" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
+								<h:outputText id="outTrasportoMittente" value="#{dettagliBean.dettaglio.trasportoMittenteLabel}" rendered="#{not empty dettagliBean.dettaglio.trasportoMittente}" />
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipoRichiesta" value="Metodo HTTP" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
+								<h:outputText id="outTipoRichiesta" value="#{dettagliBean.dettaglio.tipoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.tipoRichiesta}" />
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelUrlInvocazione" value="URL Invocazione" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
+								<h:outputText id="outUrlInvocazione" value="#{dettagliBean.dettaglio.urlInvocazione}" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and not dettagliBean.visualizzaTextAreaUrlInvocazione}"/>
+								<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+									rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
+								
+								<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'PortaDelegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'PortaApplicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
+									rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
+								<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Indirizzo Client" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
+								<h:outputText id="outIndirizzoClient" value="#{dettagliBean.dettaglio.socketClientAddress}" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
+								<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" value="" id="idTokenInfoSubtitleLabel"/>
+								<a4j:outputPanel layout="block" styleClass="subtitle-nopaddingleft-nomarginleft">	
+									<h:outputText id="idTokenInfo" value="Token Info" styleClass="subtitle-nopaddingleft-nomarginleft" />
+								</a4j:outputPanel>
+						
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenIssuer" value="Issuer" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
+								<h:outputText id="outTokenIssuer" value="#{dettagliBean.dettaglio.tokenIssuerLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenClientId" value="Client ID" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
+								<h:outputText id="outTokenClientId" value="#{dettagliBean.dettaglio.tokenClientIdLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenClientId}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenSubject" value="Subject" rendered="#{not empty dettagliBean.dettaglio.tokenSubject}"/>
+								<h:outputText id="outTokenSubject" value="#{dettagliBean.dettaglio.tokenSubjectLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenSubject}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenUsername" value="Username" rendered="#{not empty dettagliBean.dettaglio.tokenUsername}"/>
+								<h:outputText id="outTokenUsername" value="#{dettagliBean.dettaglio.tokenUsernameLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenUsername}"/>
+								
+								<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenEmail" value="eMail" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
+								<h:outputText id="outTokenEmail" value="#{dettagliBean.dettaglio.tokenMailLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenMail}"/>
+								
+								<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="Token Info" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
+								<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
+									<h:form id="formTokenInfo">
+	                                        <a4j:htmlCommandLink id="tokenInfo-iconLink"
+	                                                                         styleClass="icon-details"
+	                                                                         value="Visualizza"
+	                                                                         rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"
+	                                                                         action="tokenInfo">
+		                                        <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+		                                        <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+		                                        <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                               			</a4j:htmlCommandLink>
+									</h:form>
+								</h:panelGroup>	
+							
+							</h:panelGrid>
+						
+					</link:fieldset>
+					
 					<rich:spacer id="spacerInformazioniAvanzate" height="10px"/>
 					
 					<link:fieldset legend="Informazioni Avanzate"
@@ -460,34 +523,19 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="PdD (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 							<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.soggettoPdd}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 																		
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelUrlInvocazione" value="URL Invocazione" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione}"/>
-							<h:outputText id="outUrlInvocazione" value="#{dettagliBean.dettaglio.urlInvocazione}" rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and not dettagliBean.visualizzaTextAreaUrlInvocazione}"/>
-							<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliBean.dettaglio.urlInvocazione}" readonly="true"  cols="60" rows="11" styleClass="inputLinkLong" style="width:auto;"
-								rendered="#{not empty dettagliBean.dettaglio.urlInvocazione and dettagliBean.visualizzaTextAreaUrlInvocazione}" />
-							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta Invocazione" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
-							<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
-							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCredenziali" value="Credenziali" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
 							<h:outputText id="outCredenziali" value="#{dettagliBean.dettaglio.credenziali}" rendered="#{not empty dettagliBean.dettaglio.credenziali}"/>
 							
-							<h:outputText styleClass="outputFieldLabel" id="outLabelNomePorta" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'PortaDelegata' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'PortaApplicativa' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Porta' : 'Porta'}"
-							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
-							<h:outputText id="outNomePorta" value="#{dettagliBean.dettaglio.portaLabel}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.nomePorta}"/>
-													
 							<h:outputText styleClass="outputFieldLabel" id="outLabelConnettore" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'URL Inoltro' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'URL Consegna' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'URL Inoltro' : 'URL Inoltro'}"
 							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
 							<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
 
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelIndirizzoClient" value="Indirizzo Client" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
-							<h:outputText id="outIndirizzoClient" value="#{dettagliBean.dettaglio.socketClientAddress}" rendered="#{not empty dettagliBean.dettaglio.socketClientAddress}" />
-						
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
+							<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso}"/>
+							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelXForwardedFor" value="X-Forwarded-For" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
 							<h:outputText id="outXForwardedFor" value="#{dettagliBean.dettaglio.transportClientAddress}" rendered="#{not empty dettagliBean.dettaglio.transportClientAddress}" />
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaUscita" value="Codice Risposta Client" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
-							<h:outputText id="outCodiceRispostaUscita" value="#{dettagliBean.dettaglio.codiceRispostaUscita}" rendered="#{not empty dettagliBean.dettaglio.codiceRispostaUscita}"/>
-						
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaTotale" value="Latenza Totale" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" />
 							<h:outputText id="outLatenzaTotale" value="#{dettagliBean.dettaglio.latenzaTotale}" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" converter="latenzaConverter" />
 							

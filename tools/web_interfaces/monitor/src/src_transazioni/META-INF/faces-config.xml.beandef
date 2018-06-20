@@ -165,8 +165,8 @@
 			<to-view-id>/transazioni/pages/form/dettaglioDump.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>headerTrasporto</from-outcome>
-			<to-view-id>/transazioni/pages/form/headerTrasporto.xhtml</to-view-id>
+			<from-outcome>tokenInfo</from-outcome>
+			<to-view-id>/transazioni/pages/form/tokenInfo.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fault</from-outcome>
@@ -199,7 +199,7 @@
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/transazioni/pages/form/headerTrasporto.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/tokenInfo.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>

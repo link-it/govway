@@ -2,6 +2,7 @@ package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.util.List;
 
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
@@ -16,4 +17,6 @@ ConfigurazioniGeneraliSearchForm> {
 	public List<ConfigurazioneGenerale> findAllInformazioniServizi() throws ServiceException;
 	
 	List<ConfigurazioneGenerale> findAllDettagli(int start, int limit);
+	
+	public List<ConfigurazioneGenerale> findConfigurazioniFiglie(String nomePorta, PddRuolo ruolo) throws ServiceException;
 }

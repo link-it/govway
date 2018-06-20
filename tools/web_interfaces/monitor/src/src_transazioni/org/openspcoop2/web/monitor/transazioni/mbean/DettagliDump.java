@@ -188,7 +188,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			return this.dumpMessaggio;
 
 		try {
-			this.dumpMessaggio = (((ITransazioniService)this.service)).getDumpMessaggio(this.idTransazione, this.tipoMessaggio);
+			this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.tipoMessaggio);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 
@@ -207,7 +207,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpAllegato> list = (((ITransazioniService)this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpAllegato> list = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		if(list.size()>0){
 			List<DumpAllegato> newL = new ArrayList<DumpAllegato>();
@@ -227,7 +227,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpHeaderTrasporto> list = (((ITransazioniService)this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpHeaderTrasporto> list = ((this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		return (list.size()>0) ? list : null;
 	}
@@ -237,7 +237,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpContenuto> list = (((ITransazioniService)this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpContenuto> list = ((this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		if(list.size()>0){
 			List<DumpContenuto> listNew = new ArrayList<DumpContenuto>();
@@ -438,7 +438,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 
 			// Streams we will use to read, write the file bytes to our response
 			// First we load the file in our InputStream
-			List<DumpAllegato> allegatiCore = (((ITransazioniService)this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+			List<DumpAllegato> allegatiCore = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 			List<DumpAllegato> allegati = new ArrayList<DumpAllegato>();
 			for (DumpAllegato dumpAllegato : allegatiCore) {

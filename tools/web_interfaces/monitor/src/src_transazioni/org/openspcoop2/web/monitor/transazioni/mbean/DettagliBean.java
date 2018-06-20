@@ -2,6 +2,7 @@ package org.openspcoop2.web.monitor.transazioni.mbean;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.zip.ZipEntry;
@@ -23,6 +24,8 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundExcep
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -34,6 +37,7 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
@@ -699,5 +703,127 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	public void setVisualizzaTextAreaUrlInvocazione(boolean visualizzaTextAreaUrlInvocazione) {
+	}
+	
+	public boolean isVisualizzaTokenInfo(){
+		boolean visualizzaMessaggio = true;
+		String f = this.dettaglio.getTokenInfo();
+		
+		if(f == null)
+			return false;
+		
+		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		if(errore!= null)
+			return false;
+
+		return visualizzaMessaggio;
+	}
+	
+	public String getPrettyTokenInfo(){
+		String f = this.dettaglio.getTokenInfo();
+		String toRet = null;
+		if(f !=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			if(errore!= null)
+				return "";
+		 
+			JSONUtils jsonUtils = JSONUtils.getInstance(true);
+			try {
+				toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
+			} catch (UtilsException e) {
+			}
+			 
+		}
+
+		if(toRet == null)
+			toRet = f != null ? f : "";
+
+		return toRet;
+	}
+	
+	public String downloadTokenInfo(){
+		DettagliBean.log.debug("downloading TokenInfo: "+this.dettaglio.getId());
+		try{
+			//recupero informazioni sul file
+
+
+			// We must get first our context
+			FacesContext context = FacesContext.getCurrentInstance();
+
+			// Then we have to get the Response where to write our file
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+
+			// Now we create some variables we will use for writting the file to the
+			// response
+			// String filePath = null;
+			int read = 0;
+			byte[] bytes = new byte[1024];
+
+			// Be sure to retrieve the absolute path to the file with the required
+			// method
+			// filePath = pathToTheFile;
+
+			// Now set the content type for our response, be sure to use the best
+			// suitable content type depending on your file
+			// the content type presented here is ok for, lets say, text files and
+			// others (like CSVs, PDFs)
+			String contentType = "application/json";
+			response.setContentType(contentType);
+
+			// This is another important attribute for the header of the response
+			// Here fileName, is a String with the name that you will suggest as a
+			// name to save as
+			// I use the same name as it is stored in the file system of the server.
+			//String fileName = "allegato_"+this.selectedAttachment.getId();
+			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
+			String fileName = "tokenInfo";
+
+			String ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+
+			fileName+="."+ext;
+
+			// Setto Proprietà Export File
+			HttpUtilities.setOutputFile(response, true, fileName, contentType);
+
+			// Streams we will use to read, write the file bytes to our response
+			ByteArrayInputStream bis = null;
+			OutputStream os = null;
+
+			// First we load the file in our InputStream 
+			
+			String toRet = this.dettaglio.getTokenInfo();
+			JSONUtils jsonUtils = JSONUtils.getInstance(true);
+			try {
+				toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dettaglio.getTokenInfo()));
+			} catch (UtilsException e) {
+			}
+			
+			byte[] contenutoBody = toRet.getBytes();
+			//			if(this.base64Decode){
+			//				contenutoBody = ((DumpAllegatoBean)this.dumpMessaggio).decodeBase64();
+			//			}
+			bis = new ByteArrayInputStream(contenutoBody);
+			os = response.getOutputStream();
+
+			// While there are still bytes in the file, read them and write them to
+			// our OutputStream
+			while ((read = bis.read(bytes)) != -1) {
+				os.write(bytes, 0, read);
+			}
+
+			// Clean resources
+			os.flush();
+			os.close();
+
+			FacesContext.getCurrentInstance().responseComplete();
+
+			// End of the method
+		}catch (Exception e) {
+			DettagliBean.log.error(e.getMessage(), e);
+			MessageUtils.addErrorMsg("Si e' verificato un errore durante il download del token info");
+		}
+		return null;
 	}
 }
