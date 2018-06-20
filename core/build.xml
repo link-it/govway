@@ -454,7 +454,7 @@
 			<param name="SQLDestFile" value="${dist}/RepositoryOpenSPCoop2.sql"/>
 			<param name="SQLSourceFiles" value="runtimePdD/RepositoryBuste.sql runtimePdD/RepositoryIdSerial.sql runtimePdD/RepositoryMessaggi.sql runtimePdD/Semaphore.sql DBInfo.sql"/>
 			<param name="SQLDataFiles" value="init/runtimePdD/Semaphore_data.sql"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Porta di Dominio OpenSPCoop2');"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database di GovWay');"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
@@ -473,7 +473,7 @@
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
 			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql archiviComunicazioni/ArchivioEventi.sql archiviComunicazioni/ArchivioStatistiche.sql DBInfo.sql"/>
 			<param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioStatistiche_data.sql"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Archivio delle tracce e dei messaggi diagnostici emessi dalla Porta di Dominio OpenSPCoop2');" />
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Archivio delle tracce e dei messaggi diagnostici emessi da GovWay');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>

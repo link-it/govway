@@ -27,22 +27,22 @@ package org.openspcoop2.utils;
  */
 public class Costanti {
 
-	public final static String OPENSPCOOP2 = "OpenSPCoop2";
+	public final static String OPENSPCOOP2 = "GovWay";
 	
-	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
-	 public final static String OPENSPCOOP2_LOOKUP = "OPENSPCOOP2_LOOKUP";
+	 public final static String OPENSPCOOP2_LOOKUP = "GOVWAY_LOOKUP";
 	 
     /** Versione beta, es: "b1" */
     public static final String OPENSPCOOP2_BETA = "";
     /** Versione di OpenSPCoop */
     public static final String OPENSPCOOP2_VERSION = "3.0"+Costanti.OPENSPCOOP2_BETA;
     /** Versione di OpenSPCoop */
-    public static final String OPENSPCOOP2_PRODUCT = "OpenSPCoop2";
+    public static final String OPENSPCOOP2_PRODUCT = "GovWay";
     /** Versione di OpenSPCoop (User-Agent) */
     public static final String OPENSPCOOP2_PRODUCT_VERSION = Costanti.OPENSPCOOP2_PRODUCT+"/"+Costanti.OPENSPCOOP2_VERSION;
     /** Details */
-    public static final String OPENSPCOOP2_DETAILS = "www.openspcoop2.org";
+    public static final String OPENSPCOOP2_DETAILS = "www.govway.org";
     /** Copyright */
 	public final static String OPENSPCOOP2_COPYRIGHT = "2005-2018 Link.it srl";
 	 /** License */

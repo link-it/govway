@@ -33,7 +33,7 @@ package org.openspcoop2.protocol.trasparente.constants;
 
 public class TrasparenteCostanti {
    
-	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
     public final static String TRASPARENTE_PROPERTIES_LOCAL_PATH = "trasparente_local.properties";
     public final static String TRASPARENTE_PROPERTIES = "TRASPARENTE_PROPERTIES";

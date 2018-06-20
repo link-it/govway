@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="OpenSPCoop2 Installer v3.0" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.0" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,12 +8,12 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer Porta di Dominio OpenSPCoop2 v3.0">
+    <page type="input" name="intro" displayText="Installer GovWay v3.0">
         <comment explanatoryText=""/>
-        <comment explanatoryText="Il software OpenSPCoop2 e' distribuito con licenza GPL v3"/>
+        <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
         <comment explanatoryText="Per maggiori informazioni sul prodotto:"/>
-        <comment explanatoryText="       http://www.openspcoop.org" bold="true"/>
+        <comment explanatoryText="       http://www.govway.org" bold="true"/>
         <comment explanatoryText="       http://www.link.it" bold="true"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 

@@ -184,7 +184,7 @@ public class PolicyUtilities {
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("RuoloPdD");
+				bf.append("Tipologia");
 			}
 			
 			if(groupBy.isProtocollo()){
@@ -267,7 +267,7 @@ public class PolicyUtilities {
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("RuoloPdD: ");
+				bf.append("Tipologia: ");
 				bf.append(datiGroupBy.getRuoloPorta());
 			}
 			
@@ -357,8 +357,8 @@ public class PolicyUtilities {
 		for (int i = 0; i < split.length; i++) {
 			String tmp = split[i].trim();
 			
-			if(tmp.startsWith("RuoloPdD: ")) {
-				id.setRuoloPorta(tmp.substring("RuoloPdD: ".length()));
+			if(tmp.startsWith("Tipologia: ")) {
+				id.setRuoloPorta(tmp.substring("Tipologia: ".length()));
 			}
 			else if(tmp.startsWith("Protocollo: ")) {
 				id.setProtocollo(tmp.substring("Protocollo: ".length()));

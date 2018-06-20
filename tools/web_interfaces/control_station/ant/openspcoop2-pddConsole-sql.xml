@@ -185,7 +185,7 @@
 			<param name="SQLDestFile" value="${dist_pddConsole}/RepositoryPddConsoleOpenSPCoop2.sql"/>
 			<param name="SQLSourceFiles" value="${sqlSourceFiles}"/>
 			<param name="SQLDataFiles" value="${sqlDataFiles}"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Console di Gestione della Porta di Dominio OpenSPCoop2');"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Database della Console di Gestione di GovWay');"/>
 		</antcall>
 		
 		<!-- Replace per audit Appender (DB) -->

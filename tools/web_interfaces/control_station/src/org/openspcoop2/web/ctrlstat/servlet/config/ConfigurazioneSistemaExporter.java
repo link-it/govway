@@ -280,7 +280,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_diagnostica(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_diagnostica = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
@@ -290,7 +290,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_openspcoop(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_openspcoop = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
@@ -300,7 +300,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_integrationManager(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_integrationManager = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
@@ -340,7 +340,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_tracciamento = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
@@ -350,7 +350,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeAttributo_log4j_dump(alias));
 		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j openspcoop2_dump.log (jmxResourcePdD): "+e.getMessage(),e);
+			ControlStationCore.logError("Errore durante la lettura dello stato del file di log Log4j govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
 			log4j_dump = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		

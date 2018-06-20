@@ -30,7 +30,7 @@ package org.openspcoop2.core.transazioni.ws.server.config;
 
 public class ConstantsEnv {
 
-	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
     public final static String OPENSPCOOP2_WSTRANSAZIONI_LOCAL_PATH = "wstransazioni_local.properties";
     public final static String OPENSPCOOP2_WSTRANSAZIONI_PROPERTIES = "OPENSPCOOP2_WSTRANSAZIONI_PROPERTIES";

@@ -4103,7 +4103,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_msgDiagnostico.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL);
 		}
 		
@@ -4123,7 +4123,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL);
 		}
 		
@@ -4143,7 +4143,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_integrationManager.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL);
 		}
 
@@ -4247,7 +4247,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_tracciamento.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL);
 		}
 		
@@ -4267,7 +4267,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			dati.addElement(de);
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file openspcoop2_dump.log (jmxResourcePdD): "+e.getMessage(),e);
+			this.log.error("Errore durante la lettura delle informazioni sullo stato di log del file govway_dump.log (jmxResourcePdD): "+e.getMessage(),e);
 			addInformazioneNonDisponibile(dati, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL);
 		}
 
@@ -6484,11 +6484,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					bf.append(", ");
 				}
 				if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
-					bf.append("RuoloPdD: ");
+					bf.append("Tipologia: ");
 					bf.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUOLO_PORTA_DELEGATA);
 				}
 				else if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
-					bf.append("RuoloPdD: ");
+					bf.append("Tipologia: ");
 					bf.append(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RUOLO_PORTA_APPLICATIVA);
 				}
 			}
@@ -6605,7 +6605,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("RuoloPdD");
+				bf.append("Tipologia");
 			}
 			
 			if(groupBy.isProtocollo()){
@@ -10390,6 +10390,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			else{
 				de.setType(DataElementType.HIDDEN);
+				if(protocolliValue!=null && protocolliValue.size()>0) {
+					dati.addElement(de);
+					
+					// Si è deciso cmq di farlo vedere
+					de = new DataElement();
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO+"___LABEL");
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO);
+					de.setValue(this.getLabelProtocollo(protocolliValue.get(0))); // un protocollo e' sempre selezionato 
+					de.setType(DataElementType.TEXT);
+				}
 			}
 			dati.addElement(de);
 			

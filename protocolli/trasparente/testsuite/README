@@ -5,7 +5,7 @@ location: protocolli/trasparente/testsuite
 
 1. Overview
 
-L'applicazione permette di testare le funzionalita' base della Porta di Dominio OpenSPCoop2 con il protocollo Trasparente
+L'applicazione permette di testare le funzionalita' base di GovWay con il protocollo Trasparente
 
 L'applicazione e' suddivisa in
 - Servizio Applicativo OpenSPCoop2TestSuiteServer (server fornito con la testsuite base di OpenSPCoop2)

@@ -17,7 +17,7 @@ public class DAOFactoryInstanceProperties extends InstanceProperties {
 
 	private final static String PROPERTIES_LOCAL_PATH = "daoFactory_local.properties";
 	private final static String PROPERTIES = "DAO_FACTORY_PROPERTIES";
-    public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+    public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
 	DAOFactoryInstanceProperties(Properties reader,Logger log) throws Exception{
 		super(OPENSPCOOP2_LOCAL_HOME,reader, log);

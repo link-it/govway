@@ -410,8 +410,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
-	public final static String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime Porta di Dominio";
-	public final static String LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI = "Stato Servizi Porta di Dominio";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_STATO_SERVIZI = "Stato Servizi";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_GENERALI = "Informazioni Generali";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA = "Informazioni Diagnostica";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO = "Informazioni Tracciamento";
@@ -421,7 +421,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "Informazioni Internazionalizzazione";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "Informazioni TimeZone";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_JAVA_NET = "Informazioni Java Networking";
-	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Modalità Gateway";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI = "Connessioni Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Database";
@@ -458,8 +458,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_BANDA_ESTERNA = "Banda Esterna";
 	
 	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_ENTRAMBE = CostantiControlStation.LABEL_QUALSIASI;
-	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_DELEGATA = "Fruitore";
-	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_APPLICATIVA = "Erogatore";
+	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_DELEGATA = "Fruizione";
+	public final static String LABEL_CONFIGURAZIONE_RUOLO_PORTA_APPLICATIVA = "Erogazione";
 	
 	public final static String LABEL_CONFIGURAZIONE_MODALITA_CONTROLLO_REALTIME = "Realtime";
 	public final static String LABEL_CONFIGURAZIONE_MODALITA_CONTROLLO_STATISTICA = "Statistica";
@@ -819,28 +819,28 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA = "Base URL Erogazione";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_LABEL = "Log4j XML Diagnostici";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "openspcoop2_msgDiagnostico.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DIAGNOSTICA_NOTE = "govway_msgDiagnostico.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_LABEL = "Log4J Diagnostici";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE = "openspcoop2.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_OPENSPCOOP_NOTE = "govway.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_LABEL = "Log4J IntegrationManager";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE = "openspcoop2_integrationManager.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_INTEGRATION_MANAGER_NOTE = "govway_integrationManager.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_LABEL = "Log4J Tracciamento";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE = "openspcoop2_tracciamento.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_TRACCIAMENTO_NOTE = "govway_tracciamento.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_LABEL = "Log4J Dump";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE = "openspcoop2_dump.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_NOTE = "govway_dump.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_LABEL = "Log4J Dump Binario PD";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE = "openspcoop2_dumpBinarioPD.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PD_NOTE = "govway_dumpBinarioPD.log";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_LABEL = "Log4J Dump Binario PA";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE = "openspcoop2_dumpBinarioPA.log";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_LOG4J_DUMP_CONNETTORE_PA_NOTE = "govway_dumpBinarioPA.log";
 	
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "Porta di Dominio";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione PdD";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "ID Cluster";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "Versione BaseDati";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA = "Vendor Java";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "Versione Java";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY = "Message Factory";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "Directory di Configurazione";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "Modalità";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "contesti: ";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
@@ -879,8 +879,8 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_TEMPO_MEDIO_NOTE = "Indicazione (in millisecondi) sul tempo medio di risposta che deve essere inferiore al valore fornito";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_ENABLED = "Stato";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD = "Ruolo PdD";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD = "Tipologia";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PROTOCOLLO = "Modalità";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_FRUITORE = "Ruolo Fruitore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_FRUITORE = "Soggetto Fruitore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_SA_FRUITORE = "Applicativo Fruitore";
@@ -899,9 +899,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE = "Valore";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED = "Modalità";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL = "Ruolo";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_NOTE = "Indicazione sul ruolo della PdD (Fruitore/Erogatore)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO = "Protocollo";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_LABEL = "Tipologia";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_RUOLO_PDD_NOTE = "Indicazione sulla tipologia del servizio (Fruizione/Erogazione)";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PROTOCOLLO = "Modalità";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_FRUITORE = "Soggetto Fruitore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_SA_FRUITORE = "Applicativo Fruitore";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_EROGATORE = "Soggetto Erogatore";
@@ -1027,7 +1027,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_REFRESH = "Refresh";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_THREADS_ATTIVI = "Richieste Attive";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE = "Porta Congestionata";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_VISUALIZZA_STATO_CONGESTIONE = "Congestione in Corso";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_ID = "ID";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_NOME = "Nome";

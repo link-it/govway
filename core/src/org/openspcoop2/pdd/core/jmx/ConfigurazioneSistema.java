@@ -448,9 +448,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getVersionePdD(){
 		try{
-			String versione = "Porta di Dominio "+CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+			String versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
 			if(this.openspcoopProperties!=null){
-				versione = "Porta di Dominio "+this.openspcoopProperties.getPddDetailsForServices();
+				versione = this.openspcoopProperties.getPddDetailsForServices();
 			}
 			String buildVersion = null;
 			try {
@@ -1092,7 +1092,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				if(bf.length()>0){
 					bf.append("\n");
 				}
-				bf.append("OpenSPCoop2PropertiesReader["+this.openspcoopProperties.getRootDirectory()+"]");
+				bf.append("GovWayProperties["+this.openspcoopProperties.getRootDirectory()+"]");
 				
 				return bf.toString();
 			}

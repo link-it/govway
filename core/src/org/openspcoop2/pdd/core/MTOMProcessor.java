@@ -438,7 +438,7 @@ public class MTOMProcessor {
 		case INTEGRATION_MANAGER:
 		case ROUTER:
 		default:
-				throw new Exception("RuoloPdD["+this.tipoPdD+"] non gestito");
+				throw new Exception("Ruolo ["+this.tipoPdD+"] non gestito");
 			
 		}
 		

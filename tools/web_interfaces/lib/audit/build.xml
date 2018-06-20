@@ -179,7 +179,7 @@
 			<param name="SQLDestFile" value="${dist_audit}/RepositoryAuditingOpenSPCoop2.sql"/>
 			<param name="SQLSourceFiles" value="Audit.sql AuditAppender.sql DBInfo.sql"/>
 			<param name="SQLDataFiles" value="audit_data.sql audit_appender_db_data.sql  audit_appender_log4j_data.sql"/>
-			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Audit delle operazioni effettuate sulla console della Porta di Dominio OpenSPCoop2');"/>
+			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Audit delle operazioni effettuate sulla console di GovWay');"/>
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_audit}"/>

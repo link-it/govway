@@ -1,9 +1,9 @@
 =====================
 1) AS Config
    Copiare il file as4_local.properties nella directory di configurazione della PdD.
-   La directory di configurazione DEVE essere impostata attraverso la variabile 'OPENSPCOOP2_HOME' 
+   La directory di configurazione DEVE essere impostata attraverso la variabile 'GOVWAY_HOME' 
    tramite il seguente comando:
-	JAVA_OPTS="$JAVA_OPTS -DOPENSPCOOP2_HOME=/etc/openspcoop2/" 
+	JAVA_OPTS="$JAVA_OPTS -DGOVWAY_HOME=/etc/openspcoop2/" 
 
    Configurare come la PdD accede al servizio di backend dove spedire messaggi AS4 con ruolo Sender tramite la seguente configurazione presente nel file 'as4_local.properties':
    - org.openspcoop2.protocol.as4.domibusGateway.config.default.url: url del servizio (es. http://127.0.0.1:8080/domibus/services/backend)

@@ -30,7 +30,7 @@ package org.openspcoop2.core.config.ws.server.config;
 
 public class ConstantsEnv {
 
-	public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+	public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
     public final static String OPENSPCOOP2_WSCONFIG_LOCAL_PATH = "wsconfig_local.properties";
     public final static String OPENSPCOOP2_WSCONFIG_PROPERTIES = "OPENSPCOOP2_WSCONFIG_PROPERTIES";

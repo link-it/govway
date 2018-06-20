@@ -36,7 +36,7 @@ public class SPCoopCostanti {
 	public static final String SERVIZIO_SPC = "SPC";
 	public static final String SERVIZIO_AOO = "AOO";
 
-    public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+    public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
     public final static String SPCOOP_PROPERTIES_LOCAL_PATH = "spcoop_local.properties";
     public final static String SPCOOP_PROPERTIES = "SPCOOP_PROPERTIES";

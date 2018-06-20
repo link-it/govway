@@ -34,7 +34,7 @@ import org.slf4j.Logger;
  */
 public class DatabaseInstanceProperties extends InstanceProperties {
 
-    public final static String OPENSPCOOP2_LOCAL_HOME = "OPENSPCOOP2_HOME";
+    public final static String OPENSPCOOP2_LOCAL_HOME = "GOVWAY_HOME";
 	
 	DatabaseInstanceProperties(String PROPERTIES_LOCAL_PATH, String PROPERTIES_NAME, Properties reader,Logger log) throws Exception{
 		super(OPENSPCOOP2_LOCAL_HOME,reader, log);
