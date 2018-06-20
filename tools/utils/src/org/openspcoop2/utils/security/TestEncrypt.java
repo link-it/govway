@@ -115,6 +115,14 @@ public class TestEncrypt {
 			
 			// 2a Cifratura con chiave simmetrica
 			
+			// I test possibili sono 3:
+			// - 1) Cifratura con chiave simmetrica. La chiave simmetrica fornita viene utilizzata direttamente per cifrare il contenuto.
+			//      Faremo due test, uno con una chiave simmetrica generata, ed un altro con una chiave simmetrica presa da un keystore JCEKS
+			// - 2) La cifratura avviene con una chiave simmetrica generata ogni volta, la quale viene poi cifrata con una chiave fornita dall'utente. Questo meccanismo si chiama wrapped key
+			//      Faremo due test, uno in cui la chiave fornita dall'utente è una chiave asimmetrica ed uno in cui la chiave fornita è una chiave simmetrica.
+			//      E' quindi possibile usare la chiave simmetrica per "wrappare" la chiave simmetrica generata dinamicamente.
+			//      In quest'ultimo esempio è necessario anche indicare l'algoritmo della chiave generata.
+			
 			// Chiave simmetrica
 			String keyAlgorithm = "AES";
 			String canonicalizationAlgorithm = null;
@@ -124,53 +132,55 @@ public class TestEncrypt {
 			// keytool -genseckey -alias 'openspcoop' -keyalg 'AES' -keystore example.jceks -storepass '123456' -keypass 'key123456' -storetype "JCEKS" -keysize 256
 			@SuppressWarnings("unused")
 			SecretKey secretKeyLetta = keystoreJCEKS.getSecretKey(alias, passwordChiavePrivata);
-				
+			
+			// *** TEST 1a:  Cifratura con chiave simmetrica non wrapped; chiave simmetrica utilizzata generata precedentemente. 
 						
-			// Firma
+			// Crifratura
 			encryptAlgorithm = XMLCipher.AES_128;
-			XmlEncrypt xmlEncrypt = new XmlEncrypt(secretKeyGenerata);
+			XmlEncrypt xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata);
 			xmlEncrypt.encryptSymmetric(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm);
-			System.out.println("2a. XmlSignature Encrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (1a) XmlSignature Encrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
-			// Verifica
-			XmlDecrypt xmlDecrypt = new XmlDecrypt(secretKeyGenerata);
+			// Decifratura
+			XmlDecrypt xmlDecrypt = new XmlDecrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, secretKeyGenerata);
 			xmlDecrypt.decrypt(node);
-			System.out.println("2b. XmlSignature Decrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (1a) XmlSignature Decrypted (SymmetricKey-Generata): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
+			
+			// *** TEST 1b:  Cifratura con chiave simmetrica non wrapped; chiave simmetrica letta da un keystore JCEKS
 					
-			// Firma
+			// Crifratura
 			boolean symmetricKey = true;
 			encryptAlgorithm = XMLCipher.AES_128;
 			//xmlEncrypt = new XmlEncrypt(secretKeyLetta);
-			xmlEncrypt = new XmlEncrypt(keystoreJCEKS, symmetricKey, alias, passwordChiavePrivata);
+			xmlEncrypt = new XmlEncrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, alias, passwordChiavePrivata);
 			xmlEncrypt.encryptSymmetric(node, encryptAlgorithm);
-			System.out.println("2aa. XmlSignature Encrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (1b) XmlSignature Encrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
-			// Verifica
+			// Decifratura
 			//xmlDecrypt = new XmlDecrypt(secretKeyLetta);
-			xmlDecrypt = new XmlDecrypt(keystoreJCEKS, symmetricKey, alias, passwordChiavePrivata);
+			xmlDecrypt = new XmlDecrypt(keystoreJCEKS, symmetricKey, SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED, alias, passwordChiavePrivata);
 			xmlDecrypt.decrypt(node);
-			System.out.println("2bb. XmlSignature Decrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (1b) XmlSignature Decrypted (SymmetricKey-Letta): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			
+			// *** TEST 2a:  Cifratura con wrapped della chiave simmetrica generata dinamicanete; il wrapped avviente tramite una chiave asimmetrica
 			
 			// 2b Cifratura con chiave simmetrica wrapped ed utilizzo di chiavi asimmetriche
 			//    Cifratura con chiave privata e decifratura con chiave pubblica. Si tratta anche di un caso di firma implicita
 			
-			// Firma
+			// Crifratura
 			keyAlgorithm = "AES";
 			encryptAlgorithm = XMLCipher.AES_128;
 			String wrappedKeyAlgorithm = XMLCipher.RSA_v1dot5;
-			xmlEncrypt = new XmlEncrypt(keystore,alias,passwordChiavePrivata);
+			xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, keystore,alias,passwordChiavePrivata);
 			xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
-			System.out.println("2b. XmlSignature Encrypted (Private): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (a1). XmlSignature Encrypted (Private Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
-			// Verifica
+			// Decifratura
 			xmlDecrypt = new XmlDecrypt(truststore, alias);
 			xmlDecrypt.decrypt(node);
-			System.out.println("2b. XmlSignature Decrypted (Public): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
-			
-			
+			System.out.println("2 (a1) XmlSignature Decrypted (Public Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			
 			// 2b Cifratura con chiave simmetrica wrapped ed utilizzo di chiavi asimmetriche
@@ -179,12 +189,30 @@ public class TestEncrypt {
 			// Firma
 			xmlEncrypt = new XmlEncrypt(truststore, alias);
 			xmlEncrypt.encrypt(node, encryptAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
-			System.out.println("2c. XmlSignature Encrypted (Public): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (b1) XmlSignature Encrypted (Public Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			// Verifica
-			xmlDecrypt = new XmlDecrypt(keystore,alias,passwordChiavePrivata);
+			xmlDecrypt = new XmlDecrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, keystore,alias,passwordChiavePrivata);
 			xmlDecrypt.decrypt(node);
-			System.out.println("2c. XmlSignature Decrypted (Private): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			System.out.println("2 (b2) XmlSignature Decrypted (Private Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			
+			// *** TEST 2b:  Cifratura con wrapped della chiave simmetrica generata dinamicanete; il wrapped avviente tramite una chiave simmetrica
+			
+			// 2b Cifratura con chiave simmetrica wrapped ed utilizzo di chiavi simmetriche
+			
+			// Crifratura
+			keyAlgorithm = "AES";
+			encryptAlgorithm = XMLCipher.AES_128;
+			wrappedKeyAlgorithm = XMLCipher.AES_128_KeyWrap;
+			xmlEncrypt = new XmlEncrypt(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, keystoreJCEKS,alias,passwordChiavePrivata);
+			xmlEncrypt.encrypt(node, encryptAlgorithm, canonicalizationAlgorithm, digestAlgorithm, keyAlgorithm, wrappedKeyAlgorithm);
+			System.out.println("2 (a1). XmlSignature Encrypted (Symmetric Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
+			
+			// Decifratura
+			xmlDecrypt = new XmlDecrypt(keystoreJCEKS, true, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY, alias, passwordChiavePrivata);
+			xmlDecrypt.decrypt(node);
+			System.out.println("2 (a1) XmlSignature Decrypted (Symmetric Wrapped): "+PrettyPrintXMLUtils.prettyPrintWithTrAX(node));
 			
 			
 			

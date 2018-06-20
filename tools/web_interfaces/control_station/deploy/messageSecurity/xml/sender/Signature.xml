@@ -28,34 +28,39 @@
 			<property name="action" force="true"/>
 		</item>
 		
-			<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
-				<property name="signatureAlgorithm" />
-			</item>
-			<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
-				<property name="signatureDigestAlgorithm" />
-			</item>
-			<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
-				<property name="signatureC14nAlgorithm" />
-			</item>
-			
-			<item type="checkbox" name="signatureKeyInfo" label="Key Info" default="false">
-				<property name="signatureKeyInfo" />
-			</item>
-			<item type="select" name="signatureKeyInfoSelect" label="Tipo" default="x509">
-				<conditions>
-                    <condition>
-                            <selected name="signatureKeyInfo" />
-                    </condition>
-            	</conditions>
-				<values>
-					<value value="x509" label="x509"/>
-					<value value="RSA" label="RSA"/>
-				</values>
-				<property name="keyInfo" />
-			</item>
-			<item type="text" name="signatureKeyInfoAlias" label="Alias Certificato">
-			     <property name="keyInfoAlias" />
-			</item>
+		<item type="select" name="signatureAlgorithm" label="Signature Algorithm">
+			<property name="signatureAlgorithm" />
+		</item>
+		<item type="select" name="signatureDigestAlgorithm" label="Digest Algorithm">
+			<property name="signatureDigestAlgorithm" />
+		</item>
+		<item type="select" name="signatureC14nAlgorithm" label="Canonicalization Algorithm">
+			<property name="signatureC14nAlgorithm" />
+		</item>
+		
+		<item type="checkbox" name="signatureKeyInfo" label="Key Info" default="false" reloadOnChange="true" >
+			<property name="signatureKeyInfo" />
+		</item>
+		<item type="select" name="signatureKeyInfoSelect" label="Tipo" default="x509">
+			<conditions>
+                   <condition>
+                           <selected name="signatureKeyInfo" />
+                   </condition>
+           	</conditions>
+			<values>
+				<value value="x509" label="x509"/>
+				<value value="RSA" label="RSA"/>
+			</values>
+			<property name="keyInfo" />
+		</item>
+		<item type="text" name="signatureKeyInfoAlias" label="Alias Certificato">
+			<conditions>
+                   <condition>
+                           <selected name="signatureKeyInfo" />
+                   </condition>
+           	</conditions>
+		     <property name="keyInfoAlias" />
+		</item>
 
 		<subsection label="KeyStore">
 

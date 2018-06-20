@@ -201,7 +201,9 @@ public class KeystoreUtils {
 			encryptionKS = symmetricKeystore.getKeyStore();
 			aliasEncryptPassword = symmetricKeystore.getPasswordKey();
 		}
-		else{
+		
+		
+		if(encryptionKS==null && encryptionTrustStoreKS==null) {
 			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Encryption indicata");
 		}
 
@@ -686,8 +688,10 @@ public class KeystoreUtils {
 				aliasSignatureUser = multiKeystore.getKeyAlias(aliasSignatureUser); // aggiorno con identita alias del keystore
 			}
 		}
-		else{
-			throw new Exception("Nessuna modalita' di recupero del Keystore per la funzionalita' di Signature indicata");
+		
+
+		if(signatureKS==null && signatureTrustStoreKS==null) {
+			throw new Exception("Nessuna modalita' di recupero del TrustStore per la funzionalita' di Signature indicata");
 		}
 		
 		SignatureBean bean = new SignatureBean();

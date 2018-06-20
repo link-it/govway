@@ -56,6 +56,9 @@ public class SecurityProvider implements IProvider {
 			return l;
 		}
 		
+		//encryptionSymAlgorithm GESTIRE COME VEDERE TEST???
+		
+		
 		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
 //			List<String> l = new ArrayList<>();
 //			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.values();

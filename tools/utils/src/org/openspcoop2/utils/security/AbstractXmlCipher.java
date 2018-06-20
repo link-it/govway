@@ -39,31 +39,75 @@ import org.openspcoop2.utils.UtilsException;
  */
 public abstract class AbstractXmlCipher {
 
-	private java.security.Key key;
-	private java.security.cert.Certificate certificate;
+	private java.security.Key keyWrapped;
+	private java.security.cert.Certificate certificateWrapped;
+	protected SecretKey secretKeyWrapped;
 	private int mode;
-	protected SecretKey secretKey;
-	private boolean encryptedKey = true;
+	private SymmetricKeyWrappedMode encryptedKeyMode;
+	protected SecretKey secretKeyEncrypt;
 
-	public boolean isEncryptedKey() {
-		return this.encryptedKey;
+	public boolean isEncryptedKey() throws UtilsException {
+		if(this.encryptedKeyMode!=null) {
+			switch (this.encryptedKeyMode) {
+				case SYM_ENC_KEY_NO_WRAPPED:
+					return false;
+				case SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY:
+				case SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY:
+					return true;
+			}
+		}
+		throw new UtilsException("Wrapped Key Mode undefined");
 	}
 	
 	// BOTH
 	
-	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
-		this(mode, new KeyStore(keystore), symmetricKey, alias, passwordPrivateKey, false);
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, new KeyStore(keystore), symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, false);
 	}
-	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
-		this(mode, new KeyStore(keystore), symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, new KeyStore(keystore), symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, addBouncyCastleProvider);
 	}
-	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
-		this(mode, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, keystore, symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, false);
 	}
-	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+	protected AbstractXmlCipher(int mode, KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
 		if(symmetricKey) {
 			SecretKey secretKey = keystore.getSecretKey(alias, passwordPrivateKey);
-			this.initSymmetric(mode, secretKey, addBouncyCastleProvider);
+			this.initSymmetric(mode, wrappedSymmetricKeyMode, secretKey, addBouncyCastleProvider);
+		}
+		else {
+			this.initPrivate(mode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+		}
+	}
+	
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.Key key) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, key, false);
+	}
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.Key key,boolean addBouncyCastleProvider) throws UtilsException{
+		if(key instanceof SecretKey){
+			this.initSymmetric(mode, wrappedSymmetricKeyMode, (SecretKey) key, addBouncyCastleProvider);
+		}
+		else{
+			this.mode = mode;
+			this.keyWrapped = key;
+			this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
+			this.init(addBouncyCastleProvider);
+		}
+	}
+
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, new KeyStore(keystore), alias, passwordPrivateKey, false);
+	}
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, new KeyStore(keystore), alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, keystore, alias, passwordPrivateKey, false);
+	}
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		if("jceks".equalsIgnoreCase(keystore.getKeystore().getType())) {
+			SecretKey secretKey = keystore.getSecretKey(alias, passwordPrivateKey);
+			this.initSymmetric(mode, wrappedSymmetricKeyMode, secretKey, addBouncyCastleProvider);
 		}
 		else {
 			this.initPrivate(mode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
@@ -73,29 +117,36 @@ public abstract class AbstractXmlCipher {
 	
 	// SYMMETRIC
 	
-	protected AbstractXmlCipher(int mode, SecretKey secretKey) throws UtilsException{
-		this(mode, secretKey, false);
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, SecretKey secretKey) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, secretKey, false);
 	}
-	protected AbstractXmlCipher(int mode, SecretKey secretKey,boolean addBouncyCastleProvider) throws UtilsException{
-		this.initSymmetric(mode, secretKey, addBouncyCastleProvider);
-	}
-	
-	protected AbstractXmlCipher(int mode, String keyAlgorithm) throws UtilsException{
-		this(mode, keyAlgorithm, false);
-	}
-	protected AbstractXmlCipher(int mode, String keyAlgorithm,boolean addBouncyCastleProvider) throws UtilsException{
-		this(mode, generateSecretKey(keyAlgorithm),addBouncyCastleProvider);
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, SecretKey secretKey,boolean addBouncyCastleProvider) throws UtilsException{
+		this.initSymmetric(mode, wrappedSymmetricKeyMode, secretKey, addBouncyCastleProvider);
 	}
 	
-	private void initSymmetric(int mode, SecretKey secretKey,boolean addBouncyCastleProvider) throws UtilsException{
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String keyAlgorithm) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, keyAlgorithm, false);
+	}
+	protected AbstractXmlCipher(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String keyAlgorithm,boolean addBouncyCastleProvider) throws UtilsException{
+		this(mode, wrappedSymmetricKeyMode, generateSecretKey(keyAlgorithm),addBouncyCastleProvider);
+	}
+	
+	private void initSymmetric(int mode, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, SecretKey secretKey, boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
-		this.secretKey = secretKey;
-		this.encryptedKey = false;
+		switch (wrappedSymmetricKeyMode) {
+		case SYM_ENC_KEY_NO_WRAPPED:
+			this.secretKeyEncrypt  = secretKey;
+			break;
+		default:
+			this.secretKeyWrapped = secretKey;
+			break;
+		}
+		this.encryptedKeyMode = wrappedSymmetricKeyMode;
 		this.init(addBouncyCastleProvider);
 	}
 	
-	public SecretKey getSecretKey() {
-		return this.secretKey;
+	public SecretKey getSecretKeyEncryption() {
+		return this.secretKeyEncrypt;
 	}
 	public static SecretKey generateSecretKey(String algorithm) throws UtilsException {
 		KeyGenerator keyGenerator = null;
@@ -110,35 +161,10 @@ public abstract class AbstractXmlCipher {
 	
 	// ASYMMETRIC
 	
-	protected AbstractXmlCipher(int mode, java.security.Key key) throws UtilsException{
-		this(mode, key, false);
-	}
-	protected AbstractXmlCipher(int mode, java.security.Key key,boolean addBouncyCastleProvider) throws UtilsException{
-		if(key instanceof SecretKey){
-			this.initSymmetric(mode, (SecretKey) key, addBouncyCastleProvider);
-		}
-		else{
-			this.mode = mode;
-			this.key = key;
-			this.init(addBouncyCastleProvider);
-		}
-	}
-
-	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
-		this(mode, new KeyStore(keystore), alias, passwordPrivateKey, false);
-	}
-	protected AbstractXmlCipher(int mode, java.security.KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
-		this(mode, new KeyStore(keystore), alias, passwordPrivateKey, addBouncyCastleProvider);
-	}
-	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException{
-		this(mode, keystore, alias, passwordPrivateKey, false);
-	}
-	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
-		this.initPrivate(mode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
-	}
 	private void initPrivate(int mode, KeyStore keystore, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
-		this.key = keystore.getPrivateKey(alias, passwordPrivateKey);
+		this.keyWrapped = keystore.getPrivateKey(alias, passwordPrivateKey);
+		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -147,7 +173,8 @@ public abstract class AbstractXmlCipher {
 	}
 	protected AbstractXmlCipher(int mode, java.security.cert.Certificate certificate,boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
-		this.certificate = certificate;
+		this.certificateWrapped = certificate;
+		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -162,7 +189,8 @@ public abstract class AbstractXmlCipher {
 	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore, String alias,boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
-		this.certificate = keystore.getCertificate(alias);
+		this.certificateWrapped = keystore.getCertificate(alias);
+		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -177,7 +205,8 @@ public abstract class AbstractXmlCipher {
 	}
 	protected AbstractXmlCipher(int mode, KeyStore keystore,boolean addBouncyCastleProvider) throws UtilsException{
 		this.mode = mode;
-		this.certificate = keystore.getCertificate();
+		this.certificateWrapped = keystore.getCertificate();
+		this.encryptedKeyMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 		this.init(addBouncyCastleProvider);
 	}
 
@@ -216,7 +245,10 @@ public abstract class AbstractXmlCipher {
 			else {
 				xmlCipher = org.apache.xml.security.encryption.XMLCipher.getInstance(algorithm);
 			}
-			xmlCipher.init(this.mode, this.secretKey);
+			if(this.secretKeyEncrypt==null) {
+				throw new Exception("Key for initialize cipher engine not found");
+			}
+			xmlCipher.init(this.mode, this.secretKeyEncrypt);
 			return xmlCipher;			
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
@@ -242,11 +274,17 @@ public abstract class AbstractXmlCipher {
 			else{
 				wrapMode = XMLCipher.UNWRAP_MODE;
 			}
-			if(this.key!=null){
-				xmlCipher.init(wrapMode, this.key);
+			if(this.secretKeyWrapped!=null){
+				xmlCipher.init(wrapMode, this.secretKeyWrapped);
 			}
-			else{
-				xmlCipher.init(wrapMode, this.certificate.getPublicKey());
+			else if(this.keyWrapped!=null){
+				xmlCipher.init(wrapMode, this.keyWrapped);
+			}
+			else if(this.certificateWrapped!=null){
+				xmlCipher.init(wrapMode, this.certificateWrapped.getPublicKey());
+			}
+			else {
+				throw new Exception("Key for initialize cipher engine 'wrapped key' not found");
 			}
 			return xmlCipher;			
 		}catch(Exception e){
@@ -255,3 +293,4 @@ public abstract class AbstractXmlCipher {
 	}
 
 }
+

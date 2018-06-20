@@ -1,0 +1,61 @@
+<config id="messageSecurity.xml.receiver.signature" label="XML Verifier Signature" xmlns="http://www.openspcoop2.org/core/mvc/properties">
+
+	<compatibility not="false" and="false">
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>RESPONSE</tag>
+                <tag>PD</tag>
+        </tags>
+        <tags and="true">
+                <tag>REST</tag>
+                <tag>REQUEST</tag>
+                <tag>PA</tag>
+        </tags>
+	</compatibility>
+	
+	<properties>
+		<collection name="signatureTrustStorePropRefId"/>
+	</properties>
+	
+	<section label="Verifier Signature">
+		
+		<item type="hidden" name="securityEngine" value="xml">
+			<property name="securityEngine" force="true"/>
+		</item>
+				
+		<item type="hidden" name="signatureAction" value="Signature">
+			<property name="action" force="true"/>
+		</item>
+		
+		<item type="checkbox" name="signatureCleanSecurityInfo" label="Ripulisci Messaggio dalle Informazioni Sicurezza" defaultSelected="true">
+			<property name="detachSecurityInfo" />
+		</item>
+		
+		<subsection label="TrustStore">
+
+			<item type="select" name="truststoreType" label="Tipo" default="jks" >
+				<values>
+					<value value="jks" label="JKS"/>
+					<value value="pkcs12" label="PKCS12"/>
+					<!--  <value value="jceks" label="JCEKS"/> -->
+				</values>
+				<property name="org.apache.ws.security.crypto.merlin.keystore.type" properties="signatureTrustStorePropRefId" />
+			</item>
+			<item type="text" name="truststoreFile" label="File" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.file" properties="signatureTrustStorePropRefId" />
+			</item>
+			<item type="text" name="truststorePassword" label="Password" required="true">
+			    <property name="org.apache.ws.security.crypto.merlin.keystore.password" properties="signatureTrustStorePropRefId" />
+			</item>
+			<item type="text" name="keystoreCertificateAlias" label="Alias Certificato" required="true">
+			    <property name="signatureUser" />
+			</item>
+
+		</subsection>
+
+	</section>
+
+</config>
+
+
+

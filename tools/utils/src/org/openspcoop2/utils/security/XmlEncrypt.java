@@ -21,7 +21,8 @@
 
 package org.openspcoop2.utils.security;
 
-import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 
 import javax.crypto.SecretKey;
@@ -45,34 +46,50 @@ public class XmlEncrypt extends AbstractXmlCipher {
 
 	// BOTH 
 	
-	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, false);
 	}
-	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	public XmlEncrypt(java.security.KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, addBouncyCastleProvider);
 	}
-	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, false);
+	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, false);
 	}
-	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, alias, passwordPrivateKey, addBouncyCastleProvider);
+	public XmlEncrypt(KeyStore keystore, boolean symmetricKey, SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String alias, String passwordPrivateKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, keystore, symmetricKey, wrappedSymmetricKeyMode, alias, passwordPrivateKey, addBouncyCastleProvider);
 	}
+	
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.KeyStore keystore, String alias, String passwordPrivateKey,
+			boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keystore, alias, passwordPrivateKey);
+	}
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, KeyStore keystore, String alias, String passwordPrivateKey,
+			boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keystore, alias, passwordPrivateKey);
+	}
+	
 	
 	// SYMMETRIC
 	
-	public XmlEncrypt(int mode, SecretKey secretKey) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, secretKey);
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, SecretKey secretKey) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, secretKey);
 	}
-	public XmlEncrypt(int mode, SecretKey secretKey,boolean addBouncyCastleProvider) throws UtilsException{
-		super(XMLCipher.ENCRYPT_MODE, secretKey, addBouncyCastleProvider);
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, SecretKey secretKey,boolean addBouncyCastleProvider) throws UtilsException{
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, secretKey, addBouncyCastleProvider);
 	}
 	
-	public XmlEncrypt(String keyAlgorithm, boolean addBouncyCastleProvider)
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String keyAlgorithm, boolean addBouncyCastleProvider)
 			throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keyAlgorithm, addBouncyCastleProvider);
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keyAlgorithm, addBouncyCastleProvider);
 	}
-	public XmlEncrypt(String keyAlgorithm) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keyAlgorithm);
+	public XmlEncrypt(SymmetricKeyWrappedMode wrappedSymmetricKeyMode, String keyAlgorithm) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, wrappedSymmetricKeyMode, keyAlgorithm);
 	}
 
 	
@@ -85,11 +102,18 @@ public class XmlEncrypt extends AbstractXmlCipher {
 		super(XMLCipher.ENCRYPT_MODE, certificate);
 	}
 
-	public XmlEncrypt(Key key, boolean addBouncyCastleProvider) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, key, addBouncyCastleProvider);
+	public XmlEncrypt(PrivateKey key, boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, key, addBouncyCastleProvider);
 	}
-	public XmlEncrypt(Key key) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, key);
+	public XmlEncrypt(PrivateKey key) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, key);
+	}
+	
+	public XmlEncrypt(PublicKey key, boolean addBouncyCastleProvider) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, key, addBouncyCastleProvider);
+	}
+	public XmlEncrypt(PublicKey key) throws UtilsException {
+		super(XMLCipher.ENCRYPT_MODE, SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY, key);
 	}
 
 	public XmlEncrypt(java.security.KeyStore keystore, boolean addBouncyCastleProvider) throws UtilsException {
@@ -120,20 +144,6 @@ public class XmlEncrypt extends AbstractXmlCipher {
 		super(XMLCipher.ENCRYPT_MODE, keystore, alias);
 	}
 
-	public XmlEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey,
-			boolean addBouncyCastleProvider) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
-	}
-	public XmlEncrypt(java.security.KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey);
-	}
-	public XmlEncrypt(KeyStore keystore, String alias, String passwordPrivateKey,
-			boolean addBouncyCastleProvider) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey, addBouncyCastleProvider);
-	}
-	public XmlEncrypt(KeyStore keystore, String alias, String passwordPrivateKey) throws UtilsException {
-		super(XMLCipher.ENCRYPT_MODE, keystore, alias, passwordPrivateKey);
-	}
 
 
 	public Document encryptSymmetric(Document document, String encryptAlgorithm) throws UtilsException{
@@ -191,8 +201,8 @@ public class XmlEncrypt extends AbstractXmlCipher {
 				if(keyAlgorithm==null){
 					throw new UtilsException("KeyAlgorithm undefined");
 				}
-				super.secretKey = generateSecretKey(keyAlgorithm);
-				encryptedKey = xmlCipherWrappedAlgorithm.encryptKey(document, super.secretKey);
+				super.secretKeyEncrypt = generateSecretKey(keyAlgorithm);
+				encryptedKey = xmlCipherWrappedAlgorithm.encryptKey(document, super.secretKeyEncrypt);
 			}
 			
 			org.apache.xml.security.encryption.XMLCipher xmlCipher = super.getXMLCipher(encryptAlgorithm, canonicalizationMethod, digestMethod);
