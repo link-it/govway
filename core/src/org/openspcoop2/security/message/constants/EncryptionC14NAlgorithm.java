@@ -1,6 +1,6 @@
 package org.openspcoop2.security.message.constants;
 
-public enum EncryptC14NAlgorithm {
+public enum EncryptionC14NAlgorithm {
 	
 	INCLUSIVE_C14N_10_OMITS_COMMENTS("http://www.w3.org/TR/2001/REC-xml-c14n-20010315","Inclusive XML Canonicalization 1.0 (omits comments)"),
 	INCLUSIVE_C14N_10_WITH_COMMENTS("http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments","Inclusive XML Canonicalization 1.0 (with comments))"),
@@ -11,7 +11,7 @@ public enum EncryptC14NAlgorithm {
 	
 	private String uri;
 	private String label;
-	EncryptC14NAlgorithm(String uri,String label) {
+	EncryptionC14NAlgorithm(String uri,String label) {
 		this.uri = uri;
 		this.label = label;
 	}

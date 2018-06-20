@@ -1,6 +1,6 @@
 package org.openspcoop2.security.message.constants;
 
-public enum EncryptAlgorithm {
+public enum EncryptionAlgorithm {
 
 	TRIPLEDES("http://www.w3.org/2001/04/xmlenc#tripledes-cbc"),
 	AES_128("http://www.w3.org/2001/04/xmlenc#aes128-cbc"),
@@ -15,7 +15,7 @@ public enum EncryptAlgorithm {
 	CAMELLIA_256("http://www.w3.org/2001/04/xmldsig-more#camellia256-cbc");
 	
 	private String uri;
-	EncryptAlgorithm(String uri) {
+	EncryptionAlgorithm(String uri) {
 		this.uri = uri;
 	}
 	

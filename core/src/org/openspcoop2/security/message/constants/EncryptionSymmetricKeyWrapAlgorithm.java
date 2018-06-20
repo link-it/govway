@@ -1,6 +1,6 @@
 package org.openspcoop2.security.message.constants;
 
-public enum EncrypSymmetricKeyWrapAlgorithm {
+public enum EncryptionSymmetricKeyWrapAlgorithm {
 
 	TRIPLEDES("http://www.w3.org/2001/04/xmlenc#kw-tripledes"),
 	AES_128("http://www.w3.org/2001/04/xmlenc#kw-aes128"),
@@ -13,7 +13,7 @@ public enum EncrypSymmetricKeyWrapAlgorithm {
 	 
 	
 	private String uri;
-	EncrypSymmetricKeyWrapAlgorithm(String uri) {
+	EncryptionSymmetricKeyWrapAlgorithm(String uri) {
 		this.uri = uri;
 	}
 	
