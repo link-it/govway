@@ -1328,6 +1328,10 @@ public abstract class AbstractArchiveEngine {
 		try{
 			configurazione.setSystemProperties(this.driverConfigurazione.getSystemPropertiesPdD());
 		}catch(DriverConfigurazioneNotFound notFound){}
+		try{
+			configurazione.setGenericPropertiesList(this.driverConfigurazione.getGenericProperties());
+		}catch(DriverConfigurazioneNotFound notFound){}
+		
 		return configurazione;
 	}
 }
