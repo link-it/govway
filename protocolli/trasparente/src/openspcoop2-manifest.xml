@@ -212,7 +212,7 @@
 		<!-- Contesto proxy supporta sia soap che rest 
 		     con il mapping definito a livello generare di binding -->
 	    <context name="api"/>
-	    <emptyContext enabled="true">
+	    <emptyContext enabled="true"/>
 	
 		<!-- Contesto soap supporta solamente il service binding soap 
 	 	     (Controllo Runtime) -->
