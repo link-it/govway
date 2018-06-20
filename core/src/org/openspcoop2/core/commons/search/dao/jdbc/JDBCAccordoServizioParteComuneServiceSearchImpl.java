@@ -1116,7 +1116,7 @@ public class JDBCAccordoServizioParteComuneServiceSearchImpl implements IJDBCSer
 		List<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject> listJDBCObject = new ArrayList<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject>();
 		listJDBCObject.add(new JDBCObject(id.getNome(), String.class));
 		if(id.getVersione()!=null){
-			listJDBCObject.add(new JDBCObject(id.getVersione(), String.class));
+			listJDBCObject.add(new JDBCObject(id.getVersione(), Integer.class));
 		}
 		if(soggetto!=null){
 			listJDBCObject.add(new JDBCObject(soggetto.getId(), Long.class));
