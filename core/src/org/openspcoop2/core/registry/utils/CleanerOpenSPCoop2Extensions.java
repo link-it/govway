@@ -170,6 +170,7 @@ public class CleanerOpenSPCoop2Extensions {
 		
 		if(accordo.sizeResourceList()>0){
 			for (Resource resource : accordo.getResourceList()) {
+				resource.setProfAzione(null);
 				resource.setIdAccordo(null);
 				
 				if(resource.getRequest()!=null) {

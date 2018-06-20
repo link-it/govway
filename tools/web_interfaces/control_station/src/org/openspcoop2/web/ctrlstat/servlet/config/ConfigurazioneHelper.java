@@ -6612,7 +6612,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append("Protocollo");
+				bf.append("Modalità");
 			}
 			
 			if(groupBy.isErogatore()){

@@ -58,6 +58,14 @@ public class CleanerOpenSPCoop2Extensions {
 				this.clean(configurazionePdD.getGestioneErrore().getComponenteIntegrazione());
 			}
 		}
+		
+		if(configurazionePdD.getProtocolli()!=null && configurazionePdD.getProtocolli().sizeProtocolloList()<=0 ) {
+			configurazionePdD.setProtocolli(null); // altrimeni da errore di validazione in fase di import
+		}
+		
+		if(configurazionePdD.getSystemProperties()!=null && configurazionePdD.getSystemProperties().sizeSystemPropertyList()<=0) {
+			configurazionePdD.setSystemProperties(null); // altrimeni da errore di validazione in fase di import
+		}
 	}
 
 	public void clean(org.openspcoop2.core.config.Soggetto soggettoConfig){
@@ -107,6 +115,29 @@ public class CleanerOpenSPCoop2Extensions {
 		portaDelegata.setTipoSoggettoProprietario(null);
 		portaDelegata.setNomeSoggettoProprietario(null);
 		
+		if(portaDelegata.getMessageSecurity()!=null) {
+			if(portaDelegata.getMessageSecurity().getRequestFlow()!=null && portaDelegata.getMessageSecurity().getRequestFlow().sizeParameterList()<=0) {
+				portaDelegata.getMessageSecurity().setRequestFlow(null); // altrimeni da errore di validazione in fase di import
+			}
+			if(portaDelegata.getMessageSecurity().getResponseFlow()!=null && portaDelegata.getMessageSecurity().getResponseFlow().sizeParameterList()<=0) {
+				portaDelegata.getMessageSecurity().setResponseFlow(null); // altrimeni da errore di validazione in fase di import
+			}
+		}
+		
+		if(portaDelegata.getRuoli()!=null && portaDelegata.getRuoli().sizeRuoloList()<=0) {
+			portaDelegata.setRuoli(null); // altrimeni da errore di validazione in fase di import
+		}
+		
+		if(portaDelegata.getScope()!=null && portaDelegata.getScope().sizeScopeList()<=0) {
+			portaDelegata.setScope(null); // altrimeni da errore di validazione in fase di import
+		}
+		
+		if(portaDelegata.getCorrelazioneApplicativa()!=null && portaDelegata.getCorrelazioneApplicativa().sizeElementoList()<=0) {
+			portaDelegata.setCorrelazioneApplicativa(null); // altrimeni da errore di validazione in fase di import
+		}
+		if(portaDelegata.getCorrelazioneApplicativaRisposta()!=null && portaDelegata.getCorrelazioneApplicativaRisposta().sizeElementoList()<=0) {
+			portaDelegata.setCorrelazioneApplicativaRisposta(null); // altrimeni da errore di validazione in fase di import
+		}
 	}
 
 	public void clean(PortaApplicativa portaApplicativa){
@@ -118,6 +149,33 @@ public class CleanerOpenSPCoop2Extensions {
 		portaApplicativa.setTipoSoggettoProprietario(null);
 		portaApplicativa.setNomeSoggettoProprietario(null);
 	
+		if(portaApplicativa.getMessageSecurity()!=null) {
+			if(portaApplicativa.getMessageSecurity().getRequestFlow()!=null && portaApplicativa.getMessageSecurity().getRequestFlow().sizeParameterList()<=0) {
+				portaApplicativa.getMessageSecurity().setRequestFlow(null); // altrimeni da errore di validazione in fase di import
+			}
+			if(portaApplicativa.getMessageSecurity().getResponseFlow()!=null && portaApplicativa.getMessageSecurity().getResponseFlow().sizeParameterList()<=0) {
+				portaApplicativa.getMessageSecurity().setResponseFlow(null); // altrimeni da errore di validazione in fase di import
+			}
+		}
+		
+		if(portaApplicativa.getSoggetti()!=null && portaApplicativa.getSoggetti().sizeSoggettoList()<=0) {
+			portaApplicativa.setSoggetti(null); // altrimeni da errore di validazione in fase di import
+		}
+		
+		if(portaApplicativa.getRuoli()!=null && portaApplicativa.getRuoli().sizeRuoloList()<=0) {
+			portaApplicativa.setRuoli(null); // altrimeni da errore di validazione in fase di import
+		}
+			
+		if(portaApplicativa.getScope()!=null && portaApplicativa.getScope().sizeScopeList()<=0) {
+			portaApplicativa.setScope(null); // altrimeni da errore di validazione in fase di import
+		}
+		
+		if(portaApplicativa.getCorrelazioneApplicativa()!=null && portaApplicativa.getCorrelazioneApplicativa().sizeElementoList()<=0) {
+			portaApplicativa.setCorrelazioneApplicativa(null); // altrimeni da errore di validazione in fase di import
+		}
+		if(portaApplicativa.getCorrelazioneApplicativaRisposta()!=null && portaApplicativa.getCorrelazioneApplicativaRisposta().sizeElementoList()<=0) {
+			portaApplicativa.setCorrelazioneApplicativaRisposta(null); // altrimeni da errore di validazione in fase di import
+		}
 	}
 
 	
