@@ -28,6 +28,12 @@ public class StatisticBean {
 	private Integer versioneServizio;
 	private String azione;
 	private String servizioApplicativo;
+	private String trasportoMittente;
+	private String tokenIssuer;
+	private String tokenClientId;
+	private String tokenSubject;
+	private String tokenUsername;
+	private String tokenMail;
 	private Integer esito;
 	private String esitoContesto;
 	private long richieste;
@@ -130,6 +136,42 @@ public class StatisticBean {
 	public void setServizioApplicativo(String servizio_applicativo) {
 		this.servizioApplicativo = servizio_applicativo;
 	}
+	public String getTrasportoMittente() {
+		return this.trasportoMittente;
+	}
+	public void setTrasportoMittente(String trasportoMittente) {
+		this.trasportoMittente = trasportoMittente;
+	}
+	public String getTokenIssuer() {
+		return this.tokenIssuer;
+	}
+	public void setTokenIssuer(String tokenIssuer) {
+		this.tokenIssuer = tokenIssuer;
+	}
+	public String getTokenClientId() {
+		return this.tokenClientId;
+	}
+	public void setTokenClientId(String tokenClientId) {
+		this.tokenClientId = tokenClientId;
+	}
+	public String getTokenSubject() {
+		return this.tokenSubject;
+	}
+	public void setTokenSubject(String tokenSubject) {
+		this.tokenSubject = tokenSubject;
+	}
+	public String getTokenUsername() {
+		return this.tokenUsername;
+	}
+	public void setTokenUsername(String tokenUsername) {
+		this.tokenUsername = tokenUsername;
+	}
+	public String getTokenMail() {
+		return this.tokenMail;
+	}
+	public void setTokenMail(String tokenMail) {
+		this.tokenMail = tokenMail;
+	}
 	public Integer getEsito() {
 		return this.esito;
 	}
@@ -212,6 +254,18 @@ public class StatisticBean {
 		bf.append(this.azione);
 		bf.append("] servizio-applicativo[");
 		bf.append(this.servizioApplicativo);
+		bf.append("] trasporto-mittente[");
+		bf.append(this.trasportoMittente);
+		bf.append("] token-issuer[");
+		bf.append(this.tokenIssuer);
+		bf.append("] token-clientId[");
+		bf.append(this.tokenClientId);
+		bf.append("] token-subject[");
+		bf.append(this.tokenSubject);
+		bf.append("] token-username[");
+		bf.append(this.tokenUsername);
+		bf.append("] token-Mail[");
+		bf.append(this.tokenMail);
 		bf.append("] esito[");
 		bf.append(this.esito);
 		bf.append("] esito-contesto[");

@@ -968,6 +968,14 @@ public abstract class AbstractStatistiche {
 		
 		statisticaBase.setServizioApplicativo(stat.getServizioApplicativo());
 		
+		statisticaBase.setTrasportoMittente(stat.getTrasportoMittente());
+		
+		statisticaBase.setTokenIssuer(stat.getTokenIssuer());
+		statisticaBase.setTokenClientId(stat.getTokenClientId());
+		statisticaBase.setTokenSubject(stat.getTokenSubject());
+		statisticaBase.setTokenUsername(stat.getTokenUsername());
+		statisticaBase.setTokenMail(stat.getTokenMail());
+		
 		statisticaBase.setEsito(stat.getEsito());
 		statisticaBase.setEsitoContesto(stat.getEsitoContesto());
 		

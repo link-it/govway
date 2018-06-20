@@ -140,6 +140,20 @@ public class StatisticsUtils {
 				}
 			}
 			
+			String trasportoMittente = stat.getTrasportoMittente();
+			setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
+			
+			String tokenIssuer = stat.getTokenIssuer();
+			setCondition(expr, tokenIssuer, Transazione.model().TOKEN_ISSUER);
+			String tokenClientId = stat.getTokenClientId();
+			setCondition(expr, tokenClientId, Transazione.model().TOKEN_CLIENT_ID);
+			String tokenSubject = stat.getTokenSubject();
+			setCondition(expr, tokenSubject, Transazione.model().TOKEN_SUBJECT);
+			String tokenUsername = stat.getTokenUsername();
+			setCondition(expr, tokenUsername, Transazione.model().TOKEN_USERNAME);
+			String tokenMail = stat.getTokenMail();
+			setCondition(expr, tokenMail, Transazione.model().TOKEN_MAIL);
+			
 			expr.equals(Transazione.model().ESITO, stat.getEsito()!=null ? stat.getEsito() : -1);
 			
 			String esitoContesto = stat.getEsitoContesto();
@@ -195,6 +209,12 @@ public class StatisticsUtils {
 		}else{
 			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
 		}
+		expr.addGroupBy(Transazione.model().TRASPORTO_MITTENTE);
+		expr.addGroupBy(Transazione.model().TOKEN_ISSUER);
+		expr.addGroupBy(Transazione.model().TOKEN_CLIENT_ID);
+		expr.addGroupBy(Transazione.model().TOKEN_SUBJECT);
+		expr.addGroupBy(Transazione.model().TOKEN_USERNAME);
+		expr.addGroupBy(Transazione.model().TOKEN_MAIL);
 		expr.addGroupBy(Transazione.model().ESITO);
 		expr.addGroupBy(Transazione.model().ESITO_CONTESTO);
 		if(groupByStato){
@@ -316,6 +336,14 @@ public class StatisticsUtils {
 			}
 		}
 		stat.setServizioApplicativo(sa != null ? sa : Costanti.SERVIZIO_APPLICATIVO_ANONIMO);
+				
+		stat.setTrasportoMittente(getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row));
+		
+		stat.setTokenIssuer(getValueFromMap(Transazione.model().TOKEN_ISSUER,row));
+		stat.setTokenClientId(getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row));
+		stat.setTokenSubject(getValueFromMap(Transazione.model().TOKEN_SUBJECT,row));
+		stat.setTokenUsername(getValueFromMap(Transazione.model().TOKEN_USERNAME,row));
+		stat.setTokenMail(getValueFromMap(Transazione.model().TOKEN_MAIL,row));
 		
 //		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
 //		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));

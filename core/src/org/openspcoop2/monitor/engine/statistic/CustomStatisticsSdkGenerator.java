@@ -102,6 +102,32 @@ public class CustomStatisticsSdkGenerator implements IStatistic {
 	}
 	
 	@Override
+	public String getIdentificativoAutenticato() {
+		return this.statistic.getTrasportoMittente();
+	}
+	
+	@Override
+	public String getTokenInfoIssuer(){
+		return this.statistic.getTokenIssuer();
+	}
+	@Override
+	public String getTokenInfoClientId(){
+		return this.statistic.getTokenClientId();
+	}	
+	@Override
+	public String getTokenInfoSubject(){
+		return this.statistic.getTokenSubject();
+	}	
+	@Override
+	public String getTokenInfoUsername(){
+		return this.statistic.getTokenUsername();
+	}	
+	@Override
+	public String getTokenInfoEmail(){
+		return this.statistic.getTokenMail();
+	}
+	
+	@Override
 	public TipiDatabase getDatabaseType(){
 		return this.abstractStatisticheCore.getDatabaseType();
 	}

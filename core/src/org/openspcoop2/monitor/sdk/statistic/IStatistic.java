@@ -35,6 +35,14 @@ public interface IStatistic {
 	
 	public String getServizioApplicativo();	
 	
+	public String getIdentificativoAutenticato();	
+	
+	public String getTokenInfoIssuer();	
+	public String getTokenInfoClientId();	
+	public String getTokenInfoSubject();	
+	public String getTokenInfoUsername();	
+	public String getTokenInfoEmail();	
+	
 	public TipiDatabase getDatabaseType();
 	
 	public StatisticType getStatisticType();

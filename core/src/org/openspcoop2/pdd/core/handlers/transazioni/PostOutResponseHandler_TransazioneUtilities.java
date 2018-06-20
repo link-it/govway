@@ -606,6 +606,10 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setServizioApplicativoFruitore(tracciaRisposta.getBusta().getServizioApplicativoFruitore());
 				}
 			}
+			// correggo anonimo
+			if(transactionDTO.getServizioApplicativoFruitore()!=null && CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(transactionDTO.getServizioApplicativoFruitore())){
+				transactionDTO.setServizioApplicativoFruitore(null);
+			}
 			
 			if(transactionDTO.getServizioApplicativoErogatore()==null){
 				// provo a vedere se fosse nella traccia di richiesta
