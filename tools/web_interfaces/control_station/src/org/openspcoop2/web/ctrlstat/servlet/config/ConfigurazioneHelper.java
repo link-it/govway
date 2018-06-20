@@ -5440,53 +5440,53 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	public void addToDatiConfigurazioneRateLimiting(Vector<DataElement> dati, TipoOperazione tipoOperazione, org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale controlloTraffico, boolean first, boolean finished, long sizePolicy, long sizeGlobalPolicy) throws Exception {
 			
 		// Policy
-		if( first || finished ){
+//		if( first || finished ){
 
-			DataElement de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-			
-			// tipo errore
-			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE);
-			de.setType(DataElementType.SELECT);
-			de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
-			de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
-			if(controlloTraffico.getRateLimiting().getTipoErrore()!=null) {
-				TipoErrore tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getRateLimiting().getTipoErrore());
-				if(tipoErroEnum!=null) {
-					de.setSelected(tipoErroEnum.getValue());
-				}
+		DataElement de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_RATE_LIMITING);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		// tipo errore
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE);
+		de.setType(DataElementType.SELECT);
+		de.setValues(ConfigurazioneCostanti.TIPI_ERRORE);
+		de.setLabels(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TIPI_ERRORE);
+		if(controlloTraffico.getRateLimiting().getTipoErrore()!=null) {
+			TipoErrore tipoErroEnum = TipoErrore.toEnumConstant(controlloTraffico.getRateLimiting().getTipoErrore());
+			if(tipoErroEnum!=null) {
+				de.setSelected(tipoErroEnum.getValue());
 			}
-			dati.addElement(de);
-			
-			// messaggio di errore
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE);
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE);
-			de.setType(DataElementType.CHECKBOX);
-			de.setSelected(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione());
-			dati.addElement(de);
-			
-			de = new DataElement();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
-			de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY+" (" +sizePolicy+ ")");
-			dati.addElement(de);
-					
-			de = new DataElement();
-			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
-			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
-			de.setType(DataElementType.LINK);
-			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
-			de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK+" (" + sizeGlobalPolicy+ ")");
-			dati.addElement(de);
 		}
+		dati.addElement(de);
+		
+		// messaggio di errore
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_TIPOLOGIA_ERRORE_DESCRIZIONE);
+		de.setType(DataElementType.CHECKBOX);
+		de.setSelected(controlloTraffico.getRateLimiting().isTipoErroreIncludiDescrizione());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_CONFIGURAZIONE_POLICY_LIST);
+		de.setValue(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_POLICY+" (" +sizePolicy+ ")");
+		dati.addElement(de);
+				
+		de = new DataElement();
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_GLOBALI_LINK);
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK);
+		de.setType(DataElementType.LINK);
+		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_CONTROLLO_TRAFFICO_ATTIVAZIONE_POLICY_LIST);
+		de.setValue(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_RATE_LIMITING_POLICY_LINK+" (" + sizeGlobalPolicy+ ")");
+		dati.addElement(de);
+//		}
 		
 	}
 	
