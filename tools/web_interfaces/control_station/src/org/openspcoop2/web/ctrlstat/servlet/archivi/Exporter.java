@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
 import org.openspcoop2.protocol.sdk.archive.ExportMode;
@@ -161,8 +162,8 @@ public final class Exporter extends Action {
 				provenienza = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
 				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
 				for (Object id : identificativi) {
-					IDAccordo idAccordo = (IDAccordo) id;
-					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idAccordo.getSoggettoReferente().getTipo());
+					IDServizio idServizio = (IDServizio) id;
+					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
 					if(protocolli.contains(protocollo)==false){
 						protocolli.add(protocollo);
 					}
