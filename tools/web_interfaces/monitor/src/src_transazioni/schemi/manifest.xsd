@@ -121,7 +121,7 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+                        
             <xsd:element name="servizio-applicativo-fruitore" minOccurs="0"
                 maxOccurs="1" type="xsd:string"/>
             <xsd:element name="servizio-applicativo-erogatore" minOccurs="0"
@@ -153,6 +153,14 @@
                     
                     <xsd:attribute name="indirizzo-client" type="xsd:string" use="optional"/>                  
                     <xsd:attribute name="x-forwarded-for" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="identificativo-autenticato" type="xsd:string" use="optional"/>
+                    
+                    <xsd:attribute name="token-issuer" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="token-clientId" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="token-subject" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="token-username" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="token-eMail" type="xsd:string" use="optional"/>
                     
                 </xsd:complexType>
             </xsd:element> 
