@@ -33,6 +33,7 @@
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_transazioni"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_stat"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml" kind="src" path="tools/web_interfaces/monitor/src/src_eventi"/>
+	<classpathentry kind="src" path="tools/web_interfaces/monitor/deploy/pages"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/registry/server/src"/>
 	<classpathentry kind="src" path="tools/ws/registry/client/src"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/config/server/src"/>
