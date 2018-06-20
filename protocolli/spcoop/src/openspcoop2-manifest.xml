@@ -97,13 +97,13 @@
 
     <web>
         <context name="spcoop">
-        	<!-- <subContext function="PA" messageType="soap12">v2</subContext> --> <!-- es. http://server/openspcoop2/spcoop/PA/v2 -->
-			<emptySubContext function="PA" messageType="soap11"/> <!-- es. http://server/openspcoop2/spcoop/PA -->
+        	<!-- <subContext function="PA" messageType="soap12">v2</subContext> --> <!-- es. http://server/govway/spcoop/PA/v2 -->
+			<emptySubContext function="PA" messageType="soap11"/> <!-- es. http://server/govway/spcoop/PA -->
         </context> 
-        <emptyContext enabled="true">
-        	<!-- <subContext function="PA" messageType="soap12">v2</subContext> --> <!-- es. http://server/openspcoop2/PA/v2 -->
-			<emptySubContext function="PA" messageType="soap11"/> <!-- es. http://server/openspcoop2/PA -->
-        </emptyContext>
+        <!-- <emptyContext enabled="true"> -->
+        	<!-- <subContext function="PA" messageType="soap12">v2</subContext> --> <!-- es. http://server/govway/PA/v2 -->
+			<!-- <emptySubContext function="PA" messageType="soap11"/> --> <!-- es. http://server/govway/PA -->
+        <!-- </emptyContext> -->
     </web>
 
     <registry>

@@ -251,7 +251,7 @@ d. Configurazione della JVM dell'A.S. in modo che utilizzi il keystore ./protoco
 
 I test presenti invece nella batteria 'Handlers' verificano gli handler dinamici della Porta di Dominio.
 !!Pre-requisito!!
-Il test richiede l'installazione del jar './protocolli/spcoop/testsuite/dist/openspcoop2_spcoop-testsuite_*.jar' all'interno delle lib di OpenSPCoop2.ear
+Il test richiede l'installazione del jar './protocolli/spcoop/testsuite/dist/openspcoop2_spcoop-testsuite_*.jar' all'interno delle lib di govway.org
  Il JAR e' ottenibile tramite la compilazione del progetto dei test sul protocollo spcoop.
 
 
