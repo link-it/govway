@@ -8,8 +8,8 @@ import java.util.Properties;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
-import org.openspcoop2.security.message.constants.EncryptC14NAlgorithm;
-import org.openspcoop2.security.message.constants.EncryptDigestAlgorithm;
+import org.openspcoop2.security.message.constants.EncryptionC14NAlgorithm;
+import org.openspcoop2.security.message.constants.EncryptionDigestAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
@@ -49,7 +49,7 @@ public class SecurityProvider implements IProvider {
 		
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
-			EncryptDigestAlgorithm [] tmp = EncryptDigestAlgorithm.values();
+			EncryptionDigestAlgorithm [] tmp = EncryptionDigestAlgorithm.values();
 			for (int i = 0; i < tmp.length; i++) {
 				l.add(tmp[i].getUri());
 			}
@@ -107,7 +107,7 @@ public class SecurityProvider implements IProvider {
 		
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
-			EncryptDigestAlgorithm [] tmp = EncryptDigestAlgorithm.values();
+			EncryptionDigestAlgorithm [] tmp = EncryptionDigestAlgorithm.values();
 			for (int i = 0; i < tmp.length; i++) {
 				l.add(this.convertEnumName(tmp[i].name()));
 			}
@@ -115,7 +115,7 @@ public class SecurityProvider implements IProvider {
 		}
 		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
-			EncryptC14NAlgorithm [] tmp = EncryptC14NAlgorithm.values();
+			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
 			for (int i = 0; i < tmp.length; i++) {
 				l.add(this.convertEnumName(tmp[i].name()));
 			}
@@ -151,10 +151,10 @@ public class SecurityProvider implements IProvider {
 		}
 		
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
-			return EncryptDigestAlgorithm.SHA256.getUri();
+			return EncryptionDigestAlgorithm.SHA256.getUri();
 		}
 		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM.equals(id)) {
-			return EncryptC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
+			return EncryptionC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
 		}
 		
 //		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {

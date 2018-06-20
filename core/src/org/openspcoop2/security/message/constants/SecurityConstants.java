@@ -155,6 +155,9 @@ public class SecurityConstants {
     public static final String ENCRYPTION_MULTI_PROPERTY_FILE = "encryptionMultiPropFile";
     public static final String ENCRYPTION_SYMMETRIC_KEY_VALUE = "encryptionSymmetricKeyValue";
     public static final String ENCRYPTION_SYMMETRIC = "encryptionSymmetricKey";
+    public static final String ENCRYPTION_SYMMETRIC_WRAPPED = "encryptionSymmetricKeyWrapped";
+    public static final String ENCRYPTION_SYMMETRIC_WRAPPED_TRUE = "true";
+    public static final String ENCRYPTION_SYMMETRIC_WRAPPED_FALSE = "false";
     public static final String ENCRYPTION_KEY_SIZE = "encryptionKeySize";
     public static final String ENCRYPTION_KEY_TRANSPORT_ALGORITHM = ConfigurationConstants.ENC_KEY_TRANSPORT;
     public static final String ENCRYPTION_SYMMETRIC_ALGORITHM = ConfigurationConstants.ENC_SYM_ALGO;

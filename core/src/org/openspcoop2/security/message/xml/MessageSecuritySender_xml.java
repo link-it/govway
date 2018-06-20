@@ -36,6 +36,7 @@ import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.KeystoreUtils;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.security.SymmetricKeyWrappedMode;
 import org.openspcoop2.utils.security.XmlEncrypt;
 import org.openspcoop2.utils.security.XmlSignature;
 
@@ -196,10 +197,22 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 				KeyStore encryptionKS = bean.getKeystore();
 				KeyStore encryptionTrustStoreKS = bean.getTruststore();
 				boolean encryptionSymmetric = bean.isEncryptionSimmetric();
+				SymmetricKeyWrappedMode encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY;
 				String aliasEncryptUser = bean.getUser();
 				String aliasEncryptPassword = bean.getPassword();
 
 				if(encryptionSymmetric) {
+					
+					String encryptionSymmetricWrapped = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED);
+					if(encryptionSymmetricWrapped!=null) {
+						if(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED_TRUE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
+							encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY;
+						}
+						else if(SecurityConstants.ENCRYPTION_SYMMETRIC_WRAPPED_FALSE.equalsIgnoreCase(encryptionSymmetricWrapped)) {
+							encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_NO_WRAPPED;
+						}
+					}
+					
 					if(encryptionKS==null) {
 						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require keystore");
 					}
@@ -233,7 +246,7 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 						}
 					}
 					
-					xmlEncrypt = new XmlEncrypt(encryptionKS, true, aliasEncryptUser, aliasEncryptPassword);
+					xmlEncrypt = new XmlEncrypt(encryptionKS, true, encryptionSymmetricWrappedMode, aliasEncryptUser, aliasEncryptPassword);
 					
 				}
 				else {
