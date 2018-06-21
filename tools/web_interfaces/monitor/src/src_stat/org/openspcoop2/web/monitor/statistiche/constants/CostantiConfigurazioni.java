@@ -156,7 +156,22 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_CONNETTORE_HOSTNAME_VERIFIER = "Connettore (Hostname Verifier)";
 	public static final String LABEL_CONNETTORE_TRUST_STORE = "Connettore (TrustStore)";
 	public static final String LABEL_CONNETTORE_KEY_STORE = "Connettore (KeyStore)";
+	public static final String LABEL_VALIDAZIONE_STATO = "Validazione (Stato)";
+	public static final String LABEL_VALIDAZIONE_TIPO = "Validazione (Tipo)";
+	public static final String LABEL_VALIDAZIONE_MTOM = "Validazione (Accetta MTOM)";
 	
+	public static final String LABEL_SICUREZZA_MESSAGGIO_STATO = "Sicurezza Messaggio (Stato)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA = "Schema Sicurezza (Richiesta)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RISPOSTA = "Schema Sicurezza (Risposta)";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO = "Nessuno";
+	public static final String LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE = "Configurazione Manuale";
+	public static final String VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT = "default";
+	
+	public static final String LABEL_MTOM_RICHIESTA = "MTOM (Richiesta)";
+	public static final String LABEL_MTOM_RISPOSTA = "MTOM (Risposta)";
+	
+	public static final String LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA = "Correlazione Applicativa (Richiesta)";
+	public static final String LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA = "Correlazione Applicativa (Risposta)";
 	
 	// Valori Mode delle Porte
 	public static final String VALUE_PORTE_DELEGATED_BY = "delegatedBy";

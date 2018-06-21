@@ -15,9 +15,13 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
 import org.openspcoop2.core.config.AutorizzazioneScope;
 import org.openspcoop2.core.config.Connettore;
+import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.core.config.MessageSecurity;
+import org.openspcoop2.core.config.MtomProcessor;
+import org.openspcoop2.core.config.MtomProcessorFlow;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -25,6 +29,7 @@ import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Scope;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
@@ -109,6 +114,20 @@ public class ConfigurazioniCsvExporter {
 	    Scope Richiesti (all/any)
 	    Scope (separati da '\n')
 	    Autorizzazione (Token claims)
+	    
+	    Validazione (Stato)
+	    Validazione (Tipo)
+	    Validazione (Accetta MTOM)
+	    
+		Sicurezza Messaggio (Stato)
+		Schema Sicurezza Richiesta
+		Schema Sicurezza Risposta
+		
+	 	MTOM Richiesta
+		MTOM Risposta
+		
+		Correlazione Applicativa Richiesta
+		Correlazione Applicativa Risposta
 	  
 	    Servizio Applicativo
 	    MessageBox
@@ -164,6 +183,20 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
 			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_TIPO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_MTOM);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA);
+			
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_TIPO);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_ENDPOINT);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_CONNETTORE_DEBUG);
@@ -213,6 +246,20 @@ public class ConfigurazioniCsvExporter {
 	    Scope Richiesti (all/any)
 	    Scope (separati da '\n')
 	    Autorizzazione (Token claims)
+	    
+	    Validazione (Stato)
+	    Validazione (Tipo)
+	    Validazione (Accetta MTOM)
+	    
+		Sicurezza Messaggio (Stato)
+		Schema Sicurezza Richiesta
+		Schema Sicurezza Risposta
+		
+	 	MTOM Richiesta
+		MTOM Risposta
+		
+		Correlazione Applicativa Richiesta
+		Correlazione Applicativa Risposta
 	    
 	    MessageBox
 	    Sbustamento SOAP
@@ -267,6 +314,20 @@ public class ConfigurazioniCsvExporter {
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_RICHIESTI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SCOPE_FORNITI);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_AUTORIZZAZIONE_TOKEN_CLAIMS);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_TIPO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_VALIDAZIONE_MTOM);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_STATO);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_MTOM_RISPOSTA);
+			
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RICHIESTA);
+			this.labelColonne.add(CostantiConfigurazioni.LABEL_CORRELAZIONE_APPLICATIVA_RISPOSTA);
 
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_MESSAGE_BOX);
 			this.labelColonne.add(CostantiConfigurazioni.LABEL_SBUSTAMENTO_SOAP);
@@ -723,6 +784,119 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add("");
 		}
 		
+		
+	    //Validazione (Stato)
+	    //Validazione (Tipo)
+	    //Validazione (Accetta MTOM)
+		
+		ValidazioneContenutiApplicativi validazioneContenutiApplicativi = paOp2.getValidazioneContenutiApplicativi();
+		if(validazioneContenutiApplicativi != null) {
+			oneLine.add(validazioneContenutiApplicativi.getStato().getValue());
+			oneLine.add(validazioneContenutiApplicativi.getTipo().getValue());
+			oneLine.add(validazioneContenutiApplicativi.getAcceptMtomMessage().getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Sicurezza Messaggio (Stato)
+		// Schema Sicurezza Richiesta
+		// Schema Sicurezza Risposta
+		MessageSecurity messageSecurity = paOp2.getMessageSecurity();
+		String requestMode = null;
+		String responseMode = null; 
+		
+		if(messageSecurity != null) {
+			if(messageSecurity.getRequestFlow() != null){
+				requestMode = messageSecurity.getRequestFlow().getMode();
+			}
+			if(messageSecurity.getResponseFlow() != null){
+				responseMode = messageSecurity.getResponseFlow().getMode();
+			}
+		}
+		String statoMessageSecurity= paOp2.getStatoMessageSecurity();
+		
+		if(StringUtils.isNotEmpty(statoMessageSecurity)) {
+			oneLine.add(statoMessageSecurity);
+			
+			if(StatoFunzionalita.ABILITATO.getValue().equals(statoMessageSecurity)) {
+				if(StringUtils.isNotEmpty(requestMode)) {
+					if(requestMode.equals(CostantiConfigurazioni.VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT)) {
+						oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE);
+					} else {
+						oneLine.add(requestMode);
+					}
+				} else {
+					oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO);
+				}
+				
+				if(StringUtils.isNotEmpty(responseMode)) {
+					if(responseMode.equals(CostantiConfigurazioni.VALUE_SICUREZZA_MESSAGGIO_SCHEMA_DEFAULT)) {
+						oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_CONFIGURAZIONE_MANUALE);
+					} else {
+						oneLine.add(responseMode);
+					}
+				} else {
+					oneLine.add(CostantiConfigurazioni.LABEL_SICUREZZA_MESSAGGIO_SCHEMA_NESSUNO);
+				}
+			} else {
+				oneLine.add("");
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		
+		// MTOM Richiesta
+		// MTOM Risposta
+		MtomProcessor mtomProcessor = paOp2.getMtomProcessor();
+		
+		if(mtomProcessor != null) {
+			MtomProcessorFlow requestFlow = mtomProcessor.getRequestFlow();
+			if(requestFlow != null) {
+				oneLine.add(requestFlow.getMode().getValue());
+			} else {
+				oneLine.add("");
+			}
+			
+			MtomProcessorFlow responseFlow = mtomProcessor.getResponseFlow();
+			if(responseFlow != null) {
+				oneLine.add(responseFlow.getMode().getValue());
+			} else {
+				oneLine.add("");
+			}
+		} else {
+			oneLine.add("");
+			oneLine.add("");
+		}
+		
+		// Correlazione Applicativa Richiesta
+		// Correlazione Applicativa Risposta
+		int numCorrelazioneReq = 0;
+		int numCorrelazioneRes = 0;
+
+		CorrelazioneApplicativa ca = paOp2.getCorrelazioneApplicativa();
+		if (ca != null)
+			numCorrelazioneReq = ca.sizeElementoList();
+
+		if (paOp2.getCorrelazioneApplicativaRisposta() != null)
+			numCorrelazioneRes = paOp2.getCorrelazioneApplicativaRisposta().sizeElementoList();
+		
+		if(numCorrelazioneReq > 0) {
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
+		
+		if(numCorrelazioneRes > 0) {
+			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
+		} else {
+			oneLine.add(StatoFunzionalita.DISABILITATO.getValue());
+		}
 
 		// colonne servizio applicativo e relativo connettore
 		if(dettaglioSA != null) {
@@ -782,15 +956,26 @@ public class ConfigurazioniCsvExporter {
 		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
 	}
 
-	private void addLinePD(DRDataSource dataSource, ConfigurazioneGenerale configurazione) throws DriverRegistroServiziException  {
+	private void addLinePD(DRDataSource dataSource, ConfigurazioneGenerale configurazione) throws Exception  {
 		List<Object> oneLine = new ArrayList<Object>();
 		DettaglioPD dettaglioPD = configurazione.getPd();
 		PortaDelegata pdOp2 = dettaglioPD.getPortaDelegataOp2();
-
-		if(StringUtils.isNotEmpty(configurazione.getLabel()))
-			oneLine.add(configurazione.getLabel());
+		org.openspcoop2.core.commons.search.PortaDelegata portaDelegata = dettaglioPD.getPortaDelegata();
+		PortaDelegataAzione pdAzione = pdOp2.getAzione();
+		
+		// Modalita
+		ServiceBinding serviceBinding= null;
+		String protocollo = configurazione.getProtocollo();
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		IProtocolIntegrationConfiguration createProtocolIntegrationConfiguration = protocolFactory.createProtocolIntegrationConfiguration();
+		PorteNamingUtils n = new PorteNamingUtils(protocolFactory);
+		if(StringUtils.isNotEmpty(protocollo))
+			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
 			oneLine.add("");
+		
+		
+
 		
 		// STATO
 		if(StringUtils.isNotEmpty(configurazione.getStato()))
@@ -991,6 +1176,12 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add("");
 			}
 		}
+		
+		// Nome PD
+		if(StringUtils.isNotEmpty(portaDelegata.getLabel()))
+			oneLine.add(configurazione.getLabel());
+		else 
+			oneLine.add("");
 		
 
 		dataSource.add(oneLine.toArray(new Object[oneLine.size()])); 
