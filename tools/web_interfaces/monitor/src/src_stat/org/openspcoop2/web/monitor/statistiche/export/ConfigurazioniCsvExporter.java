@@ -35,7 +35,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -1023,7 +1022,6 @@ public class ConfigurazioniCsvExporter {
 		// Espressione: xpath o regolare
 		String endpointApplicativoPD = dettaglioPD.getEndpointApplicativoPD();
 		String contesto = dettaglioPD.getContesto();
-		PortaDelegataAzione pdAzione = dettaglioPD.getPortaDelegataOp2().getAzione();
 		
 		if(StringUtils.isNotEmpty(contesto) && !contesto.endsWith("/"))
 			contesto += "/";
@@ -1178,8 +1176,8 @@ public class ConfigurazioniCsvExporter {
 		}
 		
 		// Nome PD
-		if(StringUtils.isNotEmpty(portaDelegata.getLabel()))
-			oneLine.add(configurazione.getLabel());
+		if(StringUtils.isNotEmpty(portaDelegata.getNome()))
+			oneLine.add(portaDelegata.getNome());
 		else 
 			oneLine.add("");
 		
