@@ -44,7 +44,7 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 public class ImplementationUtils {
 
 	public static IDPortaApplicativa setCommonParameter(PortaApplicativa portaApplicativa,
-			IDServizio idServizio, boolean setDatiServizio) {
+			IDServizio idServizio, boolean setDatiServizio, boolean portaClonata) {
 	
 		portaApplicativa.setTipoSoggettoProprietario(idServizio.getSoggettoErogatore().getTipo());
 		portaApplicativa.setNomeSoggettoProprietario(idServizio.getSoggettoErogatore().getNome());
@@ -59,13 +59,15 @@ public class ImplementationUtils {
 		
 		portaApplicativa.setStato(StatoFunzionalita.ABILITATO);
 		
-		portaApplicativa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.ABILITATO);
-		portaApplicativa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.ABILITATO);
-		
-		portaApplicativa.setAllegaBody(StatoFunzionalita.DISABILITATO);
-		portaApplicativa.setScartaBody(StatoFunzionalita.DISABILITATO);
-		
-		portaApplicativa.setStatoMessageSecurity(StatoFunzionalita.DISABILITATO.toString());
+		if(!portaClonata) {
+			portaApplicativa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.ABILITATO);
+			portaApplicativa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.ABILITATO);
+			
+			portaApplicativa.setAllegaBody(StatoFunzionalita.DISABILITATO);
+			portaApplicativa.setScartaBody(StatoFunzionalita.DISABILITATO);
+			
+			portaApplicativa.setStatoMessageSecurity(StatoFunzionalita.DISABILITATO.toString());
+		}
 		
 		IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
 		idPortaApplicativa.setNome(portaApplicativa.getNome());

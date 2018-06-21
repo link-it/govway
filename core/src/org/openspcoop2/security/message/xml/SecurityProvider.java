@@ -8,8 +8,12 @@ import java.util.Properties;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
+import org.openspcoop2.security.message.constants.EncryptionAlgorithm;
 import org.openspcoop2.security.message.constants.EncryptionC14NAlgorithm;
 import org.openspcoop2.security.message.constants.EncryptionDigestAlgorithm;
+import org.openspcoop2.security.message.constants.EncryptionKeyTransportAlgorithm;
+import org.openspcoop2.security.message.constants.EncryptionSymmetricKeyWrapAlgorithm;
+import org.openspcoop2.security.message.constants.KeyAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureC14NAlgorithm;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
@@ -47,6 +51,38 @@ public class SecurityProvider implements IProvider {
 			return l;
 		}
 		
+		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			KeyAlgorithm [] tmp = KeyAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].name());
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionSymmetricKeyWrapAlgorithm [] tmp = EncryptionSymmetricKeyWrapAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].getUri());
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionKeyTransportAlgorithm [] tmp = EncryptionKeyTransportAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].getUri());
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionAlgorithm [] tmp = EncryptionAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].getUri());
+			}
+			return l;
+		}
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
 			EncryptionDigestAlgorithm [] tmp = EncryptionDigestAlgorithm.values();
@@ -55,26 +91,15 @@ public class SecurityProvider implements IProvider {
 			}
 			return l;
 		}
-		
-		//encryptionSymAlgorithm GESTIRE COME VEDERE TEST???
-		
-		
-		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
-//			List<String> l = new ArrayList<>();
-//			org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.values();
-//			for (int i = 0; i < tmp.length; i++) {
-//				l.add(tmp[i].name());
-//			}
-//			return l;
+		else if(XMLCostanti.ID_ENCRYPT_C14N_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionC14NAlgorithm [] tmp = EncryptionC14NAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(tmp[i].getUri());
+			}
+			return l;
 		}
-		else if(XMLCostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
-//			List<String> l = new ArrayList<>();
-//			org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm [] tmp = org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.values();
-//			for (int i = 0; i < tmp.length; i++) {
-//				l.add(tmp[i].name());
-//			}
-//			return l;
-		}
+		
 		return null;
 	}
 
@@ -105,6 +130,33 @@ public class SecurityProvider implements IProvider {
 			return l;
 		}
 		
+		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			return this.getValues(id);
+		}
+		else if(XMLCostanti.ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionSymmetricKeyWrapAlgorithm [] tmp = EncryptionSymmetricKeyWrapAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(this.convertEnumName(tmp[i].name()));
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionKeyTransportAlgorithm [] tmp = EncryptionKeyTransportAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(this.convertEnumName(tmp[i].name()));
+			}
+			return l;
+		}
+		else if(XMLCostanti.ID_ENCRYPT_ALGORITHM.equals(id)) {
+			List<String> l = new ArrayList<>();
+			EncryptionAlgorithm [] tmp = EncryptionAlgorithm.values();
+			for (int i = 0; i < tmp.length; i++) {
+				l.add(this.convertEnumName(tmp[i].name()));
+			}
+			return l;
+		}
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
 			List<String> l = new ArrayList<>();
 			EncryptionDigestAlgorithm [] tmp = EncryptionDigestAlgorithm.values();
@@ -150,6 +202,18 @@ public class SecurityProvider implements IProvider {
 			return SignatureC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
 		}
 		
+		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
+			return KeyAlgorithm.AES.name();
+		}
+		else if(XMLCostanti.ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM.equals(id)) {
+			return EncryptionSymmetricKeyWrapAlgorithm.AES_256.getUri();
+		}
+		else if(XMLCostanti.ID_ENCRYPT_ALGORITHM.equals(id)) {
+			return EncryptionAlgorithm.AES_256.getUri();
+		}
+		else if(XMLCostanti.ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM.equals(id)) {
+			return EncryptionKeyTransportAlgorithm.RSA_v1dot5.getUri();
+		}
 		else if(XMLCostanti.ID_ENCRYPT_DIGEST_ALGORITHM.equals(id)) {
 			return EncryptionDigestAlgorithm.SHA256.getUri();
 		}
@@ -157,12 +221,6 @@ public class SecurityProvider implements IProvider {
 			return EncryptionC14NAlgorithm.INCLUSIVE_C14N_10_WITH_COMMENTS.getUri();
 		}
 		
-//		else if(XMLCostanti.ID_ENCRYPT_KEY_ALGORITHM.equals(id)) {
-//			return org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm.RSA_OAEP_256.name();
-//		}
-//		else if(XMLCostanti.ID_ENCRYPT_CONTENT_ALGORITHM.equals(id)) {
-//			return org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm.A256GCM.name();
-//		}
 		return null;
 	}
 

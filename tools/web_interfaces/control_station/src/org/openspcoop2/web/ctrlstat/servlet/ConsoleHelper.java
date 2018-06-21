@@ -2095,6 +2095,7 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY);
 		de.setValues(tipoWS);
 		de.setSelected(messageSecurity);
+		de.setPostBack(true);
 		dati.addElement(de);
 
 		if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO.equals(messageSecurity)){
@@ -3360,13 +3361,13 @@ public class ConsoleHelper {
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata,
-			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
+			boolean addTitoloSezione,String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
 		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
-				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,visualizzaSezioneScope,
+				confPers, isSupportatoAutenticazione, contaListe, isPortaDelegata, addTitoloSezione,autorizzazioneScope,urlAutorizzazioneScope,numScope,scope,autorizzazioneScopeMatch,
 				gestioneToken, gestioneTokenPolicy, autorizzazione_tokenOptions);
 		
 	}
@@ -3376,7 +3377,7 @@ public class ConsoleHelper {
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
 			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata, boolean addTitoloSezione,
-			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,boolean visualizzaSezioneScope,
+			String autorizzazioneScope,  String urlAutorizzazioneScope, int numScope, String scope, String autorizzazioneScopeMatch,
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_tokenOptions) throws Exception{
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
@@ -3644,7 +3645,7 @@ public class ConsoleHelper {
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 				boolean autorizzazione_scope = false;
 			
-				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && visualizzaSezioneScope){
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && tokenAbilitato){
 					
 					de = new DataElement();
 					de.setType(DataElementType.SUBTITLE);

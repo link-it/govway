@@ -46,7 +46,7 @@ import org.openspcoop2.core.id.IdentificativiFruizione;
 public class SubscriptionUtils {
 
 	public static IDPortaDelegata setCommonParameter(PortaDelegata portaDelegata,
-			IDSoggetto idFruitore, IDServizio idServizio, boolean setDatiServizio) {
+			IDSoggetto idFruitore, IDServizio idServizio, boolean setDatiServizio, boolean portaClonata) {
 		
 		portaDelegata.setTipoSoggettoProprietario(idFruitore.getTipo());
 		portaDelegata.setNomeSoggettoProprietario(idFruitore.getNome());
@@ -66,13 +66,15 @@ public class SubscriptionUtils {
 		
 		portaDelegata.setStato(StatoFunzionalita.ABILITATO);
 		
-		portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.ABILITATO);
-		portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.ABILITATO);
-		
-		portaDelegata.setAllegaBody(StatoFunzionalita.DISABILITATO);
-		portaDelegata.setScartaBody(StatoFunzionalita.DISABILITATO);
-		
-		portaDelegata.setStatoMessageSecurity(StatoFunzionalita.DISABILITATO.toString());
+		if(!portaClonata) {
+			portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.ABILITATO);
+			portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.ABILITATO);
+			
+			portaDelegata.setAllegaBody(StatoFunzionalita.DISABILITATO);
+			portaDelegata.setScartaBody(StatoFunzionalita.DISABILITATO);
+			
+			portaDelegata.setStatoMessageSecurity(StatoFunzionalita.DISABILITATO.toString());
+		}
 		
 		IDPortaDelegata idPortaDelegata = new IDPortaDelegata();
 		idPortaDelegata.setNome(portaDelegata.getNome());

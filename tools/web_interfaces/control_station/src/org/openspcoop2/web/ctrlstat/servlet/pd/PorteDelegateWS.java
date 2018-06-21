@@ -271,6 +271,9 @@ public final class PorteDelegateWS extends Action {
 				if(postBackElementName.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)) {
 					applicaModifica = false;
 				}
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY)) {
+					applicaModifica = false;
+				}
 			}
 
 
@@ -394,6 +397,12 @@ public final class PorteDelegateWS extends Action {
 			}else 
 				pde.getMessageSecurity().getResponseFlow().setApplyToMtom(null);
 
+			if(!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO.equals(statoMessageSecurity)) {
+				// Devo annullare altrimenti si possono creare inconsistenze tra link accesso alla configurazione della sicurezza e non salvataggio reale dello stato generale (se si abilita la sicurezza e precedentemente esisteva già una config per la request o response)
+				pde.getMessageSecurity().setRequestFlow(null);
+				pde.getMessageSecurity().setResponseFlow(null);
+			}
+						
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteDelegateCore.performUpdateOperation(userLogin, porteDelegateHelper.smista(), pde);

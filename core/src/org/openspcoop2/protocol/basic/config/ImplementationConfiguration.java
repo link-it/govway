@@ -74,7 +74,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 			portaApplicativa.setDescrizione(null);
 		}
 		
-		IDPortaApplicativa idPortaApplicativa = ImplementationUtils.setCommonParameter(portaApplicativa, idServizio, true);
+		IDPortaApplicativa idPortaApplicativa = ImplementationUtils.setCommonParameter(portaApplicativa, idServizio, true, false);
 		
 		PortaApplicativaAzione pdAzione = new PortaApplicativaAzione();
 		ResourceIdentificationType defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getDefault();
@@ -204,10 +204,12 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		
 		// creo una nuova porta applicativa clonando quella selezionata 
 		boolean setDatiServizio = false;
+		boolean portaClonata = false;
 		if(portaApplicativaDaClonare!=null) {
 			
 			portaApplicativa = (PortaApplicativa) portaApplicativaDaClonare.clone();
 			portaApplicativa.setId(null);// annullo il table id
+			portaClonata = true;
 		
 		} else {
 			
@@ -219,7 +221,7 @@ public class ImplementationConfiguration extends AbstractIntegrationConfiguratio
 		portaApplicativa.setNome(nomeNuovaPortaApplicativa);
 		portaApplicativa.setDescrizione(descrizioneNuovaPortaApplicativa);
 		
-		IDPortaApplicativa idPortaApplicativa = ImplementationUtils.setCommonParameter(portaApplicativa, idServizio, setDatiServizio);
+		IDPortaApplicativa idPortaApplicativa = ImplementationUtils.setCommonParameter(portaApplicativa, idServizio, setDatiServizio, portaClonata);
 		
 		ImplementationUtils.setAzioneDelegate(portaApplicativa, nomePortaDelegante, azione);
 				

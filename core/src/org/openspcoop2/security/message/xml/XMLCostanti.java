@@ -16,7 +16,9 @@ public class XMLCostanti {
 	public final static String ID_SIGNATURE_C14N_ALGORITHM = "signatureC14nAlgorithm";
 	
 	public final static String ID_ENCRYPT_KEY_ALGORITHM = "encryptionKeyAlgorithm";
-	public final static String ID_ENCRYPT_CONTENT_ALGORITHM = "encryptionContentAlgorithm";
+	public final static String ID_ENCRYPT_SYMMETRIC_KEY_WRAP_ALGORITHM = "encryptionSymAlgorithm";
+	public final static String ID_ENCRYPT_TRANSPORT_KEY_WRAP_ALGORITHM = "encryptionKeyTransportAlgorithm";
+	public final static String ID_ENCRYPT_ALGORITHM = "encryptionAlgorithm";
 	public final static String ID_ENCRYPT_DIGEST_ALGORITHM = "encryptionDigestAlgorithm";
 	public final static String ID_ENCRYPT_C14N_ALGORITHM = "encryptionC14nAlgorithm";
 

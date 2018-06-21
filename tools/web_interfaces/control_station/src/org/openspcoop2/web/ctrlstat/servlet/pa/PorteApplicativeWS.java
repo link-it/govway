@@ -260,6 +260,9 @@ public final class PorteApplicativeWS extends Action {
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE_FLOW_PROPERTIES_CONFIG_NAME)) {
 					applicaModifica = false;
 				}
+				if(postBackElementName.equals(CostantiControlStation.PARAMETRO_MESSAGE_SECURITY)) {
+					applicaModifica = false;
+				}
 			}
 			
 			// setto la barra del titolo
@@ -390,6 +393,12 @@ public final class PorteApplicativeWS extends Action {
 			}else 
 				pa.getMessageSecurity().getResponseFlow().setApplyToMtom(null);
 
+			if(!CostantiControlStation.DEFAULT_VALUE_PARAMETRO_MESSAGE_SECURITY_ABILITATO.equals(statoMessageSecurity)) {
+				// Devo annullare altrimenti si possono creare inconsistenze tra link accesso alla configurazione della sicurezza e non salvataggio reale dello stato generale (se si abilita la sicurezza e precedentemente esisteva già una config per la request o response)
+				pa.getMessageSecurity().setRequestFlow(null);
+				pa.getMessageSecurity().setResponseFlow(null);
+			}
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);

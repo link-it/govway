@@ -230,43 +230,48 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 					if(aliasEncryptUser==null) {
 						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require alias public key");
 					}
+					
+					encryptionSymmetricWrappedMode = SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY;
 				}
 				
-				String encryptionAlgorithm = null;
-				String encryptionKeyAlgorithm = null;
+				
 				String wrappedKeyAlgorithm = null;
 				if(encryptionSymmetric) {	
+				
+					if(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY.equals(encryptionSymmetricWrappedMode)) {
 					
-					encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
-					if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
-						encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_ALGORITHM);
-						if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
-							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM+"'/'"+
-									SecurityConstants.ENCRYPTION_ALGORITHM+"' property");
+						wrappedKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
+						if(wrappedKeyAlgorithm==null || "".equals(wrappedKeyAlgorithm.trim())){
+							throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM+"' property");
 						}
+						
 					}
 					
 					xmlEncrypt = new XmlEncrypt(encryptionKS, true, encryptionSymmetricWrappedMode, aliasEncryptUser, aliasEncryptPassword);
 					
 				}
 				else {
-					
-					encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_ALGORITHM);
-					if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_ALGORITHM+"' property");
-					}
-					
-					encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
-					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
-						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
-					}
-					
+											
 					wrappedKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM);
 					if(wrappedKeyAlgorithm==null || "".equals(wrappedKeyAlgorithm.trim())){
 						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM+"' property");
 					}
 					
 					xmlEncrypt = new XmlEncrypt(encryptionTrustStoreKS, aliasEncryptUser);
+				}
+				
+				String encryptionKeyAlgorithm = null;
+				if(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY.equals(encryptionSymmetricWrappedMode) ||
+						SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_ASYMMETRIC_KEY.equals(encryptionSymmetricWrappedMode)) {
+					encryptionKeyAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_ALGORITHM);
+					if(encryptionKeyAlgorithm==null || "".equals(encryptionKeyAlgorithm.trim())){
+						throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_KEY_ALGORITHM+"' property");
+					}
+				}
+				
+				String encryptionAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_ALGORITHM);
+				if(encryptionAlgorithm==null || "".equals(encryptionAlgorithm.trim())){
+					throw new SecurityException(XMLCostanti.XML_ENGINE_ENCRYPT_DESCRIPTION+" require '"+SecurityConstants.ENCRYPTION_ALGORITHM+"' property");
 				}
 				
 				String encryptionDigestAlgorithm = (String) messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_DIGEST_ALGORITHM);
@@ -284,7 +289,13 @@ public class MessageSecuritySender_xml extends AbstractRESTMessageSecuritySender
 				// **************** Process **************************
 				
 				if(encryptionSymmetric) {	
-					xmlEncrypt.encryptSymmetric(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm);
+					if(SymmetricKeyWrappedMode.SYM_ENC_KEY_WRAPPED_SYMMETRIC_KEY.equals(encryptionSymmetricWrappedMode)) {
+						xmlEncrypt.encrypt(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm,
+								encryptionKeyAlgorithm, wrappedKeyAlgorithm);
+					}
+					else {
+						xmlEncrypt.encryptSymmetric(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm);
+					}
 				}
 				else {
 					xmlEncrypt.encrypt(restXmlMessage.getContent(), encryptionAlgorithm, encryptionCanonicalizationMethodAlgorithm, encryptionDigestAlgorithm,

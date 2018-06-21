@@ -75,7 +75,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 			portaDelegata.setDescrizione(null);
 		}
 		
-		IDPortaDelegata idPortaDelegata = SubscriptionUtils.setCommonParameter(portaDelegata, idFruitore, idServizio, true);
+		IDPortaDelegata idPortaDelegata = SubscriptionUtils.setCommonParameter(portaDelegata, idFruitore, idServizio, true, false);
 
 		PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 		ResourceIdentificationType defaultIdentification = this.integrationConfiguration.getResourceIdentification().getIdentificationModes().getDefault();
@@ -203,10 +203,12 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		
 		// creo una nuova porta applicativa clonando quella selezionata
 		boolean setDatiServizio = false;
+		boolean portaClonata = false;
 		if(portaDelegataDaClonare!=null) {
 			
 			portaDelegata = (PortaDelegata) portaDelegataDaClonare.clone();
 			portaDelegata.setId(null);// annullo il table id
+			portaClonata = true;
 			
 		} else {
 			
@@ -218,7 +220,7 @@ public class SubscriptionConfiguration extends AbstractIntegrationConfiguration 
 		portaDelegata.setNome(nomeNuovaPortaDelegata);
 		portaDelegata.setDescrizione(descrizioneNuovaPortaDelegata);
 		
-		IDPortaDelegata idPortaDelegata = SubscriptionUtils.setCommonParameter(portaDelegata, idFruitore, idServizio, setDatiServizio);
+		IDPortaDelegata idPortaDelegata = SubscriptionUtils.setCommonParameter(portaDelegata, idFruitore, idServizio, setDatiServizio, portaClonata);
 		
 		SubscriptionUtils.setAzioneDelegate(portaDelegata, nomePortaDelegante, azione);
 						
