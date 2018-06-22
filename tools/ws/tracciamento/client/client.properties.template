@@ -1,8 +1,8 @@
-traccia.soap11.url=http://127.0.0.1:8080/openspcoop2Tracciamento/Traccia/Soap11
+traccia.soap11.url=http://127.0.0.1:8080/govwayTracciamento/Traccia/Soap11
 #traccia.soap11.username=INSERIRE_USERNAME
 #traccia.soap11.password=INSERIRE_PASSWORD
 
-traccia.soap12.url=http://127.0.0.1:8080/openspcoop2Tracciamento/Traccia/Soap12
+traccia.soap12.url=http://127.0.0.1:8080/govwayTracciamento/Traccia/Soap12
 #traccia.soap12.username=INSERIRE_USERNAME
 #traccia.soap12.password=INSERIRE_PASSWORD
 

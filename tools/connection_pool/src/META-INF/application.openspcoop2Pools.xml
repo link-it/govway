@@ -1,6 +1,6 @@
 	<module>
 		<web>
-	   	     <web-uri>openspcoop2Pools.war</web-uri>
+	   	     <web-uri>govwayPools.war</web-uri>
                      <context-root>openspcoop2_pools</context-root>
 		</web>
 	</module>

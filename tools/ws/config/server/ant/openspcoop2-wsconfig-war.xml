@@ -142,7 +142,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_config_ws}/openspcoop2Config${ext_war}.war" webxml="deploy/cxf/web.xml">
+		<war destfile="${dist_config_ws}/govwayConfig${ext_war}.war" webxml="deploy/cxf/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>

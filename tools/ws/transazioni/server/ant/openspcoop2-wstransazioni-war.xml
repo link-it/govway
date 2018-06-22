@@ -97,7 +97,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_transazioni_ws}/openspcoop2Transazioni${ext_war}.war" webxml="deploy/cxf/web.xml">
+		<war destfile="${dist_transazioni_ws}/govwayTransazioni${ext_war}.war" webxml="deploy/cxf/web.xml">
 
 			<webinf dir="${tmp_jboss_conf}">
 				<include name="jbossws-cxf.xml"/>

@@ -1,4 +1,4 @@
-        <sub-deployment name="openspcoop2Pools.war">
+        <sub-deployment name="govwayPools.war">
                 <exclusions>
                         <module name="org.apache.log4j"/>
                         <module name="org.slf4j" />

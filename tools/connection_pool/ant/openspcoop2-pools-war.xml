@@ -38,7 +38,7 @@
 			</then>
 		</if>
 		
-		<war destfile="${dist_openspcoop2Pools}/openspcoop2Pools.war" webxml="${src_openspcoop2Pools}/WEB-INF/web.xml">
+		<war destfile="${dist_openspcoop2Pools}/govwayPools.war" webxml="${src_openspcoop2Pools}/WEB-INF/web.xml">
 			<!-- Informazioni sulla versione -->
 			<fileset dir="${openspcoop2}">
 				<include name="README.txt"/>

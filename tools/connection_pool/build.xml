@@ -187,7 +187,7 @@
 		<mkdir dir="${build_openspcoop2Pools}/pluginSRC"/>
 		<mkdir dir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure"/>
 		<mkdir dir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/"/>
-		<unzip src="${dist_openspcoop2Pools}/openspcoop2Pools.war" dest="${build_openspcoop2Pools}/pluginSRC"/>
+		<unzip src="${dist_openspcoop2Pools}/govwayPools.war" dest="${build_openspcoop2Pools}/pluginSRC"/>
 		
 		<basename property="jar.driverJDBC" file="${driverJDBC}"/>
 		<move todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/">
@@ -235,7 +235,7 @@
 			</then>
 		</if>
 		
-		<zip destfile="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/openspcoop2Pools.war" basedir="${build_openspcoop2Pools}/pluginSRC"/>
+		<zip destfile="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/govwayPools.war" basedir="${build_openspcoop2Pools}/pluginSRC"/>
 			
 		<zip destfile="${dist_openspcoop2Pools}/openspcoop2Pools_plugin.zip" basedir="${build_openspcoop2Pools}/pluginDEST"/>
 		<delete dir="${build_openspcoop2Pools}/pluginSRC"/>
